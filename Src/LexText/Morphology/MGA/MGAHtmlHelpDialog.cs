@@ -44,7 +44,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			Justification = "Offending code is compiled only on Windows")]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "GeckoWebBrowser gets added to Control collection and disposed there")]
-		public MGAHtmlHelpDialog(FdoCache cache, Mediator mediator, string sMorphemeForm) : base(cache, mediator, sMorphemeForm)
+		public MGAHtmlHelpDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
+			: base(cache, helpTopicProvider, sMorphemeForm)
 		{
 #if __MonoCS__
 			m_browser = new GeckoWebBrowser

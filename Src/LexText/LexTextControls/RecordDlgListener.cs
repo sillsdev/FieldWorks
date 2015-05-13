@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -45,12 +43,14 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new InsertRecordDlg())
 			{
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				var cache = m_propertyTable.GetValue<FdoCache>("cache");
 				ICmObject obj = null;
-				ICmObject objSelected = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as ICmObject;
-				ICmObject objOwning = m_mediator.PropertyTable.GetValue("ActiveClerkOwningObject") as ICmObject;
+				ICmObject objSelected = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
+				ICmObject objOwning = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 				if (subsubrecord)
+				{
 					obj = objSelected;
+				}
 				else if (subrecord && objSelected != null)
 				{
 					obj = objSelected;
@@ -58,8 +58,10 @@ namespace SIL.FieldWorks.LexText.Controls
 						obj = obj.Owner;
 				}
 				else
+				{
 					obj = objOwning;
-				dlg.SetDlgInfo(cache, m_mediator, obj);
+				}
+				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, obj);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
 					IRnGenericRec newRec = dlg.NewRecord;
@@ -94,9 +96,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new RecordGoDlg())
 			{
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				var cache = m_propertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
-				dlg.SetDlgInfo(cache, null, m_mediator);
+				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
 			}
@@ -115,7 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 				var areas = new[] { "notebook" };
 				foreach (string area in areas)
 				{
@@ -124,7 +126,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						// We want to show goto dialog for dictionary views, but not lists, etc.
 						// that may be in the Lexicon area.
 						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = (ICmObject)m_mediator.PropertyTable.GetValue("ActiveClerkOwningObject");
+						var obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 						return (obj != null) && (obj.ClassID == RnResearchNbkTags.kClassId);
 					}
 				}

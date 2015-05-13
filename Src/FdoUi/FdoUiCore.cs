@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public interface IFwGuiControl : IFWDisposable
 	{
-		void Init(Mediator mediator, XmlNode configurationNode, ICmObject sourceObject);
+		void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject);
 		void Launch();
 	}
 
@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.FdoUi
 		#region Data members
 
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		private Command m_command;
 		protected ICmObject m_obj;
 		protected int m_hvo;
@@ -115,6 +116,24 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				CheckDisposed();
 				return m_mediator;
+			}
+		}
+
+		public virtual PropertyTable PropTable
+		{
+			set
+			{
+				CheckDisposed();
+
+				Debug.Assert(value != null);
+				// if (m_mediator != null)
+				//	throw new ArgumentException("FDO UI object already has its mediator.");
+				m_propertyTable = value;
+			}
+			get
+			{
+				CheckDisposed();
+				return m_propertyTable;
 			}
 		}
 
@@ -361,28 +380,29 @@ namespace SIL.FieldWorks.FdoUi
 		/// Create a new FDO object.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public static CmObjectUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static CmObjectUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var cache = propertyTable.GetValue<FdoCache>("cache");
 			switch (classId)
 			{
 				default:
 					return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
 				case CmPossibilityTags.kClassId:
-					return CmPossibilityUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
+					return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 				case PartOfSpeechTags.kClassId:
-					return PartOfSpeechUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
+					return PartOfSpeechUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
 				case FsFeatDefnTags.kClassId:
-					return FsFeatDefnUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
+					return FsFeatDefnUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
 				case LexSenseTags.kClassId:
-					return LexSenseUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
+					return LexSenseUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 				case LexPronunciationTags.kClassId:
-					return LexPronunciationUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
+					return LexPronunciationUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 			}
 		}
 
@@ -514,10 +534,9 @@ namespace SIL.FieldWorks.FdoUi
 
 		#region IxCoreColleague implementation/
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-
 		}
 
 		/// <summary>
@@ -581,7 +600,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				using (var dlg = (IFwGuiControl) DynamicLoader.CreateObject(xnControl.SelectSingleNode("dynamicloaderinfo")))
 				{
-					dlg.Init(m_mediator, xnControl.SelectSingleNode("parameters"), Object);
+					dlg.Init(m_mediator, m_propertyTable, xnControl.SelectSingleNode("parameters"), Object);
 					dlg.Launch();
 				}
 			}
@@ -625,7 +644,7 @@ namespace SIL.FieldWorks.FdoUi
 			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
 			//string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_" + areaChoice, null);
-			string toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
 			if (!IsAcceptableContextToJump(toolChoice, tool))
 			{
 				display.Visible = display.Enabled = false;
@@ -681,7 +700,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			else
 			{
-				obj = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject", null) as ICmObject;
+				obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject", null);
 			}
 			return obj;
 		}
@@ -714,29 +733,31 @@ namespace SIL.FieldWorks.FdoUi
 		/// Handle a right click by popping up the implied context menu.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="hostControl"></param>
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed)
+		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed)
 		{
 			CheckDisposed();
 
-			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, ContextMenuId);
+			return HandleRightClick(mediator, propertyTable, hostControl, shouldDisposeThisWhenClosed, ContextMenuId);
 		}
 
 		/// <summary>
 		/// Handle a right click by popping up the implied context menu.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="hostControl"></param>
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <param name="adjustMenu"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
+		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
-			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
+			return HandleRightClick(mediator, propertyTable, hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
 		}
 
 		/// <summary>
@@ -764,17 +785,15 @@ namespace SIL.FieldWorks.FdoUi
 		/// Handle a control-click by invoking the first active JumpToTool menu item.
 		/// Note that the item selected here should be the same one that is selected by Mark
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="hostControl"></param>
 		/// <returns></returns>
-		public bool HandleCtrlClick(Mediator mediator, Control hostControl)
+		public bool HandleCtrlClick(Control hostControl)
 		{
-			Mediator = mediator;
-			var window = (XWindow)mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			m_hostControl = hostControl;
 			var group = window.GetChoiceGroupForMenu(ContextMenuId);
 			// temporarily the CmObjectUi must function as a colleague that can implement commands.
-			mediator.AddTemporaryColleague(this);
+			m_mediator.AddTemporaryColleague(this);
 			group.PopulateNow();
 			try
 			{
@@ -806,30 +825,35 @@ namespace SIL.FieldWorks.FdoUi
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="hostControl"></param>
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <param name="sMenuId"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
+		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
 		{
-			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
+			return HandleRightClick(mediator, propertyTable, hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
 		}
 
 		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="hostControl"></param>
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <param name="sMenuId"></param>
 		/// <param name="adjustMenu"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
+		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
-			Mediator = mediator;
-			var window = (XWindow) mediator.PropertyTable.GetValue("window");
+			if (m_propertyTable == null)
+				m_propertyTable = propertyTable;
+			if (Mediator == null)
+				Mediator = mediator;
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			m_hostControl = hostControl;
 
 			string sHostType = m_hostControl.GetType().Name;
@@ -841,7 +865,7 @@ namespace SIL.FieldWorks.FdoUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
-				object clrk = m_mediator.PropertyTable.GetValue("ActiveClerk");
+				object clrk = m_propertyTable.GetValue<object>("ActiveClerk");
 				string sClerkType = clrk != null ? clrk.GetType().Name : "";
 				if (sClerkType == "OccurrencesOfSelectedUnit")
 					return true;		// We don't want this either.  See LT-6101.
@@ -895,9 +919,9 @@ namespace SIL.FieldWorks.FdoUi
 
 				var poss = Object as ICmPossibility;
 				if (poss != null)
-					return poss.ItemTypeName(m_mediator.StringTbl);
+					return poss.ItemTypeName();
 				string typeName = Object.GetType().Name;
-				string className = m_mediator.StringTbl.GetString(typeName, "ClassNames");
+				string className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
 					className = typeName;
 
@@ -907,7 +931,7 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					if (featsys.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
 					{
-						altName = m_mediator.StringTbl.GetString(className + "-Phonological", "AlternativeTypeNames");
+						altName = StringTable.Table.GetString(className + "-Phonological", "AlternativeTypeNames");
 						if (altName != "*" + className + "-Phonological*")
 							return altName;
 					}
@@ -915,7 +939,7 @@ namespace SIL.FieldWorks.FdoUi
 				switch (Object.OwningFlid)
 				{
 					case MoStemNameTags.kflidRegions:
-						altName = m_mediator.StringTbl.GetString(className + "-MoStemName", "AlternativeTypeNames");
+						altName = StringTable.Table.GetString(className + "-MoStemName", "AlternativeTypeNames");
 						if (altName != "*" + className + "-MoStemName*")
 							return altName;
 						break;
@@ -983,16 +1007,16 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			else
 			{
-				var mainWindow = (Form) m_mediator.PropertyTable.GetValue("window");
+				var mainWindow = m_propertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 					{
 						string cannotDeleteMsg;
 						if (CanDelete(out cannotDeleteMsg))
-						dlg.SetDlgInfo(this, m_cache, Mediator);
+						dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable);
 						else
-							dlg.SetDlgInfo(this, m_cache, Mediator, m_cache.TsStrFactory.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+							dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, m_cache.TsStrFactory.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							ReallyDeleteUnderlyingObject();
@@ -1024,10 +1048,10 @@ namespace SIL.FieldWorks.FdoUi
 				if (media != null)
 					file = media.MediaFileRA;
 			}
-			ConsiderDeletingRelatedFile(file, m_mediator);
+			ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
 		}
 
-		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator)
+		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator, PropertyTable propertyTable)
 		{
 			if (file == null)
 				return;
@@ -1046,15 +1070,17 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (mediator != null)
 			{
-				var app = mediator.PropertyTable.GetValue("App") as FwApp;
-				if (app != null)
+				if (propertyTable != null && propertyTable.PropertyExists("App"))
+				{
+					var app = propertyTable.GetValue<FwApp>("App");
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
-			string fileToDelete = file.AbsoluteInternalPath;
-			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-			// with an exception indicating that something is using the file, despite the code above that
-			// tries to make our picture cache let go of it.
-			// However, waiting until idle seems to solve the problem.
-			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+				}
+				string fileToDelete = file.AbsoluteInternalPath;
+				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+				// with an exception indicating that something is using the file, despite the code above that
+				// tries to make our picture cache let go of it.
+				// However, waiting until idle seems to solve the problem.
+				mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
 				{
 					try
 					{
@@ -1066,7 +1092,7 @@ namespace SIL.FieldWorks.FdoUi
 					}
 					return true; // task is complete, don't try again.
 				});
-			file.Delete();
+				file.Delete();
 		}
 		}
 
@@ -1094,17 +1120,17 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			var mainWindow = (Form) m_mediator.PropertyTable.GetValue("window");
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			{
-				using (var dlg = new MergeObjectDlg(m_mediator.HelpTopicProvider))
+				using (var dlg = new MergeObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var wp = new WindowParams();
 					var mergeCandidates = new List<DummyCmObject>();
 					string guiControl, helpTopic;
 					DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
 					mergeCandidates.Sort();
-					dlg.SetDlgInfo(m_cache, m_mediator, wp, dObj, mergeCandidates, guiControl, helpTopic);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wp, dObj, mergeCandidates, guiControl, helpTopic);
 					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
 				}
@@ -1142,7 +1168,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			var mainWindow = (Form) m_mediator.PropertyTable.GetValue("window");
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			MessageBox.Show(mainWindow, FdoUiStrings.ksCannotMoveObjectToCopy, FdoUiStrings.ksBUG);
 		}
 
@@ -1523,17 +1549,17 @@ namespace SIL.FieldWorks.FdoUi
 			}
 
 			// try to insert the name of list into our display.Text for commands with label="{0}"
-			FormatDisplayTextWithListName(m_cache, Mediator, owningList, ref display);
+			FormatDisplayTextWithListName(m_cache, owningList, ref display);
 			if (display.Enabled)
 				command.TargetId = GuidForJumping(commandObject);
 			return true;
 		}
 
-		public static string FormatDisplayTextWithListName(FdoCache cache, Mediator mediator,
+		public static string FormatDisplayTextWithListName(FdoCache cache,
 			ICmPossibilityList pssl, ref UIItemDisplayProperties display)
 		{
 			string listName = pssl.Owner != null ? cache.DomainDataByFlid.MetaDataCache.GetFieldName(pssl.OwningFlid) : pssl.Name.BestAnalysisVernacularAlternative.Text;
-			string itemTypeName = pssl.ItemsTypeName(mediator.StringTbl);
+			string itemTypeName = pssl.ItemsTypeName();
 			if (itemTypeName != "*" + listName + "*")
 			{
 				string formattedText = String.Format(display.Text, itemTypeName);
@@ -1618,10 +1644,10 @@ namespace SIL.FieldWorks.FdoUi
 			return false;
 		}
 
-		public new static CmObjectUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner,
+		public static CmObjectUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner,
 			int flid, int insertionPosition)
 		{
-			var cache = (FdoCache) mediator.PropertyTable.GetValue("cache");
+			var cache = propertyTable.GetValue<FdoCache>("cache");
 			if (CheckAndReportProblemAddingSubitem(cache, hvoOwner))
 				return null;
 			return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
@@ -2024,21 +2050,22 @@ namespace SIL.FieldWorks.FdoUi
 			var le = (ILexEntry) obj;
 			le.MoveSenseToCopy((ILexSense) Object);
 		}
+
 		/// <summary>
 		/// When inserting a LexSense, copy the MSA from the one we are inserting after, or the
 		/// first one.  If this is the first one, we may need to create an MSA if the owning entry
 		/// does not have an appropriate one.
 		/// </summary>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static LexSenseUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexSenseUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexSenseUi result = null;
-			var cache = (FdoCache) mediator.PropertyTable.GetValue("cache");
+			var cache = propertyTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsertSense, FdoUiStrings.ksRedoInsertSense,
 				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{

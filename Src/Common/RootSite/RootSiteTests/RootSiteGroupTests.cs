@@ -8,17 +8,12 @@
 //
 // <remarks>
 // </remarks>
-
-using System;
 using System.Drawing;
 using System.Windows.Forms;
-
 using NUnit.Framework;
 using NMock;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -26,7 +21,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Summary description for RootSiteGroupTests.
 	/// </summary>
 	[TestFixture]
-	public class RootSiteGroupTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class RootSiteGroupTests : BaseTest
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

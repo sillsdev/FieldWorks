@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -56,23 +55,23 @@ namespace SIL.FieldWorks.XWorks
 			m_notifieeCount++;
 		}
 
-		public void SetMediator(Mediator mediator)
+		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
 		{
-			m_interestingTexts = GetInterestingTextList(mediator, m_services);
+			m_interestingTexts = GetInterestingTextList(mediator, propertyTable, m_services);
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(Mediator mediator, IFdoServiceLocator services)
+		static public InterestingTextList GetInterestingTextList(Mediator mediator, PropertyTable propertyTable, IFdoServiceLocator services)
 		{
-			var interestingTextList = mediator.PropertyTable.GetValue(InterestingTextKey, null) as InterestingTextList;
+			var interestingTextList = propertyTable.GetValue<InterestingTextList>(InterestingTextKey, null);
 			if (interestingTextList == null)
 			{
-				interestingTextList = new InterestingTextList(mediator.PropertyTable, services.GetInstance<ITextRepository>(),
+				interestingTextList = new InterestingTextList(mediator, propertyTable, services.GetInstance<ITextRepository>(),
 					services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
 				// Make this list available for other tools in this window, but don't try to persist it.
-				mediator.PropertyTable.SetProperty(InterestingTextKey, interestingTextList, false);
-				mediator.PropertyTable.SetPropertyPersistence(InterestingTextKey, false);
+				propertyTable.SetProperty(InterestingTextKey, interestingTextList, false);
+				propertyTable.SetPropertyPersistence(InterestingTextKey, false);
 				// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
 				// I can't find any way to make sure it eventually gets removed from the notification list.
 				services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);

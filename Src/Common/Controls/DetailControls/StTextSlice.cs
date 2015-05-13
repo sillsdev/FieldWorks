@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_mediator.HelpTopicProvider, "UserHelpFile");
+					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 				return true;
 			}
 			return false;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ITsString tssForm = tsb.GetString();
 				using (var dlg = new InsertEntryDlg())
 				{
-					dlg.SetDlgInfo(m_cache, tssForm, m_mediator);
+					dlg.SetDlgInfo(m_cache, tssForm, m_mediator, m_propertyTable);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						// is there anything special we want to do?
@@ -269,8 +269,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			Mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_text = text;
 			m_vc = new StVc("Normal", ws) {Cache = m_fdoCache, Editable = true};
 			DoSpellCheck = true;

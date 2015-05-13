@@ -26,12 +26,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
-		public void Init(Mediator mediator, IFsFeatStruc fs)
+		public void Init(FdoCache cache, IFsFeatStruc fs)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
-			m_fdoCache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_fdoCache = cache;
 
 			if (m_rootb == null)
 			{

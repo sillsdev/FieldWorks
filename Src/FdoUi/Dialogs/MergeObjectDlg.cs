@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private DummyCmObject m_obj;
 		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
@@ -85,8 +86,14 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		/// <param name="mediator"></param>
+		/// <param name="mainObj"></param>
+		/// <param name="mergeCandidates"></param>
+		/// <param name="guiControl"></param>
+		/// <param name="helpTopic"></param>
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();
@@ -94,6 +101,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			Debug.Assert(cache != null);
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_mainObj = mainObj;
 			m_tsf = cache.TsStrFactory;
@@ -122,7 +130,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private void MoveWindowToPreviousPosition()
 		{
 			// Get location to the stored values, if any.
-			object locWnd = m_mediator.PropertyTable.GetValue("mergeDlgLocation");
+			object locWnd = m_propertyTable.GetValue<object>("mergeDlgLocation");
 			// JohnT: this dialog can't be resized. So it doesn't make sense to
 			// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 			// to prevent the dialog growing every time at 120 dpi. But such an override
@@ -141,7 +149,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
 		{
-			XmlNode configurationParameters = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			XmlNode configurationParameters = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode toolNode = configurationParameters.SelectSingleNode("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kfakeFlid = 8999958;
@@ -153,8 +161,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
 
-			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, m_mediator, null, sda);
-			m_bvMergeOptions.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, m_mediator, m_propertyTable, null, sda);
+			m_bvMergeOptions.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);
@@ -393,10 +401,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void MergeObjectDlg_Closed(object sender, System.EventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("mergeDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("mergeDlgSize", Size);
+				m_propertyTable.SetProperty("mergeDlgLocation", Location, true);
+				m_propertyTable.SetProperty("mergeDlgSize", Size, true);
 			}
 		}
 

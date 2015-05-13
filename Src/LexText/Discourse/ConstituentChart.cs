@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml;
@@ -670,7 +667,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Reset bookmark to prevent LT-12666
 				if (m_bookmark != null && m_mediator != null)
-					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner, m_mediator);
+					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner);
 				return;
 			}
 			// no rows in chart; no selection necessary
@@ -784,7 +781,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex, m_mediator); // bookmark this location, but don't persist.
+			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -896,7 +893,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool HasPersistantColWidths
 		{
-			get { return m_mediator.PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
+			get { return m_propertyTable.GetStringProperty(ColWidthId(), null) != null; }
 		}
 
 		/// <summary>
@@ -907,7 +904,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_mediator == null)
 				return false;
-			string savedCols = m_mediator.PropertyTable.GetStringProperty(ColWidthId(), null);
+			string savedCols = m_propertyTable.GetStringProperty(ColWidthId(), null);
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
@@ -952,7 +949,8 @@ namespace SIL.FieldWorks.Discourse
 				colList.Append("<col width=\"" + val + "\"/>");
 			}
 			colList.Append("</root>");
-			m_mediator.PropertyTable.SetProperty(ColWidthId(), colList.ToString());
+			var cwId = ColWidthId();
+			m_propertyTable.SetProperty(cwId, colList.ToString(), true);
 		}
 
 		private string ColWidthId()
@@ -987,7 +985,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
-					m_bookmark.Reset(m_bookmark.TextIndex, m_mediator);
+					m_bookmark.Reset(m_bookmark.TextIndex);
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
@@ -1124,7 +1122,7 @@ namespace SIL.FieldWorks.Discourse
 			// guards against LT-8309, though I could not reproduce all cases.
 			if (m_chart == null || m_body == null || m_logic == null)
 				return false;
-			using (var dlg = new DiscourseExportDialog(m_mediator, this.m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			using (var dlg = new DiscourseExportDialog(m_mediator, m_propertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -1149,16 +1147,18 @@ namespace SIL.FieldWorks.Discourse
 		/// Basic initialization.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
-			if (m_mediator != null)
-				m_logic.Init(m_mediator.HelpTopicProvider);
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
+				m_logic.Init(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 
 			m_configurationParameters = configurationParameters;
 			InterlinLineChoices lineChoices = GetLineChoices();
-			m_body.Init(mediator, m_configurationParameters);
+			m_body.Init(mediator, propertyTable, m_configurationParameters);
 			m_body.LineChoices = lineChoices;
 			m_ribbon.LineChoices = lineChoices;
 		}
@@ -1207,13 +1207,16 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private InterlinLineChoices GetLineChoices()
 		{
 			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
 			string persist = null;
-			if (m_mediator != null)
-				persist = m_mediator.PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (m_propertyTable != null)
+			{
+				persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
 			{

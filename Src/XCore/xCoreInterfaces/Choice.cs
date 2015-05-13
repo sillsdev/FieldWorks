@@ -24,14 +24,10 @@
 	///when the user clicks on the group, something can happen (like show some text
 	/// in the content view which gives an overview of this section.)
 // </remarks>
-
 using System;
 using System.Xml;
-using System.Collections;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Diagnostics;
-
 using SIL.Utils;
 
 namespace XCore
@@ -62,27 +58,27 @@ namespace XCore
 		/// <summary>
 		/// Factory method. Will make the appropriate class, based on the configurationNode.
 		/// </summary>
-		static public ChoiceBase Make( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		static public ChoiceBase Make(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 		{
 			if (XmlUtils.GetAttributeValue(configurationNode, "command","") == "")
 			{
 				if (XmlUtils.GetAttributeValue(configurationNode, "boolProperty", "") != "")
-					return new BoolPropertyChoice(  mediator,    configurationNode,  adapter,  parent);
+					return new BoolPropertyChoice(mediator, propertyTable, configurationNode, adapter, parent);
 				else if (XmlUtils.GetAttributeValue(configurationNode, "label", "") == "-")
-					return new SeparatorChoice(  mediator,    configurationNode,  adapter,  parent);
+					return new SeparatorChoice(mediator, propertyTable, configurationNode, adapter, parent);
 
 					//the case where we want a choice based on a single member of the list
 					//e.g. a single view in a list of views, to use on the toolbar.
 				else if (XmlUtils.GetAttributeValue(configurationNode, "property", "") != "")
 				{
-					return MakeListPropertyChoice(mediator, configurationNode, adapter, parent);
+					return MakeListPropertyChoice(mediator, propertyTable, configurationNode, adapter, parent);
 				}
 
 				else
 					throw new ConfigurationException("Don't know what to do with this item. At least give it a dummy 'boolProperty='foo''.", configurationNode);
 			}
 			else
-				return new CommandChoice(  mediator,    configurationNode,  adapter,  parent);
+				return new CommandChoice(mediator, propertyTable, configurationNode, adapter, parent);
 		}
 
 		/// <summary>
@@ -91,10 +87,11 @@ namespace XCore
 		/// instead of showing every item in the list.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationNode"></param>
 		/// <param name="adapter"></param>
 		/// <returns></returns>
-		static public  StringPropertyChoice MakeListPropertyChoice(Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		static public StringPropertyChoice MakeListPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 		{
 			//string listId=XmlUtils.GetAttributeValue(configurationNode, "list", "");
 			//			ListItem item = new ListItem();
@@ -103,7 +100,7 @@ namespace XCore
 			//			item.imageName = XmlUtils.GetAttributeValue(configurationNode, "icon", "default");
 			//item.parameterNode = parameterNode;
 
-			return new StringPropertyChoice(mediator,configurationNode, adapter, parent);
+			return new StringPropertyChoice(mediator, propertyTable, configurationNode, adapter, parent);
 			//			if(li!=null)
 			//				return new ListPropertyChoice( mediator, li,  adapter,  parent);
 			//			else
@@ -111,13 +108,13 @@ namespace XCore
 		}
 
 
-		public ChoiceBase( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator, adapter,configurationNode)
+		public ChoiceBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, adapter,configurationNode)
 		{
 			m_parent  = parent;
 		}
-		public ChoiceBase( Mediator mediator, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator, adapter,null)
+		public ChoiceBase(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, adapter,null)
 		{
 			m_parent  = parent;
 		}
@@ -165,23 +162,19 @@ namespace XCore
 		protected string m_idOfCorrespondingCommand;
 		protected string m_defaultLabelOverride;
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="listSet"></param>
+		///  </summary>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationNode"></param>
-		/// <param name="adapter"></param>
-		/// <param name="parent"></param>
-		public CommandChoice( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator,  configurationNode, adapter, parent)
+		///  <param name="adapter"></param>
+		///  <param name="parent"></param>
+		public CommandChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 			m_idOfCorrespondingCommand = XmlUtils.GetAttributeValue(m_configurationNode, "command");
-			StringTable tbl = null;
-			if (mediator != null && mediator.HasStringTable)
-				tbl = mediator.StringTbl;
-			m_defaultLabelOverride = XmlUtils.GetLocalizedAttributeValue(tbl,
-				m_configurationNode, "label", null);
+			m_defaultLabelOverride = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", null);
 		}
 
 		#region Properties
@@ -319,8 +312,8 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class BoolPropertyChoice : ChoiceBase
 	{
-		public BoolPropertyChoice( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator,  configurationNode,  adapter, parent)
+		public BoolPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}
 
@@ -356,7 +349,7 @@ namespace XCore
 		{
 			get
 			{
-					return 	m_mediator.PropertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, this.PropertyTableGroup);
+				return m_propertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, this.PropertyTableGroup);
 			}
 		}
 
@@ -366,9 +359,9 @@ namespace XCore
 			get
 			{
 				// JohnT: this is bizarre, but I've seen it sometimes on shutdown.
-				if (m_mediator == null || m_mediator.PropertyTable == null)
+				if (m_mediator == null)
 					return DefaultBoolPropertyValue;
-				return m_mediator.PropertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, this.PropertyTableGroup) == true;
+				return m_propertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, PropertyTableGroup);
 			}
 		}
 
@@ -382,12 +375,12 @@ namespace XCore
 		#endregion Properties
 
 
-		override public void OnClick(object sender, System.EventArgs args)
+		override public void OnClick(object sender, EventArgs args)
 		{
 			//if we are a a boolProperty widget, the parent will call us back at HandleClick()
 			Debug.Assert(this.BoolPropertyName != "");
 			//toggle our value
-			m_mediator.PropertyTable.SetProperty(BoolPropertyName, !this.BoolPropertyValue, this.PropertyTableGroup);
+			m_propertyTable.SetProperty(BoolPropertyName, !BoolPropertyValue, PropertyTableGroup, true);
 		}
 
 		/// <summary>
@@ -399,15 +392,15 @@ namespace XCore
 			//review: the enabled parameter is set to the same value as the defaultVisible
 			// value so that only defaultVisible items are visible by default.  Previously
 			// enabled items would be 'visible' and enabled was true by default.
-			UIItemDisplayProperties display =new UIItemDisplayProperties(m_parent, this.Label,
-				this.m_defaultVisible, ImageName, this.m_defaultVisible);
-			display.Checked = this.Checked;
+			UIItemDisplayProperties display = new UIItemDisplayProperties(m_parent, Label,
+				m_defaultVisible, ImageName, m_defaultVisible);
+			display.Checked = Checked;
 			// The OnDisplay method name is usually just made up of the property name. However in a few cases
 			// we've used property names with hyphens in them that are inconvenient to change (the only current
 			// known group are those starting with ShowHiddenFields-), partly because they occur in settings
 			// files as well as the program. So we change any hyphens to underscore so that it's actually possible
 			// to implement the method that this code is looking for.
-			m_mediator.SendMessage("Display"+this.BoolPropertyName.Replace('-', '_'), null, ref display);
+			m_mediator.SendMessage("Display" + BoolPropertyName.Replace('-', '_'), null, ref display);
 			if (display.Text.StartsWith("$"))
 			{
 				int iOfEquals = display.Text.IndexOf("=");
@@ -437,8 +430,8 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class StringPropertyChoice : ChoiceBase
 	{
-		public StringPropertyChoice( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator,  configurationNode,  adapter, parent)
+		public StringPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}
 
@@ -497,16 +490,16 @@ namespace XCore
 		{
 			get
 			{
-				Object x = m_mediator.PropertyTable.GetValue(PropertyName, this.PropertyTableGroup);
-				return x!=null && (string)x== Value;
+				string x = m_propertyTable.GetValue<string>(PropertyName, PropertyTableGroup);
+				return x != null && x == Value;
 			}
 		}
 		#endregion Properties
 
 
-		override public void OnClick(object sender, System.EventArgs args)
+		override public void OnClick(object sender, EventArgs args)
 		{
-			ChoiceGroup.ChooseSinglePropertyAtomicValue(m_mediator, this.Value, this.ParameterNode, this.PropertyName, this.PropertyTableGroup);
+			ChoiceGroup.ChooseSinglePropertyAtomicValue(m_mediator, m_propertyTable, Value, ParameterNode, PropertyName, PropertyTableGroup);
 		}
 
 		/// <summary>
@@ -515,9 +508,9 @@ namespace XCore
 		/// <returns></returns>
 		override public UIItemDisplayProperties GetDisplayProperties()
 		{
-			UIItemDisplayProperties display =new UIItemDisplayProperties(m_parent, this.Label, m_defaultVisible, ImageName, m_defaultVisible);
-			display.Checked = this.Checked;
-			m_mediator.SendMessage("Display"+this.PropertyName, null, ref display);
+			UIItemDisplayProperties display = new UIItemDisplayProperties(m_parent, Label, m_defaultVisible, ImageName, m_defaultVisible);
+			display.Checked = Checked;
+			m_mediator.SendMessage("Display"+ PropertyName, null, ref display);
 
 			return display;
 		}
@@ -545,8 +538,8 @@ namespace XCore
 		static bool m_fHandlingClick = false;	// prevent multiple simultaneous OnClick operations.
 		#endregion
 
-		public ListPropertyChoice( Mediator mediator, ListItem listItem, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator,  adapter, parent)
+		public ListPropertyChoice(Mediator mediator, PropertyTable propertyTable, ListItem listItem, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable,  adapter, parent)
 		{
 			m_listItem = listItem;
 		}
@@ -681,8 +674,8 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class SeparatorChoice : ChoiceBase
 	{
-		public SeparatorChoice( Mediator mediator,  XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
-			: base(mediator,  configurationNode,  adapter, parent)
+		public SeparatorChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}
 		override public void OnClick(object sender, System.EventArgs args)

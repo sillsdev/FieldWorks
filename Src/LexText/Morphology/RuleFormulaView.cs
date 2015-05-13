@@ -2,13 +2,12 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -79,13 +78,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 		#endregion IDisposable override
 
-		public void Init(XCore.Mediator mediator, ICmObject obj, RuleFormulaControl formulaControl,
+		public void Init(Mediator mediator, PropertyTable propertyTable, ICmObject obj, RuleFormulaControl formulaControl,
 			RuleFormulaVc vc, int rootFrag)
 		{
 			CheckDisposed();
 			m_formulaControl = formulaControl;
 			Mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			Cache = m_propertyTable.GetValue<FdoCache>("cache");
 			m_obj = obj;
 			m_vc = vc;
 			m_rootFrag = rootFrag;
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else if (m_obj != null)
 			{
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromMediator(m_mediator));
+				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
 				m_rootb.Reconstruct();
 			}
 		}
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// view in Undo. (see FWR-3501)
 			//m_fdoCache.MainCacheAccessor.RemoveNotification(m_rootb);
 			if (m_obj != null)
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromMediator(m_mediator));
+				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
 		}
 
 		/// <summary>
@@ -228,6 +228,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 														"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 
 		protected XCore.Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		protected ITsTextProps m_bracketProps;
 		protected ITsTextProps m_pileProps;
@@ -248,10 +249,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_x;
 		protected ITsString m_zwSpace;
 
-		public RuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
+		protected RuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
 		{
-			Cache = cache;
+			Cache = propertyTable.GetValue<FdoCache>("cache");
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
 			// use Doulos SIL because it supports the special characters that are needed for
 			// multiline brackets
@@ -838,7 +840,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		int GetFontHeight(int ws)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			return FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet,
 				ws, m_cache.LanguageWritingSystemFactoryAccessor);
 		}

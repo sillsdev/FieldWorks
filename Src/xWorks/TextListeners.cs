@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -19,6 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	public class WritingSystemListHandler : IxCoreColleague, IFWDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		public enum WritingSystemSet {All, AllCurrent, AllAnalysis, AllVernacular, CurrentAnalysis, CurrentVernacular, CurrentPronounciation};
 		private WritingSystemSet m_currentSet = WritingSystemSet.AllCurrent;
@@ -131,17 +131,19 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			mediator.AddColleague(this);
-			FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_mediator.AddColleague(this);
+			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 			//don't know just what good having this default is, but it's at least safer
-			mediator.PropertyTable.SetProperty("WritingSystemHvo",
-				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString());
-			mediator.PropertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+			m_propertyTable.SetProperty("WritingSystemHvo",
+				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
+				true);
+			m_propertyTable.SetPropertyPersistence("WritingSystemHvo", false);
 		}
 
 		/// <summary>
@@ -225,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			display.List.Clear();
-			FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 			string wsSet = parameter as string;
 			WritingSystemSet setToUse = m_currentSet;
 			if (wsSet != null)
@@ -269,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 				case WritingSystemSet.CurrentPronounciation:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					string sValue = DomainObjectServices.JoinIds(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(ws => ws.Handle).ToArray(), ",");
-					m_mediator.PropertyTable.SetProperty("PronunciationWritingSystemHvos", sValue);
+					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, true);
 					break;
 			}
 			return true;//we handled this, no need to ask anyone else.
@@ -396,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

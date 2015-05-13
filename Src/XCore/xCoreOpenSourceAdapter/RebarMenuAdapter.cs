@@ -8,14 +8,10 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Security;
-using System.Security.Permissions;
 using System.Windows.Forms;
 using Reflector.UserInterface; //commandbar
 using SIL.Utils;
@@ -49,7 +45,7 @@ namespace XCore
 			base.Dispose(fDisposing);
 		}
 
-		public System.Windows.Forms.Control Init (System.Windows.Forms.Form window,  IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
+		public Control Init(Form window, IImageCollection smallImages, IImageCollection largeImages, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_window = window;
 			m_smallImages = smallImages;

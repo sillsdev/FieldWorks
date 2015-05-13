@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -9,6 +7,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -153,7 +152,7 @@ namespace SIL.FieldWorks.IText
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
 			int count = (from text in texts from para in text.ParagraphsOS select para).Count();
 			int done = 0;
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
+			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
 			{
 				progress.SetMilestone(ITextStrings.ksParsing);
 				foreach (var text in texts)

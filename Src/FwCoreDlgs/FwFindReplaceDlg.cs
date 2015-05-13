@@ -134,6 +134,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fDisableReplacePatternMatching;
 
 		private Mediator m_mediator; // optional, used for persistence.
+		private PropertyTable m_propertyTable;
 
 		private string s_helpTopic;
 		private System.Windows.Forms.HelpProvider helpProvider;
@@ -582,13 +583,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// saved on close.
 		/// </summary>
 		/// <param name="mediator"></param>
-		public void RestoreAndPersistSettingsIn(Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void RestoreAndPersistSettingsIn(Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			if (mediator == null)
 				return; // for robustness against client lacking one.
+			if (propertyTable == null)
+				return;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -631,11 +636,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_heightTabControlLess = tabControls.Height - panelSearchOptions.Height;
 				Height = m_heightDlgLess;
 				tabControls.Height = m_heightTabControlLess;
-				if (m_mediator != null)
+				if (m_mediator != null && m_propertyTable != null)
 				{
 					// Now we have our natural size, we can properly adjust our location etc.
-					object locWnd = m_mediator.PropertyTable.GetValue(kPersistenceLabel + "DlgLocation");
-					object showMore = m_mediator.PropertyTable.GetValue(kPersistenceLabel + "ShowMore");
+					object locWnd = m_propertyTable.GetValue<object>(kPersistenceLabel + "DlgLocation");
+					object showMore = m_propertyTable.GetValue<object>(kPersistenceLabel + "ShowMore");
 					if (showMore != null && "true" == (string)showMore)
 						btnMore_Click(this, new EventArgs());
 					if (locWnd != null)
@@ -1438,11 +1443,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			// Save location.
-			if (m_mediator != null)
+			if (m_mediator != null && m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty(kPersistenceLabel + "DlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty(kPersistenceLabel + "ShowMore",
-					Height == m_heightDlgMore ? "true" : "false");
+				string propertyName = kPersistenceLabel + "DlgLocation";
+				m_propertyTable.SetProperty(propertyName, Location, true);
+				propertyName = kPersistenceLabel + "ShowMore";
+				m_propertyTable.SetProperty(propertyName,
+					Height == m_heightDlgMore ? "true" : "false",
+					true);
 			}
 			base.OnClosing(e);
 			// If no other handler of this event tried to intervene, the dialog itself will

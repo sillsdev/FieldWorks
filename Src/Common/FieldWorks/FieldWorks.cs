@@ -1655,9 +1655,12 @@ namespace SIL.FieldWorks
 								var activeWindow = startingApp.ActiveMainWindow;
 								if (activeWindow != null)
 								{
-									((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+									var activeWindowInterface = (IFwMainWnd)activeWindow;
+									var activeWindowMediator = activeWindowInterface.Mediator;
+									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings);
+										PropertyTable.SettingsGroup.LocalSettings,
+										true);
 								}
 							}
 							break;
@@ -1731,9 +1734,12 @@ namespace SIL.FieldWorks
 					var activeWindow = app.ActiveMainWindow;
 					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 					{
-						((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+						var activeWindowInterface = (IFwMainWnd)activeWindow;
+						var activeWindowMediator = activeWindowInterface.Mediator;
+						activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-							PropertyTable.SettingsGroup.LocalSettings);
+							PropertyTable.SettingsGroup.LocalSettings,
+							true);
 					}
 				}
 

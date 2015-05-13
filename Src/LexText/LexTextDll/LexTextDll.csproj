@@ -201,12 +201,6 @@
     <Compile Include="AreaListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Db4oSendReceiveDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Db4oSendReceiveDialog.Designer.cs">
-      <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="FlexHelpTopicProvider.cs" />
     <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="ImageHolder.cs">
@@ -230,9 +224,102 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <EmbeddedResource Include="Db4oSendReceiveDialog.resx">
-      <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
-    </EmbeddedResource>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
+      <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml">
+      <Link>XML\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
+      <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\browseDialogColumns.xml">
+      <Link>XML\Lexicon\browseDialogColumns.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Browse\toolConfiguration.xml">
+      <Link>XML\Lexicon\Browse\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
+      <Link>XML\Lexicon\DataTreeInclude.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
+      <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml">
+      <Link>XML\Lexicon\Edit\DataEntryFilters\basicFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml">
+      <Link>XML\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\CompleteFilter.xml">
+      <Link>XML\Lexicon\Edit\DataEntryFilters\CompleteFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
+      <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml">
+      <Link>XML\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml">
+      <Link>XML\Lexicon\ReversalIndices\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
+      <Link>XML\Lists\areaConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
+      <Link>XML\Lists\DataTreeInclude.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml">
+      <Link>XML\Lists\Edit\DataEntryFilters\completeFilter.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
+      <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lists\ReversalPOSEdit\toolConfiguration.xml">
+      <Link>XML\Lists\ReversalPOSEdit\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
+      <Link>XML\Notebook\areaConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\browseDialogColumns.xml">
+      <Link>XML\Notebook\browseDialogColumns.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\Browse\toolConfiguration.xml">
+      <Link>XML\Notebook\Browse\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\Document\toolConfiguration.xml">
+      <Link>XML\Notebook\Document\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
+      <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
+    </None>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
+      <Link>XML\Parts\CellarParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibilityParts.xml">
+      <Link>XML\Parts\CmPossibilityParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
+      <Link>XML\Parts\LexEntryParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
+      <Link>XML\Parts\LexSenseParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
+      <Link>XML\Parts\MorphologyParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
+      <Link>XML\Parts\NotebookParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\ReversalParts.xml">
+      <Link>XML\Parts\ReversalParts.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
+      <Link>XML\Parts\WFIParts.xml</Link>
+    </Content>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\reusableBrowseControlConfiguration.xml">
+      <Link>XML\Word\reusableBrowseControlConfiguration.xml</Link>
+    </None>
     <EmbeddedResource Include="HelpTopicPaths.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -246,6 +333,34 @@
       <LastGenOutput>LexTextStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="LT.ico" />
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
+      <Link>XML\Parts\Cellar.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibility.fwlayout">
+      <Link>XML\Parts\CmPossibility.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
+      <Link>XML\Parts\LexEntry.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
+      <Link>XML\Parts\LexSense.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
+      <Link>XML\Parts\Morphology.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\Notebook.fwlayout">
+      <Link>XML\Parts\Notebook.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\Reversal.fwlayout">
+      <Link>XML\Parts\Reversal.fwlayout</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\ViewsLayout.xsd">
+      <Link>XML\Parts\ViewsLayout.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
+      <Link>XML\Parts\WFI.fwlayout</Link>
+    </None>
     <None Include="Resources\HelpTopicPaths.resx">
       <SubType>Designer</SubType>
     </None>
@@ -253,48 +368,52 @@
       <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
       <Link>XML\Grammar\areaConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
       <Link>XML\Grammar\DataTreeInclude.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
       <Link>XML\Grammar\InflAffixTemplateInclude.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
       <Link>XML\Lexicon\areaConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\toolConfiguration.xml">
       <Link>XML\Lexicon\Edit\toolConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Main.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Main.xml">
       <Link>XML\Main.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
       <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
       <Link>XML\Word\areaConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
       <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
       <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Spelling\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Spelling\toolConfiguration.xml">
       <Link>XML\Word\Spelling\toolConfiguration.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Statistics\toolConfiguration.xml">
+      <Link>XML\Word\Statistics\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
       <Link>XML\Word\Text\toolConfigInclude.xml</Link>
-    </Content>
-    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
+    </None>
+    <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
       <Link>XML\Word\Text\toolConfiguration.xml</Link>
-    </Content>
+    </None>
     <None Include="Resources\LexEntryParts.xml" />
     <None Include="gendarme-LexTextDll.ignore" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

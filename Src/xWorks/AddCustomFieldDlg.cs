@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -53,7 +51,8 @@ namespace SIL.FieldWorks.XWorks
 		private Label m_wsLabel;
 
 		// variables for managing the dlg
-		private readonly Mediator m_mediator;	// local mediator
+		private readonly Mediator m_mediator;
+		private readonly PropertyTable m_propertyTable;
 
 		private readonly Inventory m_layouts;
 		private readonly Dictionary<int, ModifiedLabel> m_dictModLabels = new Dictionary<int, ModifiedLabel>();
@@ -82,20 +81,21 @@ namespace SIL.FieldWorks.XWorks
 		/// Provide access (via reflection) to this dialog for use by the
 		/// Data Notebook standard format importer.
 		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(Mediator mediator)
+		public static void ShowNotebookCustomFieldDlg(Mediator mediator, PropertyTable propertyTable)
 		{
-			using (var dlg = new AddCustomFieldDlg(mediator, LocationType.Notebook))
+			using (var dlg = new AddCustomFieldDlg(mediator, propertyTable, LocationType.Notebook))
 			{
 				if (dlg.ShowCustomFieldWarning(null))
 					dlg.ShowDialog();
 			}
 		}
 
-		public AddCustomFieldDlg(Mediator mediator, LocationType locationType)
+		public AddCustomFieldDlg(Mediator mediator, PropertyTable propertyTable, LocationType locationType)
 		{
 			// create member variables
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
 			InitializeComponent();		// form required method
@@ -104,8 +104,11 @@ namespace SIL.FieldWorks.XWorks
 
 			m_fieldsLabel.Tag = m_fieldsLabel.Text;	// Localizes Tag!
 
-			m_helpProvider = new HelpProvider { HelpNamespace = mediator.HelpTopicProvider.HelpFile };
-			m_helpProvider.SetHelpKeyword(this, mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			m_helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+			};
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 
@@ -144,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
 			m_typeComboBox.SelectedIndex = 0;
 
-			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration")).ToArray());
+			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, m_propertyTable.GetValue<XmlNode>("WindowConfiguration")).ToArray());
 
 			m_listComboBox.SelectedIndex = 0;
 
@@ -1066,7 +1069,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
 		#endregion

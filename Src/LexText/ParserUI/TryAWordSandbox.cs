@@ -21,13 +21,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
 		/// <param name="analysis"></param>
 		/// <param name="mediator"></param>
-		public TryAWordSandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices,
+		public TryAWordSandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices,
 			IAnalysis analysis)
-			: base(cache, mediator, ss, choices)
+			: base(cache, mediator, propertyTable, ss, choices)
 		{
 			SizeToContent = true;
 			LoadForWordBundleAnalysis(analysis.Hvo);

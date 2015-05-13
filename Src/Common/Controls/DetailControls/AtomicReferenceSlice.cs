@@ -8,12 +8,10 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -127,7 +125,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator,
+			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
@@ -214,21 +212,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void RegisterWithContextHelper()
 		{
 			CheckDisposed();
-			if (Control != null)
-			{
-				Mediator mediator = Mediator;
-				StringTable tbl = null;
-				if (mediator.HasStringTable)
-					tbl = mediator.StringTbl;
-				string caption = XmlUtils.GetLocalizedAttributeValue(tbl, ConfigurationNode, "label", "");
 
-				var launcher = (AtomicReferenceLauncher)Control;
+			if (Control == null)
+				return;
 
-				mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{launcher.AtomicRefViewControl, caption, HelpId}, false);
-				mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{launcher.PanelControl, caption, HelpId, "Button"}, false);
-			}
+			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+			var launcher = (AtomicReferenceLauncher)Control;
+			Mediator.SendMessage("RegisterHelpTargetWithId",
+				new object[]{launcher.AtomicRefViewControl, caption, HelpId}, false);
+			Mediator.SendMessage("RegisterHelpTargetWithId",
+				new object[]{launcher.PanelControl, caption, HelpId, "Button"}, false);
 		}
 
 		#region IVwNotifyChange Members

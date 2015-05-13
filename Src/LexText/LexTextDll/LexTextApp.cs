@@ -296,10 +296,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnSFMImport(object parameters)
 		{
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
+			FwXWindow wndActive = (FwXWindow)formActive;
 			using (var importWizard = new LexImportWizard())
 			{
-				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
+				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				importWizard.ShowDialog(formActive);
 			}
 			return true;
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			Mediator mediator = wndActive.Mediator;
 			if (mediator == null)
 				return true;
-			string area = (string)mediator.PropertyTable.GetValue("areaChoice");
+			string area = wndActive.PropTable.GetValue<string>("areaChoice");
 			bool fEnabled = true;
 			switch (command.Id)
 			{
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case "CmdImportInterlinearSfm":
 				case "CmdImportWordsAndGlossesSfm":
 				case "CmdImportInterlinearData":
-					if (mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance" || mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance")
+					if (wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance" || wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance")
 
 					{
 						fEnabled = false;
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 						throw new ApplicationException(message, error);
 				}
 				var oldWsUser = Cache.WritingSystemFactory.UserWs;
-				dlg.Init(Cache, wndActive.Mediator);
+				dlg.Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
 				if (dr == DialogResult.OK)
 				{
@@ -879,9 +879,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Initialization. Never called because we don't use the xWindow class.
 		/// </summary>
 		/// <param name="mediator">Message mediator</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
 		}

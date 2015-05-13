@@ -4,9 +4,7 @@
 //
 // File: RecordView.cs
 // Responsibility: WordWorks
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -97,8 +95,7 @@ namespace SIL.FieldWorks.XWorks
 		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
 		{
 			var layoutList = new List<Tuple<string, string>>();
-			var configNode = m_mediator.PropertyTable.GetValue("currentContentControlParameters", null);
-			layoutList.AddRange(GetBuiltInLayouts((XmlNode)configNode));
+			layoutList.AddRange(GetBuiltInLayouts(m_propertyTable.GetValue<XmlNode>("currentContentControlParameters", null)));
 			var builtInLayoutList = new List<string>();
 			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
 			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
@@ -225,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnShowAllEntries(object args)
 		{
-			m_mediator.PropertyTable.SetProperty("SelectedPublication", kallEntriesSelectedPublicationValue);
+			m_propertyTable.SetProperty("SelectedPublication", kallEntriesSelectedPublicationValue, true);
 			return true;
 		}
 
@@ -247,7 +244,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// We don't want to use GetSelectedPublication here because it supplies a default,
 				// and we want to treat that case specially.
-				var pubName = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
+				var pubName = m_propertyTable.GetStringProperty("SelectedPublication", null);
 				if (pubName == null)
 				{
 					if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0)
@@ -274,12 +271,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetSelectedConfigView()
 		{
-			string sLayoutType = null;
-			if (m_mediator != null && m_mediator.PropertyTable != null)
-			{
-				sLayoutType = m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout",
-					String.Empty);
-			}
+			string sLayoutType = m_propertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = "publishStem";
 			return sLayoutType;
@@ -288,7 +280,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GetSelectedPublication()
 		{
 			// Sometimes we just want the string value which might be '$$all_entries$$'
-			return m_mediator.PropertyTable.GetStringProperty("SelectedPublication",
+			return m_propertyTable.GetStringProperty("SelectedPublication",
 				kallEntriesSelectedPublicationValue);
 		}
 
@@ -354,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 				"altTitleId");
 			if (titleId != null)
 			{
-				titleStr = StringTbl.GetString(titleId, "AlternativeTitles");
+				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
 				if (Clerk.OwningObject != null &&
 					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
 				{
@@ -422,7 +414,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Debug.Fail(@"Unexpected <> value in title string: " + match.Groups[0].Value);
 					// This might be useful one day?
-					replacement = m_mediator.PropertyTable.GetStringProperty(match.Groups[0].Value, null);
+					replacement = m_propertyTable.GetStringProperty(match.Groups[0].Value, null);
 				}
 				if (replacement != null)
 					titleStr = propertyFinder.Replace(titleStr, replacement);
@@ -595,8 +587,7 @@ namespace SIL.FieldWorks.XWorks
 			string backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
 				"backColor", "Window");
 			BackColor = Color.FromName(backColorName);
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_mediator.StringTbl,
-				m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
 		}
 
 		public virtual bool OnRecordNavigation(object argument)
@@ -609,8 +600,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			m_mediator.PropertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 
 			Clerk.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
 			using (WaitCursor wc = new WaitCursor(this))
@@ -917,8 +908,7 @@ namespace SIL.FieldWorks.XWorks
 			m_currentObject = clerk.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			string toolName = m_mediator.PropertyTable.GetStringProperty(
-				"currentContentControl", "");
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
@@ -950,7 +940,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var currControl = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && currControl == ksLexDictionary)
 			{
@@ -999,7 +989,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-							m_mediator.HelpTopicProvider.HelpFile,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
 							HelpNavigator.Topic, shlpTopic);
 		}
 
@@ -1194,7 +1184,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!clerk.SetCurrentFromRelatedClerk())
 				{
 					// retrieve persisted clerk index and set it.
-					int idx = m_mediator.PropertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
+					int idx = m_propertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
 						PropertyTable.SettingsGroup.LocalSettings);
 					if (idx >= 0 && !clerk.HasEmptyList)
 					{
@@ -1216,10 +1206,10 @@ namespace SIL.FieldWorks.XWorks
 				// Create the main view
 
 				// Review JohnT: should it be m_configurationParameters or .FirstChild?
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+				IApp app = m_propertyTable.GetValue<IApp>("App");
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
 					Publication);
-				m_mainView.Init(m_mediator, m_configurationParameters); // Required call to xCore.Colleague.
+				m_mainView.Init(m_mediator, m_propertyTable, m_configurationParameters); // Required call to xCore.Colleague.
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;
 				m_mainView.SelectionChangedEvent +=
@@ -1270,7 +1260,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				return FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 		}
 
@@ -1339,11 +1329,11 @@ namespace SIL.FieldWorks.XWorks
 				if (String.IsNullOrEmpty(sProp))
 					sProp = "DictionaryPublicationLayout";
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
-					FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
+					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
 				dlg.SetActiveNode(nodePath);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string sNewLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
+					string sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
 					m_mainView.ResetTables(sNewLayout);
 					SelectAndScrollToCurrentRecord();
 				}
@@ -1360,19 +1350,21 @@ namespace SIL.FieldWorks.XWorks
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(Mediator mediator, XmlNode configurationParameters)
+		protected void InitBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			base.m_configurationParameters = configurationParameters;
 
 			ReadParameters();
 
 			m_mediator.AddColleague(this);
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", false);
+			m_propertyTable.SetProperty("ShowRecordList", false, true);
 
 			SetupDataContext();
 			ShowRecord();
@@ -1391,11 +1383,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 		}
 
 		/// <summary>
@@ -1456,7 +1448,7 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			// Don't claim to have handled it if the clerk is holding reversal entries.
-			return !(Clerk.Id == "reversalEntries");
+			return Clerk.Id != "reversalEntries";
 		}
 
 		/// <summary>

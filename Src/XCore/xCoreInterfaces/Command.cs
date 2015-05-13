@@ -256,10 +256,21 @@ namespace XCore
 
 		public string Message
 		{
-			get { return m_messageString; }
+			get
+			{
+				CheckDisposed();
+				return m_messageString;
+			}
 		}
 
-		public bool OneAtATime { get { CheckDisposed(); return m_oneAtATime; } }
+		public bool OneAtATime
+		{
+			get
+			{
+				CheckDisposed();
+				return m_oneAtATime;
+			}
+		}
 
 		/// <summary>
 		/// A string to be inserted later into a toolTip associated with the command.
@@ -301,6 +312,7 @@ namespace XCore
 		{
 			get
 			{
+				CheckDisposed();
 				string text = ToolTip;
 				if (text.EndsWith("..."))
 					text = text.Remove(text.Length - 3);
@@ -373,7 +385,7 @@ namespace XCore
 			}
 		}
 
-		public System.Windows.Forms.Keys Shortcut
+		public Keys Shortcut
 		{
 			get
 			{
@@ -475,8 +487,8 @@ namespace XCore
 					}
 					return keys;
 				}
-				else
-					return Keys.None;
+
+				return Keys.None;
 			}
 		}
 
@@ -487,12 +499,9 @@ namespace XCore
 		{
 			m_mediator = mediator;
 			m_configurationNode = commandNode;
-			StringTable tbl = null;
-			if (mediator != null && mediator.HasStringTable)
-				tbl = mediator.StringTbl;
 			m_id = XmlUtils.GetAttributeValue(commandNode, "id");
-			m_label = XmlUtils.GetLocalizedAttributeValue(tbl, commandNode, "label", null);
-			m_tooltip = XmlUtils.GetLocalizedAttributeValue(tbl, commandNode, "tooltip", null);
+			m_label = XmlUtils.GetLocalizedAttributeValue(commandNode, "label", null);
+			m_tooltip = XmlUtils.GetLocalizedAttributeValue(commandNode, "tooltip", null);
 			m_shortcut = XmlUtils.GetAttributeValue(commandNode,"shortcut");
 			m_messageString = XmlUtils.GetAttributeValue(commandNode,"message");
 			m_valueString = XmlUtils.GetAttributeValue(commandNode,"value");

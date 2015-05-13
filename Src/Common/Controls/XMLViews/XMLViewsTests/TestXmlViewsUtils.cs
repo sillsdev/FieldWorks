@@ -6,7 +6,6 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
 using System.Xml;
-using System.Collections;
 
 namespace XMLViewsTests
 {
@@ -162,8 +161,8 @@ namespace XMLViewsTests
 			var doc = new XmlDocument();
 			doc.LoadXml(@"<string class='LexEntry' field='CitationForm'/>");
 			var node = doc.DocumentElement;
-			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null, null,
-				(int) WritingSystemServices.kwsVern);
+			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null,
+				WritingSystemServices.kwsVern);
 			Assert.That(strings, Has.Length.EqualTo(1));
 			Assert.That(strings, Has.Member("kick"));
 		}

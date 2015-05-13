@@ -10,8 +10,6 @@
 //	This class is responsible for populating the XCore tree bar with the records
 //	that are given to it by the RecordClerk.
 // </remarks>
-
-
 using System;
 using SIL.FieldWorks.FdoUi;
 using XCore;
@@ -20,7 +18,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
@@ -38,6 +35,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class RecordBarHandler : IFWDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected FdoCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
@@ -47,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(Mediator mediator, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(Mediator mediator, PropertyTable propertyTable, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
@@ -55,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 				handler = new RecordBarListHandler();
 			else
 				handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			handler.Init(mediator, node);
+			handler.Init(mediator, propertyTable, node);
 			return handler;
 		}
 
@@ -156,12 +154,13 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void  Init(Mediator mediator, XmlNode node)
+		internal virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 
 			if (node != null)
 			{
@@ -190,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_mediator.PropertyTable.GetBoolProperty("ShowRecordList", false);
+				return m_propertyTable.GetBoolProperty("ShowRecordList", false);
 			}
 		}
 
@@ -229,7 +228,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void UpdateHeaderVisibility()
 		{
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			if (window == null || window.IsDisposed)
 				return;
 
@@ -353,9 +352,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		internal override void Init(Mediator mediator, XmlNode node)
+		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
-			base.Init(mediator, node);
+			base.Init(mediator, propertyTable, node);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 		}
@@ -487,7 +486,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_list = list;
 
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			using (new WaitCursor(window))
 			{
 				window.TreeBarControl.IsFlatList = false;
@@ -735,7 +734,7 @@ namespace SIL.FieldWorks.XWorks
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
@@ -805,7 +804,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if a problem was reported and the move should be cancelled.</returns>
 		private bool CheckAndReportForbiddenMove(int hvoMove, int hvoDest)
 		{
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			var movingPossItem = m_possRepo.GetObject(hvoMove);
 			if (movingPossItem != null)
 			{
@@ -1073,7 +1071,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			var tree = (TreeView)window.TreeStyleRecordList;
 			if (currentObject == null)
 			{

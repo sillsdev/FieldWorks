@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
@@ -27,8 +24,9 @@ namespace XMLViewsTests
 						</columns>
 					</parameters>");
 				using (var mediator = new Mediator())
+				using (var propertyTable = new PropertyTable(mediator))
 				{
-					bv.Init(mediator, xdoc.DocumentElement);
+					bv.Init(mediator, propertyTable, xdoc.DocumentElement);
 					bv.SimulateDoubleClick(new EventArgs());
 				}
 			}
@@ -61,16 +59,17 @@ namespace XMLViewsTests
 				"<column layout=\"CustomPossAtomForExample_ExAtom\" label=\"$label\" visibility=\"menu\"/>" +
 				"</root>";
 			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
 			{
-				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, "myKey");
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
 				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
-				Assert.That(mediator.PropertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
 				var weatherNode = output.SelectSingleNode("//column[@layout='Weather']");
 				Assert.That(weatherNode, Is.Null);
-				Assert.That(mediator.PropertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
 				// Should not affect other nodes
 				var unknownNode = output.SelectSingleNode("//column[@layout='Unknown Test']");
 				Assert.That(unknownNode, Is.Not.Null);
@@ -120,13 +119,13 @@ namespace XMLViewsTests
 				"<column layout=\"Unknown Test\"/>" +
 				"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 				"</root>";
-				output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, "myKey");
+				output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				isAHeadwordNode = output.SelectSingleNode("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);
 				publishAsHeadwordNode = output.SelectSingleNode("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
-				Assert.That(mediator.PropertyTable.GetStringProperty("myKey", ""), Contains.Substring("PublishAsHeadword"));
+				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("PublishAsHeadword"));
 			}
 		}
 

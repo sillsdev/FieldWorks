@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.Discourse
 		IVwViewConstructor m_vc;
 		int m_wsLineNumber;
 
-		public DiscourseExportDialog(Mediator mediator, int hvoRoot, IVwViewConstructor vc,
-			int wsLineNumber) : base(mediator)
+		public DiscourseExportDialog(Mediator mediator, PropertyTable propertyTable, int hvoRoot, IVwViewConstructor vc,
+			int wsLineNumber) : base(mediator, propertyTable)
 		{
 			m_hvoRoot = hvoRoot;
 			m_vc = vc;

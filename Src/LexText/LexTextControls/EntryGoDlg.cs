@@ -1,20 +1,17 @@
 ﻿// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -85,14 +82,14 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "searchEngine is disposed by the mediator.")]
-		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(mediator, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
 				searchEngine);
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
@@ -231,7 +228,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string form = m_tbForm.Text.Trim();
 				ITsString tssFormTrimmed = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_mediator);
+				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					ILexEntry entry;

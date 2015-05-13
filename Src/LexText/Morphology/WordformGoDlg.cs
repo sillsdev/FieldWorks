@@ -1,13 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -45,14 +44,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "searchEngine is disposed by the mediator.")]
-		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			var configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(mediator, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index

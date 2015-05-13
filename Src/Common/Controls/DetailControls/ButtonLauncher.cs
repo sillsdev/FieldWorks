@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected System.Windows.Forms.Button m_btnLauncher;
 		protected IPersistenceProvider m_persistProvider;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
 		// The following variables control features of the chooser dialog.
@@ -143,17 +144,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj"></param>
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
+		/// <param name="persistProvider"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="displayNameProperty"></param>
+		/// <param name="displayWs"></param>
 		public virtual void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(flid != 0);
-			Debug.Assert(fieldName != null && fieldName.Length > 0);
+			Debug.Assert(!string.IsNullOrEmpty(fieldName));
 
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
 			m_persistProvider = persistProvider;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
 			m_cache = cache;
 			m_obj = obj;
@@ -190,6 +197,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_obj = null;
 			m_persistProvider = null;
 			m_mediator = null;
+			m_propertyTable = null;
 			m_configurationNode = null;
 			m_mainControl = null;
 			m_panel = null;
@@ -239,11 +247,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Get the mediator.  A subclass must override this property.
+		/// Get the mediator. A subclass may override this property.
 		/// </summary>
-		protected virtual XCore.Mediator Mediator
+		protected virtual Mediator Mediator
 		{
-			get { return null; }
+			get { return m_mediator; }
 		}
 
 		#region Component Designer generated code

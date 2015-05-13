@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new LinkEntryOrSenseDlg())
 			{
 				var wp = new WindowParams {m_title = LexEdStrings.ksIdentifySense, m_btnText = LexEdStrings.ksSetReversal};
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SelectSensesOnly = true;
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

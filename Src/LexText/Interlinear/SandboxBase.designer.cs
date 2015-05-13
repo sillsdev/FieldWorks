@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.RootSites;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -22,9 +23,12 @@ namespace SIL.FieldWorks.IText
 			if (IsDisposed)
 				return;
 
-			if (disposing && m_mediator != null && m_mediator.PropertyTable != null)
+			if (disposing)
 			{
-				m_mediator.PropertyTable.SetProperty("FirstControlToHandleMessages", null);
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, true);
+				}
 			}
 
 			base.Dispose(disposing);
@@ -54,6 +58,7 @@ namespace SIL.FieldWorks.IText
 
 			m_editMonitor = null;
 			m_vc = null;
+			m_propertyTable = null;
 			if (m_rawWordform != null)
 			{
 				m_rawWordform = null;

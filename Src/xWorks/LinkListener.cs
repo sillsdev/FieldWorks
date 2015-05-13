@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected LinkedList<FwLinkArgs> m_backStack;
 		protected LinkedList<FwLinkArgs> m_forwardStack;
 		protected FwLinkArgs m_currentContext;
@@ -144,8 +145,8 @@ namespace SIL.FieldWorks.XWorks
 				if (m_mediator != null)
 				{
 					m_mediator.RemoveColleague(this);
-					m_mediator.PropertyTable.SetProperty("LinkListener", null, false);
-					m_mediator.PropertyTable.SetPropertyPersistence("LinkListener", false);
+					m_propertyTable.SetProperty("LinkListener", null, false);
+					m_propertyTable.SetPropertyPersistence("LinkListener", false);
 				}
 				if (m_backStack != null)
 					m_backStack.Clear();
@@ -176,14 +177,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			mediator.PropertyTable.SetProperty("LinkListener", this);
-			mediator.PropertyTable.SetPropertyPersistence("LinkListener", false);
+			m_propertyTable.SetProperty("LinkListener", this, true);
+			m_propertyTable.SetPropertyPersistence("LinkListener", false);
 		}
 
 		/// <summary>
@@ -228,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var fwargs = new FwAppArgs(new[] {url});
-				FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 				if (SameDatabase(fwargs, cache))
 				{
 					OnFollowLink(fwargs);
@@ -330,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			if (m_currentContext != null)
 			{
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 				var args = new FwAppArgs(cache.ProjectId.Handle,
 					m_currentContext.ToolName, m_currentContext.TargetGuid);
 				ClipboardUtils.SetDataObject(args.ToString(), true);
@@ -407,7 +409,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnTestFollowLink(object unused)
 		{
 			CheckDisposed();
-			FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
 			m_mediator.SendMessage("FollowLink", new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]));
 			return true;
@@ -439,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Need some smarts here. The link creator was not sure what tool to use.
 					// The object may also be a child we don't know how to jump to directly.
-					var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+					var cache = m_propertyTable.GetValue<FdoCache>("cache");
 					ICmObject target;
 					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
 						return false; // or message?
@@ -502,25 +504,28 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// allow tools to skip loading a record if we're planning to jump to one.
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
-					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
-						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid.ToString(),
-						PropertyTable.SettingsGroup.LocalSettings);
-					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
+					m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
+						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid,
+						PropertyTable.SettingsGroup.LocalSettings,
+						true);
+					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)
 				{
-					FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+					FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_lnkActive.TargetGuid);
 					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalToolEditComplete")
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
-						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(obj.Owner.Guid))
-							m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString());
+						{
+							m_propertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString(), true);
+						}
 					}
 					// Allow this to happen after the processing of the tool change above by using the Broadcast
 					// method on the mediator, the SendMessage would process it before the above msg and it would
@@ -530,7 +535,7 @@ namespace SIL.FieldWorks.XWorks
 
 				foreach (Property property in m_lnkActive.PropertyTableEntries)
 				{
-					m_mediator.PropertyTable.SetProperty(property.name, property.value);
+					m_propertyTable.SetProperty(property.name, property.value, true);
 					//TODO: I can't think at the moment of what to do about setting
 					//the persistence or ownership of the property...at the moment the only values we're putting
 					//in there are strings or bools
@@ -544,7 +549,7 @@ namespace SIL.FieldWorks.XWorks
 					s = String.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message);
 				else
 					s = xWorksStrings.UnableToFollowLink;
-				MessageBox.Show(s, xWorksStrings.FailedJump, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+				MessageBox.Show(s, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return false;
 			}
 			return true;	//we handled this.
@@ -552,7 +557,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ShowCantJumpMessage(string msg)
 		{
-			var activeFlexWindow = ActiveFlexWindow();
+			var activeFlexWindow = m_propertyTable.GetValue<Form>("window");
 			if (activeFlexWindow == null)
 				activeFlexWindow = Form.ActiveForm;
 			if (activeFlexWindow == null)
@@ -562,11 +567,6 @@ namespace SIL.FieldWorks.XWorks
 				activeFlexWindow.Invoke(
 					(Action) (() => MessageBox.Show(activeFlexWindow, msg, xWorksStrings.ksCantJumpCaption)));
 			}
-		}
-
-		private Form ActiveFlexWindow()
-		{
-			return m_mediator.PropertyTable.GetValue("window") as Form;
 		}
 
 		/// <summary>

@@ -118,7 +118,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		// Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.
 		protected int m_cDeepSuspendLayoutCount;
-		protected StringTable m_stringTable;
 		protected IPersistenceProvider m_persistenceProvider = null;
 		protected FwStyleSheet m_styleSheet;
 		protected bool m_fShowAllFields = false;
@@ -127,6 +126,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_dxpLastRightPaneWidth = -1;  // width of right pane (if any) the last time we did a layout.
 		// to allow slices to handle events (e.g. InflAffixTemplateSlice)
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected IRecordChangeHandler m_rch = null;
 		protected IRecordListUpdater m_rlu = null;
 		protected string m_listName;
@@ -793,7 +793,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Find the first parent IRecordListOwner object (if any) that
 				// owns an IRecordListUpdater.
-				var rlo = m_mediator.PropertyTable.GetValue("window") as IRecordListOwner;
+				var rlo = m_propertyTable.GetValue<IRecordListOwner>("window");
 				if (rlo != null)
 					m_rlu = rlo.FindRecordListUpdater(m_listName);
 			}
@@ -872,24 +872,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				if (m_stringTable != null)
-					return m_stringTable;
-				if (m_mediator != null)
-					return m_mediator.StringTbl;
-				return null;
-			}
-			set
-			{
-				CheckDisposed();
-				m_stringTable = value;
-			}
-		}
-
 		public IPersistenceProvider PersistenceProvder
 		{
 			set
@@ -939,24 +921,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			if (m_mediator != null) // May be null during testing or maybe some other strange state
-			{
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-
-				// Initialize our internal state with the state of the PropertyTable
-				m_fShowAllFields = m_mediator.PropertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, false, PropertyTable.SettingsGroup.LocalSettings);
-				SetCurrentSlicePropertyNames();
-				m_currentSlicePartName = m_mediator.PropertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
-				m_currentSliceObjGuid = (Guid) m_mediator.PropertyTable.GetValue(m_sObjGuidProperty, Guid.Empty, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sPartNameProperty, null, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_currentSliceNew = null;
-				m_fSetCurrentSliceNew = false;
-			}
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			// Initialize our internal state with the state of the PropertyTable
+			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings, false);
+			SetCurrentSlicePropertyNames();
+			m_currentSlicePartName = m_propertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
+			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, PropertyTable.SettingsGroup.LocalSettings, Guid.Empty);
+			m_propertyTable.SetProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_currentSliceNew = null;
+			m_fSetCurrentSliceNew = false;
 
 			MonoIgnoreUpdates();
 
@@ -1053,18 +1031,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (String.IsNullOrEmpty(m_sPartNameProperty) || String.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				if (m_mediator != null)
-				{
-					string sTool = m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty);
-					string sArea = m_mediator.PropertyTable.GetStringProperty("areaChoice", String.Empty);
-					m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
-					m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
-				}
-				else
-				{
-					m_sPartNameProperty = "$$CurrentSlicePartName";
-					m_sObjGuidProperty = "$$CurrentSliceObjectGuid";
-				}
+				string sTool = m_propertyTable.GetStringProperty("currentContentControl", String.Empty);
+				string sArea = m_propertyTable.GetStringProperty("areaChoice", String.Empty);
+				m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
+				m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
 			}
 		}
 
@@ -1277,7 +1247,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_partInventory = null;
 			m_sliceFilter = null;
 			m_monitoredProps = null;
-			m_stringTable = null;
 			m_persistenceProvider = null;
 			m_styleSheet = null; // We may have made it, or been given it.
 			m_tooltip = null;
@@ -2851,7 +2820,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, StringTbl, PersistenceProvder, m_mediator, caller, reuseMap);
+				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, m_mediator, m_propertyTable, caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -2868,13 +2837,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Indent = indent;
 				slice.Object = obj;
 				slice.Cache = m_cache;
-				slice.StringTbl = StringTbl;
 				slice.PersistenceProvider = PersistenceProvder;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				// old code just set mediator, nothing ever set m_configurationParams. Maybe the two are redundant and should merge?
-				slice.Init(m_mediator, null);
+				slice.Init(m_mediator, m_propertyTable, null);
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
@@ -2931,10 +2899,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetLabel(XmlNode caller, XmlNode node, ICmObject obj, string attr)
 		{
 			string label;
-			if (Mediator != null && Mediator.HasStringTable)
+			if (Mediator != null)
 			{
-				label = XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl, caller, attr, null) ??
-						XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl, node, attr, null);
+				label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null) ??
+						XmlUtils.GetLocalizedAttributeValue(node, attr, null);
 			}
 			else
 			{
@@ -2960,9 +2928,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return abbr;
 
 			// Otherwise, see if we can map the label to an abbreviation in the StringTable
-			if (label != null && StringTbl != null)
+			if (label != null)
 			{
-				abbr = StringTbl.GetString(label, "LabelAbbreviations");
+				abbr = StringTable.Table.GetString(label, "LabelAbbreviations");
 				if (abbr == "*" + label + "*")
 					abbr = null;	// couldn't find it in the StringTable, reset it to null.
 			}
@@ -3157,27 +3125,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
-			if (m_mediator != null && m_mediator.PropertyTable != null)
+
+			string sCurrentPartName = null;
+			Guid guidCurrentObj = Guid.Empty;
+			if (m_currentSlice != null)
 			{
-				string sCurrentPartName = null;
-				Guid guidCurrentObj = Guid.Empty;
-				if (m_currentSlice != null)
+				if (m_currentSlice.ConfigurationNode != null &&
+					m_currentSlice.ConfigurationNode.ParentNode != null)
 				{
-					if (m_currentSlice.ConfigurationNode != null &&
-						m_currentSlice.ConfigurationNode.ParentNode != null)
-					{
-						sCurrentPartName = XmlUtils.GetAttributeValue(m_currentSlice.ConfigurationNode.ParentNode,
-							"id", String.Empty);
-					}
-					if (m_currentSlice.Object != null)
-						guidCurrentObj = m_currentSlice.Object.Guid;
+					sCurrentPartName = XmlUtils.GetAttributeValue(m_currentSlice.ConfigurationNode.ParentNode,
+						"id", String.Empty);
 				}
-				SetCurrentSlicePropertyNames();
-				m_mediator.PropertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+				if (m_currentSlice.Object != null)
+					guidCurrentObj = m_currentSlice.Object.Guid;
 			}
+			SetCurrentSlicePropertyNames();
+			m_propertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
 			return true;
 		}
 
@@ -3657,10 +3623,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_sliceSplitPositionBase = XmlUtils.GetOptionalIntegerValue(configurationParameters,
 				"defaultLabelWidth", m_sliceSplitPositionBase);
 			// This needs to happen AFTER we set the configuration sliceSplitPositionBase, otherwise,
@@ -3714,15 +3681,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool fAllow = Mediator.PropertyTable.GetBoolProperty("AllowShowNormalFields", true);
+			bool fAllow = m_propertyTable.GetBoolProperty("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
 
 			if (display.Enabled)
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-				display.Checked = m_mediator.PropertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+				display.Checked = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			}
 
 			return true; //we've handled this
@@ -4003,17 +3970,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 				name = "ShowHiddenFields-" + toolName;
 
 				// Invert the status of the real property
-				bool oldShowValue = m_mediator.PropertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(name, !oldShowValue, true, PropertyTable.SettingsGroup.LocalSettings); // update the pane bar check box.
+				bool oldShowValue = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+				m_propertyTable.SetProperty(name, !oldShowValue, PropertyTable.SettingsGroup.LocalSettings, true); // update the pane bar check box.
 				HandleShowHiddenFields(!oldShowValue);
 			}
 			else if (name.StartsWith("ShowHiddenFields-"))
 			{
-				bool fShowAllFields = m_mediator.PropertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
 				HandleShowHiddenFields(fShowAllFields);
 			}
 			else if (name == "currentContentControlObject")
@@ -4304,7 +4271,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return display.Enabled = false;
 			return display.Enabled = true;
 		}
@@ -4322,13 +4289,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))
 				return false;
 			int flid = m_mdc.GetFieldId(className, fieldName, true);
-			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator,
+			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
 				m_root.Hvo, m_root.ClassID, flid);
 			return insertPos >= 0;
 		}
@@ -4407,12 +4374,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 
 			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			XCore.PersistenceProvider persistProvider =
-				new PersistenceProvider(m_mediator.PropertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records.Cast<ICmObject>(),
+			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
 					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_mediator.HelpTopicProvider))
+				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = sTitle;
 				dlg.SetHelpTopic(helpTopic);

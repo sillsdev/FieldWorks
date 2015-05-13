@@ -10,11 +10,9 @@
 // Implementation of:
 //		ImportWordSetListener - XCore listener that fires up an ImportWordSetDlg, if needed.
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -34,6 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		#endregion Data members
 
@@ -144,11 +143,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
 		}
 
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 				return (areaChoice == "textsWords");
 			}
 		}
@@ -215,9 +215,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			using (ImportWordSetDlg dlg = new ImportWordSetDlg(m_mediator))
+			using (ImportWordSetDlg dlg = new ImportWordSetDlg(m_mediator, m_propertyTable))
 			{
-				dlg.ShowDialog((XWindow)m_mediator.PropertyTable.GetValue("window"));
+				dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window"));
 			}
 			return true;
 		}
@@ -236,6 +236,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		#endregion Data members
 
@@ -342,9 +343,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
 		}
 
@@ -385,15 +387,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
 			if (cache == null)
 				throw new ArgumentException("no cache!");
 
-			using (var dlg = new ParserParametersDlg(m_mediator.HelpTopicProvider))
+			using (var dlg = new ParserParametersDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IMoMorphData md = cache.LangProject.MorphologicalDataOA;
 				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
-				if (dlg.ShowDialog((XWindow)m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 				{
 					using (var helper = new UndoableUnitOfWorkHelper(
 						cache.ActionHandlerAccessor,

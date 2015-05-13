@@ -4,7 +4,6 @@ using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -52,19 +51,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid,
-			IPersistenceProvider persistenceProvider, Mediator mediator)
+		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tree.WritingSystemCode = defAnalWs.Handle;
-			m_tree.Font = new System.Drawing.Font(defAnalWs.DefaultFontName, 10);
+			m_tree.Font = new Font(defAnalWs.DefaultFontName, 10);
 			m_tree.StyleSheet = stylesheet;
 			if (!Application.RenderWithVisualStyles)
 				m_tree.HasBorder = false;
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
 				m_tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, m_cache, list, ws, false, mediator, (Form)mediator.PropertyTable.GetValue("window"));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, m_cache, list, ws, false, mediator, propertyTable, propertyTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try
@@ -278,18 +279,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
 	{
-				/// <summary>
+		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid,
-			IPersistenceProvider persistenceProvider, Mediator mediator)
-			: base(cache, obj, flid, persistenceProvider, mediator)
-				{
-					if (m_tree != null)
-						m_tree.ForeColor = SystemColors.GrayText;
-				}
+		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
+			: base(cache, obj, flid, mediator, propertyTable)
+		{
+			if (m_tree != null)
+				m_tree.ForeColor = SystemColors.GrayText;
+		}
 	}
 }

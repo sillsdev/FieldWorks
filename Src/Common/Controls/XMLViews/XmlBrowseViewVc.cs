@@ -8,17 +8,7 @@
 //
 // <remarks>
 // </remarks>
-
-using System;
 using System.Xml;
-using System.Drawing;
-using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources; // for check-box icons.
-
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -49,10 +39,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="xnSpec"></param>
 		/// <param name="fakeFlid"></param>
-		/// <param name="stringTable"></param>
 		/// <param name="xbv"></param>
-		public XmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, StringTable stringTable, XmlBrowseViewBase xbv)
-			: base(xnSpec, fakeFlid, stringTable, xbv)
+		public XmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+			: base(xnSpec, fakeFlid, xbv)
 		{
 		}
 	}

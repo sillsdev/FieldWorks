@@ -125,27 +125,32 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			SetDlgInfo(obj, cache, mediator, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
+			SetDlgInfo(obj, cache, mediator, propertyTable, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();
 
 			if (obj.Mediator == null)
+			{
 				obj.Mediator = mediator;
-			StringTable strings = mediator.StringTbl;
+			}
+			if (obj.PropTable == null)
+			{
+				obj.PropTable = propertyTable;
+			}
 			m_cache = cache;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
@@ -163,10 +168,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				this.helpProvider = new HelpProvider();
-				this.helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-				this.helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				helpProvider = new HelpProvider();
+				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			else
 			{

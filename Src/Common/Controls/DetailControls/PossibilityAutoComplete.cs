@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public event EventHandler PossibilitySelected;
 
-		public PossibilityAutoComplete(FdoCache cache, Mediator mediator, ICmPossibilityList list, Control control,
+		public PossibilityAutoComplete(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, Control control,
 			string displayNameProperty, string displayWs)
 		{
 			m_cache = cache;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_listBox = new ComboListBox {DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false};
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
-			m_listBox.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_listBox.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_listBox.WritingSystemFactory = cache.WritingSystemFactory;
 			m_searcher = new StringSearcher<ICmPossibility>(SearchType.Prefix, cache.ServiceLocator.WritingSystemManager);
 			m_possibilities = new List<ICmPossibility>();

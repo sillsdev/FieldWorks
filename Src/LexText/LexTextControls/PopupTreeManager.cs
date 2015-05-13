@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -33,6 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_useAbbr;
 		private Form m_parent;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		// It's conceivable to have a subclass that isn't based on a possibility list,
 		// but we haven't needed it yet, and it would be easy to just pass null if
 		// we need to make one. So it's handy to have it in the common code.
@@ -56,10 +56,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_treeCombo = treeCombo;
-			Init(cache, mediator, list, ws, useAbbr, parent);
+			Init(cache, mediator, propertyTable, list, ws, useAbbr, parent);
 			m_treeCombo.BeforeSelect += m_treeCombo_BeforeSelect;
 			m_treeCombo.AfterSelect += m_treeCombo_AfterSelect;
 			m_treeCombo.Tree.PopupTreeClosed += popupTree_PopupTreeClosed;
@@ -68,25 +68,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(PopupTree popupTree, FdoCache cache, Mediator mediator, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(PopupTree popupTree, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_popupTree = popupTree;
-			Init(cache, mediator, list, ws, useAbbr, parent);
+			Init(cache, mediator, propertyTable, list, ws, useAbbr, parent);
 			popupTree.BeforeSelect += m_treeCombo_BeforeSelect;
 			popupTree.AfterSelect += m_treeCombo_AfterSelect;
 			popupTree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
-		private void Init(FdoCache cache, Mediator mediator, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		private void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			if (parent == null)
 			{
-				if (mediator != null)
+				if (m_propertyTable != null)
 				{
-					IApp app = (IApp)mediator.PropertyTable.GetValue("App");
+					IApp app = m_propertyTable.GetValue<IApp>("App");
 					if (app != null)
+					{
 						parent = app.ActiveMainWindow;
+					}
+					if (parent == null)
+					{
+						parent = m_propertyTable.GetValue<Form>("window");
+					}
 				}
 				if (parent == null)
 					parent = Form.ActiveForm; // desperate for something...
@@ -689,8 +696,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class PossibilityListPopupTreeManager : PopupTreeManager
 	{
 		public PossibilityListPopupTreeManager(TreeCombo treeCombo, FdoCache cache,
-			Mediator mediator, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
-			: base(treeCombo, cache, mediator, list, ws, useAbbr, parent)
+			Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}
 

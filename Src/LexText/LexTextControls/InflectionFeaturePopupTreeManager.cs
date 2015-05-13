@@ -19,8 +19,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache,  bool useAbbr, Mediator mediator, Form parent, int wsDisplay)
-			: base(treeCombo, cache, mediator, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay)
+			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
 
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						HvoTreeNode parentNode = selectedNode.Parent as HvoTreeNode;
 						int hvoPos = parentNode.Hvo;
 						var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
-						dlg.SetDlgInfo(Cache, m_mediator, pos);
+						dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, pos);
 						switch (dlg.ShowDialog(ParentForm))
 						{
 							case DialogResult.OK:

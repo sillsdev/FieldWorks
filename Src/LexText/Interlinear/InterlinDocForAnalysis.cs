@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -778,9 +777,11 @@ namespace SIL.FieldWorks.IText
 			}
 			set
 			{
-				((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence = value;
-				m_mediator.PropertyTable.SetProperty("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
-				m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
+				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
+				m_propertyTable.SetProperty("TextSelectedWord",
+					value != null && value.HasWordform ? value.Analysis.Wordform : null,
+					true);
+				m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 			}
 		}
 
@@ -833,7 +834,7 @@ namespace SIL.FieldWorks.IText
 
 		internal InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode()
 		{
-			return m_mediator.PropertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+			return m_propertyTable.GetBoolProperty(ksPropertyAddWordsToLexicon, false) ?
 				InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 		}
 
@@ -1830,7 +1831,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxControllerForDisplay(m_mediator, m_styleSheet, LineChoices, m_vc.RightToLeft);
+			return new FocusBoxControllerForDisplay(m_mediator, m_propertyTable, m_styleSheet, LineChoices, m_vc.RightToLeft);
 		}
 
 		/// <summary>

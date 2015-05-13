@@ -8,13 +8,11 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using Reflector.UserInterface;//commandbar
-using SIL.Utils;
 
 namespace XCore
 {
@@ -32,7 +30,7 @@ namespace XCore
 		{
 		}
 
-		public System.Windows.Forms.Control Init (System.Windows.Forms.Form window,  IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
+		public Control Init(Form window, IImageCollection smallImages, IImageCollection largeImages, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_window = window;
 			m_smallImages = smallImages; m_largeImages = largeImages;

@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
@@ -18,7 +17,6 @@ using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
-using SilEncConverters40;
 
 namespace SIL.FieldWorks.IText
 {
@@ -80,6 +78,7 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.Button btnModifyMapping;
 		private System.Windows.Forms.Button btnImport;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		private System.Windows.Forms.Button btn_Cancel;
 		private string m_sTempDir;
 		private string m_sRootDir;
@@ -181,12 +180,14 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		public void Init(FdoCache cache, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void Init(FdoCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!m_sRootDir.EndsWith("\\"))
 				m_sRootDir += "\\";
@@ -197,11 +198,12 @@ namespace SIL.FieldWorks.IText
 				Directory.CreateDirectory(m_sTempDir);
 			m_sLastXmlFileName = "";
 
-			if(m_mediator.HelpTopicProvider != null) // FwApp.App could be null during tests
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null) // FwApp.App could be null during tests
 			{
 				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
@@ -548,7 +550,7 @@ namespace SIL.FieldWorks.IText
 
 		private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpLinguaLinksImportLink");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpLinguaLinksImportLink");
 		}
 
 		private string BaseName(string fullName)
@@ -853,9 +855,9 @@ namespace SIL.FieldWorks.IText
 			int selIndex = selIndexes[0];
 			// only support 1
 			lvItem = listViewMapping.Items[selIndex];
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache,
-					m_mediator.HelpTopicProvider, app, FontHeightAdjuster.StyleSheetFromMediator(m_mediator)))
+					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
 			{
 				llName = lvItem.Text;
 				fwName = lvItem.SubItems[1].Text;
@@ -930,7 +932,7 @@ namespace SIL.FieldWorks.IText
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
 					// because the import creates a record to change to.  See FWR-3700.
-					var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+					var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 					var fSuppressedSave = false;
 					try
 					{
@@ -1004,19 +1006,19 @@ namespace SIL.FieldWorks.IText
 				MessageBox.Show(this, message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
 
-		private void LinguaLinksImportDlg_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void LinguaLinksImportDlg_KeyDown(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void LinguaLinksImportDlg_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void LinguaLinksImportDlg_KeyUp(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void m_btnHelp_Click(object sender, System.EventArgs e)
+		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 	}
 }

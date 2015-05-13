@@ -4,16 +4,10 @@
 //
 // File: Tester.cs
 // Authorship History: John Hatton
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.Utils;
 
 namespace XCore
@@ -37,6 +31,7 @@ namespace XCore
 		public System.Windows.Forms.CheckBox cbModifyVowelList;
 
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -52,16 +47,19 @@ namespace XCore
 
 		}
 		#region IxCoreColleague stuff
+
 		/// <summary>
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 		}
 
@@ -174,7 +172,7 @@ namespace XCore
 			CheckDisposed();
 
 			WriteOutputLine ("--------Properties table");
-			WriteOutputLine(m_mediator.PropertyTable.GetPropertiesDumpString());
+			WriteOutputLine(m_propertyTable.GetPropertiesDumpString());
 			return true;//we handled this, no need to ask anyone else.
 		}
 		/// <summary>

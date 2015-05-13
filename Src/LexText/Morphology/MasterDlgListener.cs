@@ -8,19 +8,10 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Diagnostics;
 using System.Xml;
-using System.Windows.Forms;
-using System.Collections;
-
 using XCore;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -36,6 +27,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// xCore Mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -167,11 +162,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 			m_configurationParameters = configurationParameters;
 			//m_persistProvider = new XCore.PersistenceProvider(PersistentLabel, m_mediator.PropertyTable);

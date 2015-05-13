@@ -112,12 +112,14 @@ namespace SIL.FieldWorks.IText
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, Mediator mediator)
+		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
 			if (m_mediator != null)
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			{
+				m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			}
 		}
 
 		#endregion

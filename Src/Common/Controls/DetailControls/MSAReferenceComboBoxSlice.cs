@@ -90,13 +90,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				base.Mediator = value;
 
 				//Set the stylesheet so that the font size for the...
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				m_tree.StyleSheet = stylesheet;
 				var list = m_cache.LanguageProject.PartsOfSpeechOA;
 
 				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
-					m_tree.WritingSystemCode, true, m_mediator,
-					(Form)m_mediator.PropertyTable.GetValue("window"));
+					m_tree.WritingSystemCode, true, m_mediator, m_propertyTable,
+					m_propertyTable.GetValue<Form>("window"));
 				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
 				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;

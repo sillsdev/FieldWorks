@@ -1,16 +1,13 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Linq;
-
 using NUnit.Framework;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -60,28 +57,28 @@ namespace SIL.FieldWorks.XWorks
 			m_windowConfigurationNode = configuration.SelectSingleNode("window");
 			ReplaceControlAssemblies();
 
-			PropertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode);
-			PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			PropTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
+			PropTable.SetPropertyPersistence("WindowConfiguration", false);
 
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
-			m_mediator.PropertyTable.SetProperty("window", this);
-			m_mediator.PropertyTable.SetPropertyPersistence("window", false);
+			PropTable.SetProperty("window", this, true);
+			PropTable.SetPropertyPersistence("window", false);
 
 			CommandSet commandset = new CommandSet(m_mediator);
 			commandset.Init(m_windowConfigurationNode);
 			m_mediator.Initialize(commandset);
 
-			LoadStringTableIfPresent(configurationPath);
+			var st = StringTable.Table; // Force loading it.
 
 			RestoreWindowSettings(false);
 			m_mediator.AddColleague(this);
 
-			m_menusChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
-			m_sidebarChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
-			m_toolbarsChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
+			m_menusChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
+			m_sidebarChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
+			m_toolbarsChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
 
-			var handle = this.Handle; // create's a window handle for this form to allow processing broadcasted items.
+			var handle = Handle; // create's a window handle for this form to allow processing broadcasted items.
 		}
 
 		protected override void XWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -89,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_mediator.IsDisposed)
 			{
 				m_mediator.ProcessMessages = false;
-				m_mediator.PropertyTable.SetProperty("windowState", WindowState, false);
+				PropTable.SetProperty("windowState", WindowState, false);
 			}
 		}
 
@@ -115,10 +112,10 @@ namespace SIL.FieldWorks.XWorks
 		public XmlNode ActivateTool(string toolName)
 		{
 			XmlNode configurationNode = GetToolNode(toolName);
-			m_mediator.PropertyTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"));
-			m_mediator.PropertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_mediator.PropertyTable.SetProperty("currentContentControl", toolName);
-			m_mediator.PropertyTable.SetPropertyPersistence("currentContentControl", false);
+			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), true);
+			PropTable.SetPropertyPersistence("currentContentControlParameters", false);
+			PropTable.SetProperty("currentContentControl", toolName, true);
+			PropTable.SetPropertyPersistence("currentContentControl", false);
 			ProcessPendingItems();
 			return configurationNode;
 		}
@@ -177,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public RecordClerk ActiveClerk
 		{
-			get { return m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk; }
+			get { return PropTable.GetValue<RecordClerk>("ActiveClerk"); }
 		}
 
 		/// <summary>
@@ -186,9 +183,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="idCommand"></param>
 		public void InvokeCommand(string idCommand)
 		{
-			XCore.Command cmd = m_mediator.CommandSet[idCommand] as XCore.Command;
+			var cmd = m_mediator.CommandSet[idCommand] as Command;
 			cmd.InvokeCommand();
-			this.ProcessPendingItems();
+			ProcessPendingItems();
 		}
 
 		/// <summary>
@@ -619,14 +616,6 @@ namespace SIL.FieldWorks.XWorks
 			GetCommand(commandName).InvokeCommand();
 			//let the screen redraw
 			Application.DoEvents();
-		}
-
-		protected PropertyTable Properties
-		{
-			get
-			{
-				return m_window == null ? null : m_window.Mediator.PropertyTable;
-			}
 		}
 
 		protected void SetTool(string toolValueName)

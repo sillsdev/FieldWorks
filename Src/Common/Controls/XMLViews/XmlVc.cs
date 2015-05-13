@@ -4,7 +4,6 @@
 //
 // File: XmlVc.cs
 // Responsibility: WordWorks
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Globalization;
 using SIL.CoreImpl;
@@ -98,8 +96,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_mainFlid; // Main flid used in XmlSeqView.
 		/// <summary></summary>
-		protected StringTable m_stringTable;
-		/// <summary></summary>
 		protected string m_rootLayoutName; // name of part to use for root.
 		// Current writing system id being used in multilingual fragment.
 		// Some methods that refer to this variable are static, so it must be static also.
@@ -184,16 +180,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
 		/// <param name="fEditable">if set to <c>true</c> [f editable].</param>
 		/// <param name="rootSite">The root site.</param>
 		/// <param name="app">The application.</param>
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
+		public XmlVc(string rootLayoutName, bool fEditable,
 			SimpleRootSite rootSite, IApp app, ISilDataAccess sda)
-			: this(stringTable, rootLayoutName, fEditable, rootSite, app, null, sda)
+			: this(rootLayoutName, fEditable, rootSite, app, null, sda)
 		{
 		}
 
@@ -202,7 +197,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
 		/// <param name="fEditable">if set to <c>true</c> [f editable].</param>
 		/// <param name="rootSite">The root site.</param>
@@ -210,8 +204,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="condition">The condition.</param>
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this(stringTable)
+		public XmlVc(string rootLayoutName, bool fEditable,
+			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this()
 		{
 			m_rootLayoutName = rootLayoutName;
 			m_fEditable = fEditable;
@@ -226,12 +220,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// top-level layout name, such as browse view.
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable)
+		public XmlVc()
 		{
-			StringTbl = stringTable;
-
 			m_unspecComplexFormType = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType();
 			m_unspecVariantType = XmlViewsUtils.GetGuidForUnspecifiedVariantType();
 		}
@@ -1620,12 +1611,9 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							// Default to UI writing system.
 							string literal = frag.InnerText;
-							if (m_stringTable != null)
-							{
-								string sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
-								if (sTranslate.Trim().ToLower() != "do not translate")
-									literal = m_stringTable.LocalizeLiteralValue(literal);
-							}
+							string sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
+							if (sTranslate.Trim().ToLower() != "do not translate")
+								literal = StringTable.Table.LocalizeLiteralValue(literal);
 							string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 							int ws;
 							if (sWs != null)
@@ -1677,9 +1665,7 @@ namespace SIL.FieldWorks.Common.Controls
 							string[] labels;
 							if (!m_StringsFromListNode.TryGetValue(frag, out labels))
 							{
-								if (StringTbl == null)
-									throw new Exception("The stringList fragment requires a StringTable to be defined by the program");
-								labels = StringTbl.GetStringsFromStringListNode(frag);
+								labels = StringTable.Table.GetStringsFromStringListNode(frag);
 								m_StringsFromListNode[frag] = labels;
 							}
 							int flid = GetFlid(frag, hvo);
@@ -2763,7 +2749,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fShowAsParagraphs = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false);
 			if (fShowAsParagraphs)
 				return;
-			string item = XmlUtils.GetLocalizedAttributeValue(m_stringTable, frag, attrName, null);
+			string item = XmlUtils.GetLocalizedAttributeValue(frag, attrName, null);
 			if (String.IsNullOrEmpty(item))
 			{
 				if (DelayedNumberExists)
@@ -3987,22 +3973,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_sda = value;
 				m_mdc = value.MetaDataCache;
-			}
-		}
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				return m_stringTable;
-			}
-			set
-			{
-				m_stringTable = value;
-				m_StringsFromListNode.Clear();
 			}
 		}
 

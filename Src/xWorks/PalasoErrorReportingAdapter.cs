@@ -4,7 +4,6 @@
 //
 // File: PalasoErrorReportingAdapter.cs
 // Responsibility: FLEx Team
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
@@ -31,11 +30,11 @@ namespace SIL.FieldWorks.XWorks
 		private RegistryKey m_registryKey;
 		private string m_supportEmailAddress;
 
-		internal PalasoErrorReportingAdapter(Form parentForm, Mediator mediator)
+		internal PalasoErrorReportingAdapter(Form parentForm, PropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
-			m_registryKey = ((IApp)mediator.PropertyTable.GetValue("App")).SettingsKey;
-			m_supportEmailAddress = mediator.FeedbackInfoProvider.SupportEmailAddress;
+			m_registryKey = propertyTable.GetValue<IApp>("App").SettingsKey;
+			m_supportEmailAddress = propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress;
 		}
 
 		public void ReportFatalException(Exception e)

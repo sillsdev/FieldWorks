@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -176,13 +175,14 @@ namespace SIL.FieldWorks.Filters
 		/// Initialize the filter list. this is called because we are an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, XmlNode configuration)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
 		{
-			base.Init(mediator, configuration);
+			base.Init(mediator, propertyTable, configuration);
 			m_mediator.AddColleague(this);
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 			ReLoad();
 		}
 

@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
@@ -12,7 +10,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -383,24 +380,28 @@ namespace SIL.FieldWorks.IText
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if(m_mediator != null)
-				m_mediator.PropertyTable.SetProperty("ShowInvisibleSpaces", true);
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true);
+			}
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (m_mediator != null)
-				m_mediator.PropertyTable.SetProperty("ClickInvisibleSpace", false);
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true);
+			}
 		}
 
 		private bool ShowInvisibleSpaces
 		{
-			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
+			get { return m_propertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
 		}
 
 		private bool ClickInvisibleSpace
 		{
-			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
+			get { return m_propertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
 		}
 
 		#region Overrides of RootSite
@@ -485,8 +486,8 @@ namespace SIL.FieldWorks.IText
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			m_mediator.PropertyTable.SetProperty("TextSelectedWord", wordform);
-			m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
+			m_propertyTable.SetProperty("TextSelectedWord", wordform, true);
+			m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
@@ -610,10 +611,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator != null)
-					return m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-				else
-					return null;
+				return m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			}
 		}
 
@@ -717,7 +715,7 @@ namespace SIL.FieldWorks.IText
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_fdoCache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_mediator.HelpTopicProvider, "UserHelpFile");
+					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 			return true;
 		}
@@ -911,15 +909,16 @@ namespace SIL.FieldWorks.IText
 		/// Save the configuration parameters in case we want to use them locally.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			base.Init (mediator, configurationParameters);
+			base.Init (mediator, propertyTable, configurationParameters);
 			m_configurationParameters = configurationParameters;
-			m_clerk = ToolConfiguration.FindClerk(m_mediator, m_configurationParameters);
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_clerk = ToolConfiguration.FindClerk(m_propertyTable, m_configurationParameters);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 	}
 

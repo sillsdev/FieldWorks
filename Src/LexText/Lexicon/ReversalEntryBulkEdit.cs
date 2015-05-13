@@ -1,7 +1,6 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,23 +19,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class AllReversalEntriesRecordList : RecordList
 	{
-		public AllReversalEntriesRecordList()
-		{
-		}
-
-		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(cache, mediator, recordListNode);
+			BaseInit(cache, mediator, propertyTable, recordListNode);
 			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
 			//LT-14722 Crash when clicking Reversal Indexes
 			//Clerk is null when going to Reversal Indexes for the first time.
 			if (Clerk != null)
 			{
-				Guid riGuid = GetReversalIndexGuid(mediator);
+				Guid riGuid = GetReversalIndexGuid(mediator, propertyTable);
 				if (riGuid != Guid.Empty)
 				{
 					IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
@@ -79,17 +74,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// since there must not be any.  This fixes LT-6653.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		internal static Guid GetReversalIndexGuid(Mediator mediator)
+		internal static Guid GetReversalIndexGuid(Mediator mediator, PropertyTable propertyTable)
 		{
-			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 
 			if (riGuid.Equals(Guid.Empty))
 			{
 				try
 				{
 					mediator.SendMessage("InsertReversalIndex_FORCE", null);
-					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 				}
 				catch
 				{
@@ -127,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected override string PropertyTableId(string sorterOrFilter)
 		{
 			//var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
-			var reversalPub = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			var reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
 
 			// Dependent lists do not have owner/property set. Rather they have class/field.
@@ -146,16 +142,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 	public class BulkReversalEntryPosEditor : BulkPosEditorBase
 	{
-		public BulkReversalEntryPosEditor()
-		{
-		}
-
 		protected override ICmPossibilityList List
 		{
 			get
 			{
 				ICmPossibilityList list = null;
-				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					try

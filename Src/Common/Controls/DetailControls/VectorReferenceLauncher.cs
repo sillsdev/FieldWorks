@@ -73,11 +73,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator,
+			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable,
 			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_vectorRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator, displayWs);
 		}
 
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				contents,
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		public override void SetItems(IEnumerable<ICmObject> chosenObjs)

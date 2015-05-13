@@ -8,10 +8,7 @@
 //
 // <remarks>
 // </remarks>
-
-using System;
 using System.Xml;
-using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -26,7 +23,10 @@ namespace XCore
 
 	public interface IxCoreColleague
 	{
-		void Init(Mediator mediator, XmlNode configurationParameters);
+		/// <summary>
+		/// Initialize the colleague with the given Mediator, PropertyTable and xml Configuration node.
+		/// </summary>
+		void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters);
 
 		/// <summary>
 		/// In OnInvokeRecursive in the mediator this list will determine order.
@@ -100,16 +100,45 @@ namespace XCore
 		/// If it answers true, the position will not be modified further by the MultiPane.
 		/// Width is the width this pane will be after the splitter is positioned.
 		/// </summary>
-		/// <param name="position"></param>
+		/// <param name="width"></param>
 		/// <returns></returns>
 		bool SnapSplitPosition(ref int width);
+	}
+
+	/// <summary>
+	/// Implementors can provide a Mediator
+	/// </summary>
+	public interface IMediatorProvider
+	{
+		/// <summary>
+		/// this allows the calling application to talk to the window.
+		/// Placement in the IxWindow interface lets FwApp call Mediator.BroadcastPendingItems (see FWNX-213).
+		/// </summary>
+		Mediator Mediator
+		{
+			get;
+		}
+	}
+
+	/// <summary>
+	/// Implementors can provide a PropertyTable
+	/// </summary>
+	public interface IPropertyTableProvider
+	{
+		/// <summary>
+		/// Placement in the IxWindow interface lets FwApp call PropertyTable.DoStuff.
+		/// </summary>
+		PropertyTable PropTable
+		{
+			get;
+		}
 	}
 
 	/// <summary>
 	/// This is an interface implemented by xWindow (and perhaps other main window classes?)
 	/// that allows a few of their key functions to be called by things that don't reference xCore.
 	/// </summary>
-	public interface IxWindow
+	public interface IxWindow : IMediatorProvider, IPropertyTableProvider
 	{
 		/// <summary>
 		/// Call this for the duration of a block of code where we don't want idle events.
@@ -123,15 +152,6 @@ namespace XCore
 		/// See SuspentIdleProcessing.
 		/// </summary>
 		void ResumeIdleProcessing();
-
-		/// <summary>
-		/// this allows the calling application to talk to the window.
-		/// Placement in the IxWindow interface lets FwApp call Mediator.BroadcastPendingItems (see FWNX-213).
-		/// </summary>
-		Mediator Mediator
-		{
-			get;
-		}
 
 		/// <summary>
 		/// Call this for the duration of a block of code outside of xWindow that might update

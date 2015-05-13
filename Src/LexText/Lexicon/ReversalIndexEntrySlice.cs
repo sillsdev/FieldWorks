@@ -14,6 +14,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -95,8 +96,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo);
-			ctrl.Cache = (FdoCache)Mediator.PropertyTable.GetValue("cache");
+			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
+			{
+				Cache = m_propertyTable.GetValue<FdoCache>("cache")
+			};
 			Control = ctrl;
 			//m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode["deParams"]);
 #if !Want

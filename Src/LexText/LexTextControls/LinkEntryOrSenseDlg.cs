@@ -141,30 +141,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			//Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator);
+			SetDlgInfo(cache, null, mediator, propertyTable);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="wp"></param>
-		/// <param name="mediator"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="wp"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_fwcbSenses.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 
-			base.SetDlgInfo(cache, wp, mediator);
+			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 

@@ -8,16 +8,15 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Reflection;
 using NUnit.Framework;
 
 namespace XCore
 {
-
 	#region XWindow tests
 
 	/// ----------------------------------------------------------------------------------------
@@ -52,11 +51,11 @@ namespace XCore
 		public void ToggleBoolMenuItem ()
 		{
 			ClearTesterFields ();
-			bool original =(bool) m_window.PropertyTable.GetBoolProperty("toggleTest",false);
+			bool original = m_window.PropTable.GetBoolProperty("toggleTest", false);
 			ClickMenuItem("Misc", "toggle");
-			Assert.AreEqual( (bool) m_window.PropertyTable.GetValue("toggleTest"), !original);
+			Assert.AreEqual(m_window.PropTable.GetValue<bool>("toggleTest"), !original);
 			ClickMenuItem("Misc", "toggle");
-			Assert.AreEqual((bool) m_window.PropertyTable.GetValue("toggleTest"),original);
+			Assert.AreEqual(m_window.PropTable.GetValue<bool>("toggleTest"), original);
 		}
 
 		[Test][Ignore("Temporary due to Broadcast now being a defered action. (TEST needs to be revised.)")]
@@ -126,9 +125,9 @@ namespace XCore
 			m_window.Show();
 			var newWindSize = new Size(windSize.Width + 20, windSize.Height + 30);
 			m_window.Size = newWindSize;
-			var persistedWinSize = m_window.PropertyTable.GetValue("windowSize");
+			var persistedWinSize = m_window.PropTable.GetValue<Size>("windowSize");
 			ReopenWindow();
-			var newWinSize = m_window.PropertyTable.GetValue("windowSize");
+			var newWinSize = m_window.PropTable.GetValue<Size>("windowSize");
 			Assert.AreEqual(persistedWinSize, newWinSize);
 		}
 
@@ -136,9 +135,9 @@ namespace XCore
 		/// With the introduction of nunit 2.2, the order changed to alphabetical rather than code file order, and we suddenly found
 		/// that tests that are relying on a given set up our been screwed up by tests like this which change the state of things..</remarks>
 		[Test]
-		public void ZDynamicallyModifyListGroup ()
+		public void ZDynamicallyModifyListGroup()
 		{
-			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
+			ITestableUIAdapter adapter = (ITestableUIAdapter)m_window.MenuAdapter;
 			TesterControl.cbModifyVowelList .Checked = false;
 			//			MenuItem menu =FindMenu("Vowels");
 			//			menu.PerformClick();//cause the polling of the display properties
@@ -158,21 +157,22 @@ namespace XCore
 		/// that tests that are relying on a given set up our been screwed up by tests like this which change the state of things..</remarks>
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Depends on native control in comctl32.dll")]
-		public void ZPropertyPersistence ()
+		public void ZPropertyPersistence()
 		{
+			m_window.PropTable.UserSettingDirectory = m_settingsPath;
 			// This is one of only two tests that really has to show a window.
 			m_window.Show();
 			Random r = new Random();
-			int x =r.Next();
-			m_window.Mediator.PropertyTable.SetProperty("testRandom",x);
-			m_window.Mediator.PropertyTable.SetPropertyPersistence("testRandom", true);
+			int x = r.Next();
+			m_window.PropTable.SetProperty("testRandom", x, false);
+			m_window.PropTable.SetPropertyPersistence("testRandom", true);
 			ReopenWindow();
-			Assert.AreEqual(x,m_window.Mediator.PropertyTable.GetIntProperty ("testRandom",x-1));
+			Assert.AreEqual(x, m_window.PropTable.GetIntProperty("testRandom", x - 1));
 
 			//now say that the property should not be persisted
-			m_window.Mediator.PropertyTable.SetPropertyPersistence("testRandom", false);
+			m_window.PropTable.SetPropertyPersistence("testRandom", false);
 			ReopenWindow();
-			Assert.AreEqual(x-1,m_window.Mediator.PropertyTable.GetIntProperty ("testRandom",x-1));
+			Assert.AreEqual(x - 1, m_window.PropTable.GetIntProperty("testRandom", x - 1));
 		}
 
 		protected string CurrentOutputValue
@@ -218,14 +218,13 @@ namespace XCore
 		public void ZCreateUIfromStream()
 		{
 			Assembly assembly = Assembly.GetExecutingAssembly();
-			using (System.IO.Stream stream =
-				assembly.GetManifestResourceStream("XCore.basicTest.xml"))
+			using (Stream stream = assembly.GetManifestResourceStream("XCore.basicTest.xml"))
 			{
 				Assert.IsNotNull(stream, "Couldn't get the XML file.");
 
-				using (XCore.XWindow window = new XWindow())
+				using (XWindow window = new XWindow())
 				{
-					window.PropertyTable.UserSettingDirectory = m_settingsPath;
+					window.PropTable.UserSettingDirectory = m_settingsPath;
 					window.LoadUI(stream);
 
 					ITestableUIAdapter adapter = (ITestableUIAdapter)window.MenuAdapter;

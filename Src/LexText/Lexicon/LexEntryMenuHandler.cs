@@ -1,17 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 using System.Windows.Forms;
-
 using XCore;
 using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -24,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// This is an IxCoreColleague, so it gets a chance to modify
 	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
-	public class LexEntryMenuHandler : SIL.FieldWorks.XWorks.DTMenuHandler
+	public class LexEntryMenuHandler : DTMenuHandler
 	{
 		//need a default constructor for dynamic loading
 		public LexEntryMenuHandler()
@@ -43,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null || slice.IsDisposed
-				|| (m_dataEntryForm.Mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk).ListSize == 0)
+				|| (m_propertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				// (If the slice is disposed, we're in a weird state, possibly trying to update the toolbar during OnIdle though we haven't
@@ -115,7 +110,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null
-				|| (m_dataEntryForm.Mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk).ListSize == 0)
+				|| (m_propertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				display.Visible = false;
@@ -147,13 +142,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				string desiredArea = "lexicon";
 
 				// see if it's the right area
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 				if (areaChoice != null && areaChoice == desiredArea)
 				{
 					// now see if it's one of the right tools
 					string[] allowedTools = {"simpleLexiconEdit", "lexiconTestEdit",
 							"lexiconEdit", "lexiconEdit", "lexiconFullEdit"};
-					string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+					string toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
 					foreach (string tool in allowedTools)
 					{
 						if (toolChoice != null && toolChoice == tool)
@@ -429,12 +424,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FdoCache cache = m_dataEntryForm.Cache;
 			if (entry != null)
 			{
-				Form mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
+				Form mainWindow = m_propertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
 					using (SwapLexemeWithAllomorphDlg dlg = new SwapLexemeWithAllomorphDlg())
 					{
-						dlg.SetDlgInfo(cache, m_mediator, entry);
+						dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, entry);
 						if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 						{
 							SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);
@@ -474,7 +469,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (CheckForFormDataLoss(entry.LexemeFormOA, toClsid))
 				{
-					var mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
+					var mainWindow = m_propertyTable.GetValue<Form>("window");
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{
@@ -518,7 +513,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (CheckForFormDataLoss(allomorph, toClsid))
 				{
-					var mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
+					var mainWindow = m_propertyTable.GetValue<Form>("window");
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{

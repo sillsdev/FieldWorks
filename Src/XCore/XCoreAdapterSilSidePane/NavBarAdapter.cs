@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +15,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;  //for ImageList
 using System.Xml;
-
 using SIL.Utils; // for ImageCollection
 using SIL.SilSidePane;
 
@@ -133,11 +131,12 @@ namespace XCore
 		#endregion Constructor
 
 		/// <summary></summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
-			areasLabel = m_mediator.StringTbl.LocalizeAttributeValue("Areas");
+			areasLabel = StringTable.Table.LocalizeAttributeValue("Areas");
 
 			m_sidepane = new SidePane(MyControl, SidePaneItemAreaStyle.List);
 			m_sidepane.AccessibilityObject.Name = "sidepane";
@@ -549,7 +548,7 @@ namespace XCore
 			switch(propertyName)
 			{
 				case "areaChoice":
-					string areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+					string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
 					foreach(ChoiceGroup group in m_choiceGroupCollectionCache)
 					{
 						foreach (ListPropertyChoice choice in group) // group must already be populated
@@ -564,7 +563,7 @@ namespace XCore
 									// choose the first tool if one has never been chosen, and end up
 									// overwriting the property table value.  See FWR-2004.
 									string propToolForArea = "ToolForAreaNamed_" + areaName;
-									string toolForArea = m_mediator.PropertyTable.GetStringProperty(propToolForArea, null);
+									string toolForArea = m_propertyTable.GetStringProperty(propToolForArea, null);
 									m_sidepane.SelectTab(tab);
 									// FWR-2895 Deleting a Custom list could result in needing to
 									// update the PropertyTable.
@@ -572,7 +571,9 @@ namespace XCore
 									{
 										var fsuccess = m_sidepane.SelectItem(tab, toolForArea);
 										if (!fsuccess)
-											m_mediator.PropertyTable.SetProperty(propToolForArea, null);
+										{
+											m_propertyTable.SetProperty(propToolForArea, null, true);
+										}
 									}
 								}
 								break;
@@ -585,11 +586,11 @@ namespace XCore
 					// This helps fix FWR-2004.
 					if (propertyName.StartsWith("ToolForAreaNamed_"))
 					{
-						string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+						string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 						string propToolForArea = "ToolForAreaNamed_" + areaChoice;
 						if (propertyName == propToolForArea)
 						{
-							string toolForArea = m_mediator.PropertyTable.GetStringProperty(propertyName, null);
+							string toolForArea = m_propertyTable.GetStringProperty(propertyName, null);
 							SetToolForCurrentArea(toolForArea);
 						}
 					}

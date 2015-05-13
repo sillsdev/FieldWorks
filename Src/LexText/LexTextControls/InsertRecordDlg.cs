@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -71,7 +69,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject owner)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject owner)
 		{
 			CheckDisposed();
 
@@ -80,7 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_helpTopic = "khtpDataNotebook-InsertRecordDlg";
 
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -88,7 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_titleTextBox.StyleSheet = stylesheet;
 			m_titleTextBox.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_titleTextBox.WritingSystemCode = m_cache.DefaultAnalWs;
@@ -100,16 +98,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			AdjustControlAndDialogHeight(m_typeCombo, m_typeCombo.PreferredHeight);
 
 			ICmPossibilityList recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
-			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, mediator,
+			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, mediator, propertyTable,
 				recTypes, cache.DefaultAnalWs, false, this);
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject owner, ITsString tssTitle)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject owner, ITsString tssTitle)
 		{
-			SetDlgInfo(cache, mediator, owner);
+			SetDlgInfo(cache, mediator, propertyTable, owner);
 			m_titleTextBox.Tss = tssTitle;
 		}
 

@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -15,7 +14,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class MorphBreakHelperMenu : HelperMenu
 	{
 		private readonly FdoCache m_cache;
-		private readonly StringTable m_stringTable;
 
 		/// <summary>
 		/// Constructor for Morph Break Helper Context Menu
@@ -23,12 +21,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
 		/// <param name="cache">cache</param>
-		/// <param name="stringTable">stringTable</param>
-		public MorphBreakHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, FdoCache cache, StringTable stringTable)
+		public MorphBreakHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, FdoCache cache)
 			: base(textbox, helpTopicProvider)
 		{
 			m_cache = cache;
-			m_stringTable = stringTable;
 			Init();
 		}
 
@@ -51,8 +47,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				out m_mmtBoundStem, out m_mmtProclitic, out m_mmtEnclitic,
 				out m_mmtSimulfix, out m_mmtSuprafix);
 
-			string sStemExample = m_stringTable.GetString("EditMorphBreaks-stemExample", "DialogStrings");
-			string sAffixExample = m_stringTable.GetString("EditMorphBreaks-affixExample", "DialogStrings");
+			string sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
+			string sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
 
 			string lbl_stemExample = String.Format(sStemExample,
 				m_mmtStem.Prefix == null ? "" : m_mmtStem.Prefix,

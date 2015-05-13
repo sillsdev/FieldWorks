@@ -183,6 +183,11 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
 		public FdoCache Cache
@@ -232,8 +237,8 @@ namespace SIL.FieldWorks.FdoUi
 			if (m_InflectionFeatureTreeManager == null)
 			{
 				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree,
-																					   m_cache, false, m_mediator,
-																					   (Form)m_mediator.PropertyTable.GetValue("window"),
+																					   m_cache, false, m_mediator, PropTable,
+																					   PropTable.GetValue<Form>("window"),
 																					   m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 			}

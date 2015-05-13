@@ -1,7 +1,6 @@
 // Copyright (c) 2002-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +9,6 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -2867,19 +2865,19 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
 			SimpleRootSite rs = rootbox.Site as SimpleRootSite;
-			if(rs != null && rs.Mediator != null && selection != null)
+			if(rs != null && rs.Mediator != null && rs.PropTable != null && selection != null)
 			{
 				// int ws = SelectionHelper.GetFirstWsOfSelection(rootbox.Selection);
 				// Review: Or should it be this? But it returns 0 if there are multiple ws's...
 				// which may be good if the combo can handle it; i.e. there is no *one* ws so
 				// we shouldn't show one in the combo
 				int ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
-				string s = (string)rs.Mediator.PropertyTable.GetValue("WritingSystemHvo", "-1");
+				string s = rs.PropTable.GetValue("WritingSystemHvo", "-1");
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.Mediator.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString());
-					rs.Mediator.PropertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
+					rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
 					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
@@ -2907,7 +2905,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string s = (string)rs.Mediator.PropertyTable.GetValue("WritingSystemHvo", "-1");
+			string s = rs.PropTable == null ? "-1" : rs.PropTable.GetValue("WritingSystemHvo", "-1");
 			rs.Focus();
 			int writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
@@ -3045,7 +3043,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string styleName = rs.Mediator.PropertyTable.GetStringProperty("BestStyleName", null);
+			string styleName = rs.PropTable == null ? null : rs.PropTable.GetStringProperty("BestStyleName", null);
 			if (styleName == null)
 				return;
 			rs.Focus();

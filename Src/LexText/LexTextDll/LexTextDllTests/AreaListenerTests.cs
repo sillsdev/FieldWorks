@@ -7,18 +7,15 @@
 //
 // <remarks>
 // </remarks>
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
-
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
-
 
 namespace LexTextDllTests
 {
@@ -42,6 +39,8 @@ namespace LexTextDllTests
 		/// </summary>
 		private Mediator m_mediator;
 
+		private PropertyTable m_propertyTable;
+
 		/// <summary>
 		/// For testing.
 		/// </summary>
@@ -58,18 +57,28 @@ namespace LexTextDllTests
 
 			// Setup test AreaListener
 			m_listener = new AreaListener();
-			m_listener.Init(m_mediator, null);
+			m_listener.Init(m_mediator, m_propertyTable, null);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
 			if (m_listener != null)
+			{
 				m_listener.Dispose();
-			m_listener = null;
+				m_listener = null;
+
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
 			if (m_mediator != null)
+			{
 				m_mediator.Dispose();
-			m_mediator = null;
+				m_mediator = null;
+			}
 		}
 
 		#region Helper Methods
@@ -77,7 +86,8 @@ namespace LexTextDllTests
 		private void SetupTestMediator()
 		{
 			m_mediator = new Mediator();
-			m_mediator.PropertyTable.SetProperty("cache", Cache);
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable.SetProperty("cache", Cache, true);
 			m_testWindowConfig = SetupMinimalWindowConfig();
 			var cmdSet = new CommandSet(m_mediator);
 			cmdSet.Init(m_testWindowConfig);

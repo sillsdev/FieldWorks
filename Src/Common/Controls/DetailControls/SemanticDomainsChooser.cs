@@ -46,10 +46,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			editDomainsLinkPic.Image = DetailControlsStrings.gotoLinkPic;
 		}
 
-		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems)
+		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems, PropertyTable propertyTable)
 		{
 			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			selectedDomainsList.Font = FontHeightAdjuster.GetFontForNormalStyle(
 				Cache.DefaultAnalWs, m_stylesheet, Cache);
 			m_selectedItems.UnionWith(selectedItems);

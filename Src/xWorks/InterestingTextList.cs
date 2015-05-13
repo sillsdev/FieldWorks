@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -24,6 +23,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly ITextRepository m_textRepository;
 		private readonly IStTextRepository m_stTextRepository;
+		private readonly Mediator m_mediator;
 		private readonly PropertyTable m_propertyTable;
 		public const string PersistPropertyName = "InterestingScriptureTexts";
 		public const string ExcludeCoreTextPropertyName = "ExcludedCoreTexts";
@@ -44,15 +44,16 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public FdoCache Cache { get; set; }
 
-		public InterestingTextList(PropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
-			: this(propertyTable, repo, stTextRepo, true)
+		public InterestingTextList(Mediator mediator, PropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
+			: this(mediator, propertyTable, repo, stTextRepo, true)
 		{
 		}
 
-		public InterestingTextList(PropertyTable propertyTable, ITextRepository repo,
+		public InterestingTextList(Mediator mediator, PropertyTable propertyTable, ITextRepository repo,
 			IStTextRepository stTextRepo, bool includeScripture)
 		{
 			m_textRepository = repo;
+			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_stTextRepository = stTextRepo;
 			CoreTexts = GetCoreTexts();
@@ -63,9 +64,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void GetCache()
 		{
-			if (m_propertyTable == null)
-				return;
-			Cache = (FdoCache)m_propertyTable.GetValue("cache");
+			Cache = m_propertyTable.GetValue<FdoCache>("cache");
 		}
 
 		private List<IStText> m_coreTexts;
@@ -91,8 +90,6 @@ namespace SIL.FieldWorks.XWorks
 		private List<IStText> GetCoreTexts()
 		{
 			var result = AllCoreTexts.ToList();
-			if (m_propertyTable == null)
-				return result;
 			var excludedGuids = ExcludedCoreTextIdList();
 			if (excludedGuids.Count == 0)
 				return result;
@@ -145,8 +142,6 @@ namespace SIL.FieldWorks.XWorks
 		private List<IStText> GetScriptureTexts()
 		{
 			var result = new List<IStText>();
-			if (m_propertyTable == null)
-				return result;
 			var idList = m_propertyTable.GetStringProperty(PersistPropertyName, "");
 			foreach (string id in idList.Split(','))
 			{
@@ -250,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 					if (cvDel > 0)
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
-							if (m_propertyTable != null && !m_propertyTable.IsDisposed)
+							if (!m_propertyTable.IsDisposed)
 								UpdatePropertyTable();
 					}
 					break;
@@ -294,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			// We won't keep track of the clerk between calls since it could change from time to time.
-			var clerk = m_propertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			if (clerk == null)
 				return;
 
@@ -397,22 +392,24 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateExcludedCoreTexts(HashSet<Guid> excludedGuids)
 		{
-			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids));
+			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids), true);
 		}
 
 		private void UpdatePropertyTable()
 		{
-			SetScriptureTextsInPropertyTable(m_propertyTable, m_scriptureTexts);
+			SetScriptureTextsInPropertyTable(m_mediator, m_propertyTable, m_scriptureTexts);
 		}
 
 		/// <summary>
 		/// Store in the property table what needs to be there so that we will use the specified set of scripture
 		/// texts as 'interesting'.
 		/// </summary>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public static void SetScriptureTextsInPropertyTable(PropertyTable propertyTable, IEnumerable<IStText> texts)
+		/// <param name="texts"></param>
+		public static void SetScriptureTextsInPropertyTable(Mediator mediator, PropertyTable propertyTable, IEnumerable<IStText> texts)
 		{
-			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts.Cast<ICmObject>()));
+			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true);
 		}
 
 		/// <summary>

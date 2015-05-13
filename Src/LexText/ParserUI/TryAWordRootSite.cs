@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.IText;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -26,12 +27,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fRootMade;
 		private int m_labelWidth;
 
-		public TryAWordRootSite(FdoCache cache, XCore.Mediator mediator)
+		public TryAWordRootSite(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_fdoCache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			VisibleChanged += OnVisibleChanged;
-			var window = mediator.PropertyTable.GetValue("window") as FwXWindow;
+			var window = m_propertyTable.GetValue<FwXWindow>("window");
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
 			IWritingSystem wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
@@ -265,6 +267,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			//Debug.Assert(m_tryAWordSandbox == null);
 			m_tryAWordSandbox = new TryAWordSandbox(m_fdoCache,
 													Mediator,
+													m_propertyTable,
 													StyleSheet,
 													m_vc.LineChoices,
 													analysis);

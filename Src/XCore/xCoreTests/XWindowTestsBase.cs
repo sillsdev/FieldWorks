@@ -9,15 +9,12 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-
-
 using System;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-
 using NUnit.Framework;
 
 namespace XCore
@@ -56,9 +53,9 @@ namespace XCore
 				Directory.CreateDirectory(m_settingsPath);
 
 			m_window = new XWindow();
-			m_window.PropertyTable.UserSettingDirectory = m_settingsPath;
+			m_window.PropTable.UserSettingDirectory = m_settingsPath;
 			// delete any existing property table settings.
-			m_window.PropertyTable.RemoveLocalAndGlobalSettings();
+			m_window.PropTable.RemoveLocalAndGlobalSettings();
 			//m_window.PropertyTable.SetProperty("PreferredUILibrary", "FlexUIAdapter.dll");
 			m_window.LoadUI(ConfigurationFilePath);
 		}
@@ -72,7 +69,7 @@ namespace XCore
 		public override void FixtureTeardown()
 		{
 			//m_window.Close();
-			m_window.PropertyTable.RemoveLocalAndGlobalSettings();
+			m_window.PropTable.RemoveLocalAndGlobalSettings();
 			m_window.Dispose();
 
 			try
@@ -113,8 +110,7 @@ namespace XCore
 			m_window.Close();
 			m_window.Dispose();
 			m_window = new XWindow();
-			m_window.PropertyTable.UserSettingDirectory = m_settingsPath;
-			//m_window.PropertyTable.SetProperty("PreferredUILibrary", "FlexUIAdapter.dll");
+			m_window.PropTable.UserSettingDirectory = m_settingsPath;
 			m_window.LoadUI(ConfigurationFilePath);
 			m_window.SuspendWindowSizePersistence();
 			m_window.Show();

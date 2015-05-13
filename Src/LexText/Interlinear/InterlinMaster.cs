@@ -1,7 +1,6 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,7 +19,6 @@ using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
-
 
 namespace SIL.FieldWorks.IText
 {
@@ -187,7 +185,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
 			{
-				return m_mediator.PropertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+				return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
 					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 			}
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
@@ -238,7 +236,7 @@ namespace SIL.FieldWorks.IText
 				string sAltTitle = XmlUtils.GetAttributeValue(m_configurationParameters, "altTitleId");
 				if (!String.IsNullOrEmpty(sAltTitle))
 				{
-					string sTitle = StringTbl.GetString(sAltTitle, "AlternativeTitles");
+					string sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
 					if (!String.IsNullOrEmpty(sTitle))
 					{
 						((IPaneBar)m_informationBar).Text = sTitle;
@@ -265,7 +263,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupStyleSheet()
 		{
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
 		/// <summary>
@@ -336,12 +334,12 @@ namespace SIL.FieldWorks.IText
 				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord, m_mediator);
+					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord);
 				}
 				else
 				{
-					mark = new InterAreaBookmark(this, m_mediator, Cache);
-					mark.Restore(IndexOfTextRecord, m_mediator);
+					mark = new InterAreaBookmark(this, Cache, m_propertyTable);
+					mark.Restore(IndexOfTextRecord);
 					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
 				}
 			}
@@ -429,8 +427,7 @@ namespace SIL.FieldWorks.IText
 				var key = new Tuple<string, Guid>(CurrentTool, RootStText.Guid);
 				if (m_bookmarks.ContainsKey(key))
 				{
-					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true,
-										  m_mediator);
+					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
 				}
 
 				return true;
@@ -593,7 +590,7 @@ namespace SIL.FieldWorks.IText
 					case ktpsInfo:
 						//We may already be initialized, but this is not very expensive and sometimes
 						//the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(Cache, m_mediator, Clerk);
+						m_infoPane.Initialize(Cache, m_mediator, m_propertyTable, Clerk);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
@@ -633,7 +630,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupChartPane()
 		{
-			(m_constChartPane as IxCoreColleague).Init(m_mediator, m_configurationParameters);
+			(m_constChartPane as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
 			m_constChartPane.BackColor = System.Drawing.SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
@@ -713,8 +710,9 @@ namespace SIL.FieldWorks.IText
 		/// Required override for RecordView subclass.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -732,6 +730,8 @@ namespace SIL.FieldWorks.IText
 
 			// InitBase will do this, but we need it in place for testing IsPersistedForAnInterlinearTabPage.
 			m_mediator = mediator;
+			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
+			m_propertyTable = propertyTable;
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -745,7 +745,7 @@ namespace SIL.FieldWorks.IText
 			// Do NOT do this, it raises an exception.
 			//base.Init (mediator, configurationParameters);
 			// Instead do this.
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			RefreshPaneBar();
 		}
@@ -816,7 +816,7 @@ namespace SIL.FieldWorks.IText
 				SetStyleSheetFor(site as IStyleSheet);
 				site.Cache = Cache;
 				if (site is IxCoreColleague)
-					(site as IxCoreColleague).Init(m_mediator, m_configurationParameters);
+					(site as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
 			}
 		}
 
@@ -1020,11 +1020,11 @@ namespace SIL.FieldWorks.IText
 					InterAreaBookmark mark;
 					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
 					{
-						mark = new InterAreaBookmark(this, m_mediator, Cache);
+						mark = new InterAreaBookmark(this, Cache, m_propertyTable);
 						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
 					}
 
-					mark.Save(point, false, IndexOfTextRecord, m_mediator);
+					mark.Save(point, false, IndexOfTextRecord);
 				}
 			}
 			return hvoRoot;
@@ -1041,11 +1041,11 @@ namespace SIL.FieldWorks.IText
 				InterAreaBookmark mark;
 				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
 				{
-					mark.Restore(IndexOfTextRecord, m_mediator);
+					mark.Restore(IndexOfTextRecord);
 				}
 				else
 				{
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, m_mediator, Cache));
+					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, m_propertyTable));
 				}
 			}
 		}
@@ -1117,7 +1117,7 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea
 				&& toolName != "wordListConcordance";
 			display.Visible = fVisible;
@@ -1136,7 +1136,7 @@ namespace SIL.FieldWorks.IText
 			// Although it's a modal dialog, it's dangerous for it to be visible in contexts where it
 			// could not be launched, presumably because it doesn't apply to that view, and may do
 			// something dangerous to another view (cf LT-7961).
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			if (app != null && !display.Enabled)
 				app.RemoveFindReplaceDialog();
 			return true;
@@ -1146,7 +1146,7 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			if (app != null)
 				app.ShowFindReplaceDialog(false, m_rtPane);
 		}
@@ -1163,7 +1163,7 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			if (app != null)
 				app.ShowFindReplaceDialog(true, m_rtPane);
 		}
@@ -1206,9 +1206,9 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator == null || m_mediator.PropertyTable == null)
+				if (m_mediator == null)
 					return TabPageSelection.RawText;
-				string val = m_mediator.PropertyTable.GetStringProperty("InterlinearTab", TabPageSelection.RawText.ToString());
+				string val = m_propertyTable.GetStringProperty("InterlinearTab", TabPageSelection.RawText.ToString());
 				TabPageSelection tabSelection;
 				if (string.IsNullOrEmpty(val))
 				{
@@ -1231,7 +1231,7 @@ namespace SIL.FieldWorks.IText
 
 			set
 			{
-				m_mediator.PropertyTable.SetProperty("InterlinearTab", value.ToString());
+				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), true);
 			}
 		}
 
@@ -1273,7 +1273,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator == null || m_mediator.PropertyTable == null)
+				if (m_mediator == null)
 					return false; // apparently not quite setup to determine true or false.
 				return InterlinearTab == TabPageSelection.Interlinearizer ||
 					InterlinearTab == TabPageSelection.Gloss;
@@ -1292,8 +1292,7 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
-				string toolName =
-					m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
@@ -1318,7 +1317,7 @@ namespace SIL.FieldWorks.IText
 				string desiredArea = "textsWords";
 
 				// see if it's the right area
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 				return areaChoice != null && areaChoice == desiredArea;
 			}
 		}
@@ -1330,7 +1329,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		protected bool InFriendlyTool(string desiredTool)
 		{
-			var toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null);
+			var toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null);
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 

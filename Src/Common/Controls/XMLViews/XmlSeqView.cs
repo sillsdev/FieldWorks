@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,13 +15,13 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -130,8 +129,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected XmlVc m_xmlVc;
 		/// <summary></summary>
 		protected IFwMetaDataCache m_mdc;
-		/// <summary></summary>
-		protected StringTable m_stringTable;
 		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
 		private IApp m_app;
 
@@ -256,7 +253,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 			}
 			m_xmlVc = null;
-			m_stringTable = null;
 			m_mdc = null;
 			m_sXmlSpec = null;
 			m_docSpec = null;
@@ -320,20 +316,20 @@ namespace SIL.FieldWorks.Common.Controls
 			rootb.SetSite(this);
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			m_fShowFailingItems = m_mediator.PropertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
-			//m_xmlVc = new XmlVc(m_xnSpec, StringTbl); // possibly reinstate for old approach?
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			m_fShowFailingItems = m_propertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
+			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
 			// used when the configure dialog handles a shared view.
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
-				sLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
+				sLayout = m_propertyTable.GetStringProperty(sProp, null);
 			if (String.IsNullOrEmpty(sLayout))
 				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
 			ISilDataAccess sda = GetSda();
-			m_xmlVc = new XmlVc(StringTbl, sLayout, fEditable, this, m_app,
+			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
@@ -384,10 +380,10 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			base.OnPropertyChanged(name);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 			if(name == "ShowFailingItems-" + toolName)
 			{
-				bool fShowFailingItems = m_mediator.PropertyTable.GetBoolProperty(name, false);
+				bool fShowFailingItems = m_propertyTable.GetBoolProperty(name, false);
 				if (fShowFailingItems != m_fShowFailingItems)
 				{
 					m_fShowFailingItems = fShowFailingItems;
@@ -452,25 +448,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 		#endregion
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_stringTable = value;
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

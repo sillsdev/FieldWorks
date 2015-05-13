@@ -3,6 +3,7 @@ using System;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -37,13 +38,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					if (m_srcClerk != null)
 					{
-						m_mediator.PropertyTable.RemoveProperty("RecordClerk-" + m_srcClerk.Id);
+						m_propertyTable.RemoveProperty("RecordClerk-" + m_srcClerk.Id);
 						m_srcClerk.Dispose();
 					}
 
 					if (m_dstClerk != null)
 					{
-						m_mediator.PropertyTable.RemoveProperty("RecordClerk-" + m_dstClerk.Id);
+						m_propertyTable.RemoveProperty("RecordClerk-" + m_dstClerk.Id);
 						m_dstClerk.Dispose();
 					}
 
@@ -52,6 +53,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			}
 			m_mediator = null;
+			m_propertyTable = null;
 			m_cache = null;
 			m_srcwfiWordform = null;
 			m_srcClerk = null;

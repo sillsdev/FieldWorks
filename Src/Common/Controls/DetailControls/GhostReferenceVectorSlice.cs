@@ -11,6 +11,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 
-			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, m_mediator, DisplayNameProperty, BestWsName);
+			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, m_mediator, m_propertyTable, DisplayNameProperty, BestWsName);
 		}
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.
@@ -88,7 +89,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// YAGNI: may eventually need to make configurable how it comes up with the list of candidates.
 			// Currently this is used only for properties of a ghost notebook record.
 			var candidateList = (ICmPossibilityList) ReferenceTargetServices.RnGenericRecReferenceTargetOwner(m_cache, m_flid);
-			var candidates = candidateList == null ? null : candidateList.PossibilitiesOS.Cast<ICmObject>();
+			var candidates = candidateList == null ? null : candidateList.PossibilitiesOS;
 			// YAGNI: see ReferenceLauncher implementation of this method for a possible approach to
 			// making the choice of writing system configurable.
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates,
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				new ICmObject[0],
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
 			chooser.SetObjectAndFlid(0, m_flid);
@@ -118,7 +119,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//    if (referenceTargetOwner != null)
 				//        chooser.TextParamHvo = referenceTargetOwner.Hvo;
 				//    chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-				chooser.InitializeExtras(Slice.ConfigurationNode, Mediator);
+				chooser.InitializeExtras(Slice.ConfigurationNode, Mediator, m_propertyTable);
 			}
 			var res = chooser.ShowDialog(FindForm());
 			if (DialogResult.Cancel == res)

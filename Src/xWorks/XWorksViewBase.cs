@@ -65,6 +65,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
+		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.
 		/// </summary>
@@ -163,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				return m_propertyTable.GetValue<FdoCache>("cache");
 			}
 		}
 
@@ -180,8 +184,10 @@ namespace SIL.FieldWorks.XWorks
 					return m_clerk;
 				if (m_mediator == null)
 					return null; // Avoids a null reference exception, if there is no mediator at all.
+				if (m_propertyTable == null)
+					return null; // Avoids a null reference exception, if there is no property table at all.
 				m_haveActiveClerk = false;
-				m_clerk = RecordClerk.FindClerk(m_mediator, m_vectorName);
+				m_clerk = RecordClerk.FindClerk(m_propertyTable, m_vectorName);
 				if (m_clerk != null && m_clerk.IsActiveInGui)
 					m_haveActiveClerk = true;
 				return m_clerk;
@@ -190,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_configurationParameters, loadList);
+			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList);
 			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
 			return clerk;
 		}
@@ -211,19 +217,6 @@ namespace SIL.FieldWorks.XWorks
 				// allow parent controls to pass in the Clerk we want this control to use.
 				m_vectorName = value != null ? value.Id : "";
 				m_clerk = value;
-			}
-		}
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_mediator.StringTbl;
 			}
 		}
 
@@ -253,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public abstract void Init(Mediator mediator, XmlNode configurationParameters);
+		public abstract void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters);
 
 		/// <summary>
 		/// return an array of all of the objects which should
@@ -422,18 +415,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_informationBar == null)
 				return;
-			string className = StringTbl.GetString("No Record", "Misc");
+			string className = StringTable.Table.GetString("No Record", "Misc");
 			if (Clerk.CurrentObject != null)
 			{
 				string typeName = Clerk.CurrentObject.GetType().Name;
 				if (Clerk.CurrentObject is ICmPossibility)
 				{
 					var possibility = Clerk.CurrentObject as ICmPossibility;
-					className = possibility.ItemTypeName(StringTbl);
+					className = possibility.ItemTypeName();
 				}
 				else
 				{
-					className = StringTbl.GetString(typeName, "ClassNames");
+					className = StringTable.Table.GetString(typeName, "ClassNames");
 				}
 				if (className == "*" + typeName + "*")
 				{
@@ -446,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!String.IsNullOrEmpty(emptyTitleId))
 				{
 					string titleStr;
-					XmlViewsUtils.TryFindString(StringTbl, "EmptyTitles", emptyTitleId, out titleStr);
+					XmlViewsUtils.TryFindString("EmptyTitles", emptyTitleId, out titleStr);
 					if (titleStr != "*" + emptyTitleId + "*")
 						className = titleStr;
 					Clerk.UpdateStatusBarRecordNumber(titleStr);
@@ -516,11 +509,11 @@ namespace SIL.FieldWorks.XWorks
 			// (areaChoice == "lexicon" or "words" or "grammar" or "lists"
 
 			RecordClerk clerk = Clerk;
-			string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 			//uncomment the following line if we need to turn on or off the Export menu item
 			//for specific tools in the various areas of the application.
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-			string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
+			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
 			bool inFriendlyTerritory = (areaChoice == "lexicon"
 				|| areaChoice == "notebook"
 				|| clerk.Id == "concordanceWords"
@@ -551,8 +544,8 @@ namespace SIL.FieldWorks.XWorks
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
 			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
-			string toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", string.Empty);
-			string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
+			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -581,7 +574,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
+			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			switch (areaChoice)
 			{
 				case "lexicon":
@@ -591,7 +584,7 @@ namespace SIL.FieldWorks.XWorks
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
 					break;
 			}
-			using (var dlg = new AddCustomFieldDlg(m_mediator, locationType))
+			using (var dlg = new AddCustomFieldDlg(m_mediator, m_propertyTable, locationType))
 			{
 				if (dlg.ShowCustomFieldWarning(this))
 					dlg.ShowDialog(this);
@@ -605,7 +598,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -623,7 +616,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
-				using (var dlg = new ConfigureListDlg(m_mediator, (ICmPossibilityList) Clerk.OwningObject))
+				using (var dlg = new ConfigureListDlg(m_mediator, m_propertyTable, (ICmPossibilityList) Clerk.OwningObject))
 					dlg.ShowDialog(this);
 
 			return true;	// handled
@@ -634,7 +627,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -651,7 +644,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			using (var dlg = new AddListDlg(m_mediator))
+			using (var dlg = new AddListDlg(m_mediator, m_propertyTable))
 				dlg.ShowDialog(this);
 
 			return true;	// handled
@@ -662,7 +655,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{

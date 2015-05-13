@@ -412,19 +412,6 @@ namespace SIL.Utils
 
 		#endregion
 
-		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///make this false during automated testing
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool OkToInteractWithUser
-		{
-			set {s_isOkToInteractWithUser = value;}
-			get {return s_isOkToInteractWithUser;}
-		}
-		#endregion
-
 		#region Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

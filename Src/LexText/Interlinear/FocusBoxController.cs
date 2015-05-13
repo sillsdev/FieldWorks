@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -18,6 +19,7 @@ namespace SIL.FieldWorks.IText
 	{
 		internal IAnalysisControlInternal m_sandbox;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		private IVwStylesheet m_stylesheet;
 		protected InterlinLineChoices m_lineChoices;
 
@@ -57,10 +59,11 @@ namespace SIL.FieldWorks.IText
 				m_sandbox.UpdateLineChoices(choices);
 		}
 
-		public FocusBoxController(Mediator mediator, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
+		public FocusBoxController(Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
 			: this()
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_stylesheet = stylesheet;
 			m_lineChoices = lineChoices;
 			if (m_mediator != null)
@@ -147,7 +150,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			Sandbox sandbox = new Sandbox(selected.Analysis.Cache, m_mediator, m_stylesheet,
+			Sandbox sandbox = new Sandbox(selected.Analysis.Cache, m_mediator, m_propertyTable, m_stylesheet,
 				m_lineChoices, selected, this);
 			sandbox.SizeToContent = true; // Layout will ignore size.
 			//sandbox.Mediator = Mediator;
@@ -451,7 +454,7 @@ namespace SIL.FieldWorks.IText
 
 		private void btnMenu_Click(object sender, EventArgs e)
 		{
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			XWindow window = m_propertyTable.GetValue<XWindow>("window");
 
 			window.ShowContextMenu("mnuFocusBox",
 				btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)),
@@ -541,8 +544,8 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public partial class FocusBoxControllerForDisplay : FocusBoxController, IxCoreColleague
 	{
-		public FocusBoxControllerForDisplay(Mediator mediator, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
-			: base(mediator, stylesheet, lineChoices)
+		public FocusBoxControllerForDisplay(Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
+			: base(mediator, propertyTable, stylesheet, lineChoices)
 		{
 			m_fRightToLeft = rightToLeft;
 		}
@@ -552,13 +555,13 @@ namespace SIL.FieldWorks.IText
 		public IxCoreColleague[] GetMessageTargets()
 		{
 			if (InterlinWordControl is IxCoreColleague)
-				return new IxCoreColleague[] {(IxCoreColleague)InterlinWordControl, this };
+				return new[] {(IxCoreColleague)InterlinWordControl, this };
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			//throw new NotImplementedException();
+			// Do nothing.
 		}
 
 		/// <summary>

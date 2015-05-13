@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 
 namespace XCore
@@ -10,9 +6,9 @@ namespace XCore
 	/// <summary>
 	/// Summary description for PaneBar.
 	/// </summary>
-	public class PaneBar : System.Windows.Forms.UserControl, IPaneBar
+	public class PaneBar : UserControl, IPaneBar
 	{
-		private System.Windows.Forms.Label label1;
+		private Label label1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -29,7 +25,7 @@ namespace XCore
 			// TODO: Add any initialization after the InitializeComponent call
 			if (SIL.Utils.MiscUtils.IsUnix)
 				label1.Font = new Font(SIL.Utils.MiscUtils.StandardSansSerif, 14.25F,
-					System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (System.Byte)0);
+					FontStyle.Bold, GraphicsUnit.Point, 0);
 		}
 
 		/// <summary>
@@ -40,13 +36,14 @@ namespace XCore
 
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="smallImages"></param>
+		///  </summary>
+		///  <param name="smallImages"></param>
+		/// <param name="menuBarAdapter"></param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		public void  Init (IImageCollection smallImages,  IUIMenuAdapter menuBarAdapter, Mediator mediator)
+		public void Init(IImageCollection smallImages, IUIMenuAdapter menuBarAdapter, Mediator mediator)
 		{
 		}
 
@@ -54,7 +51,7 @@ namespace XCore
 		///
 		/// </summary>
 		/// <param name="group"></param>
-		public void  AddGroup(XCore.ChoiceGroup group)
+		public void  AddGroup(ChoiceGroup group)
 		{
 		}
 

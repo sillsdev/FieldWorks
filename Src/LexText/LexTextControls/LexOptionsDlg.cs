@@ -9,7 +9,6 @@
 // <remarks>
 // This implements the "Tools/Options" command dialog for Language Explorer.
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +32,8 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class LexOptionsDlg : Form, IFwExtension
 	{
-		private Mediator m_mediator = null;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private FdoCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out ws);
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the mediator's string table with the appropriate language data.
-				m_mediator.StringTbl.Reload(m_sNewUserWs);
+				StringTable.Table.Reload(m_sNewUserWs);
 			}
 
 			// Handle installing/uninstalling plugins.
@@ -219,12 +219,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// open that project automatically instead of displaying the usual Welcome dialog.
 			get
 			{
-				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				var app = m_propertyTable.GetValue<FwApp>("App");
 				return app.RegistrySettings.AutoOpenLastEditedProject;
 			}
 			set
 			{
-				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				var app = m_propertyTable.GetValue<FwApp>("App");
 				if (app != null)
 					app.RegistrySettings.AutoOpenLastEditedProject = value;
 			}
@@ -243,12 +243,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, Mediator mediator)
+		void IFwExtension.Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
-			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
+			updateGlobalWS.Checked = !Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			m_sNewUserWs = m_sUserWs;
 			m_userInterfaceChooser.Init(m_sUserWs);

@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
-
 using SIL.Utils; // For IFWDisposable
 
 namespace XCore
@@ -117,13 +116,14 @@ namespace XCore
 
 		#region IxCoreColleague implementation
 		/// <summary></summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			SuspendLayout();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 
 			// Make the IPaneBar.
@@ -132,8 +132,8 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
-				ImageCollection small = (ImageCollection)m_mediator.PropertyTable.GetValue("smallImages");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
+				ImageCollection small = m_propertyTable.GetValue<ImageCollection>("smallImages");
 				paneBar.Init(small, (IUIMenuAdapter)window.MenuAdapter, m_mediator);
 			}
 			ReloadPaneBar(paneBar);
@@ -163,7 +163,7 @@ namespace XCore
 				mp.DefaultPrintPaneId = DefaultPrintPaneId;
 				mp.ParentSizeHint = ParentSizeHint;
 			}*/
-			(mainControl as IxCoreColleague).Init(m_mediator, mainControlNode.SelectSingleNode("parameters"));
+			(mainControl as IxCoreColleague).Init(m_mediator, m_propertyTable, mainControlNode.SelectSingleNode("parameters"));
 #if __MonoCS__
 			// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
 			// cause the program to hang later on.  See FWNX-1036 for details.
@@ -201,7 +201,7 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
 				ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
 				group.PopulateNow();
 				paneBar.AddGroup(group);
@@ -300,6 +300,7 @@ namespace XCore
 		#region Data Members
 
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected IPaneBar m_paneBar;
 
 		#endregion Data Members
@@ -308,10 +309,19 @@ namespace XCore
 		/// Init for basic panebar.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="mainControl"></param>
-		public void Init(Mediator mediator, Control mainControl)
+		public void Init(Mediator mediator, PropertyTable propertyTable, Control mainControl)
 		{
-			m_mediator = mediator;
+			if (m_mediator != null && m_mediator != mediator)
+				throw new ArgumentException("Mis-matched mediators being set for this object.");
+			if (m_propertyTable != null && m_propertyTable != propertyTable)
+				throw new ArgumentException("Mis-matched property tables being set for this object.");
+
+			if (m_mediator == null)
+				m_mediator = mediator;
+			if (m_propertyTable == null)
+				m_propertyTable = propertyTable;
 			m_paneBar = CreatePaneBar();
 			Controls.Add(m_paneBar as Control);
 
@@ -322,7 +332,7 @@ namespace XCore
 
 		protected IPaneBar CreatePaneBar()
 		{
-			string preferredLibrary = (string)m_mediator.PropertyTable.GetValue("PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
+			string preferredLibrary = m_propertyTable.GetValue("PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
 			Assembly adaptorAssembly = AdapterAssemblyFactory.GetAdapterAssembly(preferredLibrary);
 			IPaneBar paneBar = adaptorAssembly.CreateInstance("XCore.PaneBar") as IPaneBar;
 			Control pb = paneBar as Control;

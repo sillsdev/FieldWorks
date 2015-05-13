@@ -6,14 +6,12 @@
 // Authorship History: Randy Regnier
 // Last reviewed:
 // </remarks>
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Diagnostics;
-
 using SIL.Utils; // for ImageCollection
 
 namespace XCore
@@ -230,11 +228,11 @@ namespace XCore
 			item.Enabled = display.Enabled;
 			item.Visible = display.Visible;
 
-			object helper = m_mediator.PropertyTable.GetValue("ContextHelper");
 
-			if (helper != null)
+			if (m_propertyTable.PropertyExists("ContextHelper"))
 			{
-				String s = ((IContextHelper)helper).GetToolTip(choice.HelpId);
+				var helper = m_propertyTable.GetValue<IContextHelper>("ContextHelper");
+				String s = helper.GetToolTip(choice.HelpId);
 				if (choice.Shortcut != Keys.None)
 				{
 
@@ -244,12 +242,14 @@ namespace XCore
 				}
 			}
 			else
+			{
 				item.ToolTipText = item.Text.Replace("&",""); //useful for buttons.
-
+			}
 
 			choice.ReferenceWidget = item;
 			return item;
 		}
+
 		protected ToolStripItem CreateMenuItem(ChoiceBase choice, out bool reallyVisible)
 		{
 			UIItemDisplayProperties display = choice.GetDisplayProperties();
@@ -306,11 +306,11 @@ namespace XCore
 			item.Enabled = display.Enabled;
 			item.Visible = display.Visible;
 
-			object helper = m_mediator.PropertyTable.GetValue("ContextHelper");
 
-			if (helper != null)
+			if (m_propertyTable.PropertyExists("ContextHelper"))
 			{
-				String s = ((IContextHelper)helper).GetToolTip(choice.HelpId);
+				var helper = m_propertyTable.GetValue<IContextHelper>("ContextHelper");
+				String s = helper.GetToolTip(choice.HelpId);
 				item.ToolTipText = s;
 				if (choice.Shortcut != Keys.None)
 				{

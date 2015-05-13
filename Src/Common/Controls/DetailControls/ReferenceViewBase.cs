@@ -10,19 +10,13 @@
 // <remarks>
 // For handling things common to ReferenceView classes.
 // </remarks>
-
-using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO.Validation;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -115,7 +109,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvoTarget))
 				{
-					ui.HandleCtrlClick(Mediator, this);
+					ui.HandleCtrlClick(this);
 				}
 			}
 		}
@@ -148,7 +142,7 @@ Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.
 #if TESTMS
 Debug.WriteLine("ui.HandleRightClick: and returning true.");
 #endif
-					return ui.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 #if TESTMS
 Debug.WriteLine("No ui: returning false");

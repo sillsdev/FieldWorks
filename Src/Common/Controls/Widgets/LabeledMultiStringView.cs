@@ -426,10 +426,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Required method for IXCoreColleague. As a colleague, it behaves exactly like its inner view.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			m_innerView.Init(mediator, configurationParameters);
+			m_innerView.Init(mediator, propertyTable, configurationParameters);
 		}
 
 		/// <summary>

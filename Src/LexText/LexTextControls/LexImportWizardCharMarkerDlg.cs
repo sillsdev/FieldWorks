@@ -533,11 +533,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnStyles_Click(object sender, EventArgs e)
 		{
-			Mediator med = null;
+			PropertyTable propertyTable = null;
 			LexImportWizard wiz = LexImportWizard.Wizard();
 			if (wiz != null)
-				med = wiz.Mediator;
-			if (med == null)
+			{
+				propertyTable = wiz.PropTable;
+			}
+			if (propertyTable == null)
 			{
 				// See LT-9100 and LT-9266.  Apparently this condition can happen.
 				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem,
@@ -545,7 +547,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as FwStyleSheet,
-				0, 0, m_cache, this, ((IApp)med.PropertyTable.GetValue("App")), m_helpTopicProvider);
+				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider);
 		}
 
 		//private void tbElementName_TextChanged(object sender, EventArgs e)

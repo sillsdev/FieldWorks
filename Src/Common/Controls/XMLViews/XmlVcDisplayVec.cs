@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,7 +41,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private readonly FdoCache m_cache;
 		private readonly ISilDataAccess m_sda;
 		private readonly ICmObjectRepository m_objRepo;
-		private readonly StringTable m_stringTable;
 		/// <summary>
 		/// The number part ref that is either current when we call OutputItemNumber, or that
 		/// was current when we set tssDelayedNumber.
@@ -72,7 +70,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (vwenv.DataAccess != null)
 				m_sda = vwenv.DataAccess;
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			m_stringTable = m_viewConstructor.StringTbl;
 		}
 
 		private LayoutCache Layouts
@@ -324,7 +321,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsString SetBeforeString(XmlNode specialAttrsNode, XmlNode listDelimitNode)
 		{
 			ITsString tssBefore = null;
-			string sBefore = XmlUtils.GetLocalizedAttributeValue(m_stringTable, listDelimitNode, "before", null);
+			string sBefore = XmlUtils.GetLocalizedAttributeValue(listDelimitNode, "before", null);
 			if (!String.IsNullOrEmpty(sBefore) || DelayedNumberExists)
 			{
 				if (sBefore == null)
@@ -648,7 +645,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string layoutName;
 			XmlNode node = command.GetNodeForChild(out layoutName, fragId, m_viewConstructor, hvo);
 			var keys = XmlViewsUtils.ChildKeys(m_cache, m_sda, node, hvo, Layouts,
-				command.Caller, m_stringTable, m_viewConstructor.WsForce);
+				command.Caller, m_viewConstructor.WsForce);
 			return AreAllKeysEmpty(keys);
 		}
 

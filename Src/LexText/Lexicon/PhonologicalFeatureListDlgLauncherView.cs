@@ -11,12 +11,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private IFsFeatStruc m_fs;
 		private CmObjectUi.CmAnalObjectVc m_vc;
 
-		public void Init(Mediator mediator, IFsFeatStruc fs)
+		public void Init(FdoCache cache, IFsFeatStruc fs)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
-			m_fdoCache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_fdoCache = cache;
 
 			UpdateRootObject();
 			m_fdoCache.DomainDataByFlid.AddNotification(this);

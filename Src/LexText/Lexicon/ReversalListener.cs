@@ -1,7 +1,6 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,6 +35,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Mediator that passes off messages.
 		/// </summary>
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private XmlNode m_configurationParameters;
 
 		#region IDisposable & Co. implementation
@@ -144,15 +143,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region IxCoreColleague implementation
 
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 			m_mediator.AddColleague(this);
 
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<IWritingSystem>();
 			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -216,8 +216,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true);
+			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -245,8 +245,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
-				dlg.SetDlgInfo(cache, null, m_mediator); // , false
+				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					// Can't Go to a subentry, so we have to go to its main entry.
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				IReversalIndexEntry rie = null;
 				string clerkId = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "clerk");
 				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
-				RecordClerk clerk = (RecordClerk)m_mediator.PropertyTable.GetValue(propertyName);
+				RecordClerk clerk = m_propertyTable.GetValue<RecordClerk>(propertyName);
 				if (clerk != null)
 					rie = clerk.CurrentObject as IReversalIndexEntry;
 				return rie;
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			display.List.Clear();
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
 			// List all existing reversal indexes.  (LT-4479, as amended)
 			//IReversalIndex riOwner = this.IReversalIndex;
 			foreach (IReversalIndex ri in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (var dlg = new CreateReversalIndexDlg())
 			{
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				var cache = m_propertyTable.GetValue<FdoCache>("cache");
 				dlg.Init(cache, allowCancel);
 				// Don't bother if all languages already have a reversal index!
 				if (dlg.PossibilityCount > 0)
@@ -383,8 +383,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
-				string toolFor = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string toolFor = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
 
 				return areaChoice == "lexicon" && toolFor.StartsWith("reversalTool");
 			}
@@ -399,17 +399,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public abstract class ReversalClerk : RecordClerk
 	{
-		public override void Init(Mediator mediator, XmlNode viewConfiguration)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
 		{
 			CheckDisposed();
 
-			base.Init(mediator, viewConfiguration);
+			base.Init(mediator, propertyTable, viewConfiguration);
 			ChangeOwningObjectIfPossible();
 		}
 
 		private void ChangeOwningObjectIfPossible()
 		{
-			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 			try
 			{
 				ChangeOwningObject(newGuid);
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				// We need to find another reversal index. Any will do.
 				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
-				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString());
+				m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true);
 			}
 
 			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
-			m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
+			m_propertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true);
 
 			ICmObject newOwningObj = NewOwningObject(ri);
 			if (newOwningObj != OwningObject)
@@ -444,8 +444,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 				OnChangeSorter(); // Update the column headers with sort arrows
 				OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-				m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
-				m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+				m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
+				m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 				m_mediator.SendMessage("ClerkOwningObjChanged", this);
 			}
 		}
@@ -500,10 +500,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// The stored sorter files keep messing us up here, so we need to do a bit of post-deserialization processing.
 		/// </summary>
 		/// <returns>true if we restored something different from what was already there.</returns>
-		protected override bool TryRestoreSorter(Mediator mediator, XmlNode clerkConfiguration, FdoCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
 		{
 			var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache }; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
-			if(base.TryRestoreSorter(mediator, clerkConfiguration, cache) && Sorter is GenRecordSorter)
+			if (base.TryRestoreSorter(clerkConfiguration, cache) && Sorter is GenRecordSorter)
 			{
 				var sorter = (GenRecordSorter)Sorter;
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XmlNode ?? BrowseViewFormCol;
 					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(Cache, colSpec, fakevc,
-																						(IApp)m_mediator.PropertyTable.GetValue("App")),
+																						m_propertyTable.GetValue<IApp>("App")),
 															stringFinderComparer.SubComparer);
 				}
 				return true;
@@ -519,7 +519,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if(Sorter is GenRecordSorter) // If we already have a GenRecordSorter, it's probably an existing, valid one.
 				return false;
 			// Try to create a sorter based on the current Reversal Index's WritingSystem
-			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 			if(newGuid.Equals(Guid.Empty))
 				return false;
 			var ri = cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return false;
 			var writingSystem = (IWritingSystem)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 			m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
-																								(IApp)m_mediator.PropertyTable.GetValue("App")),
+																								m_propertyTable.GetValue<IApp>("App")),
 																		new WritingSystemComparer(writingSystem)));
 			return true;
 		}
@@ -539,10 +539,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			var window = m_mediator.PropertyTable.GetValue("window");
-			if (window is FwXWindow)
+			var window = m_propertyTable.GetValue<FwXWindow>("window");
+			if (window != null)
 			{
-				(window as FwXWindow).ClearInvalidatedStoredData();
+				window.ClearInvalidatedStoredData();
 			}
 			switch(name)
 			{
@@ -558,7 +558,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					base.OnPropertyChanged(name);
 					break;
 				case "ActiveClerk":
-					RecordClerk activeClerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk");
+					RecordClerk activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 					if (activeClerk == this)
 						ChangeOwningObjectIfPossible();
 					else
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (newGuid != Guid.Empty)
 			{
 				ChangeOwningObject(newGuid);
-				var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+				var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 				if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
 					SetReversalIndexGuid(newGuid);
 			}
@@ -679,7 +679,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			var oldGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			var oldGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 			if (oldGuid.Equals(Guid.Empty))
 				return;
 
@@ -693,13 +693,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			var mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			{
-				using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+				using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var ui = new CmObjectUi(ri);
-					dlg.SetDlgInfo(ui, Cache, m_mediator);
+					dlg.SetDlgInfo(ui, Cache, m_mediator, m_propertyTable);
 					dlg.TopMessage = LexEdStrings.ksDeletingThisRevIndex;
 					dlg.BottomQuestion = LexEdStrings.ksReallyWantToDeleteRevIndex;
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
@@ -761,8 +761,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Cache.ServiceLocator.GetObject(ReversalIndexGuid) is IReversalIndex)
 			{
-				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString());
-				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+				m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true);
+				m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 			}
 		}
 

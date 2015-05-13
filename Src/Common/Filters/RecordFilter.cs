@@ -39,11 +39,9 @@
 // is set, or there was an original filter defining the list, we further combine all the filters
 // using an AndFilter.
 // </remarks>
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -119,8 +117,7 @@ namespace SIL.FieldWorks.Filters
 	/// Summary description for RecordFilter.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class RecordFilter : IPersistAsXml, IStoresFdoCache, IStoresDataAccess,
-		IAcceptsStringTable
+	public abstract class RecordFilter : IPersistAsXml, IStoresFdoCache, IStoresDataAccess
 	{
 
 		/// <summary></summary>
@@ -158,18 +155,6 @@ namespace SIL.FieldWorks.Filters
 			var sfc = obj as IStoresDataAccess;
 			if (sfc != null)
 				sfc.DataAccess = sda;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set the string table on the specified object if it wants it.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal void SetStringTable(object obj, StringTable table)
-		{
-			var target = obj as IAcceptsStringTable;
-			if (target != null)
-				target.StringTable = table;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -364,20 +349,6 @@ namespace SIL.FieldWorks.Filters
 		{
 			set { }
 		}
-		#region IAcceptsStringTable Members
-
-		/// <summary>
-		/// Subclasses override if they need one.
-		/// </summary>
-		public virtual StringTable StringTable
-		{
-			set
-			{
-				// default does nothing
-			}
-		}
-
-		#endregion
 	}
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -1394,7 +1365,7 @@ namespace SIL.FieldWorks.Filters
 	/// <summary>
 	/// Matches if the embedded matcher fails.
 	/// </summary>
-	public class InvertMatcher : BaseMatcher, IAcceptsStringTable, IStoresFdoCache, IStoresDataAccess
+	public class InvertMatcher : BaseMatcher, IStoresFdoCache, IStoresDataAccess
 	{
 		IMatcher m_matcher;
 
@@ -1472,19 +1443,6 @@ namespace SIL.FieldWorks.Filters
 			base.InitXml (node);
 			m_matcher = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
 		}
-
-		#region IAcceptsStringTable Members
-
-		public StringTable StringTable
-		{
-			set
-			{
-				if (m_matcher is IAcceptsStringTable)
-					(m_matcher as IAcceptsStringTable).StringTable = value;
-			}
-		}
-
-		#endregion
 
 		#region IStoresFdoCache Members
 
@@ -2532,19 +2490,6 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		/// <summary>
-		/// Pass the string finder to children that may want it.
-		/// </summary>
-		public override StringTable StringTable
-		{
-			set
-			{
-				base.StringTable = value;
-				SetStringTable(m_finder, value);
-				SetStringTable(m_matcher, value);
-			}
-		}
-
-		/// <summary>
 		/// These filters are always created by user action in the filter bar, and thus visible to the user.
 		/// </summary>
 		public override bool IsUserVisible
@@ -2703,22 +2648,6 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set the string table.
-		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------------
-		public override StringTable  StringTable
-		{
-			set
-			{
-				base.StringTable = value;
-				foreach (object obj in m_filters)
-					SetStringTable(obj, value);
-			}
-		}
-
 		/// <summary>
 		///  An AndFilter is user-visible if ANY of its compoents is.
 		/// </summary>
@@ -2812,14 +2741,6 @@ namespace SIL.FieldWorks.Filters
 		{
 			m_name = FiltersStrings.ksUncheckAll;
 		}
-	}
-
-	/// <summary>
-	/// Interface implemented by finders which require a string table.
-	/// </summary>
-	public interface IAcceptsStringTable
-	{
-		StringTable StringTable { set; }
 	}
 
 	/// <summary>

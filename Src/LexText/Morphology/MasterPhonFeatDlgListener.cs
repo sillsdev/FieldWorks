@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (MasterPhonologicalFeatureListDlg dlg = new MasterPhonologicalFeatureListDlg(className))
 			{
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
 				string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
 				if (cache.LanguageProject.PhFeatureSystemOA == null)
@@ -101,8 +101,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							   cache.ServiceLocator.GetInstance<IFsFeatureSystemFactory>().Create();
 					   });
 				}
-				dlg.SetDlginfo(cache.LangProject.PhFeatureSystemOA, m_mediator, true, "masterPhonFeatListDlg", sXmlFile);
-				switch (dlg.ShowDialog((Form)m_mediator.PropertyTable.GetValue("window")))
+				dlg.SetDlginfo(cache.LangProject.PhFeatureSystemOA, m_mediator, m_propertyTable, true, "masterPhonFeatListDlg", sXmlFile);
+				switch (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

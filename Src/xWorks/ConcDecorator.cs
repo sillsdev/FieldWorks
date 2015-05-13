@@ -527,10 +527,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public Mediator Mediator { get; private set; }
 
-		public void SetMediator(Mediator mediator)
+		public PropertyTable PropTable { get; private set; }
+
+		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
 		{
 			Mediator = mediator;
-			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, m_services);
+			PropTable = propertyTable;
+			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, PropTable, m_services);
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 

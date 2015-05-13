@@ -11,7 +11,6 @@
 // ------------------- -------------------------------------------------------------------------
 using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -155,10 +154,10 @@ namespace SIL.FieldWorks.XWorks
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
 			if (Clerk.IsControllingTheRecordTreeBar
-				&& string.IsNullOrEmpty(m_mediator.PropertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", null)) )
+				&& string.IsNullOrEmpty(m_propertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", null)))
 			{
 				//add our current state to the history system
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl","");
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
@@ -190,12 +189,14 @@ namespace SIL.FieldWorks.XWorks
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(Mediator mediator, XmlNode configurationParameters)
+		protected void InitBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 
 			ReadParameters();
@@ -322,11 +323,11 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						m_mediator.PropertyTable.SetProperty("ShowRecordList", false);
+						m_propertyTable.SetProperty("ShowRecordList", false, true);
 						break;
 
 					case TreebarAvailability.Required:
-						m_mediator.PropertyTable.SetProperty("ShowRecordList", true);
+						m_propertyTable.SetProperty("ShowRecordList", true, true);
 						break;
 
 					case TreebarAvailability.Optional:

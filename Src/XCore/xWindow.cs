@@ -8,14 +8,12 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +22,6 @@ using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.Utils;
-
 
 namespace XCore
 {
@@ -94,6 +91,7 @@ namespace XCore
 
 		protected bool m_persistWindowSize = true;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected Set<IUIAdapter> m_adapters = new Set<IUIAdapter>();
 		protected ChoiceGroupCollection m_menusChoiceGroupCollection;
 		protected ChoiceGroupCollection m_sidebarChoiceGroupCollection;
@@ -206,6 +204,20 @@ namespace XCore
 			}
 		}
 
+		#region IPropertyTableProvider Members
+
+		public PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+
+				return m_propertyTable;
+			}
+		}
+
+		#endregion
+
 		public IUIAdapter MenuAdapter
 		{
 			get
@@ -213,18 +225,6 @@ namespace XCore
 				CheckDisposed();
 
 				return m_menuBarAdapter;
-			}
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public PropertyTable PropertyTable
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_mediator.PropertyTable;
 			}
 		}
 
@@ -436,14 +436,14 @@ namespace XCore
 			AccessibleName = GetType().Name;
 			BootstrapPart1();
 
-			m_smallImages.AddList(this.builtInImages,new string[]{"default"}); //a question mark for when icons are missing
-			m_largeImages.AddList(this.builtInImages, new string[] { "default" }); //a question mark for when icons are missing
+			m_smallImages.AddList(builtInImages,new[]{"default"}); //a question mark for when icons are missing
+			m_largeImages.AddList(builtInImages, new[] { "default" }); //a question mark for when icons are missing
 		}
 
 		private void BootstrapPart1()
 		{
-
 			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
 			// No broadcasting until it has our handle (see OnHandleCreated)
 			m_mediator.SpecificToOneMainWindow = true;
 
@@ -484,10 +484,10 @@ namespace XCore
 			m_smallImages.AddList(configurationNode.SelectNodes("imageList[@size=null]"));
 
 			//make image list available from the property table
-			m_mediator.PropertyTable.SetProperty("smallImages", m_smallImages);
-			m_mediator.PropertyTable.SetPropertyPersistence("smallImages", false);
-			m_mediator.PropertyTable.SetProperty("largeImages", m_largeImages);
-			m_mediator.PropertyTable.SetPropertyPersistence("largeImages", false);
+			PropTable.SetProperty("smallImages", m_smallImages, true);
+			PropTable.SetPropertyPersistence("smallImages", false);
+			PropTable.SetProperty("largeImages", m_largeImages, true);
+			PropTable.SetPropertyPersistence("largeImages", false);
 		}
 
 		//the <defaultProperties> section of the configuration can be used to make defaults
@@ -515,7 +515,7 @@ namespace XCore
 				 * initial content control element, then the sidebar display (which *is* affected by this code)
 				 * may show that one tool is selected but actually another one is. Something of a TODO...
 				 */
-				if (listId != null && listId != "")
+				if (!string.IsNullOrEmpty(listId))
 				{
 					string listItemValue = XmlUtils.GetManditoryAttributeValue(node, "listItemValue");
 					XmlNode listNode = configurationNode.SelectSingleNode("//lists/list[@id='" + listId + "']");
@@ -527,85 +527,53 @@ namespace XCore
 						throw new ConfigurationException("list item not found", node);
 
 					XmlNode parametersNode = itemNode.SelectSingleNode("parameters");//OK if this is null
-					ChoiceGroup.ChooseSinglePropertyAtomicValue(m_mediator, listItemValue, parametersNode, name,
+					ChoiceGroup.ChooseSinglePropertyAtomicValue(m_mediator, m_propertyTable, listItemValue, parametersNode, name,
 						settingsGroup);
 				}
 				else if(node.Attributes["bool"] != null)
 				{
-					m_mediator.PropertyTable.SetDefault(
+					m_propertyTable.SetDefault(
 						name,
 						XmlUtils.GetBooleanAttributeValue(node, "bool"),
-						true,
-						settingsGroup);
+						settingsGroup,
+						true);
 				}
 				else if(node.Attributes["intValue"] != null)
 				{
-					m_mediator.PropertyTable.SetDefault(
+					m_propertyTable.SetDefault(
 						name,
 						XmlUtils.GetMandatoryIntegerAttributeValue(node, "intValue"),
-						true,
-						settingsGroup);
+						settingsGroup,
+						true);
 				}
 					//this one allows us to just create an object on-the-fly and stick it directly in a property.
 				else if(node.Attributes["assemblyPath"] != null)
 				{
-					m_mediator.PropertyTable.SetDefault(
+					m_propertyTable.SetDefault(
 						name,
-						SIL.Utils.DynamicLoader.CreateObject(node,new object[]{m_mediator}),
-						true,
-						settingsGroup);
-					m_mediator.PropertyTable.SetPropertyPersistence(name, false, settingsGroup);
+						DynamicLoader.CreateObject(node, m_mediator),
+						settingsGroup,
+						true);
+					m_propertyTable.SetPropertyPersistence(name, false, settingsGroup);
 				}
 				else
 				{
 					// won't be null if a command line param was used to push in a value
-					if(m_mediator.PropertyTable.GetValue(name) == null)
+					if (!m_propertyTable.PropertyExists(name))
 					{
-						m_mediator.PropertyTable.SetDefault(
+						m_propertyTable.SetDefault(
 							name,
 							XmlUtils.GetManditoryAttributeValue(node, "value"),
-							true,
-							settingsGroup);
+							settingsGroup,
+							true);
 					}
 				}
 
 				if(node.Attributes["persist"] != null)
 				{
-					m_mediator.PropertyTable.SetPropertyPersistence(name, XmlUtils.GetBooleanAttributeValue(node, "persist"), settingsGroup);
+					m_propertyTable.SetPropertyPersistence(name, XmlUtils.GetBooleanAttributeValue(node, "persist"), settingsGroup);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Create our string localization object, based on the directory containing the configuration file
-		/// for this application.
-		/// </summary>
-		/// <param name="configurationPath"></param>
-		protected void LoadStringTableIfPresent(string configurationPath)
-		{
-			if (configurationPath == null)
-				return;
-			string directoryContainingConfiguration	= System.IO.Directory.GetParent(configurationPath).ToString();
-			SIL.Utils.StringTable table = null;
-			try
-			{
-				table = new SIL.Utils.StringTable(directoryContainingConfiguration);
-			}
-			catch (FileNotFoundException)
-			{
-				//nb: could be null if a suitable file was not found. We don't want to
-				//absolutely required the file at this point, otherwise having such a file would become a requirement of using XCore.
-				//Instead, leave it to the components being loaded in the future to complain if they depend on
-				//such a file being there.
-
-				//An alternative would be to let the configuration file itself
-				//tell us at least whether it must be accompanied by at least in English strings file.
-				//But in the end, I don't see any practical way, other than running into a missing string,
-				// to know that all of the required strings are available.
-				table = null;
-			}
-			//table may be null at this point.
-			Mediator.StringTbl = table;
 		}
 
 		/// <summary>
@@ -623,7 +591,7 @@ namespace XCore
 			{
 				Object listener = DynamicLoader.CreateObject(node);
 				// Note: It is up to the colleague to add itself to the mediator's list of colleagues.
-				((IxCoreColleague)listener).Init(m_mediator, node.SelectSingleNode("parameters"));
+				((IxCoreColleague)listener).Init(m_mediator, m_propertyTable, node.SelectSingleNode("parameters"));
 			}
 		}
 
@@ -646,7 +614,7 @@ namespace XCore
 			catch (Exception error)
 			{
 				ErrorReporter.ReportException(error, ApplicationRegistryKey,
-					m_mediator.FeedbackInfoProvider.SupportEmailAddress);
+					m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 			}
 			LoadUIFromXmlDocument(configuration, null);
 		}
@@ -721,26 +689,24 @@ namespace XCore
 			{
 				// Create the crash detector file for next time.
 				// Make sure the folder exists first.
-				System.IO.Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
-				using (System.IO.StreamWriter writer = System.IO.File.CreateText(CrashOnStartupDetectorPathName))
+				Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
+				using (StreamWriter writer = File.CreateText(CrashOnStartupDetectorPathName))
 					writer.Close();
 			}
 
-			ErrorReporter.OkToInteractWithUser = !m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false);
 			m_windowConfigurationNode = configuration.SelectSingleNode("window");
 
-			PropertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode);
-			PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			m_propertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
+			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 
 			SetApplicationName();
 
 			//nb:some things might be sensitive to when this actually happens
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
-			m_mediator.PropertyTable.SetProperty("window", this);
-			m_mediator.PropertyTable.SetPropertyPersistence("window", false);
-
-			LoadStringTableIfPresent(configurationPath);
+			m_propertyTable.SetProperty("window", this, true);
+			m_propertyTable.SetPropertyPersistence("window", false);
+			var st = StringTable.Table; // Makes ure it is loaded.
 			LoadResources(m_windowConfigurationNode.SelectSingleNode("resources"));
 
 			//make the command set
@@ -760,8 +726,8 @@ namespace XCore
 			m_mediator.AddColleague(this);
 			Assembly adaptorAssembly = GetAdapterAssembly();
 
-			m_mediator.PropertyTable.SetProperty("uiAdapter", adaptorAssembly);
-			m_mediator.PropertyTable.SetPropertyPersistence("uiAdapter", false);
+			m_propertyTable.SetProperty("uiAdapter", adaptorAssembly, true);
+			m_propertyTable.SetPropertyPersistence("uiAdapter", false);
 
 			//add the menubar
 			Control menubar;
@@ -775,13 +741,13 @@ namespace XCore
 
 			if (menubar != null && menubar.Parent != null)
 			{
-				System.Windows.Forms.Control parent = menubar.Parent;
+				Control parent = menubar.Parent;
 				if (parent.AccessibleName == null)
 					parent.AccessibleName = "ParentOf" + menubar.AccessibleName;
 			}
 
 			//add the toolbar
-			System.Windows.Forms.Control rebar;
+			Control rebar;
 			m_toolbarsChoiceGroupCollection = MakeMajorUIPortion(
 				adaptorAssembly,
 				m_windowConfigurationNode,
@@ -813,9 +779,9 @@ namespace XCore
 			m_mainSplitContainer.FirstControl = m_sidebar;
 			m_mainSplitContainer.Tag = "SidebarWidthGlobal";
 			m_mainSplitContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
-			m_mainSplitContainer.Panel1Collapsed = !Mediator.PropertyTable.GetBoolProperty("ShowSidebar", false); // Andy Black wants to collapse it for one of his XCore apps.
+			m_mainSplitContainer.Panel1Collapsed = !m_propertyTable.GetBoolProperty("ShowSidebar", false); // Andy Black wants to collapse it for one of his XCore apps.
 			m_mainSplitContainer.Panel2Collapsed = false; // Never collapse the main content control, plus optional record list.
-			int sd = Mediator.PropertyTable.GetIntProperty("SidebarWidthGlobal", 140);
+			int sd = m_propertyTable.GetIntProperty("SidebarWidthGlobal", 140);
 			if (!m_mainSplitContainer.Panel1Collapsed)
 				SetSplitContainerDistance(m_mainSplitContainer, sd);
 			if (m_sideBarPlaceholderPanel != null)
@@ -823,22 +789,22 @@ namespace XCore
 				m_sideBarPlaceholderPanel.Dispose();
 				m_sideBarPlaceholderPanel = null;
 			}
-			m_mainSplitContainer.FirstLabel = (string)Mediator.PropertyTable.GetValue("SidebarLabel");
-			m_mainSplitContainer.SecondLabel = (string)Mediator.PropertyTable.GetValue("AllButSidebarLabel");
+			m_mainSplitContainer.FirstLabel = m_propertyTable.GetValue<string>("SidebarLabel");
+			m_mainSplitContainer.SecondLabel = m_propertyTable.GetValue<string>("AllButSidebarLabel");
 
 			// Maybe show the record list.
 			m_recordBar.Dock = DockStyle.Fill;
 			m_recordBar.TabStop = true;
 			m_recordBar.TabIndex = 1;
-			m_secondarySplitContainer.Panel1Collapsed = !Mediator.PropertyTable.GetBoolProperty("ShowRecordList", false);
+			m_secondarySplitContainer.Panel1Collapsed = !m_propertyTable.GetBoolProperty("ShowRecordList", false);
 			// Always show the main content control.
 			m_secondarySplitContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
 			m_secondarySplitContainer.Panel2Collapsed = false;
 			m_secondarySplitContainer.Tag = "RecordListWidthGlobal";
-			sd = Mediator.PropertyTable.GetIntProperty("RecordListWidthGlobal", 200);
+			sd = m_propertyTable.GetIntProperty("RecordListWidthGlobal", 200);
 			SetSplitContainerDistance(m_secondarySplitContainer, sd);
-			m_secondarySplitContainer.FirstLabel = (string)Mediator.PropertyTable.GetValue("RecordListLabel");
-			m_secondarySplitContainer.SecondLabel = (string)Mediator.PropertyTable.GetValue("MainContentLabel");
+			m_secondarySplitContainer.FirstLabel = m_propertyTable.GetValue<string>("RecordListLabel");
+			m_secondarySplitContainer.SecondLabel = m_propertyTable.GetValue<string>("MainContentLabel");
 			// End of main layout.
 
 			CreateStatusBar(m_windowConfigurationNode);
@@ -892,7 +858,7 @@ namespace XCore
 			var codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
 			string baseDir = Path.GetDirectoryName(codeBasePath);
 
-			string preferredLibrary = (string)m_mediator.PropertyTable.GetValue(
+			string preferredLibrary = m_propertyTable.GetValue(
 				"PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
 
 			try
@@ -911,9 +877,9 @@ namespace XCore
 		private void SetApplicationName()
 		{
 			string applicationName = XmlUtils.GetAttributeValue(m_windowConfigurationNode, "label", "application name?");
-			ErrorReporter.AddProperty("Application",applicationName);
-			m_mediator.PropertyTable.SetProperty("applicationName", applicationName);
-			m_mediator.PropertyTable.SetPropertyPersistence("applicationName", false);
+			ErrorReporter.AddProperty("Application", applicationName);
+			m_propertyTable.SetProperty("applicationName", applicationName, true);
+			m_propertyTable.SetPropertyPersistence("applicationName", false);
 			UpdateCaptionBar();
 		}
 
@@ -954,7 +920,7 @@ namespace XCore
 			CheckDisposed();
 
 			XmlNode node = GetContextMenuNodeFromMenuId(menuId);
-			return new ChoiceGroup(m_mediator, m_menuBarAdapter, node, null);
+			return new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, node, null);
 		}
 
 		/// <summary>
@@ -1020,7 +986,7 @@ namespace XCore
 				XmlNode node = GetContextMenuNodeFromMenuId(m);
 				nodes.Add(node);
 			}
-			ChoiceGroup group = new ChoiceGroup(m_mediator, m_menuBarAdapter, nodes, null);
+			ChoiceGroup group = new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null);
 			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer);
 		}
 
@@ -1066,15 +1032,17 @@ namespace XCore
 					StatusBarPanel panel;
 					string id = XmlUtils.GetManditoryAttributeValue(part, "id");
 
-					if(part.Attributes.GetNamedItem("assemblyPath") != null)
+					if (part.Attributes.GetNamedItem("assemblyPath") != null)
 					{
 						//load a custom status bar panel control (like the progress bar)
-						panel = (StatusBarPanel)DynamicLoader.CreateObject(part, new object[]{bar});
+						panel = (StatusBarPanel) DynamicLoader.CreateObject(part, new object[] {bar});
 					}
 					else
+					{
 						panel = new StatusBarPanel();
-					m_mediator.PropertyTable.SetProperty(id, panel);
-					m_mediator.PropertyTable.SetPropertyPersistence(id, false);
+					}
+					m_propertyTable.SetProperty(id, panel, true);
+					m_propertyTable.SetPropertyPersistence(id, false);
 
 					string val = XmlUtils.GetOptionalAttributeValue(part, "width");
 					if (val != null)
@@ -1127,20 +1095,6 @@ namespace XCore
 				File.Delete(CrashOnStartupDetectorPathName);
 				wasCrashDuringPreviousStartup = false;
 			}
-			//when we are doing an automated test, we don't want to just read in whatever the human
-			//user had in their settings.
-			if (m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false))
-			{
-				// Review JohnH(JohnT): this sounds nice, but the old RestoreFromFile ignored the ID,
-				// and the new version doesn't even pass it.
-				//if the test code has set this property, then that means that we are actually testing the
-				//settings persistence functionality. So, this is the second run of the program
-				//where we are supposed to pick up the settings stored in some previous run.
-				if (m_mediator.PropertyTable.GetBoolProperty("TestRestoringFromTestSettings", false))
-					id += "Test";
-				else //otherwise, simulate a fresh start with no settings file
-					id = "YoureNotGoingtoFindThis";
-			}
 
 			bool useExtantPrefs = Control.ModifierKeys != Keys.Shift; // Holding shift key means don't use extant preference file, no matter what.
 			if (useExtantPrefs)
@@ -1180,30 +1134,30 @@ namespace XCore
 				DiscardProperties();
 			}
 
-			object state = m_mediator.PropertyTable.GetValue("windowState");
-			if (state != null
-				//don't bother restoring the program to the minimized state.
-				&& ((System.Windows.Forms.FormWindowState)state)!= System.Windows.Forms.FormWindowState.Minimized)
+			if (m_propertyTable.PropertyExists("windowState"))
 			{
-				WindowState = (System.Windows.Forms.FormWindowState)state;
+				var state = m_propertyTable.GetValue<FormWindowState>("windowState");
+				if (state != FormWindowState.Minimized)
+				{
+					WindowState = state;
+				}
 			}
 
-			object location = m_mediator.PropertyTable.GetValue("windowLocation");
-			if (location != null)
+			if (m_propertyTable.PropertyExists("windowLocation"))
 			{
-				Location = (System.Drawing.Point)location;
+				Location = m_propertyTable.GetValue<Point>("windowLocation");
 				//the location restoration only works if the window startposition is set to "manual"
 				//because the window is not visible yet, and the location will be changed
 				//when it is Show()n.
-				StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+				StartPosition = FormStartPosition.Manual;
 			}
-			object size = m_mediator.PropertyTable.GetValue("windowSize");
-			if (size != null)
+
+			if (m_propertyTable.PropertyExists("windowSize"))
 			{
 				m_persistWindowSize = false;
 				try
 				{
-					Size = (System.Drawing.Size)size;
+					Size = m_propertyTable.GetValue<Size>("windowSize");
 				}
 				finally
 				{
@@ -1217,7 +1171,7 @@ namespace XCore
 		/// </summary>
 		protected virtual void RestoreProperties()
 		{
-			m_mediator.PropertyTable.RestoreFromFile(m_mediator.PropertyTable.GlobalSettingsId);
+			m_propertyTable.RestoreFromFile(m_propertyTable.GlobalSettingsId);
 		}
 
 		/// <summary>
@@ -1250,12 +1204,12 @@ namespace XCore
 			catch (Exception e)
 			{
 				ErrorReporter.ReportException(e, ApplicationRegistryKey,
-					m_mediator.FeedbackInfoProvider.SupportEmailAddress);
+					m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 			}
 
 			Trace.Assert(adapter != null, "XCore could not create the adapter for " + adapterClass);
 
-			control = adapter.Init(this, m_smallImages, m_largeImages, m_mediator);
+			control = adapter.Init(this, m_smallImages, m_largeImages, m_mediator, m_propertyTable);
 			if (control != null)
 			{
 				control.Tag = adapter;
@@ -1287,7 +1241,7 @@ namespace XCore
 			XmlNode configurationNode = m_windowConfigurationNode.SelectSingleNode(elementName);
 			if (configurationNode== null)
 				return null; //the configuration did not specify anything for this user interface thatelement
-			ChoiceGroupCollection groupset = new ChoiceGroupCollection (m_mediator, adapter,configurationNode);
+			ChoiceGroupCollection groupset = new ChoiceGroupCollection(m_mediator, m_propertyTable, adapter, configurationNode);
 			groupset.Init();
 			return groupset;
 		}
@@ -1461,11 +1415,18 @@ namespace XCore
 			if (m_mainContentPlaceholderPanel != null && m_mainContentPlaceholderPanel.Parent == null)
 				m_mainContentPlaceholderPanel.Dispose();
 
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+			}
+
 			// Get rid of the Mediator last,
 			// so anyone else who wants to access it during shutdown can.
 			// Review RandyR: Who would want to do that?
 			if (m_mediator != null)
+			{
 				m_mediator.Dispose();
+			}
 		}
 
 		#endregion
@@ -1746,7 +1707,7 @@ namespace XCore
 		/// </summary>
 		public virtual void SaveSettings()
 		{
-			m_mediator.PropertyTable.Save("", new string[0]);
+			m_propertyTable.Save("", new string[0]);
 		}
 
 		/// <summary>
@@ -1815,17 +1776,24 @@ namespace XCore
 			// Finish destroying the old mediator, and create a new one.
 			if (m_mediator != null)
 			{
-				// First, we need to get rid of any existing DotNetBarManager object!  (See LT-6481)
-				if (m_mediator.PropertyTable.PropertyExists("DotNetBarManager"))
+				// First, we need to get rid of any existing ToolStripManager object!  (See LT-6481)
+				if (m_propertyTable.PropertyExists("ToolStripManager"))
 				{
-					m_mediator.PropertyTable.SetPropertyDispose("DotNetBarManager", true);
+					m_propertyTable.SetPropertyDispose("ToolStripManager", true);
 				}
 				m_mediator.Dispose();
 			}
-			m_mediator = new Mediator();
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+			}
 			// No broadcasting until it has our handle (see OnHandleCreated)
-			m_mediator.SpecificToOneMainWindow = true;
-			this.ResumeLayout();
+			m_mediator = new Mediator
+			{
+				SpecificToOneMainWindow = true
+			};
+			m_propertyTable = new PropertyTable(m_mediator);
+			ResumeLayout();
 		}
 
 		/// <summary>
@@ -1880,12 +1848,11 @@ namespace XCore
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			CheckDisposed();
-
-			throw new ArgumentException("The Constructor creates the Mediator for this object.");
+			throw new ArgumentException("The Constructor creates the Mediator and PropertyTable for this object.");
 		}
 
 		/// <summary>
@@ -1937,7 +1904,7 @@ namespace XCore
 				case "currentContentControl":
 					using(new WaitCursor(this))
 					{
-						XmlNode controlNode = (XmlNode)this.Mediator.PropertyTable.GetValue("currentContentControlParameters");
+						XmlNode controlNode = m_propertyTable.GetValue<XmlNode>("currentContentControlParameters");
 						if (controlNode != null)
 						{
 							XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
@@ -1973,7 +1940,7 @@ namespace XCore
 						if (m_statusPanels.ContainsKey(panelName))
 						{
 							StatusBarPanel panel = m_statusPanels[panelName];
-							panel.Text = m_mediator.PropertyTable.GetStringProperty(name,"");
+							panel.Text = m_propertyTable.GetStringProperty(name, "");
 						}
 					}
 					break;
@@ -2038,7 +2005,7 @@ namespace XCore
 			if (suspendAndResumeLayout)
 				this.SuspendLayout();
 
-			if (Mediator.PropertyTable.GetBoolProperty("ShowSidebar", true))
+			if (m_propertyTable.GetBoolProperty("ShowSidebar", true))
 			{
 				// Show side bar.
 				if (m_mainSplitContainer.Panel1Collapsed)
@@ -2051,7 +2018,7 @@ namespace XCore
 					m_mainSplitContainer.Panel1Collapsed = true;
 			}
 
-			if (Mediator.PropertyTable.GetBoolProperty("ShowRecordList", false))
+			if (m_propertyTable.GetBoolProperty("ShowRecordList", false))
 			{
 				// Show Record List.
 				if (m_secondarySplitContainer.Panel1Collapsed)
@@ -2070,14 +2037,16 @@ namespace XCore
 
 		protected void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)
 		{
-			Mediator.PropertyTable.SetProperty("SelectedTreeBarNode", e.Node);
-			Mediator.PropertyTable.SetPropertyPersistence("SelectedTreeBarNode", false);
+			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, true);
+			m_propertyTable.SetPropertyPersistence("SelectedTreeBarNode", false);
 		}
 
 		protected void OnListBarSelect( object sender, EventArgs e)
 		{
-			Mediator.PropertyTable.SetProperty("SelectedListBarNode", m_recordBar.ListView.SelectedItems.Count==0 ? null :m_recordBar.ListView.SelectedItems[0]);
-			Mediator.PropertyTable.SetPropertyPersistence("SelectedListBarNode", false);
+			m_propertyTable.SetProperty("SelectedListBarNode",
+				m_recordBar.ListView.SelectedItems.Count == 0 ? null : m_recordBar.ListView.SelectedItems[0],
+				true);
+			m_propertyTable.SetPropertyPersistence("SelectedListBarNode", false);
 		}
 
 		public void ClearRecordBarList()
@@ -2085,11 +2054,11 @@ namespace XCore
 			CheckDisposed();
 
 			//we really do want both of these handlers disconnected while clearing
-			m_recordBar.TreeView.AfterSelect -= new TreeViewEventHandler(OnTreeBarAfterSelect);
-			m_recordBar.ListView.SelectedIndexChanged -=new EventHandler(OnListBarSelect);
+			m_recordBar.TreeView.AfterSelect -= OnTreeBarAfterSelect;
+			m_recordBar.ListView.SelectedIndexChanged -=OnListBarSelect;
 			m_recordBar.Clear();
-			m_recordBar.ListView.SelectedIndexChanged += new  EventHandler(OnListBarSelect);
-			m_recordBar.TreeView.AfterSelect += new TreeViewEventHandler(OnTreeBarAfterSelect);
+			m_recordBar.ListView.SelectedIndexChanged += OnListBarSelect;
+			m_recordBar.TreeView.AfterSelect += OnTreeBarAfterSelect;
 		}
 
 		#endregion
@@ -2108,15 +2077,15 @@ namespace XCore
 				return;
 			}
 
-
 			if (m_mainContentControl != null)
 			{
 				// First, see if the existing content object is ready to go away.
 				if (!MainContentControlAsIxCoreContentControl.PrepareToGoAway())
 					return;
 
-				PropertyTable.SetProperty("currentContentControlObject", null, false);
-				PropertyTable.SetPropertyPersistence("currentContentControlObject", false);
+				// No broadcast even if it did change.
+				m_propertyTable.SetProperty("currentContentControlObject", null, false);
+				m_propertyTable.SetPropertyPersistence("currentContentControlObject", false);
 
 				m_mediator.RemoveColleague(MainContentControlAsIxCoreColleague);
 				foreach (IxCoreColleague icc in MainContentControlAsIxCoreColleague.GetMessageTargets())
@@ -2127,7 +2096,8 @@ namespace XCore
 				//m_secondarySplitContainer.SecondControl = m_mainContentPlaceholderPanel;
 				// Hide the first pane for sure so that MultiPane's internal splitter will be set
 				// correctly.  See LT-6515.
-				m_mediator.PropertyTable.SetProperty("ShowRecordList", false, false);
+				// No broadcast even if it did change.
+				m_propertyTable.SetProperty("ShowRecordList", false, false);
 				m_secondarySplitContainer.Panel1Collapsed = true;
 				m_mainContentControl.Dispose(); // before we create the new one, it inactivates the Clerk, which the new one may want active.
 				m_mainContentControl = null;
@@ -2151,7 +2121,7 @@ namespace XCore
 					}
 					mainControl.SuspendLayout();
 					m_mainContentControl = mainControl;
-					m_mainContentControl.Dock = System.Windows.Forms.DockStyle.Fill;
+					m_mainContentControl.Dock = DockStyle.Fill;
 					m_mainContentControl.AccessibleDescription = "XXXXXXXXXXXX";
 					m_mainContentControl.AccessibleName = contentClass;
 					m_mainContentControl.TabStop = true;
@@ -2160,7 +2130,7 @@ namespace XCore
 					if (contentClassNode != null)
 						parameters = contentClassNode.SelectSingleNode("parameters");
 					m_secondarySplitContainer.SetSecondCollapseZone(parameters);
-					MainContentControlAsIxCoreColleague.Init(m_mediator, parameters);
+					MainContentControlAsIxCoreColleague.Init(m_mediator, m_propertyTable, parameters);
 					// We don't want it or any part of it drawn until we're done laying out.
 					// Also, layout tends not to actually happen until we make it visible, which further helps avoid duplication,
 					// and makes sure the user doesn't see any intermediate state.
@@ -2172,9 +2142,9 @@ namespace XCore
 					//this was added because the user may switch to a control through some UI vector that does not
 					//first set the appropriate area. Doing this will lead to the appropriate area button being highlighted, and also
 					//help other things which depend on the accuracy of this "areaChoice" property.
-					PropertyTable.SetProperty("currentContentControlObject", m_mainContentControl);
-					PropertyTable.SetPropertyPersistence("currentContentControlObject", false);
-					PropertyTable.SetProperty("areaChoice", MainContentControlAsIxCoreContentControl.AreaName);
+					m_propertyTable.SetProperty("currentContentControlObject", m_mainContentControl, true);
+					m_propertyTable.SetPropertyPersistence("currentContentControlObject", false);
+					m_propertyTable.SetProperty("areaChoice", MainContentControlAsIxCoreContentControl.AreaName, true);
 
 					if (contentClassNode != null && contentClassNode.ParentNode != null)
 						SetToolDefaultProperties(contentClassNode.ParentNode.SelectSingleNode("defaultProperties"));
@@ -2193,15 +2163,15 @@ namespace XCore
 					m_secondarySplitContainer.Panel2.ResumeLayout();
 					string s = "Something went wrong trying to create a " + contentClass + ".";
 					ErrorReporter.ReportException(new ApplicationException(s, error),
-						ApplicationRegistryKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress);
+						ApplicationRegistryKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 				}
 			}
 		}
 
 		private void SetToolDefaultProperties(XmlNode configurationNode)
 		{
-			Mediator.PropertyTable.SetProperty("AllowInsertLinkToFile", true);	// default to allowing LinkedFiles links
-			Mediator.PropertyTable.SetProperty("AllowShowNormalFields", true);
+			m_propertyTable.SetProperty("AllowInsertLinkToFile", true, true);	// default to allowing LinkedFiles links
+			m_propertyTable.SetProperty("AllowShowNormalFields", true, true);
 
 			if (configurationNode == null)
 				return;
@@ -2218,8 +2188,8 @@ namespace XCore
 		protected void UpdateCaptionBar()
 		{
 			Text = String.Format("{0} - {1}",
-				m_mediator.PropertyTable.GetStringProperty("DocumentName", ""),
-				m_mediator.PropertyTable.GetStringProperty("applicationName", "application name???")); ;
+				m_propertyTable.GetStringProperty("DocumentName", ""),
+				m_propertyTable.GetStringProperty("applicationName", "application name???")); ;
 		}
 
 		#region Helper methods
@@ -2228,10 +2198,12 @@ namespace XCore
 		{
 			string property = splitContainer.Tag as string;
 			int defaultValue = property == "SidebarWidthGlobal" ? 140 : 200;
-			int oldValue = m_mediator.PropertyTable.GetIntProperty(property, defaultValue);
+			int oldValue = m_propertyTable.GetIntProperty(property, defaultValue);
 			int newValue = splitContainer.SplitterDistance;
 			if (oldValue != newValue)
-				m_mediator.PropertyTable.SetProperty(property, newValue, false);
+			{
+				m_propertyTable.SetProperty(property, newValue, false);
+			}
 
 			return oldValue;
 		}
@@ -2272,9 +2244,12 @@ namespace XCore
 			//if we did, then when the user exits the application and then runs it again,
 			//	then switches to the normal state, we would be switching to a bizarre size.
 			if (WindowState == FormWindowState.Normal)
-				m_mediator.PropertyTable.SetProperty("windowSize", Size);
+			{
+				m_propertyTable.SetProperty("windowSize", Size, true);
+			}
 			// We do need to store the window state as well:  see LT-6602.
-			m_mediator.PropertyTable.SetProperty("windowState", WindowState, false);
+			// No broadcast even if it did change.
+			m_propertyTable.SetProperty("windowState", WindowState, false);
 		}
 
 		private void XWindow_Move(object sender, EventArgs e)
@@ -2282,11 +2257,13 @@ namespace XCore
 			//don't bother storing the location if we are maximized or minimized.
 			//if we did, then when the user exits the application and then runs it again,
 			//	then switches to the normal state, we would be switching to 0,0 or something.
-			if (this.WindowState == FormWindowState.Normal)
-				m_mediator.PropertyTable.SetProperty("windowLocation", this.Location);
+			if (WindowState == FormWindowState.Normal)
+			{
+				m_propertyTable.SetProperty("windowLocation", Location, true);
+			}
 		}
 
-		protected virtual void XWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		protected virtual void XWindow_Closing(object sender, CancelEventArgs e)
 		{
 			CheckDisposed();
 
@@ -2311,19 +2288,14 @@ namespace XCore
 			}
 			//}
 
-			m_mediator.PropertyTable.SetProperty("windowState", WindowState, false);
+			m_propertyTable.SetProperty("windowState", WindowState, false);
 			string id = XmlUtils.GetAttributeValue(m_windowConfigurationNode, "settingsId");
 			if (id != null)
 			{
-				// Review JohnH(JohnT): id was not used, and now is not even passed. Does this matter?
-				//when we are doing an automated test, we don't want to override whenever the human
-				//user had in their settings.  So save the settings with "Test" appended.
-				if (m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false))
-					id += "Test";
 				SaveSettings();
 			}
 
-			this.m_secondarySplitContainer.Focus();
+			m_secondarySplitContainer.Focus();
 		}
 
 		/// <summary>

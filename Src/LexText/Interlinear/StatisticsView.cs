@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -20,7 +19,9 @@ namespace SIL.FieldWorks.IText
 		private bool _shouldNotCall;
 
 		private string _areaName;
-		private Mediator mediator;
+		private Mediator _mediator;
+		private PropertyTable _propertyTable;
+		private FdoCache _cache;
 		private InterlinearTextsRecordClerk m_clerk;
 
 		public StatisticsView()
@@ -61,15 +62,17 @@ namespace SIL.FieldWorks.IText
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="RecordClerk.FindClerk() returns a reference")]
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			this.mediator = mediator; //allows the Cache property to function
+			_mediator = mediator; //allows the Cache property to function
+			_propertyTable = propertyTable;
+			_cache = _propertyTable.GetValue<FdoCache>("cache");
 
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
-			var clerk = RecordClerk.FindClerk(mediator, name);
+			var clerk = RecordClerk.FindClerk(_propertyTable, name);
 			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
-				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, configurationParameters, true) :
+				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true) :
 				(InterlinearTextsRecordClerk)clerk;
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).
@@ -79,7 +82,7 @@ namespace SIL.FieldWorks.IText
 			//add ourselves so that we can receive messages (related to the text selection currently misnamed AddTexts)
 			mediator.AddColleague(this);
 			//add our current state to the history system
-			string toolName = mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
 			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 
@@ -94,7 +97,7 @@ namespace SIL.FieldWorks.IText
 			statisticsBox.SelectionTabs = new int[] { 10, 300};
 			//retrieve the default UI font.
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
-														  FontHeightAdjuster.StyleSheetFromMediator(mediator),
+														  FontHeightAdjuster.StyleSheetFromPropertyTable(_propertyTable),
 														  Cache.DefaultUserWs, Cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
 			Font headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
@@ -103,7 +106,7 @@ namespace SIL.FieldWorks.IText
 			statisticsBox.Text = ITextStrings.ksStatisticsView_HeaderText;
 
 			int row = 0;
-			var textList = InterestingTextsDecorator.GetInterestingTextList(mediator, Cache.ServiceLocator);
+			var textList = InterestingTextsDecorator.GetInterestingTextList(_mediator, _propertyTable, Cache.ServiceLocator);
 			int numberOfSegments = 0;
 			int wordCount = 0;
 			int uniqueWords = 0;
@@ -289,7 +292,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				return mediator != null ? (FdoCache)mediator.PropertyTable.GetValue("cache") : null;
+				return _cache;
 			}
 		}
 		//Code to add right click

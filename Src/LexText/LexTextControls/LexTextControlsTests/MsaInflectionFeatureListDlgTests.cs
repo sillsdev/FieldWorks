@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ILexEntryInflType cobj =
 					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
 				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-				dlg.SetDlgInfo(Cache, (Mediator)null, cobj, 0);
+				dlg.SetDlgInfo(Cache, null, null, cobj, 0);
 
 				// load some feature system values into treeview
 				FeatureStructureTreeView tv = dlg.TreeView;
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)
 					featStruct.FeatureSpecsOC.Remove(spec);
-				dlg.SetDlgInfo(Cache, null, featStruct, MoStemMsaTags.kflidMsFeatures);
+				dlg.SetDlgInfo(Cache, null, null, featStruct, MoStemMsaTags.kflidMsFeatures);
 				dlg.UpdateFeatureStructure(tv.Nodes);
 			}
 		}

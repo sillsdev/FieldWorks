@@ -1554,9 +1554,8 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="stringTbl"></param>
 		/// <returns></returns>
-		string ItemsTypeName(StringTable stringTbl);
+		string ItemsTypeName();
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -1603,9 +1602,8 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="strTable"></param>
 		/// <returns></returns>
-		string ItemTypeName(StringTable strTable);
+		string ItemTypeName();
 
 		/// <summary>
 		/// Abbreviation and Name with hyphen between.

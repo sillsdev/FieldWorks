@@ -8,20 +8,13 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Drawing;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Xml;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
-using System.Resources;
-using System.Runtime.InteropServices;
-
 using SIL.Utils;
 
 namespace XCore
@@ -44,7 +37,11 @@ namespace XCore
 		/// <summary>
 		/// Mediator that passes off messages.
 		/// </summary>
-		protected XCore.Mediator m_mediator;
+		protected Mediator m_mediator;
+		/// <summary>
+		/// Property table that stores all manner of objects.
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -104,13 +101,15 @@ namespace XCore
 		/// Initialize.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			base.m_configurationParameters = configurationParameters;
+			m_propertyTable = propertyTable;
+			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 			string urlAttr = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "URL");
 			m_htmlControl.URL = GetInstallSubDirectory(urlAttr);
@@ -197,7 +196,7 @@ namespace XCore
 			string asmPathname = Assembly.GetExecutingAssembly().CodeBase;
 			asmPathname = FileUtils.StripFilePrefix(asmPathname);
 			string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/") + 1);
-			string possiblePath = System.IO.Path.Combine(asmPath, retval);
+			string possiblePath = Path.Combine(asmPath, retval);
 			if (File.Exists(possiblePath))
 				retval = possiblePath;
 			// Implicit 'else' assumes it to be a full path,

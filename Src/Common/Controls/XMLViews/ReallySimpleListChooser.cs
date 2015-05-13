@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -23,7 +22,6 @@ using System.Text;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -88,7 +86,9 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_flidObject;
 
 		/// <summary></summary>
-		protected Mediator m_mediator = null;
+		protected Mediator m_mediator;
+		/// <summary></summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary></summary>
 		protected string m_fieldName = null;
 		private int m_cLinksShown = 0;
@@ -836,16 +836,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="configNode"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void InitializeExtras(XmlNode configNode, Mediator mediator)
+		public void InitializeExtras(XmlNode configNode, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(m_cache != null);
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			int ws = m_cache.DefaultAnalWs;
-			SetFontFromWritingSystem(ws, mediator);
+			SetFontFromWritingSystem(ws);
 
 			if (configNode == null)
 				return;
@@ -883,9 +885,6 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 
-				StringTable tbl = null;
-				if (m_mediator != null && m_mediator.HasStringTable)
-					tbl = m_mediator.StringTbl;
 				string sTitle = XmlUtils.GetAttributeValue(node, "title");
 				if (sTitle != null)
 					Title = sTitle;
@@ -897,7 +896,7 @@ namespace SIL.FieldWorks.Common.Controls
 				for (int i = linkNodes.Count - 1; i >= 0 ; --i)
 				{
 					string sType = XmlUtils.GetAttributeValue(linkNodes[i], "type", "goto").ToLower();
-					string sLabel = XmlUtils.GetLocalizedAttributeValue(tbl, linkNodes[i], "label", null);
+					string sLabel = XmlUtils.GetLocalizedAttributeValue(linkNodes[i], "label", null);
 					switch (sType)
 					{
 					case "goto":
@@ -977,7 +976,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// We need to dynamically figure out a tool for this list.
 			string sTool = null;
 			XmlNode chooserNode = null;
-			XmlNode windowConfig = m_mediator.PropertyTable.GetValue("WindowConfiguration") as XmlNode;
+			XmlNode windowConfig = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (windowConfig != null)
 			{
 				// The easiest search is through various jump command parameters.
@@ -1059,7 +1058,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_persistProvider != null)
 			{
 				m_persistProvider.RestoreWindowSettings("SimpleListChooser-HelpBrowser", this);
-				splitterDistance = m_mediator.PropertyTable.GetIntProperty("SimpleListChooser-HelpBrowserSplitterDistance",
+				splitterDistance = m_propertyTable.GetIntProperty("SimpleListChooser-HelpBrowserSplitterDistance",
 					m_splitContainer.Width);
 			}
 
@@ -1422,13 +1421,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Access for outsiders who don't call InitializExtras.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="sGuiControl"></param>
-		public void ReplaceTreeView(Mediator mediator, string sGuiControl)
+		public void ReplaceTreeView(Mediator mediator, PropertyTable propertyTable, string sGuiControl)
 		{
 			if (m_fFlatList)
 			{
 				if (m_mediator == null)
 					m_mediator = mediator;
+				if (m_propertyTable == null)
+					m_propertyTable = propertyTable;
 				ReplaceTreeView(sGuiControl);
 			}
 		}
@@ -1441,7 +1443,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (!m_fFlatList || String.IsNullOrEmpty(sGuiControl))
 				return;
-			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 				return;
 			string sXPath = string.Format("controls/parameters/guicontrol[@id=\"{0}\"]/parameters", sGuiControl);
@@ -1455,8 +1457,8 @@ namespace SIL.FieldWorks.Common.Controls
 				TabIndex = m_labelsTreeView.TabIndex
 			};
 			m_flvLabels.SelectionChanged += m_flvLabels_SelectionChanged;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			m_flvLabels.Initialize(m_cache, stylesheet, m_mediator, configNode, m_objs);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_flvLabels.Initialize(m_cache, stylesheet, m_mediator, m_propertyTable, configNode, m_objs);
 			if (m_chosenObjs != null)
 				m_flvLabels.SetCheckedItems(m_chosenObjs);
 			m_viewPanel.Controls.Remove(m_labelsTreeView);
@@ -1512,10 +1514,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void SetFontFromWritingSystem(int ws, Mediator mediator)
+		private void SetFontFromWritingSystem(int ws)
 		{
 			Font oldFont = m_labelsTreeView.Font;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			Font font = FontHeightAdjuster.GetFontForNormalStyle(
 				ws, stylesheet, m_cache.WritingSystemFactory);
 			float maxPoints = font.SizeInPoints;
@@ -1562,19 +1564,21 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes the raw.
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="sTitle">The s title.</param>
 		/// <param name="sText">The s text.</param>
 		/// <param name="sGotoLabel">The s goto label.</param>
 		/// <param name="sTool">The s tool.</param>
 		/// <param name="sWs">The s ws.</param>
 		/// ------------------------------------------------------------------------------------
-		public void InitializeRaw(Mediator mediator, string sTitle, string sText,
+		public void InitializeRaw(Mediator mediator, PropertyTable propertyTable, string sTitle, string sText,
 			string sGotoLabel, string sTool, string sWs)
 		{
 			CheckDisposed();
 
 			Debug.Assert(m_cache != null);
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			if (sTitle != null)
 				Title = sTitle;
 			if (sText != null)
@@ -1602,7 +1606,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//		break;
 			//	}
 			//}
-			SetFontFromWritingSystem(ws, mediator);
+			SetFontFromWritingSystem(ws);
 		}
 
 		/// <summary>
@@ -2319,7 +2323,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_webBrowser != null)
 				{
-					m_mediator.PropertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance);
+					m_propertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance, true);
 					m_persistProvider.PersistWindowSettings("SimpleListChooser-HelpBrowser", this);
 				}
 				else
@@ -2570,29 +2574,27 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="persistenceProvider"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
 		public static bool ChooseNaturalClass(IVwRootBox rootb, FdoCache cache,
-			IPersistenceProvider persistenceProvider, Mediator mediator)
+			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.Cast<ICmObject>(), "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
 			using (var chooser = new ReallySimpleListChooser(persistenceProvider,
-				labels, "NaturalClass", mediator.HelpTopicProvider))
+				labels, "NaturalClass", propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				string sTitle = null;
 				string sDescription = null;
 				string sJumpLabel = null;
-				if (mediator != null && mediator.HasStringTable)
-				{
-					sTitle = mediator.StringTbl.GetString("kstidChooseNaturalClass",
-						"Linguistics/Morphology/NaturalClassChooser");
-					sDescription = mediator.StringTbl.GetString("kstidNaturalClassListing",
-						"Linguistics/Morphology/NaturalClassChooser");
-					sJumpLabel = mediator.StringTbl.GetString("kstidGotoNaturalClassList",
-						"Linguistics/Morphology/NaturalClassChooser");
-				}
+				sTitle = StringTable.Table.GetString("kstidChooseNaturalClass",
+					"Linguistics/Morphology/NaturalClassChooser");
+				sDescription = StringTable.Table.GetString("kstidNaturalClassListing",
+					"Linguistics/Morphology/NaturalClassChooser");
+				sJumpLabel = StringTable.Table.GetString("kstidGotoNaturalClassList",
+					"Linguistics/Morphology/NaturalClassChooser");
 				if (string.IsNullOrEmpty(sTitle) || sTitle == "kstidChooseNaturalClass")
 					sTitle = XMLViewsStrings.ksChooseNaturalClass;
 				if (string.IsNullOrEmpty(sDescription) || sDescription == "kstidNaturalClassListing")
@@ -2602,7 +2604,7 @@ namespace SIL.FieldWorks.Common.Controls
 				chooser.Cache = cache;
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
-				chooser.InitializeRaw(mediator, sTitle, sDescription, sJumpLabel,
+				chooser.InitializeRaw(mediator, propertyTable, sTitle, sDescription, sJumpLabel,
 					"naturalClassedit", "analysis vernacular");
 
 				DialogResult res = chooser.ShowDialog();

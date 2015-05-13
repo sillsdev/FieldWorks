@@ -38,8 +38,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
 using System.Diagnostics.CodeAnalysis;
-
-
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -310,19 +308,20 @@ namespace SIL.FieldWorks.XWorks
 		private void BasicInit(FwApp app)
 		{
 			m_delegate = new MainWindowDelegate(this);
-			m_delegate.App = app;
-			m_mediator.HelpTopicProvider = app;
-			m_mediator.FeedbackInfoProvider = app;
-			m_mediator.PropertyTable.SetProperty("App", app);
-			m_mediator.PropertyTable.SetPropertyPersistence("App", false);
-
-			string path = null;
 			if (app != null) // if configFile in FwXApp == null
 			{
-				path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
+				m_delegate.App = app;
+				string path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
 				Directory.CreateDirectory(path);
+				m_propertyTable.UserSettingDirectory = path;
+
+				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
+				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+				m_propertyTable.SetProperty("App", app, true);
+				m_propertyTable.SetPropertyPersistence("App", false);
 			}
-			m_mediator.PropertyTable.UserSettingDirectory = path;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -350,13 +349,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="iconStream">The icon stream.</param>
 		/// <param name="configFile">The config file.</param>
 		/// <param name="startupLink">The link to follow once the window is initialized.</param>
-		/// <param name="inAutomatedTest">if set to <c>true</c>, (well behaved) code will avoid
-		/// bringing up dialogs that we cannot respond to (like confirmation and error dialogs)
-		/// and it should cause the system to avoid saving the settings to a file (or at least
-		/// saving them in some special way so as not to mess up the user.)</param>
 		/// ------------------------------------------------------------------------------------
 		public FwXWindow(FwApp app, Form wndCopyFrom, Stream iconStream,
-			string configFile, FwLinkArgs startupLink, bool inAutomatedTest)
+			string configFile, FwLinkArgs startupLink)
 		{
 			BasicInit(app);
 			m_startupLink = startupLink;
@@ -366,11 +361,6 @@ namespace SIL.FieldWorks.XWorks
 			m_configFile = configFile;
 
 			Init(iconStream, wndCopyFrom, app.Cache);
-			if(inAutomatedTest)
-			{
-				Mediator.PropertyTable.SetProperty("DoingAutomatedTest", true);
-				Mediator.PropertyTable.SetPropertyPersistence("DoingAutomatedTest", false);
-			}
 
 			// The order of the next two lines has been changed because the loading of the UI
 			// properly depends on m_viewHelper being initialized.  Why this was not so with DNB
@@ -387,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
 
-			m_viewHelper.ActiveViewChanged += new EventHandler<EventArgs>(ActiveViewChanged);
+			m_viewHelper.ActiveViewChanged += ActiveViewChanged;
 		}
 
 		/// <summary>
@@ -404,8 +394,8 @@ namespace SIL.FieldWorks.XWorks
 		protected override void RestoreProperties()
 		{
 			base.RestoreProperties();
-			m_mediator.PropertyTable.RestoreFromFile(m_mediator.PropertyTable.LocalSettingsId);
-			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_mediator.PropertyTable);
+			m_propertyTable.RestoreFromFile(m_propertyTable.LocalSettingsId);
+			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_propertyTable);
 		}
 
 		/// <summary>
@@ -543,11 +533,11 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void InitMediatorValues(FdoCache cache)
 		{
-			Mediator.PropertyTable.LocalSettingsId = "local";
-			Mediator.PropertyTable.SetProperty("cache", cache);
-			Mediator.PropertyTable.SetPropertyPersistence("cache", false);
-			Mediator.PropertyTable.SetProperty("DocumentName", GetProjectName(cache));
-			Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
+			m_propertyTable.LocalSettingsId = "local";
+			m_propertyTable.SetProperty("cache", cache, true);
+			m_propertyTable.SetPropertyPersistence("cache", false);
+			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
+			m_propertyTable.SetPropertyPersistence("DocumentName", false);
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 		}
 
@@ -578,34 +568,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// factory method for getting a progress state which is already hooked up to the correct progress panel
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="taskLabel"></param>
 		/// <returns></returns>
-		public static ProgressState CreatePredictiveProgressState(Mediator mediator, string taskLabel)
+		public static ProgressState CreatePredictiveProgressState(PropertyTable propertyTable, string taskLabel)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
-			IApp app = (IApp)mediator.PropertyTable.GetValue("App");
+			IApp app = propertyTable.GetValue<IApp>("App");
 			PredictiveProgressState s = new PredictiveProgressState(panel, app.SettingsKey, taskLabel);
 			return s;
 		}
 		/// <summary>
 		/// factory method for getting a progress state which is already hooked up to the correct progress panel
 		/// </summary>
-		/// <param name="taskLabel"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateMilestoneProgressState(Mediator mediator)
+		public static ProgressState CreateMilestoneProgressState(PropertyTable propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -614,15 +597,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// factory method for getting a simple progress state which is already hooked up to the correct progress panel
 		/// </summary>
-		/// <param name="taskLabel"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateSimpleProgressState(Mediator mediator)
+		public static ProgressState CreateSimpleProgressState(PropertyTable propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -744,7 +723,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(pathname))
 				return false;
 			pathname = MoveOrCopyFilesDlg.MoveCopyOrLeaveExternalFile(pathname,
-				Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider);
+				Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			if (String.IsNullOrEmpty(pathname))
 				return false;
 			// JohnT: don't use m_StyleSheet, no guarantee it has been created (see LT-7034)
@@ -763,7 +742,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			bool fAllow = Mediator.PropertyTable.GetBoolProperty("AllowInsertLinkToFile", true);
+			bool fAllow = m_propertyTable.GetBoolProperty("AllowInsertLinkToFile", true);
 
 			if (fAllow)
 			{
@@ -891,7 +870,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (UtilityDlg dlg = new UtilityDlg(m_app))
 			{
-				dlg.SetDlgInfo(m_mediator, (command as XCore.Command).Parameters[0]);
+				dlg.SetDlgInfo(m_mediator, m_propertyTable, ((Command)command).Parameters[0]);
 				dlg.ShowDialog(this);
 			}
 
@@ -995,8 +974,7 @@ namespace SIL.FieldWorks.XWorks
 			// the program exits.
 			using (ScriptMaker sm = new ScriptMaker(ActiveForm))
 			{
-				LinkListener ll = (LinkListener)m_mediator.PropertyTable.GetValue("LinkListener",
-					null);
+				LinkListener ll = m_propertyTable.GetValue<LinkListener>("LinkListener", null);
 				if (ll == null)
 					return true;
 				sm.GoTo(ll.CurrentContext.ToString());
@@ -1053,12 +1031,12 @@ namespace SIL.FieldWorks.XWorks
 			//there appears to be a problem with the DotNetBar balloon help which causes
 			//it to crash when the user hovers over something that should have a balloon but that window
 			//is behind a modeless dialog.
-			var balloonActive=m_mediator.PropertyTable.GetBoolProperty("ShowBalloonHelp", false);
-			m_mediator.PropertyTable.SetProperty("ShowBalloonHelp", false);
+			var balloonActive = m_propertyTable.GetBoolProperty("ShowBalloonHelp", false);
+			m_propertyTable.SetProperty("ShowBalloonHelp", false, true);
 
 			m_delegate.FileOpen(this);
 
-			m_mediator.PropertyTable.SetProperty("ShowBalloonHelp", balloonActive);
+			m_propertyTable.SetProperty("ShowBalloonHelp", balloonActive, true);
 
 			return true;
 		}
@@ -1188,7 +1166,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// show the RAMP dialog
 			ReapRamp ramp = new ReapRamp();
-			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
+			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_propertyTable, m_app, Cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1233,7 +1211,7 @@ namespace SIL.FieldWorks.XWorks
 			string sProject = cache.ProjectId.Name;
 			string sProjectOrig = sProject;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromMediator(Mediator)))
+			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
 			{
 				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
 				if (startOnWSPage)
@@ -1254,8 +1232,8 @@ namespace SIL.FieldWorks.XWorks
 					// destroyed and recreated.
 					if (!fDbRenamed && !fFilesMoved)
 					{
-						Mediator.PropertyTable.SetProperty("DocumentName", cache.ProjectId.UiName);
-						Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
+						m_propertyTable.SetProperty("DocumentName", cache.ProjectId.UiName, true);
+						m_propertyTable.SetPropertyPersistence("DocumentName", false);
 					}
 				}
 			}
@@ -1445,11 +1423,14 @@ namespace SIL.FieldWorks.XWorks
 		private Control GetFocusControl()
 		{
 			Control focusControl = null;
-			object control = m_mediator.PropertyTable.GetValue("FirstControlToHandleMessages");
-			if (control != null)
-				focusControl = control as Control;
+			if (m_propertyTable.PropertyExists("FirstControlToHandleMessages"))
+			{
+				focusControl = m_propertyTable.GetValue<Control>("FirstControlToHandleMessages");
+			}
 			if (focusControl == null || focusControl.IsDisposed)
-				focusControl = XWindow.FocusedControl();
+			{
+				focusControl = FocusedControl();
+			}
 			return focusControl;
 		}
 
@@ -1962,11 +1943,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void SaveSettings()
 		{
-			GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_mediator.PropertyTable);
+			GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 			// first save global settings, ignoring database specific ones.
-			m_mediator.PropertyTable.SaveGlobalSettings();
+			m_propertyTable.SaveGlobalSettings();
 			// now save database specific settings.
-			m_mediator.PropertyTable.SaveLocalSettings();
+			m_propertyTable.SaveLocalSettings();
 		}
 
 		/// <summary>Keyman select language message</summary>
@@ -2090,7 +2071,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				return (FdoCache)m_mediator.PropertyTable.GetValue("cache", null);
+				return m_propertyTable.GetValue<FdoCache>("cache", null);
 			}
 		}
 
@@ -2134,12 +2115,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				object loc = m_mediator.PropertyTable.GetValue("windowLocation");
-				Debug.Assert(loc != null);
-
-				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new Size(400,400));
-				Debug.Assert(size != null);
-				return new Rectangle((Point)loc, (Size)size);
+				var loc = m_propertyTable.GetValue<Point>("windowLocation");
+				var size = m_propertyTable.GetValue("windowSize", /*hack*/new Size(400, 400));
+				return new Rectangle(loc, size);
 			}
 		}
 
@@ -2290,7 +2268,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			return Mediator.PropertyTable.GetValue(name, null) as IRecordListUpdater;
+			return m_propertyTable.GetValue<IRecordListUpdater>(name, null);
 		}
 		#endregion // IRecordListOwner implementation
 

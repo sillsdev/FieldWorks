@@ -11,8 +11,8 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PossibilityComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, Form parent) :
-			base(treeCombo, cache, list, ws, useAbbr, mediator, parent)
+		public PossibilityComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
+			base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
 		{
 			Sorted = true;
 		}

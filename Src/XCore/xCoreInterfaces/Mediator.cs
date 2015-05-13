@@ -4,7 +4,6 @@
 //
 // File: Mediator.cs
 // Authorship History: John Hatton
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +13,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
-
 using SIL.Utils;
 
 namespace XCore
@@ -213,7 +211,6 @@ namespace XCore
 		public bool IsDisposedColleague(string hashKey) { return m_disposedColleagues.Contains(hashKey); }
 		//private void ClearDisposedColleagues() { m_disposedColleagues.Clear(); }
 		private bool m_processMessages = true;
-		private PropertyTable m_propertyTable;
 		private CommandSet m_commandSet;
 //		private bool m_allowCommandsToExecute;
 		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>(new TupleComparer());
@@ -259,7 +256,6 @@ namespace XCore
 		/// -----------------------------------------------------------------------------------
 		public Mediator()
 		{
-			m_propertyTable = new PropertyTable(this);
 			m_MethodsOnAnyColleague = new Set<string>();
 //			m_allowCommandsToExecute = false;
 
@@ -399,16 +395,13 @@ namespace XCore
 						// Is the class marked with [XCore.MediatorDispose],
 						// or is it in the temporary colleague holder?
 						object[] attrs = icc.GetType().GetCustomAttributes(typeof(MediatorDisposeAttribute), true);
-						if ((attrs != null && attrs.Length > 0)
-							|| m_temporaryColleague == icc)
+						if ((attrs.Length > 0) || m_temporaryColleague == icc)
 						{
 							(icc as IDisposable).Dispose();
 						}
 					}
 				}
 				copyOfColleagues.Clear();
-				if (m_propertyTable != null)
-					m_propertyTable.Dispose();
 				if (m_commandSet != null)
 					m_commandSet.Dispose();
 				if (m_pathVariables != null)
@@ -432,7 +425,6 @@ namespace XCore
 			m_jobs = null;
 			m_disposedColleagues = null;
 			m_temporaryColleague = null;
-			m_propertyTable = null;
 			m_commandSet = null;
 			m_colleagues = null;
 			m_pathVariables = null;
@@ -1523,109 +1515,6 @@ namespace XCore
 			{
 				CheckDisposed();
 				return m_commandSet;
-			}
-		}
-
-		public PropertyTable PropertyTable
-		{
-			get
-			{
-				CheckDisposed();
-				return m_propertyTable;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the help topic provider from the mediator's properties.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IHelpTopicProvider HelpTopicProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return (IHelpTopicProvider)PropertyTable.GetValue("HelpTopicProvider");
-			}
-			set
-			{
-				CheckDisposed();
-				PropertyTable.SetProperty("HelpTopicProvider", value);
-				PropertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the feedback information provider from the mediator's properties.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IFeedbackInfoProvider FeedbackInfoProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return (IFeedbackInfoProvider)PropertyTable.GetValue("FeedbackInfoProvider");
-			}
-			set
-			{
-				CheckDisposed();
-				PropertyTable.SetProperty("FeedbackInfoProvider", value);
-				PropertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				object table = PropertyTable.GetValue("stringTable");
-				if (table == null)
-					throw new ConfigurationException("Could not get the StringTable. Make sure there is at least an 'strings-en.xml' in the configuration directory.");
-				return (StringTable)table;
-			}
-			set
-			{
-				PropertyTable.SetProperty("stringTable", value);
-				PropertyTable.SetPropertyPersistence("stringTable", false);
-			}
-		}
-
-		/// <summary>
-		/// This property can be used to see if the String Table has been set
-		/// without triggering an exception.
-		/// </summary>
-		public bool IsStringTableSet
-		{
-			get
-			{
-				try
-				{
-					var table = this.StringTbl;
-					return true;
-				}
-				catch (ConfigurationException)
-				{
-					return false;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Check whether we have a string table stored and available for use.
-		/// </summary>
-		public bool HasStringTable
-		{
-			get
-			{
-				object table = PropertyTable.GetValue("stringTable");
-				return table != null;
 			}
 		}
 

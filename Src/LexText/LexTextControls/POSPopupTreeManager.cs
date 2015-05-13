@@ -2,9 +2,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -44,16 +42,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, Form parent)
-			:base (treeCombo, cache, mediator, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			:base (treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, Form parent)
-			: base(popupTree, cache, mediator, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}
 
@@ -138,7 +136,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 				{
-					dlg.SetDlginfo(List, m_mediator, false, null);
+					dlg.SetDlginfo(List, m_mediator, m_propertyTable, false, null);
 					switch (dlg.ShowDialog(ParentForm))
 					{
 						case DialogResult.OK:

@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.IText
 		// spacing between contexts
 		private const int PileMargin = 1000;
 
-		private readonly Mediator m_mediator;
+		private readonly PropertyTable m_propertyTable;
 
 		private readonly ITsTextProps m_bracketProps;
 		private readonly ITsTextProps m_pileProps;
@@ -91,10 +91,10 @@ namespace SIL.FieldWorks.IText
 
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
-		public ComplexConcPatternVc(FdoCache cache, Mediator mediator)
+		public ComplexConcPatternVc(FdoCache cache, PropertyTable propertyTable)
 		{
 			Cache = cache;
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
 			// use Charis SIL because it supports the special characters that are needed for
 			// multiline brackets
@@ -754,7 +754,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		private int GetFontHeight(int ws)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			return FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet,
 				ws, m_cache.LanguageWritingSystemFactoryAccessor);
 		}

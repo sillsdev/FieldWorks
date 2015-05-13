@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		/// m_window is needed for processing xcore messages when simulating user events.
 		/// </summary>
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
 		protected List<ICmObject> m_createdObjectList;
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			UndoAllActions();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 
 			//if (m_bulkEditBar != null)
 			//    m_bulkEditBar.Dispose();
@@ -91,9 +91,10 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			((MockFwXWindow)m_window).ClearReplacements();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 			ProcessPendingItems();
 			ControlAssemblyReplacements();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
@@ -200,11 +201,10 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			readonly MockFwXWindow m_wnd;
 
-			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
-				: base(bv, spec, mediator, cache)
+			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+				: base(bv, spec, mediator, propertyTable, cache)
 			{
-				Form mainWindow = (Form)mediator.PropertyTable.GetValue("window") as Form;
-				m_wnd = mainWindow as MockFwXWindow;
+				m_wnd = propertyTable.GetValue<MockFwXWindow>("window");
 			}
 
 			internal void SwitchTab(string tabName)
@@ -315,25 +315,25 @@ namespace SIL.FieldWorks.XWorks
 			MockFwXWindow m_wnd = null;
 
 			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-				Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
-				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sdaRecordList)
+				Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
+				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
 			{
-				var mainWindow = (Form)mediator.PropertyTable.GetValue("window");
-				m_wnd = mainWindow as MockFwXWindow;
+				m_wnd = m_propertyTable.GetValue<MockFwXWindow>("window");
 				m_xbv.MakeRoot(); // needed to process OnRecordNavigation
 			}
 
-			/// <summary>
+			///  <summary>
 			///
-			/// </summary>
-			/// <param name="bv"></param>
-			/// <param name="spec"></param>
-			/// <param name="mediator"></param>
+			///  </summary>
+			///  <param name="bv"></param>
+			///  <param name="spec"></param>
+			///  <param name="mediator"></param>
+			/// <param name="propertyTable"></param>
 			/// <param name="cache"></param>
-			/// <returns></returns>
-			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+			///  <returns></returns>
+			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
 			{
-				return new BulkEditBarForTests(bv, spec, mediator, cache);
+				return new BulkEditBarForTests(bv, spec, mediator, propertyTable, cache);
 			}
 
 			private AnywhereMatcher CreateAnywhereMatcher(string pattern, int ws)
@@ -417,7 +417,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// get column matching the given layoutName
 				List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName, null);
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName);
 				if (this.IsColumnHidden(colSpec))
 				{
 					this.AppendColumn(colSpec);
@@ -462,11 +462,13 @@ namespace SIL.FieldWorks.XWorks
 		protected class RecordBrowseViewForTests : RecordBrowseView
 		{
 			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-				FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+				FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
-				var app = (MockFwXApp)mediator.PropertyTable.GetValue("App");
-				mediator.FeedbackInfoProvider = app;
-				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache, mediator,
+				var app = propertyTable.GetValue<MockFwXApp>("App");
+				propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache,
+					mediator, propertyTable,
 					sortItemProvider, sda);
 			}
 

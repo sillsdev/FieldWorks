@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections.Generic;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -22,8 +21,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region Data members
 
+		private PropertyTable m_propertyTable;
 		private Form m_parentForm;
-		private Mediator m_mediator;
 		private FdoCache m_cache;
 		private Control m_ctrlAssistant;
 		private POSPopupTreeManager m_mainPOSPopupTreeManager;
@@ -472,7 +471,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 			m_parentForm = null;
-			m_mediator = null;
 			m_secPOSPopupTreeManager = null;
 			m_lAfxType = null;
 			m_fwcbAffixTypes = null;
@@ -489,15 +487,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		/// <param name="btnAssistant"></param>
+		/// <param name="ctrlAssistant"></param>
 		/// <param name="parentForm"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, Control ctrlAssistant, Form parentForm)
+		/// <param name="propertyTable"></param>
+		public void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, Control ctrlAssistant, Form parentForm)
 		{
 			CheckDisposed();
 
 			Debug.Assert(ctrlAssistant != null);
 			m_ctrlAssistant = ctrlAssistant;
-			Initialize(cache, mediator, parentForm, new SandboxGenericMSA());
+			Initialize(cache, mediator, propertyTable, parentForm, new SandboxGenericMSA());
 		}
 
 		/// <summary>
@@ -505,17 +504,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="parentForm"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, Form parentForm, SandboxGenericMSA sandboxMSA)
+		/// <param name="sandboxMSA"></param>
+		public void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			CheckDisposed();
 
 			m_parentForm = parentForm;
-			m_mediator = mediator;
 			m_tsf = cache.TsStrFactory;
 			m_cache = cache;
+			m_propertyTable = propertyTable;
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			int defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			string defAnalWsFont = defAnalWs.DefaultFontName;
@@ -551,7 +552,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
 			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache,
 				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, m_mediator,
+				defAnalWs.Handle, false, mediator, m_propertyTable,
 				m_parentForm);
 			m_mainPOSPopupTreeManager.NotSureIsAny = true;
 			m_mainPOSPopupTreeManager.LoadPopupTree(m_selectedMainPOS != null ? m_selectedMainPOS.Hvo : 0);
@@ -559,7 +560,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwcbSlots.SelectedIndexChanged += HandleComboSlotChange;
 			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache,
 				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, m_mediator,
+				defAnalWs.Handle, false, mediator, m_propertyTable,
 				m_parentForm);
 			m_secPOSPopupTreeManager.NotSureIsAny = true; // only used for affixes.
 			m_selectedSecondaryPOS = sandboxMSA.SecondaryPOS;
@@ -740,21 +741,24 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_morphType == null)
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
-				var lex = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as ILexEntry;
+				var lex = m_propertyTable.GetValue<ILexEntry>("ActiveClerkSelectedObject");
 				if (lex != null)
+				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);
-				else
-					return m_selectedMainPOS.AllAffixSlots;
+				}
+
+				return m_selectedMainPOS.AllAffixSlots;
 			}
-			else
-			{ //  Called by InsertEntryDlg so we know the morphtype
-				bool fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
-				bool fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
-				if (fIsPrefixal && fIsSuffixal)
-					return m_selectedMainPOS.AllAffixSlots;
-				else
-					return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
+
+			// Called by InsertEntryDlg so we know the morphtype
+			bool fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
+			bool fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
+			if (fIsPrefixal && fIsSuffixal)
+			{
+				return m_selectedMainPOS.AllAffixSlots;
 			}
+
+			return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
 		}
 
 		public void AdjustInternalControlsAndGrow()

@@ -9,7 +9,6 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -39,7 +38,6 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		private TextWriter m_writer = null;
 		private FdoCache m_cache = null;
-		private Mediator m_mediator;
 		private FwStyleSheet m_stylesheet;
 		private TextWriterStream m_strm = null;
 		private string m_sFormat = null;
@@ -113,14 +111,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// element start tag to the output.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, Mediator mediator, TextWriter w, string sDataType,
+		public void Initialize(FdoCache cache, PropertyTable propertyTable, TextWriter w, string sDataType,
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
 			m_strm = new TextWriterStream(w);
 			m_cache = cache;
-			m_mediator = mediator;
-			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_mdc = cache.MetaDataCacheAccessor;
 			m_sFormat = sFormat.ToLowerInvariant();
 			if (m_sFormat == "xhtml")

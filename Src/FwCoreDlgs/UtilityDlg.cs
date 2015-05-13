@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class UtilityDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private string m_whenDescription;
 		private string m_whatDescription;
 		private string m_redoDescription;
@@ -80,6 +81,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CheckDisposed();
 				return m_mediator;
+			}
+		}
+
+		/// <summary>
+		/// Get the property table.
+		/// </summary>
+		public PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+				return m_propertyTable;
 			}
 		}
 
@@ -181,10 +194,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Setup the dlg with needed information.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void SetDlgInfo(Mediator mediator, XmlNode configurationParameters)
+		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -192,9 +206,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Debug.Assert(configurationParameters != null);
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
-			this.Text = XmlUtils.GetLocalizedAttributeValue(mediator.StringTbl, configurationParameters,
-				"title", "FieldWorks Project Utilities");
+			this.Text = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities");
 			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
 			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
 			// Get the folder path:

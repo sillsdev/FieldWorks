@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.IText
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		#region disposal
 		protected virtual void Dispose(bool disposing)
@@ -33,11 +34,25 @@ namespace SIL.FieldWorks.IText
 			if (disposing)
 			{
 				if (m_application != null)
+				{
 					m_application.Dispose();
+					m_application = null;
+				}
 				if (m_window != null)
+				{
 					m_window.Dispose();
+					m_window = null;
+				}
 				if (m_mediator != null)
+				{
 					m_mediator.Dispose();
+					m_mediator = null;
+				}
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.Dispose();
+					m_propertyTable = null;
+				}
 			}
 		}
 
@@ -67,6 +82,7 @@ namespace SIL.FieldWorks.IText
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 
 			// set up default vernacular ws.
 			m_wsDefaultVern = Cache.ServiceLocator.WritingSystemManager.Get("fr");
@@ -93,7 +109,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ShowRoot_ReplacesGlobalDefaultWsWithDefaultVernInEmptyText()
 		{
-			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_sttNoExplicitWs))
+			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_propertyTable, m_sttNoExplicitWs))
 			{
 				interlinMaster.TestShowRecord(); // SUT
 			}
@@ -104,7 +120,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ShowRoot_MaintainsSelectedWsInEmptyText()
 		{
-			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_sttEmptyButWithWs))
+			using (var interlinMaster = new TestInterlinMaster(m_mediator, m_propertyTable, m_sttEmptyButWithWs))
 			{
 				interlinMaster.TestShowRecord(); // SUT
 			}
@@ -115,9 +131,10 @@ namespace SIL.FieldWorks.IText
 		#region Test Classes
 		private class TestInterlinMaster : InterlinMaster
 		{
-			public TestInterlinMaster(Mediator mediator, IStText stText)
+			public TestInterlinMaster(Mediator mediator, PropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 				if(ExistingClerk != null)
 				{
 					System.Diagnostics.Debug.WriteLine("****** Disposing a {0} whose current StText's WS is {1}; replacing with {2}. ******",
@@ -126,7 +143,7 @@ namespace SIL.FieldWorks.IText
 						Cache.ServiceLocator.WritingSystemManager.Get(stText.MainWritingSystem).Id);
 					ExistingClerk.Dispose();
 				}
-				Clerk = new TestClerk(mediator, stText);
+				Clerk = new TestClerk(mediator, propertyTable, stText);
 			}
 
 			protected internal override IStText RootStText
@@ -144,9 +161,10 @@ namespace SIL.FieldWorks.IText
 		{
 			internal readonly IStText m_stText;
 
-			public TestClerk(Mediator mediator, IStText stText)
+			public TestClerk(Mediator mediator, PropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 				m_stText = stText;
 			}
 

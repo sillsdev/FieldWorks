@@ -187,9 +187,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// This sets the original citation form into the dialog.
 		/// </summary>
-		/// <param name="sWord"></param>
-		/// <param name="sMorphs"></param>
-		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator)
+		/// <param name="tssCitationForm"></param>
+		/// <param name="le"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -204,7 +206,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, 10);
 			m_fwtbGloss.Font = new Font(defAnalWs.DefaultFontName, 10);
-			var stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			// Set writing system factory and code for the two edit boxes.
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;
@@ -218,7 +220,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbGloss.Text = String.Empty;
 			m_fwtbCitationForm.HasBorder = false;
 
-			m_msaGroupBox.Initialize(m_cache, mediator, this, new SandboxGenericMSA());
+			m_msaGroupBox.Initialize(m_cache, mediator, propertyTable, this, new SandboxGenericMSA());
 
 			// get the current morph type from the lexical entry.
 			IMoMorphType mmt;

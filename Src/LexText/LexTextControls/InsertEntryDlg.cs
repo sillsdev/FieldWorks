@@ -10,7 +10,6 @@
 // Implementation of:
 //		InsertEntryDlg - Dialog for adding basic information of new entries.
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,6 +53,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -384,12 +384,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Debug.Assert(value != null);
 				m_mediator = value;
-				if (m_mediator.HelpTopicProvider != null)
+				var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				if (helpTopicProvider != null)
 				{
-					m_helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-					m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+					m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				}
-				m_btnHelp.Enabled = (m_mediator.HelpTopicProvider != null);
+				m_btnHelp.Enabled = (helpTopicProvider != null);
 			}
 		}
 
@@ -578,13 +579,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			try
 			{
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-				var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+				var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-				SearchEngine searchEngine = SearchEngine.Get(m_mediator, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
+				SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, configNode,
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, m_propertyTable, configNode,
 					searchEngine);
 
 				m_cache = cache;
@@ -658,7 +659,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
 
-				m_msaGroupBox.Initialize(cache, m_mediator, m_lnkAssistant, this);
+				m_msaGroupBox.Initialize(cache, m_mediator, m_propertyTable, m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				int oldHeight = m_msaGroupBox.Height;
 				int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
@@ -790,10 +791,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="tssForm">The initial form to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
+			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
 			Mediator = mediator;
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
@@ -829,12 +832,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
 			Debug.Assert(persistProvider != null);
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 
 			SetDlgInfo(cache);
@@ -848,12 +853,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="msaType">The type of msa</param>
 		/// <param name="slot">The default slot of the inflectional affix msa to</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="filter">The filter.</param>
 		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, MorphTypeFilterType filter)
+			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, PropertyTable propertyTable, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
 
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 
 			SetDlgInfo(cache, morphType, 0, filter);
@@ -932,8 +939,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string GetTitle()
 		{
-			return m_mediator == null ? LexText.Controls.LexTextControls.ksNewEntry
-				: m_mediator.StringTbl.GetStringWithXPath("CreateEntry", "/group[@id=\"DialogTitles\"]/");
+			return StringTable.Table.GetStringWithXPath("CreateEntry", "/group[@id=\"DialogTitles\"]/");
 		}
 
 		protected virtual void UpdateMatches()
@@ -1019,9 +1025,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 
 			s_helpTopic = helpTopic;
-			if (m_mediator.HelpTopicProvider != null)
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null)
 			{
-				m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				m_btnHelp.Enabled = true;
 			}
 		}
@@ -1713,7 +1720,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 				// Need to use a wait cursor while creating dialog, but not when showing it.
 				using (new WaitCursor(m_lnkAssistant))
-					dlg = new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
+					dlg = new MGAHtmlHelpDialog(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_tbLexicalForm.Text);
 
 				using (dlg)
 				{
@@ -1734,7 +1741,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
 		}
 
 		#endregion Event Handlers

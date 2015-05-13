@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -54,13 +55,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			var linkCommandNode = m_configurationNode.SelectSingleNode("descendant::chooserLink");
 			var chooser = new SemanticDomainsChooser
-				{ Mediator = m_mediator, Cache = m_cache, DisplayWs = displayWs, Sense = sense,
-					LinkNode = linkCommandNode, HelpTopicProvider = m_mediator.HelpTopicProvider
+				{
+					Mediator = m_mediator,
+					Cache = m_cache,
+					DisplayWs = displayWs,
+					Sense = sense,
+					LinkNode = linkCommandNode,
+					HelpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")
 			};
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
 				m_displayNameProperty, displayWs);
-			chooser.Initialize(labels, sense.SemanticDomainsRC);
+			chooser.Initialize(labels, sense.SemanticDomainsRC, m_propertyTable);
 			var result = chooser.ShowDialog();
 			if(result == DialogResult.OK)
 			{

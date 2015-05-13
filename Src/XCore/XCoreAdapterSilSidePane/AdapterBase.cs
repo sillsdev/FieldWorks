@@ -8,19 +8,10 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
-using SIL.Utils;
-
- // for ImageCollection
 
 namespace XCore
 {
@@ -37,6 +28,10 @@ namespace XCore
 		/// The XCore mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// The main XWindow form.
 		/// </summary>
@@ -90,13 +85,13 @@ namespace XCore
 		{
 			get
 			{
-				ToolStripManager manager = (ToolStripManager)m_mediator.PropertyTable.GetValue("DotNetBarManager");
+				ToolStripManager manager = m_propertyTable.GetValue<ToolStripManager>("ToolStripManager");
 				if (manager == null)
 				{
 					manager = new ToolStripManager();
 					m_window.Controls.Add(manager);
-					m_mediator.PropertyTable.SetProperty("DotNetBarManager", manager);
-					m_mediator.PropertyTable.SetPropertyPersistence("DotNetBarManager", false);
+					m_propertyTable.SetProperty("ToolStripManager", manager, true);
+					m_propertyTable.SetPropertyPersistence("ToolStripManager", false);
 				}
 
 				return manager;
@@ -125,16 +120,23 @@ namespace XCore
 		/// <param name="smallImages">Collection of small images.</param>
 		/// <param name="largeImages">Collection of large images.</param>
 		/// <param name="mediator">XCore Mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <returns>A Control for use by client.</returns>
-		public virtual System.Windows.Forms.Control Init(System.Windows.Forms.Form window,
-			IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
+		public virtual Control Init(Form window,
+			IImageCollection smallImages, IImageCollection largeImages, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_window = window;
 			m_smallImages = smallImages;
 			m_largeImages = largeImages;
-			m_mediator = mediator;
-			if(this is IxCoreColleague)
-				((IxCoreColleague)this).Init(mediator, null/*I suppose we could get these to the adapter if someone needs that someday*/);
+			if (this is IxCoreColleague)
+			{
+				((IxCoreColleague)this).Init(mediator, propertyTable, null/*I suppose we could get the config node to the adapter if someone needs that someday*/);
+			}
+			else
+			{
+				m_mediator = mediator;
+				m_propertyTable = propertyTable;
+			}
 			return MyControl;
 		}
 

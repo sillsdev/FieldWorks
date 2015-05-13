@@ -8,3 +8,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("XML Utilities")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+[assembly: InternalsVisibleTo("XMLUtilsTests")]

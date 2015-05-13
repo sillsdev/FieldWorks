@@ -4,7 +4,6 @@
 //
 // File: PropertyTable.cs
 // Authorship History: John Hatton
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,11 +11,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.Runtime.Serialization;
 using System.IO;
 using System.Threading;		// for Monitor (dlh)
 using System.Text;
-
 using SIL.Utils;
 
 namespace XCore
@@ -44,8 +41,9 @@ namespace XCore
 		/// </summary>
 		public enum SettingsGroup { Undecided, GlobalSettings, LocalSettings, BestSettings };
 
+		private Mediator Mediator { get; set; }
+
 		private Dictionary<string, Property> m_properties;
-		private Mediator m_mediator;
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
@@ -55,13 +53,13 @@ namespace XCore
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PropertySet"/> class.
+		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public PropertyTable(Mediator mediator)
 		{
-			m_mediator = mediator;
 			m_properties = new Dictionary<string, Property>(100);
+			Mediator = mediator;
 		}
 
 		#region IDisposable & Co. implementation
@@ -150,9 +148,8 @@ namespace XCore
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				foreach(KeyValuePair<string, Property> kvp in m_properties)
+				foreach (var property in m_properties.Values)
 				{
-					Property property = kvp.Value;
 					if (property.doDispose)
 						((IDisposable)property.value).Dispose();
 					property.name = null;
@@ -162,22 +159,15 @@ namespace XCore
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_localSettingsId = null;
+			m_userSettingDirectory = null;
 			m_properties = null;
-			m_mediator = null;
 			m_traceSwitch = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
-
-		private void BroadcastPropertyChange(string name)
-		{
-			string propertyName = DecodeLocalPropertyName(name);
-
-			if (m_mediator != null)
-				m_mediator.BroadcastString("OnPropertyChanged", propertyName);
-		}
 
 		public string GetPropertiesDumpString()
 		{
@@ -197,6 +187,7 @@ namespace XCore
 		/// <param name="name"></param>
 		public void RemoveProperty(string name)
 		{
+			CheckDisposed();
 			Property goner;
 			if (m_properties.TryGetValue(name, out goner))
 			{
@@ -210,52 +201,39 @@ namespace XCore
 		#region getting and setting
 
 		/// <summary>
-		/// See if we can find an existing property setting trying local first, and then global.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		internal SettingsGroup GetBestSettings(string name)
-		{
-			SettingsGroup bestSettings;
-			object propertyValue;
-			PropertyExists(name, out propertyValue, out bestSettings);
-			return bestSettings;
-		}
-
-		/// <summary>
-		/// Get the best settings for the first property found in a set of property names.
-		/// This is useful for setting/retrieving contextual properties based upon the group setting of
-		/// some root property. The user may want to look up the setting based upon the contextual name,
-		/// and then the root property name, if it couldn't find one.
-		/// </summary>
-		/// <param name="ids"></param>
-		/// <returns></returns>
-		internal PropertyTable.SettingsGroup GetBestSettings(string[] ids)
-		{
-			PropertyTable.SettingsGroup bestSettings = PropertyTable.SettingsGroup.Undecided;
-			// see if we have already stored the property with its context.
-			foreach (string id in ids)
-			{
-				bestSettings = GetBestSettings(id);
-				if (bestSettings != PropertyTable.SettingsGroup.Undecided)
-					break;
-			}
-			return bestSettings;
-		}
-
-		/// <summary>
 		/// If the specified settingsGroup is "BestSettings", find the best setting,
-		/// otherwise return the specified settingsGroup.
+		/// otherwise return the provided settingsGroup.
+		///
+		/// Also, return the property name as the key into the property table dictionary.
+		/// It may be the original property name or one adjusted for local settings.
+		///
+		/// Prefer local over global, if both exist.
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="settingsGroup"></param>
-		/// <param name="firstSettings"></param>
+		/// <param name="adjustedPropertyKey"></param>
 		/// <returns></returns>
-		private SettingsGroup TestForBestSettings(string name, SettingsGroup settingsGroup, out SettingsGroup firstSettings)
+		private SettingsGroup GetBestSettingsGroupAndKey(string name, SettingsGroup settingsGroup, out string adjustedPropertyKey)
 		{
-			firstSettings = settingsGroup;
+			adjustedPropertyKey = name;
 			if (settingsGroup == SettingsGroup.BestSettings)
-				settingsGroup = GetBestSettings(name);
+			{
+				// Prefer local over global.
+				var key = FormatPropertyNameForLocalSettings(name);
+				if (GetProperty(key) != null)
+				{
+					adjustedPropertyKey = key;
+					return SettingsGroup.LocalSettings;
+				}
+				if (GetProperty(name) != null)
+				{
+					return SettingsGroup.GlobalSettings;
+				}
+			}
+			else if (settingsGroup == SettingsGroup.LocalSettings)
+			{
+				adjustedPropertyKey = FormatPropertyNameForLocalSettings(name);
+			}
 			return settingsGroup;
 		}
 
@@ -266,40 +244,9 @@ namespace XCore
 		/// <returns></returns>
 		public bool PropertyExists(string name)
 		{
-			object propertyValue = null;
-			SettingsGroup bestGuessGroup;
-			return PropertyExists(name, out propertyValue, out bestGuessGroup);
-		}
+			CheckDisposed();
 
-		/// <summary>
-		/// Tests whether a property exists, and gives the 'best' group it was found in
-		/// (ie. local first and then global).
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="bestGuessGroup">Undecided, if none was found.</param>
-		/// <returns></returns>
-		public bool PropertyExists(string name, out SettingsGroup bestGuessGroup)
-		{
-			object propertyValue = null;
-			return PropertyExists(name, out propertyValue, out bestGuessGroup);
-		}
-
-		/// <summary>
-		/// Test whether a property exists and gives its 'best' group and its value.
-		/// (ie. local first and then global).
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="propertyValue">null, if it didn't find the property.</param>
-		/// <param name="bestGuessGroup">Undecided, if none was found.</param>
-		/// <returns></returns>
-		public bool PropertyExists(string name, out object propertyValue, out SettingsGroup bestGuessGroup)
-		{
-			bestGuessGroup = SettingsGroup.Undecided;
-			if (PropertyExists(name, out propertyValue, SettingsGroup.LocalSettings))
-				bestGuessGroup = SettingsGroup.LocalSettings;
-			else if (PropertyExists(name, out propertyValue, SettingsGroup.GlobalSettings))
-				bestGuessGroup = SettingsGroup.GlobalSettings;
-			return bestGuessGroup != SettingsGroup.Undecided;
+			return PropertyExists(name, SettingsGroup.BestSettings);
 		}
 
 		/// <summary>
@@ -310,8 +257,12 @@ namespace XCore
 		/// <returns></returns>
 		public bool PropertyExists(string name, SettingsGroup settingsGroup)
 		{
-			object propertyValue = null;
-			return PropertyExists(name, out propertyValue, settingsGroup);
+			CheckDisposed();
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+
+			return GetProperty(key) != null;
 		}
 
 		/// <summary>
@@ -319,12 +270,61 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="propertyValue">null, if it didn't find the property.</param>
-		/// <param name="settingsGroup"></param>
 		/// <returns></returns>
-		public bool PropertyExists(string name, out object propertyValue, SettingsGroup settingsGroup)
+		public bool TryGetValue<T>(string name, out T propertyValue)
 		{
-			propertyValue = GetValue(name, settingsGroup);
-			return propertyValue != null;
+			CheckDisposed();
+
+			return TryGetValue(name, SettingsGroup.BestSettings, out propertyValue);
+		}
+
+		/// <summary>
+		/// Test whether a property exists in the specified group. Gives any value found.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="settingsGroup"></param>
+		/// <param name="propertyValue">null, if it didn't find the property.</param>
+		/// <returns></returns>
+		internal bool TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
+		{
+			CheckDisposed();
+
+			propertyValue = default(T);
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			var prop = GetProperty(key);
+			if (prop == null)
+			{
+				return false;
+			}
+			var basicValue = prop.value;
+			if (basicValue == null)
+			{
+				return false;
+			}
+			if (basicValue is T)
+			{
+				propertyValue = (T)basicValue;
+				return true;
+			}
+			throw new ArgumentException("Mismatched data type.");
+		}
+
+		private Property GetProperty(string key)
+		{
+			if (!Monitor.TryEnter(m_properties))
+			{
+				MiscUtils.ErrorBeep();
+				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
+				Monitor.Enter(m_properties);
+			}
+
+			Property result;
+			m_properties.TryGetValue(key, out result);
+
+			Monitor.Exit(m_properties);
+
+			return result;
 		}
 
 		/// <summary>
@@ -332,9 +332,26 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns>returns null if the property is not found</returns>
-		public object GetValue(string name)
+		public T GetValue<T>(string name)
 		{
-			return GetValue(name, SettingsGroup.BestSettings);
+			CheckDisposed();
+
+			return GetValue<T>(name, SettingsGroup.BestSettings);
+		}
+
+		/// <summary>
+		/// Get the value of the property of the specified settingsGroup.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="settingsGroup"></param>
+		/// <returns></returns>
+		public T GetValue<T>(string name, SettingsGroup settingsGroup)
+		{
+			CheckDisposed();
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			return GetValueInternal<T>(key);
 		}
 
 		/// <summary>
@@ -344,9 +361,11 @@ namespace XCore
 		/// <param name="name"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		public object GetValue(string name, object defaultValue)
+		public T GetValue<T>(string name, T defaultValue)
 		{
-			return GetValue(name, defaultValue, SettingsGroup.BestSettings);
+			CheckDisposed();
+
+			return GetValue(name, SettingsGroup.BestSettings, defaultValue);
 		}
 
 		/// <summary>
@@ -354,78 +373,90 @@ namespace XCore
 		/// Sets the defaultValue if the property doesn't exist.
 		/// </summary>
 		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
 		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
-		public object GetValue(string name, object defaultValue, SettingsGroup settingsGroup)
-		{
-			object result = GetValue(name, settingsGroup);
-			if (result == null)
-			{
-				result = defaultValue;
-				SetProperty(name, result, settingsGroup);
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// Get the value of the property of the specified settingsGroup.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
-		public object GetValue(string name, SettingsGroup settingsGroup)
-		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					return GetValueInternal(FormatPropertyNameForLocalSettings(name));
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					return GetValueInternal(name);
-			}
-		}
-
-		/// <summary>
-		/// Get the value of the property of the specified settingsGroup.
-		/// </summary>
-		/// <param name="key">Encoded name for local or global lookup</param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		private object GetValueInternal(string key, object defaultValue)
+		public T GetValue<T>(string name, SettingsGroup settingsGroup, T defaultValue)
 		{
 			CheckDisposed();
-			object result = GetValueInternal(key);
-			if (result == null)
-			{
-				result = defaultValue;
-				SetPropertyInternal(key, result);
-			}
-			return result;
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			return GetValueInternal(key, defaultValue);
 		}
 
 		/// <summary>
 		/// get the value of a property
 		/// </summary>
 		/// <param name="key">Encoded name for local or global lookup</param>
-		/// <returns>returns null if the property is not found</returns>
-		private object GetValueInternal(string key)
+		/// <returns>Returns the property value, or null if property does not exist.</returns>
+		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
+		private T GetValueInternal<T>(string key)
 		{
-			CheckDisposed();
 			if (!Monitor.TryEnter(m_properties))
 			{
 				MiscUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}
-			object result = null;
-			if (m_properties.ContainsKey(key))
-				result = m_properties[key].value;
+			var result = default(T);
+			Property prop;
+			if (m_properties.TryGetValue(key, out prop))
+			{
+				var basicValue = prop.value;
+				if (basicValue == null)
+				{
+					return result;
+				}
+				if (basicValue is T)
+				{
+					result = (T)basicValue;
+				}
+				else
+				{
+					throw new ArgumentException("Mismatched data type.");
+				}
+			}
 			Monitor.Exit(m_properties);
 
+			return result;
+		}
+
+		/// <summary>
+		/// Get the value of the property of the specified settingsGroup.
+		/// </summary>
+		/// <param name="key">Encoded name for local or global lookup</param>
+		/// <param name="defaultValue"></param>
+		/// <returns></returns>
+		private T GetValueInternal<T>(string key, T defaultValue)
+		{
+			T result;
+			var prop = GetProperty(key);
+			if (prop == null)
+			{
+				result = defaultValue;
+				SetDefaultInternal(key, defaultValue, true);
+			}
+			else
+			{
+				if (prop.value == null)
+				{
+					prop.value = defaultValue;
+					result = defaultValue;
+					SetDefaultInternal(key, defaultValue, true);
+				}
+				else
+				{
+					if (prop.value is T)
+					{
+						result = (T)prop.value;
+					}
+					else
+					{
+						throw new ArgumentException("Mismatched data type.");
+					}
+				}
+			}
 			return result;
 		}
 
@@ -434,10 +465,14 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="defaultValue"></param>
-		/// <param name="doBroadcastChange">>if true, will fire in the OnPropertyChanged() methods of all colleagues</param>
-		public void SetDefault(string name, object defaultValue, bool doBroadcastChange)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		public void SetDefault(string name, object defaultValue, bool doBroadcastIfChanged)
 		{
-			SetDefault(name, defaultValue, doBroadcastChange, SettingsGroup.BestSettings);
+			CheckDisposed();
+			SetDefault(name, defaultValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -445,23 +480,17 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="defaultValue"></param>
-		/// <param name="doBroadcastChange"></param>
 		/// <param name="settingsGroup"></param>
-		public void SetDefault(string name, object defaultValue, bool doBroadcastChange, SettingsGroup settingsGroup)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					SetDefaultInternal(FormatPropertyNameForLocalSettings(name), defaultValue, doBroadcastChange);
-					break;
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					SetDefaultInternal(name, defaultValue, doBroadcastChange);
-					break;
-			}
+			CheckDisposed();
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			SetDefaultInternal(key, defaultValue, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -469,10 +498,12 @@ namespace XCore
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="defaultValue"></param>
-		/// <param name="doBroadcastChange">>if true, will fire in the OnPropertyChanged() methods of all colleagues</param>
-		private void SetDefaultInternal(string key, object defaultValue, bool doBroadcastChange)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		private void SetDefaultInternal(string key, object defaultValue, bool doBroadcastIfChanged)
 		{
-			CheckDisposed();
 			if(!Monitor.TryEnter(m_properties))
 			{
 				TraceVerboseLine(">>>>>>>*****  colision: <c>  ********<<<<<<<<<<<");
@@ -480,20 +511,10 @@ namespace XCore
 			}
 			if (!m_properties.ContainsKey(key))
 			{
-				SetPropertyInternal(key, defaultValue, doBroadcastChange);
+				SetPropertyInternal(key, defaultValue, doBroadcastIfChanged);
 			}
-			Monitor.Exit(m_properties);
-		}
 
-		/// <summary>
-		/// set the property value for the specified settingsGroup (broadcast change by default)
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="newValue"></param>
-		/// <param name="settingsGroup"></param>
-		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup)
-		{
-			SetProperty(name, newValue, true, settingsGroup);
+			Monitor.Exit(m_properties);
 		}
 
 		/// <summary>
@@ -501,34 +522,17 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="newValue"></param>
-		/// <param name="doBroadcastChange"></param>
 		/// <param name="settingsGroup"></param>
-		public void SetProperty(string name, object newValue, bool doBroadcastChange, SettingsGroup settingsGroup)
-		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					SetPropertyInternal(FormatPropertyNameForLocalSettings(name), newValue, doBroadcastChange);
-					break;
-				case SettingsGroup.GlobalSettings:
-				default:
-					SetPropertyInternal(name, newValue, doBroadcastChange);
-					break;
-			}
-		}
-
-		/// <summary>
-		/// set the value of the best property (try finding local first, then global)
-		/// and broadcast the change.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="newValue"></param>
-		public void SetProperty(string name, object newValue)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
-			SetProperty(name, newValue, true);
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			SetPropertyInternal(key, newValue, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -537,22 +541,14 @@ namespace XCore
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="newValue"></param>
-		/// <param name="doBroadcastChange">if true & the property is actually different,
-		/// will fire the OnPropertyChanged() methods of all colleagues</param>
-		public void SetProperty(string name, object newValue, bool doBroadcastChange)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		public void SetProperty(string name, object newValue, bool doBroadcastIfChanged)
 		{
-			SetProperty(name, newValue, doBroadcastChange, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// set the value of the best property (try finding local first, then global)
-		/// and broadcast the change.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="newValue"></param>
-		private void SetPropertyInternal(string key, object newValue)
-		{
-			SetPropertyInternal(key, newValue, true);
+			CheckDisposed();
+			SetProperty(name, newValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -560,13 +556,15 @@ namespace XCore
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="newValue"></param>
-		/// <param name="doBroadcastChange">if true & the property is actually different,
-		/// will fire the OnPropertyChanged() methods of all colleagues</param>
-		private void SetPropertyInternal(string key, object newValue, bool doBroadcastChange)
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		private void SetPropertyInternal(string key, object newValue, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 
-			bool didChange = true;
+			var didChange = true;
 			if (!Monitor.TryEnter(m_properties))
 			{
 				TraceVerboseLine(">>>>>>>*****  colision: <d>  ********<<<<<<<<<<<");
@@ -582,8 +580,7 @@ namespace XCore
 								|| (oldExists
 									&&
 									(	(oldValue == newValue) // Identity is the same
-										||
-										oldValue.Equals(newValue)) // Close enough for government work.
+										|| oldValue.Equals(newValue)) // Close enough for government work.
 									)
 								);
 				if (didChange)
@@ -598,6 +595,11 @@ namespace XCore
 				m_properties[key] = new Property(key, newValue);
 			}
 
+			if (didChange && doBroadcastIfChanged)
+			{
+				BroadcastPropertyChange(key);
+			}
+
 			Monitor.Exit(m_properties);
 
 #if SHOWTRACE
@@ -606,8 +608,17 @@ namespace XCore
 				TraceVerboseLine("Property '"+key+"' --> '"+newValue.ToString()+"'");
 			}
 #endif
-			if (didChange && doBroadcastChange)
-				BroadcastPropertyChange(key);
+		}
+
+		private void BroadcastPropertyChange(string key)
+		{
+			var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
+			var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
+
+			if (Mediator != null)
+			{
+				Mediator.BroadcastString("OnPropertyChanged", propertyName);
+			}
 		}
 
 		/// <summary>
@@ -620,17 +631,10 @@ namespace XCore
 		/// <returns></returns>
 		public bool GetBoolProperty(string name, bool defaultValue, SettingsGroup settingsGroup)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					return GetBoolPropertyInternal(FormatPropertyNameForLocalSettings(name), defaultValue);
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					return GetBoolPropertyInternal(name, defaultValue);
-			}
+			CheckDisposed();
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			return GetBoolPropertyInternal(key, defaultValue);
 		}
 
 		/// <summary>
@@ -642,6 +646,7 @@ namespace XCore
 		/// <returns></returns>
 		public bool GetBoolProperty(string name, bool defaultValue)
 		{
+			CheckDisposed();
 			return GetBoolProperty(name, defaultValue, SettingsGroup.BestSettings);
 		}
 
@@ -649,18 +654,12 @@ namespace XCore
 		/// Gets the boolean value of property
 		/// and creates the property with the default value if it doesn't exist yet.
 		/// </summary>
-		/// <param name="name"></param>
+		/// <param name="key"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		private bool GetBoolPropertyInternal(string name, bool defaultValue)
+		private bool GetBoolPropertyInternal(string key, bool defaultValue)
 		{
-			CheckDisposed();
-
-			object o = GetValueInternal(name, defaultValue);
-			if (o is bool)
-				return (bool)o;
-
-			throw new ApplicationException("The property " + name + " is not currently a boolean.");
+			return GetValueInternal(key, defaultValue);
 		}
 
 		/// <summary>
@@ -673,17 +672,10 @@ namespace XCore
 		/// <returns></returns>
 		public string GetStringProperty(string name, string defaultValue, SettingsGroup settingsGroup)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					return GetStringPropertyInternal(FormatPropertyNameForLocalSettings(name), defaultValue);
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					return GetStringPropertyInternal(name, defaultValue);
-			}
+			CheckDisposed();
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			return GetStringPropertyInternal(key, defaultValue);
 		}
 
 		/// <summary>
@@ -695,6 +687,7 @@ namespace XCore
 		/// <returns></returns>
 		public string GetStringProperty(string name, string defaultValue)
 		{
+			CheckDisposed();
 			return GetStringProperty(name, defaultValue, SettingsGroup.BestSettings);
 		}
 
@@ -702,13 +695,12 @@ namespace XCore
 		/// Gets the string value of property
 		/// and creates the property with the default value if it doesn't exist yet.
 		/// </summary>
-		/// <param name="name"></param>
+		/// <param name="key"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
-		private string GetStringPropertyInternal(string name, string defaultValue)
+		private string GetStringPropertyInternal(string key, string defaultValue)
 		{
-			CheckDisposed();
-			return (string)GetValueInternal(name, defaultValue);
+			return GetValueInternal(key, defaultValue);
 		}
 
 		/// <summary>
@@ -721,17 +713,11 @@ namespace XCore
 		/// <returns></returns>
 		public int GetIntProperty(string name, int defaultValue, SettingsGroup settingsGroup)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					return GetIntPropertyInternal(FormatPropertyNameForLocalSettings(name), defaultValue);
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					return GetIntPropertyInternal(name, defaultValue);
-			}
+			CheckDisposed();
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			return GetIntPropertyInternal(key, defaultValue);
 		}
 
 		/// <summary>
@@ -743,6 +729,7 @@ namespace XCore
 		/// <returns></returns>
 		public int GetIntProperty(string name, int defaultValue)
 		{
+			CheckDisposed();
 			return GetIntProperty(name, defaultValue, SettingsGroup.BestSettings);
 		}
 
@@ -756,34 +743,26 @@ namespace XCore
 		private int GetIntPropertyInternal(string name, int defaultValue)
 		{
 			CheckDisposed();
-			return (int)GetValueInternal(name, defaultValue);
+			return GetValueInternal(name, defaultValue);
 		}
 
 		public void SetPropertyDispose(string name, bool doDispose)
 		{
+			CheckDisposed();
 			SetPropertyDispose(name, doDispose, SettingsGroup.BestSettings);
 		}
 
 		public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch (settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					SetPropertyDisposeInternal(FormatPropertyNameForLocalSettings(name), doDispose);
-					break;
-				case SettingsGroup.GlobalSettings:
-				case SettingsGroup.Undecided:
-				default:
-					SetPropertyDisposeInternal(name, doDispose);
-					break;
-			}
+			CheckDisposed();
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			SetPropertyDisposeInternal(key, doDispose);
 		}
 
-		private void SetPropertyDisposeInternal(string name, bool doDispose)
+		private void SetPropertyDisposeInternal(string key, bool doDispose)
 		{
-			CheckDisposed();
 			if(!Monitor.TryEnter(m_properties))
 			{
 				TraceVerboseLine(">>>>>>>*****  colision: <e>  ********<<<<<<<<<<<");
@@ -791,13 +770,13 @@ namespace XCore
 			}
 			try
 			{
-				Property property = m_properties[name];
+				Property property = m_properties[key];
 				// Don't need an assert,
 				// since the Dictionary will throw an exception,
 				// if the key is missing.
 				//Debug.Assert(property != null);
 				if (!(property.value is IDisposable))
-					throw new ArgumentException(String.Format("The property named: {0} is not valid for disposing.", name));
+					throw new ArgumentException(String.Format("The property named: {0} is not valid for disposing.", key));
 				property.doDispose = doDispose;
 			}
 			finally
@@ -811,81 +790,67 @@ namespace XCore
 
 		public void SetPropertyPersistence(string name, bool doPersist, SettingsGroup settingsGroup)
 		{
-			SettingsGroup firstSettings;
-			settingsGroup = TestForBestSettings(name, settingsGroup, out firstSettings);
-			switch(settingsGroup)
-			{
-				case SettingsGroup.LocalSettings:
-					SetPropertyPersistenceInternal(FormatPropertyNameForLocalSettings(name), doPersist);
-					break;
-				case SettingsGroup.GlobalSettings:
-				default:
-					SetPropertyPersistenceInternal(name, doPersist);
-					break;
-			}
-		}
-
-		public void SetPropertyPersistence(string name, bool doPersist)
-		{
-			SetPropertyPersistence(name, doPersist, SettingsGroup.BestSettings);
-		}
-
-		private void SetPropertyPersistenceInternal(string name, bool doPersist)
-		{
 			CheckDisposed();
-			if(!Monitor.TryEnter(m_properties))
+
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			if (!Monitor.TryEnter(m_properties))
 			{
 				TraceVerboseLine(">>>>>>>*****  colision: <f>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}
-			// Will thorw if not in Dictionary.
+			// Will properly throw if not in Dictionary.
 			Property property = null;
 			try
 			{
-				property = m_properties[name];
+				property = m_properties[key];
 			}
 			finally
 			{
 				Monitor.Exit(m_properties);
 			}
 
-			//Debug.Assert(property!=null);
 			property.doPersist = doPersist;
+		}
+
+		public void SetPropertyPersistence(string name, bool doPersist)
+		{
+			CheckDisposed();
+
+			SetPropertyPersistence(name, doPersist, SettingsGroup.BestSettings);
 		}
 
 		/// <summary>
 		/// Save general application settings
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Mediator.PropertyTable returns a reference")]
 		public void SaveGlobalSettings()
 		{
-			string dbprefix = m_mediator.PropertyTable.LocalSettingsId;
+			CheckDisposed();
 			// first save global settings, ignoring database specific ones.
-			m_mediator.PropertyTable.Save("", new string[] { dbprefix });
+			// The empty string '""' in the first parameter means the global settings.
+			// The array in the second parameter means to 'exclude me'.
+			// In this case, local settings won't be saved.
+			Save("", new[] { LocalSettingsId });
 		}
 
 		/// <summary>
 		/// Save database specific settings.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Mediator.PropertyTable returns a reference")]
 		public void SaveLocalSettings()
 		{
-			string dbprefix = m_mediator.PropertyTable.LocalSettingsId;
+			CheckDisposed();
 			// now save database specific settings.
-			m_mediator.PropertyTable.Save(dbprefix, new string[0]);
+			Save(LocalSettingsId, new string[0]);
 		}
 
 		/// <summary>
 		/// Remove the settings files saved from PropertyTable.Save()
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Mediator.PropertyTable returns a reference")]
 		public void RemoveLocalAndGlobalSettings()
 		{
+			CheckDisposed();
 			// first remove local settings file.
-			string path = SettingsPath(m_mediator.PropertyTable.LocalSettingsId);
+			string path = SettingsPath(LocalSettingsId);
 			if (File.Exists(path))
 				File.Delete(path);
 			// next remove global settings file.
@@ -957,8 +922,8 @@ namespace XCore
 		{
 			if (String.IsNullOrEmpty(settingsId))
 				return string.Empty;
-			else
-				return FormatPropertyNameForLocalSettings(string.Empty, settingsId);
+
+			return FormatPropertyNameForLocalSettings(string.Empty, settingsId);
 		}
 
 		/// <summary>
@@ -968,6 +933,7 @@ namespace XCore
 		/// <returns></returns>
 		public string SettingsPath(string settingsId)
 		{
+			CheckDisposed();
 			string pathPrefix = GetPathPrefixForSettingsId(settingsId);
 			return Path.Combine(UserSettingDirectory, pathPrefix + "Settings.xml");
 		}
@@ -993,14 +959,6 @@ namespace XCore
 			return FormatPropertyNameForLocalSettings(name, LocalSettingsId);
 		}
 
-		private string DecodeLocalPropertyName(string name)
-		{
-			string localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
-			if (name.StartsWith(localSettingsPrefix))
-				return name.Remove(0, localSettingsPrefix.Length);
-			return name;
-		}
-
 		/// <summary>
 		/// Establishes a current group id for saving to property tables/files with SettingsGroup.LocalSettings.
 		/// By default, this is the same as GlobalSettingsId.
@@ -1009,12 +967,14 @@ namespace XCore
 		{
 			get
 			{
+				CheckDisposed();
 				if (m_localSettingsId == null)
 					return GlobalSettingsId;
 				return m_localSettingsId;
 			}
 			set
 			{
+				CheckDisposed();
 				m_localSettingsId = value;
 			}
 		}
@@ -1024,7 +984,11 @@ namespace XCore
 		/// </summary>
 		public string GlobalSettingsId
 		{
-			get { return ""; }
+			get
+			{
+				CheckDisposed();
+				return "";
+			}
 		}
 
 		/// <summary>
@@ -1041,6 +1005,10 @@ namespace XCore
 			set
 			{
 				CheckDisposed();
+
+				if (string.IsNullOrEmpty(value))
+					throw new ArgumentNullException("value", @"Cannot set 'UserSettingDirectory' to null or empty string.");
+
 				m_userSettingDirectory = value;
 			}
 		}

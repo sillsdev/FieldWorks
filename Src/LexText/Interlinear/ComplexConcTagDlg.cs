@@ -18,7 +18,6 @@ namespace SIL.FieldWorks.IText
 		private TreeCombo m_tagComboBox;
 
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcTagNode m_node;
 		private PossibilityComboController m_posPopupTreeManager;
@@ -29,10 +28,9 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ComplexConcTagNode node)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcTagNode node)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_node = node;
 
 			m_tagComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
@@ -42,12 +40,13 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.TextMarkupTagsOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									m_mediator,
-									(Form) m_mediator.PropertyTable.GetValue("window"));
+									mediator,
+									propertyTable,
+									propertyTable.GetValue<Form>("window"));
 
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag != null ? m_node.Tag.Hvo : 0);
 
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));

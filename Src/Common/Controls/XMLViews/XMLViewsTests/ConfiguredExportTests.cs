@@ -8,11 +8,44 @@ using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
+using XCore;
 
 namespace XMLViewsTests
 {
 	public class ConfiguredExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to start an undoable UOW.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to end the undoable UOW, Undo everything, and 'commit',
+		/// which will essentially clear out the Redo stack.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestTearDown()
+		{
+			m_mediator.Dispose();
+			m_mediator = null;
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+
+			base.TestTearDown();
+		}
+
 		[Test]
 		public void BeginCssClassIfNeeded_UsesSafeClasses()
 		{
@@ -33,7 +66,7 @@ namespace XMLViewsTests
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -57,7 +90,7 @@ namespace XMLViewsTests
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
@@ -84,7 +117,7 @@ namespace XMLViewsTests
 			{
 				using(var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
@@ -109,7 +142,7 @@ namespace XMLViewsTests
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -140,7 +173,7 @@ namespace XMLViewsTests
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
@@ -157,7 +190,7 @@ namespace XMLViewsTests
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 
 					var frag = new XmlDocument();
 					frag.LoadXml("<p css='some#style' flowType='" + flowType + "'/>");

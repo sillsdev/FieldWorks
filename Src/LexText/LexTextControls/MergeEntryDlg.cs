@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -75,15 +74,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator);
+			SetDlgInfo(cache, null, mediator, propertyTable);
 
 			// Relocate remaining three buttons.
 			Point pt = m_btnHelp.Location;

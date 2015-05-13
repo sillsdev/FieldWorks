@@ -148,9 +148,9 @@ namespace XMLViewsTests
 		[Test]
 		public void StringPropIsMarked()
 		{
-			using (var view = new XmlView(m_hvoLexDb, "root", null, true, m_sda))
+			using (var view = new XmlView(m_hvoLexDb, "root", true, m_sda))
 			{
-				var vc = new XmlVc(null, "root", true, view, null, m_sda);
+				var vc = new XmlVc("root", true, view, null, m_sda);
 				vc.IdentifySource = true;
 				vc.SetCache(Cache);
 				vc.m_layouts = m_layouts;
@@ -219,7 +219,7 @@ namespace XMLViewsTests
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var sda = new MockDecorator(Cache);
-			var vc = new XmlVc(null, "root", true, null, null, sda);
+			var vc = new XmlVc("root", true, null, null, sda);
 			vc.SetCache(Cache);
 			var sut = new XmlVcDisplayVec(vc, new MockEnv(), entry.Hvo, LexEntryTags.kflidSenses, 1);
 

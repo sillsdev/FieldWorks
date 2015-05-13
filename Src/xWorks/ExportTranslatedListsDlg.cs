@@ -4,12 +4,10 @@
 //
 // File: ExportTranslatedListsDlg.cs
 // Responsibility: mcconnel
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -26,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// ----------------------------------------------------------------------------------------
 	public partial class ExportTranslatedListsDlg : Form
 	{
-		Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		FdoCache m_cache;
 		string m_titleFrag;
 		string m_defaultExt;
@@ -59,10 +57,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog with all needed information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(Mediator mediator, FdoCache cache, string titleFrag,
+		public void Initialize(PropertyTable propertyTable, FdoCache cache, string titleFrag,
 			string defaultExt, string filter)
 		{
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_titleFrag = titleFrag;
 			m_defaultExt = defaultExt;
@@ -184,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Filter = String.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
 				dlg.Title = String.Format(xWorksStrings.ExportTo0,
 					String.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
-				dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+				dlg.InitialDirectory = m_propertyTable.GetStringProperty("ExportDir",
 					Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 				if (dlg.ShowDialog(this) != DialogResult.OK)
 					return;
@@ -238,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpExportTranslatedListsDlg");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpExportTranslatedListsDlg");
 		}
 
 		private void m_btnSelectAll_Click(object sender, EventArgs e)

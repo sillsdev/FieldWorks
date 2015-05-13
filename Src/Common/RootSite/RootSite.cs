@@ -16,7 +16,6 @@
 // refactored to enable a distinction between a SimpleRootSite that does not know what cache
 // is being used for the view, and RootSite which has an FdoCache member variable.
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,14 +29,11 @@ using System.Windows.Forms;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using XCore;
-using SIL.FieldWorks.Resources;
 
 // How to debug COM reference counts:
 // a) create a global variable that contains a file handle:
@@ -467,12 +463,12 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-				string oldBest = m_mediator.PropertyTable.GetStringProperty("BestStyleName", null);
+				string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
 				if (oldBest != bestStyle)
 				{
 					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					m_mediator.PropertyTable.SetProperty("BestStyleName", bestStyle);
-					m_mediator.PropertyTable.SetPropertyPersistence("BestStyleName", false);
+					m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
+					m_propertyTable.SetPropertyPersistence("BestStyleName", false);
 				}
 				return bestStyle;
 			}
@@ -1864,17 +1860,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region IxCoreColleague Members
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Not used
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
-
 		}
 
 		/// ------------------------------------------------------------------------------------

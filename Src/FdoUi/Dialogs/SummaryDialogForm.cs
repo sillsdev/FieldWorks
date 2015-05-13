@@ -49,6 +49,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private XmlView m_xv;
 		private FdoCache m_cache;
 		private XCore.Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
 //		private IVwStylesheet m_vss;
@@ -86,6 +87,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_rghvo.Add(leui.Object.Hvo);
 			m_cache = leui.Object.Cache;
 			m_mediator = leui.Mediator;
+			m_propertyTable = leui.PropTable;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
@@ -281,7 +283,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");
 
 			// Make an XmlView which displays that object using the specified layout.
-			XmlView xv = new XmlView(hvoRoot, "publishFound", null, false, sda);
+			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda);
 			xv.Cache = cache;
 			xv.Mediator = m_mediator;
 			xv.StyleSheet = styleSheet;
@@ -450,7 +452,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "lexiconEdit", cmo.Guid);
 			Debug.Assert(m_mediator != null, "The program must pass in a mediator to follow a link in the same application!");
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			app.HandleOutgoingLink(link);
 		}
 

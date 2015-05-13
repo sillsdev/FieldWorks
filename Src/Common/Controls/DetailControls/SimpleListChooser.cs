@@ -170,12 +170,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						sLabel = String.Format(sLabel, sTopPOS);
 						bool fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional",
 							false);
-						string sTitle = m_mediator.StringTbl.GetString(
+						string sTitle = StringTable.Table.GetString(
 							fOptional ? "OptionalSlot" : "ObligatorySlot",
 							"Linguistics/Morphology/TemplateTable");
 						AddLink(sLabel, LinkType.kSimpleLink,
 							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
-							fOptional, m_mediator));
+							fOptional, m_mediator, m_propertyTable));
 					}
 					break;
 				default:

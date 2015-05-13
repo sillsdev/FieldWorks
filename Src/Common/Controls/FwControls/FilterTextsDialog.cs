@@ -1,7 +1,6 @@
 // Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
 				message = FwControls.kOkbtnGenreSelection;
-				own.Mediator.PropertyTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList);
+				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true);
 				showWarning = true;
 			}
 			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)

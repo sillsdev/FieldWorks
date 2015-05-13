@@ -213,6 +213,11 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
 		public FdoCache Cache
@@ -281,7 +286,8 @@ namespace SIL.FieldWorks.FdoUi
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 					false,
 					m_mediator,
-					(Form)m_mediator.PropertyTable.GetValue("window"));
+					PropTable,
+					PropTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(0);

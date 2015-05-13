@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.XWorks
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
 			FwXWindow result = new FwXWindow(this, wndCopyFrom, iconStream, configFile,
-				m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null, false);
+				m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
 			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 			return result;
 		}

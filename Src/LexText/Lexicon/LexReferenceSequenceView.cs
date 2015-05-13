@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (ui != null)
 			{
 				//Debug.WriteLine("hvo=" + hvo.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-				return ui.HandleRightClick(Mediator, this, true);
+				return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
 			}
 
 			return false;

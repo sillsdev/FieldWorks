@@ -8,16 +8,8 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
-using System.Diagnostics;
-
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -66,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, m_fakeFlid, m_stringTable, this);
+					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
 				}
 				return base.Vc;
 			}

@@ -11,7 +11,6 @@
 // (This affects only DEBUG builds.)
 // </remarks>
 #define DEBUG_TEST
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,8 +60,8 @@ namespace SIL.FieldWorks.XWorks
 		FwStyleSheet m_styleSheet;
 		IMainWindowDelegateCallbacks m_callbacks;
 		Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		string m_sLayoutPropertyName;
-		StringTable m_stringTbl;
 		Inventory m_layouts;
 		Inventory m_parts;
 		LayoutTreeNode m_current;
@@ -359,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
 			FwStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
-			Mediator mediator, string sLayoutPropertyName)
+			Mediator mediator, PropertyTable propertyTable, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
@@ -375,38 +374,31 @@ namespace SIL.FieldWorks.XWorks
 			m_styleSheet = styleSheet;
 			m_callbacks = mainWindowDelegateCallbacks;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_sLayoutPropertyName = sLayoutPropertyName;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				m_stringTbl = m_mediator.StringTbl;
 			m_layouts = Inventory.GetInventory("layouts", cache.ProjectId.Name);
 			m_parts = Inventory.GetInventory("parts", cache.ProjectId.Name);
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_stringTbl,
-				configurationParameters, "configureObjectName", "");
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "configureObjectName", "");
 			Text = String.Format(Text, m_configObjectName);
 			m_defaultRootLayoutName = XmlUtils.GetAttributeValue(configurationParameters, "layout");
 			string sLayoutType = null;
-			if (m_mediator != null && m_mediator.PropertyTable != null)
+			if (m_propertyTable.PropertyExists(m_sLayoutPropertyName))
 			{
-				object objType = m_mediator.PropertyTable.GetValue(m_sLayoutPropertyName);
-				if (objType != null)
-					sLayoutType = (string)objType;
+				sLayoutType = m_propertyTable.GetValue<string>(m_sLayoutPropertyName);
 			}
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = m_defaultRootLayoutName;
 			CreateComboAndTreeItems(sLayoutType);
 
 			// Restore the location and size from last time we called this dialog.
-			if (m_mediator != null && m_mediator.PropertyTable != null)
+			if (m_propertyTable.PropertyExists("XmlDocConfigureDlg_Location") && m_propertyTable.PropertyExists("XmlDocConfigureDlg_Size"))
 			{
-				object locWnd = m_mediator.PropertyTable.GetValue("XmlDocConfigureDlg_Location");
-				object szWnd = m_mediator.PropertyTable.GetValue("XmlDocConfigureDlg_Size");
-				if (locWnd != null && szWnd != null)
-				{
-					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
+				var locWnd = m_propertyTable.GetValue<Point>("XmlDocConfigureDlg_Location");
+				var szWnd = m_propertyTable.GetValue<Size>("XmlDocConfigureDlg_Size");
+				Rectangle rect = new Rectangle(locWnd, szWnd);
+				ScreenUtils.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
 			}
 
 			// Make a help topic ID
@@ -551,7 +543,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private LayoutTreeNode BuildMainLayout(XmlNode config)
 		{   // builds control tree nodes based on a configure element
-			LayoutTreeNode ltn = new LayoutTreeNode(config, m_stringTbl, null);
+			LayoutTreeNode ltn = new LayoutTreeNode(config, null);
 			ltn.OriginalIndex = m_tvParts.Nodes.Count;
 			string className = ltn.ClassName;
 			string layoutName = ltn.LayoutName;
@@ -609,7 +601,7 @@ namespace SIL.FieldWorks.XWorks
 					var cOrig = 0;
 					if (!fHide)
 					{
-						ltn = new LayoutTreeNode(node, m_stringTbl, className)
+						ltn = new LayoutTreeNode(node, className)
 							{
 								OriginalIndex = ltnParent.Nodes.Count,
 								ParentLayout = layout,
@@ -1226,10 +1218,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mediator != null)
 			{
-				m_mediator.PropertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, false);
-				m_mediator.PropertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Location", true);
-				m_mediator.PropertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, false);
-				m_mediator.PropertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Size", true);
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, false);
+				m_propertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Location", true);
+				// No broadcast even if it did change.
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, false);
+				m_propertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}
@@ -1696,7 +1689,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (new WaitCursor(this))
 			{
-				LayoutCache.InitializePartInventories(null, (IApp)m_mediator.PropertyTable.GetValue("App"),
+				LayoutCache.InitializePartInventories(null, m_propertyTable.GetValue<IApp>("App"),
 					m_cache.ProjectId.ProjectFolder);
 				Inventory layouts = Inventory.GetInventory("layouts", null);
 				Inventory parts = Inventory.GetInventory("parts", null);
@@ -1742,10 +1735,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (IsDirty())
 			{
-				m_mediator.PropertyTable.SetProperty(m_sLayoutPropertyName,
-					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName, true,
-					PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
+				m_propertyTable.SetProperty(m_sLayoutPropertyName,
+					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName,
+					PropertyTable.SettingsGroup.LocalSettings,
+					true);
+				m_propertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
 					PropertyTable.SettingsGroup.LocalSettings);
 				SaveModifiedLayouts();
 				DialogResult = DialogResult.OK;
@@ -1759,7 +1753,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicID);
 		}
 
 		/// <summary>
@@ -1797,8 +1791,8 @@ namespace SIL.FieldWorks.XWorks
 				defaultStyle, m_styleSheet,
 				m_callbacks != null ? m_callbacks.MaxStyleLevelToShow : 0,
 				m_callbacks != null ? m_callbacks.HvoAppRootObject : 0,
-				m_cache, this, ((IApp)m_mediator.PropertyTable.GetValue("App")),
-				m_mediator.HelpTopicProvider);
+				m_cache, this, m_propertyTable.GetValue<IApp>("App"),
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		/// <summary>
@@ -3377,7 +3371,7 @@ namespace SIL.FieldWorks.XWorks
 			StoreNodeData(m_current);
 			if (m_fDeleteCustomFiles)
 				return true;
-			string sOldRootLayout = m_mediator.PropertyTable.GetStringProperty(m_sLayoutPropertyName, null);
+			string sOldRootLayout = m_propertyTable.GetStringProperty(m_sLayoutPropertyName, null);
 			string sRootLayout = ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName;
 			if (sOldRootLayout != sRootLayout)
 				return true;
@@ -3514,10 +3508,10 @@ namespace SIL.FieldWorks.XWorks
 
 			readonly List<LayoutTreeNode> m_rgltnMerged = new List<LayoutTreeNode>();
 
-			public LayoutTreeNode(XmlNode config, StringTable stringTbl, string classParent)
+			public LayoutTreeNode(XmlNode config, string classParent)
 			{
 				m_xnConfig = config;
-				m_sLabel = XmlUtils.GetLocalizedAttributeValue(stringTbl, config, "label", null);
+				m_sLabel = XmlUtils.GetLocalizedAttributeValue(config, "label", null);
 				if (config.Name == "configure")
 				{
 					m_sClassName = XmlUtils.GetManditoryAttributeValue(config, "class");
@@ -3529,8 +3523,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					m_sClassName = classParent;
 					string sRef = XmlUtils.GetManditoryAttributeValue(config, "ref");
-					if (m_sLabel == null && stringTbl != null)
-						m_sLabel = stringTbl.LocalizeAttributeValue(sRef);
+					if (m_sLabel == null)
+						m_sLabel = StringTable.Table.LocalizeAttributeValue(sRef);
 					if (config.ParentNode != null && config.ParentNode.Name == "layout")
 						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.ParentNode, "name");
 					else
@@ -4917,7 +4911,7 @@ namespace SIL.FieldWorks.XWorks
 			var current = currentItem.LayoutTypeNode;
 			var configViews = (m_cbDictType.Items.OfType<LayoutTypeComboItem>().Select(
 				item => item.LayoutTypeNode)).ToList();
-			using (var dlg = new DictionaryConfigMgrDlg(m_mediator, m_configObjectName, configViews, current))
+			using (var dlg = new DictionaryConfigMgrDlg(m_mediator, m_propertyTable, m_configObjectName, configViews, current))
 			{
 				dlg.Text = String.Format(dlg.Text, m_configObjectName);
 				var presenter = dlg.Presenter;

@@ -11,12 +11,10 @@
 //	for sequences. Also, adding the same element multiple times is not allowed for collections,
 //	but it is for sequences.
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;
@@ -129,7 +127,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator,
+			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
@@ -275,18 +273,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)
 			{
-				Mediator mediator = Mediator;
-				if (mediator != null) // paranoia and unit testing
+				if (Mediator != null) // paranoia and unit testing
 				{
-					StringTable tbl = null;
-					if (mediator.HasStringTable)
-						tbl = mediator.StringTbl;
-					string caption = XmlUtils.GetLocalizedAttributeValue(tbl,
-						ConfigurationNode, "label", "");
+					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 					var vrl = (VectorReferenceLauncher)Control;
-					mediator.SendMessage("RegisterHelpTargetWithId",
+					Mediator.SendMessage("RegisterHelpTargetWithId",
 						new object[]{vrl.Controls[1], caption, HelpId}, false);
-					mediator.SendMessage("RegisterHelpTargetWithId",
+					Mediator.SendMessage("RegisterHelpTargetWithId",
 						new object[]{vrl.Controls[0], caption, HelpId, "Button"}, false);
 				}
 			}

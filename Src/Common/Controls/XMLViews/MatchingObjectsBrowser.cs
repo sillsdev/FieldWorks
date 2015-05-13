@@ -1,14 +1,12 @@
 ﻿// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -58,6 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
@@ -151,18 +150,20 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Properties
 
 		#region Public methods
+
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine)
 		{
-			Initialize(cache, stylesheet, mediator, configNode, searchEngine, null);
+			Initialize(cache, stylesheet, mediator, propertyTable, configNode, searchEngine, null);
 		}
 
 		/// <summary>
@@ -171,10 +172,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine, IWritingSystem reversalWs)
 		{
 			CheckDisposed();
@@ -182,6 +184,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
 
@@ -319,7 +322,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
 			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache, m_mediator,
-				null, m_listPublisher);
+				m_propertyTable, null, m_listPublisher);
 			m_bvMatches.SuspendLayout();
 			m_bvMatches.Location = new Point(0, 0);
 			m_bvMatches.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;

@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -999,7 +998,7 @@ namespace SIL.FieldWorks.Common.Controls
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksGreaterThanOne),
 						new RangeIntMatcher(2, Int32.MaxValue), item));
 					combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.Mediator.HelpTopicProvider,
+						m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						combo));
@@ -1007,7 +1006,7 @@ namespace SIL.FieldWorks.Common.Controls
 				case "genDate":
 				case "date":
 					combo.Items.Add(new RestrictDateComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.Mediator.HelpTopicProvider,
+						m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						sortType == "genDate",
@@ -1051,7 +1050,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!String.IsNullOrEmpty(beSpec))
 			{
-				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.Mediator);
+				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.Mediator, m_bv.PropTable);
 			}
 			// Todo: lots more interesting items.
 			// - search the list for existing names
@@ -1135,13 +1134,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="combo">The combo.</param>
 		/// <param name="beSpec">The be spec.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec, XCore.Mediator mediator)
+		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec,
+			Mediator mediator, PropertyTable propertyTable)
 		{
 			switch (beSpec)
 			{
 				case "complexListMultiple":
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, combo, false, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo, false, null));
 					break;
 				case "external":
 					Type beType = DynamicLoader.TypeForLoaderNode(item.Spec);
@@ -1165,7 +1166,7 @@ namespace SIL.FieldWorks.Common.Controls
 						bool fAtomic = false;
 						if (pi != null)
 							fAtomic = (bool)pi.GetValue(null, null);
-						ListChoiceComboItem comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, combo,
+						ListChoiceComboItem comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo,
 							fAtomic, filterType);
 						combo.Items.Add(comboItem);
 
@@ -1188,13 +1189,13 @@ namespace SIL.FieldWorks.Common.Controls
 				case "atomicFlatListItem": // Fall through
 				case "morphTypeListItem":  // Fall through
 				case "variantConditionListItem":
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, combo, true, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo, true, null));
 					break;
 				default:
 					// if we didn't find it, try "chooserFilter", if we haven't already.
 					string chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", "");
 					if (!String.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
-						MakeListChoiceFilterItem(item, combo, chooserFilter, mediator);
+						MakeListChoiceFilterItem(item, combo, chooserFilter, mediator, propertyTable);
 					return;
 			}
 		}
@@ -1214,7 +1215,7 @@ namespace SIL.FieldWorks.Common.Controls
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
 			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-				m_bv.Mediator.HelpTopicProvider,
+				m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				item,
 				m_cache.ServiceLocator.WritingSystemManager.UserWs,
 				combo));
@@ -1896,7 +1897,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_vc == null)
 				{
-					m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda, null);
+					m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda);
 					m_vc.SuppressPictures = true; // we won't dispose of it, so it mustn't make pictures (which we don't need)
 				}
 				return m_vc;
@@ -2058,6 +2059,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_leafFlid;
 		FdoCache m_cache;
 		XCore.Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		FwComboBox m_combo;
 		bool m_fAtomic;
 		XmlNode m_colSpec;
@@ -2094,12 +2096,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fsi">The fsi.</param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="combo">The combo.</param>
 		/// <param name="fAtomic">if set to <c>true</c> [f atomic].</param>
 		/// <param name="filterType">Type of the filter.</param>
 		/// ------------------------------------------------------------------------------------
 		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, FdoCache cache,
-			XCore.Mediator mediator, FwComboBox combo, bool fAtomic, Type filterType)
+			Mediator mediator, PropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
 			: base(tssName, null, fsi)
 		{
 			m_colSpec = fsi.Spec;
@@ -2111,7 +2114,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// This basically duplicates the loading of treeBarHandler properties. Currently, we don't have access
 				// to that information in XMLViews, and even if we did, the information may not be loaded until
 				// the user actually switches to that RecordList.
-				XmlNode windowConfiguration = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
+				XmlNode windowConfiguration = propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				string owningClass;
 				string property;
 				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
@@ -2128,6 +2131,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_combo = combo;
 			m_fAtomic = fAtomic;
 			m_filterType = filterType;
@@ -2276,17 +2280,16 @@ namespace SIL.FieldWorks.Common.Controls
 		private ReallySimpleListChooser MakeChooser(IEnumerable<ObjectLabel> labels, int[] oldTargets)
 		{
 			var chosenObjs = from hvo in oldTargets select (hvo == 0 ? null : m_cache.ServiceLocator.GetObject(hvo));
-			XCore.PersistenceProvider persistProvider =
-				new PersistenceProvider(m_mediator.PropertyTable);
+			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
 			if (m_leafFlid == 0)
 			{
 				return new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache,
-					chosenObjs, m_mediator.HelpTopicProvider);
+					chosenObjs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			}
 			else
 			{
 				return new LeafChooser(persistProvider, labels, "Items", m_cache, chosenObjs,
-					m_leafFlid, m_mediator.HelpTopicProvider);
+					m_leafFlid, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			}
 		}
 
@@ -2660,9 +2663,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_bv.Mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_bv.PropTable);
 			using (SimpleMatchDlg dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory,
-				m_bv.Mediator.HelpTopicProvider, m_ws, stylesheet, m_bv.Cache))
+				m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ws, stylesheet, m_bv.Cache))
 			{
 				dlg.SetDlgValues(m_matcher, stylesheet);
 				if (dlg.ShowDialog() != DialogResult.OK || dlg.Pattern.Length == 0)

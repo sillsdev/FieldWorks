@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.XWorks
 	/// The intended use is that each window, when it saves its settings, passes its property table to SaveSettings
 	/// so that any global settings can be recorded. The first window to open (on a particular database) should call RestoreSettings.
 	/// </summary>
-	public class GlobalSettingServices
+	public static class GlobalSettingServices
 	{
 		private const string khomographconfiguration = "HomographConfiguration";
 
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 		public static void SaveSettings(IFdoServiceLocator services, PropertyTable propertyTable)
 		{
 			var hc = services.GetInstance<HomographConfiguration>();
-			propertyTable.SetProperty(khomographconfiguration, hc.PersistData);
+			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
 		}
 
 		/// <summary>

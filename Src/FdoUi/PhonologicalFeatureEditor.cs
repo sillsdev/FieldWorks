@@ -198,6 +198,11 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
 		public FdoCache Cache
@@ -265,17 +270,15 @@ namespace SIL.FieldWorks.FdoUi
 				}
 
 				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
-																						   m_cache, false, m_mediator,
-																						   (Form)
-																						   m_mediator.PropertyTable.GetValue(
-																							"window"),
+																						   m_cache, false, m_mediator, PropTable,
+																						   PropTable.GetValue<Form>("window"),
 																						   m_displayWs, m_closedFeature);
 				m_PhonologicalFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_PhonFeaturePopupTreeManager_AfterSelect);
 			}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);
 		}
 
-		private void m_PhonFeaturePopupTreeManager_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void m_PhonFeaturePopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
@@ -661,10 +664,11 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="spec">The parameters element of the BV, containing the
 		/// 'columns' elements that specify the BE bar (among other things).</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache) :
-			base(bv, spec, mediator, cache)
+		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache) :
+			base(bv, spec, mediator, propertyTable, cache)
 		{
 			m_operationsTabControl.Controls.Remove(BulkCopyTab);
 			m_operationsTabControl.Controls.Remove(ClickCopyTab);
@@ -789,22 +793,23 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewerPhonologicalFeatures(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sda)
+			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{ }
 
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="bv"></param>
-		/// <param name="spec"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="bv"></param>
+		///  <param name="spec"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
-		/// <returns></returns>
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+		///  <returns></returns>
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
 		{
-			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, cache);
+			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, propertyTable, cache);
 		}
 
 	}

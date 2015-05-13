@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Xml;
+﻿using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
@@ -14,7 +12,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class InterAreaBookmark : IStTextBookmark
 	{
-		FdoCache m_cache = null;
+		private PropertyTable m_propertyTable;
 		int m_iParagraph;
 		int m_BeginOffset;
 		int m_EndOffset;
@@ -25,19 +23,20 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		internal InterAreaBookmark(InterlinMaster interlinMaster, Mediator mediator, FdoCache cache)	// For restoring
+		internal InterAreaBookmark(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)	// For restoring
 		{
 			// Note: resist any temptation to save mediator in a memer variable. Bookmarks are kept in a static dictionary
 			// and may well have a longer life than the mediator. There is danger of using if after it is disposed. See LT-12435.
-			Init(interlinMaster, cache);
-			Restore(interlinMaster.IndexOfTextRecord, mediator);
+			Init(interlinMaster, cache, propertyTable);
+			Restore(interlinMaster.IndexOfTextRecord);
 		}
 
-		internal void Init(InterlinMaster interlinMaster, FdoCache cache)
+		internal void Init(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)
 		{
 			Debug.Assert(interlinMaster != null);
 			Debug.Assert(cache != null);
-			m_cache = cache;
+			Debug.Assert(propertyTable != null);
+			m_propertyTable = propertyTable;
 		}
 
 		/// <summary>
@@ -46,37 +45,38 @@ namespace SIL.FieldWorks.IText
 		/// <param name="point"></param>
 		/// <param name="fPersistNow">if true, this annotation will persist.</param>
 		/// <param name="index">The index of the selected text in the list</param>
-		public void Save(AnalysisOccurrence point, bool fPersistNow, int index, Mediator mediator)
+		public void Save(AnalysisOccurrence point, bool fPersistNow, int index)
 		{
 			if (point == null || !point.IsValid)
 			{
-				Reset(index, mediator); // let's just reset for an empty location.
+				Reset(index); // let's just reset for an empty location.
 				return;
 			}
 			var iParaInText = point.Segment.Paragraph.IndexInOwner;
 			var begOffset = point.Segment.GetAnalysisBeginOffset(point.Index);
 			var endOffset = point.HasWordform ? begOffset + point.BaselineText.Length : begOffset;
 
-			Save(index, iParaInText, begOffset, endOffset, fPersistNow, mediator);
+			Save(index, iParaInText, begOffset, endOffset, fPersistNow);
 		}
 
 		/// <summary>
 		/// Saves the current selected annotation in the InterlinMaster.
 		/// </summary>
 		/// <param name="fPersistNow">if true, this annotation will persist.</param>
-		public void Save(bool fPersistNow, int index, Mediator mediator)
+		/// <param name="index"></param>
+		public void Save(bool fPersistNow, int index)
 		{
 			if (fPersistNow)
-				this.SavePersisted(index, mediator);
+				SavePersisted(index);
 		}
 
-		internal void Save(int textIndex, int paragraphIndex, int beginCharOffset, int endCharOffset, bool fPersistNow, Mediator mediator)
+		internal void Save(int textIndex, int paragraphIndex, int beginCharOffset, int endCharOffset, bool fPersistNow)
 		{
 			m_iParagraph = paragraphIndex;
 			m_BeginOffset = beginCharOffset;
 			m_EndOffset = endCharOffset;
 			m_textIndex = textIndex;
-			this.Save(fPersistNow, textIndex, mediator);
+			Save(fPersistNow, textIndex);
 		}
 
 		private string BookmarkNamePrefix
@@ -101,45 +101,44 @@ namespace SIL.FieldWorks.IText
 			return BookmarkNamePrefix + attribute;
 		}
 
-		private void SavePersisted(int recordIndex, Mediator mediator)
+		private void SavePersisted(int recordIndex)
 		{
-			Debug.Assert(mediator != null && !mediator.IsDisposed);
-			mediator.PropertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, false, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, false, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, false, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, false, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetPropertyPersistence(RecordIndexBookmarkName, true, PropertyTable.SettingsGroup.LocalSettings);
-			// m_mediator.PropertyTable.SetPropertyPersistence(pfx + "Title", true);
-			mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("IndexOfParagraph"), true, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("CharBeginOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
-			mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("CharEndOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
+			Debug.Assert(!m_propertyTable.IsDisposed);
+			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(RecordIndexBookmarkName, true, PropertyTable.SettingsGroup.LocalSettings);
+			// propertyTable.SetPropertyPersistence(pfx + "Title", true);
+			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("IndexOfParagraph"), true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("CharBeginOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("CharEndOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
 		/// Restore the InterlinMaster bookmark to its previously saved state.
 		/// </summary>
-		public void Restore(int index, Mediator mediator)
+		public void Restore(int index)
 		{
-			Debug.Assert(mediator != null);
 			// verify we're restoring to the right text. Is there a better way to verify this?
-			int restoredRecordIndex = mediator.PropertyTable.GetIntProperty(RecordIndexBookmarkName, -1, PropertyTable.SettingsGroup.LocalSettings);
+			int restoredRecordIndex = m_propertyTable.GetIntProperty(RecordIndexBookmarkName, -1, PropertyTable.SettingsGroup.LocalSettings);
 			if (index != restoredRecordIndex)
 				return;
-			m_iParagraph = mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("IndexOfParagraph"), 0, PropertyTable.SettingsGroup.LocalSettings);
-			m_BeginOffset = mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("CharBeginOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
-			m_EndOffset = mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("CharEndOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
+			m_iParagraph = m_propertyTable.GetIntProperty(BookmarkPropertyName("IndexOfParagraph"), 0, PropertyTable.SettingsGroup.LocalSettings);
+			m_BeginOffset = m_propertyTable.GetIntProperty(BookmarkPropertyName("CharBeginOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
+			m_EndOffset = m_propertyTable.GetIntProperty(BookmarkPropertyName("CharEndOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
 		/// Reset the bookmark to its default values.
 		/// </summary>
-		public void Reset(int index, Mediator mediator)
+		public void Reset(int index)
 		{
 			m_iParagraph = 0;
 			m_BeginOffset = 0;
 			m_EndOffset = 0;
 
-			this.SavePersisted(index, mediator);
+			SavePersisted(index);
 		}
 
 		#region IStTextBookmark

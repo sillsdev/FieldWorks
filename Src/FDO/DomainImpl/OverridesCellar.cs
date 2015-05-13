@@ -4,7 +4,6 @@
 //
 // File: OverridesCellar.cs
 // Responsibility: FW Team
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -905,20 +904,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// The type of items contained in this list.
 		/// </summary>
-		/// <param name="stringTbl">string table containing mappings for list item names.</param>
 		/// <returns></returns>
-		public string ItemsTypeName(StringTable stringTbl)
+		public string ItemsTypeName()
 		{
 			string listName;
 			if (Owner != null)
 				listName = Cache.DomainDataByFlid.MetaDataCache.GetFieldName(OwningFlid);
 			else
 				listName = Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = stringTbl.GetString(listName, "PossibilityListItemTypeNames");
+			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
 			return itemsTypeName != "*" + listName + "*"
 					? itemsTypeName
 					: (PossibilitiesOS.Count > 0
-						? stringTbl.GetString(PossibilitiesOS[0].GetType().Name, "ClassNames")
+						? StringTable.Table.GetString(PossibilitiesOS[0].GetType().Name, "ClassNames")
 						: itemsTypeName);
 		}
 
@@ -1153,12 +1151,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// The name for the type of CmCustomItem.
 		/// </summary>
-		/// <param name="strTable">string table containing mappings for list item names.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public override string ItemTypeName(StringTable strTable)
+		public override string ItemTypeName()
 		{
-			return strTable.GetString(GetType().Name, "ClassNames");
+			return StringTable.Table.GetString(GetType().Name, "ClassNames");
 		}
 
 		/// <summary>
@@ -1290,20 +1287,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// The name for the type of CmPossibility. Subclasses may override.
 		/// </summary>
-		/// <param name="strTable">string table containing mappings for list item names.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual string ItemTypeName(StringTable strTable)
+		public virtual string ItemTypeName()
 		{
 			var owningList = OwningList;
 			if (owningList.OwningFlid == 0)
-				return strTable.GetString(GetType().Name, "ClassNames");
+				return StringTable.Table.GetString(GetType().Name, "ClassNames");
 			var owningFieldName =
 				Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
-			var itemsTypeName = owningList.ItemsTypeName(strTable);
+			var itemsTypeName = owningList.ItemsTypeName();
 			return itemsTypeName != "*" + owningFieldName + "*"
 					? itemsTypeName
-					: strTable.GetString(GetType().Name, "ClassNames");
+					: StringTable.Table.GetString(GetType().Name, "ClassNames");
 		}
 
 		/// <summary>

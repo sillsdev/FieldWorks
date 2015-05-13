@@ -20,11 +20,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly FdoCache m_cache;
 		private readonly FwTextBox m_tbWordForm;
 
-		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, FdoCache cache, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_cache = cache;
 			m_tbWordForm = tbWordForm;
 #if __MonoCS__
 			m_htmlControl.Browser.DomClick += HandleDomClick;

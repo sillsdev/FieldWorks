@@ -188,10 +188,10 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -244,12 +244,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RemoteRequest.cs" />
-    <Compile Include="ShareProjectsFolderDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ShareProjectsFolderDlg.Designer.cs">
-      <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="WelcomeToFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -294,10 +288,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ShareProjectsFolderDlg.resx">
-      <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">

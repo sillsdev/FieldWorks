@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
@@ -17,7 +16,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Reflection; // for check-box icons.
 using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
@@ -119,7 +117,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				string Id1 = m_xbv.Mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				string Id1 = m_xbv.m_bv.PropTable.GetStringProperty("currentContentControl", "");
 				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
 				return String.Format("{0}_{1}", Id1, Id2);
 			}
@@ -160,7 +158,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc() : base(null) // We don't have a string table.
+		public XmlBrowseViewBaseVc() : base() // We don't have a string table.
 		{
 			m_fakeFlid = 0;
 		}
@@ -168,14 +166,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-
-			Debug.Assert(xbv.Mediator.FeedbackInfoProvider != null, "No FeedbackInfoProvider");
-
-			MApp = xbv.Mediator.FeedbackInfoProvider as IApp;
-			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess, table);
+			MApp = xbv.m_bv.PropTable.GetValue<IApp>("FeedbackInfoProvider");
+			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}
 
@@ -184,18 +178,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// It will fail if asked to interpret decorator properties, since it doesn't have the decorator SDA.
 		/// Avoid using this constructor if possible.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(FdoCache cache)
+			: base()
 		{
-			XmlBrowseViewBaseVcInit(cache, null, table);
+			XmlBrowseViewBaseVcInit(cache, null);
 		}
 		/// <summary>
 		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache, ISilDataAccess sda, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(FdoCache cache, ISilDataAccess sda)
+			: base()
 		{
-			XmlBrowseViewBaseVcInit(cache, sda, table);
+			XmlBrowseViewBaseVcInit(cache, sda);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -204,16 +198,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="xnSpec">The xn spec.</param>
 		/// <param name="fakeFlid">The fake flid.</param>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, StringTable stringTable, XmlBrowseViewBase xbv)
-			: this(xbv, stringTable)
+		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+			: this(xbv)
 		{
 			Debug.Assert(xnSpec != null);
-			Debug.Assert(stringTable != null);
 			Debug.Assert(xbv != null);
 			DataAccess = xbv.SpecialCache;
 
@@ -221,14 +213,14 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xnSpec = xnSpec;
 
 			// This column list is saved in BrowseViewer.UpdateColumnList
-			string savedCols = m_xbv.Mediator.PropertyTable.GetStringProperty(ColListId, null, XCore.PropertyTable.SettingsGroup.LocalSettings);
+			string savedCols = m_xbv.m_bv.PropTable.GetStringProperty(ColListId, null, XCore.PropertyTable.SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;
 			string target = null;
-			if (savedCols != null && savedCols != "")
+			if (!string.IsNullOrEmpty(savedCols))
 			{
-				doc = GetSavedColumns(savedCols, m_xbv.Mediator, ColListId);
+				doc = GetSavedColumns(savedCols, m_xbv.Mediator, m_xbv.m_bv.PropTable, ColListId);
 			}
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
@@ -251,7 +243,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SetupSelectColumn();
 		}
 
-		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, string colListId)
+		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, PropertyTable propertyTable, string colListId)
 		{
 			XmlDocument doc;
 			string target;
@@ -296,7 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 						case 15:
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
-							mediator.PropertyTable.SetProperty(colListId, savedCols);
+							propertyTable.SetProperty(colListId, savedCols, true);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -308,7 +300,7 @@ namespace SIL.FieldWorks.Common.Controls
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
 							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							mediator.PropertyTable.SetProperty(colListId, "", XCore.PropertyTable.SettingsGroup.LocalSettings);
+							propertyTable.SetProperty(colListId, "", PropertyTable.SettingsGroup.LocalSettings, true);
 							break;
 					}
 				}
@@ -430,7 +422,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		private void XmlBrowseViewBaseVcInit(FdoCache cache, ISilDataAccess sda, StringTable table)
+		private void XmlBrowseViewBaseVcInit(FdoCache cache, ISilDataAccess sda)
 		{
 			Debug.Assert(cache != null);
 
@@ -561,7 +553,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>true if this node refers to a nonexistent custom field</returns>
 		private bool CheckForBadCustomField(List<XmlNode> possibleColumns, XmlNode node)
 		{
-			StringTable stringTbl = this.StringTbl;
 			// see if this node is based on a layout. If so, get its part
 			PropWs propWs;
 			XmlNode columnForCustomField = null;
@@ -575,7 +566,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
 						{
-							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache, stringTbl);
+							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 							return false;
 						}
 					}
@@ -584,7 +575,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else if (propWs != null)
 				{
 					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
-					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache, stringTbl);
+					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 				}
 				else
 				{
@@ -599,18 +590,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
 		{
-			StringTable tbl = this.StringTbl;
 			foreach (XmlNode possibleColumn in possibleColumns)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
 				PropWs propWs;
-				XmlNode columnForCustomField = null;
-				if (this.TryColumnForCustomField(possibleColumn, this.ListItemsClass, out columnForCustomField, out propWs))
+				XmlNode columnForCustomField;
+				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.flid == flid)
 					{
-						string label = XmlUtils.GetLocalizedAttributeValue(tbl, possibleColumn,
+						string label = XmlUtils.GetLocalizedAttributeValue(possibleColumn,
 								"label", null);
 						return label;
 					}

@@ -4,14 +4,12 @@
 //
 // File: BaseGoDlg.cs
 // Responsibility: Randy Regnier
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -38,6 +36,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// </summary>
 		protected Mediator m_mediator;
+
+		/// <summary>
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -224,12 +226,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="mediator"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
 		{
-			SetDlgInfo(cache, wp, mediator, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, int ws)
+		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, int ws)
 		{
 			CheckDisposed();
 
@@ -238,16 +241,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_tsf = cache.TsStrFactory; // do this very early, other initializers may depend on it.
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				object locWnd = m_mediator.PropertyTable.GetValue(PersistenceLabel + "DlgLocation");
-				object szWnd = m_mediator.PropertyTable.GetValue(PersistenceLabel + "DlgSize");
-				if (locWnd != null && szWnd != null)
+				if (m_propertyTable.PropertyExists(PersistenceLabel + "DlgLocation")
+					&& m_propertyTable.PropertyExists(PersistenceLabel + "DlgSize"))
 				{
-					var rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					var locWnd = m_propertyTable.GetValue<Point>(PersistenceLabel + "DlgLocation");
+					var szWnd = m_propertyTable.GetValue<Size>(PersistenceLabel + "DlgSize");
+					var rect = new Rectangle(locWnd, szWnd);
 
 					//grow it if it's too small.  This will happen when we add new controls to the dialog box.
 					if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
@@ -256,14 +261,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
 						rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
 
-					//rect.Height = 600;
-
 					ScreenUtils.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
 
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				if (m_helpTopicProvider != null)
 				{
 					m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -274,7 +277,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SetupBasicTextProperties(wp);
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
 			m_tbForm.Font = new Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
@@ -327,7 +330,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// we've set WSF on all the controls.
 			m_cbWritingSystems.SelectedIndexChanged += m_cbWritingSystems_SelectedIndexChanged;
 
-			InitializeMatchingObjects(cache, mediator);
+			InitializeMatchingObjects(cache);
 
 			// Adjust things if the form box needs to grow to accommodate its style.
 			int oldHeight = m_tbForm.Height;
@@ -438,7 +441,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		protected virtual void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected virtual void InitializeMatchingObjects(FdoCache cache)
 		{
 			// override.
 		}
@@ -486,30 +489,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, string form)
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, form, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, string form, int ws)
+		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form, int ws)
 		{
-			SetDlgInfo(cache, wp, mediator, ws);
+			SetDlgInfo(cache, wp, mediator, propertyTable, ws);
 			Form = form;
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="wp"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="wp"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, ITsString tssform)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, ITsString tssform)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
+			SetDlgInfo(cache, wp, mediator, propertyTable, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
 		#endregion Construction and Destruction
@@ -829,9 +834,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Save location.
 			if (m_mediator != null)
 			{
-				m_mediator.PropertyTable.SetProperty(PersistenceLabel + "DlgLocation", Location);
+				var propName = PersistenceLabel + "DlgLocation";
+				m_propertyTable.SetProperty(propName, Location, true);
 				var sz = new Size(0, m_delta);
-				m_mediator.PropertyTable.SetProperty(PersistenceLabel + "DlgSize", Size - sz);
+				propName = PersistenceLabel + "DlgSize";
+				m_propertyTable.SetProperty(propName, Size - sz, true);
 			}
 		}
 

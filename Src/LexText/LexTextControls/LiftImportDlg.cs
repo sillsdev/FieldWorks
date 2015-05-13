@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private FdoCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
 		private OpenFileDialogAdapter openFileDialog1;
@@ -55,17 +56,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		void IFwExtension.Init(FdoCache cache, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		void IFwExtension.Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
-			string sPrevFile = m_mediator.PropertyTable.GetStringProperty(FilePropertyName, null);
+			m_propertyTable = propertyTable;
+			string sPrevFile = m_propertyTable.GetStringProperty(FilePropertyName, null);
 			if (!String.IsNullOrEmpty(sPrevFile))
 			{
 				tbPath.Text = sPrevFile;
 				UpdateButtons();
 			}
-			string sMergeStyle = m_mediator.PropertyTable.GetStringProperty(MergeStylePropertyName, null);
+			string sMergeStyle = m_propertyTable.GetStringProperty(MergeStylePropertyName, null);
 			if (!String.IsNullOrEmpty(sMergeStyle))
 			{
 				m_msImport = (FlexLiftMerger.MergeStyle)Enum.Parse(typeof(FlexLiftMerger.MergeStyle), sMergeStyle, true);
@@ -124,7 +127,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using(var dlg = new BackupProjectDlg(m_cache, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				dlg.ShowDialog(this);
 		}
 
@@ -142,8 +145,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateButtons();
 			if (btnOK.Enabled)
 			{
-				m_mediator.PropertyTable.SetProperty(FilePropertyName, tbPath.Text);
-				m_mediator.PropertyTable.SetPropertyPersistence(FilePropertyName, true);
+				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true);
+				m_propertyTable.SetPropertyPersistence(FilePropertyName, true);
 			}
 		}
 
@@ -319,9 +322,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				// Show the pretty yellow semi-crash dialog box, with instructions for the
 				// user to report the bug.  Then ask the user whether to continue.
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				Utils.ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey,
-					m_mediator.FeedbackInfoProvider.SupportEmailAddress, this, false);
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey,
+					m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
 				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion,
 					LexTextControls.ksProblemImporting,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
@@ -427,14 +430,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void SetMergeStyle(FlexLiftMerger.MergeStyle ms)
 		{
 			m_msImport = ms;
-			m_mediator.PropertyTable.SetProperty(MergeStylePropertyName,
-				Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport));
-			m_mediator.PropertyTable.SetPropertyPersistence(MergeStylePropertyName, true);
+			m_propertyTable.SetProperty(MergeStylePropertyName,
+				Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport),
+				true);
+			m_propertyTable.SetPropertyPersistence(MergeStylePropertyName, true);
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpImportLIFT");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpImportLIFT");
 		}
 	}
 }

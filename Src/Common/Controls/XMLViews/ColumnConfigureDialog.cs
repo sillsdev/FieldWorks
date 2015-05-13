@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -38,7 +37,6 @@ namespace SIL.FieldWorks.Common.Controls
 		List<XmlNode> m_possibleColumns;
 		List<XmlNode> m_currentColumns;
 		readonly FdoCache m_cache;
-		StringTable m_stringTbl;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
@@ -96,22 +94,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="possibleColumns">The possible columns.</param>
 		/// <param name="currentColumns">The current columns.</param>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="stringTbl">The string TBL.</param>
+		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns,
-			Mediator mediator, StringTable stringTbl)
+		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns, PropertyTable propertyTable)
 		{
 			m_possibleColumns = possibleColumns;
 			m_currentColumns = currentColumns;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			m_stringTbl = stringTbl;
+			m_cache = propertyTable.GetValue<FdoCache>("cache");
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (m_helpTopicProvider != null)
 			{
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -552,7 +547,7 @@ namespace SIL.FieldWorks.Common.Controls
 		ListViewItem MakeCurrentItem(XmlNode node)
 		{
 			var cols = new string[2];
-			var label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, node, "label", null);
+			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
 			if (label == null)
 				label = XmlUtils.GetManditoryAttributeValue(node, "label");
 			cols[0] = label;
@@ -753,7 +748,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		void InitCurrentList()
 		{
-			IComparer<XmlNode> columnSorter = new ColumnSorter(m_stringTbl);
+			IComparer<XmlNode> columnSorter = new ColumnSorter();
 			int firstIndex = 0;
 			int count = m_possibleColumns.Count;
 			if (m_possibleColumns.Count > 0 && m_possibleColumns[0].ParentNode != null)
@@ -1103,10 +1098,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string GetColumnLabel(int columnIndex)
 		{
-			string label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+			string label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
 															   "originalLabel", null);
 			if (label == null)
-				label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+				label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
 															"label", null);
 			if (label == null)
 				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
@@ -1420,7 +1415,7 @@ namespace SIL.FieldWorks.Common.Controls
 					XmlUtils.AppendAttribute(replacement, "originalWs", currentList.Items[index].SubItems[1].Text);
 			}
 
-			GenerateColumnLabel(replacement, m_cache, m_stringTbl);
+			GenerateColumnLabel(replacement, m_cache);
 
 			XmlAttribute xa = replacement.Attributes["label"];
 			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
@@ -1447,9 +1442,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec">The XML node of the column specification</param>
 		/// <param name="cache">The FdoCache</param>
-		/// <param name="stringTbl">The string TBL.</param>
 		/// ------------------------------------------------------------------------------------
-		static public void GenerateColumnLabel(XmlNode colSpec, FdoCache cache, StringTable stringTbl)
+		static public void GenerateColumnLabel(XmlNode colSpec, FdoCache cache)
 		{
 			string newWs = XmlViewsUtils.FindWsParam(colSpec);
 			string originalWs = XmlUtils.GetOptionalAttributeValue(colSpec, "originalWs");
@@ -1467,8 +1461,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			string label = originalLabel;
-			if (!String.IsNullOrEmpty(label) && stringTbl != null)
-				label = stringTbl.LocalizeAttributeValue(label);
+			if (!String.IsNullOrEmpty(label))
+				label = StringTable.Table.LocalizeAttributeValue(label);
 
 			// Note that there's no reason to try and make a new label if originalWs isn't defined.  If this is the
 			// case, then it means that the ws was never changed, so we don't need to put the new ws in the label
@@ -1508,21 +1502,14 @@ namespace SIL.FieldWorks.Common.Controls
 		// Class to sort the columns before they are displayed
 		private class ColumnSorter : IComparer<XmlNode>
 		{
-			private StringTable m_stringTable;
-
-			internal ColumnSorter(StringTable tbl)
-			{
-				m_stringTable = tbl;
-			}
-
 			#region IComparer<T> Members
 
 			public int Compare(XmlNode x, XmlNode y)
 			{
-				string xVal = XmlUtils.GetLocalizedAttributeValue(m_stringTable, (XmlNode)x, "label", null);
+				string xVal = XmlUtils.GetLocalizedAttributeValue(x, "label", null);
 				if (xVal == null)
-					xVal = XmlUtils.GetManditoryAttributeValue((XmlNode)x, "label");
-				string yVal = XmlUtils.GetLocalizedAttributeValue(m_stringTable, (XmlNode)y, "label", null);
+					xVal = XmlUtils.GetManditoryAttributeValue(x, "label");
+				string yVal = XmlUtils.GetLocalizedAttributeValue(y, "label", null);
 				if (yVal == null)
 					yVal = XmlUtils.GetManditoryAttributeValue((XmlNode)y, "label");
 				return xVal.CompareTo(yVal);

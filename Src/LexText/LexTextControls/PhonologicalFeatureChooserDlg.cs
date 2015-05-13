@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -31,6 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private FdoCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
@@ -212,21 +212,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="rule"></param>
 		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
 			IFsFeatStruc fs = ((IPhNCFeatures) ctxt.FeatureStructureRA).FeaturesOA;
-			SetDlgInfo(cache, mediator, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
+			SetDlgInfo(cache, mediator, propertyTable, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPhRegularRule rule)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, 0, 0, null, rule, null);
+			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, rule, null);
 		}
 
 		/// <summary>
@@ -235,9 +236,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IFsFeatStruc fs)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IFsFeatStruc fs)
 		{
-			SetDlgInfo(cache, mediator, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
+			SetDlgInfo(cache, mediator, propertyTable, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
 
 		/// <summary>
@@ -245,36 +246,61 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, cobj.Hvo, owningFlid, null, null, null);
+			SetDlgInfo(cache, mediator, propertyTable, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, 0, 0, null, null, null);
+			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(FdoCache cache, Mediator mediator, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			m_fs = fs;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = hvoOwner;
 			m_rule = rule;
 			m_ctxt = ctxt;
-			Mediator = mediator;
+			m_mediator = mediator;
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
+			{
+				// Reset window location.
+				// Get location to the stored values, if any.
+				if (m_propertyTable.PropertyExists("phonFeatListDlgLocation")
+					&& m_propertyTable.PropertyExists("phonFeatListDlgSize"))
+				{
+					var locWnd = m_propertyTable.GetValue<Point>("phonFeatListDlgLocation");
+					var szWnd = m_propertyTable.GetValue<Size>("phonFeatListDlgSize");
+					var rect = new Rectangle(locWnd, szWnd);
+					ScreenUtils.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
+
+				var helpTopicProvider = (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				if (helpTopicProvider != null) // Will be null when running tests
+				{
+					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+					m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
+					m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				}
+			}
 			m_cache = cache;
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
 			LoadPhonFeats(m_fs);
-			BuildInitialBrowseView(mediator);
+			BuildInitialBrowseView();
 		}
 
 		private bool ContainsFeature(IEnumerable<IPhFeatureConstraint> vars, IFsFeatDefn feat)
@@ -295,7 +321,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 
 			m_helpTopic = helpTopic;
-			m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(helpTopic));
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopic));
 		}
 
 		public void HandleJump()
@@ -441,9 +467,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void BuildInitialBrowseView(Mediator mediator)
+		private void BuildInitialBrowseView()
 		{
-			var configurationParameters = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
+			var configurationParameters = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode toolNode = configurationParameters.SelectSingleNode(
 				"controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
 
@@ -453,14 +479,14 @@ namespace SIL.FieldWorks.LexText.Controls
 								 select s.Hvo;
 			int[] featureHvos = sortedFeatureHvos.ToArray();
 			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
-			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, mediator, null, m_sda);
+			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, m_mediator, m_propertyTable, null, m_sda);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			m_bvList.ScrollBar.ValueChanged += ScrollBar_ValueChanged;
 			m_bvList.Scroller.Scroll += ScrollBar_Scroll;
 			m_bvList.ColumnsChanged += BrowseViewer_ColumnsChanged;
 			m_bvList.Resize += m_bvList_Resize;
 			m_bvList.TabStop = true;
-			m_bvList.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_bvList.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_bvList.Dock = DockStyle.Fill;
 			m_bvList.BackColor = SystemColors.Window;
 			m_listPanel.Controls.Add(m_bvList);
@@ -485,35 +511,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		void m_bvList_Resize(object sender, EventArgs e)
 		{
 			PositionValuesCombo();
-		}
-
-		private Mediator Mediator
-		{
-			set
-			{
-				m_mediator = value;
-				if (m_mediator != null)
-				{
-					// Reset window location.
-					// Get location to the stored values, if any.
-					object locWnd = m_mediator.PropertyTable.GetValue("phonFeatListDlgLocation");
-					object szWnd = m_mediator.PropertyTable.GetValue("phonFeatListDlgSize");
-					if (locWnd != null && szWnd != null)
-					{
-						var rect = new Rectangle((Point) locWnd, (Size) szWnd);
-						ScreenUtils.EnsureVisibleRect(ref rect);
-						DesktopBounds = rect;
-						StartPosition = FormStartPosition.Manual;
-					}
-
-					if (m_mediator.HelpTopicProvider != null) // Will be null when running tests
-					{
-						m_helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-						m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopic));
-						m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-					}
-				}
-			}
 		}
 
 		/// <summary>
@@ -791,10 +788,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("phonFeatListDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("phonFeatListDlgSize", Size);
+				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, true);
+				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, true);
 			}
 		}
 
@@ -850,9 +847,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			if (m_mediator.PropertyTable.GetStringProperty("currentContentControl", null).Substring(0,7) == "natural")
+			if (m_propertyTable.GetStringProperty("currentContentControl", null).Substring(0, 7) == "natural")
 				m_helpTopic = "khtpChoose-Phonemes";
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",

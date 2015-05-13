@@ -1,7 +1,6 @@
 // Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -21,6 +19,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -70,9 +69,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, XCore.Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_sda = m_cache.MainCacheAccessor;
 		}
 
@@ -98,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// assume the owner is the entry (e.g. owner of LexEntryRef)
 						le = m_obj.OwnerOfClass<ILexEntry>();
 					}
-					dlg.SetDlgInfo(m_cache, m_mediator, le);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, le);
 					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -120,15 +119,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_displayNameProperty, displayWs);
 				using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(null,
 					labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS.Cast<ICmObject>(),
-					false, m_mediator.HelpTopicProvider))
+					false, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					chooser.HideDisplayUsageCheckBox();
 					chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
 					chooser.Text = LexEdStrings.ksChooseWhereToShowSubentry;
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(null, Mediator);
+					chooser.InitializeExtras(null, Mediator, m_propertyTable);
 					chooser.AddLink(LexEdStrings.ksAddAComponent, ReallySimpleListChooser.LinkType.kDialogLink,
-						new AddPrimaryLexemeChooserCommand(m_cache, false, null, m_mediator, m_obj, FindForm()));
+						new AddPrimaryLexemeChooserCommand(m_cache, false, null, m_mediator, m_propertyTable, m_obj, FindForm()));
 					DialogResult res = chooser.ShowDialog();
 					if (DialogResult.Cancel == res)
 						return;
@@ -146,7 +145,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						using (var dlg = new EntryGoDlg())
 						{
 							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
-							dlg.SetDlgInfo(m_cache, null, m_mediator);
+							dlg.SetDlgInfo(m_cache, null, m_mediator, m_propertyTable);
 							String str = ShowHelp.RemoveSpaces(Slice.Label);
 							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
 							dlg.SetOkButtonText(LexEdStrings.ksMakeComponentOf);
@@ -197,16 +196,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_displayNameProperty, displayWs);
 			using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(null,
 				labels, fieldName, m_cache, oldValue,
-				false, m_mediator.HelpTopicProvider))
+				false, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.HideDisplayUsageCheckBox();
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
 				chooser.Text = fieldName == "Subentries" ? LexEdStrings.ksChooseSubentries : LexEdStrings.ksChooseVisibleComplexForms;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID() + "-CFChooser");
-				chooser.InitializeExtras(null, Mediator);
+				chooser.InitializeExtras(null, Mediator, m_propertyTable);
 				// Step 3 of LT-11155:
 				chooser.AddLink(LexEdStrings.ksAddAComplexForm, ReallySimpleListChooser.LinkType.kDialogLink,
-					new AddComplexFormChooserCommand(m_cache, false, null, m_mediator, m_obj, FindForm()));
+					new AddComplexFormChooserCommand(m_cache, false, null, m_mediator, m_propertyTable, m_obj, FindForm()));
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 					return;
@@ -350,9 +349,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Form m_parentWindow;
 
 		public AddPrimaryLexemeChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, XCore.Mediator mediator, ICmObject lexEntryRef, /* Why ICmObject? */
+			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntryRef, /* Why ICmObject? */
 			Form parentWindow)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator)
+			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_lexEntryRef = lexEntryRef as ILexEntryRef;
 			m_parentWindow = parentWindow;
@@ -368,7 +367,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					ILexEntry le = null;
 					// assume the owner is the entry (e.g. owner of LexEntryRef)
 					le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
-					dlg.SetDlgInfo(m_cache, m_mediator, le);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, le);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
 					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
 					{
@@ -418,9 +417,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Form m_parentWindow;
 
 		public AddComplexFormChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, XCore.Mediator mediator, ICmObject lexEntry, /* Why ICmObject? */
+			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntry, /* Why ICmObject? */
 			Form parentWindow)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator)
+			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_lexEntry = lexEntry as ILexEntry;
 			if (m_lexEntry == null)
@@ -440,7 +439,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				using (var dlg = new EntryGoDlg())
 				{
-					dlg.SetDlgInfo(m_cache, null, m_mediator);
+					dlg.SetDlgInfo(m_cache, null, m_mediator, m_propertyTable);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense"); // TODO: When LT-11318 is fixed, use its help topic ID.
 					dlg.SetOkButtonText(LexEdStrings.ksMakeComponentOf);
 					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)

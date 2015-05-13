@@ -89,12 +89,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",
 				m_persistenceProvider,
 				Mediator,
+				m_propertyTable,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}

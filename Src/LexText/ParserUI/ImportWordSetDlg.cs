@@ -11,17 +11,14 @@
 //		ImportWordSetDlg - Dialog for editing XML representation of parser parameters
 //                            (MoMorphData : ParserParameters)
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Text;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using XCore;
 using SIL.FieldWorks.Resources;
 
@@ -38,6 +35,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected IHelpTopicProvider m_helpTopicProvider;
 		protected FdoCache m_cache;
 		protected string[] m_paths;
 
@@ -69,15 +70,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 		}
 
-		public ImportWordSetDlg(Mediator mediator) : this()
+		public ImportWordSetDlg(Mediator mediator, PropertyTable propertyTable)
+			: this()
 		{
 			//InitializeComponent();
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_cache = propertyTable.GetValue<FdoCache>("cache");
 
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-			helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
@@ -316,7 +319,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void buttonHelp_Click(object sender, System.EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 	}
 }

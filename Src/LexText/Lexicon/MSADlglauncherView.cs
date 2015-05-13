@@ -27,11 +27,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
-		public void Init(Mediator mediator, IMoMorphSynAnalysis msa)
+		public void Init(FdoCache cache, IMoMorphSynAnalysis msa)
 		{
 			Debug.Assert(msa != null);
 			m_msa = msa;
-			m_fdoCache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_fdoCache = cache;
 			if (m_rootb == null)
 			{
 				MakeRoot();

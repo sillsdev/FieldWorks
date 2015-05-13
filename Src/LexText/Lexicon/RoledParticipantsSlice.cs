@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// this slice displays the default roled participants
 			var vrl = (VectorReferenceLauncher) Control;
 			vrl.Initialize(m_cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, m_persistenceProvider, Mediator,
+				m_propertyTable,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ObjectCreator = defaultRoleCreator;
@@ -240,12 +241,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				DisplayNameProperty, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistenceProvider, labels, m_fieldName,
-				m_cache, null, m_mediator.HelpTopicProvider))
+				m_cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.TextParamHvo = m_cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
 				if (m_configurationNode != null)
-					chooser.InitializeExtras(m_configurationNode, Mediator);
+					chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
@@ -292,11 +293,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
 			if (areaName == "textsWords")
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
 			else
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
 		}
 
 		public virtual bool OnDisplayDeleteParticipants(object commandObject, ref UIItemDisplayProperties display)

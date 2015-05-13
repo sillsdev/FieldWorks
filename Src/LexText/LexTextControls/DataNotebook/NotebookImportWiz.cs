@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +16,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using XCore;
@@ -58,6 +56,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IFwMetaDataCacheManaged m_mdc;
 		private IVwStylesheet m_stylesheet;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IWritingSystemManager m_wsManager;
 		private IStTextFactory m_factStText;
 		private IStTextRepository m_repoStText;
@@ -735,17 +734,18 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(FdoCache cache, Mediator mediator)
+		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			lblMappingLanguagesInstructions.Text = String.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
 
-			m_tbDatabaseFileName.Text = m_mediator.PropertyTable.GetStringProperty("DataNotebookImportDb", String.Empty);
-			m_tbProjectFileName.Text = m_mediator.PropertyTable.GetStringProperty("DataNotebookImportPrj", String.Empty);
-			m_tbSettingsFileName.Text = m_mediator.PropertyTable.GetStringProperty("DataNotebookImportMap", String.Empty);
+			m_tbDatabaseFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportDb", String.Empty);
+			m_tbProjectFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportPrj", String.Empty);
+			m_tbSettingsFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportMap", String.Empty);
 			if (String.IsNullOrEmpty(m_tbSettingsFileName.Text) || m_tbSettingsFileName.Text == m_sStdImportMap)
 			{
 				m_tbSettingsFileName.Text = m_sStdImportMap;
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				m_tbSaveAsFileName.Text = m_tbSettingsFileName.Text;
 				m_fDirtySettings = false;
 			}
-			m_stylesheet = AnthroStyleSheetFromMediator(mediator);
+			m_stylesheet = AnthroStyleSheetFromPropertyTable(m_propertyTable);
 			if (m_stylesheet == null)
 			{
 				FwStyleSheet styles = new FwStyleSheet();
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 
 			if (helpTopic != null)
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopic);
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 		}
 
 		protected override void OnCancelButton()
@@ -854,18 +854,17 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		public static IVwStylesheet AnthroStyleSheetFromMediator(Mediator mediator)
+		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(PropertyTable propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return null;
-			Form mainWindow = (Form)mediator.PropertyTable.GetValue("window");
+			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;
 			if (mainWindow != null)
 				pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
 			if (pi != null)
+			{
 				return pi.GetValue(mainWindow, null) as FwStyleSheet;
-			else
-				return mediator.PropertyTable.GetValue("AnthroStyleSheet") as FwStyleSheet;
+			}
+			return propertyTable.GetValue<FwStyleSheet>("AnthroStyleSheet");
 		}
 
 		private void FillLanguageMappingView()
@@ -888,8 +887,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				m_fDirtySettings = true;
 			}
 			m_lvMappingLanguages.Sort();
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-			m_btnAddWritingSystem.Initialize(m_cache, m_mediator.HelpTopicProvider, app, m_stylesheet, wss);
+			IApp app = m_propertyTable.GetValue<IApp>("App");
+			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, wss);
 		}
 
 		private ListViewItem CreateListViewItemForWS(IWritingSystem ws)
@@ -916,7 +915,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				dlg.ShowDialog(this);
 		}
 
@@ -1070,8 +1069,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				ListViewItem lvi = m_lvMappingLanguages.SelectedItems[0];
 				string sName = lvi.SubItems[0].Text;
 				string sEncCnv = lvi.SubItems[1].Text;
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				dlg.Initialize(sName, sEncCnv, m_mediator.HelpTopicProvider, app);
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				dlg.Initialize(sName, sEncCnv, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					string sNewEncCnv = dlg.EncodingConverter;
@@ -1094,8 +1093,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			{
 				ListViewItem lvi = m_lvContentMapping.SelectedItems[0];
 				RnSfMarker rsfm = lvi.Tag as RnSfMarker;
-				var app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				dlg.Initialize(m_cache, m_mediator.HelpTopicProvider, app, rsfm,
+				var app = m_propertyTable.GetValue<IApp>("App");
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm,
 					m_SfmFile, m_mapFlidName, m_stylesheet, m_mediator);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -1144,8 +1143,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			using (ImportCharMappingDlg dlg = new ImportCharMappingDlg())
 			{
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				dlg.Initialize(m_cache, m_mediator.HelpTopicProvider, app, m_stylesheet, null);
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, null);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					CharMapping cmNew = new CharMapping();
@@ -1171,8 +1170,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			using (ImportCharMappingDlg dlg = new ImportCharMappingDlg())
 			{
 				CharMapping cm = lvi.Tag as CharMapping;
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				dlg.Initialize(m_cache, m_mediator.HelpTopicProvider, app, m_stylesheet, cm);
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, cm);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					cm.BeginMarker = dlg.BeginMarker;
@@ -1221,12 +1220,12 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void SaveSettings()
 		{
-			m_mediator.PropertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text);
-			m_mediator.PropertyTable.SetPropertyPersistence("DataNotebookImportDb", true);
-			m_mediator.PropertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text);
-			m_mediator.PropertyTable.SetPropertyPersistence("DataNotebookImportPrj", true);
-			m_mediator.PropertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text);
-			m_mediator.PropertyTable.SetPropertyPersistence("DataNotebookImportMap", true);
+			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, true);
+			m_propertyTable.SetPropertyPersistence("DataNotebookImportDb", true);
+			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, true);
+			m_propertyTable.SetPropertyPersistence("DataNotebookImportPrj", true);
+			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, true);
+			m_propertyTable.SetPropertyPersistence("DataNotebookImportMap", true);
 			using (TextWriter tw = FileUtils.OpenFileForWrite(m_tbSaveAsFileName.Text, Encoding.UTF8))
 			{
 				try

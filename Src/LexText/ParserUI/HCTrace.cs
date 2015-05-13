@@ -22,25 +22,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
-
-		/// <summary>
-		/// The real deal
-		/// </summary>
-		/// <param name="mediator"></param>
-		public HCTrace(Mediator mediator)
-		{
-			m_mediator = mediator;
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
-		}
-
-		public string CreateResultPage(XDocument result, bool isTrace)
+		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			var args = new XsltArgumentList();
-			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "HCLoadErrors.xml"));
+			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<FdoCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
 			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
-			return TraceTransform.Transform(m_mediator, result, isTrace ? "HCTrace" : "HCParse", args);
+			return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
 		}
 	}
 }

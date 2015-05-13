@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +14,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -34,6 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopicId = "khtpDictConfigManager"; // use as default?
 		private readonly HelpProvider m_helpProvider;
 		private readonly Mediator m_mediator;
+		private readonly PropertyTable m_propertyTable;
 		private readonly string m_objType;
 
 		/// ------------------------------------------------------------------------------------
@@ -41,19 +40,23 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:DictionaryConfigMgrDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DictionaryConfigMgrDlg(Mediator mediator, string objType, List<XmlNode> configViews, XmlNode current)
+		public DictionaryConfigMgrDlg(Mediator mediator, PropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
 		{
 			InitializeComponent();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_presenter = new DictionaryConfigManager(this, configViews, current);
 			m_objType = objType;
 
 			// Make a help topic ID
 			m_helpTopicId = generateChooserHelpTopicID(m_objType);
 
-			m_helpProvider = new HelpProvider { HelpNamespace = m_mediator.HelpTopicProvider.HelpFile };
-			m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopicId));
+			m_helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+			};
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_helpTopicId));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 		}
@@ -209,7 +212,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopicId);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicId);
 		}
 
 		private void m_listView_SelectedIndexChanged(object sender, EventArgs e)

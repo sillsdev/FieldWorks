@@ -48,13 +48,13 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// <param name="dialogFont">RAMP dialog font (for localization and consistency)</param>
 		/// <param name="localizationDialogIcon"></param>
 		/// <param name="filesToArchive"></param>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="thisapp"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
-			IEnumerable<string> filesToArchive, Mediator mediator, FwApp thisapp, FdoCache cache)
+			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			// create the dialog
 			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
-			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, mediator))
+			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, propertyTable))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
 				dlg.ShowDialog(owner);

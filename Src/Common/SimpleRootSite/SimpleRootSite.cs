@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation.Provider;
+using System.Xml;
 using Accessibility;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
@@ -380,6 +381,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
+		/// The proerty Table provided by XCoreColleague.Init.
+		/// </summary>
+		protected PropertyTable m_propertyTable;
+		/// <summary>
 		/// Supports the LayoutSizeChanged event by maintaining a list of who wants it.
 		/// </summary>
 		public event EventHandler LayoutSizeChanged;
@@ -721,10 +726,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Retrieve the mediator, typically obtained from xCoreColleague.Init, though somtimes
+		/// Retrieve the mediator, typically obtained from xCoreColleague.Init, though sometimes
 		/// it may be set directly.
 		/// </summary>
-		public XCore.Mediator Mediator
+		public Mediator Mediator
 		{
 			get
 			{
@@ -737,6 +742,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_mediator = value;
 			}
 		}
+
+		/// <summary>
+		/// Get the PropertyTable.
+		/// </summary>
+		internal PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The paragraph style name for the current selection.
@@ -2099,18 +2113,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Implementation of IxCoreColleague
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows xCore-specific initialization. We don't need any.
 		/// </summary>
 		/// <param name="mediator">The mediator</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(XCore.Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			// Save the mediator in case a client or subclass wants it.
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2120,10 +2137,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual XCore.IxCoreColleague[] GetMessageTargets()
+		public virtual IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			return new XCore.IxCoreColleague[] { this };
+			return new IxCoreColleague[] { this };
 		}
 
 		/// <summary>

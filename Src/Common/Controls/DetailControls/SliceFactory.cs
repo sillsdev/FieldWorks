@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Xml;
 using System.IO;
@@ -34,12 +33,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// If not found, answer 0.
 		/// If found, answer the ID of the appropriate writing system, or throw exception if not valid.
 		/// </summary>
-		private static int GetWs(Mediator mediator, FdoCache cache, XmlNode node)
+		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node)
 		{
-			return GetWs(mediator, cache, node, "ws");
+			return GetWs(cache, propertyTable, node, "ws");
 		}
 
-		private static int GetWs(Mediator mediator, FdoCache cache, XmlNode node, string sAttr)
+		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node, string sAttr)
 		{
 			string wsSpec = XmlUtils.GetOptionalAttributeValue(node, sAttr);
 			if (wsSpec != null)
@@ -58,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
 						break;
 					case "reversal":
-						var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+						var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 						if (!riGuid.Equals(Guid.Empty))
 						{
 							try
@@ -87,7 +86,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
-			StringTable stringTbl, IPersistenceProvider persistenceProvider, Mediator mediator, XmlNode caller, ObjSeqHashMap reuseMap)
+			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
 			switch(editor)
@@ -163,7 +162,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					if (flid == 0)
 						throw new ApplicationException("field attribute required for basic properties " + node.OuterXml);
-					int ws = GetWs(mediator, cache, node);
+					int ws = GetWs(cache, propertyTable, node);
 					if (ws != 0)
 						slice = new StringSlice(obj, flid, ws);
 					else
@@ -171,7 +170,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
 					if (fShowWsLabel)
 						(slice as StringSlice).ShowWsLabel = true;
-					int wsEmpty = GetWs(mediator, cache, node, "wsempty");
+					int wsEmpty = GetWs(cache, propertyTable, node, "wsempty");
 					if (wsEmpty != 0)
 						(slice as StringSlice).DefaultWs = wsEmpty;
 					break;
@@ -184,7 +183,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// Editable if BOTH the caller (part ref) AND the node itself (the slice) say so...or at least if neither says not.
 					bool editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true)
 						&& XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
-					slice = new ViewSlice(new XmlView(obj.Hvo, layout, stringTbl, editable));
+					slice = new ViewSlice(new XmlView(obj.Hvo, layout, editable));
 					break;
 				}
 				case "summary":
@@ -194,7 +193,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "enumcombobox":
 				{
-					slice = new EnumComboSlice(cache, obj, flid, stringTbl, node["deParams"]);
+					slice = new EnumComboSlice(cache, obj, flid, node["deParams"]);
 					break;
 				}
 				case "referencecombobox":
@@ -215,12 +214,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case "lit": // was "message"
 				{
 					string message = XmlUtils.GetManditoryAttributeValue(node, "message");
-					if (stringTbl != null)
-					{
-						string sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
-						if (sTranslate.Trim().ToLower() != "do not translate")
-							message = stringTbl.LocalizeLiteralValue(message);
-					}
+					string sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
+					if (sTranslate.Trim().ToLower() != "do not translate")
+						message = StringTable.Table.LocalizeLiteralValue(message);
 					slice = new MessageSlice(message);
 					break;
 				}
@@ -278,7 +274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "atomicreferencepos":
 				{
-					slice = new AtomicReferencePOSSlice(cache, obj, flid, persistenceProvider, mediator);
+					slice = new AtomicReferencePOSSlice(cache, obj, flid, mediator, propertyTable);
 					break;
 				}
 				case "possatomicreference":
@@ -288,7 +284,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "atomicreferenceposdisabled":
 				{
-					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, persistenceProvider, mediator);
+					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, mediator, propertyTable);
 					break;
 				}
 
@@ -323,7 +319,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "sttext":
 				{
-					slice = new StTextSlice(obj, flid, GetWs(mediator, cache, node));
+					slice = new StTextSlice(obj, flid, GetWs(cache, propertyTable, node));
 					break;
 				}
 
@@ -335,9 +331,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "customwithparams":
 				{
-					slice = (Slice)DynamicLoader.CreateObject(node,
-						new object[]{cache, editor, flid, node, obj, stringTbl,
-										persistenceProvider, GetWs(mediator, cache, node)});
+					slice = (Slice)DynamicLoader.CreateObject(node, cache, editor, flid, node, obj, persistenceProvider, GetWs(cache, propertyTable, node));
 					break;
 				}
 				case "ghostvector":

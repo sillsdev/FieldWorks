@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
+		private PropertyTable _propertyTable;
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
@@ -75,15 +76,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			_mediator = mediator;
-			Cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
-			_mediator.PropertyTable.SetProperty("FLExBridgeListener", this);
-			_mediator.PropertyTable.SetPropertyPersistence("FLExBridgeListener", false);
-			_parentForm = (Form)_mediator.PropertyTable.GetValue("window");
+			_propertyTable = propertyTable;
+			Cache = _propertyTable.GetValue<FdoCache>("cache");
+			_propertyTable.SetProperty("FLExBridgeListener", this, true);
+			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
+			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
 		}
 
@@ -112,7 +114,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty(
+			var bridgeLastUsed = _propertyTable.GetStringProperty(
 				"LastBridgeUsed", "NoBridgeUsedYet", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 			{
@@ -160,7 +162,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void RunFLExLiftBridge(object commandObject)
 		{
-			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			var bridgeLastUsed = _propertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 				OnFLExBridge(commandObject);
 
@@ -187,12 +189,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-				PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+				PropertyTable.SettingsGroup.LocalSettings, true);
 
 			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
 
@@ -226,7 +228,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
 			{
-				MessageBox.Show(((FwApp)_mediator.PropertyTable.GetValue("App")).ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				MessageBox.Show(_propertyTable.GetValue<FwApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 				return true;
 			}
 
@@ -242,7 +244,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			 // Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
 			return true;
@@ -286,12 +288,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (!LinkedFilesLocationIsDefault())
 			{
-				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_mediator.HelpTopicProvider))
+				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
 					{
-						var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+						var app = _propertyTable.GetValue<LexTextApp>("App");
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
@@ -316,7 +318,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			StopParser();
 			SaveAllDataToDisk();
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 
 			if (ChangeProjectNameIfNeeded())
 				return true;
@@ -341,8 +343,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				var app = _propertyTable.GetValue<LexTextApp>("App");
+				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -450,7 +452,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
@@ -484,8 +486,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				var app = _propertyTable.GetValue<LexTextApp>("App");
+				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -518,7 +520,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
-			var activeForm = _mediator.PropertyTable.GetValue("window") as Form;
+			var activeForm = _propertyTable.GetValue<Form>("window");
 			if (activeForm != null)
 			{
 				activeForm.ValidateChildren(ValidationConstraints.Enabled);
@@ -1364,13 +1366,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (CheckForExistingFileName(projectFolder, revisedProjName))
 					return true;
 
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				var app = _propertyTable.GetValue<LexTextApp>("App");
 				if (app.FwManager.RenameProject(revisedProjName, app))
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...
 					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
-					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+					var tempWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
 					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
 					// to hopefully come back here after resetting things
 				}
@@ -1433,9 +1435,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
-		private static bool IsVernacularSpellingEnabled(Mediator mediator)
+		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
 		{
-			return mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
 		private static DialogResult DisplayNonAsciiWarning(string revisedProjName)
@@ -1468,13 +1470,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "FwApp is a reference I guess")]
-		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
+		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, PropertyTable propertyTable, string fullProjectFileName)
 		{
 			var manager = app.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
 				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
+			if (IsVernacularSpellingEnabled(propertyTable))
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			//clear out any sort cache files (or whatever else might mess us up) and then refresh
 			newAppWindow.ClearInvalidatedStoredData();
@@ -1560,7 +1562,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool ShowMessageBeforeFirstSendReceive_IsUserReady()
 		{
-			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_mediator.HelpTopicProvider))
+			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				return DialogResult.OK == FirstTimeDlg.ShowDialog();
 			}

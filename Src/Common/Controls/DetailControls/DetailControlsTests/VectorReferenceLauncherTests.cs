@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
 			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, null, "", analysisWs);
+			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
 		}
 	}
 

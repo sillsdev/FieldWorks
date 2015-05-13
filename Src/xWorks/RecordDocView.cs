@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -54,12 +53,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize this as an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 		}
 
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void SetupStylesheet()
 		{
 			// If possible make it use the style sheet appropriate for its main window.
-			m_rootSite.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_rootSite.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 		protected virtual RootSite ConstructRoot()
 		{
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
 			//are taking a longtime are not getting Breath().
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
-			using (ProgressState progress = FwXWindow.CreatePredictiveProgressState(m_mediator, this.m_vectorName))
+			using (ProgressState progress = FwXWindow.CreatePredictiveProgressState(m_propertyTable, m_vectorName))
 			{
 				progress.Breath();
 
@@ -171,14 +171,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception error)
 				{
-					if (m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false))
-						throw;
-					else	//don't really need to make the program stop just because we could not show this record.
-					{
-						IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-						ErrorReporter.ReportException(error, app.SettingsKey,
-							m_mediator.FeedbackInfoProvider.SupportEmailAddress, null, false);
-					}
+					//don't really need to make the program stop just because we could not show this record.
+					IApp app = m_propertyTable.GetValue<IApp>("App");
+					ErrorReporter.ReportException(error, app.SettingsKey,
+						m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
 				}
 			}
 		}
@@ -189,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 			m_rootSite = ConstructRoot();
-			m_rootSite.Init(m_mediator, m_configurationParameters); // Init it as xCoreColleague.
+			m_rootSite.Init(m_mediator, m_propertyTable, m_configurationParameters); // Init it as xCoreColleague.
 			//m_rootSite.PersistenceProvder = new XCore.PersistenceProvider(m_mediator.PropertyTable);
 
 			m_rootSite.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -238,8 +234,7 @@ namespace SIL.FieldWorks.XWorks
 		#endregion
 
 		public XmlDocItemView(int hvoRoot, XmlNode xnSpec, string sLayout, Mediator mediator) :
-			base(hvoRoot, sLayout, null,
-				XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
+			base(hvoRoot, sLayout, XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
 		{
 			Mediator = mediator;
 			if (m_xnSpec == null)
@@ -289,8 +284,7 @@ namespace SIL.FieldWorks.XWorks
 				nodePath = tss.get_Properties(0).GetStrPropValue((int) FwTextPropType.ktptBulNumTxtBef);
 			}
 			if (m_configObjectName == null)
-				m_configObjectName = XmlUtils.GetLocalizedAttributeValue(
-					Mediator.StringTbl, m_xnSpec, "configureObjectName", null);
+				m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_xnSpec, "configureObjectName", null);
 			string label;
 			if (string.IsNullOrEmpty(nodePath))
 				label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
@@ -322,13 +316,13 @@ namespace SIL.FieldWorks.XWorks
 				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
-					FindForm() as IMainWindowDelegateCallbacks, Mediator, sProp);
+					FindForm() as IMainWindowDelegateCallbacks, Mediator, m_propertyTable, sProp);
 				if (nodePath != null)
 					dlg.SetActiveNode(nodePath);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// Configuration may well have changed. Reset XML tables and redraw.
-					var sNewLayout = Mediator.PropertyTable.GetStringProperty(sProp, null);
+					var sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
 					ResetTables(sNewLayout);
 				}
 				if (dlg.MasterRefreshRequired)
@@ -364,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetupStylesheet()
 		{
-			StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 	}
 
@@ -422,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override RootSite ConstructRoot()
 		{
-			string sLayout = GetLayoutName(m_jtSpecs, m_mediator);
+			string sLayout = GetLayoutName(m_jtSpecs, m_mediator, m_propertyTable);
 			return new XmlDocItemView(0, m_jtSpecs, sLayout, m_mediator);
 		}
 
@@ -443,12 +437,12 @@ namespace SIL.FieldWorks.XWorks
 		/// is (e.g.) publishStemPreview. (This view wraps publishStem with some conditional logic to ensure
 		/// that we display things like "Not published" if the entry is excluded from all publications.)
 		/// </summary>
-		public static string GetLayoutName(XmlNode xnSpec, Mediator mediator)
+		public static string GetLayoutName(XmlNode xnSpec, Mediator mediator, PropertyTable propertyTable)
 		{
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
-				sLayout = mediator.PropertyTable.GetStringProperty(sProp, null);
+				sLayout = propertyTable.GetStringProperty(sProp, null);
 			if (String.IsNullOrEmpty(sLayout))
 				sLayout = XmlUtils.GetManditoryAttributeValue(xnSpec, "layout");
 			var parts = sLayout.Split('#');
@@ -464,8 +458,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void ReadParameters()
 		{
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_mediator.StringTbl,
-				m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
 			base.ReadParameters();
 		}
 
@@ -480,7 +473,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_configObjectName == null || m_configObjectName == "")
+			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -508,15 +501,15 @@ namespace SIL.FieldWorks.XWorks
 				string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
 				if (String.IsNullOrEmpty(sProp))
 					sProp = "DictionaryPublicationLayout";
-				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
-					this.FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
+				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable),
+					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// LT-8767 When this dialog is launched from the Configure Dictionary View dialog
 					// m_mediator != null && m_rootSite == null so we need to handle this to prevent a crash.
 					if (m_mediator != null && m_rootSite != null)
 					{
-						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, m_mediator));
+						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, m_mediator, m_propertyTable));
 					}
 				}
 				if (dlg.MasterRefreshRequired)
@@ -525,12 +518,5 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private FwStyleSheet StyleSheet
-		{
-			get
-			{
-				return FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			}
-		}
 	}
 }

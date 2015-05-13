@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFindInDictionary(object args)
 		{
-			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, m_mediator, null, null,
+			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, m_mediator, m_propertyTable, null, null,
 				((IWfiWordform) Object).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
 			return true;
 		}
