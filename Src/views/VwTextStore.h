@@ -20,6 +20,9 @@ namespace TestViews
 	class TestVwTextStore;
 };
 
+typedef int HVO;
+typedef int PropTag;
+
 DEFINE_COM_PTR(ITextStoreACP);
 DEFINE_COM_PTR(ITextStoreACPSink);
 DEFINE_COM_PTR(ITextStoreACPServices);

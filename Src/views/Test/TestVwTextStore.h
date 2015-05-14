@@ -582,6 +582,7 @@ namespace TestViews
 
 		VwTextStoreTestSub(VwRootBox * prootb): VwTextStore(prootb)
 		{
+			m_cCalledGetCurrentWS = 0;
 		}
 
 		void GetCurrentWritingSystem()
@@ -1921,7 +1922,7 @@ namespace TestViews
 			// suppressing immediate propChanged notifications makes the CachedDataAccess class behave
 			// like the real FdoCache in a way that is crucial for the function we are testing here.
 			m_qcda->SuppressPropChanges();
-			CheckHr(pselTemp->CommitAndNotify(VwSelChangeType::ksctSamePara, m_qrootb));
+			CheckHr(pselTemp->CommitAndNotify(ksctSamePara, m_qrootb));
 			m_qcda->ResumePropChanges(); // Resume retriggers NotifySelChange after it was postponed for a normalization commit.
 			unitpp::assert_eq("OnSelectionChange(1) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
 			unitpp::assert_false("OnSelectionChange(false) m_qrootb->m_fNormalizationCommitInProgress", m_qrootb->m_fNormalizationCommitInProgress);
