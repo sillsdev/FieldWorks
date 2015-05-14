@@ -1,11 +1,17 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
+using System.Xml;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -178,6 +184,39 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
+		protected override void InitializeMatchingObjects(FdoCache cache)
+		{
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
+			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
+
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+				searchEngine);
+
+			// start building index
+			var selectedWs = (IWritingSystem)m_cbWritingSystems.SelectedItem;
+			if(selectedWs != null)
+				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+		}
+
+		/// <summary>
+		/// A search engine that excludes the current entry (you can't merge an entry with its self
+		/// </summary>
+		private class MergeEntrySearchEngine : EntryGoSearchEngine
+		{
+			public int CurrentEntryHvo { private get; set; }
+
+			public MergeEntrySearchEngine(FdoCache cache) : base(cache)
+			{
+			}
+
+			protected override IEnumerable<int>  FilterResults(IEnumerable<int> results)
+			{
+				return results == null ? null : results.Where(hvo => hvo != CurrentEntryHvo);
+			}
+		}
 		#endregion	Other methods
 
 		#region Designer generated code

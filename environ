@@ -8,8 +8,8 @@ BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
-[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/usr/lib/fieldworks
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono-sil
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
@@ -32,10 +32,10 @@ ${LD_LIBRARY_PATH}"
 [ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
 
 # Add packaged mono items to paths
-PATH="${MONO_SILPKGDIR}/mono/bin:${PATH}"
-LD_LIBRARY_PATH="${MONO_SILPKGDIR}/mono/lib:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="${MONO_SILPKGDIR}/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
-MONO_GAC_PREFIX="${MONO_SILPKGDIR}/mono:/usr:${MONO_PREFIX}"
+PATH="${MONO_SILPKGDIR}/bin:${PATH}"
+LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${LD_LIBRARY_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+MONO_GAC_PREFIX="${MONO_SILPKGDIR}:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGE" ]
 then
@@ -69,6 +69,8 @@ if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
+	[ -d /var/lib/encConverters ] && cp -r /var/lib/encConverters/SIL $FW_CommonAppData \
+		&& cp -r /var/lib/encConverters/registry $FW_CommonAppData
 fi
 
 MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}"

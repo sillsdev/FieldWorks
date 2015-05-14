@@ -67,7 +67,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\outpu\debug"
+			OutputDirectory="..\..\output\debug"
 			IntermediateDirectory="..\..\obj\debug"
 			ConfigurationType="0"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"

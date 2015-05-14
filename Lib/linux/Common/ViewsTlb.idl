@@ -1,4 +1,4 @@
-#line 1 "C:\\develop\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
+#line 1 ".\\ViewsTlb.idl"
 
 
 
@@ -17,7 +17,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\Src\\Generic\\common.idh"
+#line 1 "c:\\develop\\fwrepo\\fw\\Src\\Generic\\common.idh"
 
 
 
@@ -120,10 +120,10 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 20 "C:\\develop\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
+#line 20 ".\\ViewsTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000c0fb81b5") cpp_quote(",") cpp_quote("Views") cpp_quote(");") [ uuid(f6d10640-c00c-11d2-8078-0000c0fb81b5), version(1.0), helpstring("Views 1.0 Type Library") ] library Views
-#line 23 "C:\\develop\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
+#line 23 ".\\ViewsTlb.idl"
 {
 	
 	importlib("FwKernelTlb.tlb");	
@@ -6085,6 +6085,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 	HRESULT OnTextChange();
 }
 
-#line 28 "C:\\develop\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
+#line 28 ".\\ViewsTlb.idl"
 
 };

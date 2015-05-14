@@ -122,8 +122,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override string PropertyTableId(string sorterOrFilter)
 		{
-			//var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
 			var reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			if (reversalPub == null)
+				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
 
 			// Dependent lists do not have owner/property set. Rather they have class/field.

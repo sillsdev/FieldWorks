@@ -126,6 +126,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
@@ -147,6 +148,8 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -175,6 +178,7 @@
     <Compile Include="FwListBoxTests.cs" />
     <Compile Include="FwMultilingualPropViewTests.cs" />
     <Compile Include="FwTextBoxTests.cs" />
+    <Compile Include="InnerLabeledMultiStringViewTests.cs" />
     <Compile Include="UiaWidgetTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -195,6 +199,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\FDO\FDOTests\FDOTests.csproj">
+      <Project>{5B119AEF-2895-44AB-BB28-6C1071A9B62B}</Project>
+      <Name>FDOTests</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

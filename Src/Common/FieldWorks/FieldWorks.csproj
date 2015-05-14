@@ -186,15 +186,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
-      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
+    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
+      <Package>Geckofx-Core</Package>
+      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
     </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
-      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
+    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
+      <Package>Geckofx-WinForms</Package>
+      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

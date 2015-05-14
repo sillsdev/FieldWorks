@@ -282,19 +282,12 @@ STDMETHODIMP GraphiteEngine::InitRenderer(IVwGraphics * pvg, BSTR bstrData)
 
 /*----------------------------------------------------------------------------------------------
 	Return an indication of whether the font is valid for the renderer.
-	S_OK means it is valid, E_FAIL means the font was not available,
-	E_UNEXPECTED means the font could not be used to initialize the renderer in the
-	expected way (eg, the Graphite tables could not be found).
-	Assumes InitRenderer() has already been called to set the font name.
-	ENHANCE: Do we possibly need to return an error code for an invalid font name?
-	ENHANCE: This is not a standard use of E_UNEXPECTED, we may want to have the method return
-	an enumeration member.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP GraphiteEngine::FontIsValid()
+STDMETHODIMP GraphiteEngine::get_FontIsValid(ComBool * pfValid)
 {
 	BEGIN_COM_METHOD
-	if (m_face == NULL)
-		return E_UNEXPECTED;
+	ChkComOutPtr(pfValid);
+	*pfValid = m_face != NULL;
 	END_COM_METHOD(g_fact, IID_IRenderEngine);
 }
 

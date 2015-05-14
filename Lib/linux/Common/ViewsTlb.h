@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 7.00.0555 */
-/* at Tue Sep 30 16:04:47 2014
+ /* File created by MIDL compiler version 8.00.0603 */
+/* at Wed Apr 22 10:36:55 2015
  */
-/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
+/* Compiler settings for c:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -44,126 +44,147 @@
 #ifndef __IVwNotifyChange_FWD_DEFINED__
 #define __IVwNotifyChange_FWD_DEFINED__
 typedef interface IVwNotifyChange IVwNotifyChange;
+
 #endif 	/* __IVwNotifyChange_FWD_DEFINED__ */
 
 
 #ifndef __IVwSelection_FWD_DEFINED__
 #define __IVwSelection_FWD_DEFINED__
 typedef interface IVwSelection IVwSelection;
+
 #endif 	/* __IVwSelection_FWD_DEFINED__ */
 
 
 #ifndef __IVwEmbeddedWindow_FWD_DEFINED__
 #define __IVwEmbeddedWindow_FWD_DEFINED__
 typedef interface IVwEmbeddedWindow IVwEmbeddedWindow;
+
 #endif 	/* __IVwEmbeddedWindow_FWD_DEFINED__ */
 
 
 #ifndef __IVwStylesheet_FWD_DEFINED__
 #define __IVwStylesheet_FWD_DEFINED__
 typedef interface IVwStylesheet IVwStylesheet;
+
 #endif 	/* __IVwStylesheet_FWD_DEFINED__ */
 
 
 #ifndef __IVwEnv_FWD_DEFINED__
 #define __IVwEnv_FWD_DEFINED__
 typedef interface IVwEnv IVwEnv;
+
 #endif 	/* __IVwEnv_FWD_DEFINED__ */
 
 
 #ifndef __IVwViewConstructor_FWD_DEFINED__
 #define __IVwViewConstructor_FWD_DEFINED__
 typedef interface IVwViewConstructor IVwViewConstructor;
+
 #endif 	/* __IVwViewConstructor_FWD_DEFINED__ */
 
 
 #ifndef __IVwRootSite_FWD_DEFINED__
 #define __IVwRootSite_FWD_DEFINED__
 typedef interface IVwRootSite IVwRootSite;
+
 #endif 	/* __IVwRootSite_FWD_DEFINED__ */
 
 
 #ifndef __ISilDataAccess_FWD_DEFINED__
 #define __ISilDataAccess_FWD_DEFINED__
 typedef interface ISilDataAccess ISilDataAccess;
+
 #endif 	/* __ISilDataAccess_FWD_DEFINED__ */
 
 
 #ifndef __IStructuredTextDataAccess_FWD_DEFINED__
 #define __IStructuredTextDataAccess_FWD_DEFINED__
 typedef interface IStructuredTextDataAccess IStructuredTextDataAccess;
+
 #endif 	/* __IStructuredTextDataAccess_FWD_DEFINED__ */
 
 
 #ifndef __IVwCacheDa_FWD_DEFINED__
 #define __IVwCacheDa_FWD_DEFINED__
 typedef interface IVwCacheDa IVwCacheDa;
+
 #endif 	/* __IVwCacheDa_FWD_DEFINED__ */
 
 
 #ifndef __IVwRootBox_FWD_DEFINED__
 #define __IVwRootBox_FWD_DEFINED__
 typedef interface IVwRootBox IVwRootBox;
+
 #endif 	/* __IVwRootBox_FWD_DEFINED__ */
 
 
 #ifndef __IVwPropertyStore_FWD_DEFINED__
 #define __IVwPropertyStore_FWD_DEFINED__
 typedef interface IVwPropertyStore IVwPropertyStore;
+
 #endif 	/* __IVwPropertyStore_FWD_DEFINED__ */
 
 
 #ifndef __IVwOverlay_FWD_DEFINED__
 #define __IVwOverlay_FWD_DEFINED__
 typedef interface IVwOverlay IVwOverlay;
+
 #endif 	/* __IVwOverlay_FWD_DEFINED__ */
 
 
 #ifndef __IVwPrintContext_FWD_DEFINED__
 #define __IVwPrintContext_FWD_DEFINED__
 typedef interface IVwPrintContext IVwPrintContext;
+
 #endif 	/* __IVwPrintContext_FWD_DEFINED__ */
 
 
 #ifndef __IVwSearchKiller_FWD_DEFINED__
 #define __IVwSearchKiller_FWD_DEFINED__
 typedef interface IVwSearchKiller IVwSearchKiller;
+
 #endif 	/* __IVwSearchKiller_FWD_DEFINED__ */
 
 
 #ifndef __IVwSynchronizer_FWD_DEFINED__
 #define __IVwSynchronizer_FWD_DEFINED__
 typedef interface IVwSynchronizer IVwSynchronizer;
+
 #endif 	/* __IVwSynchronizer_FWD_DEFINED__ */
 
 
 #ifndef __IVwVirtualHandler_FWD_DEFINED__
 #define __IVwVirtualHandler_FWD_DEFINED__
 typedef interface IVwVirtualHandler IVwVirtualHandler;
+
 #endif 	/* __IVwVirtualHandler_FWD_DEFINED__ */
 
 
 #ifndef __IVwLayoutStream_FWD_DEFINED__
 #define __IVwLayoutStream_FWD_DEFINED__
 typedef interface IVwLayoutStream IVwLayoutStream;
+
 #endif 	/* __IVwLayoutStream_FWD_DEFINED__ */
 
 
 #ifndef __IVwLayoutManager_FWD_DEFINED__
 #define __IVwLayoutManager_FWD_DEFINED__
 typedef interface IVwLayoutManager IVwLayoutManager;
+
 #endif 	/* __IVwLayoutManager_FWD_DEFINED__ */
 
 
 #ifndef __ICheckWord_FWD_DEFINED__
 #define __ICheckWord_FWD_DEFINED__
 typedef interface ICheckWord ICheckWord;
+
 #endif 	/* __ICheckWord_FWD_DEFINED__ */
 
 
 #ifndef __IGetSpellChecker_FWD_DEFINED__
 #define __IGetSpellChecker_FWD_DEFINED__
 typedef interface IGetSpellChecker IGetSpellChecker;
+
 #endif 	/* __IGetSpellChecker_FWD_DEFINED__ */
 
 
@@ -266,6 +287,7 @@ typedef struct VwPrintContextWin32 VwPrintContextWin32;
 #ifndef __IVwPattern_FWD_DEFINED__
 #define __IVwPattern_FWD_DEFINED__
 typedef interface IVwPattern IVwPattern;
+
 #endif 	/* __IVwPattern_FWD_DEFINED__ */
 
 
@@ -284,6 +306,7 @@ typedef struct VwPattern VwPattern;
 #ifndef __IVwTxtSrcInit2_FWD_DEFINED__
 #define __IVwTxtSrcInit2_FWD_DEFINED__
 typedef interface IVwTxtSrcInit2 IVwTxtSrcInit2;
+
 #endif 	/* __IVwTxtSrcInit2_FWD_DEFINED__ */
 
 
@@ -302,6 +325,7 @@ typedef struct VwMappedTxtSrc VwMappedTxtSrc;
 #ifndef __IVwTxtSrcInit_FWD_DEFINED__
 #define __IVwTxtSrcInit_FWD_DEFINED__
 typedef interface IVwTxtSrcInit IVwTxtSrcInit;
+
 #endif 	/* __IVwTxtSrcInit_FWD_DEFINED__ */
 
 
@@ -332,6 +356,7 @@ typedef struct VwSearchKiller VwSearchKiller;
 #ifndef __IVwDrawRootBuffered_FWD_DEFINED__
 #define __IVwDrawRootBuffered_FWD_DEFINED__
 typedef interface IVwDrawRootBuffered IVwDrawRootBuffered;
+
 #endif 	/* __IVwDrawRootBuffered_FWD_DEFINED__ */
 
 
@@ -374,6 +399,7 @@ typedef struct VwLayoutStream VwLayoutStream;
 #ifndef __IPictureFactory_FWD_DEFINED__
 #define __IPictureFactory_FWD_DEFINED__
 typedef interface IPictureFactory IPictureFactory;
+
 #endif 	/* __IPictureFactory_FWD_DEFINED__ */
 
 
@@ -392,6 +418,7 @@ typedef struct PictureFactory PictureFactory;
 #ifndef __IVwWindow_FWD_DEFINED__
 #define __IVwWindow_FWD_DEFINED__
 typedef interface IVwWindow IVwWindow;
+
 #endif 	/* __IVwWindow_FWD_DEFINED__ */
 
 
@@ -410,6 +437,7 @@ typedef struct VwWindow VwWindow;
 #ifndef __IViewInputMgr_FWD_DEFINED__
 #define __IViewInputMgr_FWD_DEFINED__
 typedef interface IViewInputMgr IViewInputMgr;
+
 #endif 	/* __IViewInputMgr_FWD_DEFINED__ */
 
 
@@ -522,143 +550,153 @@ F0A60670-D280-45EA-A5C5-F0B84C027EFC
 );
 typedef /* [v1_enum] */ 
 enum VwSpecialChars
-    {	kscBackspace	= 8,
-	kscDelForward	= 0x7f
+    {
+        kscBackspace	= 8,
+        kscDelForward	= 0x7f
     } 	VwSpecialChars;
 
 typedef /* [v1_enum] */ 
 enum VwSelType
-    {	kstText	= 1,
-	kstPicture	= 2
+    {
+        kstText	= 1,
+        kstPicture	= 2
     } 	VwSelType;
 
 typedef /* [v1_enum] */ 
 enum PropChangeType
-    {	kpctNotifyMeThenAll	= 0,
-	kpctNotifyAll	= ( kpctNotifyMeThenAll + 1 ) ,
-	kpctNotifyAllButMe	= ( kpctNotifyAll + 1 ) 
+    {
+        kpctNotifyMeThenAll	= 0,
+        kpctNotifyAll	= ( kpctNotifyMeThenAll + 1 ) ,
+        kpctNotifyAllButMe	= ( kpctNotifyAll + 1 ) 
     } 	PropChangeType;
 
 typedef /* [v1_enum] */ 
 enum VwDelProbType
-    {	kdptNone	= 0,
-	kdptComplexRange	= ( kdptNone + 1 ) ,
-	kdptBsAtStartPara	= ( kdptComplexRange + 1 ) ,
-	kdptDelAtEndPara	= ( kdptBsAtStartPara + 1 ) ,
-	kdptBsReadOnly	= ( kdptDelAtEndPara + 1 ) ,
-	kdptDelReadOnly	= ( kdptBsReadOnly + 1 ) ,
-	kdptReadOnly	= ( kdptDelReadOnly + 1 ) 
+    {
+        kdptNone	= 0,
+        kdptComplexRange	= ( kdptNone + 1 ) ,
+        kdptBsAtStartPara	= ( kdptComplexRange + 1 ) ,
+        kdptDelAtEndPara	= ( kdptBsAtStartPara + 1 ) ,
+        kdptBsReadOnly	= ( kdptDelAtEndPara + 1 ) ,
+        kdptDelReadOnly	= ( kdptBsReadOnly + 1 ) ,
+        kdptReadOnly	= ( kdptDelReadOnly + 1 ) 
     } 	VwDelProbType;
 
 typedef /* [v1_enum] */ 
 enum VwDelProbResponse
-    {	kdprAbort	= 0,
-	kdprFail	= ( kdprAbort + 1 ) ,
-	kdprDone	= ( kdprFail + 1 ) 
+    {
+        kdprAbort	= 0,
+        kdprFail	= ( kdprAbort + 1 ) ,
+        kdprDone	= ( kdprFail + 1 ) 
     } 	VwDelProbResponse;
 
 typedef /* [v1_enum] */ 
 enum VwInsertDiffParaResponse
-    {	kidprDefault	= 0,
-	kidprFail	= ( kidprDefault + 1 ) ,
-	kidprDone	= ( kidprFail + 1 ) 
+    {
+        kidprDefault	= 0,
+        kidprFail	= ( kidprDefault + 1 ) ,
+        kidprDone	= ( kidprFail + 1 ) 
     } 	VwInsertDiffParaResponse;
 
 typedef /* [v1_enum] */ 
 enum DbColType
-    {	koctGuid	= 0,
-	koctInt	= 1,
-	koctString	= 2,
-	koctFmt	= 3,
-	koctMlaAlt	= 4,
-	koctMlsAlt	= 5,
-	koctMltAlt	= 6,
-	koctObj	= 7,
-	koctObjVec	= 8,
-	koctBaseId	= 9,
-	koctTtp	= 10,
-	koctUnicode	= 11,
-	koctInt64	= 12,
-	koctTime	= 13,
-	koctEnc	= 14,
-	koctFlid	= 15,
-	koctTimeStamp	= 16,
-	koctObjOwn	= 17,
-	koctObjVecOwn	= 18,
-	koctBinary	= 19,
-	koctTimeStampIfMissing	= 20,
-	koctLim	= 21,
-	koctObjVecExtra	= 22
+    {
+        koctGuid	= 0,
+        koctInt	= 1,
+        koctString	= 2,
+        koctFmt	= 3,
+        koctMlaAlt	= 4,
+        koctMlsAlt	= 5,
+        koctMltAlt	= 6,
+        koctObj	= 7,
+        koctObjVec	= 8,
+        koctBaseId	= 9,
+        koctTtp	= 10,
+        koctUnicode	= 11,
+        koctInt64	= 12,
+        koctTime	= 13,
+        koctEnc	= 14,
+        koctFlid	= 15,
+        koctTimeStamp	= 16,
+        koctObjOwn	= 17,
+        koctObjVecOwn	= 18,
+        koctBinary	= 19,
+        koctTimeStampIfMissing	= 20,
+        koctLim	= 21,
+        koctObjVecExtra	= 22
     } 	DbColType;
 
 typedef /* [v1_enum] */ 
 enum AutoloadPolicies
-    {	kalpLoadForThisObject	= 0,
-	kalpNoAutoload	= 1,
-	kalpLoadForAllOfObjectClass	= 2,
-	kalpLoadForAllOfBaseClass	= 3,
-	kalpLoadAllOfClassForReadOnly	= 4,
-	kalpLoadAllOfClassIncludingAllVirtuals	= 5,
-	kalpLim	= 6
+    {
+        kalpLoadForThisObject	= 0,
+        kalpNoAutoload	= 1,
+        kalpLoadForAllOfObjectClass	= 2,
+        kalpLoadForAllOfBaseClass	= 3,
+        kalpLoadAllOfClassForReadOnly	= 4,
+        kalpLoadAllOfClassIncludingAllVirtuals	= 5,
+        kalpLim	= 6
     } 	AutoloadPolicies;
 
 typedef /* [v1_enum] */ 
 enum FldType
-    {	kftString	= 0,
-	kftMsa	= ( kftString + 1 ) ,
-	kftMta	= ( kftMsa + 1 ) ,
-	kftRefAtomic	= ( kftMta + 1 ) ,
-	kftRefCombo	= ( kftRefAtomic + 1 ) ,
-	kftRefSeq	= ( kftRefCombo + 1 ) ,
-	kftEnum	= ( kftRefSeq + 1 ) ,
-	kftUnicode	= ( kftEnum + 1 ) ,
-	kftTtp	= ( kftUnicode + 1 ) ,
-	kftStText	= ( kftTtp + 1 ) ,
-	kftDummy	= ( kftStText + 1 ) ,
-	kftLimEmbedLabel	= ( kftDummy + 1 ) ,
-	kftGroup	= ( kftLimEmbedLabel + 1 ) ,
-	kftGroupOnePerLine	= ( kftGroup + 1 ) ,
-	kftTitleGroup	= ( kftGroupOnePerLine + 1 ) ,
-	kftDateRO	= ( kftTitleGroup + 1 ) ,
-	kftDate	= ( kftDateRO + 1 ) ,
-	kftGenDate	= ( kftDate + 1 ) ,
-	kftSubItems	= ( kftGenDate + 1 ) ,
-	kftObjRefAtomic	= ( kftSubItems + 1 ) ,
-	kftObjRefSeq	= ( kftObjRefAtomic + 1 ) ,
-	kftInteger	= ( kftObjRefSeq + 1 ) ,
-	kftBackRefAtomic	= ( kftInteger + 1 ) ,
-	kftExpandable	= ( kftBackRefAtomic + 1 ) ,
-	kftObjOwnSeq	= ( kftExpandable + 1 ) ,
-	kftObjOwnCol	= ( kftObjOwnSeq + 1 ) ,
-	kftGuid	= ( kftObjOwnCol + 1 ) ,
-	kftStTextParas	= ( kftGuid + 1 ) ,
-	kftLim	= ( kftStTextParas + 1 ) 
+    {
+        kftString	= 0,
+        kftMsa	= ( kftString + 1 ) ,
+        kftMta	= ( kftMsa + 1 ) ,
+        kftRefAtomic	= ( kftMta + 1 ) ,
+        kftRefCombo	= ( kftRefAtomic + 1 ) ,
+        kftRefSeq	= ( kftRefCombo + 1 ) ,
+        kftEnum	= ( kftRefSeq + 1 ) ,
+        kftUnicode	= ( kftEnum + 1 ) ,
+        kftTtp	= ( kftUnicode + 1 ) ,
+        kftStText	= ( kftTtp + 1 ) ,
+        kftDummy	= ( kftStText + 1 ) ,
+        kftLimEmbedLabel	= ( kftDummy + 1 ) ,
+        kftGroup	= ( kftLimEmbedLabel + 1 ) ,
+        kftGroupOnePerLine	= ( kftGroup + 1 ) ,
+        kftTitleGroup	= ( kftGroupOnePerLine + 1 ) ,
+        kftDateRO	= ( kftTitleGroup + 1 ) ,
+        kftDate	= ( kftDateRO + 1 ) ,
+        kftGenDate	= ( kftDate + 1 ) ,
+        kftSubItems	= ( kftGenDate + 1 ) ,
+        kftObjRefAtomic	= ( kftSubItems + 1 ) ,
+        kftObjRefSeq	= ( kftObjRefAtomic + 1 ) ,
+        kftInteger	= ( kftObjRefSeq + 1 ) ,
+        kftBackRefAtomic	= ( kftInteger + 1 ) ,
+        kftExpandable	= ( kftBackRefAtomic + 1 ) ,
+        kftObjOwnSeq	= ( kftExpandable + 1 ) ,
+        kftObjOwnCol	= ( kftObjOwnSeq + 1 ) ,
+        kftGuid	= ( kftObjOwnCol + 1 ) ,
+        kftStTextParas	= ( kftGuid + 1 ) ,
+        kftLim	= ( kftStTextParas + 1 ) 
     } 	FldType;
 
 typedef /* [v1_enum] */ 
 enum VwBoxType
-    {	kvbtUnknown	= 0,
-	kvbtGroup	= ( kvbtUnknown + 1 ) ,
-	kvbtParagraph	= ( kvbtGroup + 1 ) ,
-	kvbtConcPara	= ( kvbtParagraph + 1 ) ,
-	kvbtPile	= ( kvbtConcPara + 1 ) ,
-	kvbtInnerPile	= ( kvbtPile + 1 ) ,
-	kvbtMoveablePile	= ( kvbtInnerPile + 1 ) ,
-	kvbtDiv	= ( kvbtMoveablePile + 1 ) ,
-	kvbtRoot	= ( kvbtDiv + 1 ) ,
-	kvbtTable	= ( kvbtRoot + 1 ) ,
-	kvbtTableRow	= ( kvbtTable + 1 ) ,
-	kvbtTableCell	= ( kvbtTableRow + 1 ) ,
-	kvbtLeaf	= ( kvbtTableCell + 1 ) ,
-	kvbtString	= ( kvbtLeaf + 1 ) ,
-	kvbtDropCapString	= ( kvbtString + 1 ) ,
-	kvbtAnchor	= ( kvbtDropCapString + 1 ) ,
-	kvbtSeparator	= ( kvbtAnchor + 1 ) ,
-	kvbtBar	= ( kvbtSeparator + 1 ) ,
-	kvbtPicture	= ( kvbtBar + 1 ) ,
-	kvbtIndepPicture	= ( kvbtPicture + 1 ) ,
-	kvbtIntegerPicture	= ( kvbtIndepPicture + 1 ) ,
-	kvbtLazy	= ( kvbtIntegerPicture + 1 ) 
+    {
+        kvbtUnknown	= 0,
+        kvbtGroup	= ( kvbtUnknown + 1 ) ,
+        kvbtParagraph	= ( kvbtGroup + 1 ) ,
+        kvbtConcPara	= ( kvbtParagraph + 1 ) ,
+        kvbtPile	= ( kvbtConcPara + 1 ) ,
+        kvbtInnerPile	= ( kvbtPile + 1 ) ,
+        kvbtMoveablePile	= ( kvbtInnerPile + 1 ) ,
+        kvbtDiv	= ( kvbtMoveablePile + 1 ) ,
+        kvbtRoot	= ( kvbtDiv + 1 ) ,
+        kvbtTable	= ( kvbtRoot + 1 ) ,
+        kvbtTableRow	= ( kvbtTable + 1 ) ,
+        kvbtTableCell	= ( kvbtTableRow + 1 ) ,
+        kvbtLeaf	= ( kvbtTableCell + 1 ) ,
+        kvbtString	= ( kvbtLeaf + 1 ) ,
+        kvbtDropCapString	= ( kvbtString + 1 ) ,
+        kvbtAnchor	= ( kvbtDropCapString + 1 ) ,
+        kvbtSeparator	= ( kvbtAnchor + 1 ) ,
+        kvbtBar	= ( kvbtSeparator + 1 ) ,
+        kvbtPicture	= ( kvbtBar + 1 ) ,
+        kvbtIndepPicture	= ( kvbtPicture + 1 ) ,
+        kvbtIntegerPicture	= ( kvbtIndepPicture + 1 ) ,
+        kvbtLazy	= ( kvbtIntegerPicture + 1 ) 
     } 	VwBoxType;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -673,9 +711,10 @@ A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C
 );
 typedef /* [v1_enum] */ 
 enum VwClearInfoAction
-    {	kciaRemoveObjectInfoOnly	= 0,
-	kciaRemoveObjectAndOwnedInfo	= 1,
-	kciaRemoveAllObjectInfo	= 2
+    {
+        kciaRemoveObjectInfoOnly	= 0,
+        kciaRemoveObjectAndOwnedInfo	= 1,
+        kciaRemoveAllObjectInfo	= 2
     } 	VwClearInfoAction;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -695,10 +734,11 @@ VwUndoDa
 );
 typedef /* [v1_enum] */ 
 enum VwShiftStatus
-    {	kfssNone	= 0,
-	kfssShift	= 1,
-	kfssControl	= 2,
-	kgrfssShiftControl	= ( kfssShift | kfssControl ) 
+    {
+        kfssNone	= 0,
+        kfssShift	= 1,
+        kfssControl	= 2,
+        kgrfssShiftControl	= ( kfssShift | kfssControl ) 
     } 	VwShiftStatus;
 
 typedef struct VwSelLevInfo
@@ -722,12 +762,13 @@ typedef struct VwChangeInfo
 
 typedef /* [v1_enum] */ 
 enum VwUnit
-    {	kunPoint1000	= 0,
-	kunPercent100	= 1,
-	kunRelative	= 2
+    {
+        kunPoint1000	= 0,
+        kunPercent100	= 1,
+        kunRelative	= 2
     } 	VwUnit;
 
-typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0001_0070_0001
+typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0001_0072_0001
     {
     int nVal;
     VwUnit unit;
@@ -735,122 +776,133 @@ typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_
 
 typedef /* [v1_enum] */ 
 enum VwAlignment
-    {	kvaLeft	= 0,
-	kvaCenter	= ( kvaLeft + 1 ) ,
-	kvaRight	= ( kvaCenter + 1 ) ,
-	kvaJustified	= ( kvaRight + 1 ) 
+    {
+        kvaLeft	= 0,
+        kvaCenter	= ( kvaLeft + 1 ) ,
+        kvaRight	= ( kvaCenter + 1 ) ,
+        kvaJustified	= ( kvaRight + 1 ) 
     } 	VwAlignment;
 
 typedef /* [v1_enum] */ 
 enum VwFramePosition
-    {	kvfpVoid	= 0,
-	kvfpAbove	= 0x1,
-	kvfpBelow	= 0x2,
-	kvfpLhs	= 0x4,
-	kvfpRhs	= 0x8,
-	kvfpHsides	= ( kvfpAbove | kvfpBelow ) ,
-	kvfpVsides	= ( kvfpLhs | kvfpRhs ) ,
-	kvfpBox	= ( kvfpHsides | kvfpVsides ) 
+    {
+        kvfpVoid	= 0,
+        kvfpAbove	= 0x1,
+        kvfpBelow	= 0x2,
+        kvfpLhs	= 0x4,
+        kvfpRhs	= 0x8,
+        kvfpHsides	= ( kvfpAbove | kvfpBelow ) ,
+        kvfpVsides	= ( kvfpLhs | kvfpRhs ) ,
+        kvfpBox	= ( kvfpHsides | kvfpVsides ) 
     } 	VwFramePosition;
 
 typedef /* [v1_enum] */ 
 enum VwRule
-    {	kvrlNone	= 0,
-	kvrlGroups	= 0x1,
-	kvrlRowNoGroups	= 0x2,
-	kvrlRows	= ( kvrlGroups | kvrlRowNoGroups ) ,
-	kvrlColsNoGroups	= 0x4,
-	kvrlCols	= ( kvrlGroups | kvrlColsNoGroups ) ,
-	kvrlAll	= ( kvrlRows | kvrlCols ) 
+    {
+        kvrlNone	= 0,
+        kvrlGroups	= 0x1,
+        kvrlRowNoGroups	= 0x2,
+        kvrlRows	= ( kvrlGroups | kvrlRowNoGroups ) ,
+        kvrlColsNoGroups	= 0x4,
+        kvrlCols	= ( kvrlGroups | kvrlColsNoGroups ) ,
+        kvrlAll	= ( kvrlRows | kvrlCols ) 
     } 	VwRule;
 
 typedef /* [v1_enum] */ 
 enum VwBulNum
-    {	kvbnNone	= 0,
-	kvbnNumberBase	= 10,
-	kvbnArabic	= kvbnNumberBase,
-	kvbnRomanUpper	= ( kvbnArabic + 1 ) ,
-	kvbnRomanLower	= ( kvbnRomanUpper + 1 ) ,
-	kvbnLetterUpper	= ( kvbnRomanLower + 1 ) ,
-	kvbnLetterLower	= ( kvbnLetterUpper + 1 ) ,
-	kvbnArabic01	= ( kvbnLetterLower + 1 ) ,
-	kvbnNumberMax	= ( kvbnArabic01 + 1 ) ,
-	kvbnBulletBase	= 100,
-	kvbnBullet	= kvbnBulletBase,
-	kvbnBulletMax	= ( kvbnBulletBase + 100 ) 
+    {
+        kvbnNone	= 0,
+        kvbnNumberBase	= 10,
+        kvbnArabic	= kvbnNumberBase,
+        kvbnRomanUpper	= ( kvbnArabic + 1 ) ,
+        kvbnRomanLower	= ( kvbnRomanUpper + 1 ) ,
+        kvbnLetterUpper	= ( kvbnRomanLower + 1 ) ,
+        kvbnLetterLower	= ( kvbnLetterUpper + 1 ) ,
+        kvbnArabic01	= ( kvbnLetterLower + 1 ) ,
+        kvbnNumberMax	= ( kvbnArabic01 + 1 ) ,
+        kvbnBulletBase	= 100,
+        kvbnBullet	= kvbnBulletBase,
+        kvbnBulletMax	= ( kvbnBulletBase + 100 ) 
     } 	VwBulNum;
 
 typedef /* [v1_enum] */ 
 enum VwStyleProperty
-    {	kspNamedStyle	= 133,
-	kspMarginLeading	= 19,
-	kspMarginTrailing	= 20,
-	kspMarginTop	= 21,
-	kspMarginBottom	= 22,
-	kspMaxLines	= 151,
-	kspWsStyle	= 156,
-	kspRelLineHeight	= 160
+    {
+        kspNamedStyle	= 133,
+        kspMarginLeading	= 19,
+        kspMarginTrailing	= 20,
+        kspMarginTop	= 21,
+        kspMarginBottom	= 22,
+        kspMaxLines	= 151,
+        kspWsStyle	= 156,
+        kspRelLineHeight	= 160
     } 	VwStyleProperty;
 
 typedef /* [v1_enum] */ 
 enum VwFontAbsoluteSize
-    {	kvfsXXSmall	= 0,
-	kvfsXSmall	= ( kvfsXXSmall + 1 ) ,
-	kvfsSmall	= ( kvfsXSmall + 1 ) ,
-	kvfsNormal	= ( kvfsSmall + 1 ) ,
-	kvfsLarge	= ( kvfsNormal + 1 ) ,
-	kvfsXLarge	= ( kvfsLarge + 1 ) ,
-	kvfsXXLarge	= ( kvfsXLarge + 1 ) ,
-	kvfsSmaller	= ( kvfsXXLarge + 1 ) ,
-	kvfsLarger	= ( kvfsSmaller + 1 ) 
+    {
+        kvfsXXSmall	= 0,
+        kvfsXSmall	= ( kvfsXXSmall + 1 ) ,
+        kvfsSmall	= ( kvfsXSmall + 1 ) ,
+        kvfsNormal	= ( kvfsSmall + 1 ) ,
+        kvfsLarge	= ( kvfsNormal + 1 ) ,
+        kvfsXLarge	= ( kvfsLarge + 1 ) ,
+        kvfsXXLarge	= ( kvfsXLarge + 1 ) ,
+        kvfsSmaller	= ( kvfsXXLarge + 1 ) ,
+        kvfsLarger	= ( kvfsSmaller + 1 ) 
     } 	VwFontAbsoluteSize;
 
 typedef /* [v1_enum] */ 
 enum VwFontWeight
-    {	kvfw100	= 100,
-	kvfw200	= 200,
-	kvfw300	= 300,
-	kvfw400	= 400,
-	kvfw500	= 500,
-	kvfw600	= 600,
-	kvfw700	= 700,
-	kvfw800	= 800,
-	kvfw900	= 900,
-	kvfwNormal	= 400,
-	kvfwBold	= 700,
-	kvfwBolder	= -1,
-	kvfwLighter	= -2
+    {
+        kvfw100	= 100,
+        kvfw200	= 200,
+        kvfw300	= 300,
+        kvfw400	= 400,
+        kvfw500	= 500,
+        kvfw600	= 600,
+        kvfw700	= 700,
+        kvfw800	= 800,
+        kvfw900	= 900,
+        kvfwNormal	= 400,
+        kvfwBold	= 700,
+        kvfwBolder	= -1,
+        kvfwLighter	= -2
     } 	VwFontWeight;
 
 typedef /* [v1_enum] */ 
 enum VwSpecialAttrTags
-    {	ktagNotAnAttr	= -1,
-	ktagGapInAttrs	= -2
+    {
+        ktagNotAnAttr	= -1,
+        ktagGapInAttrs	= -2
     } 	VwSpecialAttrTags;
 
 typedef /* [v1_enum] */ 
 enum VwSelectionState
-    {	vssDisabled	= 0,
-	vssOutOfFocus	= ( vssDisabled + 1 ) ,
-	vssEnabled	= ( vssOutOfFocus + 1 ) ,
-	vssLim	= ( vssEnabled + 1 ) 
+    {
+        vssDisabled	= 0,
+        vssOutOfFocus	= ( vssDisabled + 1 ) ,
+        vssEnabled	= ( vssOutOfFocus + 1 ) ,
+        vssLim	= ( vssEnabled + 1 ) 
     } 	VwSelectionState;
 
 typedef /* [v1_enum] */ 
 enum VwPrepDrawResult
-    {	kxpdrNormal	= 0,
-	kxpdrAdjust	= ( kxpdrNormal + 1 ) ,
-	kxpdrInvalidate	= ( kxpdrAdjust + 1 ) ,
-	kxpdrLim	= ( kxpdrInvalidate + 1 ) 
+    {
+        kxpdrNormal	= 0,
+        kxpdrAdjust	= ( kxpdrNormal + 1 ) ,
+        kxpdrInvalidate	= ( kxpdrAdjust + 1 ) ,
+        kxpdrLim	= ( kxpdrInvalidate + 1 ) 
     } 	VwPrepDrawResult;
 
 typedef /* [v1_enum] */ 
 enum VwBoundaryMark
-    {	none	= 0,
-	endOfParagraph	= ( none + 1 ) ,
-	endOfSection	= ( endOfParagraph + 1 ) ,
-	endOfParagraphHighlighted	= ( endOfSection + 1 ) ,
-	endofSectionHighlighted	= ( endOfParagraphHighlighted + 1 ) 
+    {
+        none	= 0,
+        endOfParagraph	= ( none + 1 ) ,
+        endOfSection	= ( endOfParagraph + 1 ) ,
+        endOfParagraphHighlighted	= ( endOfSection + 1 ) ,
+        endofSectionHighlighted	= ( endOfParagraphHighlighted + 1 ) 
     } 	VwBoundaryMark;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -875,10 +927,11 @@ IVwViewConstructor
 );
 typedef /* [v1_enum] */ 
 enum VwScrollSelOpts
-    {	kssoDefault	= 1,
-	kssoNearTop	= 2,
-	kssoTop	= 3,
-	kssoBoth	= 4
+    {
+        kssoDefault	= 1,
+        kssoNearTop	= 2,
+        kssoTop	= 3,
+        kssoBoth	= 4
     } 	VwScrollSelOpts;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -888,9 +941,10 @@ C999413C-28C8-481c-9543-B06C92B812D1
 );
 typedef /* [v1_enum] */ 
 enum VwConcParaOpts
-    {	kcpoBold	= 1,
-	kcpoAlign	= 2,
-	kcpoDefault	= 3
+    {
+        kcpoBold	= 1,
+        kcpoAlign	= 2,
+        kcpoDefault	= 3
     } 	VwConcParaOpts;
 
 typedef struct DispPropOverride
@@ -917,9 +971,10 @@ IVwSelection
 );
 typedef /* [v1_enum] */ 
 enum StyleType
-    {	kstParagraph	= 0,
-	kstCharacter	= ( kstParagraph + 1 ) ,
-	kstLim	= ( kstCharacter + 1 ) 
+    {
+        kstParagraph	= 0,
+        kstCharacter	= ( kstParagraph + 1 ) ,
+        kstLim	= ( kstCharacter + 1 ) 
     } 	StyleType;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -944,33 +999,36 @@ VwPropertyStore
 );
 typedef /* [v1_enum] */ 
 enum VwOverlayFlags
-    {	kfofTagsUseAttribs	= 1,
-	kfofLeadBracket	= 2,
-	kfofLeadTag	= 4,
-	kfofTrailBracket	= 8,
-	kfofTrailTag	= 16,
-	kgrfofTagAbove	= 6,
-	kgrfofTagBelow	= 24,
-	kgrfofTagAnywhere	= 30,
-	kgrfofBracketAnywhere	= 10,
-	kgrfofDefault	= 31
+    {
+        kfofTagsUseAttribs	= 1,
+        kfofLeadBracket	= 2,
+        kfofLeadTag	= 4,
+        kfofTrailBracket	= 8,
+        kfofTrailTag	= 16,
+        kgrfofTagAbove	= 6,
+        kgrfofTagBelow	= 24,
+        kgrfofTagAnywhere	= 30,
+        kgrfofBracketAnywhere	= 10,
+        kgrfofDefault	= 31
     } 	VwOverlayFlags;
 
 typedef /* [v1_enum] */ 
 enum VwConst1
-    {	kcchGuidRepLength	= 8
+    {
+        kcchGuidRepLength	= 8
     } 	VwConst1;
 
 typedef /* [v1_enum] */ 
 enum FwOverlaySetMask
-    {	kosmAbbr	= 0x1,
-	kosmName	= 0x2,
-	kosmClrFore	= 0x4,
-	kosmClrBack	= 0x8,
-	kosmClrUnder	= 0x10,
-	kosmUnderType	= 0x20,
-	kosmHidden	= 0x40,
-	kosmAll	= 0x7f
+    {
+        kosmAbbr	= 0x1,
+        kosmName	= 0x2,
+        kosmClrFore	= 0x4,
+        kosmClrBack	= 0x8,
+        kosmClrUnder	= 0x10,
+        kosmUnderType	= 0x20,
+        kosmHidden	= 0x40,
+        kosmAll	= 0x7f
     } 	FwOverlaySetMask;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -985,17 +1043,18 @@ VwOverlay
 );
 typedef /* [v1_enum] */ 
 enum VwHeaderPositions
-    {	kvhpLeft	= 1,
-	kvhpRight	= 2,
-	kvhpOutside	= 4,
-	kvhpInside	= 8,
-	kvhpCenter	= 16,
-	kvhpOdd	= 32,
-	kvhpEven	= 64,
-	kvhpTop	= 128,
-	kvhpBottom	= 256,
-	kvhpFirst	= 512,
-	kgrfvhpNormal	= 915
+    {
+        kvhpLeft	= 1,
+        kvhpRight	= 2,
+        kvhpOutside	= 4,
+        kvhpInside	= 8,
+        kvhpCenter	= 16,
+        kvhpOdd	= 32,
+        kvhpEven	= 64,
+        kvhpTop	= 128,
+        kvhpBottom	= 256,
+        kvhpFirst	= 512,
+        kgrfvhpNormal	= 915
     } 	VwHeaderPositions;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1100,9 +1159,10 @@ IVwVirtualHandler
 );
 typedef /* [v1_enum] */ 
 enum FieldSource
-    {	kModel	= 0,
-	kCustom	= 1,
-	kVirtual	= 2
+    {
+        kModel	= 0,
+        kCustom	= 1,
+        kVirtual	= 2
     } 	FieldSource;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1117,11 +1177,12 @@ VwWindow
 );
 typedef /* [v1_enum] */ 
 enum VwMouseEvent
-    {	kmeDown	= 0,
-	kmeDblClick	= ( kmeDown + 1 ) ,
-	kmeMoveDrag	= ( kmeDblClick + 1 ) ,
-	kmeExtend	= ( kmeMoveDrag + 1 ) ,
-	kmeUp	= ( kmeExtend + 1 ) 
+    {
+        kmeDown	= 0,
+        kmeDblClick	= ( kmeDown + 1 ) ,
+        kmeMoveDrag	= ( kmeDblClick + 1 ) ,
+        kmeExtend	= ( kmeMoveDrag + 1 ) ,
+        kmeUp	= ( kmeExtend + 1 ) 
     } 	VwMouseEvent;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1156,6 +1217,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwNotifyChangeVtbl
@@ -1166,7 +1228,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwNotifyChange * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwNotifyChange * This);
@@ -1420,6 +1482,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwSelectionVtbl
@@ -1430,7 +1493,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwSelection * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwSelection * This);
@@ -1854,6 +1917,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwEmbeddedWindowVtbl
@@ -1864,7 +1928,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwEmbeddedWindow * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwEmbeddedWindow * This);
@@ -2049,6 +2113,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwStylesheetVtbl
@@ -2059,7 +2124,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwStylesheet * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwStylesheet * This);
@@ -2528,6 +2593,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwEnvVtbl
@@ -2538,7 +2604,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwEnv * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwEnv * This);
@@ -3183,6 +3249,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwViewConstructorVtbl
@@ -3193,7 +3260,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwViewConstructor * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwViewConstructor * This);
@@ -3509,6 +3576,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwRootSiteVtbl
@@ -3519,7 +3587,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwRootSite * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwRootSite * This);
@@ -4169,6 +4237,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ISilDataAccessVtbl
@@ -4179,7 +4248,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             ISilDataAccess * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ISilDataAccess * This);
@@ -4866,6 +4935,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IStructuredTextDataAccessVtbl
@@ -4876,7 +4946,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IStructuredTextDataAccess * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IStructuredTextDataAccess * This);
@@ -5059,6 +5129,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwCacheDaVtbl
@@ -5069,7 +5140,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwCacheDa * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwCacheDa * This);
@@ -5626,6 +5697,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwRootBoxVtbl
@@ -5636,7 +5708,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwRootBox * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwRootBox * This);
@@ -6314,6 +6386,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwPropertyStoreVtbl
@@ -6324,7 +6397,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwPropertyStore * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwPropertyStore * This);
@@ -6558,6 +6631,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwOverlayVtbl
@@ -6568,7 +6642,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwOverlay * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwOverlay * This);
@@ -6914,6 +6988,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwPrintContextVtbl
@@ -6924,7 +6999,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwPrintContext * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwPrintContext * This);
@@ -7154,6 +7229,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwSearchKillerVtbl
@@ -7164,7 +7240,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwSearchKiller * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwSearchKiller * This);
@@ -7256,6 +7332,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwSynchronizerVtbl
@@ -7266,7 +7343,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwSynchronizer * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwSynchronizer * This);
@@ -7429,6 +7506,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwVirtualHandlerVtbl
@@ -7439,7 +7517,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwVirtualHandler * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwVirtualHandler * This);
@@ -7732,6 +7810,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwLayoutStreamVtbl
@@ -7742,7 +7821,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwLayoutStream * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwLayoutStream * This);
@@ -7932,6 +8011,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwLayoutManagerVtbl
@@ -7942,7 +8022,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwLayoutManager * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwLayoutManager * This);
@@ -8044,6 +8124,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ICheckWordVtbl
@@ -8054,7 +8135,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             ICheckWord * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ICheckWord * This);
@@ -8125,6 +8206,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IGetSpellCheckerVtbl
@@ -8135,7 +8217,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IGetSpellChecker * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IGetSpellChecker * This);
@@ -8430,6 +8512,7 @@ VwPrintContextWin32;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwPatternVtbl
@@ -8440,7 +8523,7 @@ VwPrintContextWin32;
             IVwPattern * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwPattern * This);
@@ -8868,6 +8951,7 @@ VwPattern;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwTxtSrcInit2Vtbl
@@ -8878,7 +8962,7 @@ VwPattern;
             IVwTxtSrcInit2 * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwTxtSrcInit2 * This);
@@ -8957,6 +9041,7 @@ VwMappedTxtSrc;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwTxtSrcInitVtbl
@@ -8967,7 +9052,7 @@ VwMappedTxtSrc;
             IVwTxtSrcInit * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwTxtSrcInit * This);
@@ -9082,6 +9167,7 @@ VwSearchKiller;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwDrawRootBufferedVtbl
@@ -9092,7 +9178,7 @@ VwSearchKiller;
             IVwDrawRootBuffered * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwDrawRootBuffered * This);
@@ -9229,6 +9315,7 @@ VwLayoutStream;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IPictureFactoryVtbl
@@ -9239,7 +9326,7 @@ VwLayoutStream;
             IPictureFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IPictureFactory * This);
@@ -9321,6 +9408,7 @@ PictureFactory;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwWindowVtbl
@@ -9331,7 +9419,7 @@ PictureFactory;
             IVwWindow * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwWindow * This);
@@ -9447,6 +9535,7 @@ VwWindow;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IViewInputMgrVtbl
@@ -9457,7 +9546,7 @@ VwWindow;
             IViewInputMgr * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IViewInputMgr * This);

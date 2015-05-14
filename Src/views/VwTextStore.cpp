@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1641,6 +1641,7 @@ STDMETHODIMP VwTextStore::OnTextChange()
 	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
 }
 
+
 /*----------------------------------------------------------------------------------------------
 	The selection changed.
 
@@ -1649,15 +1650,16 @@ STDMETHODIMP VwTextStore::OnTextChange()
 STDMETHODIMP VwTextStore::OnSelectionChange(int nHow)
 {
 	BEGIN_COM_METHOD;
+
 #ifdef TRACING_TSF
 	StrAnsi sta;
 	sta.Format("VwTextStore::OnSelChange(%d), m_fNotify = %s%n",
 		nHow, m_fNotify ? "true" : "false");
 	TraceTSF(sta.Chars());
 #endif
+
 	// since the selection has changed, we must retrieve the current writing system, so that we
 	// can use it to determine whether to return NFD or NFC to TSF
-
 	GetCurrentWritingSystem();
 	// Brute force...if this works we should probably at least check that our window has focus.
 	//CheckHr(s_qttmThreadMgr->SetFocus(m_qtdmDocMgr));
@@ -2713,7 +2715,7 @@ int VwTextStore::LogToAcp(int ichReq)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Determines if the current IME requires NFD or NFC.
+	Determines if the current IME requires NFD or NFC. Returns true for NFD, false for NFC. Currently returns only false (NFC)
 ----------------------------------------------------------------------------------------------*/
 bool VwTextStore::IsNfdIMEActive()
 {

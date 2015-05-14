@@ -465,9 +465,10 @@ namespace FwBuildTasks
 			{
 				case "xWorksTests":			// ~244 sec (Mono 2/8/2013)
 				case "FDOTests":			// ~143 sec
-					return 420000;
+					return 540000;
 				case "FwCoreDlgsTests":		// ~122 sec
 				case "TeDllTests":			// ~122 sec (Mono 2/8/2013)
+					return 420000;
 				case "TeImportExportTests":	// ~90 sec
 					return 240000;
 				case "DiffViewTests":		// ~55 sec
@@ -496,6 +497,7 @@ namespace FwBuildTasks
 				case "FrameworkTests":			// ~24 sec (overnight 1/22/15)
 				case "NotesViewTests":			// ~21 sec (overnight 2/5/15)
 				case "BasicUtilsTests":			// ~24 sec (overnight 2/27/15)
+				case "LexEdDllTests":		        // ~24 sec (overnight 4/15/15)
 				case "ParserCoreTests":
 				case "FdoUiTests":				// ~24 sec (overnight 3/18/15)
 				case "WidgetsTests":			// ~23 sec (overnight 4/5/15)

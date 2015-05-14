@@ -2309,9 +2309,10 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 			CheckHr(m_qwsf->get_RendererFromChrp(pvg, &m_chrp, &qreneng));
 			if (qreneng)
 			{
-				IgnoreHr(hr = qreneng->FontIsValid());
-				if (FAILED(hr) && hr != E_NOTIMPL)
-					return hr;
+				ComBool fValid;
+				CheckHr(qreneng->get_FontIsValid(&fValid));
+				if (!fValid)
+					return E_UNEXPECTED;
 			}
 		}
 	}

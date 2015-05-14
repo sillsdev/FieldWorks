@@ -1,5 +1,12 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Palaso.Linq;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 using SIL.FieldWorks.FDO;
@@ -114,10 +121,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Debug.Assert(slice != null, "No slice was current");
 				var currentEntry = (IReversalIndexEntry) slice.Object;
 				dlg.ReversalIndex = currentEntry.ReversalIndex;
-				dlg.FilteredReversalEntries.Add(currentEntry);
+				AddEntryAndChildrenRecursively(dlg.FilteredReversalEntryHvos, currentEntry);
 				IReversalIndexEntry owningEntry = currentEntry.OwningEntry;
 				if (owningEntry != null)
-					dlg.FilteredReversalEntries.Add(owningEntry);
+					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams {m_btnText = LexEdStrings.ks_MoveEntry, m_title = LexEdStrings.ksMoveRevEntry};
 				var cache = m_propertyTable.GetValue<FdoCache>("cache");
@@ -140,8 +147,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainEntry.Hvo);
 				}
 			}
-
 			return true;
+		}
+
+		private static void AddEntryAndChildrenRecursively(ICollection<int> hvos, IReversalIndexEntry entry)
+		{
+			hvos.Add(entry.Hvo);
+			entry.AllOwnedObjects.Where(obj => obj is IReversalIndexEntry).ForEach(subentry => hvos.Add(subentry.Hvo));
 		}
 
 		/// <summary>
