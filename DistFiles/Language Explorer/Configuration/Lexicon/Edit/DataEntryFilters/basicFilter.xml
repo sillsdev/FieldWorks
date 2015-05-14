@@ -11,7 +11,7 @@ do not otherwise have an ID; you usually have to add 1 before you can reference 
   <node id="MoDerivAffMsaToExceptionFeatures"/>
   <node id="MoStemMsaInflectionClass"/>
   <node id="MoStemExceptionFeatures"/>
-	<node id="LexMajorEntryFunction"/>
+  <node id="LexMajorEntryFunction"/>
   <node id="LexMinorEntryFunction"/>
   <node id="LexSubentryFunction"/>
 </SliceFilter>

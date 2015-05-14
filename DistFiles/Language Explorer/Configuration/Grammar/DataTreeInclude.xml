@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
 	<!--<include path="../CommonDataTreeInclude.xml"/> -->
-<!--
+	<!--
   ===========================================================
   Commands
   ===========================================================
   -->
-  <commands>
-	<!--<include query="window/commands/*"/> -->
-	  <command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
-		  <parameters tool="interlinearEdit" className="Text"/>
-	  </command>
-	  <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
-		  <parameters tool="notebookEdit" className="RnGenericRecord"/>
-	  </command>
-	  <!--
+	<commands>
+		<!--<include query="window/commands/*"/> -->
+		<command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
+			<parameters tool="interlinearEdit" className="Text"/>
+		</command>
+		<command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
+			<parameters tool="notebookEdit" className="RnGenericRecord"/>
+		</command>
+		<!--
 	No-op - no operation makes sense here
 	-->
-	<command id="CmdDataTree-Help" label="Help..." icon="Help" message="DataTreeHelp"/>
-<!--
+		<command id="CmdDataTree-Help" label="Help..." icon="Help" message="DataTreeHelp"/>
+		<!--
 	Adhoc Co-prohibitions
 	-->
-	<command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
-	  <parameters field="Members" className="MoAlloAdhocProhib"/>
-	</command>
-	<command id="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
-	  <parameters field="Members" className="MoMorphAdhocProhib"/>
-	</command>
-	<command id="CmdDataTree-Insert-Adhoc-Group-Members-Group" label="Insert Nested Group" message="DataTreeInsert">
-	  <parameters field="Members" className="MoAdhocProhibGr"/>
-	</command>
-	<command id="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Members" className="MoAlloAdhocProhib"/>
-	</command>
-	<command id="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Members" className="MoMorphAdhocProhib"/>
-	</command>
-	<command id="CmdDataTree-Delete-Adhoc-Group-Members-Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Members" className="MoAdhocProhibGr"/>
-	</command>
-<!--
+		<command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
+			<parameters field="Members" className="MoAlloAdhocProhib"/>
+		</command>
+		<command id="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
+			<parameters field="Members" className="MoMorphAdhocProhib"/>
+		</command>
+		<command id="CmdDataTree-Insert-Adhoc-Group-Members-Group" label="Insert Nested Group" message="DataTreeInsert">
+			<parameters field="Members" className="MoAdhocProhibGr"/>
+		</command>
+		<command id="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
+			<parameters field="Members" className="MoAlloAdhocProhib"/>
+		</command>
+		<command id="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
+			<parameters field="Members" className="MoMorphAdhocProhib"/>
+		</command>
+		<command id="CmdDataTree-Delete-Adhoc-Group-Members-Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
+			<parameters field="Members" className="MoAdhocProhibGr"/>
+		</command>
+		<!--
 	Compound Rules
 	-->
-	<command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-	<command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-<!--
+		<command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
+			<parameters field="Linker" className="MoAffixAllomorph"/>
+		</command>
+		<command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
+			<parameters field="Linker" className="MoAffixAllomorph"/>
+		</command>
+		<!--
 	Features
 	-->
-	<command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
-	  <parameters field="Values" className="FsSymFeatVal"/>
-	</command>
-	<command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Values" className="FsSymFeatVal"/>
-	</command>
-<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
+		<command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
+			<parameters field="Values" className="FsSymFeatVal"/>
+		</command>
+		<command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
+			<parameters field="Values" className="FsSymFeatVal"/>
+		</command>
+		<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
 	  <parameters field="FeatureSpecs" className="FsClosedValue"/>
 	</command>
 	<command id="CmdDataTree-Delete-FeatureStructure-Feature" label="Delete Feature" message="DataTreeDelete" icon="Delete">
@@ -70,203 +70,203 @@
 	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
 	</command>
 	-->
-<!--
+		<!--
 	Parts of Speech
 	-->
-	<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
-	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
-	</command>
-	<command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
-	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
-	</command>
-	<command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
-	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
-	</command>
-	 <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
-		<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
-	 </command>
-	 <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
-	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
-	</command>
-	<command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
-	  <parameters field="Subclasses" className="MoInflClass"/>
-	</command>
-	<command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
-	  <parameters field="InflectionClasses" className="MoInflClass"/>
-	</command>
-	<command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
-	  <parameters field="InflectionClasses" className="MoInflClass"/>
-	</command>
-	<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
-	  <parameters field="StemNames" className="MoStemName"/>
-	</command>
-	<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
-	  <parameters field="StemNames" className="MoStemName"/>
-	</command>
-	<command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">
-	  <parameters field="Regions" className="FsFeatStruc"/>
-	</command>
-	<command id="CmdDataTree-Delete-MoStemName-Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Regions" className="FsFeatStruc"/>
-	</command>
-	<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
-	  <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner"/>
-	</command>
-<!--
+		<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
+			<parameters field="AffixSlots" className="MoInflAffixSlot"/>
+		</command>
+		<command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
+			<parameters field="AffixSlots" className="MoInflAffixSlot"/>
+		</command>
+		<command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
+			<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+		</command>
+		<command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
+			<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+		</command>
+		<command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
+			<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+		</command>
+		<command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
+			<parameters field="Subclasses" className="MoInflClass"/>
+		</command>
+		<command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
+			<parameters field="InflectionClasses" className="MoInflClass"/>
+		</command>
+		<command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
+			<parameters field="InflectionClasses" className="MoInflClass"/>
+		</command>
+		<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
+			<parameters field="StemNames" className="MoStemName"/>
+		</command>
+		<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
+			<parameters field="StemNames" className="MoStemName"/>
+		</command>
+		<command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">
+			<parameters field="Regions" className="FsFeatStruc"/>
+		</command>
+		<command id="CmdDataTree-Delete-MoStemName-Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
+			<parameters field="Regions" className="FsFeatStruc"/>
+		</command>
+		<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="PartOfSpeech" slice="owner"/>
+		</command>
+		<!--
 	Phonemes
 	-->
-	<command id="CmdDataTree-Insert-Phoneme-Code" label="Grapheme" message="DataTreeInsert">
-	  <parameters field="Codes" className="PhCode"/>
-	</command>
-	<command id="CmdDataTree-Delete-Phoneme-Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Codes" className="PhCode"/>
-	</command>
-<!--
+		<command id="CmdDataTree-Insert-Phoneme-Code" label="Grapheme" message="DataTreeInsert">
+			<parameters field="Codes" className="PhCode"/>
+		</command>
+		<command id="CmdDataTree-Delete-Phoneme-Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
+			<parameters field="Codes" className="PhCode"/>
+		</command>
+		<!--
 	Environments
 	-->
-	<command id="CmdDataTree-Insert-Env-Slash" label="Insert Environment slash" message="InsertSlash"/>
-	<command id="CmdDataTree-Insert-Env-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
-	<command id="CmdDataTree-Insert-Env-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
-	<command id="CmdDataTree-Insert-Env-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
-	<command id="CmdDataTree-Insert-Env-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
-  </commands>
-<!--
+		<command id="CmdDataTree-Insert-Env-Slash" label="Insert Environment slash" message="InsertSlash"/>
+		<command id="CmdDataTree-Insert-Env-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
+		<command id="CmdDataTree-Insert-Env-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
+		<command id="CmdDataTree-Insert-Env-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
+		<command id="CmdDataTree-Insert-Env-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
+	</commands>
+	<!--
   ===========================================================
   Context Menus
   ===========================================================
   -->
-  <contextMenus>
-	<!--<include query="window/contextMenus/*"/> -->
-	<menu id="mnuDataTree-Help">
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	  <menu id="mnuDataTree-Text">
-		  <item command="CmdJumpToText"/>
-	  </menu>
-	  <menu id="mnuTextInfo-Notebook">
-		  <item command="CmdJumpToNotebook"/>
-	  </menu>
+	<contextMenus>
+		<!--<include query="window/contextMenus/*"/> -->
+		<menu id="mnuDataTree-Help">
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Text">
+			<item command="CmdJumpToText"/>
+		</menu>
+		<menu id="mnuTextInfo-Notebook">
+			<item command="CmdJumpToNotebook"/>
+		</menu>
 
-	  <!--
+		<!--
 	Adhoc Co-prohibitions
 	-->
-	<menu id="mnuDataTree-Adhoc-Group-Members">
-	  <item command="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme"/>
-	  <item command="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph"/>
-	  <item command="CmdDataTree-Insert-Adhoc-Group-Members-Group"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-Delete-Adhoc-Morpheme">
-	  <item command="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-Delete-Adhoc-Allomorph">
-	  <item command="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-Delete-Adhoc-Group">
-	  <item command="CmdDataTree-Delete-Adhoc-Group-Members-Group"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
+		<menu id="mnuDataTree-Adhoc-Group-Members">
+			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme"/>
+			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph"/>
+			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Group"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Delete-Adhoc-Morpheme">
+			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Delete-Adhoc-Allomorph">
+			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Delete-Adhoc-Group">
+			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Group"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
 
-<!--
+		<!--
 	Compound Rules
 	-->
-	<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
-	  <item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph"/>
-	  <item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-FeatureStructure-Feature">
-	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-<!--
+		<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
+			<item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph"/>
+			<item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-FeatureStructure-Feature">
+			<item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<!--
 	Features
 	-->
-	<menu id="mnuDataTree-ClosedFeature-Values">
-	  <item command="CmdDataTree-Insert-ClosedFeature-Value"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-ClosedFeature-Value">
-	  <item command="CmdDataTree-Delete-ClosedFeature-Value"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-FeatureStructure-Features">
-<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
+		<menu id="mnuDataTree-ClosedFeature-Values">
+			<item command="CmdDataTree-Insert-ClosedFeature-Value"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-ClosedFeature-Value">
+			<item command="CmdDataTree-Delete-ClosedFeature-Value"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-FeatureStructure-Features">
+			<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
 	  <item command="CmdDataTree-Insert-FeatureStructure-ComplexFeature"/>
 	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
 	  <item command="CmdDataTree-Delete-FeatureStructure-ComplexFeature"/> -->
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-<!--
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<!--
 	Parts of Speech
 	-->
-	<menu id="mnuDataTree-POS-AffixSlots">
-	  <item command="CmdDataTree-Insert-POS-AffixSlot"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-AffixSlot">
-	  <item command="CmdDataTree-Delete-POS-AffixSlot"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-AffixTemplates">
-	  <item command="CmdDataTree-Insert-POS-AffixTemplate"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	 <menu id="mnuDataTree-POS-AffixTemplate">
-	  <item command="CmdDataTree-Delete-POS-AffixTemplate"/>
-	   <item command="CmdDataTree-Copy-POS-AffixTemplate"/>
-	   <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-InflectionClass-Subclasses">
-	  <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-InflectionClasses">
-	  <item command="CmdDataTree-Insert-POS-InflectionClass"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-InflectionClass">
-	  <item command="CmdDataTree-Delete-POS-InflectionClass"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-POS-StemNames">
-	  <item command="CmdDataTree-Insert-POS-StemName"/>
-	</menu>
-	<menu id="mnuDataTree-POS-StemName">
-	  <item command="CmdDataTree-Delete-POS-StemName"/>
-	</menu>
-	<menu id="mnuDataTree-MoStemName-Regions">
-	  <item command="CmdDataTree-Insert-MoStemName-Region"/>
-	</menu>
-	<menu id="mnuDataTree-MoStemName-Region">
-	  <item command="CmdDataTree-Delete-MoStemName-Region"/>
-	</menu>
-	<menu id="mnuDataTree-POS-SubPossibilities">
-	  <item command="CmdDataTree-Insert-POS-SubPossibilities"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-<!--
+		<menu id="mnuDataTree-POS-AffixSlots">
+			<item command="CmdDataTree-Insert-POS-AffixSlot"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-AffixSlot">
+			<item command="CmdDataTree-Delete-POS-AffixSlot"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-AffixTemplates">
+			<item command="CmdDataTree-Insert-POS-AffixTemplate"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-AffixTemplate">
+			<item command="CmdDataTree-Delete-POS-AffixTemplate"/>
+			<item command="CmdDataTree-Copy-POS-AffixTemplate"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-InflectionClass-Subclasses">
+			<item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-InflectionClasses">
+			<item command="CmdDataTree-Insert-POS-InflectionClass"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-InflectionClass">
+			<item command="CmdDataTree-Delete-POS-InflectionClass"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-POS-StemNames">
+			<item command="CmdDataTree-Insert-POS-StemName"/>
+		</menu>
+		<menu id="mnuDataTree-POS-StemName">
+			<item command="CmdDataTree-Delete-POS-StemName"/>
+		</menu>
+		<menu id="mnuDataTree-MoStemName-Regions">
+			<item command="CmdDataTree-Insert-MoStemName-Region"/>
+		</menu>
+		<menu id="mnuDataTree-MoStemName-Region">
+			<item command="CmdDataTree-Delete-MoStemName-Region"/>
+		</menu>
+		<menu id="mnuDataTree-POS-SubPossibilities">
+			<item command="CmdDataTree-Insert-POS-SubPossibilities"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<!--
 	Phonemes
 	-->
-	<menu id="mnuDataTree-Phoneme-Codes">
-	  <item command="CmdDataTree-Insert-Phoneme-Code" label="Insert Grapheme"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-Phoneme-Code">
-	  <item command="CmdDataTree-Delete-Phoneme-Code"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-<!--
+		<menu id="mnuDataTree-Phoneme-Codes">
+			<item command="CmdDataTree-Insert-Phoneme-Code" label="Insert Grapheme"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Phoneme-Code">
+			<item command="CmdDataTree-Delete-Phoneme-Code"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<!--
 	Environments
 	-->
-	<menu id="mnuDataTree-StringRepresentation-Insert">
-	  <item command="CmdDataTree-Insert-Env-Slash"/>
-	  <item command="CmdDataTree-Insert-Env-Underscore"/>
-	  <item command="CmdDataTree-Insert-Env-NaturalClass"/>
-	  <item command="CmdDataTree-Insert-Env-OptionalItem"/>
-	  <item command="CmdDataTree-Insert-Env-HashMark"/>
-	</menu>
-  </contextMenus>
+		<menu id="mnuDataTree-StringRepresentation-Insert">
+			<item command="CmdDataTree-Insert-Env-Slash"/>
+			<item command="CmdDataTree-Insert-Env-Underscore"/>
+			<item command="CmdDataTree-Insert-Env-NaturalClass"/>
+			<item command="CmdDataTree-Insert-Env-OptionalItem"/>
+			<item command="CmdDataTree-Insert-Env-HashMark"/>
+		</menu>
+	</contextMenus>
 </window>

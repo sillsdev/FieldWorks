@@ -10,7 +10,8 @@
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 						<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
-						<parameters area="grammar" clerk="categories" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default" emptyTitleId="No-PartsOfSpeech"/>
+						<parameters area="grammar" clerk="categories" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml"
+							persistContext="advancedEdit" layout="default" emptyTitleId="No-PartsOfSpeech"/>
 					</control>
 				</parameters>
 			</control>
@@ -21,7 +22,8 @@
 				<parameters id="POSList">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-						<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true" editable="false">
+						<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true"
+							editable="false">
 							<columns>
 								<column label="Name" width="16%" layout="Name" ws="$ws=best analysis" field="Name"/>
 								<column label="Abbreviation" width="16%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
@@ -45,7 +47,8 @@
 						<parameters id="CompoundRuleList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
-								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural" selectColumn="true">
+								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural"
+									selectColumn="true">
 									<columns>
 										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 										<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
@@ -64,7 +67,9 @@
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-								<parameters clerk="compoundRules" treeBarAvailability="NotAllowed" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="Edit" emptyTitleId="No-MoCompoundRules"/>
+								<parameters clerk="compoundRules" treeBarAvailability="NotAllowed"
+									filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit"
+									layout="Edit" emptyTitleId="No-MoCompoundRules"/>
 							</control>
 						</parameters>
 					</control>
@@ -120,7 +125,8 @@
 						<parameters id="PhonologicalFeaturesList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-								<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures" altTitleId="FsFeatDefn-Phonological">
+								<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures"
+									altTitleId="FsFeatDefn-Phonological">
 									<columns>
 										<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
 										<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
@@ -137,7 +143,8 @@
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-								<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed" altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
+								<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed"
+									altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
 							</control>
 						</parameters>
 					</control>
@@ -150,8 +157,10 @@
 				<parameters id="PhonemesBulkEdit">
 					<control>
 						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AssignFeaturesToPhonemes"/>
-						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
-							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
+						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true"
+							bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false"
+								enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
 							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
 							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
 							<!--								<overrides>-->
@@ -159,7 +168,8 @@
 								<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 								<!-- Phonological Feature Defns (generated)-->
 								<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
-									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
+									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis"
+										cansortbylength="true" visibility="always" width="4%">
 										<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
 											<args>
 												<arg name="xpathToConfigurationNode" value="ancestor::column"/>
@@ -167,7 +177,7 @@
 										</dynamicloaderinfo>
 									</column>
 								</generate>
-<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
+								<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
 									<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
 										<args>
 											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
@@ -386,7 +396,9 @@
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 								<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
-								<parameters area="grammar" clerk="ProdRestrict" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default" treeBarAvailability="NotAllowed" emptyTitleId="No-ProdRestricts"/>
+								<parameters area="grammar" clerk="ProdRestrict"
+									filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit"
+									layout="default" treeBarAvailability="NotAllowed" emptyTitleId="No-ProdRestricts"/>
 							</control>
 						</parameters>
 					</control>
@@ -396,12 +408,15 @@
 		<tool label="Grammar Sketch" value="grammarSketch" icon="DocumentView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GeneratedHtmlViewer"/>
-				<parameters area="grammar" regKeyName="MorphSketchGen" dialogTitle="Generate Morphological Sketch" fileNameKey="MorphSketchFileName" stringsPath="Linguistics/Morphology/MorphSketch" saveButtonToolTip="Save Sketch as Webpage and also as XLingPaper file">
+				<parameters area="grammar" regKeyName="MorphSketchGen" dialogTitle="Generate Morphological Sketch" fileNameKey="MorphSketchFileName"
+					stringsPath="Linguistics/Morphology/MorphSketch" saveButtonToolTip="Save Sketch as Webpage and also as XLingPaper file">
 					<retriever progressPrompt="Preparing data">
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GrammarSketchDataRetriever"/>
 					</retriever>
 					<transforms>
-						<transform progressPrompt="Processing data, step 1 of 2" stylesheetName="FxtM3MorphologySketch" stylesheetAssembly="ApplicationTransforms" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
+						<transform progressPrompt="Processing data, step 1 of 2" stylesheetName="FxtM3MorphologySketch" stylesheetAssembly="ApplicationTransforms"
+							ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file"
+							replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
 							<xsltParameters>
 								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
 								<param name="sWordWorksTransformPath" value="TransformDirectory"/>

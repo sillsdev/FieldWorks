@@ -4,7 +4,6 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
 		<!-- Parser commands -->
 		<command id="CmdEditParserParameters" label="_Edit Parser Parameters..." message="EditParserParameters">
 			<params className="MoMorphData"/>
@@ -16,7 +15,8 @@
 		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
-		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
+		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser"
+			tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
 		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
@@ -48,7 +48,8 @@
 		<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext"/>
 		<command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter"/>
 		<command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter"/>
-		<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext"/>
+		<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E"
+			icon="browseAndMoveNext"/>
 		<command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter"/>
 		<command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right"/>
 		<command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left"/>
@@ -140,7 +141,6 @@
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
 	<lists>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
 		<list id="WordToolsList"/>
 	</lists>
 	<!-- ********************************************************** -->
@@ -151,7 +151,8 @@
 			<guicontrol id="TextInformationPane">
 				<control>
 					<!-- dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/ -->
-					<parameters area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" layout="FullInformation" treeBarAvailability="NotAllowed">
+					<parameters area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" layout="FullInformation"
+						treeBarAvailability="NotAllowed">
 						<menuHandler>
 							<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
 						</menuHandler>
@@ -159,36 +160,28 @@
 				</control>
 			</guicontrol>
 			<guicontrol id="WordformConcordanceBrowseView">
-				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
-					ShowOwnerShortname="true">
+				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true" ShowOwnerShortname="true">
 					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 				</parameters>
 			</guicontrol>
 			<guicontrol id="AnalysisConcordanceBrowseView">
-				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
-					ShowOwnerShortname="true">
+				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true" ShowOwnerShortname="true">
 					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 				</parameters>
 			</guicontrol>
 			<guicontrol id="GlossConcordanceBrowseView">
-				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true"
-					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true"
-					ShowOwnerShortname="true">
+				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true" ShowOwnerShortname="true">
 					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 				</parameters>
 			</guicontrol>
 			<guicontrol id="WordformsBrowseView">
-				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
-					filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
-					hscroll="true" editable="false">
+				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords" filterBar="false" treeBarAvailability="NotAllowed"
+					defaultCursor="Arrow" hscroll="true" editable="false">
 					<columns>
-						<column label="Wordform" ws="$ws=best vernacular" editable="false"
-							width="100%" field="Form">
+						<column label="Wordform" ws="$ws=best vernacular" editable="false" width="100%" field="Form">
 							<span>
 								<properties>
 									<editable value="false"/>
@@ -200,47 +193,44 @@
 				</parameters>
 			</guicontrol>
 			<guicontrol id="MergeWordGlossList">
-				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false"
-					treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
+				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					editable="false" selectColumn="false">
 					<columns>
 						<column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
 					</columns>
 				</parameters>
 			</guicontrol>
-			<include path="Extensions/*/AreaConfigurationExtension.xml"
-				query="root/controls/parameter/guicontrol/*"/>
 			<clerks>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
 				<clerk id="interlinearTexts" shouldHandleDeletion="false">
 					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
-		  <recordList owner="LangProject" property="InterestingTexts">
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
-		  </recordList>
-		  <filters/>
+					<recordList owner="LangProject" property="InterestingTexts">
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+					</recordList>
+					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
 					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
 					<recordList class="WfiWordform" field="ExactOccurrences">
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
-		  </recordList>
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
 					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
 					<recordList class="WfiAnalysis" field="ExactOccurrences">
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
-		  </recordList>
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
 					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
 					<recordList class="WfiGloss" field="ExactOccurrences">
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
-		  </recordList>
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
@@ -252,7 +242,6 @@
 					<filters/>
 					<sortMethods/>
 				</clerk>
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
 			</clerks>
 		</parameters>
 	</controls>
@@ -262,22 +251,21 @@
 	<menubar>
 		<menu id="Parser" label="Pa_rser">
 			<item command="CmdParseAllWords"/>
-	  <item command="CmdReparseAllWords"/>
-	  <item command="CmdReInitializeParser"/>
-	  <item command="CmdStopParser"/>
+			<item command="CmdReparseAllWords"/>
+			<item command="CmdReInitializeParser"/>
+			<item command="CmdStopParser"/>
 			<item label="-" translate="do not translate"/>
-	  <item command="CmdTryAWord"/>
-	  <item command="CmdParseWordsInCurrentText"/>
-	  <item command="CmdParseCurrentWord"/>
-	  <item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
+			<item command="CmdTryAWord"/>
+			<item command="CmdParseWordsInCurrentText"/>
+			<item command="CmdParseCurrentWord"/>
+			<item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<menu id="ChooseParserMenu" label="Choose Parser">
 				<item command="CmdChooseXAmpleParser"/>
 				<item command="CmdChooseHCParser"/>
 			</menu>
-	  <item command="CmdEditParserParameters"/>
+			<item command="CmdEditParserParameters"/>
 		</menu>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
 	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
@@ -319,8 +307,8 @@
 			<item command="CmdMakePhrase" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
-			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveLeft" defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveRight" defaultVisible="false"/>
 			<item command="CmdApproveAll" defaultVisible="false"/>
 		</menu>
 
@@ -345,7 +333,6 @@
 		<menu id="Configure">
 			<item command="CmdConfigureInterlinear" defaultVisible="false"/>
 		</menu>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
@@ -396,8 +383,8 @@
 			<item command="CmdMakePhrase" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
-			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveLeft" defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveRight" defaultVisible="false"/>
 			<item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
 		</menu>
 
@@ -501,25 +488,17 @@
 			<item command="CmdPatternNodeSetCriteria"/>
 			<item command="CmdPatternNodeGroup"/>
 		</menu>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
 	</contextMenus>
 	<!-- ********************************************************** -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
 		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-		<!-- <tab label="Filters" list="WordsFiltersList" behavior="singlePropertyAtomicValue" property="words">
-	  <item id="all" label="All" boolProperty="foo" icon="NoFilter"/>
- see RecordClerk::OnDisplayWordsFiltersList
-	</tab>-->
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
 	</sidebar>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbars *********************** -->
 	<!-- ********************************************************** -->
-	<toolbars>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
-	</toolbars>
+	<toolbars />
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -539,7 +518,6 @@
 			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 		</toolbar>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources *********************** -->
@@ -547,13 +525,11 @@
 	<resources>
 		<imageList assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ImageHolder" field="buttonImages" size="small"
 			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth, approveAll"/>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
 		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MorphologyListener">
 			<parameters clerk="concordanceWords"/>
 		</listener>
@@ -575,10 +551,8 @@
 				</clerks>
 				<controls>
 					<control id="srcSentences">
-						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true"
-							allowInsertDeleteRecord="false" editable="false"
-							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true"
-							selectionStyle="none">
+						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true" allowInsertDeleteRecord="false" editable="false"
+							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true" selectionStyle="none">
 							<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 						</parameters>
 					</control>
@@ -590,7 +564,6 @@
 	<!-- ************************ defaultProperties *********************** -->
 	<!-- ********************************************************** -->
 	<defaultProperties>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
 		<!--This next line specifies which tool in this area is the default tool which Flex starts off in
 			  when the user switches to this area.-->
 		<property name="ToolForAreaNamed_textsWords" value="interlinearEdit" settingsGroup="local"/>
@@ -619,8 +592,8 @@
 				<clerk id="interlinearTexts">
 					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="InterestingTexts">
-					<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-					<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+						<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
 					</recordList>
 					<filterMethods/>
 					<sortMethods/>
@@ -642,15 +615,13 @@
 				<include path="Analyses/toolConfiguration.xml" query="root/clerks/*"/>
 				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
 				<include path="BulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>
-		<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
-		<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
-		<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
-		<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+				<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
 			</tools>
 		</parameters>
 	</item>

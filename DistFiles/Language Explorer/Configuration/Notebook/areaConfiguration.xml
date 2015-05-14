@@ -4,7 +4,6 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
 		<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
 			<params className="RnGenericRec"/>
 		</command>
@@ -47,7 +46,6 @@
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
 	<lists>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
 		<list id="NotebookToolsList"/>
 	</lists>
 	<!-- ********************************************************** -->
@@ -56,7 +54,8 @@
 	<controls>
 		<parameters id="guicontrols">
 			<guicontrol id="matchingRecords">
-				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
+				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
+					altTitleId="RnGenericRec-Plural" editable="false">
 					<columns>
 						<column label="Record Type" layout="" editable="false" width="72000">
 							<obj field="Type" layout="Name"/>
@@ -67,19 +66,13 @@
 					</columns>
 				</parameters>
 			</guicontrol>
-
-			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
-			<clerks>
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
-			</clerks>
+			<clerks />
 		</parameters>
 	</controls>
 	<!-- ******************************************************** -->
 	<!-- ************************ menus *********************** -->
 	<!-- ******************************************************** -->
-	<menubar>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
-	</menubar>
+	<menubar />
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -90,7 +83,6 @@
 			<item command="CmdInsertSubsubrecord" defaultVisible="false"/>
 			<item command="CmdAddToLexicon" label="Entry..." defaultVisible="false"/>
 		</menu>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
@@ -104,7 +96,8 @@
 			</menu>
 			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-notebookEdit" defaultVisible="true" settingsGroup="local"/>
 		</menu>
-		<menu id="mnuDataTree-Subrecord-Hotlinks"> <!-- Observation blue links -->
+		<menu id="mnuDataTree-Subrecord-Hotlinks">
+			<!-- Observation blue links -->
 			<item command="CmdDataTree-Insert-Subrecord"/>
 		</menu>
 		<menu id="mnuDataTree-Participants">
@@ -113,10 +106,12 @@
 		<menu id="mnuDataTree-SubRecords">
 			<item command="CmdDataTree-Insert-Subrecord"/>
 		</menu>
-		<menu id="mnuDataTree-SubRecords-Hotlinks">   <!-- Subrecords blue links -->
+		<menu id="mnuDataTree-SubRecords-Hotlinks">
+			<!-- Subrecords blue links -->
 			<item command="CmdDataTree-Insert-Subrecord"/>
 		</menu>
-		<menu id="mnuDataTree-SubRecordSummary">	    <!-- Observation dropdown context menu -->
+		<menu id="mnuDataTree-SubRecordSummary">
+			<!-- Observation dropdown context menu -->
 			<item command="CmdDataTree-Insert-Subrecord"/>
 			<item command="CmdDataTree-Insert-Subsubrecord"/>
 			<item command="CmdMoveRecordUp"/>
@@ -124,14 +119,12 @@
 			<item command="CmdPromoteSubrecord"/>
 			<item command="CmdDemoteSubrecord"/>
 		</menu>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
 	</contextMenus>
 	<!-- ********************************************************** -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
 		<tab label="Notebook Tools" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
 	</sidebar>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbars *********************** -->
@@ -148,14 +141,12 @@
 			<item command="CmdAddToLexicon" defaultVisible="false"/>
 			<item command="CmdLexiconLookup" defaultVisible="false"/>
 		</toolbar>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources ********************* -->
 	<!-- ********************************************************** -->
 	<resources>
 		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ImageHolder" field="buttonImages" size="small" labels="nbkRecord, goToRecord"/>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
@@ -163,13 +154,11 @@
 	<listeners>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkRecordDlgListener"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertRecordDlgListener"/>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
 	</listeners>
 	<!-- ********************************************************** -->
 	<!-- ************************ defaultProperties ********************* -->
 	<!-- ********************************************************** -->
 	<defaultProperties>
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
 		<property name="ToolForAreaNamed_notebook" value="notebookEdit" settingsGroup="local"/>
 		<property name="ShowHiddenFields" bool="false" persist="false" settingsGroup="local"/>
 	</defaultProperties>
@@ -200,7 +189,6 @@
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Browse/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Document/toolConfiguration.xml" query="root/tools/*"/>
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
 			</tools>
 		</parameters>
 	</item>

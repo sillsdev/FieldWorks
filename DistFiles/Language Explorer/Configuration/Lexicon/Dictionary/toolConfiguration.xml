@@ -3,7 +3,9 @@
 	<reusableControls>
 		<control id="DictionaryPubPreviewControl">
 			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView"/>
-			<parameters id="DictionaryPubPreview" area="lexicon" clerk="entries" treeBarAvailability="NotMyBusiness" layout="publishStem" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary" viewTypeLabelKey="ksDictionaryView" emptyTitleId="No-LexEntries">
+			<parameters id="DictionaryPubPreview" area="lexicon" clerk="entries" treeBarAvailability="NotMyBusiness" layout="publishStem"
+				layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary" viewTypeLabelKey="ksDictionaryView"
+				emptyTitleId="No-LexEntries">
 				<configureLayouts>
 					<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
 						<configure class="LexEntry" label="Main Entry" layout="publishStemEntry"/>
@@ -25,7 +27,8 @@
 				<parameters PaneBarGroupId="PaneBar-Dictionary">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
-						<parameters area="lexicon" clerk="entries" altTitleId="LexEntry-Plural" persistContext="Dict" backColor="White" layout="publishStem" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary">
+						<parameters area="lexicon" clerk="entries" altTitleId="LexEntry-Plural" persistContext="Dict" backColor="White" layout="publishStem"
+							layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary">
 							<configureLayouts>
 								<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
 									<configure class="LexEntry" label="Main Entry" layout="publishStemEntry"/>

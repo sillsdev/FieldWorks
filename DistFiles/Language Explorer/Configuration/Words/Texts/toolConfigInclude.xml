@@ -6,10 +6,11 @@
 			<control>
 				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
-				<parameters id="textsChooser" clerk="interlinearTexts" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
+				<parameters id="textsChooser" clerk="interlinearTexts" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural"
+					editable="false">
 					<columns>
 						<column label="Title" width="144000" chooserFilter="special">
-							<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.TextsFilterItem" />
+							<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.TextsFilterItem"/>
 							<string field="Title" ws="$ws=best vernoranal"/>
 						</column>
 						<column label="Abbreviation" visibility="menu" width="72000">

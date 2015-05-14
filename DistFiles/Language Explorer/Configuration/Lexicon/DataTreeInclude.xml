@@ -65,7 +65,7 @@
 			<parameters field="Pictures" className="LexSense"/>
 		</command>
 		<command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
-			<parameters field="Pictures" className="LexSense" />
+			<parameters field="Pictures" className="LexSense"/>
 		</command>
 		<!--
 	  AlternateForms
@@ -307,7 +307,8 @@
 			<item command="CmdDataTree-Convert-LexemeForm-AffixAllomorph"/>
 		</menu>
 		<menu id="mnuDataTree-LexemeFormContext">
-			<item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
+			<item command="CmdEntryJumpToConcordance"/>
+			<!-- Show Entry in Concordance -->
 			<item command="CmdLexemeFormJumpToConcordance"/>
 			<item command="CmdDataTree-Swap-LexemeForm"/>
 		</menu>
@@ -368,7 +369,7 @@
 			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
 		</menu>
 		<menu id="mnuDataTree-Picture">
-			<item command="CmdDataTree-Properties-Picture" />
+			<item command="CmdDataTree-Properties-Picture"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-MoveUp-Picture"/>
 			<item command="CmdDataTree-MoveDown-Picture"/>
@@ -411,7 +412,7 @@
 			<item command="CmdFindExampleSentence"/>
 			<item command="CmdDataTree-Insert-SenseBelow"/>
 			<item command="CmdDataTree-Insert-SubSense"/>
-			<item command="CmdInsertPicture" label="Insert _Picture"  defaultVisible="false"/>
+			<item command="CmdInsertPicture" label="Insert _Picture" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdSenseJumpToConcordance"/>
 			<item label="-" translate="do not translate"/>
@@ -487,18 +488,18 @@
 			<item command="CmdDataTree-Delete-Etymology"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-	<menu id="mnuDataTree-DeleteAddLexReference">
-	  <item command="CmdDataTree-Delete-LexReference"/>
-	  <item command="CmdDataTree-Add-ToLexReference"/>
-	  <item command="CmdDataTree-EditDetails-LexReference"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-DeleteReplaceLexReference">
-	  <item command="CmdDataTree-Delete-LexReference"/>
-	  <item command="CmdDataTree-Replace-LexReference"/>
-	  <item command="CmdDataTree-EditDetails-LexReference"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
+		<menu id="mnuDataTree-DeleteAddLexReference">
+			<item command="CmdDataTree-Delete-LexReference"/>
+			<item command="CmdDataTree-Add-ToLexReference"/>
+			<item command="CmdDataTree-EditDetails-LexReference"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-DeleteReplaceLexReference">
+			<item command="CmdDataTree-Delete-LexReference"/>
+			<item command="CmdDataTree-Replace-LexReference"/>
+			<item command="CmdDataTree-EditDetails-LexReference"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
 		<menu id="mnuDataTree-InsertReversalSubentry">
 			<item command="CmdDataTree-Insert-ReversalSubentry"/>
 		</menu>

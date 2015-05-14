@@ -22,9 +22,11 @@
 						<parameters id="EntriesList" collapse="180000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-								<parameters area="textsWords" clerk="concordanceWords" persistContext="normalEdit" suppressInfoBar="false" layout="Normal" treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100">
+								<parameters area="textsWords" clerk="concordanceWords" persistContext="normalEdit" suppressInfoBar="false" layout="Normal"
+									treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100">
 									<menuHandler>
-										<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.WordsEditToolMenuHandler"/>
+										<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.WordsEditToolMenuHandler"
+										/>
 									</menuHandler>
 								</parameters>
 							</control>
