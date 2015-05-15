@@ -156,6 +156,9 @@ namespace XCore
 					property.value = null;
 				}
 				m_properties.Clear();
+
+				Mediator.Dispose();
+				Mediator = null;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.

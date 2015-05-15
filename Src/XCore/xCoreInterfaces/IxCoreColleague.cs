@@ -126,7 +126,7 @@ namespace XCore
 	public interface IPropertyTableProvider
 	{
 		/// <summary>
-		/// Placement in the IxWindow interface lets FwApp call PropertyTable.DoStuff.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
 		/// </summary>
 		PropertyTable PropTable
 		{

@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.IText;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
@@ -31,8 +30,23 @@ namespace SIL.FieldWorks.XWorks.LexText
 	/// <summary>
 	/// Summary description for LexTextApp.
 	/// </summary>
-	public class LexTextApp : FwXApp, IApp, IxCoreColleague
+	public class LexTextApp : FwXApp
 	{
+		/* TODO: Make sure these old style Mediator commands/methods are handled in the best IArea/ITool manner.
+		 * TODO: This will likely mean some/all of these get moved elsewhere, since they are not global.
+Old Mediator methods/commands
+	LaunchConnectedDialog: OnDisplayLaunchConnectedDialog & OnLaunchConnectedDialog
+		Services these xml faux global commands:
+			CmdImportSFMLexicon
+			CmdImportLinguaLinksData
+		 * CmdImportLiftData
+		 * CmdImportInterlinearSfm
+		 * CmdImportWordsAndGlossesSfm
+		 * CmdImportInterlinearData
+	ConfigureHomographs: OnConfigureHomographs (no display check)
+		 * Services this global(?) command CmdConfigHomographs
+	OnRefresh (not used by Mediator now)
+		 */
 		protected XMessageBoxExManager m_messageBoxExManager;
 		/// <summary>
 		///  Web browser to use in Linux
@@ -205,15 +219,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
-		//public override string ProductName
-		//{
-		//    get
-		//    {
-		//        CheckDisposed();
-		//        return LexTextStrings.kstidApplicationName;
-		//    }
-		//}
-
 		public override string DefaultConfigurationPathname
 		{
 			get
@@ -232,7 +237,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="stid">String resource id</param>
 		/// <returns>string</returns>
 		/// -----------------------------------------------------------------------------------
-		string SIL.FieldWorks.Common.RootSites.IApp.ResourceString(string stid)
+		public string ResourceString(string stid)
 		{
 			CheckDisposed();
 
@@ -328,17 +333,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 			bool fEnabled = true;
 			switch (command.Id)
 			{
-				case "CmdImportSFMLexicon":
-					fEnabled = area == "lexicon";
-					break;
-				case "CmdImportLinguaLinksData":
-					fEnabled = area == "lexicon";
-					break;
+				case "CmdImportSFMLexicon": // Fall through
+				case "CmdImportLinguaLinksData": // Fall through
 				case "CmdImportLiftData":
 					fEnabled = area == "lexicon";
 					break;
-				case "CmdImportInterlinearSfm":
-				case "CmdImportWordsAndGlossesSfm":
+				case "CmdImportInterlinearSfm": // Fall through
+				case "CmdImportWordsAndGlossesSfm": // Fall through
 				case "CmdImportInterlinearData":
 					if (wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance" || wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance")
 
@@ -352,8 +353,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 					break;
 				case "CmdImportSFMNotebook":
 					fEnabled = area == "notebook";
-					break;
-				default:
 					break;
 			}
 			display.Enabled = fEnabled;
@@ -486,32 +485,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 				}
 			}
 			return true;
-		}
-
-		/// <summary>
-		/// This implements the "Synchronize with LiftShare..." menu command.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		/// <remarks>Until LiftShare is fully implemented, this is irrelevant.</remarks>
-		public bool OnSynchronize(object sender)
-		{
-#if WANTPORT // FWR-2845; this was not enabled in 6.0 and may be superseded by Randy's LiftBridge.
-			Form formActive = ActiveForm;
-			if (cache != null)
-			{
-				FwXWindow wndActive = formActive as FwXWindow;
-				LiftSynchronizeDlg dlg = new LiftSynchronizeDlg(Cache, wndActive.Mediator);
-				dlg.ShowDialog(formActive);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-#else
-			return false;
-#endif
 		}
 
 		/// <summary>
@@ -871,50 +844,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 				return new List<ContextValues>(new ContextValues[] { ContextValues.General });
 			}
 		}
-
-		#region IxCoreColleague Members
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialization. Never called because we don't use the xWindow class.
-		/// </summary>
-		/// <param name="mediator">Message mediator</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters">Not used</param>
-		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
-		{
-			CheckDisposed();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the message targets in the right order (i.e. main window that has focus first)
-		/// </summary>
-		/// <returns>List of main windows (which are possible message targets)</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[] { this };
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Returns str surrounded by double-quotes.

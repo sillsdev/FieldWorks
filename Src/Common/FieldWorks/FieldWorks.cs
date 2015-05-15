@@ -111,7 +111,6 @@ namespace SIL.FieldWorks
 		private static FdoCache s_cache;
 		private static string s_sWsUser;
 		private static FwRegistrySettings s_settingsForLastClosedWindow;
-		private static FwApp s_flexApp;
 		private static RegistryKey s_flexAppKey;
 		private static IFwMainWnd s_activeMainWnd;
 		private static FwSplashScreen s_splashScreen;
@@ -325,7 +324,7 @@ namespace SIL.FieldWorks
 				if (!string.IsNullOrEmpty(appArgs.BackupFile))
 				{
 					LaunchRestoreFromCommandLine(appArgs);
-					if (s_flexApp == null)
+					if (FwApp.App == null)
 						return 0; // Restore was cancelled or failed, or another process took care of it.
 					if (!String.IsNullOrEmpty(s_LinkDirChangedTo))
 					{
@@ -448,7 +447,10 @@ namespace SIL.FieldWorks
 			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
 			if(mainWindow != null)
 			{
-				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+				// Try to live without Mediator as long as possible
+				// OnWarnUserAboutFailedLiftImportIfNecessary is in FLExBridgeListener
+				// The S/R menu is global.
+				//mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
 			}
 		}
 
@@ -595,7 +597,7 @@ namespace SIL.FieldWorks
 				if (!s_allowFinalShutdown)
 					return false; // operation in process without TE or FLEx window open
 
-				if (s_flexApp != null && s_flexApp.MainWindows.Count > 0)
+				if (FwApp.App != null && FwApp.App.MainWindows.Count > 0)
 					return false;
 
 				return true;
@@ -626,10 +628,8 @@ namespace SIL.FieldWorks
 			{
 				try
 				{
-					if (s_activeMainWnd != null && s_activeMainWnd.App != null)
-						return s_activeMainWnd.App.SupportEmailAddress;
-					if (s_flexApp != null)
-						return s_flexApp.SupportEmailAddress;
+					if (FwApp.App != null)
+						return FwApp.App.SupportEmailAddress;
 				}
 				catch
 				{
@@ -880,10 +880,10 @@ namespace SIL.FieldWorks
 			if (settings == null)
 			{
 				IFwMainWnd activeWnd = s_activeMainWnd ?? Form.ActiveForm as IFwMainWnd;
-				if (activeWnd == null || activeWnd.App == null || activeWnd.App.RegistrySettings == null)
+				if (activeWnd == null || FwApp.App == null || FwApp.App.RegistrySettings == null)
 					return;
 				Debug.Assert(activeWnd.Cache == e.Cache && e.Cache == s_cache);
-				settings = activeWnd.App.RegistrySettings;
+				settings = FwApp.App.RegistrySettings;
 			}
 
 			// We recently closed a window of this application; record it as having recently-saved changes
@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks
 			// even when the application is in a crashed state. For example, error reporting failed
 			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
 			RegistryKey appKey = FwRegistryHelper.FieldWorksRegistryKey;
-			if (parent != null && parent.App != null && parent.App == s_flexApp && s_flexAppKey != null)
+			if (parent != null && FwApp.App != null && FwApp.App != null)
 				appKey = s_flexAppKey;
 			return ErrorReporter.ReportException(error, appKey, SupportEmail,
 				parent as Form, isLethal);
@@ -1401,7 +1401,7 @@ namespace SIL.FieldWorks
 		{
 			if (projectId == null)
 				throw new ArgumentNullException("projectId");
-			if (app != s_flexApp)
+			if (app != FwApp.App)
 				throw new ArgumentException("Invalid application", "app");
 
 			if (projectId.Equals(s_projectId))
@@ -1489,7 +1489,7 @@ namespace SIL.FieldWorks
 
 			if (s_renameSuccessful)
 			{
-				FwApp newApp = s_flexApp;
+				FwApp newApp = FwApp.App;
 				newApp.RegistrySettings.LatestProject = projId.Handle;
 			}
 			return s_renameSuccessful;
@@ -1656,7 +1656,6 @@ namespace SIL.FieldWorks
 								if (activeWindow != null)
 								{
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									var activeWindowMediator = activeWindowInterface.Mediator;
 									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 										PropertyTable.SettingsGroup.LocalSettings,
@@ -1735,7 +1734,6 @@ namespace SIL.FieldWorks
 					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 					{
 						var activeWindowInterface = (IFwMainWnd)activeWindow;
-						var activeWindowMediator = activeWindowInterface.Mediator;
 						activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 							PropertyTable.SettingsGroup.LocalSettings,
@@ -2566,7 +2564,7 @@ namespace SIL.FieldWorks
 			// other cases where the link information survives and we need to follow it now.
 			if (link.HasLinkInformation)
 			{
-				FwApp app = s_flexApp;
+				FwApp app = FwApp.App;
 				Debug.Assert(app != null && app.HasBeenFullyInitialized,
 					"KickOffAppFromOtherProcess should create the application needed");
 				// Let the application handle the link
@@ -2696,7 +2694,7 @@ namespace SIL.FieldWorks
 			{
 				// Remember the settings, so that, if we end up saving some changes
 				// related to it, we can record the last saved project.
-				s_settingsForLastClosedWindow = s_activeMainWnd.App.RegistrySettings;
+				s_settingsForLastClosedWindow = FwApp.App.RegistrySettings;
 				// Make sure the closing main window is not considered the active main window
 				s_activeMainWnd = null;
 			}
@@ -2718,7 +2716,7 @@ namespace SIL.FieldWorks
 		internal static bool CreateAndInitNewMainWindow(FwApp app, bool fNewCache, Form wndCopyFrom,
 			bool fOpeningNewProject)
 		{
-			Debug.Assert(app == s_flexApp);
+			Debug.Assert(app == FwApp.App);
 
 			WriteSplashScreen(app.GetResourceString("kstidInitWindow"));
 
@@ -2830,13 +2828,13 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static FwApp GetOrCreateApplication(FwAppArgs args)
 		{
-			if (s_flexApp == null)
+			if (FwApp.App == null)
 			{
-				s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
+				var flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 					FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(), args);
-				s_flexAppKey = s_flexApp.SettingsKey;
+				s_flexAppKey = FwApp.App.SettingsKey;
 			}
-			return s_flexApp;
+			return FwApp.App;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2847,8 +2845,8 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static FwApp GetOrCreateFlexApp()
 		{
-			if (s_flexApp != null)
-				return s_flexApp;
+			if (FwApp.App != null)
+				return FwApp.App;
 
 			return GetOrCreateApplication(new FwAppArgs(string.Empty, string.Empty, Guid.Empty));
 		}
@@ -3005,7 +3003,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static void ShutdownApp(FwApp app, bool fSaveSettings)
 		{
-			if (app != s_flexApp)
+			if (app != FwApp.App)
 				throw new ArgumentException("Application must belong to this FieldWorks", "app");
 
 			if (fSaveSettings)
@@ -3019,9 +3017,6 @@ namespace SIL.FieldWorks
 			}
 
 			RecordLastAppForProject();
-
-			if (app == s_flexApp)
-				s_flexApp = null;
 
 			// Make sure we do this after we set the variables to null to keep a race condition
 			// from happening where we want to GetOrCreateApplication() for the app that is
@@ -3046,7 +3041,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void ExitIfNoAppsRunning()
 		{
-			if (s_flexApp == null || s_flexApp.MainWindows.Count == 0)
+			if (FwApp.App == null || FwApp.App.MainWindows.Count == 0)
 			{
 				ExitCleanly();
 			}
@@ -3077,7 +3072,7 @@ namespace SIL.FieldWorks
 		{
 			if (s_cache == null || s_cache.IsDisposed)
 				return; // too late
-			if (s_flexApp != null)
+			if (FwApp.App != null)
 				return; // this isn't the last one to shut down, not time to record.
 
 			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
@@ -3380,7 +3375,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static IHelpTopicProvider GetHelpTopicProvider()
 		{
-			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
+			return FwApp.App ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 				"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
 		}
 
@@ -3540,7 +3535,7 @@ namespace SIL.FieldWorks
 													}
 													return null;
 												});
-			return s_flexApp;
+			return FwApp.App;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3614,7 +3609,7 @@ namespace SIL.FieldWorks
 		{
 			// Give any open main windows a chance to close normally before being forcibly
 			// disposed.
-			CloseAllMainWindowsForApp(s_flexApp);
+			CloseAllMainWindowsForApp(FwApp.App);
 
 			// Its quite possible that there are some important messages to process.
 			// (e.g., an FwApp.RemoveWindow asynchronous call from FwMainWnd.Dispose)
@@ -3622,7 +3617,7 @@ namespace SIL.FieldWorks
 			// might occur. (FWR-1687)
 			ExceptionHelper.LogAndIgnoreErrors(Application.DoEvents);
 
-			GracefullyShutDownApp(s_flexApp);
+			GracefullyShutDownApp(FwApp.App);
 
 			// If FieldWorks was in app server mode, there is a chance that the apps could have
 			// already been shut down, but the cache is still running. In this case, we need
@@ -3631,7 +3626,7 @@ namespace SIL.FieldWorks
 
 			if (!s_noUserInterface)
 			{
-				Debug.Assert(s_flexApp == null, "The FLEx app did not get properly cleaned up");
+				Debug.Assert(FwApp.App == null, "The FLEx app did not get properly cleaned up");
 				Debug.Assert(s_cache == null, "The cache did not get properly cleaned up");
 			}
 		}
@@ -3793,7 +3788,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static void CloseAllMainWindows()
 		{
-			CloseAllMainWindowsForApp(s_flexApp);
+			CloseAllMainWindowsForApp(FwApp.App);
 		}
 		#endregion
 	}

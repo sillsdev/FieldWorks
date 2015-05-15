@@ -9,6 +9,7 @@
 using System.Drawing;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -19,7 +20,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd : IxWindow
+	public interface IFwMainWnd : IFWDisposable, IPropertyTableProvider
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -30,22 +31,14 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the data objects cache.
+		/// Gets the data object cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		FdoCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the application to which this main window belongs.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		FwApp App { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Create the client windows and add correspnding stuff to the sidebar, View menu,
-		/// etc. Subclasses must override this.
+		/// Create the client windows and add correspnding stuff to the sidebar, View menu,  etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		void InitAndShowClient();

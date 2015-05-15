@@ -20,9 +20,6 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Interface for application.
-	/// TODO: The only place this interface is used in RootSite is in SyncUndoAction. The only
-	/// place that SyncUndoAction is used is in FrameWork. This means that IApp could be moved
-	/// to a better place.
 	/// </summary>
 	public interface IApp
 	{

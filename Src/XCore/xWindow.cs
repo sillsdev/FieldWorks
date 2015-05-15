@@ -1948,18 +1948,6 @@ namespace XCore
 		}
 
 		/// <summary>
-		/// Handles "Close" menu command.
-		/// </summary>
-		public bool OnCloseWindow(object sender)
-		{
-			CheckDisposed();
-
-			this.Close();
-
-			return true;
-		}
-
-		/// <summary>
 		/// Called through FwXWindow.OnMasterRefresh (and perhaps eventually others),
 		/// gives the window a chance to save anything in progress before the Refresh
 		/// updates the cache.

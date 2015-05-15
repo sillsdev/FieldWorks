@@ -168,6 +168,11 @@ namespace SIL.FieldWorks.Common.Framework
 		#region Member variables
 
 		/// <summary>
+		/// Get the singleton instance of the app.
+		/// </summary>
+		public static FwApp App { get; private set; }
+
+		/// <summary>
 		/// A picture holder that may be used to retrieve various useful pictures.
 		/// </summary>
 		public PictureHolder PictureHolder { get; private set; }
@@ -229,6 +234,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected FwApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider)
 		{
+			if (App != null)
+			{
+				throw new InvalidOperationException(@"Already has App.");
+			}
 			PictureHolder = new PictureHolder();
 			m_fwManager = fwManager;
 			m_helpTopicProvider = helpTopicProvider;
@@ -243,6 +252,8 @@ namespace SIL.FieldWorks.Common.Framework
 			Application.LeaveThreadModal += Application_LeaveThreadModal;
 
 			Application.AddMessageFilter(this);
+
+			App = this;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -341,21 +352,6 @@ namespace SIL.FieldWorks.Common.Framework
 			if (fwMainWindow == Form.ActiveForm)
 				m_activeMainWindow = fwMainWindow;
 			fwMainWindow.HandleDestroyed += fwMainWindow_HandleDestroyed;
-
-			// finalize and show the new window
-			if (fwMainWindow is IxWindow)
-			{
-				// Moved here due to FWNX-213
-				// OnHandleCreated must get called before the BroadcastPendingItems.
-				// Unfortunately, OnHandleCreated changes the window size, so we need to store
-				// the persisted size and restore it later.
-				var persistedSize = fwMainWindow.Size;
-				((IxWindow)fwMainWindow).SuspendWindowSizePersistence();
-				IntPtr dummy = fwMainWindow.Handle;
-				((IxWindow)fwMainWindow).ResumeWindowSizePersistence();
-				fwMainWindow.Size = persistedSize;
-				((IxWindow)fwMainWindow).Mediator.BroadcastPendingItems();
-			}
 			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
 			fwMainWindow.Activate(); // This makes main window come to front after splash screen closes
 
@@ -573,6 +569,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_suppressedCacheInfo = null;
 			m_refreshView = null;
 			PictureHolder = null;
+			App = null;
 #if DEBUG
 			m_debugProcs = null;
 #endif

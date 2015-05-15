@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
-<window label="FieldWorks Language Explorer" settingsId="Language Explorer">
+<window settingsId="Language Explorer">
 
 	<!--See the following comments as a guide to understanding the structure of these XML files and how they
 	   relate to the C# code.-->
@@ -43,7 +43,6 @@
 		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R"/>
 
-		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
 		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord"/>
@@ -99,8 +98,6 @@
 		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
 		<command id="CmdExport" label="_Export..." message="Export"/>
-		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize"
-			translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
@@ -124,7 +121,6 @@
 			 configuration files of various applications. we could perhaps make it possible to define the label here
 			 using the property value: label="{MainObjectLabel}" and then add to XCore the ability to define this:
 			 <property id="MainObjectLabel">Lexical Database</property>-->
-		<command id="CmdMainObjectProperties" label="?? Properties (TODO)" message="MainObjectProperties"/>
 		<command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z"/>
 		<command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C"/>
@@ -470,8 +466,6 @@
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdClose"/>
 		</menu>
 		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true">
 			<item command="CmdFLExBridge"/>
@@ -839,9 +833,6 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<include path="Lists/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 			<include path="Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 		</toolbar>
-		<!--<toolbar id="Edit">
-			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Edit']/item"/>
-		</toolbar>-->
 		<toolbar id="View">
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item"/>
 			<item command="CmdChangeFilterClearAll"/>

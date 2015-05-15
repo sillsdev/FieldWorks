@@ -259,10 +259,6 @@ namespace SIL.FieldWorks.XWorks
 		public override Form NewMainAppWnd(IProgress progressDlg, bool isNewCache,
 			Form wndCopyFrom, bool fOpeningNewProject)
 		{
-			if (isNewCache)
-			{
-				// TODO: Do any needed initialization here.
-			}
 			Stream iconStream = ApplicationIconStream;
 			Debug.Assert(iconStream != null, "Couldn't find the specified application icon as a resource.");
 			string configFile;
@@ -277,13 +273,11 @@ namespace SIL.FieldWorks.XWorks
 				if (!File.Exists(configFile))
 					configFile = null;
 			}
-			if (configFile == null) // try to load from stream
-				return new FwXWindow(this, wndCopyFrom, iconStream, ConfigurationStream);
 
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
-			FwXWindow result = new FwXWindow(this, wndCopyFrom, iconStream, configFile,
-				m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
+			var result = new FwMainWnd((FwMainWnd)wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
+
 			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 			return result;
 		}

@@ -225,6 +225,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FwMainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwMainWnd.Designer.cs">
+      <DependentUpon>FwMainWnd.cs</DependentUpon>
+    </Compile>
     <Compile Include="HelpTopicProviderBase.cs" />
     <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="FrameworkStrings.Designer.cs">
@@ -262,6 +268,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FrameworkStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="FwMainWnd.resx">
+      <DependentUpon>FwMainWnd.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FwRootSite.resx">
       <DependentUpon>FwRootSite.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -287,6 +296,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LT.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
