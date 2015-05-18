@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {

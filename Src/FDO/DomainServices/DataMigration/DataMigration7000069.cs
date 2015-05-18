@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.Keyboarding;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
 

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure

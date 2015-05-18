@@ -338,8 +338,8 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.LexiconUtils.dll" LocalFilename="$(fwrt)/Downloads/SIL.LexiconUtils.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.LexiconUtils.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.LexiconUtils.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.dll" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.$(DebugInfo)"/>
 
 		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, and Spart."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
@@ -446,9 +446,9 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>

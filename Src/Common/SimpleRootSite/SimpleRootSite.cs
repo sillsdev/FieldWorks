@@ -22,6 +22,9 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;
+#if !__MonoCS__
+using SIL.Windows.Forms.Keyboarding.Windows;
+#endif
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -173,6 +176,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
 		#endregion Events
 
+#if !__MonoCS__
 		#region WindowsLanguageProfileSink class
 
 		// NOTE: we implement the IWIndowsLanguageProfileSink interface in a private class
@@ -232,6 +236,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		}
 		#endregion
+#endif
 
 		#region Member variables
 		/// <summary>Value for the available width to tell the view that we want to do a

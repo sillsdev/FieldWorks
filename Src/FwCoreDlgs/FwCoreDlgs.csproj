@@ -180,9 +180,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.LexiconUtils, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.LexiconUtils.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Lexicon.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.WritingSystems, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

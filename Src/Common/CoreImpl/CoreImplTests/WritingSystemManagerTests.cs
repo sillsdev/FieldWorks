@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 using SIL.Utils;
 using SIL.WritingSystems;
 

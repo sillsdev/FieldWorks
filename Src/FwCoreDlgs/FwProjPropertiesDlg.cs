@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO.Infrastructure;

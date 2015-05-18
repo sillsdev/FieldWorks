@@ -15,7 +15,7 @@ using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.LexiconUtils;
+using SIL.Lexicon;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
