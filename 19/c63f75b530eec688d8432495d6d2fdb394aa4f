@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-at: Tue, 19 May 2015 20:09:05 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3062
+Project: FieldWorks
+Branch: refs/heads/release/8.2
