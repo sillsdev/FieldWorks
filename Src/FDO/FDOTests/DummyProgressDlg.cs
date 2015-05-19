@@ -7,7 +7,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -108,14 +107,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public bool Canceled
 		{
 			get { return false; }
-		}
-
-		/// <summary>
-		/// Gets the progress as a form (used for message box owners, etc).
-		/// </summary>
-		public Form Form
-		{
-			get { return null; }
 		}
 
 		/// <summary>
