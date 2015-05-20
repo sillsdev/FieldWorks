@@ -304,17 +304,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// simulate choosing settings with those specified in SelectEthnologueCodeDlg().
 		/// </summary>
-		/// <param name="dlg"></param>
-		/// <returns></returns>
-		protected override DialogResult CallShowDialog(LanguageSelectionDlg dlg)
+		protected override bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
 		{
-			if (m_ethnologueDlgResultToEnforce == DialogResult.OK)
+			if (m_ethnologueDlgResultToEnforce != DialogResult.OK)
 			{
-				// overwrite
-				dlg.LanguageName = m_selectedLanguageName;
-				dlg.EthnologueCode = m_selectedEthnologueCode;
+				selectedLanguageTag = null;
+				desiredLanguageName = null;
+				return false;
 			}
-			return DialogResult = m_ethnologueDlgResultToEnforce;
+
+			selectedLanguageTag = m_selectedEthnologueCode;
+			desiredLanguageName = m_selectedLanguageName;
+			return true;
 		}
 
 		/// <summary>
@@ -635,14 +636,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Phonetic)" });
 			// Now update the Ethnologue code, and cancel msg box to check we restored the expected newly added language defns.
-			m_dlg.SelectEthnologueCodeDlg("WSDialog", "wsd", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("WSDialog", "qaa-x-wsd", "", DialogResult.OK,
 				new[] { DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs },
 				new[] { "qaa-x-kal" },
 				new[] { DialogResult.OK});
 			// Verify dialog indicates a list to add to current (vernacular) ws list
 			VerifyNewlyAddedWritingSystems(new[] { "qaa-fonipa-x-kal-etic" });
 			// Now update the Ethnologue code, check we still have expected newly added language defns.
-			m_dlg.SelectEthnologueCodeDlg("Kala", "", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Kala", "qaa-x-kal", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { }, new string[] { }, new DialogResult[] { });
 			// Verify dialog indicates a list to add to current (vernacular) ws list
 			VerifyNewlyAddedWritingSystems(new[] { "qaa-fonipa-x-kal-etic" });
@@ -747,7 +748,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ShowDialog(m_wsKalaba);
 			// change to nonconflicting ethnologue code
-			m_dlg.SelectEthnologueCodeDlg("Silly", "xxx", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Silly", "qaa-x-xxx", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { },
 				new string[] { },
 				new DialogResult[] { });
@@ -770,7 +771,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ShowDialog(m_wsKalaba);
 			// change to nonconflicting ethnologue code
-			m_dlg.SelectEthnologueCodeDlg("Silly", "xxx", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Silly", "qaa-x-xxx", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { },
 				new string[] { },
 				new DialogResult[] { });

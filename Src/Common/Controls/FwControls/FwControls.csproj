@@ -141,9 +141,6 @@
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="Ethnologue">
-      <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources">
       <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
@@ -294,9 +291,6 @@
     <Compile Include="InformationBarButtonCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LanguageSetup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="LineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -442,10 +436,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InformationBarButton.resx">
       <DependentUpon>InformationBarButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSetup.resx">
-      <DependentUpon>LanguageSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LineControl.resx">

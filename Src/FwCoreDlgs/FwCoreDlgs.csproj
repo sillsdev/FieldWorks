@@ -117,10 +117,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -432,9 +428,6 @@
     <Compile Include="IUtility.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LanguageSelectionDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MorphBreakHelperMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -612,10 +605,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwUserProperties.resx">
       <DependentUpon>FwUserProperties.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSelectionDlg.resx">
-      <DependentUpon>LanguageSelectionDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PicturePropertiesDialog.resx">

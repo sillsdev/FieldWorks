@@ -198,7 +198,6 @@
     <EmbeddedResource Include="DummyPersistedFormWinDef.resx">
       <DependentUpon>DummyPersistedFormWinDef.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="LanguageSetupTests.cs" />
     <Compile Include="ProgressStateTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ using System.Text;
 using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
@@ -89,6 +91,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal WritingSystemSetupModel m_modelForKeyboard;
 
+		private static readonly string[] LocalizedLanguages = Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, XmlTranslatedLists.LocalizedListPrefix + "*.zip")
+			.Select(f => Path.GetFileNameWithoutExtension(f).Substring(XmlTranslatedLists.LocalizedListPrefix.Length)).ToArray();
 
 		/// <summary>
 		/// Shows the new writing system properties dialog.
@@ -110,24 +114,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = null;
-			LanguageSubtag languageSubtag;
+			string languageTag, languageName;
 
 			using (new WaitCursor(owner))
-			using (var dlg = new LanguageSelectionDlg(wsManager, helpTopicProvider))
+			using (var dlg = new LanguageLookupDialog())
 			{
+				dlg.StartPosition = FormStartPosition.CenterParent;
 				dlg.Text = FwCoreDlgs.kstidLanguageSelectionNewWsCaption;
-				dlg.DefaultLanguageName = defaultName;
+				dlg.MatchingLanguageFilter = FilterLocalizedLanguages;
+				dlg.SearchText = defaultName;
 
 				if (dlg.ShowDialog(owner) != DialogResult.OK)
 					return false;
 
-				languageSubtag = dlg.LanguageSubtag;
+				languageTag = dlg.SelectedLanguage.LanguageTag;
+				languageName = dlg.DesiredLanguageName;
+				if (languageTag == WellKnownSubtags.UnlistedLanguage)
+					languageTag += "-x-" + GetPrivateUseLangCodeForNewLang(wsManager, languageName);
 			}
 
 			using (new WaitCursor(owner))
 			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, wsManager, wsContainer, helpTopicProvider, app, stylesheet))
 			{
-				wsPropsDlg.SetupDialog(languageSubtag, displayRelatedWss);
+				wsPropsDlg.SetupDialog(languageTag, languageName, displayRelatedWss);
 
 				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
 				{
@@ -136,6 +145,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Filters out all secondary localized languages. Currently, FW can only provide localized lists for the primary
+		/// writing system for a language. For example, there is an "en" list localization, but not an "en-US" localization.
+		/// If a user selected "en-US", the lists would not be imported.
+		/// </summary>
+		private static bool FilterLocalizedLanguages(LanguageInfo language)
+		{
+			// FW does not have a localization for "zh", only for "zh-CN"
+			if (language.LanguageTag == "zh")
+				return false;
+
+			// English is the default localization, so it is hardcoded here.
+			if (language.LanguageTag != "en" && language.LanguageTag.StartsWith("en"))
+				return false;
+
+			return !LocalizedLanguages.Any(l => l != language.LanguageTag && language.LanguageTag.StartsWith(l));
 		}
 
 		/// <summary>
@@ -451,16 +478,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Setups the dialog.
 		/// </summary>
-		/// <param name="languageSubtag">The language subtag.</param>
+		/// <param name="languageTag">The language tag.</param>
+		/// <param name="languageName">Name of the language.</param>
 		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
-		public void SetupDialog(LanguageSubtag languageSubtag, bool displayRelatedWss)
+		public void SetupDialog(string languageTag, string languageName, bool displayRelatedWss)
 		{
 			CheckDisposed();
 
-			RegionSubtag region = null;
-			if (languageSubtag.Code == "zh" && languageSubtag.Iso3Code == "cmn")
-				region = "CN";
-			SetupDialog(m_wsManager.Create(languageSubtag, null, region, Enumerable.Empty<VariantSubtag>()), null, displayRelatedWss);
+			LanguageSubtag languageSubtag;
+			ScriptSubtag scriptSubtag;
+			RegionSubtag regionSubtag;
+			IEnumerable<VariantSubtag> variantSubtags;
+			if (!IetfLanguageTag.TryGetSubtags(languageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+				throw new ArgumentException("The language tag is invalid.", "languageTag");
+			languageSubtag = new LanguageSubtag(languageSubtag, languageName);
+			CoreWritingSystemDefinition ws = m_wsManager.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
+			SetupDialog(ws, null, displayRelatedWss);
 		}
 
 		private void SetupDialog(CoreWritingSystemDefinition tempWs, CoreWritingSystemDefinition origWs, bool displayRelatedWss)
@@ -614,7 +647,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesLoadPanel.Visible = true;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidIcuSortingHelp, Environment.NewLine);
 					var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
-					m_sortRulesTextBox.Tss = m_tsf.MakeString(icuCollation.CollationRules, ws.Handle);
+					m_sortRulesTextBox.Tss = m_tsf.MakeString(icuCollation.CollationRules.Replace("\t", ""), ws.Handle);
 					break;
 
 				case CollationRulesType.CustomSimple:
@@ -685,7 +718,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// for 'en', as in our extension SpellingHelper. The second branch of the OR is unused at present
 					// but will help if we extend SpellingHelper to the 'en' dictionary when asked for the 'en_US' one
 					// (when it can't find an exact match).
-					if (spellCheckingDictionary != null &&
+					if (!string.IsNullOrEmpty(spellCheckingDictionary) &&
 						(languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId)))
 					{
 						// Vernacular dictionaries may only be used if they match the requested ID exactly.
@@ -1510,58 +1543,154 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!CheckOkToChangeContext())
 				return;
 
-			using (var dlg = new LanguageSelectionDlg(m_wsManager, m_helpTopicProvider))
+			string origLangName = m_tbLanguageName.Text;
+			string selectedLanguageTag;
+			string desiredLanguageName;
+			if (!ChooseLanguage(out selectedLanguageTag, out desiredLanguageName))
+				return;
+
+			var origWsData = m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Select(ws => new {WritingSystem = ws, ws.Language, ws.IsChanged}).ToArray();
+			LanguageSubtag languageSubtag;
+			ScriptSubtag scriptSubtag;
+			RegionSubtag regionSubtag;
+			IEnumerable<VariantSubtag> variantSubtags;
+			if (!IetfLanguageTag.TryGetSubtags(selectedLanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+				return;
+			languageSubtag = new LanguageSubtag(languageSubtag, desiredLanguageName);
+			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
 			{
-				dlg.StartedInModifyState = true;	// started in modify state
+				ws.Language = languageSubtag;
+				if (scriptSubtag != null)
+					ws.Script = scriptSubtag;
+				if (regionSubtag != null)
+					ws.Region = regionSubtag;
+			}
 
-				string origLangName = m_tbLanguageName.Text;
-				dlg.LanguageSubtag = CurrentWritingSystem.Language;
-
-				if (CallShowDialog(dlg) != DialogResult.OK)
-					return;
-
-				var origWsData = m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Select(ws => new {WritingSystem = ws, ws.Language, ws.IsChanged}).ToArray();
-				LanguageSubtag subtag = dlg.LanguageSubtag;
-				foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
+			if (!CheckWSIetfLanguageTagChange())
+			{
+				// revert back to original language
+				foreach (var wsData in origWsData)
 				{
-					ws.Language = subtag;
-					if (ws.Language.Code == "zh" && ws.Language.Iso3Code == "cmn" && ws.Region == null)
-						ws.Region = "CN";
-				}
-
-				if (!CheckWSIetfLanguageTagChange())
-				{
-					// revert back to original language
-					foreach (var wsData in origWsData)
-					{
-						wsData.WritingSystem.Language = wsData.Language;
-						if (!wsData.IsChanged)
-							wsData.WritingSystem.AcceptChanges();
-					}
-				}
-				else
-				{
-					Set_tbLanguageName(subtag.Name);
-					SetupEthnologueCode(CurrentWritingSystem);
-					if (m_tbLanguageName.Text != origLangName)
-					{
-						int len = Math.Min(3, m_tbLanguageName.Text.Length);
-						m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
-					}
-
-					UpdateDialogWithChangesToLanguageName();
+					wsData.WritingSystem.Language = wsData.Language;
+					if (!wsData.IsChanged)
+						wsData.WritingSystem.AcceptChanges();
 				}
 			}
+			else
+			{
+				Set_tbLanguageName(languageSubtag.Name);
+				SetupEthnologueCode(CurrentWritingSystem);
+				if (m_tbLanguageName.Text != origLangName)
+				{
+					int len = Math.Min(3, m_tbLanguageName.Text.Length);
+					m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
+				}
+
+				UpdateDialogWithChangesToLanguageName();
+			}
+		}
+
+		/// <summary>
+		/// Returns a private use language code that is guaranteed to be valid and unique for both the
+		/// local and the global writing system store.
+		/// NOTE: This method should only be used for writing systems that are custom (i.e. not
+		/// defined in the current version of the ethnologue).
+		/// The returned code will *not* have the 'x-' prefix denoting a user-defined writing system,
+		/// but it will check that an existing user-defined writing system does not exist with
+		/// the returned language tag.
+		/// This method also does not worry about regions, variants, etc. as it's use is restricted to
+		/// the language subtag for a custom writing system.
+		/// </summary>
+		/// <param name="wsManager">The writing system manager.</param>
+		/// <param name="langName">The full name of the language.</param>
+		/// <returns></returns>
+		private static string GetPrivateUseLangCodeForNewLang(WritingSystemManager wsManager, string langName)
+		{
+			string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
+			var builder = new StringBuilder(nameD.ToLowerInvariant());
+			int index = 0;
+			while (index < builder.Length)
+			{
+				char c = builder[index];
+				bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+				if (!charValid)
+				{
+					// Found an invalid character, so remove it.
+					builder.Remove(index, 1);
+					continue;
+				}
+				index++;
+			}
+
+			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
+			if (IetfLanguageTag.IsValidLanguageCode(isoCode) && !LangTagInUse(wsManager, "qaa-x-" + isoCode))
+				return isoCode; // The generated code is valid and not in use by the local or global store
+
+			// We failed to generate a valid, unused language tag from the language name so
+			// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
+			builder.Remove(0, builder.Length); // Clear the builder
+			builder.Append("aaa");
+			while (LangTagInUse(wsManager, "qaa-x-" + builder))
+			{
+				var newCharLast = (char)(builder[2] + 1);
+				if (newCharLast > 'z')
+				{
+					// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
+					newCharLast = 'a';
+					var newCharMiddle = (char)(builder[1] + 1);
+					if (newCharMiddle > 'z')
+					{
+						// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
+						// Assume we won't ever have more then 4096 (26^3) custom writing systems
+						newCharMiddle = 'a';
+						builder[0] = (char)(builder[0] + 1);
+					}
+					builder[1] = newCharMiddle;
+				}
+				builder[2] = newCharLast;
+			}
+			return builder.ToString();
+		}
+
+		/// <summary>
+		/// Determines whether or not the specified language tag is in use by another writing system
+		/// in either the local or global writing system store.
+		/// </summary>
+		/// <param name="wsManager">The writing system manager.</param>
+		/// <param name="identifier">The language tag to check.</param>
+		/// <returns></returns>
+		private static bool LangTagInUse(WritingSystemManager wsManager, string identifier)
+		{
+			return wsManager.AllDistinctWritingSystems.Select(ws => ws.LanguageTag).Contains(identifier);
 		}
 
 		/// <summary>
 		/// Calls the ShowDialog of the LanguageSelectionDlg. Used for tests.
 		/// </summary>
-		/// <param name="dlg">The language selection dialog.</param>
+		/// <param name="selectedLanguageTag">The selected language tag.</param>
+		/// <param name="desiredLanguageName">The desired language name.</param>
 		/// <returns></returns>
-		protected virtual DialogResult CallShowDialog(LanguageSelectionDlg dlg)
+		protected virtual bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
 		{
-			return dlg.ShowDialog(this);
+			using (var dlg = new LanguageLookupDialog())
+			{
+				dlg.StartPosition = FormStartPosition.CenterParent;
+				dlg.MatchingLanguageFilter = FilterLocalizedLanguages;
+				dlg.SearchText = CurrentWritingSystem.Language.Name;
+
+				if (dlg.ShowDialog(this) != DialogResult.OK)
+				{
+					selectedLanguageTag = null;
+					desiredLanguageName = null;
+					return false;
+				}
+
+				selectedLanguageTag = dlg.SelectedLanguage.LanguageTag;
+				desiredLanguageName = dlg.DesiredLanguageName;
+				if (selectedLanguageTag == WellKnownSubtags.UnlistedLanguage)
+					selectedLanguageTag += "-x-" + GetPrivateUseLangCodeForNewLang(m_wsManager, desiredLanguageName);
+				return true;
+			}
 		}
 
 		private void Set_regionVariantControl(CoreWritingSystemDefinition ws)
