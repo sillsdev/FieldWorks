@@ -131,12 +131,6 @@
 		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A"/>
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
-		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
-		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
-		<command id="CmdHelpTraining" label="_Training" message="HelpTraining"/>
-		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
-		<!-- LT-15886 <command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/> -->
-		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
 		<command id="CmdHelpXLingPap" label="Editing Linguistics Papers Using _XLingPaper ..." message="HelpHelpsFile">
@@ -146,7 +140,6 @@
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
 		</command>
 		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
-		<command id="CmdHelpNotesSendReceive" label="Technical Notes on FieldWorks Send-_Receive..." message="HelpNotesSendReceive"/>
 		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
 		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
@@ -616,28 +609,17 @@
 			<item command="CmdNewWindow"/>
 		</menu>
 		<menu id="Help" label="_Help">
-			<!--  <item label="Show Help Balloons" boolProperty="ShowBalloonHelp" />
-			<separator />-->
-			<item command="CmdHelpLanguageExplorer"/>
-			<item command="CmdHelpTraining"/>
-			<item command="CmdHelpDemoMovies"/>
 			<menu id="Resources" label="_Resources">
+				<!-- Have non-visible placeholders in menu. BUT, they need to be handled in area/tool space, since they aren't really global. 
 				<item command="CmdHelpLexicographyIntro"/>
 				<item command="CmdHelpMorphologyInto"/>
-				<item command="CmdHelpNotesSendReceive"/>
+				S/R help menu was here.-->
 				<item command="CmdHelpNotesSFMDatabaseImport"/>
 				<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
 				<item command="CmdHelpNotesInterlinearImport"/>
 				<item command="CmdHelpNotesWritingSystems"/>
 				<item command="CmdHelpXLingPap"/>
 			</menu>
-			<item label="-" translate="do not translate"/>
-			<!-- LT-15886 <item command="CmdHelpCheckForUpdates"/>
-			This feature was never completed because FLEx would crash after updating on some machines for unexplained reasons.-->
-			<item command="CmdHelpReportBug"/>
-			<item command="CmdHelpMakeSuggestion"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdHelpAbout"/>
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->

@@ -1,229 +1,239 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-	Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-	Version 2.0
-
-	The primary goals of this format is to allow a simple XML format
-	that is mostly human readable. The generation and parsing of the
-	various data types are done through the TypeConverter classes
-	associated with the data types.
-
-	Example:
-
-	... ado.net/XML headers & schema ...
-	<resheader name="resmimetype">text/microsoft-resx</resheader>
-	<resheader name="version">2.0</resheader>
-	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-
-	There are any number of "resheader" rows that contain simple
-	name/value pairs.
-
-	Each data row contains a name, and value. The row also contains a
-	type or mimetype. Type corresponds to a .NET class that support
-	text/value conversion through the TypeConverter architecture.
-	Classes that don't support this are serialized and stored with the
-	mimetype set.
-
-	The mimetype is used for serialized objects, and tells the
-	ResXResourceReader how to depersist the object. This is currently not
-	extensible. For a given mimetype the value must be set accordingly:
-
-	Note - application/x-microsoft.net.object.binary.base64 is the format
-	that the ResXResourceWriter will generate, however the reader can
-	read any of the formats listed below.
-
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-	<xsd:element name="root" msdata:IsDataSet="true">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs="unbounded">
-		  <xsd:element name="metadata">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" use="required" type="xsd:string" />
-			  <xsd:attribute name="type" type="xsd:string" />
-			  <xsd:attribute name="mimetype" type="xsd:string" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="assembly">
-			<xsd:complexType>
-			  <xsd:attribute name="alias" type="xsd:string" />
-			  <xsd:attribute name="name" type="xsd:string" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="data">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="resheader">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-	<value>text/microsoft-resx</value>
+    <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-	<value>2.0</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksCannotLoadFile" xml:space="preserve">
-	<value>File {0} could not be loaded.
+    <value>File {0} could not be loaded.
 {1}</value>
   </data>
   <data name="ksCannotRedefineFactoryStyle" xml:space="preserve">
-	<value>Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksCannotReplaceXwithY" xml:space="preserve">
-	<value>Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}.</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}.</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksInfoBarBtnToolTipFmt" xml:space="preserve">
-	<value>{0} - {1}</value>
-	<comment>title of the button's corresponding sidebar tab followed by the tab's current button</comment>
+    <value>{0} - {1}</value>
+    <comment>title of the button's corresponding sidebar tab followed by the tab's current button</comment>
   </data>
   <data name="ksInvalidFirstLineHanging" xml:space="preserve">
-	<value>Illegal specification of both 'firstLine' and 'hanging' attributes for {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Illegal specification of both 'firstLine' and 'hanging' attributes for {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksInvalidResourceFileVersion" xml:space="preserve">
-	<value>Invalid version attribute in {0}</value>
-	<comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
+    <value>Invalid version attribute in {0}</value>
+    <comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
   </data>
   <data name="ksMissingBasedOnStyle" xml:space="preserve">
-	<value>The basedOn style for {0} style must be specified in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>The basedOn style for {0} style must be specified in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksMissingParagraphNode" xml:space="preserve">
-	<value>Paragraph style {0} must have a paragraph node in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Paragraph style {0} must have a paragraph node in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksNegativeLineSpacing" xml:space="preserve">
-	<value>Negative value is not valid for paragraph 'lineSpacing' attribute of {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Negative value is not valid for paragraph 'lineSpacing' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksNoBasedOnSelf" xml:space="preserve">
-	<value>Style {0} cannot be based on itself (as defined in {1}).</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Style {0} cannot be based on itself (as defined in {1}).</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownAlignmentValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'alignment' attribute of {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized value for paragraph 'alignment' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownAttrUnits" xml:space="preserve">
-	<value>Unrecognized units specified for '{0}' attribute of {1} style in {2}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized units specified for '{0}' attribute of {1} style in {2}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownBackgroundValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'background' attribute of {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized value for paragraph 'background' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownBasedOnStyle" xml:space="preserve">
-	<value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownBorderValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'border' attribute of {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized value for paragraph 'border' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownFontType" xml:space="preserve">
-	<value>Unrecognized value for font 'type' attribute of {0} style in {1}</value>
-	<comment>Error message when processing an XML file to create factory styles.</comment>
+    <value>Unrecognized value for font 'type' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
   </data>
   <data name="ksUnknownLineSpacingValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'lineSpacingType' attribute of {0} style in {1}</value>
+    <value>Unrecognized value for paragraph 'lineSpacingType' attribute of {0} style in {1}</value>
   </data>
   <data name="ksUnknownNextStyle" xml:space="preserve">
-	<value>Unrecognized next style for {0} style in {2}: {1}</value>
+    <value>Unrecognized next style for {0} style in {2}: {1}</value>
   </data>
   <data name="ksUnknownStyleAttribute" xml:space="preserve">
-	<value>Unrecognized '{0}' attribute for style {1} in {2}</value>
+    <value>Unrecognized '{0}' attribute for style {1} in {2}</value>
   </data>
   <data name="ksUnknownUnderlineColor" xml:space="preserve">
-	<value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
+    <value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
   </data>
   <data name="kstidIncompatibleDTDVersion" xml:space="preserve">
-	<value>{0} conforms to a DTD which is incompatible with this version of the program.
+    <value>{0} conforms to a DTD which is incompatible with this version of the program.
 This version of the program requires version {1}.</value>
-	<comment>Error message when processing an XML file to create factory settings (styles, publications, etc.).</comment>
+    <comment>Error message when processing an XML file to create factory settings (styles, publications, etc.).</comment>
   </data>
   <data name="kstidUndoRedoProjectProperties" xml:space="preserve">
-	<value>Project Properties</value>
-	<comment>Text for Undo/Redo when changing project properties</comment>
+    <value>Project Properties</value>
+    <comment>Text for Undo/Redo when changing project properties</comment>
   </data>
   <data name="kstidNameDiffersOnlyInCase" xml:space="preserve">
-	<value>The new name differs only in letter case -- this is insufficient to change the database name.</value>
+    <value>The new name differs only in letter case -- this is insufficient to change the database name.</value>
   </data>
   <data name="kstidWarning" xml:space="preserve">
-	<value>Warning</value>
+    <value>Warning</value>
   </data>
   <data name="ksRedoInsertLink" xml:space="preserve">
-	<value>Redo Insert Link</value>
+    <value>Redo Insert Link</value>
   </data>
   <data name="ksUndoInsertLink" xml:space="preserve">
-	<value>Undo Insert Link</value>
+    <value>Undo Insert Link</value>
   </data>
   <data name="ksUnknownBulNumStartAtValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'bulNumStartAt' attribute of {0} style in {1}</value>
+    <value>Unrecognized value for paragraph 'bulNumStartAt' attribute of {0} style in {1}</value>
   </data>
   <data name="ksUnknownBulNumSchemeValue" xml:space="preserve">
-	<value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
+    <value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
   </data>
   <data name="ksCannotCreateShortcut" xml:space="preserve">
-	<value>FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}</value>
+    <value>FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}</value>
   </data>
   <data name="ksCannotCreateShortcutCaption" xml:space="preserve">
-	<value>Cannot create shortcut</value>
+    <value>Cannot create shortcut</value>
+  </data>
+  <data name="ksCannotLaunchX" xml:space="preserve">
+    <value>Sorry, could not launch {0}.</value>
+  </data>
+  <data name="ksError" xml:space="preserve">
+    <value>Error</value>
+    <comment>caption for message box</comment>
+  </data>
+  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
+    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
   </data>
 </root>

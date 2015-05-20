@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<ControlAssemblyReplacement> m_replacements = new List<ControlAssemblyReplacement>();
 
 		public MockFwXWindow(FwXApp application, string configFile)
-			:base(application, configFile)
+			:base(application)
 		{
 		}
 
@@ -408,25 +408,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		/// <summary>
-		/// Default for FLEx for now. A mixture of forward and backward slashes?
-		/// </summary>
-		public override string DefaultConfigurationPathname
-		{
-			get
-			{
-				return @"Language Explorer/Configuration/Main.xml";
-			}
-		}
-
-		protected override Stream ConfigurationStream
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a main FLEx window.
@@ -539,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Init();
 			Init(); // subclass version must create and set m_application
 
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/Main.xml");
 
 			// Setup for possibility loading [GetPossibilityOrCreateOne()]
 			// and test data creation

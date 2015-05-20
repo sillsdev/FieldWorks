@@ -218,12 +218,8 @@
 		 Help menu
 		 -->
 	<item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
-	<item id="CmdHelpAbout">Display version information about this application.</item>
 	<item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
 	<item id="CmdHelpXLingPap">You can edit your Grammar Sketch in XLingPaper format using an XML editor (only available in English).</item>
-	<item id="CmdHelpTraining">Training for using Language Explorer (only available in English).</item>
-	<item id="CmdHelpLanguageExplorer">Help on using Language Explorer (only available in English).</item>
-	<item id="CmdHelpDemoMovies">Run the Demo Movies.</item>
 	<item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>
 	<item id="CmdHelpDemoOverview">Tour of Language Explorer.</item>
 	<item id="CmdHelpDemoConfigColumns">Examples of configuring columns.</item>
@@ -246,7 +242,6 @@
 	<item id="CmdHelpDemoPlayAll">Play all the movies (length 84 minutes).</item>
 	<item id="CmdHelpLexicographyIntro">Display Introduction to Lexicography (only available in English).</item>
 	<item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
-	<item id="CmdHelpNotesSendReceive">Display technical notes on FieldWorks Send/Receive (only available in English).</item>
 	<item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
 	<item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
 	<item id="CmdHelpNotesWritingSystems">Display technical notes on Writing Systems (only available in English).</item>

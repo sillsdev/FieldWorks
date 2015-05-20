@@ -1,9 +1,15 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -13,6 +19,11 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	public partial class FwMainWnd : Form, IFwMainWnd
 	{
+		/// <summary>
+		///  Web browser to use in Linux
+		/// </summary>
+		private string m_webBrowserProgramLinux = "firefox";
+
 		/// <summary>
 		/// Create new instance of window.
 		/// </summary>
@@ -210,11 +221,170 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 
-		private void CloseWindow(object sender, EventArgs e)
+		private void File_CloseWindow(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			Close();
+		}
+
+		private void Help_LanguageExplorer(object sender, EventArgs e)
+		{
+			var helpFile = FwApp.App.HelpFile;
+			try
+			{
+				// When the help window is closed it will return focus to the window that opened it (see MSDN
+				// documentation for HtmlHelp()). We don't want to use the main window as the parent, because if
+				// a modal dialog is visible, it will still return focus to the main window, allowing the main window
+				// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
+				// which can be bad. So, we just create a dummy control and pass that in as the parent.
+				Help.ShowHelp(new Control(), helpFile);
+			}
+			catch (Exception)
+			{
+				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotLaunchX, helpFile),
+					FrameworkStrings.ksError);
+			}
+		}
+
+		private void Help_Training(object sender, EventArgs e)
+		{
+			using (var process = new Process())
+			{
+				process.StartInfo.UseShellExecute = true;
+				process.StartInfo.FileName = "http://wiki.lingtransoft.info/doku.php?id=tutorials:student_manual";
+				process.Start();
+				process.Close();
+			}
+		}
+
+		private void Help_DemoMovies(object sender, EventArgs e)
+		{
+			try
+			{
+				var pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
+					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
+					Path.DirectorySeparatorChar);
+
+				OpenDocument<Win32Exception>(pathMovies, (win32err) =>
+				{
+					if (win32err.NativeErrorCode == 1155)
+					{
+						// The user has the movie files, but does not have a file association for .html files.
+						// Try to launch Internet Explorer directly:
+						using (Process.Start("IExplore.exe", pathMovies))
+						{
+						}
+					}
+					else
+					{
+						// User probably does not have movies. Try to launch the "no movies" web page:
+						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
+							"{0}Language Explorer{0}Movies{0}notfound.html",
+							Path.DirectorySeparatorChar);
+
+						OpenDocument<Win32Exception>(pathNoMovies, (win32err2) =>
+						{
+							if (win32err2.NativeErrorCode == 1155)
+							{
+								// The user does not have a file association for .html files.
+								// Try to launch Internet Explorer directly:
+								using (Process.Start("IExplore.exe", pathNoMovies))
+								{
+								}
+							}
+							else
+								throw win32err2;
+						});
+					}
+				});
+			}
+			catch (Exception)
+			{
+				// Some other unforeseen error:
+				MessageBox.Show(null, String.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
+					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
+					Path.DirectorySeparatorChar)), FrameworkStrings.ksError);
+			}
+		}
+
+		/// <summary>
+		/// Uses Process.Start to run path. If running in Linux and path ends in .html or .htm,
+		/// surrounds the path in double quotes and opens it with a web browser.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="exceptionHandler"/>
+		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
+
+		private void OpenDocument(string path, Action<Exception> exceptionHandler)
+		{
+			OpenDocument<Exception>(path, exceptionHandler);
+		}
+
+		/// <summary>
+		/// Like OpenDocument(), but allowing specification of specific exception type T to catch.
+		/// </summary>
+		private void OpenDocument<T>(string path, Action<T> exceptionHandler) where T : Exception
+		{
+			try
+			{
+				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
+				{
+					using (Process.Start(m_webBrowserProgramLinux, Enquote(path)))
+					{
+					}
+				}
+				else
+				{
+					using (Process.Start(path))
+					{
+					}
+				}
+			}
+			catch (T e)
+			{
+				if (exceptionHandler != null)
+					exceptionHandler(e);
+			}
+		}
+
+		/// <summary>
+		/// Returns str surrounded by double-quotes.
+		/// This is useful for paths containing spaces in Linux.
+		/// </summary>
+		private static string Enquote(string str)
+		{
+			return "\"" + str + "\"";
+		}
+
+		private void Help_Technical_Notes_on_FieldWorks_Send_Receive(object sender, EventArgs e)
+		{
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
+				Path.DirectorySeparatorChar);
+
+			OpenDocument(path, (err) =>
+			{
+				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotLaunchX, path),
+					FrameworkStrings.ksError);
+			});
+		}
+
+		private void Help_ReportProblem(object sender, EventArgs e)
+		{
+			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, FwApp.App.SupportEmailAddress, this);
+		}
+
+		private void Help_Make_a_Suggestion(object sender, EventArgs e)
+		{
+			ErrorReporter.MakeSuggestion(FwRegistryHelper.FieldWorksRegistryKey, "FLExDevteam@sil.org", this);
+		}
+
+		private void Help_About_Language_Explorer(object sender, EventArgs e)
+		{
+			using (var helpAboutWnd = new FwHelpAbout())
+			{
+				helpAboutWnd.ProductExecutableAssembly = Assembly.LoadFile(FwApp.App.ProductExecutableFile);
+				helpAboutWnd.ShowDialog();
+			}
 		}
 	}
 }

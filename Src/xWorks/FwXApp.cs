@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
-using System.IO;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
@@ -42,24 +41,6 @@ namespace SIL.FieldWorks.XWorks
 		//        return "Generic xWorks Application";
 		//    }
 		//}
-
-		/// <summary>
-		/// Get the pathname of the default XML configuration file,
-		/// which is used if none was provided in the "-x" command line option.
-		/// </summary>
-		/// <remarks>Subclasses should override this to get the proper XML configuration pathname.</remarks>
-		public virtual string DefaultConfigurationPathname
-		{
-			get
-			{
-				CheckDisposed();
-
-				// TODO: See if there can be a generic config file for all of xWorks.
-				// Maybe something like an editor of LangProject.
-				Debug.Assert(false);
-				return "";
-			}
-		}
 
 		public override bool Synchronize(SyncMsg sync)
 		{
@@ -121,20 +102,6 @@ namespace SIL.FieldWorks.XWorks
 				activeWnd.FinishRefresh();
 				activeWnd.Refresh();
 				activeWnd.Activate();
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the XML file as stream
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual Stream ConfigurationStream
-		{
-			get
-			{
-				Debug.Assert(false, "Subclasses must overrride this property.");
-				return null;
 			}
 		}
 
@@ -259,59 +226,12 @@ namespace SIL.FieldWorks.XWorks
 		public override Form NewMainAppWnd(IProgress progressDlg, bool isNewCache,
 			Form wndCopyFrom, bool fOpeningNewProject)
 		{
-			Stream iconStream = ApplicationIconStream;
-			Debug.Assert(iconStream != null, "Couldn't find the specified application icon as a resource.");
-			string configFile;
-			if (m_appArgs.ConfigFile != string.Empty)
-				configFile = m_appArgs.ConfigFile;
-			else
-			{
-				configFile = FwDirectoryFinder.GetCodeFile(DefaultConfigurationPathname);
-				//					configFile = (string)SettingsKey.GetValue("LatestConfigurationFile",
-				//						Path.Combine(FwDirectoryFinder.CodeDirectory,
-				//						DefaultConfigurationPathname));
-				if (!File.Exists(configFile))
-					configFile = null;
-			}
-
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
 			var result = new FwMainWnd((FwMainWnd)wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
 
 			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 			return result;
-		}
-
-		/// <summary>
-		/// override this with the name of your icon
-		/// This icon file should be included in the assembly, and its "build action" should be set to "embedded resource"
-		/// </summary>
-		protected virtual string ApplicationIconName
-		{
-			get { return "app.ico"; }
-		}
-
-		/// <summary>
-		/// Get a stream on the application icon.
-		/// </summary>
-		protected System.IO.Stream ApplicationIconStream
-		{
-			get
-			{
-				System.IO.Stream iconStream = null;
-				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(GetType());
-				string expectedIconName = ApplicationIconName.ToLowerInvariant();
-				foreach(string resourcename in assembly.GetManifestResourceNames())
-				{
-					if(resourcename.ToLowerInvariant().EndsWith(expectedIconName))
-					{
-						iconStream = assembly.GetManifestResourceStream(resourcename);
-						Debug.Assert(iconStream != null, "Could not load the " + ApplicationIconName + " resource.");
-						break;
-					}
-				}
-				return iconStream;
-			}
 		}
 
 		#endregion // FwApp required methods

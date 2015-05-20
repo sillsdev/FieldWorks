@@ -219,15 +219,6 @@ Old Mediator methods/commands
 			}
 		}
 
-		public override string DefaultConfigurationPathname
-		{
-			get
-			{
-				CheckDisposed();
-				return @"Language Explorer/Configuration/Main.xml";
-			}
-		}
-
 		private static bool m_fResourceFailed = false;
 
 		/// -----------------------------------------------------------------------------------
@@ -273,15 +264,6 @@ Old Mediator methods/commands
 		public override string ApplicationName
 		{
 			get { return FwUtils.ksFlexAppName; }
-		}
-
-		/// <summary>
-		/// override this with the name of your icon
-		/// This icon file should be included in the assembly, and its "build action" should be set to "embedded resource"
-		/// </summary>
-		protected override string ApplicationIconName
-		{
-			get { return "lt.ico"; }
 		}
 
 		/// <summary>
@@ -509,24 +491,6 @@ Old Mediator methods/commands
 			}
 			return false;
 		}
-		/// <summary>
-		/// When user selects Help -> Training, display a webpage in place of the Word Training documents.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnHelpTraining(object sender)
-		{
-			CheckDisposed();
-
-			using (var process = new Process())
-			{
-				process.StartInfo.UseShellExecute = true;
-				process.StartInfo.FileName = "http://wiki.lingtransoft.info/doku.php?id=tutorials:student_manual";
-				process.Start();
-				process.Close();
-			}
-			return true;
-		}
 
 		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
 		{
@@ -564,21 +528,6 @@ Old Mediator methods/commands
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.pdf",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
-			});
-			return true;
-		}
-
-		public bool OnHelpNotesSendReceive(object sender)
-		{
-			CheckDisposed();
-
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -655,57 +604,6 @@ Old Mediator methods/commands
 			return true;
 		}
 
-		public bool OnHelpDemoMovies(object commandObject)
-		{
-			CheckDisposed();
-
-			try
-			{
-				string pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
-					Path.DirectorySeparatorChar);
-
-				OpenDocument<Win32Exception>(pathMovies, (win32err) => {
-					if (win32err.NativeErrorCode == 1155)
-					{
-						// The user has the movie files, but does not have a file association for .html files.
-						// Try to launch Internet Explorer directly:
-						using (Process.Start("IExplore.exe", pathMovies))
-						{
-						}
-					}
-					else
-					{
-						// User probably does not have movies. Try to launch the "no movies" web page:
-						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-							"{0}Language Explorer{0}Movies{0}notfound.html",
-							Path.DirectorySeparatorChar);
-
-						OpenDocument<Win32Exception>(pathNoMovies, (win32err2) => {
-							if (win32err2.NativeErrorCode == 1155)
-							{
-								// The user does not have a file association for .html files.
-								// Try to launch Internet Explorer directly:
-								using (Process.Start("IExplore.exe", pathNoMovies))
-								{
-								}
-							}
-							else
-								throw win32err2;
-						});
-						}
-				});
-					}
-			catch (Exception)
-			{
-				// Some other unforeseen error:
-				MessageBox.Show(null, String.Format(LexTextStrings.ksErrorCannotLaunchMovies,
-					String.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
-					Path.DirectorySeparatorChar)), LexTextStrings.ksError);
-			}
-			return true;
-		}
-
 		public bool OnHelpMorphologyIntro(object sender)
 		{
 			CheckDisposed();
@@ -718,32 +616,6 @@ Old Mediator methods/commands
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
 					LexTextStrings.ksError);
 			});
-			return true;
-		}
-
-		/// <summary>
-		/// Launch the main help file for Flex.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnHelpLanguageExplorer(object sender)
-		{
-			CheckDisposed();
-
-			try
-			{
-				// When the help window is closed it will return focus to the window that opened it (see MSDN
-				// documentation for HtmlHelp()). We don't want to use the main window as the parent, because if
-				// a modal dialog is visible, it will still return focus to the main window, allowing the main window
-				// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
-				// which can be bad. So, we just create a dummy control and pass that in as the parent.
-				Help.ShowHelp(new Control(), HelpFile);
-			}
-			catch(Exception)
-			{
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, HelpFile),
-					LexTextStrings.ksError);
-			}
 			return true;
 		}
 

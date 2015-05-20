@@ -224,6 +224,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
+      <Link>XML\strings-en.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\UtilityCatalogInclude.xml">
+      <Link>XML\UtilityCatalogInclude.xml</Link>
+    </Content>
     <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
     </None>
@@ -293,6 +299,15 @@
     <None Include="..\..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
       <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
     </None>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
+      <Link>XML\CommonDataTreeInclude.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
+      <Link>XML\ConstituentChartStyleInfo.xml</Link>
+    </Content>
+    <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
+      <Link>XML\ContextHelp.xml</Link>
+    </Content>
     <Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
       <Link>XML\Parts\CellarParts.xml</Link>
     </Content>

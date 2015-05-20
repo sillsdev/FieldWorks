@@ -63,11 +63,6 @@ namespace SIL.FieldWorks.XWorks
 		protected bool m_fWindowIsCopy = false;
 
 		/// <summary>
-		/// Configuration file pathname.
-		/// </summary>
-		protected string m_configFile;
-
-		/// <summary>
 		///
 		/// </summary>
 		protected ActiveViewHelper m_viewHelper;
@@ -317,8 +312,10 @@ namespace SIL.FieldWorks.XWorks
 
 				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
 				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+
 				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
 				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+
 				m_propertyTable.SetProperty("App", app, true);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
@@ -329,15 +326,12 @@ namespace SIL.FieldWorks.XWorks
 		/// C'tor for TESTING with MockFwXWindow
 		/// </summary>
 		/// <param name="app"></param>
-		/// <param name="configFile">Only sets the member variable here, does NOT load UI.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwXWindow(FwApp app, string configFile)
+		public FwXWindow(FwApp app)
 		{
 			BasicInit(app);
 
-			Debug.Assert(File.Exists(configFile));
 			m_app = app;
-			m_configFile = configFile;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -347,18 +341,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="app">The app.</param>
 		/// <param name="wndCopyFrom">Source window to copy from</param>
 		/// <param name="iconStream">The icon stream.</param>
-		/// <param name="configFile">The config file.</param>
 		/// <param name="startupLink">The link to follow once the window is initialized.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwXWindow(FwApp app, Form wndCopyFrom, Stream iconStream,
-			string configFile, FwLinkArgs startupLink)
+		public FwXWindow(FwApp app, Form wndCopyFrom, Stream iconStream, FwLinkArgs startupLink)
 		{
 			BasicInit(app);
 			m_startupLink = startupLink;
-
-			Debug.Assert(File.Exists(configFile));
 			m_app = app;
-			m_configFile = configFile;
 
 			Init(iconStream, wndCopyFrom, app.Cache);
 
@@ -375,7 +364,6 @@ namespace SIL.FieldWorks.XWorks
 			*/
 
 			m_viewHelper = new ActiveViewHelper(this);
-			LoadUI(configFile);
 
 			m_viewHelper.ActiveViewChanged += ActiveViewChanged;
 		}
@@ -429,7 +417,6 @@ namespace SIL.FieldWorks.XWorks
 			Stream configStream) : this()
 		{
 			m_app = app;
-			m_configFile = null;
 			Init(iconStream, wndCopyFrom, app.Cache);
 			LoadUI(configStream);
 		}
@@ -1038,64 +1025,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_propertyTable.SetProperty("ShowBalloonHelp", balloonActive, true);
 
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show dialog to report a bug in the system
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnHelpMakeSuggestion(object args)
-		{
-			ErrorReporter.MakeSuggestion(FwRegistryHelper.FieldWorksRegistryKey, "FLExDevteam@sil.org", this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show dialog to report a bug in the system
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnHelpReportProblem(object args)
-		{
-			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, m_app.SupportEmailAddress, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check if any updates to FW are available
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnHelpCheckForUpdates(object args)
-		{
-#if !__MonoCS__
-			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
-			if (sparkle == null)
-				MessageBox.Show("Updates do not work unless FieldWorks was installed via the installer.");
-			else
-				sparkle.CheckForUpdatesAtUserRequest();
-#endif
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show Help About dialog
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnHelpAbout(object args)
-		{
-			m_delegate.ShowHelpAbout();
 			return true;
 		}
 
@@ -2012,17 +1941,6 @@ namespace SIL.FieldWorks.XWorks
 		public void SaveSettingsNow()
 		{
 			CheckDisposed();
-
-			try
-			{
-				RegistryKey key = SettingsKey;
-				key.SetValue("LatestConfigurationFile", m_configFile);
-			}
-			catch (Exception e)
-			{
-				// just ignore any exceptions. It really doesn't matter if SaveSettingsNow() fail.
-				Console.WriteLine("FwXWindow.SaveSettingsNow: Exception caught: {0}", e.Message);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
