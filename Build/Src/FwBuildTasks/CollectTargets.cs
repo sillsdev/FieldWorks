@@ -502,10 +502,10 @@ namespace FwBuildTasks
 				case "FdoUiTests":				// ~24 sec (overnight 3/18/15)
 				case "WidgetsTests":			// ~23 sec (overnight 4/5/15)
 				case "FiltersTests":			// ~21 sec (overnight 4/15/15)
+				case "DetailControlsTests":		// ~29 sec (overnight 5/21/2013)
 					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
-				case "DetailControlsTests":				// ~10 sec (Mono 2/8/2013)
 
 					return 25000;
 				default:
