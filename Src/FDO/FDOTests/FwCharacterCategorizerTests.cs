@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -51,7 +50,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
-			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
 			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
@@ -73,7 +72,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e", "."}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
-			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
 			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
@@ -100,7 +99,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
-			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
 			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
@@ -126,7 +125,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
-			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
 			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
@@ -151,7 +150,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
-			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
 			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);

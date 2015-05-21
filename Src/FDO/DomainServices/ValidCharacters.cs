@@ -76,7 +76,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly List<string> m_otherCharacters = new List<string>();
 		private readonly ILgCharacterPropertyEngine m_cpe;
 		private TsStringComparer m_comparer;
-		private string m_legacyOverridesFile;
 
 		#endregion
 
@@ -111,11 +110,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="ws">The writing system.</param>
 		/// <param name="exceptionHandler">The exception handler to use if valid character data
 		/// cannot be loaded.</param>
-		/// <param name="legacyOverridesFile"></param>
 		/// <returns>A <see cref="ValidCharacters"/> initialized with the valid characters data
 		/// from the language definition.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ValidCharacters Load(CoreWritingSystemDefinition ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
+		public static ValidCharacters Load(CoreWritingSystemDefinition ws, LoadExceptionDelegate exceptionHandler = null)
 		{
 			var validChars = new ValidCharacters();
 			validChars.LoadException += exceptionHandler;
@@ -124,7 +122,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			validChars.AddCharactersFromWritingSystem(ws, "main", ValidCharacterType.WordForming, invalidChars);
 			validChars.AddCharactersFromWritingSystem(ws, "numeric", ValidCharacterType.Numeric, invalidChars);
 			validChars.AddCharactersFromWritingSystem(ws, "punctuation", ValidCharacterType.Other, invalidChars);
-			validChars.m_legacyOverridesFile = legacyOverridesFile;
 
 			if (invalidChars.Count > 0)
 			{
@@ -144,7 +141,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 
 			if (invalidChars.Count > 0 && validChars.m_wordFormingCharacters.Count == 0)
-				validChars.AddDefaultWordformingCharOverrides();
+			{
+				validChars.m_wordFormingCharacters.AddRange(DefaultWordformingChars);
+				validChars.Sort(validChars.m_wordFormingCharacters);
+			}
 
 			validChars.InitSortComparer(ws);
 
@@ -177,16 +177,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				else
 					invalidChars.Add(chr);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the default word forming overrides.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private IEnumerable<string> DefaultWordFormingOverrides
-		{
-			get { return ParseLegacyWordFormingCharOverrides(m_legacyOverridesFile) ?? DefaultWordformingChars; }
 		}
 		#endregion
 
@@ -530,17 +520,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return ValidCharacterType.Numeric;
 			}
 			return ValidCharacterType.Other;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the characters from the legacy word-forming character overrides file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void AddDefaultWordformingCharOverrides()
-		{
-			m_wordFormingCharacters.AddRange(DefaultWordFormingOverrides);
-			Sort(m_wordFormingCharacters);
 		}
 
 		/// ------------------------------------------------------------------------------------

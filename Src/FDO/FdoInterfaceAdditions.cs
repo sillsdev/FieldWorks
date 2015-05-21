@@ -3653,15 +3653,6 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Prepare to return tokens for Scripture checking.
-		/// </summary>
-		/// <param name="chapterNum">0=read whole book, else specified chapter number</param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		bool GetTextToCheck(int chapterNum);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Finds the next exact match starting from the given section starting at the given
 		/// paragraph and character offsets. If not found looking forward from that point, the
 		/// search wraps around from the beginning of the book.
@@ -3688,25 +3679,6 @@ namespace SIL.FieldWorks.FDO
 		bool GetRefStartFromSection(ScrReference targetRef, bool fFindSectionStart,
 			IScrSection startingSection, int startingParaIndex, int startingCharIndex,
 			out IScrSection section, out int paraIndex, out int ichVerseStart);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the index of the section where the given chapter begins.
-		/// </summary>
-		/// <param name="chapterNum">The chapter number (assumed to be in same versification as
-		/// that of the Scripture object).</param>
-		/// <returns>the index of the section or -1 if not found</returns>
-		/// ------------------------------------------------------------------------------------
-		int FindSectionForChapter(int chapterNum);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Enumerate all the ITextToken's from the most recent GetText call.
-		/// </summary>
-		/// <returns>An IEnumerable implementation that allows the caller to retrieve each
-		/// text token in sequence.</returns>
-		/// ------------------------------------------------------------------------------------
-		IEnumerable<ITextToken> TextTokens();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

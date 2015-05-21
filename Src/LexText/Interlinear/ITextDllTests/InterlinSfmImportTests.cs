@@ -6,7 +6,6 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using Sfm2Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -373,7 +372,7 @@ namespace SIL.FieldWorks.IText
 
 		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			ValidCharacters validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{

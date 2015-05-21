@@ -2436,7 +2436,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		void SetupOldWordformingOverrides()
 		{
 			CoreWritingSystemDefinition wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{

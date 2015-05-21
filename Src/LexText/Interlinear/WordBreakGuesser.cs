@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.IText
 			//get the writing system from the cache
 			var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
 			//get the ValidCharacters for the writing system.
-			ValidCharacters vc = ws != null ? ValidCharacters.Load(ws, e => { }, FwDirectoryFinder.CodeDirectory) : null;
+			ValidCharacters vc = ws != null ? ValidCharacters.Load(ws) : null;
 			//split the text on everything found in the OtherCharacters section
 			string[] distinctPhrases = vc != null ? txt.Split(vc.OtherCharacters.ToArray(), StringSplitOptions.None) //ws info was good, use it
 												  : Regex.Replace(txt, "\\p{P}", ".").Split('.'); //bad ws info, replace all punct with . and split on .

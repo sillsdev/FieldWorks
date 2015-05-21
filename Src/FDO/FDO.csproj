@@ -310,9 +310,6 @@
     <Compile Include="DomainServices\ProjectLockingService.cs" />
     <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
     <Compile Include="DomainServices\ReferenceTargetServices.cs" />
-    <Compile Include="DomainServices\ScrCheckingToken.cs" />
-    <Compile Include="DomainServices\ScrCheckingTokenizer.cs" />
-    <Compile Include="DomainServices\ScrChecksDataSource.cs" />
     <Compile Include="DomainServices\ScrFdoResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

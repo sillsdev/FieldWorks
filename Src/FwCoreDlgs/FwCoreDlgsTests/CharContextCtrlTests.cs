@@ -12,7 +12,6 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -166,85 +165,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.AreEqual(1, results.Length);
 				Assert.AreEqual("\u2074", results[0], "Expect ICU-style normalization");
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetTokenSubstrings method when no validator is supplied.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetTokenSubstrings_NoValidator()
-		{
-			using (var ctrl = new CharContextCtrl())
-			{
-				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
-					null, null, null, null);
-
-				var tokens = new List<ITextToken>();
-				ITextToken token = new ScrCheckingToken();
-				ReflectionHelper.SetField(token, "m_sText", "Mom. Dad!");
-				tokens.Add(token);
-				var inventory = new DummyScrInventory
-													{
-														m_references = new List<TextTokenSubstring>
-															{ new TextTokenSubstring(token, 3, 2) }
-													};
-				var validatedList = (List<TextTokenSubstring>)ReflectionHelper.GetResult(ctrl, "GetTokenSubstrings",
-					inventory, tokens);
-				Assert.AreEqual(1, validatedList.Count);
-				Assert.AreEqual(". ", validatedList[0].Text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetTokenSubstrings method when a validator is supplied which removes
-		/// the first and last substring.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetTokenSubstrings_ValidatorThatRemovesSomeResults()
-		{
-			using (var ctrl = new CharContextCtrl())
-			{
-				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
-					null, null, null, null);
-				ctrl.ListValidator = RemoveFirstAndLastSubString;
-
-				var tokens = new List<ITextToken>();
-				ITextToken token = new ScrCheckingToken();
-				ReflectionHelper.SetField(token, "m_sText", "Mom. Dad! Brother(Sister)");
-				tokens.Add(token);
-				var inventory = new DummyScrInventory
-									{
-										m_references = new List<TextTokenSubstring>
-														{
-															new TextTokenSubstring(token, 3, 2),
-															new TextTokenSubstring(token, 8, 2),
-															new TextTokenSubstring(token, 17, 1),
-															new TextTokenSubstring(token, 24, 1)
-														}
-									};
-				var validatedList =
-					(List<TextTokenSubstring>)ReflectionHelper.GetResult(ctrl, "GetTokenSubstrings",
-					inventory, tokens);
-				Assert.AreEqual(2, validatedList.Count);
-				Assert.AreEqual("! ", validatedList[0].Text);
-				Assert.AreEqual("(", validatedList[1].Text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Removes the first and last sub string.
-		/// </summary>
-		/// <param name="list">The list.</param>
-		/// ------------------------------------------------------------------------------------
-		private static void RemoveFirstAndLastSubString(List<TextTokenSubstring> list)
-		{
-			list.RemoveAt(0);
-			list.RemoveAt(list.Count - 1);
 		}
 	}
 	#endregion

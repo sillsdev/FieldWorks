@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_gridWordForming = gridWf;
 				m_gridNumbers = gridNum;
 				m_gridOther = gridOther;
-				m_validChars = ValidCharacters.Load(ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+				m_validChars = ValidCharacters.Load(ws, LoadException);
 
 				RefreshCharacterGrids(ValidCharacterType.All);
 			}
@@ -651,16 +651,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, int> m_characterCount;
 
 		private List<CharacterInventoryRow> m_inventoryRows;
-		private TsStringComparer m_inventoryCharComparer = null;
+		private TsStringComparer m_inventoryCharComparer;
 		/// <summary>Protected to facilitate testing</summary>
 		protected ValidCharGridsManager m_validCharsGridMngr;
 
 		/// <summary>Hold a reference to the writing system manager</summary>
 		private WritingSystemManager m_wsManager;
-
-		/// <summary>True if we created a temporary writing system manager that we have to
-		/// dispose</summary>
-		private bool m_fDisposeWsManager;
 
 		private OpenFileDialogAdapter m_openFileDialog;
 		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
@@ -768,7 +764,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			contextCtrl.Initialize(cache, wsContainer, m_ws, m_app, fnt, gridCharInventory);
 			contextCtrl.Dock = DockStyle.Fill;
 			contextCtrl.CheckToRun = CharContextCtrl.CheckType.Characters;
-			contextCtrl.ListValidator = RemoveInvalidCharacters;
 
 			colChar.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
 			gridCharInventory.AutoGenerateColumns = false;
@@ -794,13 +789,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_openFileDialog != null)
 					m_openFileDialog.Dispose();
 
-				if (m_fDisposeWsManager)
-				{
-					var disposable = m_wsManager as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-					m_wsManager = null;
-				}
 				if (m_fntForSpecialChar != null)
 				{
 					m_fntForSpecialChar.Dispose();
@@ -898,7 +886,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					Debug.Assert(m_ws != null);
 					m_wsManager = FwUtils.CreateWritingSystemManager();
-					m_fDisposeWsManager = true;
 					m_wsManager.Set(m_ws);
 				}
 				return m_wsManager;
@@ -1082,7 +1069,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					int codepoint;
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
-						chr = ((char) codepoint).ToString();
+						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
 						if (m_chrPropEng.get_IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
@@ -1136,7 +1123,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var undefinedChars = new List<string>();
 				for (int i = first; i <= last; i++)
 				{
-					string chr = ((char)i).ToString();
+					string chr = ((char)i).ToString(CultureInfo.InvariantCulture);
 
 					try
 					{
@@ -1730,25 +1717,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			base.OnClosed(e);
 			Keyboard.Controller.ActivateDefaultKeyboard();
-		}
-		#endregion
-
-		#region Delegates
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Removes the invalid characters.
-		/// </summary>
-		/// <param name="list">The list.</param>
-		/// ------------------------------------------------------------------------------------
-		private void RemoveInvalidCharacters(List<TextTokenSubstring> list)
-		{
-			// Getting one cpe and properly disposing it instead of creating a new cpe for every
-			// character in the Bible solves TE-8420, plus it is many, many times faster.
-			for (int i = list.Count - 1; i >= 0; i--)
-			{
-				if (!TsStringUtils.IsValidChar(list[i].InventoryText, m_chrPropEng))
-					list.RemoveAt(i);
-			}
 		}
 		#endregion
 

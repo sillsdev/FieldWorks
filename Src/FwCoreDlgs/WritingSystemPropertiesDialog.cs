@@ -37,7 +37,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.CoreImpl;
-using SILUBS.SharedScrUtils;
 using XCore;
 using MatchedPair = SIL.WritingSystems.MatchedPair;
 
@@ -356,8 +355,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#endregion Characters Tab
 
-		private Label m_lblPunctuation;
-		private Button btnPunctuation;
 		private Label lblFullCode;
 		private Label m_FullCode;
 		private Label lblScriptRegionVariant;
@@ -398,7 +395,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			components = new Container();
 			AccessibleName = GetType().Name;
 			m_lblValidCharacters.Tag = m_lblValidCharacters.Text;
-			m_lblPunctuation.Tag = m_lblPunctuation.Text;
 			m_lblEncodingConverter.Tag = m_lblEncodingConverter.Text;
 			m_tsf = TsStrFactoryClass.Create();
 
@@ -940,8 +936,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_sortLanguageComboBox = new System.Windows.Forms.ComboBox();
 			this.m_sortLanguageLabel = new System.Windows.Forms.Label();
 			this.tpPUACharacters = new System.Windows.Forms.TabPage();
-			this.m_lblPunctuation = new System.Windows.Forms.Label();
-			this.btnPunctuation = new System.Windows.Forms.Button();
 			this.m_lblValidCharacters = new System.Windows.Forms.Label();
 			this.btnValidChars = new System.Windows.Forms.Button();
 			this.btnModifyEthnologueInfo = new System.Windows.Forms.Button();
@@ -1289,28 +1283,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// tpPUACharacters
 			//
 			this.tpPUACharacters.BackColor = System.Drawing.Color.Transparent;
-			this.tpPUACharacters.Controls.Add(this.m_lblPunctuation);
-			this.tpPUACharacters.Controls.Add(this.btnPunctuation);
 			this.tpPUACharacters.Controls.Add(this.m_lblValidCharacters);
 			this.tpPUACharacters.Controls.Add(this.btnValidChars);
 			resources.ApplyResources(this.tpPUACharacters, "tpPUACharacters");
 			this.tpPUACharacters.Name = "tpPUACharacters";
 			this.helpProvider.SetShowHelp(this.tpPUACharacters, ((bool)(resources.GetObject("tpPUACharacters.ShowHelp"))));
 			this.tpPUACharacters.UseVisualStyleBackColor = true;
-			//
-			// m_lblPunctuation
-			//
-			resources.ApplyResources(this.m_lblPunctuation, "m_lblPunctuation");
-			this.m_lblPunctuation.Name = "m_lblPunctuation";
-			this.helpProvider.SetShowHelp(this.m_lblPunctuation, ((bool)(resources.GetObject("m_lblPunctuation.ShowHelp"))));
-			//
-			// btnPunctuation
-			//
-			this.helpProvider.SetHelpString(this.btnPunctuation, resources.GetString("btnPunctuation.HelpString"));
-			resources.ApplyResources(this.btnPunctuation, "btnPunctuation");
-			this.btnPunctuation.Name = "btnPunctuation";
-			this.helpProvider.SetShowHelp(this.btnPunctuation, ((bool)(resources.GetObject("btnPunctuation.ShowHelp"))));
-			this.btnPunctuation.Click += new System.EventHandler(this.btnPunctuation_Click);
 			//
 			// m_lblValidCharacters
 			//
@@ -1733,7 +1711,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void SetFullNameLabels(string fullName)
 		{
 			SetLabelParams(m_lblValidCharacters, fullName);
-			SetLabelParams(m_lblPunctuation, fullName);
 			SetLabelParams(m_lblEncodingConverter, fullName);
 		}
 
@@ -1856,15 +1833,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void btnPunctuation_Click(object sender, EventArgs e)
-		{
-			using (var dlg = new PunctuationDlg(m_cache, m_wsContainer, m_helpTopicProvider, m_app,
-				CurrentWritingSystem, CurrentWritingSystem.DisplayLabel, StandardCheckIds.kguidMatchedPairs))
-			{
-				dlg.ShowDialog(this);
-			}
-		}
-
 		/// <summary>
 		/// Handles the Click event of the btnRemove control.
 		/// </summary>
@@ -1877,7 +1845,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int indexNext = m_listBoxRelatedWSs.SelectedIndex == m_listBoxRelatedWSs.Items.Count - 1 ?
 				m_listBoxRelatedWSs.SelectedIndex - 1 : m_listBoxRelatedWSs.SelectedIndex;
 			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			CoreWritingSystemDefinition origWs = m_tempWritingSystems[ws];
 			m_tempWritingSystems.Remove(ws);
 			m_listBoxRelatedWSs.Items.RemoveAt(m_listBoxRelatedWSs.SelectedIndex);
 			m_listBoxRelatedWSs.SelectedIndex = indexNext;

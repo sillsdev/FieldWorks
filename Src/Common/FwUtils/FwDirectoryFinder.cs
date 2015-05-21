@@ -470,17 +470,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <summary>
-		/// Gets the legacy wordforming character overrides file.
-		/// </summary>
-		public static string LegacyWordformingCharOverridesFile
-		{
-			get
-			{
-				return Path.Combine(CodeDirectory, "WordFormingCharOverrides.xml");
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the dir where templates are installed

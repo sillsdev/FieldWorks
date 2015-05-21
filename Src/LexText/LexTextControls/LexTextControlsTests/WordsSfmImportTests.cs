@@ -7,7 +7,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Test.TestUtils;
@@ -182,7 +181,7 @@ namespace LexTextControlsTests
 		/// <param name="wsObj"></param>
 		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			ValidCharacters validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{

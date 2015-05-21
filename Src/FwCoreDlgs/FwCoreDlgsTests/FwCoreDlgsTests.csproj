@@ -282,7 +282,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwStylesDlgTests.cs" />
-    <Compile Include="PunctuationDlgTests.cs" />
     <Compile Include="WritingSystemPropertiesDialogTests.cs">
       <SubType>Form</SubType>
     </Compile>

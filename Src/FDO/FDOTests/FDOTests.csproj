@@ -350,7 +350,6 @@
     <Compile Include="ScrBookTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ScrChecksDataSourceTests.cs" />
     <Compile Include="ScrFootnoteTests.cs" />
     <Compile Include="ScrImportFileInfoTests.cs" />
     <Compile Include="ScrImportSetTests.cs" />

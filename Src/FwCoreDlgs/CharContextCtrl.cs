@@ -53,11 +53,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// list of context information.</summary>
 		public event GetContextInfoHandler GetContextInfo;
 
-		/// <summary>list validator used to remove bogus items from the list of
-		/// TextTokenSubstrings returned from the check
-		/// </summary>
-		public delegate void ValidateList(List<TextTokenSubstring> list);
-
 		private string[] m_fileData;
 		private DataGridView m_tokenGrid;
 		private string m_scrChecksDllFile;
@@ -74,7 +69,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly string m_sInitialScanMsgLabel;
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
 		private string m_currContextItem;
-		private ValidateList m_listValidator;
 		private OpenFileDialogAdapter m_openFileDialog;
 
 		/// ------------------------------------------------------------------------------------
@@ -144,18 +138,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_ws != null)
 			{
-				bool modifyingVernWs = (m_wsContainer.DefaultVernacularWritingSystem != null &&
-					m_ws.LanguageTag == m_wsContainer.DefaultVernacularWritingSystem.LanguageTag);
-
-				// If TE isn't installed, we can't support creating an inventory
-				// based on Scripture data. Likewise if we don't yet have any books (which also guards
-				// against showing the option in the SE edition, unless it has been paired with Paratext).
-				cmnuScanScripture.Visible = (isOkToDisplayScripture &&
-					File.Exists(m_scrChecksDllFile) &&
-					m_cache != null && m_cache.LanguageProject.TranslatedScriptureOA != null
-					&& m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0
-					&& modifyingVernWs);
-
 				if (m_ws.RightToLeftScript)
 				{
 					// Set the order of the columns for right-to-left text.
@@ -285,17 +267,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the list validator used to remove bogus items from the list of
-		/// TextTokenSubstrings returned from the check.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ValidateList ListValidator
-		{
-			set { m_listValidator = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -332,7 +303,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Get the writing system and valid characters list
 				if (m_wsContainer.DefaultVernacularWritingSystem == null)
 					return null;
-				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException);
 			}
 		}
 
@@ -576,17 +547,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void cmnuScanScripture_Click(object sender, EventArgs e)
-		{
-			// Scan the current scripture project.
-			GetTokensSubStrings(null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void cmnuScanFile_Click(object sender, EventArgs e)
 		{
 			// Use an open file dialog to let the user specify a file to scan.
@@ -613,8 +573,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (new WaitCursor(this))
 			{
-				List<TextTokenSubstring> tokens = (string.IsNullOrEmpty(fileName) ?
-					ReadTEScripture() : ReadFile(fileName));
+				List<TextTokenSubstring> tokens = ReadFile(fileName);
 
 				if (tokens == null || tokens.Count == 0)
 				{
@@ -631,76 +590,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					TextTokenSubStringsLoaded(tokens);
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reads the current TE scripture project.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private List<TextTokenSubstring> ReadTEScripture()
-		{
-			var scrDataSource = new ScrChecksDataSource(m_cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
-				FwDirectoryFinder.LegacyWordformingCharOverridesFile, FwDirectoryFinder.TeStylesPath);
-
-			scrDataSource.LoadException += scrDataSource_LoadException;
-
-			IScrCheckInventory scrCharInventoryBldr = CreateScrCharInventoryBldr(FwDirectoryFinder.BasicEditorialChecksDll,
-				scrDataSource, m_checkToRun == CheckType.Punctuation ?
-				"SILUBS.ScriptureChecks.PunctuationCheck" : "SILUBS.ScriptureChecks.CharactersCheck");
-
-			var tokens = new List<ITextToken>();
-			var scr = m_cache.LangProject.TranslatedScriptureOA;
-			if (scr == null || scr.ScriptureBooksOS.Count == 0)
-				return null;
-
-			foreach (var book in scr.ScriptureBooksOS)
-			{
-				if (scrDataSource.GetText(book.CanonicalNum, 0))
-					tokens.AddRange(scrDataSource.TextTokens());
-			}
-
-			foreach (KeyValuePair<string, string> kvp in m_chkParams)
-				scrDataSource.SetParameterValue(kvp.Key, kvp.Value);
-
-			scrDataSource.SetParameterValue("PreferredLocale", string.Empty);
-
-			return tokens.Count == 0 ? null : GetTokenSubstrings(scrCharInventoryBldr, tokens);
-		}
-
-		private static IScrCheckInventory CreateScrCharInventoryBldr(string checksDll, IChecksDataSource scrDataSource, string checkType)
-		{
-			var scrCharInventoryBldr = (IScrCheckInventory)ReflectionHelper.CreateObject(checksDll,
-				checkType, new object[] { scrDataSource });
-			return scrCharInventoryBldr;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a load exception in the scrDataSource.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void scrDataSource_LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, m_app.SettingsKey, m_app.SupportEmailAddress,
-				ParentForm, false);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the token substrings.
-		/// </summary>
-		/// <param name="inventory">The inventory used to parse the tokens.</param>
-		/// <param name="tokens">The tokens (runs of text).</param>
-		/// ------------------------------------------------------------------------------------
-		private List<TextTokenSubstring> GetTokenSubstrings(IScrCheckInventory inventory,
-			List<ITextToken> tokens)
-		{
-			List<TextTokenSubstring> list = inventory.GetReferences(tokens, string.Empty);
-			if (m_listValidator != null)
-				m_listValidator(list);
-			return list;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -748,10 +637,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// The following list of control characters should never appear in plain Unicode
 			// data.
-			char[] controlChars = new char[] {
+			char[] controlChars =
+			{
 				'\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\x0E', '\x0F',
 				'\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19',
-				'\x1A', '\x1B', '\x7F' };
+				'\x1A', '\x1B', '\x7F'
+			};
 			for (int i = 0; i < m_fileData.Length; i++)
 			{
 				if (m_fileData[i].Length > 0)
