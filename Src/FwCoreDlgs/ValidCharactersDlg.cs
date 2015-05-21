@@ -13,10 +13,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Icu;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -1332,9 +1334,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		internal void AddExemplarChars(string icuLocale)
 		{
-#if WS_FIX
-			m_validCharsGridMngr.AddCharacters(ExemplarCharactersHelper.GetValidCharsForLocale(icuLocale, m_chrPropEng));
-#endif
+			if (icuLocale == null)
+				return;
+
+			var chars = new List<string>();
+			foreach (string c in UnicodeSet.ToCharacters(Common.COMInterfaces.Icu.GetExemplarCharacters(icuLocale)))
+			{
+				chars.Add(c.Normalize(NormalizationForm.FormD));
+				chars.Add(Common.COMInterfaces.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
+			}
+			m_validCharsGridMngr.AddCharacters(chars);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1567,7 +1576,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						string chr = m_inventoryRows[i].Character;
-						if (!Icu.IsSpace(chr[0]) && !Icu.IsControl(chr[0]))
+						if (!Common.COMInterfaces.Icu.IsSpace(chr[0]) && !Common.COMInterfaces.Icu.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;

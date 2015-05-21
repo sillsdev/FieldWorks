@@ -738,11 +738,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(String languageId)
 		{
-			Icu.UErrorCode err;
+			Common.COMInterfaces.Icu.UErrorCode err;
 			string country;
-			Icu.GetDisplayCountry(languageId, "en", out country, out err);
+			Common.COMInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
 			string languageName;
-			Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			Common.COMInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -1961,7 +1961,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = Icu.GetCollationRules(baseLocale);
+			string sortRules = Common.COMInterfaces.Icu.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = m_tsf.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 
