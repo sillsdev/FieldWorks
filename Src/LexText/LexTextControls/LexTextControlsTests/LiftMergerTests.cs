@@ -16,6 +16,7 @@ using NUnit.Framework;
 using Palaso.Lift.Parsing;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -2974,7 +2975,6 @@ namespace LexTextControlsTests
 			return flidCustom;
 		}
 
-#if WS_FIX
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data with conflicts,
@@ -3052,7 +3052,6 @@ namespace LexTextControlsTests
 			//Delete the files that were converted to the new lang names.
 			LdmlFileBackup.DeleteDirectory(testLiftDataPath);
 		}
-#endif
 
 		private void VerifyLiftRangesFile(string sLiftRangesFile)
 		{

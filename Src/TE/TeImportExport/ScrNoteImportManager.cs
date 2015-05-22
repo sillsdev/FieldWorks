@@ -10,7 +10,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.WritingSystems;
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.TE
 		#region Misc. methods
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Find or create the writing system code for the given RFC4646 language tag. If it's
+		/// Find or create the writing system code for the given IETF language tag. If it's
 		/// not in either the list of vernacular writing systems or the list of analysis
 		/// writing systems, add it to the list of analysis writing systems.
 		/// </summary>
@@ -177,12 +177,18 @@ namespace SIL.FieldWorks.TE
 		public static int GetWsForLocale(string locale)
 		{
 			string identifier = IetfLanguageTag.ToLanguageTag(locale);
-			CoreWritingSystemDefinition ws;
-			// TODO (WS_FIX): This used to be TryGetOrSet. How should we handle it now?
-			s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);
-			if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
-				s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
-			return ws.Handle;
+			if (s_scr.Cache.ServiceLocator.WritingSystemManager.Exists(identifier)
+				|| s_scr.Cache.ServiceLocator.WritingSystemManager.OtherWritingSystems.Any(ws => ws.LanguageTag == identifier))
+			{
+				CoreWritingSystemDefinition ws;
+				s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);
+				if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
+					s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
+				return ws.Handle;
+			}
+
+			throw new UnknownWritingSystemException(identifier + " is an unknown IETF language tag.",
+				locale, identifier);
 		}
 
 		/// -----------------------------------------------------------------------------------
