@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		IFdoServiceLocator, IServiceLocatorInternal, IDisposable
 	{
 		private Container m_container;
-		private ILgCharacterPropertyEngine m_lgpe = LgIcuCharPropEngineClass.Create();
+		private ILgCharacterPropertyEngine m_lgpe;
 
 		/// <summary>
 		/// Constructor
@@ -593,6 +593,9 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
+				if (m_lgpe == null)
+					m_lgpe = LgIcuCharPropEngineClass.Create();
+
 				return m_lgpe; // m_baseServiceLocator.GetInstance<ILgCharacterPropertyEngine>();
 			}
 		}
