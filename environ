@@ -70,7 +70,6 @@ if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
-	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
 fi
 
 MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}:${ENC_CONVERTERS}"

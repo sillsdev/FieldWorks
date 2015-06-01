@@ -267,7 +267,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
-	rm -f $(DESTDIR)/usr/lib/fieldworks/{SilEncConverters40,ECInterfaces}.dll
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards

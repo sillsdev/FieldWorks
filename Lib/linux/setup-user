@@ -103,7 +103,7 @@ CopyRegistryKey()
 
 	echo "# Updating configuration"
 
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54/icudt50l"
+	mono "${WRITEKEY}" LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54/icudt54l"
 	mono "${WRITEKEY}" LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
 
 	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
