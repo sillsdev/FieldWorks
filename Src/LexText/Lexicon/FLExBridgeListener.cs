@@ -8,9 +8,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.Lift;
-using Palaso.Lift.Migration;
-using Palaso.Lift.Parsing;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -1084,9 +1084,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 				if (fMigrationNeeded)
 				{
-					var sOldVersion = Palaso.Lift.Validation.Validator.GetLiftVersion(liftPathname);
+					var sOldVersion = Lift.Validation.Validator.GetLiftVersion(liftPathname);
 					progressDialog.Message = String.Format(ResourceHelper.GetResourceString("kstidLiftVersionMigration"),
-						sOldVersion, Palaso.Lift.Validation.Validator.LiftVersion);
+						sOldVersion, Lift.Validation.Validator.LiftVersion);
 					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 				}
 				else
@@ -1109,7 +1109,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// Try to move the migrated file to the temp directory, even if a copy of it
 					// already exists there.
 					var sTempMigrated = Path.Combine(Path.GetTempPath(),
-													 Path.ChangeExtension(Path.GetFileName(sFilename), "." + Palaso.Lift.Validation.Validator.LiftVersion + ".lift"));
+													 Path.ChangeExtension(Path.GetFileName(sFilename), "." + Lift.Validation.Validator.LiftVersion + ".lift"));
 					if (File.Exists(sTempMigrated))
 						File.Delete(sTempMigrated);
 					File.Move(sFilename, sTempMigrated);

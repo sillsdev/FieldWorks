@@ -6,7 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml;
-using Palaso.Media;
+using SIL.Media;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class LabeledMultiStringView : UserControl, IxCoreColleague
 	{
 		private InnerLabeledMultiStringView m_innerView;
-		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
+		private List<ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
 
 		/// <summary>
 		/// Constructor.

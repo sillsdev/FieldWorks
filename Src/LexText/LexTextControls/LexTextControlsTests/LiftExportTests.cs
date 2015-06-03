@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.Lift.Validation;
+using SIL.Lift.Validation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

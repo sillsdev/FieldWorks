@@ -318,11 +318,11 @@
 		<Message Text="Downloading latest successful artifacts for Palaso."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Core.dll" LocalFilename="$(fwrt)/Downloads/SIL.Core.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Core.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Core.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lift.dll" LocalFilename="$(fwrt)/Downloads/SIL.Lift.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lift.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.dll" LocalFilename="$(fwrt)/Downloads/SIL.Media.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Media.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
@@ -422,13 +422,13 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
