@@ -33,7 +33,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else
 			{
-				m_selectedItem = (LanguageProjectInfo)listBox.SelectedItem;
+				m_selectedItem = (LanguageProjectInfo) listBox.SelectedItem;
+				if (ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
+				{
+					MessageBox.Show(this, Strings.ksProjectOpen, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
 			}
 			DialogResult = DialogResult.OK;
 
