@@ -484,6 +484,7 @@ namespace FwBuildTasks
 				case "TeScrInitializerTests":  // ~29 sec  (overnight build machine 4/23/2013)
 				case "LexTextControlsTests":			// ~only 8 sec on dev windows, but took longer than 40 sec on mono build machine
 				case "RootSiteTests":			// ~44 sec (overnight 4/15/15)
+				case "BasicUtilsTests":			// ~44 sec (overnight 6/4/15)
 					return 75000;
 				case "TeDialogsTests":			// ~11 sec
 				case "TePrintLayoutTests":				// ~12 sec
@@ -496,7 +497,6 @@ namespace FwBuildTasks
 				case "CacheLightTests":			// ~25 sec (overnight 11/6/14)
 				case "FrameworkTests":			// ~24 sec (overnight 1/22/15)
 				case "NotesViewTests":			// ~21 sec (overnight 2/5/15)
-				case "BasicUtilsTests":			// ~24 sec (overnight 2/27/15)
 				case "LexEdDllTests":		        // ~24 sec (overnight 4/15/15)
 				case "ParserCoreTests":
 				case "FdoUiTests":				// ~24 sec (overnight 3/18/15)
