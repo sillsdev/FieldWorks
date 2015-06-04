@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)); }
+			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase))); }
 		}
 
 		private static string GetDirectory(string registryValue, string defaultDir)

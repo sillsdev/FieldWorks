@@ -3,11 +3,13 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -40,6 +42,36 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
+			// setup necessary environment variables on Linux
+			if (MiscUtils.IsUnix)
+			{
+				// update ICU_DATA to location of ICU data files
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+				{
+#if DEBUG
+					string icuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
+					if (Directory.Exists(icuDataPath))
+						icuDataPath = Icu.DefaultDataDirectory;
+#else
+					string icuDataPath = Icu.DefaultDataDirectory;
+#endif
+					Environment.SetEnvironmentVariable("ICU_DATA", icuDataPath);
+				}
+				// update COMPONENTS_MAP_PATH to point to code directory so that COM objects can be loaded properly
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COMPONENTS_MAP_PATH")))
+				{
+#if DEBUG
+					string compMapPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+#else
+					string compMapPath = ParatextLexiconPluginDirectoryFinder.CodeDirectory;
+#endif
+					Environment.SetEnvironmentVariable("COMPONENTS_MAP_PATH", compMapPath);
+				}
+				// update FW_ROOTCODE so that strings-en.txt file can be found
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
+					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
+			}
+
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
