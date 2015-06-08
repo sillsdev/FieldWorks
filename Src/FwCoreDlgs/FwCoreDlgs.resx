@@ -952,10 +952,6 @@ The error was:
     <value>The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually.</value>
     <comment>Displayed if we try to open a .bak file (because there isn't an fwdata one) and the system won't allow it.</comment>
   </data>
-  <data name="ksNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The Project name you have entered contains one or more non-ASCII characters. If you use this name for your project, you will be unable to use the Send/Receive project function.</value>
-    <comment>Used to warn the user of a project name that will make Send/Receive not work for this project.</comment>
-  </data>
   <data name="ksCantShare" xml:space="preserve">
     <value>Cannot Share Projects</value>
     <comment>caption for ksCantShareDiffProjectFolders</comment>
@@ -972,9 +968,6 @@ The error was:
   </data>
   <data name="ksWSWarnWhenMergingWritingSystems" xml:space="preserve">
     <value>Warning: You are about to merge two writing systems. If you have done interlinear analysis in both writing systems, the analyses in one of those writing systems will be lost. Do you wish to continue?</value>
-  </data>
-  <data name="ksOKToContinueCancelToChangeName" xml:space="preserve">
-    <value> Click 'OK' to continue with this project name or 'Cancel' to enter a different name.</value>
   </data>
   <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
     <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>

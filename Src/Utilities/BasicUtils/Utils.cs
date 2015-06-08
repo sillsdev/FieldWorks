@@ -371,6 +371,8 @@ namespace SIL.Utils
 				case FilenameFilterStrength.kFilterProjName:
 					// This is to avoid problems with restoring from backup.
 					invalidChars = AddMissingChars(invalidChars, "()");
+					// This is to avoid problems during Send/Receive
+					invalidChars = AddMissingChars(invalidChars, "#");
 					goto case FilenameFilterStrength.kFilterMSDE;
 				case FilenameFilterStrength.kFilterMSDE:
 					// JohnT: I don't think this case is used any more.

@@ -30,10 +30,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// ----------------------------------------------------------------------------------------
 	public class DummyFwNewLangProject : FwNewLangProject
 	{
-		/// <summary>
-		/// Tells tests whether or not the Non-Ascii project name warning dialog was activated.
-		/// </summary>
-		public bool NonAsciiWarningWasActivated { get; set; }
 
 		/// <summary/>
 		public void CreateNewLangProj()
@@ -41,8 +37,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 
 			CreateNewLangProjWithProgress();
-			NonAsciiWarningWasActivated = false;
-			SimulatedNonAsciiDialogResult = DialogResult.Cancel;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -71,20 +65,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void setProjectName(string name)
 		{
 			ProjectName = name;
-		}
-
-		/// <summary>
-		/// Tells the test version of DisplayNonAsciiWarningDialog what response to give.
-		/// </summary>
-		public DialogResult SimulatedNonAsciiDialogResult { get; set; }
-
-		/// <summary>
-		/// This override just reports to tests that the dialog method was activated.
-		/// </summary>
-		protected override DialogResult DisplayNonAsciiWarningDialog()
-		{
-			NonAsciiWarningWasActivated = true;
-			return SimulatedNonAsciiDialogResult;
 		}
 	}
 	#endregion // DummyFwNewLangProject
@@ -148,169 +128,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make sure a non-Ascii project name triggers a warning.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("DesktopRequired")]
-		public void CreateNewLangProject_NameTriggersNonAsciiWarning()
-		{
-			const string dbName = "Fran\u00e7ais";
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				dlg.setProjectName(dbName);
-				if (DbExists(dbName))
-					DestroyDb(dbName, true);
-				try
-				{
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsTrue(dlg.NonAsciiWarningWasActivated, "Project Name should have activated the non-Ascii warning.");
-				}
-				finally
-				{
-					dlg.Close();
-					// Blow away the database to clean things up
-					DestroyDb(dbName, false);
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make sure an Ascii-only project name doesn't trigger a warning.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("DesktopRequired")]
-		public void CreateNewLangProject_NameDoesntTriggerNonAsciiWarning()
-		{
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				const string dbName = "Simple";
-				if (DbExists(dbName))
-					DestroyDb(dbName, true);
-				dlg.setProjectName(dbName);
-				try
-				{
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsFalse(dlg.NonAsciiWarningWasActivated, "Ascii-only Project Name should not activate the non-Ascii warning.");
-				}
-				finally
-				{
-					dlg.Close();
-					// Blow away the database to clean things up
-					DestroyDb(dbName, false);
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make sure a non-Ascii project name triggers a warning and the non-Ascii charcter gets
-		/// removed from the dialog's project name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void CreateNewLangProject_NameHasNonAsciiCharRemoved()
-		{
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				const string dbName = "Fran\u00e7ais";
-				if (DbExists(dbName))
-					DestroyDb(dbName, true);
-				dlg.setProjectName(dbName);
-				try
-				{
-					dlg.SimulatedNonAsciiDialogResult = DialogResult.Cancel;
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsTrue(dlg.NonAsciiWarningWasActivated, "Non-Ascii Project Name should activate the non-Ascii warning.");
-					Assert.AreEqual("Franais", dlg.ProjectName, "Project Name should have had non-ASCII character removed.");
-				}
-				finally
-				{
-					dlg.Close();
-					// Blow away the database to clean things up
-					DestroyDb(dbName, false);
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make sure a non-Ascii project name triggers a warning, and the non-Ascii character
-		/// is NOT removed.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("DesktopRequired")]
-		public void CreateNewLangProject_NameDoesNotHaveNonAsciiCharsRemoved()
-		{
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				const string dbName = "Fran\u00e7ais";
-				if (DbExists(dbName))
-					DestroyDb(dbName, true);
-				dlg.setProjectName(dbName);
-				try
-				{
-					dlg.SimulatedNonAsciiDialogResult = DialogResult.OK;
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsTrue(dlg.NonAsciiWarningWasActivated, "Non-Ascii Project Name should activate the non-Ascii warning.");
-					Assert.AreEqual(dbName, dlg.ProjectName, "Project Name should not have non-ASCII character removed.");
-				}
-				finally
-				{
-					dlg.Close();
-					// Blow away the database to clean things up
-					DestroyDb(dbName, false);
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make sure a non-Ascii project name triggers a warning and the non-Ascii charcters get
-		/// removed from the dialog's project name. (There are four of them.)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void CreateNewLangProject_NameHasMultipleNonAsciiCharsRemoved()
-		{
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				const string dbName = "Fra\u014b\u00e7a\u01b4s\u028c"; // get around changing file type
-				if (DbExists(dbName))
-					DestroyDb(dbName, true);
-				dlg.setProjectName(dbName);
-				try
-				{
-					dlg.SimulatedNonAsciiDialogResult = DialogResult.Cancel;
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsTrue(dlg.NonAsciiWarningWasActivated, "Non-Ascii Project Name should activate the non-Ascii warning.");
-					Assert.AreEqual("Fraas", dlg.ProjectName, "Project Name should have had four non-ASCII characters removed.");
-				}
-				finally
-				{
-					dlg.Close();
-					// Blow away the database to clean things up
-					DestroyDb(dbName, false);
-				}
-			}
-		}
-
 		private void CheckInitialSetOfPartsOfSpeech(FdoCache cache)
 		{
 			ILangProject lp = cache.LanguageProject;

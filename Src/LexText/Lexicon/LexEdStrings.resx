@@ -552,14 +552,6 @@
   <data name="ksExistingProjectName" xml:space="preserve">
     <value>That project already exists. Please choose a different name in Project Properties.</value>
   </data>
-  <data name="ksNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The current project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive Project function.
-{0} is a name that will work.
-You may choose a different project name in FieldWorks Project Properties.
-Click 'OK' to change the name of your project and continue with Send/Receive.
-Click 'Cancel' to cancel Send/Receive.</value>
-    <comment>Used when some non-ASCII characters are found in the project name</comment>
-  </data>
   <data name="kStandardFailureFileContents" xml:space="preserve">
     <value>standard</value>
   </data>
@@ -582,12 +574,6 @@ Click 'Cancel' to cancel Send/Receive.</value>
   </data>
   <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
     <value>Second Get and Merge not possible</value>
-  </data>
-  <data name="ksAllNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The current project name contains non-ASCII characters. This currently prevents use of the Send/Receive Project function.
-Please use a name that only contains ASCII characters.
-You may choose a different project name in FieldWorks Project Properties.</value>
-    <comment>Used when only non-ASCII characters are found in the project name on Send/Receive.</comment>
   </data>
   <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
     <value>Send/Receive not permitted</value>

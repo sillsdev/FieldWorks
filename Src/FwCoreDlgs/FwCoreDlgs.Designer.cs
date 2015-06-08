@@ -811,15 +811,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Project name you have entered contains one or more non-ASCII characters. If you use this name for your project, you will be unable to use the Send/Receive project function..
-        /// </summary>
-        public static string ksNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksNonAsciiProjectNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The processor you have created does not perform a Unicode to Unicode conversion;
         ///it is for use with a legacy encoding.
         ///It cannot be used in Bulk Edit operations..
@@ -827,15 +818,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksNoUnicodeToUnicode {
             get {
                 return ResourceManager.GetString("ksNoUnicodeToUnicode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to  Click &apos;OK&apos; to continue with this project name or &apos;Cancel&apos; to enter a different name..
-        /// </summary>
-        public static string ksOKToContinueCancelToChangeName {
-            get {
-                return ResourceManager.GetString("ksOKToContinueCancelToChangeName", resourceCulture);
             }
         }
         
@@ -1011,7 +993,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By removing the English writing system, some of your topics list items, may show &quot;***&quot; instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your topics list items, you may add English back at any time using the Add button.
+        ///   Looks up a localized string similar to By removing the English writing system, some of your List items, may show &quot;***&quot; instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your List items, you may add English back at any time using the Add button.
         ///
         ///Do you want to remove English now?.
         /// </summary>

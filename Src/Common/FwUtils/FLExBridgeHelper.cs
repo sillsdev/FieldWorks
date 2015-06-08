@@ -290,7 +290,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					try
 					{
 						host.Close();
-						((IDisposable)host).Dispose();
+						var disposableHost = host as IDisposable;
+						if(disposableHost != null)
+							disposableHost.Dispose();
 					}
 					catch(Exception)
 					{
