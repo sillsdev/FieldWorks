@@ -498,6 +498,7 @@ namespace FwBuildTasks
 				case "NotesViewTests":			// ~21 sec (overnight 2/5/15)
 				case "BasicUtilsTests":			// ~24 sec (overnight 2/27/15)
 				case "LexEdDllTests":		        // ~24 sec (overnight 4/15/15)
+				case "CheckAdminPrivilege":			// ~23 sec (overnight 6/8/15)
 				case "ParserCoreTests":
 					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
