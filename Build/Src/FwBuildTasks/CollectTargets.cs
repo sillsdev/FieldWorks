@@ -501,10 +501,11 @@ namespace FwBuildTasks
 				case "CheckAdminPrivilege":			// ~23 sec (overnight 6/8/15)
 				case "ScrControlsTests":			// ~21 sec (overnight 6/9/15)
 				case "ParserCoreTests":
+				case "DetailControlsTests":			// ~25 sec (overnight 6/10/2015)
 					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
-				case "DetailControlsTests":				// ~10 sec (Mono 2/8/2013)
+
 					return 25000;
 				default:
 					return 20000;
