@@ -503,6 +503,7 @@ namespace FwBuildTasks
 				case "ParserCoreTests":
 				case "DetailControlsTests":			// ~25 sec (overnight 6/10/2015)
 				case "FieldWorksTests:":			// ~24 sec (overnight 6/10/2015)
+				case "FxtDllTests":					// ~21 sec (overnight 6/11/2015)
 					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
