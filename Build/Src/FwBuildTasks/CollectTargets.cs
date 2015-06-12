@@ -508,9 +508,9 @@ namespace FwBuildTasks
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
 
-					return 25000;
+					return 30000;
 				default:
-					return 20000;
+					return 25000;
 			}
 		}
 
