@@ -503,13 +503,12 @@ namespace FwBuildTasks
 				case "WidgetsTests":			// ~23 sec (overnight 4/5/15)
 				case "FiltersTests":			// ~21 sec (overnight 4/15/15)
 				case "DetailControlsTests":		// ~29 sec (overnight 5/21/2013)
-					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
 
-					return 25000;
+					return 40000;
 				default:
-					return 20000;
+					return 30000;
 			}
 		}
 
