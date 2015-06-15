@@ -2918,11 +2918,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Set the keyboard to match the writing system.
 		/// </summary>
-		/// <param name="ws">writing system object</param>
+		/// <param name="palasoWs">writing system object</param>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(ILgWritingSystem ws)
+		protected void SetKeyboardForWs(IWritingSystemDefinition palasoWs)
 		{
-			if(Callbacks == null || ws == null)
+			if (Callbacks == null || palasoWs == null)
 			{
 				ActivateDefaultKeyboard();
 				return;
@@ -2934,9 +2934,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle)
-					as IWritingSystemDefinition;
-				if (palasoWs != null && palasoWs.LocalKeyboard != null)
+				if (palasoWs.LocalKeyboard != null)
 					palasoWs.LocalKeyboard.Activate();
 			}
 			catch
@@ -2963,9 +2961,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
-				return;			// Can't do anything useful, so let's not do anything at all.
+				return; // Can't do anything useful, so let's not do anything at all.
 
-			ILgWritingSystem ws = WritingSystemFactory.get_EngineOrNull(newWs);
+			var ws = ((IWritingSystemManager)WritingSystemFactory).Get(newWs) as IWritingSystemDefinition;
 			SetKeyboardForWs(ws);
 		}
 
@@ -2986,10 +2984,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			//JohnT: was, LgWritingSystemFactoryClass.Create();
-			ILgWritingSystem ws = null;
+			IWritingSystemDefinition ws = null;
 
-			if (WritingSystemFactory != null) // this sometimes happened in our tests when the window got/lost focus
-				ws = WritingSystemFactory.get_EngineOrNull(nWs);
+			var writingSystemManager = WritingSystemFactory as IWritingSystemManager;
+			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
+				ws = writingSystemManager.Get(nWs) as IWritingSystemDefinition;
 
 			SetKeyboardForWs(ws);
 

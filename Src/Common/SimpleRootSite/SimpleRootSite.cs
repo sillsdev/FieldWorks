@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation.Provider;
 using Accessibility;
+using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
 using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.UI.WindowsForms.Keyboarding.Types;
@@ -174,6 +175,68 @@ namespace SIL.FieldWorks.Common.RootSites
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
 		#endregion Events
 
+		#region WindowsLanguageProfileSink class
+
+		// NOTE: we implement the IWIndowsLanguageProfileSink interface in a private class
+		// so that we don't introduce an otherwise unnecessary dependency on
+		// PalasoUIWindowsForms which would require to add a reference to all projects that
+		// use a SimpleRootSite.
+		private class WindowsLanguageProfileSink : IWindowsLanguageProfileSink
+		{
+			private SimpleRootSite Parent { get; set; }
+
+			public WindowsLanguageProfileSink(SimpleRootSite parent)
+			{
+				Parent = parent;
+			}
+
+			/// <summary>
+			/// Called after the language profile has changed.
+			/// </summary>
+			/// <param name="previousKeyboard">The previous input method</param>
+			/// <param name="newKeyboard">The new input method</param>
+			public void OnInputLanguageChanged(IKeyboardDefinition previousKeyboard, IKeyboardDefinition newKeyboard)
+			{
+				if (Parent.IsDisposed || Parent.m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
+					return;
+
+				var manager = Parent.WritingSystemFactory as PalasoWritingSystemManager;
+				if (manager == null)
+					return;
+
+				// JT: apparently this comes to all the views, but only the active keyboard
+				// needs to handle it.
+				// SMc: furthermore, this is not really focused until OnGotFocus() has run.
+				// Responding before that causes a nasty bug in language/keyboard selection.
+				var wsRepo = manager.LocalWritingSystemStore;
+
+				if (!Parent.Focused || g_focusRootSite.Target != Parent || wsRepo == null)
+					return;
+
+				// If possible, adjust the language of the selection to be one that matches
+				// the keyboard just selected.
+
+				var vwsel = Parent.m_rootb.Selection; // may be null
+				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
+				IWritingSystemDefinition wsSelDefn = null;
+				if (wsSel != 0)
+					wsSelDefn = manager.Get(wsSel) as IWritingSystemDefinition;
+
+				var wsNewDefn = wsRepo.GetWsForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
+				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
+					return;
+
+				Parent.HandleKeyboardChange(vwsel, ((PalasoWritingSystem)wsNewDefn).Handle);
+
+				// The following line is needed to get Chinese IMEs to fully initialize.
+				// This causes Text Services to set its focus, which is the crucial bit
+				// of behavior.  See LT-7488 and LT-5345.
+				Parent.Activate(VwSelectionState.vssEnabled);
+			}
+
+		}
+		#endregion
+
 		#region Member variables
 		/// <summary>Value for the available width to tell the view that we want to do a
 		/// layout</summary>
@@ -327,9 +390,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private bool m_fMouseInProcess = false;
 
-		/// <summary>Flag used to ensure that OnInputLangChanged gets registered once.</summary>
-		private bool m_fRegisteredOnInputLangChanged = false;
-
 		/// <summary>
 		/// This is set true during processing of the OnPaint message. It serves to suppress
 		/// certain behavior that ought not to happen during a paint.
@@ -409,9 +469,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_orientationManager = CreateOrientationManager();
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-			#if __MonoCS__
-			KeyboardController.Register(this, new IbusRootSiteEventHandler(this));
-			#endif
+#if __MonoCS__
+			var eventHandler = new IbusRootSiteEventHandler(this);
+#else
+			var eventHandler = new WindowsLanguageProfileSink(this);
+#endif
+			KeyboardController.Register(this, eventHandler);
 		}
 
 #if DEBUG
@@ -874,13 +937,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
-				#if __MonoCS__
+#if __MonoCS__
+				var eventHandler = new IbusRootSiteEventHandler(this);
+#else
+				var eventHandler = new WindowsLanguageProfileSink(this);
+#endif
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 					KeyboardController.Unregister(this);
 				else if (!EditingHelper.Editable && !value)
-					KeyboardController.Register(this, new IbusRootSiteEventHandler(this));
-				#endif
+					KeyboardController.Register(this, eventHandler);
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an
 				// editable insertion point when moving the cursor with the cursor movement
@@ -3230,8 +3296,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				// the user? Or go ahead with create, but set up Paint to display some message?
 			}
 
-			RegisterForInputLanguageChanges();
-
 			// Create a timer used to flash the insertion point if any.
 			// We flash every half second (500 ms).
 			// Note that the timer is not started until we get focus.
@@ -3343,9 +3407,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			//Debug.WriteLine("SimpleRootSite.OnGotFocus() hwnd = " + this.Handle);
-			// If it hasn't been registered yet, register OnInputLanguageChanged().
-			if (m_fRegisteredOnInputLangChanged == false)
-				RegisterForInputLanguageChanges();
 
 			g_focusRootSite.Target = this;
 			base.OnGotFocus(e);
@@ -4635,13 +4696,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (DesignMode || m_rootb == null)
 				return;
 
-			Form topForm = FindForm();
-			if (topForm != null)
-			{
-				topForm.InputLanguageChanged -= OnInputLangChanged;
-				m_fRegisteredOnInputLangChanged = false;
-			}
-
 			if (m_Timer != null)
 				m_Timer.Stop();
 			// Can't flash IP, if the root box is toast.
@@ -4884,65 +4938,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// The system keyboard has changed. Determine the corresponding codepage to use when
-		/// processing characters.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>Because .NET uses only Unicode characters, there is no need to set a code
-		/// page</remarks>
-		/// -----------------------------------------------------------------------------------
-		protected virtual void OnInputLangChanged(object sender, InputLanguageChangedEventArgs e)
-		{
-			if (IsDisposed || m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
-				return;
-
-			var manager = WritingSystemFactory as PalasoWritingSystemManager;
-			if (manager == null)
-				return;
-			//Debug.WriteLine(string.Format("OnInputLangChanged: Handle={2}, g_focusRootSite={0}, culture={1}",
-			//    g_focusRootSite.Target, e.InputLanguage.Culture.ToString(), Handle));
-			// JT: apparently this comes to all the views, but only the active keyboard
-			// needs to handle it.
-			// SMc: furthermore, this is not really focused until OnGotFocus() has run.
-			// Responding before that causes a nasty bug in language/keyboard selection.
-			// SMc: also, we trust the lcid derived from vwsel more than we trust the one
-			// passed in as e.CultureInfo.LCID.
-			var wsRepo = manager.LocalWritingSystemStore;
-			if (this.Focused && g_focusRootSite.Target == this && wsRepo != null)
-			{
-				// If possible, adjust the language of the selection to be one that matches
-				// the keyboard just selected.
-
-				IVwSelection vwsel = m_rootb.Selection; // may be null
-				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				IWritingSystemDefinition wsSelDefn = null;
-				if (wsSel != 0)
-					wsSelDefn = manager.Get(wsSel) as IWritingSystemDefinition;
-				var wsNewDefn = wsRepo.GetWsForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
-				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
-					return;
-
-				HandleKeyboardChange(vwsel, ((PalasoWritingSystem)wsNewDefn).Handle);
-
-				// The following line is needed to get Chinese IMEs to fully initialize.
-				// This causes Text Services to set its focus, which is the crucial bit
-				// of behavior.  See LT-7488 and LT-5345.
-				Activate(VwSelectionState.vssEnabled);
-
-				//Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + lcid +
-				//    ") [hwnd = " + this.Handle + "] -> HandleKeyBoardChange(vwsel, " + lcid +
-				//    ")");
-			}
-			//else
-			//{
-			//    Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + LcidHelper.LangIdFromLCID(e.Culture.LCID).ToString() +
-			//        ") [hwnd = " + this.Handle + "] -> no action");
-			//}
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// When the user has selected a keyboard from the system tray, adjust the language of
 		/// the selection to something that matches, if possible.
 		/// </summary>
@@ -5142,25 +5137,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool WasFocused()
 		{
 			return g_focusRootSite.Target == this;
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Register for the InputLanguageChanged event of the form.  Don't do anything if it
-		/// has already been registered.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RegisterForInputLanguageChanges()
-		{
-			CheckDisposed();
-			if (m_fRegisteredOnInputLangChanged == false)
-			{
-				Form topForm = FindForm();
-				if (topForm != null)
-				{
-					topForm.InputLanguageChanged += OnInputLangChanged;
-					m_fRegisteredOnInputLangChanged = true;
-				}
-			}
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -6318,6 +6294,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			return false; // Let the message be dispatched
 		}
 		#endregion
+
 	}
 	#endregion
 }
