@@ -49,7 +49,7 @@ LDLIBS := $(LDLIBS) \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
-	-luuid -lexpat
+	-luuid -lexpat -ldl
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic

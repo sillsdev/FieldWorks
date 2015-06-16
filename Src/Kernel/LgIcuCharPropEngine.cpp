@@ -1020,13 +1020,6 @@ STDMETHODIMP LgIcuCharPropEngine::get_Decomposition(int ch, BSTR * pbstr)
 	UErrorCode uerr = U_ZERO_ERROR;
 	UNormalizationMode normMode = UNORM_NFD;
 
-	// Convert input character to UTF-16 string.
-	const int cchSrc = 3;
-	wchar rgchwSrc[3];
-	u_strFromUTF32(rgchwSrc, cchSrc, NULL, (UChar32 *)&ch, 1, &uerr);
-	if (U_FAILURE(uerr))
-		ThrowInternalError(E_FAIL);
-
 	// Note: it may be safe to always do NFKD since it performs compatability decomposition
 	// then canonical, but it is not always safe to do NFD since it will only do the canonical
 	// decomposition. This may be recursive, i.e. not just returning the first decomposition,
@@ -1037,38 +1030,15 @@ STDMETHODIMP LgIcuCharPropEngine::get_Decomposition(int ch, BSTR * pbstr)
 	if (decompType != U_DT_NONE)
 		normMode = UNORM_NFKD;
 
-	// Since we are only decomposing 1 character, it seems highly unlikely
-	// that is will decompose into more than 10 characters
-	const int cchBuff = 16;
-	wchar chwBuff[cchBuff];
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(normMode);
+	UnicodeString input;
+	input.setTo(ch);
+	UnicodeString output = norm->normalize(input, uerr);
 
-	// http://oss.software.ibm.com/icu/apiref/unorm_8h.html#a17
-	int cchResultLength = unorm_normalize(rgchwSrc, -1, normMode, 0, chwBuff, cchBuff, &uerr);
-
-	// If we didn't allocate enough memory try again.
-	if (uerr == U_BUFFER_OVERFLOW_ERROR)
-	{
-		wchar * pchwBuff = new wchar[cchResultLength +1 ];
-		// Reset the error code so that unorm_normalize will function correctly.
-		uerr = U_ZERO_ERROR;
-		unorm_normalize(rgchwSrc, -1, normMode, 0, pchwBuff, cchResultLength + 1, &uerr);
-		if (U_SUCCESS(uerr))
-		{
-			*pbstr = SysAllocStringLen(pchwBuff, cchResultLength);
-			delete [] pchwBuff;
-		}
-		else
-		{
-			delete [] pchwBuff;
-			ThrowInternalError(E_FAIL);
-		}
-	}
-	else if (U_SUCCESS(uerr))
-		*pbstr = SysAllocStringLen(chwBuff, cchResultLength);
+	if (U_SUCCESS(uerr))
+		*pbstr = SysAllocStringLen(output.getBuffer(), output.length());
 	else
-	{
 		ThrowInternalError(E_FAIL);
-	}
 
 	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
 }
@@ -1148,12 +1118,9 @@ STDMETHODIMP LgIcuCharPropEngine::FullDecompRgch(int ch, int cchMax1, OLECHAR * 
 
 	UChar32 uch = ch;
 	UnicodeString ustrSrc = uch;
-	//ustrSrc[1] = 0;
-	UnicodeString ustrResult;
 	UErrorCode uerr = U_ZERO_ERROR;
-	Normalizer norm(ustrSrc, UNORM_NFD);
-
-	norm.normalize(ustrSrc, UNORM_NFD, 0, ustrResult, uerr);
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFD);
+	UnicodeString ustrResult = norm->normalize(ustrSrc, uerr);
 
 	if (!U_SUCCESS(uerr))
 		ThrowNice(E_FAIL, kstidICUDecomp);
@@ -1214,7 +1181,9 @@ STDMETHODIMP LgIcuCharPropEngine::get_CombiningClass(int ch, int * pn)
 			return S_OK;
 		}
 	}
-	*pn = u_getCombiningClass(ch);
+
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+	*pn = norm->getCombiningClass(ch);
 
 	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
 }
@@ -1231,27 +1200,7 @@ STDMETHODIMP LgIcuCharPropEngine::get_Comment(int ch, BSTR * pbstr)
 	BEGIN_COM_METHOD
 	ChkComOutPtr(pbstr);
 
-	OLECHAR rgOLEch[256]; //longer than longest standard name
-	OLECHAR * pchw = rgOLEch;
-	char rgch[256];
-	memset(rgch, 0, sizeof(rgch));
-	char * prgch = rgch;
-	UErrorCode uerr = U_ZERO_ERROR;
-	int cch=0;
-
-	int cChars = 0;
-	cChars = u_getISOComment(ch, rgch, 255, &uerr);
-
-	if (!U_SUCCESS(uerr))
-		ThrowNice(E_FAIL, kstidICUCharName);
-
-	for (;*prgch;)
-	{
-		*pchw++ = *prgch++;
-		cch++;
-	}
-	*prgch = 0;  // When the "for" loop terminated, this was already 0 !
-	*pbstr = SysAllocStringLen(rgOLEch, cch);
+	*pbstr = SysAllocStringLen(NULL, 0);
 	if (!*pbstr)
 		ThrowOutOfMemory();
 
@@ -1763,13 +1712,12 @@ STDMETHODIMP LgIcuCharPropEngine::NormalizeDRgch(OLECHAR * prgchIn, int cchIn,
 void LgIcuCharPropEngine::NormalizeRgch(UNormalizationMode mode, OLECHAR * prgchIn, int cchIn,
 	OLECHAR * prgchOut, int cchMaxOut, int * pcchOut)
 {
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(mode);
+
 	UnicodeString ustIn(prgchIn, cchIn);
-	UnicodeString ustOut;
 
-	Normalizer norm(ustIn, mode);
 	UErrorCode uerr = U_ZERO_ERROR;
-
-	norm.normalize(ustIn, mode, 0, ustOut, uerr);
+	UnicodeString ustOut = norm->normalize(ustIn, uerr);
 
 	if (!U_SUCCESS(uerr))
 		ThrowNice(E_FAIL, kstidICUNormalize);

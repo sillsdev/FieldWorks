@@ -48,6 +48,7 @@ LDLIBS = \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
+	-ldl
 
 ifeq ($(BUILD_CONFIG),Debug)
 	OPTIMIZATIONS = -O0

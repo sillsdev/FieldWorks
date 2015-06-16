@@ -232,15 +232,25 @@
 	</Target>
 
 	<!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
-	<Target Name="BuildLinuxXslAssemblies" Condition="'$(OS)'=='Unix'">
-		<CreateItem Include="$(fwrt)/Src/Transforms/Presentation/*.xsl">
-			<Output TaskParameter="Include" ItemName="PresentationXslFiles"/>
-		</CreateItem>
+	<ItemGroup>
+		<PresentationXslFiles Include="$(fwrt)/Src/Transforms/Presentation/*.xsl" />
+		<ApplicationXslFiles Include="$(fwrt)/Src/Transforms/Application/*.xsl" />
+	</ItemGroup>
+	<Target Name="BuildLinuxXslAssemblies" Inputs="@(PresentationXslFiles);@(ApplicationXslFiles)" Outputs="$(dir-outputBase)/PresentationTransforms.dll;$(dir-outputBase)/ApplicationTransforms.dll" Condition="'$(action)'!='clean'">
 		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/PresentationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(PresentationXslFiles)" />
-
-		<CreateItem Include="$(fwrt)/Src/Transforms/Application/*.xsl">
-			<Output TaskParameter="Include" ItemName="ApplicationXslFiles"/>
-		</CreateItem>
 		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/ApplicationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(ApplicationXslFiles)" />
+	</Target>
+
+	<ItemGroup>
+		<Graphite2Sources Include="$(fwrt)/Lib/src/graphite2/src/*.*" />
+	</ItemGroup>
+	<Target Name="graphite2Linux" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)/Lib/linux/$(config-capital)/libgraphite2.a" Condition="'$(action)'!='clean'">
+		<MakeDir Directories="$(fwrt)/Lib/linux/$(config-capital)" />
+		<Make ToolPath="/usr/bin"
+				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
+		<Message Text="Finished building graphite2."/>
 	</Target>
 </Project>

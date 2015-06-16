@@ -31,6 +31,7 @@ INCLUDES := $(shell icu-config --cppflags) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
+	-I$(ICU_INC_DIR) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 

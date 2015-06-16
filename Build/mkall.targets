@@ -5,6 +5,7 @@
 	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;CopyDlls;allCpp;allCsharp;ensureTLBsUpToDate">
@@ -294,6 +295,7 @@
 		<ForceDelete Files="@(IcuDataFiles)"/>
 		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
 		<ForceDelete Files="@(GeneratedFiles)"/>
+		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion).zip"/>
 
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
@@ -320,10 +322,10 @@
 		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
-		<!-- bt398 is the icu50 branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt398/.lastSuccessful</IcuDownloadUrl>
-		<!-- bt281 is the master branch build of icucil for linux development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful</IcuDownloadUrl>
+		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful</IcuDownloadUrl>
+		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/.lastSuccessful</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
@@ -518,18 +520,18 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- ICU50 dlls -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
+		<!-- ICU dlls -->
+		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icudt$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icuin$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icuuc$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu50.dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
@@ -571,7 +573,7 @@
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\ProjectsDir"
 			Value="$(dir-fwdistfiles)\Projects"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu50DataDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu$(IcuVersion)DataDir"
 			Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
@@ -598,4 +600,33 @@
 
 	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
 
+	<ItemGroup>
+		<IcuDataSources Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/*.*" />
+	</ItemGroup>
+	<ItemGroup>
+		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/UnicodeDataOverrides.txt" />
+		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" />
+		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+	</ItemGroup>
+	<Target Name="GenerateIcuData" Inputs="@(IcuDataSources)" Outputs="$(fwrt)/DistFiles/Icu$(IcuVersion).zip">
+		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
+		<PropertyGroup>
+			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(fwrt)/Lib/src/icu/bin/gennorm2.exe</gennorm2>
+			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
+		</PropertyGroup>
+		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
+		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
+		<Zip Source="@(IcuDataZipFiles)" WorkingDirectory="$(fwrt)/DistFiles" Destination="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" />
+	</Target>
+
+	<ItemGroup>
+		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/*.*"/>
+		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/*.*"/>
+	</ItemGroup>
+	<Target Name="IcuData" DependsOnTargets="GenerateIcuData">
+		<Delete Files="$(IcuDataFiles)" TreatErrorsAsWarnings="true"/>
+		<Unzip ZipFilename="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" ToDir="$(fwrt)/DistFiles"/>
+	</Target>
 </Project>

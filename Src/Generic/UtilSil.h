@@ -34,6 +34,8 @@ namespace SilUtil
 	bool IsPathRooted(const wchar * pszPath);
 	bool FileExists(const wchar * pszPath);
 
+	const Normalizer2* GetIcuNormalizer(UNormalizationMode mode);
+
 }; //:> end namespace SilUtil
 
 #endif /*UTILSIL_H*/

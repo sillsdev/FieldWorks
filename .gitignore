@@ -115,3 +115,9 @@ DistFiles/ReleaseData/
 !Lib/Windows/Release
 !Lib/linux/Debug
 !Lib/linux/Release
+
+DistFiles/Windows/gennorm2.exe
+DistFiles/Windows/icutu*.dll
+DistFiles/Icu*.zip
+DistFiles/Icu*/icudt*l
+DistFiles/Icu*/*.*
