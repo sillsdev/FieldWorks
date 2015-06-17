@@ -83,6 +83,34 @@
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.so">
+			<Output TaskParameter="Include" ItemName="LinuxECShlibs"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxECShlibs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.dll">
+			<Output TaskParameter="Include" ItemName="LinuxECLibs"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxECLibs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.dll.config">
+			<Output TaskParameter="Include" ItemName="LinuxECConfigs"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxECConfigs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/usr/lib/fieldworks/EC/Plugins/*.xml">
+			<Output TaskParameter="Include" ItemName="LinuxECPlugins"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxECPlugins)"
+			  DestinationFolder="$(dir-outputBase)/EC/Plugins"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
 	</Target>
 
 	<!--
