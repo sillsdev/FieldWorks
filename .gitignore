@@ -22,8 +22,10 @@ Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
+Lib/debug/unit++.lib
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
+Lib/release/unit++.lib
 DistFiles/Parts/Generated.fwlayout
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
@@ -75,6 +77,8 @@ Output_i686/
 Output_x86_64/
 Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
+Lib/src/unit++/VS/Debug/
+Lib/src/unit++/VS/Release/
 Lib/src/Enchant/fieldworks-enchant-1.6.1/
 Src/DbAccessFirebird/Test/temp.awk
 Src/DbAccessFirebird/testDbAccess

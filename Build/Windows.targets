@@ -26,6 +26,7 @@
 		<MSBuild Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
 			Properties="Configuration=$(config-capital)"/>
 	</Target>
+
 	<!-- Copy the EncodingConverters files, registering them on Windows -->
 	<ItemGroup>
 		<EncConverterSources Include="..\DistFiles\Windows\EC\**\*.*"/>

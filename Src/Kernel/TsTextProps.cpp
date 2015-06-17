@@ -1590,7 +1590,7 @@ const OLECHAR * TsStrHolder::GetString(int hstu)
 	if (hstu)
 	{
 		int ishe = IndexFromCookie(hstu);
-		const OLECHAR* str;
+		const OLECHAR* str = NULL;
 		LOCK (m_mutex)
 			str = m_vshe[ishe].m_stu.Chars();
 		return str;

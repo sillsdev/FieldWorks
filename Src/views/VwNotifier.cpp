@@ -436,7 +436,7 @@ STDMETHODIMP VwNotifier::PropChanged(HVO hvo, int tag, int ivMin, int cvIns, int
 	NotifierVec vpanoteNew;		// list of all new notifiers.
 	// This is a flag that controls Cleanup: behavior if we go through UpOneLevel.
 	bool fTryNextLevel = false;
-	VwNotifier * pnoteNextOuter;
+	VwNotifier * pnoteNextOuter = NULL;
 	VwSelection * psel;
 	psel = prootb->Selection();
 	bool fSelShowing = false;

@@ -29,6 +29,7 @@ Last reviewed:
 
 #define NO_EXCEPTIONS 1
 #if WIN32
+#include <algorithm>
 #include <mlang.h>
 #endif
 

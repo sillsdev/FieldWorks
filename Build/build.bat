@@ -16,9 +16,9 @@ REG.exe Query %RegQry% > checkOS.txt
 Find /i "x86" < CheckOS.txt > StringCheck.txt
 
 If %ERRORLEVEL% == 0 (
-	set KEY_NAME=HKLM\SOFTWARE\Microsoft\VisualStudio\10.0
+	set KEY_NAME=HKLM\SOFTWARE\Microsoft\VisualStudio\12.0
 ) ELSE (
-	set KEY_NAME=HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0
+	set KEY_NAME=HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0
 )
 set KEY_NAME=%KEY_NAME%\Setup\VS
 
@@ -28,7 +28,7 @@ del StringCheck.txt
 set VALUE_NAME=ProductDir
 
 REM Check for presence of key first.
-reg query %KEY_NAME% /v %VALUE_NAME% 2>nul || (echo Build requires VisualStudio 2010! & exit /b 1)
+reg query %KEY_NAME% /v %VALUE_NAME% 2>nul || (echo Build requires VisualStudio 2013! & exit /b 1)
 
 REM query the value. pipe it through findstr in order to find the matching line that has the value. only grab token 3 and the remainder of the line. %%b is what we are interested in here.
 set INSTALL_DIR=
