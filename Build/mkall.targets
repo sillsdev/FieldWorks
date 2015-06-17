@@ -612,12 +612,11 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
-		<PropertyGroup>
-			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(fwrt)/Lib/src/icu/bin/gennorm2.exe</gennorm2>
-			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
-		</PropertyGroup>
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
+		<!-- In mono2 PropertyGroups can not be inside of targets Conditional Exec is the best available hack for the feature/Dictionary branch -->
+		<Exec Condition="'$(OS)'=='Windows_NT'" Command='"$(fwrt)/Lib/src/icu/bin/gennorm2.exe" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
+		<Exec Condition="'$(OS)'=='Windows_NT'" Command='"$(fwrt)/Lib/src/icu/bin/gennorm2.exe" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
+		<Exec Condition="'$(OS)'=='Unix'" Command='"$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
+		<Exec Condition="'$(OS)'=='Unix'" Command='"$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
 		<Zip Source="@(IcuDataZipFiles)" WorkingDirectory="$(fwrt)/DistFiles" Destination="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" />
 	</Target>
 

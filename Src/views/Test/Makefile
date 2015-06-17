@@ -37,7 +37,7 @@ INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GRENG) -I$(GRFW) -I$(KERNELTEST_SRC)\
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
+	$(shell icu-config --detect-prefix --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
@@ -49,7 +49,7 @@ INCLUDES := \
 
 
 LDLIBS := \
-	$(shell icu-config --ldflags) \
+	$(shell icu-config --detect-prefix --ldflags) \
 	-L$(FWINCLUDE) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \

@@ -36,7 +36,7 @@ INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) -I$(GENERIC_SRC
 INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
+	$(shell icu-config --detect-prefix --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
@@ -47,7 +47,7 @@ INCLUDES := \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 LDLIBS := \
-	$(shell icu-config --ldflags) \
+	$(shell icu-config --detect-prefix --ldflags) \
 	-L$(FWINCLUDE) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
