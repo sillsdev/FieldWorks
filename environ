@@ -15,6 +15,7 @@ ARCH=$(uname -m)
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
+ENC_CONVERTERS=/usr/lib/fieldworks
 
 MONO_RUNTIME=v4.0.30319
 
@@ -33,9 +34,9 @@ ${LD_LIBRARY_PATH}"
 
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
-LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${LD_LIBRARY_PATH}"
+LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
-MONO_GAC_PREFIX="${MONO_SILPKGDIR}:/usr:${MONO_PREFIX}"
+MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGE" ]
 then
@@ -69,11 +70,10 @@ if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
-	[ -d /var/lib/encConverters ] && cp -r /var/lib/encConverters/SIL $FW_CommonAppData \
-		&& cp -r /var/lib/encConverters/registry $FW_CommonAppData
+	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
 fi
 
-MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}"
+MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}:${ENC_CONVERTERS}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable

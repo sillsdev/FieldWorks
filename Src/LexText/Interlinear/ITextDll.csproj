@@ -193,9 +193,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
+    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -209,9 +213,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
+    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
