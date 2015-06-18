@@ -6,7 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++;BuildIcuWindows">
+			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
 	</Target>
 
 	<ItemGroup>
@@ -131,13 +131,5 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
 		<Message Text="Finished building graphite2."/>
-	</Target>
-
-	<Target Name="BuildIcuWindows" Condition="'$(action)'!='clean'">
-		<MSBuild Projects="$(fwrt)\Lib\src\icu\source\allinone\allinone.sln" Targets="common;gennorm2;i18n;makedata;toolutil" Properties="Configuration=Release;Platform=Win32" />
-		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\icutu$(IcuVersion).dll" DestinationFolder="$(fwrt)\DistFiles\Windows"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\gennorm2.exe" DestinationFolder="$(fwrt)\DistFiles\Windows"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 </Project>
