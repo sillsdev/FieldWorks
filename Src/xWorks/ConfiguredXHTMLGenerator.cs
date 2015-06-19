@@ -1210,15 +1210,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var writer = settings.Writer;
 			var cache = settings.Cache;
-			if(String.IsNullOrEmpty(requestedString.Text))
+			if (String.IsNullOrEmpty(requestedString.Text))
 			{
 				return;
 			}
-			if(wsOptions.DisplayWritingSystemAbbreviations)
+			if (wsOptions.DisplayWritingSystemAbbreviations)
 			{
 				writer.WriteStartElement("span");
-				writer.WriteStartAttribute("class", "writingsystemprefix");
-				var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				writer.WriteAttributeString("class", "writingsystemprefix");
+				var prefix = ((IWritingSystem) cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 				writer.WriteString(prefix);
 				writer.WriteEndElement();
 			}

@@ -709,6 +709,55 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_DefinitionOrGlossWorks_WithAbbrev()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+				},
+				DisplayWritingSystemAbbreviations = true
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "DefinitionOrGloss",
+						DictionaryNodeOptions = wsOpts,
+						IsEnabled = true
+					}
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> {senses},
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			var entryOne = CreateInterestingLexEntry();
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseWithdefinitionOrGloss =
+					"//span[@class='sense']/span[@class='definitionorgloss']/span[@class='writingsystemprefix'][normalize-space(text())='Eng']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString())
+					.HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_MLHeadWordVirtualPropWorks()
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
