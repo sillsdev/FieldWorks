@@ -64,12 +64,10 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Opens a new main window for the specified application.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="wndToCopyFrom">The window to copy information from (optional).</param>
 		/// ------------------------------------------------------------------------------------
-		public void OpenNewWindowForApp(FwApp app, Form wndToCopyFrom)
+		public void OpenNewWindowForApp()
 		{
-			if (!FieldWorks.CreateAndInitNewMainWindow(app, false, wndToCopyFrom, false))
+			if (!FieldWorks.CreateAndInitNewMainWindow(false, false))
 			{
 				Debug.Fail("New main window was not created correctly!");
 			}
@@ -82,15 +80,11 @@ namespace SIL.FieldWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the project request.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ChooseLangProject(FwApp app, Form dialogOwner)
+		public void ChooseLangProject()
 		{
-			Debug.Assert(dialogOwner is IFwMainWnd, "OpenExistingProject cannot use this window for copying");
-
-			ProjectId openedProject = FieldWorks.ChooseLangProject(dialogOwner, app);
-			if (openedProject != null && !FieldWorks.OpenExistingProject(openedProject, app, dialogOwner))
+			ProjectId openedProject = FieldWorks.ChooseLangProject();
+			if (openedProject != null && !FieldWorks.OpenExistingProject(openedProject))
 			{
 				Debug.Fail("Failed to open the project specified!");
 			}
@@ -103,12 +97,10 @@ namespace SIL.FieldWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the new project.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public void CreateNewProject(FwApp app, Form dialogOwner)
+		public void CreateNewProject()
 		{
-			ProjectId newProject = FieldWorks.CreateNewProject(dialogOwner, app, app);
+			var newProject = FieldWorks.CreateNewProject();
 			if (newProject != null && !FieldWorks.OpenNewProject(newProject))
 			{
 				Debug.Fail("Failed to open the new project");
@@ -131,14 +123,13 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Lets the user backup any FW databases that are not currently open
 		/// </summary>
-		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// <returns>The path to the backup file, or <c>null</c> if the user cancels the
 		/// backup</returns>
 		/// ------------------------------------------------------------------------------------
-		public string BackupProject(FwApp app, Form dialogOwner)
+		public string BackupProject(Form dialogOwner)
 		{
-			return FieldWorks.BackupProject(dialogOwner, app);
+			return FieldWorks.BackupProject(dialogOwner);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -184,9 +175,9 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <returns>True if the rename was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool RenameProject(string newName, FwApp app)
+		public bool RenameProject(string newName)
 		{
-			return FieldWorks.RenameProject(newName, app);
+			return FieldWorks.RenameProject(newName);
 		}
 
 		/// ------------------------------------------------------------------------------------

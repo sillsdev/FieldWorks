@@ -28,7 +28,6 @@
 	<!-- ************************ commands *********************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
 		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge"/>
 		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages"/>
@@ -51,20 +50,9 @@
 		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdNewWindow" label="_New Window" message="NewWindow"/>
-		<command id="CmdRefresh" label="_Refresh" message="MasterRefresh" icon="Refresh" shortcut="F5" oneatatime="true"/>
-
-		<!-- F5 doesn't seem to work with the open source adapter -->
-		<command id="CmdProjectProperties" label="Field_Works Project Properties..." message="FileProjectProperties"/>
-		<command id="CmdProjectLocation" label="Project Locations..." message="FileProjectLocation"/>
-		<command id="CmdDeleteProject" label="_Delete Project..." message="DeleteProject" icon="Delete"/>
-		<command id="CmdCreateProjectShortcut" label="_Create Shortcut on Desktop" message="CreateShortcut"/>
-		<command id="CmdNewLangProject" label="_New FieldWorks Project..." message="NewLangProject" icon="NewProject"/>
-		<command id="CmdPrint" label="_Print..." message="Print" shortcut="Ctrl+P"/>
 		<command id="CmdProjectUtilities" label="_Utilities..." message="Utilities">
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
-		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
-		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
@@ -96,8 +84,6 @@
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
 			</parameters>
 		</command>
-		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
-		<command id="CmdExport" label="_Export..." message="Export"/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
@@ -114,9 +100,6 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdWritingSystemProperties" label="Se_t up Writing Systems..." message="WritingSystemProperties"/>
-		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject"/>
-		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject"/>
 		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
 			 configuration files of various applications. we could perhaps make it possible to define the label here
 			 using the property value: label="{MainObjectLabel}" and then add to XCore the ability to define this:
@@ -409,7 +392,7 @@
 		 =============================================================================================
 		 Here is a second example:
 		 <item command="CmdNewLangProject"/> this command will appear in all Areas
-		 and has no dfaultVisitble attribute so the default is visible.
+		 and has no defaultVisible attribute so the default is visible.
 		 Examine it's XML definition
 		 <command id="CmdNewLangProject" label="_New FieldWorks Project..."
 		 message="NewLangProject" icon="NewProject"/>
@@ -429,25 +412,9 @@
 	-->
 	<menubar>
 		<menu id="File" label="_File" b4InsertMenu="true">
-			<item command="CmdNewLangProject"/>
-			<item command="CmdChooseLangProject"/>
-			<item label="-" translate="do not translate"/>
-			<menu id="ProjectManagement" label="Project _Management">
-				<item command="CmdProjectProperties"/>
-				<item command="CmdBackup"/>
-				<item command="CmdRestoreFromBackup"/>
-				<item label="-" translate="do not translate"/>
-				<item command="CmdProjectLocation"/>
-				<item command="CmdDeleteProject"/>
-				<item command="CmdCreateProjectShortcut"/>
-			</menu>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdArchiveWithRamp"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdPageSetup"/>
-			<item command="CmdPrint"/>
 			<item label="-" translate="do not translate"/>
 			<menu id="Import" label="_Import">
+				<!-- All Area/Tool specific, not global -->
 				<item command="CmdImportSFMLexicon"/>
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
@@ -455,9 +422,7 @@
 				<item command="CmdImportWordsAndGlossesSfm"/>
 				<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
-				<item command="CmdImportTranslatedLists"/>
 			</menu>
-			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
 		</menu>
 		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true">
@@ -502,8 +467,6 @@
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		</menu>
 		<menu id="View" label="_View" b4InsertMenu="true">
-			<item command="CmdRefresh"/>
-			<item label="-" translate="do not translate"/>
 			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
@@ -550,7 +513,6 @@
 			<item command="CmdFormatStyle"/>
 			<item command="CmdFormatApplyStyle"/>
 			<menu id="WritingSystemMenu" label="_Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo"/>
-			<item command="CmdWritingSystemProperties"/>
 		</menu>
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools">
@@ -564,9 +526,7 @@
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
 				<item command="CmdConfigHomographs"/>
 				<item command="CmdRestoreDefaults"/>
-				<item label="-" translate="do not translate"/>
-				<!-- This Setup Writing Systems... is a copy of the one on the Format menu -->
-				<item command="CmdWritingSystemProperties"/>
+				<!-- CmdAddCustomField goes below "Set up WS menu item -->
 				<item command="CmdAddCustomField" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
@@ -827,7 +787,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<item label="-" translate="do not translate"/>
 			<item command="CmdUndo"/>
 			<item command="CmdRedo"/>
-			<item command="CmdRefresh"/>
+			<!-- DONE <item command="CmdRefresh"/> -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdFirstRecord"/>
 			<item command="CmdPreviousRecord"/>
@@ -947,9 +907,8 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 
 		<property name="InitialArea" value="lexicon" settingsGroup="local"/>
 		<property name="DoLog" bool="true" persist="false"/>
-		<!-- ShowBalloonHelp and ShowMorphBundles are no longer supported in GUI, but still in the code.
+		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
 		So, add a default value here in order to prevent it from persisting -->
-		<property name="ShowBalloonHelp" bool="false" persist="false"/>
 		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
 		<!-- Default splitter values -->
 		<!--		<property name="PartsOfSpeech.editBasic.DataTree-Splitter" intValue="200"/>

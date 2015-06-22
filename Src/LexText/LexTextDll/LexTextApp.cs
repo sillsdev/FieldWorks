@@ -405,7 +405,7 @@ Old Mediator methods/commands
 		internal void ReplaceMainWindow(FwXWindow wndActive)
 		{
 			wndActive.SaveSettings();
-			FwManager.OpenNewWindowForApp(this, null);
+			FwManager.OpenNewWindowForApp();
 			m_windowToCloseOnIdle = wndActive;
 			Application.Idle += CloseOldWindow;
 		}

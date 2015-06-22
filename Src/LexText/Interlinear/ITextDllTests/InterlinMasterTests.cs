@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 		private void DoSetupFixture()
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/Main.xml");
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;

@@ -19,12 +19,10 @@ using System.Collections.Generic;
 using System.Text;
 using L10NSharp;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.XWorks.Archiving;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
@@ -38,9 +36,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
 using System.Diagnostics.CodeAnalysis;
-#if !__MonoCS__
-using NetSparkle;
-#endif
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -944,7 +939,7 @@ namespace SIL.FieldWorks.XWorks
 			// Ensure that the new window opens in the same tool and location as this window.
 			// See LT-1648.
 			SaveSettings();
-			m_app.FwManager.OpenNewWindowForApp(m_app, this);
+			m_app.FwManager.OpenNewWindowForApp();
 			return true;
 		}
 
@@ -1015,30 +1010,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			//there appears to be a problem with the DotNetBar balloon help which causes
-			//it to crash when the user hovers over something that should have a balloon but that window
-			//is behind a modeless dialog.
-			var balloonActive = m_propertyTable.GetBoolProperty("ShowBalloonHelp", false);
-			m_propertyTable.SetProperty("ShowBalloonHelp", false, true);
+			m_delegate.FileOpen();
 
-			m_delegate.FileOpen(this);
-
-			m_propertyTable.SetProperty("ShowBalloonHelp", balloonActive, true);
-
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="command"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnNewLangProject(object command)
-		{
-			CheckDisposed();
-			m_delegate.FileNew(this);
 			return true;
 		}
 
@@ -1063,55 +1036,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handle whether to enable Archive With RAMP menu item (enabled iff properly installed)
-		/// </summary>
-		/// <param name="command">Not used</param>
-		/// <param name="display">Display properties</param>
-		/// <returns>true (handled)</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnDisplayArchiveWithRamp(object command, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = ReapRamp.Installed;
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle click on Archive With RAMP menu item
-		/// </summary>
-		/// <param name="command">Not used</param>
-		/// <returns>true (handled)</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnArchiveWithRamp(object command)
-		{
-			CheckDisposed();
-
-			// prompt the user to select or create a FieldWorks backup
-			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
-
-			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
-				return true;
-
-			// show the RAMP dialog
-			ReapRamp ramp = new ReapRamp();
-			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_propertyTable, m_app, Cache);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Display the project properties dialog
-		/// </summary>
-		/// <param name="args"></param>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnFileProjectProperties(object command)
-		{
-			LaunchProjPropertiesDlg(false);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Exits the application :)
 		/// </summary>
 		/// <param name="param"></param>
@@ -1122,65 +1046,6 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			m_delegate.FileExit();
 			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Launches the proj properties DLG.
-		/// </summary>
-		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
-		/// ------------------------------------------------------------------------------------
-		private void LaunchProjPropertiesDlg(bool startOnWSPage)
-		{
-			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
-				return;
-
-			FdoCache cache = Cache;
-			bool fDbRenamed = false;
-			string sProject = cache.ProjectId.Name;
-			string sProjectOrig = sProject;
-			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
-			{
-				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
-				if (startOnWSPage)
-					dlg.StartWithWSPage();
-				if (dlg.ShowDialog(this) != DialogResult.Abort)
-				{
-					fDbRenamed = dlg.ProjectNameChanged();
-					if (fDbRenamed)
-					{
-						sProject = dlg.ProjectName;
-					}
-					bool fFilesMoved = false;
-					if (dlg.LinkedFilesChanged())
-					{
-						fFilesMoved = m_app.UpdateExternalLinks(sLinkedFilesRootDir);
-					}
-					// no need for any of these refreshes if entire window has been/will be
-					// destroyed and recreated.
-					if (!fDbRenamed && !fFilesMoved)
-					{
-						m_propertyTable.SetProperty("DocumentName", cache.ProjectId.UiName, true);
-						m_propertyTable.SetPropertyPersistence("DocumentName", false);
-					}
-				}
-			}
-			if (fDbRenamed)
-				m_app.FwManager.RenameProject(sProject, m_app);
-		}
-
-		private void OnProjectPropertiesChanged(object sender, EventArgs eventArgs)
-		{
-			// this event is fired before the Project Properties dialog is closed, so that we have a chance
-			// to refresh everything before Paint events start getting fired, which can cause problems if
-			// any writing systems are removed that a rootsite is currently displaying
-			var dlg = (FwProjPropertiesDlg) sender;
-			if (dlg.WritingSystemsChanged())
-			{
-				if (m_app is FwXApp)
-					((FwXApp)m_app).OnMasterRefresh(null);
-			}
 		}
 
 		/// <summary>
@@ -1203,22 +1068,6 @@ namespace SIL.FieldWorks.XWorks
 			return oldName;
 		}
 
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Display the project properties dialog, but starting with the WS page.
-		/// </summary>
-		/// <param name="arg"></param>
-		/// ------------------------------------------------------------------------------------
-		public bool OnWritingSystemProperties(object arg)
-		{
-			CheckDisposed();
-
-			LaunchProjPropertiesDlg(true);
-			return true;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is very similar to OnUpdateEditCut, but for xCore applications.
@@ -1232,82 +1081,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			display.Enabled = true;
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the File/Backup and Restore menu command
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns>true</returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnRestoreAProject(object arg)
-		{
-			m_app.FwManager.RestoreProject(m_app, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the File/Restore menu command
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnFileProjectLocation(object arg)
-		{
-			m_app.FwManager.FileProjectLocation(m_app, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Updates the enabled state of the File Project Sharing Location menu item
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayFileProjectLocation(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the File/Backup and Restore menu command
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns>true</returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnBackupThisProject(object arg)
-		{
-			SaveSettings(); // so they can be backed up!
-			m_app.FwManager.BackupProject(m_app, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the File/"Project Management"/Delete... menu command
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns><c>true</c> if handled, otherwise <c>false</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDeleteProject(object args)
-		{
-			m_app.FwManager.DeleteProject(m_app, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Disables/enables the File/"Project Management"/Delete... menu item
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayDeleteProject(object commandObject, ref UIItemDisplayProperties display)
-		{
 			display.Enabled = true;
 			return true;
 		}
@@ -1499,7 +1272,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Called in FwXApp.OnMasterRefresh AFTER clearing the cache, to reset everything.
 		/// </summary>
 		/// <returns></returns>
-		public bool FinishRefresh()
+		public void FinishRefresh()
 		{
 			CheckDisposed();
 
@@ -1510,8 +1283,6 @@ namespace SIL.FieldWorks.XWorks
 
 			Refresh();
 			ResumeLayout(true);
-
-			return true;
 		}
 
 
@@ -1742,20 +1513,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the Create Shortcut on Desktop menu/toolbar item.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnCreateShortcut(object args)
-		{
-			CheckDisposed();
-
-			return m_delegate.OnCreateShortcut(args);
-		}
-
 		/// <summary>
 		/// return an array of all of the objects which should
 		/// 1) be queried when looking for someone to deliver a message to
@@ -1769,68 +1526,6 @@ namespace SIL.FieldWorks.XWorks
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
 				return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Display this import command everywhere.
-		/// </summary>
-		public bool OnDisplayImportTranslatedLists(object parameters, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = true;
-			display.Visible = true;
-			return true;
-		}
-
-		/// <summary>
-		/// Import a file contained translated strings for one or more lists.
-		/// </summary>
-		/// <remarks>See FWR-1739.</remarks>
-		public bool OnImportTranslatedLists(object commandObject)
-		{
-			string filename = null;
-			// ActiveForm can go null (see FWNX-731), so cache its value, and check whether
-			// we need to use 'this' instead (which might be a better idea anyway).
-			var form = ActiveForm;
-			if (form == null)
-				form = this;
-			using (var dlg = new OpenFileDialogAdapter())
-			{
-				dlg.CheckFileExists = true;
-				dlg.RestoreDirectory = true;
-				dlg.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
-				dlg.ValidateNames = true;
-				dlg.Multiselect = false;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
-				if (dlg.ShowDialog(form) != DialogResult.OK)
-					return true;
-				filename = dlg.FileName;
-			}
-#if DEBUG
-			var dtBegin = DateTime.Now;
-#endif
-			using (new WaitCursor(form, true))
-			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() => ImportTranslatedLists(filename));
-			}
-#if DEBUG
-			var dtEnd = DateTime.Now;
-			var span = new TimeSpan(dtEnd.Ticks - dtBegin.Ticks);
-			Debug.WriteLine(String.Format("Total elapsed time for loading translated list(s) from {0} and handling PropChanges = {1}",
-				filename, span));
-#endif
-			return true;
-		}
-
-		private void ImportTranslatedLists(string filename)
-		{
-			using (var dlg = new ProgressDialogWithTask(this))
-			{
-				dlg.AllowCancel = true;
-				dlg.Maximum = 200;
-				dlg.Message = filename;
-				dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
-			}
 		}
 
 		#endregion // XCore Message Handlers
@@ -1976,21 +1671,6 @@ namespace SIL.FieldWorks.XWorks
 				m_mediator.SendMessage("FollowLink", m_startupLink);
 			UpdateControls();
 			return true;
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the data objects cache.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public FdoCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_propertyTable.GetValue<FdoCache>("cache", null);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2157,7 +1837,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// We don't want to clear the cache... just update the view.
 			m_mediator.SendMessage("Refresh", this);
-			//OnMasterRefresh(null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2191,6 +1870,12 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // IRecordListOwner implementation
 
 		#region implementation of (some of) IMainWindowDelegateCallbacks
+
+		/// <summary>
+		/// Get the FdoCache used in the window
+		/// </summary>
+		public FdoCache Cache { get { return FwApp.App.Cache; } }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the style list helper for the paragraph styles combo box on the formatting

@@ -699,8 +699,6 @@ namespace XCore
 			m_propertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
 			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 
-			SetApplicationName();
-
 			//nb:some things might be sensitive to when this actually happens
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
@@ -872,15 +870,6 @@ namespace XCore
 			}
 			Debug.Assert(adaptorAssembly != null, "XCore Could not find an adapter library DLL to use.");
 			return adaptorAssembly;
-		}
-
-		private void SetApplicationName()
-		{
-			string applicationName = XmlUtils.GetAttributeValue(m_windowConfigurationNode, "label", "application name?");
-			ErrorReporter.AddProperty("Application", applicationName);
-			m_propertyTable.SetProperty("applicationName", applicationName, true);
-			m_propertyTable.SetPropertyPersistence("applicationName", false);
-			UpdateCaptionBar();
 		}
 
 		/// <summary>
@@ -1917,9 +1906,6 @@ namespace XCore
 					}
 					break;
 
-				case "DocumentName":
-					UpdateCaptionBar();
-					break;
 				// Obsolete case "ShowSidebarControls": // Fall through.
 				case "ShowSidebar": // Fall through.
 				// Obsolete case "ShowTreeBar": // Fall through.
@@ -2166,18 +2152,6 @@ namespace XCore
 
 			// Let's get the overridden value from the toolConfiguration xml file ...
 			LoadDefaultProperties(configurationNode);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show the document name and application name in the caption bar.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void UpdateCaptionBar()
-		{
-			Text = String.Format("{0} - {1}",
-				m_propertyTable.GetStringProperty("DocumentName", ""),
-				m_propertyTable.GetStringProperty("applicationName", "application name???")); ;
 		}
 
 		#region Helper methods

@@ -55,10 +55,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Opens a new main window for the specified application.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="wndToCopyFrom">The window to copy information from (optional).</param>
 		/// ------------------------------------------------------------------------------------
-		void OpenNewWindowForApp(FwApp app, Form wndToCopyFrom);
+		void OpenNewWindowForApp();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -67,10 +65,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the project request.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		void ChooseLangProject(FwApp app, Form dialogOwner);
+		void ChooseLangProject();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -79,10 +75,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the new project.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		void CreateNewProject(FwApp app, Form dialogOwner);
+		void CreateNewProject();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -97,12 +91,11 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Lets the user backup any FW databases that are not currently open
 		/// </summary>
-		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// <returns>The path to the backup file, or <c>null</c> if the user cancels the
 		/// backup</returns>
 		/// ------------------------------------------------------------------------------------
-		string BackupProject(FwApp app, Form dialogOwner);
+		string BackupProject(Form dialogOwner);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -146,10 +139,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Rename the project used by this FieldWorks to the specified new name.
 		/// </summary>
 		/// <param name="newName">The new name</param>
-		/// <param name="app">The calling application</param>
 		/// <returns>True if the rename was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		bool RenameProject(string newName, FwApp app);
+		bool RenameProject(string newName);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

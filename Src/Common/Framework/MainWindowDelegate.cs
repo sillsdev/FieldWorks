@@ -3,23 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: MainWindowDelegate.cs
-
 using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -104,15 +99,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// dialog. (apps that do not use style levels in their stylesheets can pass 0)</param>
 		/// ------------------------------------------------------------------------------------
 		void ShowApplyStyleDialog(string paraStyleName, string charStyleName, int maxStyleLevel);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Create a desktop shortcut for the current application and database.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		bool OnCreateShortcut(object args);
 	}
 	#endregion
 
@@ -250,7 +236,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private FdoCache Cache
 		{
-			get { return m_callbacks.Cache; }
+			get { return m_callbacks.Cache; } // Not null for FLEx
 		}
 
 		/// <summary>
@@ -273,7 +259,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private StyleComboListHelper ParaStyleListHelper
 		{
-			get	{ return m_callbacks.ParaStyleListHelper; }
+			get { return m_callbacks.ParaStyleListHelper; } // Always null for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -283,7 +269,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private StyleComboListHelper CharStyleListHelper
 		{
-			get {return m_callbacks.CharStyleListHelper;}
+			get { return m_callbacks.CharStyleListHelper; } // Always null for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -293,7 +279,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private ComboBox WritingSystemSelector
 		{
-			get { return m_callbacks.WritingSystemSelector; }
+			get { return m_callbacks.WritingSystemSelector; } // Always null for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -303,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private int MaxStyleLevelToShow
 		{
-			get { return m_callbacks.MaxStyleLevelToShow; }
+			get { return m_callbacks.MaxStyleLevelToShow; } // Always Int32.MaxValue for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -314,7 +300,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		int HvoAppRootObject
 		{
-			get { return m_callbacks.HvoAppRootObject; }
+			get { return m_callbacks.HvoAppRootObject; } // Always Cache.LanguageProject.LexDbOA.Hvo for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -324,7 +310,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private IRootSite ActiveView
 		{
-			get { return m_callbacks.ActiveView; }
+			get { return m_callbacks.ActiveView; } // Always m_viewHelper.ActiveView for FLEx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -334,7 +320,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private FwEditingHelper FwEditingHelper
 		{
-			get {return m_callbacks.FwEditingHelper; }
+			get { return m_callbacks.FwEditingHelper; } // Always (ActiveView == null) ? null : (ActiveView.EditingHelper as FwEditingHelper) for FELx.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -344,7 +330,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private EditingHelper EditingHelper
 		{
-			get {return m_callbacks.EditingHelper; }
+			get {return m_callbacks.EditingHelper; } // Not null in FLEx, but complex.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -356,7 +342,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return m_callbacks.StyleSheet;
+				return m_callbacks.StyleSheet; // Not null in FLEx, but complex.
 			}
 		}
 
@@ -369,7 +355,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return m_callbacks.ActiveStyleSheet;
+				return m_callbacks.ActiveStyleSheet; // Not null in FLEx, but complex.
 			}
 		}
 		/// ------------------------------------------------------------------------------------
@@ -412,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return m_callbacks.StyleSheetOwningFlid;
+				return m_callbacks.StyleSheetOwningFlid; // Complex in FLEx.
 			}
 		}
 
@@ -421,22 +407,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// The "Open Existing Project" menu option has been selected. Display the Choose
 		/// Language Project dialog.
 		/// </summary>
-		/// <param name="owner">The owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FileOpen(Form owner)
+		public void FileOpen()
 		{
-			m_app.FwManager.ChooseLangProject(m_app, owner);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The "New FieldWorks Project" menu option has been selected. Display the New
-		/// FieldWorks Project dialog.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void FileNew(Form owner)
-		{
-			m_app.FwManager.CreateNewProject(m_app, owner);
+			m_app.FwManager.ChooseLangProject();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -490,13 +464,13 @@ namespace SIL.FieldWorks.Common.Framework
 			if (Cache == null)
 				return;
 
-			if (ParaStyleListHelper != null)
+			if (ParaStyleListHelper != null) // Always null in FLEx
 			{
 				ParaStyleListHelper.ShowOnlyStylesOfType = StyleType.kstParagraph;
 				ParaStyleListHelper.AddStyles(ActiveStyleSheet);
 			}
 
-			if (CharStyleListHelper != null)
+			if (CharStyleListHelper != null) // Always null in FLEx
 			{
 				CharStyleListHelper.ShowOnlyStylesOfType = StyleType.kstCharacter;
 				CharStyleListHelper.AddStyles(ActiveStyleSheet);
@@ -512,9 +486,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void UpdateStyleComboBoxValue(IRootSite rootsite)
 		{
+			// Not called in FLEx
 			// If we don't have a paraStyleListHelper, we can't update the paragraph or
 			// character style combo.
-			if (ParaStyleListHelper == null || rootsite == null || rootsite.EditingHelper == null)
+			if (ParaStyleListHelper == null /*FLEx is always null here, so the rest of the code isn't done.*/ || rootsite == null || rootsite.EditingHelper == null)
 				return;
 
 			FwEditingHelper fwEditingHelper = rootsite.EditingHelper as FwEditingHelper;
@@ -560,7 +535,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void UpdateWritingSystemSelectorForSelection(IVwRootBox rootbox)
 		{
-			ComboBox box = WritingSystemSelector;
+			ComboBox box = WritingSystemSelector; // WritingSystemSelector is always null for FLEx
 			if (box == null || rootbox == null)
 				return;
 			int hvoWs = SelectionHelper.GetFirstWsOfSelection(rootbox.Selection);
@@ -584,7 +559,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void RefreshParaStyleComboBoxList(IStStyle style, IRootSite view)
 		{
-			if (m_callbacks.PopulateParaStyleListOverride())
+			if (m_callbacks.PopulateParaStyleListOverride()) // FLEx always returns false.
 				return;
 
 			if (ParaStyleListHelper.ActiveView == view && style != null &&
@@ -620,6 +595,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private void RefreshCharStyleComboBoxList(ContextValues styleContext, IRootSite view)
 		{
+			// Never called in FLEx.
 			CharStyleListHelper.IncludeStylesWithContext.Clear();
 
 			FwEditingHelper editingHelper = view.EditingHelper as FwEditingHelper;
@@ -841,127 +817,6 @@ namespace SIL.FieldWorks.Common.Framework
 				helpAboutWnd.ShowDialog();
 			}
 			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the Create Shortcut on Desktop menu/toolbar item.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool OnCreateShortcut(object args)
-		{
-			return CreateShortcut(Environment.GetFolderPath(
-				Environment.SpecialFolder.DesktopDirectory));
-		}
-
-		/// <summary>
-		/// Create shortcut to current project in directory, if exists.
-		/// </summary>
-		internal bool CreateShortcut(string directory)
-		{
-			if (!FileUtils.DirectoryExists(directory))
-			{
-				MessageBoxUtils.Show(String.Format(
-					"Error: Cannot create project shortcut because destination directory '{0}' does not exist.",
-					directory));
-				return true;
-			}
-
-			var arguments = "-" + FwAppArgs.kProject + " \"" + Cache.ProjectId.Handle + "\"";
-			var description = ResourceHelper.FormatResourceString(
-				"kstidCreateShortcutLinkDescription", Cache.ProjectId.UiName,
-				m_app.ApplicationName);
-
-			if (MiscUtils.IsUnix)
-				return CreateProjectLauncher(arguments, description, directory);
-
-			return CreateProjectShortcut(arguments, description, directory);
-		}
-
-		/// <summary>
-		/// Create Windows shortcut in directory (such as Desktop) to open TE or Flex project.
-		/// </summary>
-		private bool CreateProjectShortcut(string applicationArguments,
-			string shortcutDescription, string directory)
-		{
-			IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShellClass();
-
-			string filename = Cache.ProjectId.UiName;
-			filename = Path.ChangeExtension(filename, "lnk");
-			string linkPath = Path.Combine(directory, filename);
-
-			IWshRuntimeLibrary.IWshShortcut link =
-				(IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(linkPath);
-			if (link.FullName != linkPath)
-			{
-				var msg = string.Format(FrameworkStrings.ksCannotCreateShortcut,
-					m_app.ProductExecutableFile + " " + applicationArguments);
-				MessageBox.Show(Form.ActiveForm, msg,
-					FrameworkStrings.ksCannotCreateShortcutCaption, MessageBoxButtons.OK,
-					MessageBoxIcon.Asterisk);
-				return true;
-			}
-			link.TargetPath = m_app.ProductExecutableFile;
-			link.Arguments = applicationArguments;
-			link.Description = shortcutDescription;
-			link.IconLocation = link.TargetPath + ",0";
-			link.Save();
-
-			return true;
-		}
-
-		/// <summary>
-		/// Create Gnome/KDE launcher in directory (such as Desktop) to open TE or Flex project
-		/// in Linux. Returns true if successful, otherwise false.
-		/// FWNX-458
-		/// </summary>
-		private bool CreateProjectLauncher(string applicationArguments,
-			string launcherDescription, string directory)
-		{
-			var projectName = Cache.ProjectId.UiName;
-			var pathExtension = ".desktop";
-			var launcherPath = MakeLauncherPath(directory, projectName, null, pathExtension);
-
-			// Choose a different name if already in use
-			int tailNumber = 2;
-			while (FileUtils.SimilarFileExists(launcherPath))
-			{
-				var tail = "-" + tailNumber.ToString();
-				launcherPath = MakeLauncherPath(directory, projectName, tail, pathExtension);
-				tailNumber++;
-			}
-
-			const string applicationExecutablePath = "fieldworks-flex";
-			const string iconPath = "fieldworks-flex";
-			if (string.IsNullOrEmpty(applicationExecutablePath))
-				return false;
-
-			string content = String.Format(
-				"[Desktop Entry]{0}" +
-				"Version=1.0{0}" +
-				"Terminal=false{0}" +
-				"Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
-				"Icon=" + iconPath + "{0}" +
-				"Type=Application{0}" +
-				"Name=" + projectName + "{0}" +
-				"Comment=" + launcherDescription + "{0}", Environment.NewLine);
-
-			// Don't write a BOM
-			using (var launcher = FileUtils.OpenFileForWrite(launcherPath,
-				new UTF8Encoding(false)))
-			{
-				launcher.Write(content);
-
-				FileUtils.SetExecutable(launcherPath);
-
-				return true;
-			}
-		}
-
-		private static string MakeLauncherPath(string directory, string projectName,
-			string tail, string pathExtension)
-		{
-			return Path.Combine(directory, projectName + tail + pathExtension);
 		}
 	}
 }

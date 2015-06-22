@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create the client windows and add correspnding stuff to the sidebar, View menu,  etc.
+		/// Create the client windows and add corresponding stuff to the sidebar, View menu,  etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		void InitAndShowClient();
@@ -91,6 +91,23 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
 		bool OnEditFind(object args);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Prepare to refresh the main window and its IAreas and ITools.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		void PrepareToRefresh();
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finish refreshing the main window and its IAreas and ITools.
+		/// </summary>
+		/// <remarks>
+		/// This should call Refresh on real window implementations,
+		/// after everything else is done.</remarks>
+		/// ------------------------------------------------------------------------------------
+		void FinishRefresh();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

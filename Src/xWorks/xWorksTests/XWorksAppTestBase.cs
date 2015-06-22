@@ -267,10 +267,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Opens a new main window for the specified application.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="wndToCopyFrom">The window to copy information from (optional).</param>
 		/// ------------------------------------------------------------------------------------
-		public void OpenNewWindowForApp(FwApp app, Form wndToCopyFrom)
+		public void OpenNewWindowForApp()
 		{
 			throw new NotImplementedException();
 		}
@@ -282,10 +280,8 @@ namespace SIL.FieldWorks.XWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the project request.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ChooseLangProject(FwApp app, Form dialogOwner)
+		public void ChooseLangProject()
 		{
 			throw new NotImplementedException();
 		}
@@ -297,10 +293,8 @@ namespace SIL.FieldWorks.XWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the new project.
 		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="dialogOwner">The owner for the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public void CreateNewProject(FwApp app, Form dialogOwner)
+		public void CreateNewProject()
 		{
 			throw new NotImplementedException();
 		}
@@ -324,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public string BackupProject(FwApp app, Form dialogOwner)
+		public string BackupProject(Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -365,10 +359,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Rename the project used by this FieldWorks to the specified new name.
 		/// </summary>
 		/// <param name="newName">The new name</param>
-		/// <param name="app">The running application</param>
 		/// <returns>True if the rename was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool RenameProject(string newName, FwApp app)
+		public bool RenameProject(string newName)
 		{
 			throw new NotImplementedException();
 		}
@@ -520,7 +513,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Init();
 			Init(); // subclass version must create and set m_application
 
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/Main.xml");
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
 
 			// Setup for possibility loading [GetPossibilityOrCreateOne()]
 			// and test data creation

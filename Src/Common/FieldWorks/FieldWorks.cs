@@ -289,7 +289,7 @@ namespace SIL.FieldWorks
 				}
 				else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
 				{
-					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
+					ProjectId projId = ChooseLangProject();
 					if (projId == null)
 						return 1; // User probably canceled
 					try
@@ -1393,22 +1393,18 @@ namespace SIL.FieldWorks
 		/// the project if no FieldWorks processes are running for the specified project.
 		/// </summary>
 		/// <param name="projectId">The project id.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="wndCopyFrom">The window to copy from (optional).</param>
 		/// <returns>True if successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static bool OpenExistingProject(ProjectId projectId, FwApp app, Form wndCopyFrom)
+		internal static bool OpenExistingProject(ProjectId projectId)
 		{
 			if (projectId == null)
 				throw new ArgumentNullException("projectId");
-			if (app != FwApp.App)
-				throw new ArgumentException("Invalid application", "app");
 
 			if (projectId.Equals(s_projectId))
 			{
 				// We're trying to open this same project. Just open a new window for the
 				// specified application
-				return CreateAndInitNewMainWindow(app, false, wndCopyFrom, false);
+				return CreateAndInitNewMainWindow(false, false);
 			}
 
 			if (TryFindExistingProcess(projectId, new FwAppArgs(projectId.Handle, null, Guid.Empty)))
@@ -1460,10 +1456,9 @@ namespace SIL.FieldWorks
 		/// Rename the database.
 		/// </summary>
 		/// <param name="dbNewName">new basename desired</param>
-		/// <param name="app">The calling application</param>
 		/// <returns>True if the rename was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static bool RenameProject(string dbNewName, FwApp app)
+		internal static bool RenameProject(string dbNewName)
 		{
 			// TODO (FWR-722): Also move project-specific registry settings
 			ProjectId projId = s_projectId;
@@ -1489,8 +1484,7 @@ namespace SIL.FieldWorks
 
 			if (s_renameSuccessful)
 			{
-				FwApp newApp = FwApp.App;
-				newApp.RegistrySettings.LatestProject = projId.Handle;
+				FwApp.App.RegistrySettings.LatestProject = projId.Handle;
 			}
 			return s_renameSuccessful;
 		}
@@ -1611,11 +1605,11 @@ namespace SIL.FieldWorks
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
-							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
+							projectToTry = CreateNewProject();
 							Debug.Assert(projectToTry == null || projectToTry.IsValid);
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Open:
-							projectToTry = ChooseLangProject(null, helpTopicProvider);
+							projectToTry = ChooseLangProject();
 							try
 							{
 								if (projectToTry != null)
@@ -1664,7 +1658,7 @@ namespace SIL.FieldWorks
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
-							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
+							projectToTry = CreateNewProject();
 							if (projectToTry != null)
 							{
 							var projectLaunched = LaunchProject(args, ref projectToTry);
@@ -1712,33 +1706,28 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Lets the user select an existing language project.
 		/// </summary>
-		/// <param name="dialogOwner">The owner of the dialog.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The chosen project, or null if no project was chosen</returns>
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "activeWindow is a reference")]
-		internal static ProjectId ChooseLangProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
+		internal static ProjectId ChooseLangProject()
 		{
-			if (!FwNewLangProject.CheckProjectDirectory(dialogOwner, helpTopicProvider))
+			if (!FwNewLangProject.CheckProjectDirectory(FwApp.App.ActiveMainWindow, FwApp.App))
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
+			using (var dlg = new ChooseLangProjectDialog(FwApp.App, false))
 			{
-				dlg.ShowDialog(dialogOwner);
-				var app = helpTopicProvider as IApp;
-				if (app != null)
+				dlg.ShowDialog(FwApp.App.ActiveMainWindow);
+				var app = FwApp.App as IApp;
+				var activeWindow = app.ActiveMainWindow;
+				if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 				{
-					var activeWindow = app.ActiveMainWindow;
-					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
-					{
-						var activeWindowInterface = (IFwMainWnd)activeWindow;
-						activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-							PropertyTable.SettingsGroup.LocalSettings,
-							true);
-					}
+					var activeWindowInterface = (IFwMainWnd)activeWindow;
+					activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+						PropertyTable.SettingsGroup.LocalSettings,
+						true);
 				}
 
 				if (dlg.DialogResult == DialogResult.OK)
@@ -1757,20 +1746,17 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Lets the user create a new project
 		/// </summary>
-		/// <param name="dialogOwner">The owner of the dialog (and any message boxes shown)</param>
-		/// <param name="app">This is needed for opening an existing project.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>
 		/// The project that was created (and needs to be loaded), or null if the user
 		/// canceled.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
+		internal static ProjectId CreateNewProject()
 		{
 			using (var dlg = new FwNewLangProject())
 			{
-				dlg.SetDialogProperties(helpTopicProvider);
-				switch (dlg.DisplayDialog(dialogOwner))
+				dlg.SetDialogProperties(FwApp.App);
+				switch (dlg.DisplayDialog(FwApp.App.ActiveMainWindow))
 				{
 					case DialogResult.OK:
 						if (dlg.IsProjectNew)
@@ -1782,7 +1768,7 @@ namespace SIL.FieldWorks
 							// null for the ProjectId so the caller of this method does not try to
 							// create a new project.
 							ProjectId projectId = new ProjectId(dlg.GetDatabaseFile());
-							OpenExistingProject(projectId, app, dialogOwner);
+							OpenExistingProject(projectId);
 							return null;
 						}
 					case DialogResult.Abort:
@@ -1790,7 +1776,7 @@ namespace SIL.FieldWorks
 						// in the OnLoad method). We can't just catch that exception here (probably
 						// because of the extra message loop the dialog has), so we close the dialog
 						// and return Abort.
-						MessageBox.Show(dialogOwner,
+						MessageBox.Show(FwApp.App.ActiveMainWindow,
 							ResourceHelper.GetResourceString("kstidNewProjError"),
 							ResourceHelper.GetResourceString("kstidMiscError"));
 						break;
@@ -1821,12 +1807,11 @@ namespace SIL.FieldWorks
 		/// Backup the project.
 		/// </summary>
 		/// <param name="dialogOwner">The dialog owner.</param>
-		/// <param name="fwApp">The FW application.</param>
 		/// <returns>The path to the backup file, or <c>null</c></returns>
 		/// ------------------------------------------------------------------------------------
-		internal static string BackupProject(Form dialogOwner, FwApp fwApp)
+		internal static string BackupProject(Form dialogOwner)
 		{
-			using (BackupProjectDlg dlg = new BackupProjectDlg(Cache, fwApp))
+			using (BackupProjectDlg dlg = new BackupProjectDlg(Cache, FwApp.App))
 			{
 				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
 				{
@@ -2707,28 +2692,25 @@ namespace SIL.FieldWorks
 		/// Creates a new main window and initializes it. The specified App is responsible for
 		/// creating the proper main window type.
 		/// </summary>
-		/// <param name="app">The app</param>
 		/// <param name="fNewCache"><c>true</c> if we didn't reuse an existing cache</param>
-		/// <param name="wndCopyFrom">The window to copy from (optional).</param>
 		/// <param name="fOpeningNewProject"><c>true</c> if opening a new project</param>
 		/// <returns>True if the main window was create and initialized successfully</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static bool CreateAndInitNewMainWindow(FwApp app, bool fNewCache, Form wndCopyFrom,
+		internal static bool CreateAndInitNewMainWindow(bool fNewCache,
 			bool fOpeningNewProject)
 		{
-			Debug.Assert(app == FwApp.App);
-
-			WriteSplashScreen(app.GetResourceString("kstidInitWindow"));
+			WriteSplashScreen(FwApp.App.GetResourceString("kstidInitWindow"));
 
 			Form fwMainWindow;
 			try
 			{
 				// Construct the new window, of the proper derived type
-				fwMainWindow = app.NewMainAppWnd(s_splashScreen, fNewCache, wndCopyFrom, fOpeningNewProject);
+				var currentWindow = FwApp.App.ActiveMainWindow;
+				fwMainWindow = FwApp.App.NewMainAppWnd(s_splashScreen, fNewCache, currentWindow, fOpeningNewProject);
 
 				// Let the application do its initialization of the new window
 				using (new DataUpdateMonitor(fwMainWindow, "Creating new main window"))
-					app.InitAndShowMainWindow(fwMainWindow, wndCopyFrom);
+					FwApp.App.InitAndShowMainWindow(fwMainWindow, currentWindow);
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
@@ -2989,7 +2971,7 @@ namespace SIL.FieldWorks
 					progressDlg.IsIndeterminate = false;
 			}
 
-			return CreateAndInitNewMainWindow(app, true, null, false);
+			return CreateAndInitNewMainWindow(true, false);
 		}
 
 		/// ------------------------------------------------------------------------------------

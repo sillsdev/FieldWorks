@@ -1367,7 +1367,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					return true;
 
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				if (app.FwManager.RenameProject(revisedProjName, app))
+				if (app.FwManager.RenameProject(revisedProjName))
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...

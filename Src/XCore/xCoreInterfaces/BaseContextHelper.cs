@@ -186,8 +186,6 @@ namespace XCore
 			path = Path.Combine(Path.GetDirectoryName(configParamatersBasePath), path);
 			m_document.Load(path);
 			//m_items = m_document.SelectNodes("strings/item");
-
-			ShowAlways = m_propertyTable.GetBoolProperty("ShowBalloonHelp", true);
 		}
 
 		public	IxCoreColleague[] GetMessageTargets()
@@ -350,24 +348,6 @@ namespace XCore
 
 			AddControls(target, helpid, caption, text);
 			return true;	//we handled this.
-		}
-
-		/// summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// /summary>
-		public void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			//			Debug.WriteLine("record clerk ("+this.m_vectorName + ") saw OnPropertyChanged " + name);
-			switch(name)
-			{
-				case "ShowBalloonHelp":
-					ShowAlways = m_propertyTable.GetBoolProperty(name, true);
-					break;
-				default:
-					break;
-			}
 		}
 	}
 }

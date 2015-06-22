@@ -194,7 +194,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -254,10 +253,7 @@
     <Compile Include="AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Archiving\ArchivingExtensions.cs" />
-    <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="GlobalSettingServices.cs" />
-    <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
       <SubType>Form</SubType>

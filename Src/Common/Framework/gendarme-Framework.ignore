@@ -12,6 +12,7 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.FwApp::PreFilterMessage(System.Windows.Forms.Message&)
+M: SIL.FieldWorks.Common.Framework.FwMainWnd::LaunchProjPropertiesDlg(System.Boolean)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

@@ -63,8 +63,6 @@ namespace XCore
 		{
 			set
 			{
-//				m_balloon.ShowAlways= value;
-//				m_balloon.Enabled= value;
 			}
 		}
 

@@ -1,12 +1,18 @@
 ﻿using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.XWorks.Archiving;
+using SIL.Archiving;
 
-namespace SIL.FieldWorks.XWorks
+namespace SIL.FieldWorks.Common.Framework
 {
+	/// <summary>
+	/// Test Archiving system
+	/// </summary>
 	[TestFixture]
 	public class ArchivingTests
 	{
+		/// <summary>
+		/// See that AppendLineFormat extension works right.
+		/// </summary>
 		[Test]
 		public void StringBuilder_AppendLineFormat()
 		{

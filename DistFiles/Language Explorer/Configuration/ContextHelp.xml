@@ -31,20 +31,8 @@
 	<!--
 		  File menu
 		  -->
-	<item id="CmdNewLangProject">Create a new FieldWorks project.</item>
-	<item id="CmdChooseLangProject">Open an existing FieldWorks project.</item>
 	<item id="CmdSave">Save</item>
-	<item id="CmdArchiveWithRamp">Starts RAMP (if it is installed) and prepares an archive package for uploading.</item>
-	<item id="CmdRefresh">Refresh the screen.</item>
-	<item id="CmdPageSetup">Determine page layout options for printing.</item>
-	<item id="CmdPrint">Print</item>
 	<item id="CmdImport">Import an existing lexicon.</item>
-	<item id="CmdExport">Export this FieldWorks project to a file.</item>
-	<item id="CmdBackup">Back up a FieldWorks project.</item>
-	<item id="CmdRestoreFromBackup">Restore a FieldWorks project.</item>
-	<item id="CmdDeleteProject">Delete FieldWorks project.</item>
-	<item id="CmdCreateProjectShortcut">Create a desktop shortcut to this project.</item>
-	<item id="CmdProjectProperties">Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
 	<!-- Send/Receive menu -->
 	<item id="CmdFLExBridge">Send/Receive this Project (lexicon and texts)</item>
 	<item id="CmdViewMessages">View Project questions, merge conflicts, and notifications</item>
@@ -183,7 +171,6 @@
 		 Format menu
 		 -->
 	<item id="CmdFormatStyle">Add, delete, or change styles.</item>
-	<item id="CmdWritingSystemProperties">Add, remove, or change the writing systems specified for this project.</item>
 	<!--
 		 Tools menu
 		 -->
