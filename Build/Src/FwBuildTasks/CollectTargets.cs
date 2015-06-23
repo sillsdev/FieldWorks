@@ -485,7 +485,6 @@ namespace FwBuildTasks
 				case "LexTextControlsTests":			// ~only 8 sec on dev windows, but took longer than 40 sec on mono build machine
 				case "RootSiteTests":			// ~44 sec (overnight 4/15/15)
 				case "BasicUtilsTests":			// ~44 sec (overnight 6/4/15)
-					return 75000;
 				case "TeDialogsTests":			// ~11 sec
 				case "TePrintLayoutTests":				// ~12 sec
 				case "FwPrintLayoutComponentsTests":	// ~13 sec
@@ -506,9 +505,9 @@ namespace FwBuildTasks
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
 
-					return 40000;
+					return 75000;
 				default:
-					return 30000;
+					return 50000;
 			}
 		}
 
