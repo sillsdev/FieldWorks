@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Microsoft.Build.Utilities;
 
 namespace FwBuildTasks
@@ -43,6 +44,7 @@ namespace FwBuildTasks
 		private TaskLoggingHelper Log { get; set; }
 		private XmlDocument m_csprojFile;
 		private XmlNamespaceManager m_namespaceMgr;
+		private Dictionary<string, int> m_timeoutMap;
 
 		public CollectTargets(TaskLoggingHelper log)
 		{
@@ -455,53 +457,27 @@ namespace FwBuildTasks
 		/// Return the timeout for running the tests in the given test project.
 		/// </summary>
 		/// <remarks>
-		/// This could just use the biggest number for everything, but I prefer a finer grain.
-		/// These timings from from a fairly old computer (Dell Precision 390), so should be
-		/// safe for a wide variety of systems.
+		/// The timings for projects are now found in the fw/Build/TestTimeoutValues.xml file and can be changed there
+		/// without having to rebuild the FwBuildTasks dll.
 		/// </remarks>
 		int TimeoutForProject(string project)
 		{
-			switch (project)
+			if(m_timeoutMap == null)
 			{
-				case "xWorksTests":			// ~244 sec (Mono 2/8/2013)
-				case "FDOTests":			// ~143 sec
-					return 420000;
-				case "FwCoreDlgsTests":		// ~122 sec
-				case "TeDllTests":			// ~122 sec (Mono 2/8/2013)
-				case "TeImportExportTests":	// ~90 sec
-					return 240000;
-				case "DiffViewTests":		// ~55 sec
-				case "MGATests":			// ~72 sec
-					return 150000;
-				case "PrintLayoutTests":	// ~22 sec
-				case "ITextDllTests":		// ~26 sec
-				case "DiscourseTests":		// ~36 sec
-				case "TeEditingTests":		// ~30 sec (Mono 2/8/2013)
-				case "SimpleRootSiteTests":	// ~30 sec (Mono 2/8/2013)
-				case "FwCoreDlgControlsTests": // ~34 sec (overnight build machine 4/1/2013)
-				case "TeScrInitializerTests":  // ~29 sec  (overnight build machine 4/23/2013)
-				case "LexTextControlsTests":			// ~only 8 sec on dev windows, but took longer than 40 sec on mono build machine
-					return 75000;
-				case "RootSiteTests":					// ~11 sec
-				case "TeDialogsTests":					// ~11 sec
-				case "TePrintLayoutTests":				// ~12 sec
-				case "FwPrintLayoutComponentsTests":	// ~13 sec
-				case "LexTextDllTests":					// ~24 sec
-				case "TePrintLayoutComponentsTests":	// ~17 sec
-				case "FwControlsTests":					// ~19 sec
-				case "XMLViewsTests":					// ~15 sec (Mono 2/8/2013)\
-				case "ParserUITests":					// ~11 sec (overnight 4/10/13)
-				case "CacheLightTests":					// ~25 sec (overnight 11/6/14)
-				case "ParserCoreTests":
-				case "NotesViewTests":					// ~24 sec (overnight 12/1/14)
-					return 40000;
-				case "PhraseTranslationHelperTests":	// ~8 sec
-				case "CoreImplTests":					// ~9 sec
-				case "DetailControlsTests":				// ~10 sec (Mono 2/8/2013)
-					return 25000;
-				default:
-					return 20000;
+				var timeoutDocument = XDocument.Load(Path.Combine(m_fwroot, "Build", "TestTimeoutValues.xml"));
+				m_timeoutMap = new Dictionary<string, int>();
+				var testTimeoutValuesElement = timeoutDocument.Root;
+				m_timeoutMap["default"] = int.Parse(testTimeoutValuesElement.Attribute("defaultTimeLimit").Value);
+				foreach(var timeoutElement in timeoutDocument.Root.Descendants("TimeoutGroup"))
+				{
+					var timeout = int.Parse(timeoutElement.Attribute("timeLimit").Value);
+					foreach(var projectElement in timeoutElement.Descendants("Project"))
+					{
+						m_timeoutMap[projectElement.Attribute("name").Value] = timeout;
+					}
+				}
 			}
+			return m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"];
 		}
 
 		void ProcessDependencyGraph(StreamWriter writer)

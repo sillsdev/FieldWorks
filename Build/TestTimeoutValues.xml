@@ -1,0 +1,38 @@
+<TestTimeoutValues defaultTimeLimit="25000">
+	<TimeoutGroup timeLimit="420000">
+		<Project name="xWorksTests"/>
+		<Project name="FDOTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="240000">
+		<Project name="FwCoreDlgsTests"/>
+		<Project name="TeDllTests"/>
+		<Project name="TeImportExportTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="150000">
+		<Project name="DiffViewTests"/>
+		<Project name="MGATests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="75000">
+		<Project name="PrintLayoutTests"/>
+		<Project name="ITextDllTests"/>
+		<Project name="DiscourseTests"/>
+		<Project name="SimpleRootSiteTests"/>
+		<Project name="FwCoreDlgControlsTests"/>
+		<Project name="TeScrInitializerTests"/>
+		<Project name="LexTextControlsTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="40000">
+		<Project name="RootSiteTests"/>
+		<Project name="TeDialogsTests"/>
+		<Project name="TePrintLayoutTests"/>
+		<Project name="FwPrintLayoutComponentsTests"/>
+		<Project name="LexTextDllTests"/>
+		<Project name="TePrintLayoutComponentsTests"/>
+		<Project name="FwControlsTests"/>
+		<Project name="XMLViewsTests"/>
+		<Project name="ParserUITests"/>
+		<Project name="CacheLightTests"/>
+		<Project name="ParserCoreTests"/>
+		<Project name="NotesViewTests"/>
+	</TimeoutGroup>
+</TestTimeoutValues>	
