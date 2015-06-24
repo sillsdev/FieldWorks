@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
 
-				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
+				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
 
 				//SUT
 				dcc.PopulateTreeView();
@@ -67,15 +67,15 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CalculateTreeInfo(ref int levels, ref int count, TreeNodeCollection nodes)
 		{
-			if(nodes == null || nodes.Count < 1)
+			if (nodes == null || nodes.Count < 1)
 			{
 				return;
 			}
 			++levels;
-			foreach(TreeNode node in nodes)
+			foreach (TreeNode node in nodes)
 			{
 				++count;
-				if(node.Nodes.Count > 0)
+				if (node.Nodes.Count > 0)
 				{
 					CalculateTreeInfo(ref levels, ref count, node.Nodes);
 				}
@@ -91,21 +91,21 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private ConfigurableDictionaryNode BuildTestPartTree(int numberOfLevels, int numberOfNodes)
 		{
-			if(numberOfLevels < 1)
+			if (numberOfLevels < 1)
 			{
 				throw new ArgumentException("You wanted less than one level in the hierarchy.  Really?");
 			}
 
-			if(numberOfNodes < numberOfLevels)
+			if (numberOfNodes < numberOfLevels)
 			{
 				throw new ArgumentException("You asked for more levels in the hierarchy then nodes in the tree; how did you expect me to do that?");
 			}
 			ConfigurableDictionaryNode rootNode = null;
 			ConfigurableDictionaryNode workingNode = null;
 			var children = new List<ConfigurableDictionaryNode>();
-			for(var i = 0; i < numberOfLevels; ++i)
+			for (var i = 0; i < numberOfLevels; ++i)
 			{
-				if(workingNode == null)
+				if (workingNode == null)
 				{
 					workingNode = rootNode = new ConfigurableDictionaryNode { Label = "root" };
 					continue;
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 				children.Add(workingNode);
 			}
 			// Add remaining desired nodes at the bottom
-			for(var i = 0; i < numberOfNodes - numberOfLevels; ++i)
+			for (var i = 0; i < numberOfNodes - numberOfLevels; ++i)
 			{
 				children.Add(new ConfigurableDictionaryNode { Label = "extraChild" + i });
 			}
@@ -222,8 +222,8 @@ namespace SIL.FieldWorks.XWorks
 		public void CreateAndAddTreeNodeForNode_SetsCheckbox()
 		{
 			var controller = new DictionaryConfigurationController();
-			var enabledNode = new ConfigurableDictionaryNode {IsEnabled = true};
-			var disabledNode = new ConfigurableDictionaryNode {IsEnabled = false};
+			var enabledNode = new ConfigurableDictionaryNode { IsEnabled = true };
+			var disabledNode = new ConfigurableDictionaryNode { IsEnabled = false };
 
 			using (var dummyView = new TestConfigurableDictionaryView())
 			{
@@ -254,8 +254,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController() {View = view};
-				var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+				var controller = new DictionaryConfigurationController() { View = view };
+				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 				// SUT
 				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var view = new TestConfigurableDictionaryView())
 			{
 				var controller = new DictionaryConfigurationController() { View = view };
-				var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				AddChildrenToNode(rootNode.Children[0], 2);
 				AddChildrenToNode(rootNode.Children[1], 3);
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
 			{
 				writer.Write("test");
 			}
@@ -356,13 +356,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using(var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "user.xml")))
+			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "user.xml")))
 			{
 				writer.Write("usertest");
 			}
@@ -376,13 +376,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "Root.xml")))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using(var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "Root.xml")))
 			{
 				writer.Write("usertest");
 			}
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary/>
 		private void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
 		{
-			for(int childIndex = 0; childIndex < numberOfChildren; childIndex++)
+			for (int childIndex = 0; childIndex < numberOfChildren; childIndex++)
 			{
 				var child = new ConfigurableDictionaryNode()
 				{
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyTreeNodeHierarchy(TreeNode treeNode)
 		{
 			var label = ((ConfigurableDictionaryNode)treeNode.Tag).Label;
-			for(int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
+			for (int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
 			{
 				var child = treeNode.Nodes[childIndex];
 				var childLabel = ((ConfigurableDictionaryNode)child.Tag).Label;
@@ -555,7 +555,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetProjectConfigLocationForPath_AlreadyProjectLocNoChange()
 		{
-			using(var mockMediator = new MockMediator(Cache))
+			using (var mockMediator = new MockMediator(Cache))
 			{
 				var mediator = mockMediator.Mediator;
 				var projectPath = Path.Combine(Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test.xml");
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetProjectConfigLocationForPath_DefaultLocResultsInProjectPath()
 		{
 			var defaultPath = Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test.xml");
-			using(var mockMediator = new MockMediator(Cache))
+			using (var mockMediator = new MockMediator(Cache))
 			{
 				var mediator = mockMediator.Mediator;
 				//SUT
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsTrue(result.EndsWith(Path.Combine("Test", "test.xml")));
 			}
 		}
-		
+
 		[Test]
 		public void GetCustomFieldsForType_NoCustomFieldsGivesEmptyList()
 		{
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 									 CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_PossibilityListFieldGetsChildren()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 								 CellarPropertyType.OwningAtomic, Cache.LanguageProject.LocationsOA.Guid))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_SenseCustomFieldIsRepresented()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
 								 CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_MorphCustomFieldIsRepresented()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
 								 CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_ExampleCustomFieldIsRepresented()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 								 CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -663,9 +663,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_MultipleFieldsAreReturned()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
 								 CellarPropertyType.ReferenceCollection, Guid.Empty))
-			using(var cf2 = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+			using (var cf2 = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
 								 CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -684,11 +684,11 @@ namespace SIL.FieldWorks.XWorks
 			using (var view = new TestConfigurableDictionaryView())
 			{
 				var controller = new DictionaryConfigurationController() { View = view, _model = m_model };
-				var rootNode = new ConfigurableDictionaryNode() {Label = "root", Children = new List<ConfigurableDictionaryNode>()};
+				var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				var movingChild = rootNode.Children[movingChildOriginalPosition];
 				var otherChild = rootNode.Children[movingChildExpectedPosition];
-				m_model.Parts = new List<ConfigurableDictionaryNode>() {rootNode};
+				m_model.Parts = new List<ConfigurableDictionaryNode>() { rootNode };
 				// SUT
 				controller.Reorder(movingChild, directionToMoveChild);
 				Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
@@ -726,7 +726,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsAreAdded()
 		{
-			using(var cf2 = new CustomFieldForTest(Cache, "CustomString",
+			using (var cf2 = new CustomFieldForTest(Cache, "CustomString",
 															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 															CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
@@ -748,7 +748,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_FieldsAreNotDuplicated()
 		{
-			using(var cf2 = new CustomFieldForTest(Cache, "CustomString",
+			using (var cf2 = new CustomFieldForTest(Cache, "CustomString",
 															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 															CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.XWorks
 			m_model.Publications = new List<string> { "A" };
 			Assert.AreEqual(controller.AffectedPublications, "A");
 
-			m_model.Publications = new List<string> {"A","B"};
+			m_model.Publications = new List<string> { "A", "B" };
 			Assert.AreEqual(controller.AffectedPublications, "A, B");
 		}
 
@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_ExampleCustomFieldIsRepresented()
 		{
-			using(new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel();
@@ -890,13 +890,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoModel_MergeWithDefaultRootModelDoesNotThrow()
 		{
-			using(new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel(Path.Combine(FwDirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")), Cache);
 
 				//SUT
-				Assert.DoesNotThrow(()=>DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
+				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
 			}
 		}
 
@@ -1014,20 +1014,20 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_treeControl; }
 			}
 
-			public DetailsView DetailsView { set; private get; }
+			public IDictionaryDetailsView DetailsView { set; private get; }
 			public string PreviewData { set; private get; }
 
 			public void Redraw()
-			{}
+			{ }
 
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
-			{}
+			{ }
 
 			public void ShowPublicationsForConfiguration(string publications)
-			{}
+			{ }
 
 			public void SelectConfiguration(DictionaryConfigurationModel configuration)
-			{}
+			{ }
 
 			public void Dispose()
 			{

@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// Complex Form types, Lexical Relation types, Sense numbers, etc.
 	/// This view does not display any preview of the entry.
 	/// </summary>
-	public partial class DetailsView : UserControl
+	public partial class DetailsView : UserControl, IDictionaryDetailsView
 	{
 		public DetailsView()
 		{

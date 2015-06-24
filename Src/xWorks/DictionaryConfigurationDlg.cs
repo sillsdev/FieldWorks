@@ -41,14 +41,14 @@ namespace SIL.FieldWorks.XWorks
 			get { return treeControl; }
 		}
 
-		public DetailsView DetailsView
+		public IDictionaryDetailsView DetailsView
 		{
 			set
 			{
 				if(detailsView != null)
 					detailsView.Dispose();
 
-				detailsView = value;
+				detailsView = (DetailsView) value;
 				previewDetailSplit.Panel2.Controls.Add(detailsView);
 				detailsView.Dock = DockStyle.Fill;
 				detailsView.Location = new Point(0, 0);

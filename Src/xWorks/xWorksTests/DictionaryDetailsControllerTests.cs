@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			IsDisposed = true;
 		}
+
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
@@ -69,6 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			get;
 			private set;
 		}
+
 		#endregion IDisposable and Gendarme Requirements
 
 		#region Setup and Teardown
@@ -109,23 +111,23 @@ namespace SIL.FieldWorks.XWorks
 			return ddStyle.Items.Cast<StyleComboItem>().ToList();
 		}
 
-		private static ListOptionsView GetListOptionsView(DetailsView view)
+		private static ListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
 			var panelOptions = (Panel)ReflectionHelper.GetField(view, "panelOptions");
 			return (ListOptionsView)panelOptions.Controls[0];
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
-		private static IList<ListViewItem> GetListViewItems(DetailsView view)
+		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
 			var listOptionsView = GetListOptionsView(view);
 			var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 			return listView.Items.Cast<ListViewItem>().ToList();
 		}
 
-		private static void AssertShowingCharacterStyles(DetailsView view)
+		private static void AssertShowingCharacterStyles(IDictionaryDetailsView view)
 		{
-			var styles = GetAvailableStyles(view);
+			var styles = GetAvailableStyles((DetailsView)view);
 
 			// The first character style should be (none), specified by null
 			Assert.IsNull(styles[0].Style);
@@ -137,9 +139,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void AssertShowingParagraphStyles(DetailsView view)
+		private static void AssertShowingParagraphStyles(IDictionaryDetailsView view)
 		{
-			foreach (var style in GetAvailableStyles(view))
+			foreach (var style in GetAvailableStyles((DetailsView)view))
 			{
 				Assert.IsTrue(style.Style.IsParagraphStyle);
 			}
@@ -151,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SenseLoadsParagraphStylesWhenShowInParaSet()
 		{
 			using (var view = new DictionaryDetailsController( // SUT
-				new ConfigurableDictionaryNode { DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }}, m_mediator).View)
+				new ConfigurableDictionaryNode { DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true } }, m_mediator).View)
 			{
 				AssertShowingParagraphStyles(view);
 			}
@@ -160,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void NonSenseLoadsCharacterStyles()
 		{
-			using(var view = new DictionaryDetailsController(new ConfigurableDictionaryNode(), m_mediator).View)
+			using (var view = new DictionaryDetailsController(new ConfigurableDictionaryNode(), m_mediator).View)
 				AssertShowingCharacterStyles(view);
 		}
 
@@ -168,10 +170,13 @@ namespace SIL.FieldWorks.XWorks
 		public void LoadNodeSwitchesStyles()
 		{
 			// Load character styles
-			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = new DictionaryNodeListOptions
+			var node = new ConfigurableDictionaryNode
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
-			} };
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+					{
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+					}
+			};
 			var controller = new DictionaryDetailsController(node, m_mediator);
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
@@ -180,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options =  new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			controller.LoadNode(node); // SUT
 			AssertShowingParagraphStyles(controller.View);
@@ -232,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryDetailsController controller = null;
 			// SUT - controller constructor calls LoadNode
-			Assert.DoesNotThrow(()=> { controller = new DictionaryDetailsController(node, m_mediator); });
+			Assert.DoesNotThrow(() => { controller = new DictionaryDetailsController(node, m_mediator); });
 			controller.View.Dispose();
 		}
 
@@ -251,11 +256,11 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				Parent = parentSenseNode
 			};
-			parentSenseNode.Children = new List<ConfigurableDictionaryNode>{ childGramarNode };
+			parentSenseNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
 			using (var view = new DictionaryDetailsController(childGramarNode, m_mediator).View)
 			{
-				var optionsView = GetListOptionsView(view);
+				var optionsView = GetListOptionsView((DetailsView)view);
 				optionsView.DisplayOptionCheckBoxChecked = false;
 
 				Assert.False(parentSenseOptions.ShowSharedGrammarInfoFirst, "ShowSharedGrammarInfoFirst should have been updated");
@@ -275,10 +280,10 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				Parent = parentComplexFormsNode
 			};
-			parentComplexFormsNode.Children = new List<ConfigurableDictionaryNode>{ childGramarNode };
+			parentComplexFormsNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
 			// SUT is constructor.  `using ... .View` to ensure disposal
-			Assert.DoesNotThrow(() => { using(new DictionaryDetailsController(childGramarNode, m_mediator).View) {} });
+			Assert.DoesNotThrow(() => { using (new DictionaryDetailsController(childGramarNode, m_mediator).View) { } });
 		}
 		#endregion Sense tests
 
@@ -355,7 +360,7 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryDetailsController(node, m_mediator); // SUT
 			using (var view = controller.View)
 			{
-				var listViewItems = GetListViewItems(view);
+				var listViewItems = GetListViewItems((DetailsView)view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved selection should be first");
@@ -367,7 +372,7 @@ namespace SIL.FieldWorks.XWorks
 			controller.LoadNode(node); // SUT
 			using (var view = controller.View)
 			{
-				var listViewItems = GetListViewItems(view);
+				var listViewItems = GetListViewItems((DetailsView)view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved item should be first");
@@ -509,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" } ),
+				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
@@ -533,6 +538,50 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
 				Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId((int)defaultItem.Tag),
 					wsOptions.Options.First(option => option.IsEnabled).Id, "The default WS should be enabled");
+			}
+		}
+
+		[Test]
+		public void LoadWsOptions_DisplayCheckboxEnable()
+		{
+			var wsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
+				DisplayWritingSystemAbbreviations = true
+			};
+			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
+			using (var view = controller.View)
+			{
+				// Verify setup
+				var listViewItems = GetListViewItems(view);
+				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should be exactly two items checked initially");
+				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
+				Assert.AreEqual("fr", listViewItems.Last(item => item.Checked).Tag, "French should be checked.");
+
+
+				var optionsView = GetListOptionsView(view);
+				//var checkedItem = listViewItems.First(item => item.Checked);
+				//checkedItem.Checked = true;
+
+				optionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
+				{
+					optionsView.DisplayOptionCheckBoxEnabled = true;
+					wsOptions.DisplayWritingSystemAbbreviations = optionsView.DisplayOptionCheckBoxEnabled;
+				};
+
+				//var otherNamedItem = listViewItems.First(item => item.Checked);
+				//otherNamedItem.Checked = true;
+				//// SUT
+				//// Events are not actually fired during tests, so they must be run manually
+				//ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
+				//    GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
+
+				//// optionsView.DisplayOptionCheckBoxEnabled = true;
+				//// optionsView.DisplayOptionCheckBoxChecked = true;
+
+				Assert.IsTrue(optionsView.DisplayOptionCheckBoxChecked, "Display checkbox is should be enabled.");
+				Assert.IsFalse(optionsView.DisplayOptionCheckBoxEnabled, "Display checkbox is should be disabled.");
 			}
 		}
 
@@ -572,7 +621,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en" } ),
+				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
@@ -623,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 					"Should not be able to reorder default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for(int i = 0; i < listViewItems.Count; i++)
+				for (int i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
@@ -651,7 +700,7 @@ namespace SIL.FieldWorks.XWorks
 					"Should not be able to move a named writing system above a default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
-				for(int i = 0; i < listViewItems.Count; i++)
+				for (int i = 0; i < listViewItems.Count; i++)
 				{
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}

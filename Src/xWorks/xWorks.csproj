@@ -331,6 +331,7 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />

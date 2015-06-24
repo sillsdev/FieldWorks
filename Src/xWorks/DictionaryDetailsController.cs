@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
 
 		/// <summary>The DetailsView controlled by this controller</summary>
-		public DetailsView View { get; private set; }
+		public IDictionaryDetailsView View { get; private set; }
 
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			View.SuspendLayout();
 
 			// Populate Styles dropdown
-			View.SetStyles(m_charStyles, m_node.Style);
+			View.SetStyles(m_charStyles, m_node.Style, true);
 
 			// Test for Options type
 			if (Options != null)
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					LoadListOptions(Options as DictionaryNodeListOptions);
 				}
-				else if(Options is DictionaryNodePictureOptions)
+				else if (Options is DictionaryNodePictureOptions)
 				{
 					// todo: loading options here once UX has been worked out
 				}
@@ -235,10 +235,10 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
 			senseOptionsView.NumberStyleChanged += (sender, e) => { senseOptions.NumberStyle = senseOptionsView.NumberStyle; RefreshPreview(); };
-// ReSharper disable ImplicitlyCapturedClosure
-// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
+			// ReSharper disable ImplicitlyCapturedClosure
+			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
 			senseOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, senseOptionsView.NumberStyle);
-// ReSharper restore ImplicitlyCapturedClosure
+			// ReSharper restore ImplicitlyCapturedClosure
 			senseOptionsView.NumberSingleSenseChanged += (sender, e) =>
 			{
 				senseOptions.NumberEvenASingleSense = senseOptionsView.NumberSingleSense;
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// Insert saved items in their saved order, with their saved check-state
 				int insertionIdx = 0;
-				foreach(var optn in listOptions.Options)
+				foreach (var optn in listOptions.Options)
 				{
 					var savedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
 					if (savedItem != null && availableOptions.Remove(savedItem))
@@ -477,7 +477,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoComplexFormType + ">")
 			{
-				Checked = true, Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
+				Checked = true,
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
 			});
 			return result;
 		}
@@ -487,7 +488,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoVariantType + ">")
 			{
-				Checked = true, Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
+				Checked = true,
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
 			});
 			return result;
 		}
@@ -499,7 +501,8 @@ namespace SIL.FieldWorks.XWorks
 			result.Sort(ComparePossibilitiesByName);
 			return result.Select(item => new ListViewItem(item.Name.BestAnalysisVernacularAlternative.Text)
 			{
-				Checked = true, Tag = item.Guid.ToString()
+				Checked = true,
+				Tag = item.Guid.ToString()
 			}).ToList();
 		}
 
@@ -701,9 +704,9 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = item.Checked
 			}).ToList();
 
-			if(Options is DictionaryNodeWritingSystemOptions)
+			if (Options is DictionaryNodeWritingSystemOptions)
 				(Options as DictionaryNodeWritingSystemOptions).Options = options;
-			else if(Options is DictionaryNodeListOptions)
+			else if (Options is DictionaryNodeListOptions)
 				(Options as DictionaryNodeListOptions).Options = options;
 			else
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
@@ -737,7 +740,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void Reorder(ListViewItem item, DictionaryConfigurationController.Direction direction)
 		{
-			if(!CanReorder(item, direction))
+			if (!CanReorder(item, direction))
 				throw new ArgumentOutOfRangeException();
 
 			int newIdx;

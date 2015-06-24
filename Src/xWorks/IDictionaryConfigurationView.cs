@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Sets the DetailsView
 		/// </summary>
-		DetailsView DetailsView { set; }
+		IDictionaryDetailsView DetailsView { set; }
 
 		/// <summary>
 		/// Sets the XHTML to display in the preview control
