@@ -1054,7 +1054,43 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator.Dispose();
 			FwRegistrySettings.Release();
 		}
-
+		[Test]
+		public void GenerateCssForConfiguration_GlossWithMultipleWs()
+		{
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en","fr" }),
+				IsEnabled = true
+			};
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
+			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry .senses .sense .gloss span.writingsystemprefix{font-style:normal;font-size:10pt;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry .senses .sense .gloss span.writingsystemprefix:after{content:' ';}"));
+		}
 		private TestStyle GenerateStyle(string name)
 		{
 			var fontInfo = new FontInfo();

@@ -2812,7 +2812,11 @@ namespace SIL.FieldWorks.XWorks
 			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
 			return wsOptions;
 		}
-
+		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages)
+		{
+			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),DisplayWritingSystemAbbreviations = true};
+			return wsOptions;
+		}
 		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
 		{
 			var listOptions = new DictionaryNodeListOptions {

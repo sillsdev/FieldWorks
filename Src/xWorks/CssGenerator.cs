@@ -84,10 +84,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//Generate the rules for the default font info
 				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
-				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-				if(wsOptions != null)
+			}
+			var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			if (wsOptions != null)
+			{
+				GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
+				if (wsOptions.DisplayWritingSystemAbbreviations)
 				{
-					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
+					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
+				}
+				if (configNode.DisplayLabel == "Gloss" && (wsOptions.Options.Count(s => s.IsEnabled) > 1))
+				{
+					GenerateCssForGlossWithMultipleWs(styleSheet, baseSelection);
 				}
 			}
 			styleSheet.Rules.AddRange(beforeAfterSelectors);
@@ -100,6 +108,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, mediator);
 			}
+		}
+
+		private static void GenerateCssForGlossWithMultipleWs(StyleSheet styleSheet, string baseSelection)
+		{
+			var glossRule = new StyleRule {Value = baseSelection + ":not(:last-child):after"};
+			glossRule.Declarations.Properties.Add(new Property("content") {Term = new PrimitiveTerm(UnitType.String, " ")});
+			styleSheet.Rules.Add(glossRule);
 		}
 
 		private static void GenerateCssFromSenseOptions(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
@@ -169,9 +184,21 @@ namespace SIL.FieldWorks.XWorks
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
 				var wsRule = new StyleRule();
 				wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
+				if (!String.IsNullOrEmpty(configNode.Style))
 				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator));
 				styleSheet.Rules.Add(wsRule);
 			}
+		}
+
+		private static void GenerateCssForWritingSystemPrefix(StyleSheet styleSheet, string baseSelection)
+		{
+			var wsRule1 = new StyleRule {Value = baseSelection + ".writingsystemprefix"};
+			wsRule1.Declarations.Properties.Add(new Property("font-style") {Term = new PrimitiveTerm(UnitType.Attribute, "normal")});
+			wsRule1.Declarations.Properties.Add(new Property("font-size") {Term = new PrimitiveTerm(UnitType.Point, 10)});
+			styleSheet.Rules.Add(wsRule1);
+			var wsRule2=new StyleRule {Value = wsRule1.Value + ":after"};
+			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
+			styleSheet.Rules.Add(wsRule2);
 		}
 
 		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
