@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
 		{
 			// initialize SenseOptionsView
-			var senseOptionsView = new SenseOptionsView
+			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles, // load available list before setting value
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseOptions, senseOptionsView);
 
 			// add senseOptionsView to the DetailsView
-			View.OptionsView = senseOptionsView;
+			View.OptionsView = senseOptionsView as SenseOptionsView;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
@@ -777,14 +777,14 @@ namespace SIL.FieldWorks.XWorks
 		#endregion ListChanges
 
 		#region SenseChanges
-		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
+		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView)
 		{
 			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			RefreshPreview();
 		}
 
-		private void SenseInParaChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
+		private void SenseInParaChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView)
 		{
 			senseOptions.DisplayEachSenseInAParagraph = senseOptionsView.SenseInPara;
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);

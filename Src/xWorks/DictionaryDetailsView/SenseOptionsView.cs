@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// <summary>
 	/// Displays the controls for detailed configuration of Senses, including Sense numbers.
 	/// </summary>
-	public partial class SenseOptionsView : UserControl
+	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
 		public SenseOptionsView()
 		{
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
-		internal string BeforeText
+		public string BeforeText
 		{
 			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text); }
 			set { textBoxBefore.Text = value; }
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
-		internal string NumberingStyle
+		public string NumberingStyle
 		{
 			get{ return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
 			set
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
-		internal string AfterText
+		public string AfterText
 		{
 			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
 			set { textBoxAfter.Text = value; }
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
-		internal string NumberStyle
+		public string NumberStyle
 		{
 			get
 			{
@@ -101,19 +101,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
-		internal bool NumberSingleSense
+		public bool NumberSingleSense
 		{
 			get { return checkBoxNumberSingleSense.Checked; }
 			set { checkBoxNumberSingleSense.Checked = value; }
 		}
 
-		internal bool ShowGrammarFirst
+		public bool ShowGrammarFirst
 		{
 			get { return checkBoxShowGrammarFirst.Checked; }
 			set { checkBoxShowGrammarFirst.Checked = value; }
 		}
 
-		internal bool SenseInPara
+		public bool SenseInPara
 		{
 			get { return checkBoxSenseInPara.Checked; }
 			set { checkBoxSenseInPara.Checked = value; }
