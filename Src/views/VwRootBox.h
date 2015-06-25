@@ -1,20 +1,19 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-File: VwRootBox.h
-Responsibility: John Thomson
-Last reviewed: Not yet.
-
-Description:
-
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #pragma once
 #ifndef VWROOTBOX_INCLUDED
 #define VWROOTBOX_INCLUDED
 
 #include "OleStringLiteral.h"
+
+namespace TestViews
+{
+	class TestVwRootBox;
+	class TestVwTextStore;
+}
 
 class VwTextStore;
 DEFINE_COM_PTR(VwTextStore);
@@ -60,6 +59,8 @@ class VwRootBox : public IVwRootBox, public IServiceProvider, public VwDivBox
 	friend class VwParagraphBox; // just for Assert in destructor.
 	typedef VwDivBox SuperClass;
 	friend class VwLazyBox;
+	friend class TestViews::TestVwRootBox;
+	friend class TestViews::TestVwTextStore;
 public:
 	// Static methods
 
@@ -282,6 +283,9 @@ public:
 		return m_qvo;
 	}
 	void NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite = true);
+	void BeginNormalizationCommit(HVO hvo, PropTag tag);
+	bool IsNormalizationCommitInProgress() { return m_fNormalizationCommitInProgress; }
+	void PropChanged(HVO hvo, PropTag tag);
 
 	// This calls Layout with the correct parameters. It also notifies the root site of
 	// any size changes in case it needs to update anything.
@@ -481,6 +485,11 @@ protected:
 	void FindBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst, int ysStart, int * pysEnd);
 	bool OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me);
 	IGetSpellCheckerPtr m_qgspCheckerRepository;
+	// The string in the paragraph box can fall out of sync with selection indices while a normalize commit is in progress.
+	bool m_fNormalizationCommitInProgress;
+	HVO m_hvoNormalizationCommitInProgress;
+	PropTag m_tagNormalizationCommitInProgress;
+	void EndNormalizationCommit();
 
 public:
 	bool FixSelectionsForStringReplacement(VwTxtSrc * psrcModify, int itssMin, int itssLim,

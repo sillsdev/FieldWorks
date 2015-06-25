@@ -1,17 +1,21 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
-using System.Reflection;
-using SIL.FieldWorks.FDO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.Filters;
-using System.IO;
-using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Filters;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -608,7 +612,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private string[] GetChildObjKey(XmlNode layout, int hvo, IManyOnePathSortItem item, int pathIndex, bool sortedFromEnd)
 		{
 			ICmObject childObj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-			string layoutName = XmlUtils.GetManditoryAttributeValue(layout, "layout");
+			string layoutName = XmlUtils.GetOptionalAttributeValue(layout, "layout");
 			XmlNode part = XmlVc.GetNodeForPart(hvo, layoutName, true, m_sda, m_layouts);
 			var key = GetKey(part, childObj, item, pathIndex, sortedFromEnd);
 			if (key != null)

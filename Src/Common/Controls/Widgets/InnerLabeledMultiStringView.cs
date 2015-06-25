@@ -1,3 +1,7 @@
+// Copyright (c) 2010-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -111,7 +115,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			ConstructReuseCore(hvo, flid, wsMagic, wsOptional, forceIncludeEnglish, editable, spellCheck);
 			if (!editable && RootSiteEditingHelper != null)
-				RootSiteEditingHelper.PasteFixTssEvent -= new FwPasteFixTssEventHandler(OnPasteFixTssEvent);
+				RootSiteEditingHelper.PasteFixTssEvent -= OnPasteFixTssEvent;
 			if (m_rootb != null)
 			{
 				m_rgws = WritingSystemOptions;
@@ -194,7 +198,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_forceIncludeEnglish = forceIncludeEnglish;
 			m_editable = editable;
 			if (editable && RootSiteEditingHelper != null)
-				RootSiteEditingHelper.PasteFixTssEvent += new FwPasteFixTssEventHandler(OnPasteFixTssEvent);
+				RootSiteEditingHelper.PasteFixTssEvent += OnPasteFixTssEvent;
 			DoSpellCheck = spellCheck;
 		}
 
@@ -203,7 +207,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		void OnPasteFixTssEvent(EditingHelper sender, FwPasteFixTssEventArgs e)
 		{
-			EliminateExtraStyleAndWsInfo(e, m_flid);
+			EliminateExtraStyleAndWsInfo(RootBox.DataAccess.MetaDataCache, e, m_flid);
 		}
 
 		/// <summary>
@@ -293,13 +297,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		private void EliminateExtraStyleAndWsInfo(FwPasteFixTssEventArgs e, int flid)
+		static internal void EliminateExtraStyleAndWsInfo(IFwMetaDataCache mdc, FwPasteFixTssEventArgs e, int flid)
 		{
-			var mdc = RootBox.DataAccess.MetaDataCache;
 			var type = (CellarPropertyType)mdc.GetFieldType(flid);
-			if (type == CellarPropertyType.MultiString ||
-				type == CellarPropertyType.MultiUnicode ||
-				type == CellarPropertyType.String ||
+			if (type == CellarPropertyType.MultiUnicode ||
 				type == CellarPropertyType.Unicode)
 			{
 				e.TsString = e.TsString.ToWsOnlyString();

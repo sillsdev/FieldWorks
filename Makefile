@@ -224,14 +224,12 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
-	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
@@ -248,7 +246,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
@@ -257,20 +255,15 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	done
 	# Handle the Converter files
 	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
-	# Remove geckofx DLLs since those are shipped in a separate package
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll.config
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Winforms.dll
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
-	case $(ARCH) in i686) SUFFIX=x86_64;; x86_64) SUFFIX=x86;; esac; \
-	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}_$$SUFFIX.so
-	case $(ARCH) in i686) OTHERSUFFIX=_64;; x86_64) OTHERSUFFIX=;; esac; \
-	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}$$OTHERSUFFIX.so
-	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu50/tools
-	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu50/Keyboards
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{SilEncConverters40,ECInterfaces}.dll
+	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
+	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
+	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
 
 install-menuentries:
 	# Add to Applications menu

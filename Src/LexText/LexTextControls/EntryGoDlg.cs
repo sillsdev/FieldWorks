@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_matchingObjectsBrowser.SearchAsync(GetFields(searchKey, wsSelHvo));
 		}
 
-		private IEnumerable<SearchField> GetFields(string str, int ws)
+		protected IEnumerable<SearchField> GetFields(string str, int ws)
 		{
 			var tssKey = m_tsf.MakeString(str, ws);
 			if (m_vernHvos.Contains(ws))

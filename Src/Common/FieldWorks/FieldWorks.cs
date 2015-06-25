@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -826,6 +826,14 @@ namespace SIL.FieldWorks
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
 		private static void EnsureValidLinkedFilesFolder(FdoCache cache)
 		{
+			// If the location of the LinkedFilesRootDir was changed when this project was restored just now;
+			// overwrite the location that was restored from the fwdata file.
+			if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
+			{
+				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor,
+					() => cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+			}
+
 			if (MiscUtils.RunningTests)
 				return;
 
@@ -835,18 +843,18 @@ namespace SIL.FieldWorks
 
 			if (!Directory.Exists(linkedFilesFolder))
 			{
-				if (!Directory.Exists(defaultFolder))
-					defaultFolder = cache.ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-				while (!Directory.Exists(linkedFilesFolder))
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					else
 					{
-						folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
 					}
 				}
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
@@ -855,8 +863,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Just make the directory if it's the default.
-		/// See FWNX-1092, LT-14491.
+		/// Create the specified Linked Files directory only if it's the default Linked Files directory. See FWNX-1092, LT-14491.
 		/// </summary>
 		internal static void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
 		{
@@ -3560,14 +3567,6 @@ namespace SIL.FieldWorks
 				if (!InitializeFirstApp(app, projId))
 					return;
 
-				//A restore from backup was done and there was a change to the location of the LinkedFilesRootDir
-				//When the fwdata file is restored, it still has the old LinkedFiledRootDir stored in it so this needs to
-				//be changed to the new location.
-				if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !s_cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
-				{
-					NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-						() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-				}
 				s_projectId = projId; // Process needs to know its project
 			}
 			finally

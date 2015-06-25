@@ -1,7 +1,11 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -32,18 +36,11 @@ namespace SIL.FieldWorks.FdoUi
 			wp.m_label = FdoUiStrings.ksEntries;
 
 			var rie = (IReversalIndexEntry) Object;
-			int wsIndex = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
-			foreach (var rieInner in rie.ReversalIndex.AllEntries)
-			{
-				if (rieInner.Hvo != Object.Hvo)
-				{
-					mergeCandidates.Add(
-						new DummyCmObject(
-						rieInner.Hvo,
-						rieInner.ShortName,
-						wsIndex));
-				}
-			}
+			var filteredHvos = new HashSet<int>(rie.AllOwnedObjects.Select(obj => obj.Hvo)) { rie.Hvo }; // exclude `rie` and all of its subentries
+			var wsIndex = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
+			mergeCandidates.AddRange(from rieInner in rie.ReversalIndex.AllEntries
+									 where !filteredHvos.Contains(rieInner.Hvo)
+									 select new DummyCmObject(rieInner.Hvo, rieInner.ShortName, wsIndex));
 			guiControl = "MergeReversalEntryList";
 			helpTopic = "khtpMergeReversalEntry";
 			return new DummyCmObject(m_hvo, rie.ShortName, wsIndex);

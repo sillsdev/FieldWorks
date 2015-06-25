@@ -52,7 +52,7 @@ public:
 
 	// IRenderEngine methods
 	STDMETHOD(InitRenderer)(IVwGraphics* pvg, BSTR bstrData);
-	STDMETHOD(FontIsValid)();
+	STDMETHOD(get_FontIsValid)(ComBool * pfValid);
 	STDMETHOD(get_SegDatMaxLength)(int* cb);
 	STDMETHOD(FindBreakPoint)(IVwGraphics* pvg, IVwTextSource* pts, IVwJustifier* pvjus,
 		int ichMin, int ichLim, int ichLimBacktrack,

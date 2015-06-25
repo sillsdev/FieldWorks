@@ -1,4 +1,4 @@
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "c:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,7 +117,7 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
@@ -892,7 +892,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 #line 770 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 21 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 
@@ -2371,7 +2371,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 };
 #line 1477 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 22 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
@@ -3382,7 +3382,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 	} LgEndSegmentType; 
 
-
 	
 
 
@@ -3401,10 +3400,8 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 			[in] BSTR bstrData);
 		
 		
-		
-		
-		
-		HRESULT FontIsValid();
+		[propget] HRESULT FontIsValid(
+			[out, retval] ComBool * pfValid);
 
 		
 		
@@ -3480,7 +3477,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IRenderEngine;
 	};
-	#line 1109 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3605,9 +3602,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
-#line 1234 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
-#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 23 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 
@@ -5440,5 +5437,5 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	};
 #line 1831 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
-#line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 24 "c:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

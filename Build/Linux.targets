@@ -76,34 +76,11 @@
 	<Target Name="linuxLibs" DependsOnTargets="iculibs">
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
-		<!-- Always copy from Release -->
 		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>
 		<Copy SourceFiles="@(LinuxReleaseLibs)"
 			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatformBase)/*.*">
-			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
-		</CreateItem>
-		<Copy SourceFiles="@(LinuxDebugLibs)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/*.config">
-			<Output TaskParameter="Include" ItemName="LinuxLibConfigFiles"/>
-		</CreateItem>
-		<Copy SourceFiles="@(LinuxLibConfigFiles)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/ECPlugins/*.xml">
-			<Output TaskParameter="Include" ItemName="LinuxLibECPlugins"/>
-		</CreateItem>
-		<MakeDir Directories="$(dir-outputBase)/EC/Plugins" Condition="'$(action)'!='clean'"/>
-		<Copy SourceFiles="@(LinuxLibECPlugins)"
-			  DestinationFolder="$(dir-outputBase)/EC/Plugins"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
 	</Target>
@@ -245,6 +222,7 @@
 		<Graphite2Sources Include="$(fwrt)/Lib/src/graphite2/src/*.*" />
 	</ItemGroup>
 	<Target Name="graphite2Linux" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)/Lib/linux/$(config-capital)/libgraphite2.a" Condition="'$(action)'!='clean'">
+		<MakeDir Directories="$(fwrt)/Lib/linux/$(config-capital)" />
 		<Make ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
 				Configuration="$(config-capital)" Target="$(make-target)"

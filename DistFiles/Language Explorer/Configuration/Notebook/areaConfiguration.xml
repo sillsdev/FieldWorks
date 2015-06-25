@@ -57,10 +57,10 @@
 				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					altTitleId="RnGenericRec-Plural" editable="false">
 					<columns>
-						<column label="Record Type" layout="" editable="false" width="72000">
+						<column label="Record Type" editable="false" width="72000">
 							<obj field="Type" layout="Name"/>
 						</column>
-						<column label="Title" layout="" editable="false" width="196000">
+						<column label="Title" editable="false" width="196000">
 							<string field="Title"/>
 						</column>
 					</columns>
