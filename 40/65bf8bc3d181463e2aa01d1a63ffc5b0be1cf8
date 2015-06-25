@@ -1,0 +1,8 @@
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified+1: Brent McCarthy <brent_mccarthy@sil.org>
+Verified-Linux+1: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-by: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-at: Thu, 25 Jun 2015 23:17:10 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3114
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
