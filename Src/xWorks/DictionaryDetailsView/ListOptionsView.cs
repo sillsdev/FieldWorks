@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// Writing Systems (list of checkable Writing Systems; single checkbox to display WS Abbreviations), but it can be configured for anything,
 	/// for example, Complex Forms (list of checkable Complex Form Types, single checkbox to display each Complex Form in a paragraph).
 	/// </summary>
-	public partial class ListOptionsView : UserControl
+	public partial class ListOptionsView : UserControl, IDictionaryListOptionsView
 	{
 		public ListOptionsView()
 		{
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				listView.Items.Clear();
 				listView.Items.AddRange(value.ToArray());
 			}
-			internal get { return listView.Items.Cast<ListViewItem>().ToList(); }
+			get { return listView.Items.Cast<ListViewItem>().ToList(); }
 		}
 
 		//

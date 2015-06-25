@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			return ddStyle.Items.Cast<StyleComboItem>().ToList();
 		}
 
-		private static ListOptionsView GetListOptionsView(IDictionaryDetailsView view)
+		private static IDictionaryListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
 			var panelOptions = (Panel)ReflectionHelper.GetField(view, "panelOptions");
 			return (ListOptionsView)panelOptions.Controls[0];
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
-			var listOptionsView = GetListOptionsView(view);
+			IDictionaryListOptionsView listOptionsView = GetListOptionsView(view);
 			var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 			return listView.Items.Cast<ListViewItem>().ToList();
 		}

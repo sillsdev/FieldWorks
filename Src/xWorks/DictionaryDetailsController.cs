@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.XWorks
 			View.OptionsView = wsOptionsView;
 		}
 
-		private EventHandler WritingSystemEventHandlerAdder(ListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
+		private EventHandler WritingSystemEventHandlerAdder(IDictionaryListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			return (o, args) =>
 			{
@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private void LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
-			var listOptionsView = new ListOptionsView();
+			IDictionaryListOptionsView listOptionsView = new ListOptionsView();
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
@@ -327,10 +327,10 @@ namespace SIL.FieldWorks.XWorks
 				listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 			}
 
-			View.OptionsView = listOptionsView;
+			View.OptionsView = listOptionsView as UserControl;
 		}
 
-		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
+		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, IDictionaryListOptionsView listOptionsView)
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
 
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.XWorks
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 		}
 
-		private EventHandler ListEventHandlerAdder(ListOptionsView listOptionsView, DictionaryNodeListOptions listOptions)
+		private EventHandler ListEventHandlerAdder(IDictionaryListOptionsView listOptionsView, DictionaryNodeListOptions listOptions)
 		{
 			return (o, args) =>
 			{
@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="listOptionsView"></param>
 		/// <param name="wsOptions">Null if the list doesn't represent writing systems</param>
 		/// <param name="e"></param>
-		private void ListItemCheckedChanged(ListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
+		private void ListItemCheckedChanged(IDictionaryListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;
 
@@ -733,7 +733,7 @@ namespace SIL.FieldWorks.XWorks
 			RefreshPreview();
 		}
 
-		private void ListViewSelectionChanged(ListOptionsView loView, ListViewItemSelectionChangedEventArgs e)
+		private void ListViewSelectionChanged(IDictionaryListOptionsView loView, ListViewItemSelectionChangedEventArgs e)
 		{
 			if (e.IsSelected)
 			{
