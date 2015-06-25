@@ -167,6 +167,90 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CheckIsAllParentsChecked()
+		{
+			var pronunciation = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Form",
+				Label = "Pronunciation",
+				IsEnabled = true
+			};
+
+			var variantPronunciations = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciation },
+				FieldDescription = "OwningEntry",
+				Label = "Variant Pronunciations",
+				IsEnabled = true
+			};
+
+			var variantForms = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantPronunciations },
+				FieldDescription = "VariantFormEntryBackRefs",
+				Label = "Variant Forms",
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantForms },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var controller = new DictionaryDetailsController(mainEntryNode, m_mediator);
+
+			Assert.AreEqual(true, controller.IsAllParentsChecked(pronunciation));
+
+			controller.View.Dispose();
+		}
+
+		[Test]
+		public void CheckIsAnyParentsUnchecked()
+		{
+			var pronunciation = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Form",
+				Label = "Pronunciation",
+				IsEnabled = false
+			};
+
+			var variantPronunciations = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciation },
+				FieldDescription = "OwningEntry",
+				Label = "Variant Pronunciations",
+				IsEnabled = true
+			};
+
+			var variantForms = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantPronunciations },
+				FieldDescription = "VariantFormEntryBackRefs",
+				Label = "Variant Forms",
+				IsEnabled = false
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantForms },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var controller = new DictionaryDetailsController(mainEntryNode, m_mediator);
+
+			Assert.AreEqual(false, controller.IsAllParentsChecked(pronunciation));
+
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void LoadNodeSwitchesStyles()
 		{
 			// Load character styles

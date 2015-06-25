@@ -56,6 +56,25 @@ namespace SIL.FieldWorks.XWorks
 			LoadNode(node);
 		}
 
+
+		/// <summary>
+		/// Checks and returns whether all parents nodes are checked
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		internal bool IsAllParentsChecked(ConfigurableDictionaryNode node)
+		{
+			if (node.Parent == null) return false;
+			while (node != null)
+			{
+				if (!node.IsEnabled)
+					return false;
+				node = node.Parent;
+			}
+			return true;
+		}
+
+
 		#region LoadModel
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
@@ -71,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 				BeforeText = m_node.Before,
 				BetweenText = m_node.Between,
 				AfterText = m_node.After,
-				Enabled = m_node.IsEnabled
+				Enabled = IsAllParentsChecked(m_node)
 			};
 
 			View.SuspendLayout();
