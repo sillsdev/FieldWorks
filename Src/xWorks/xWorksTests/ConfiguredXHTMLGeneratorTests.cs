@@ -2615,7 +2615,51 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+		[Test]
+		public void GenerateXHTMLForEntry_VariantOfReferencedHeadWord()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigReferencedEntries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				CSSClassNameOverride = "referencedentries"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleVariantEntryRefs",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { refNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
+			var mainEntry = CreateInterestingLexEntry();
+			var otherReferencedComplexForm = CreateInterestingLexEntry();
+			CreateVariantForm(otherReferencedComplexForm, mainEntry);
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string referencedEntries =
+					"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentrie']/span[@class='headword'][@lang='en']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString())
+					.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 1);
+			}
+		}
 		[Test]
 		public void IsCollectionType()
 		{
