@@ -458,7 +458,7 @@ namespace FwBuildTasks
 		/// </summary>
 		/// <remarks>
 		/// The timings for projects are now found in the fw/Build/TestTimeoutValues.xml file and can be changed there
-		/// without having to rebuild the FwBuildTasks dll.
+		/// without having to rebuild the FwBuildTasks dll.  Values in XML are in seconds, which we convert to milliseconds here.
 		/// </remarks>
 		int TimeoutForProject(string project)
 		{
@@ -477,7 +477,7 @@ namespace FwBuildTasks
 					}
 				}
 			}
-			return m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"];
+			return (m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"])*1000;
 		}
 
 		void ProcessDependencyGraph(StreamWriter writer)
