@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.XWorks
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
 			// If we are not showing each sense in a paragraph then the paragraph style should no longer be in the configuration.
 			// The default style "Dictionary-Sense" will be used if the user turns this option on.
-			m_node.Style = !senseOptions.DisplayEachSenseInAParagraph ? null : "Dictionary-Sense";
+			m_node.Style = !senseOptions.DisplayEachSenseInAParagraph ? null : View.Style;
 			RefreshPreview();
 		}
 		#endregion SenseChanges
