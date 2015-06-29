@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -500,11 +501,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (DetailsController == null)
 			{
-				DetailsController = new DictionaryDetailsController(node, mediator);
+				DetailsController = new DictionaryDetailsController(new DetailsView(), mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
 			}
-			else
-				DetailsController.LoadNode(node);
+			DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;
 		}
 

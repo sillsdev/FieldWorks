@@ -44,16 +44,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
 
-		public DictionaryDetailsController(ConfigurableDictionaryNode node, Mediator mediator)
+		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
 		{
 			// one-time setup
 			m_mediator = mediator;
 			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			LoadStylesLists();
-
-			// load node
-			LoadNode(node);
+			View = view;
 		}
 
 
@@ -85,18 +83,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_node = node;
 
-			View = new DetailsView
-			{
-				BeforeText = m_node.Before,
-				BetweenText = m_node.Between,
-				AfterText = m_node.After,
-				Enabled = IsAllParentsChecked(m_node)
-			};
-
 			View.SuspendLayout();
 
+			ResetView(View, node);
+
 			// Populate Styles dropdown
-			View.SetStyles(m_charStyles, m_node.Style, true);
+			View.SetStyles(m_charStyles, m_node.Style, m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph);
 
 			// Test for Options type
 			if (Options != null)
@@ -136,13 +128,54 @@ namespace SIL.FieldWorks.XWorks
 			// else, show only the default details (style, before, between, after)
 
 			// Register eventhandlers
-			View.StyleSelectionChanged += (sender, e) => StyleChanged();
-			View.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, View.Style);
-			View.BeforeTextChanged += (sender, e) => BeforeTextChanged();
-			View.BetweenTextChanged += (sender, e) => BetweenTextChanged();
-			View.AfterTextChanged += (sender, e) => AfterTextChanged();
+			View.StyleSelectionChanged += OnViewOnStyleSelectionChanged;
+			View.StyleButtonClick += OnViewOnStyleButtonClick;
+			View.BeforeTextChanged += OnViewOnBeforeTextChanged;
+			View.BetweenTextChanged += OnViewOnBetweenTextChanged;
+			View.AfterTextChanged += OnViewOnAfterTextChanged;
 
 			View.ResumeLayout();
+		}
+
+		private void OnViewOnAfterTextChanged(object sender, EventArgs e)
+		{
+			AfterTextChanged();
+		}
+
+		private void OnViewOnBetweenTextChanged(object sender, EventArgs e)
+		{
+			BetweenTextChanged();
+		}
+
+		private void OnViewOnBeforeTextChanged(object sender, EventArgs e)
+		{
+			BeforeTextChanged();
+		}
+
+		private void OnViewOnStyleButtonClick(object sender, EventArgs e)
+		{
+			HandleStylesBtn((ComboBox)sender, View.Style);
+		}
+
+		private void OnViewOnStyleSelectionChanged(object sender, EventArgs e)
+		{
+			StyleChanged();
+		}
+
+		private void ResetView(IDictionaryDetailsView view, ConfigurableDictionaryNode node)
+		{
+			// Deregister event handlers before resetting view content to avoid unnecessary slow down
+			view.StyleSelectionChanged -= OnViewOnStyleSelectionChanged;
+			view.StyleButtonClick -= OnViewOnStyleButtonClick;
+			view.BeforeTextChanged -= OnViewOnBeforeTextChanged;
+			view.BetweenTextChanged -= OnViewOnBetweenTextChanged;
+			view.AfterTextChanged -= OnViewOnAfterTextChanged;
+
+			view.BeforeText = node.Before;
+			view.BetweenText = node.Between;
+			view.AfterText = node.After;
+			view.Visible = true;
+			view.Enabled = IsAllParentsChecked(node);
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>

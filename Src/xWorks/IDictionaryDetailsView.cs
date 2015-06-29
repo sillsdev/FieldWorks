@@ -54,6 +54,8 @@ namespace SIL.FieldWorks.XWorks
 
 		bool IsDisposed { get; }
 
+		bool Enabled { get; set; }
+
 		void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles);
 
 		void SuspendLayout();

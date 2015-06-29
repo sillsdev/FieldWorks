@@ -30,6 +30,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			textBoxBetween.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 		}
 
+		private Control m_OptionsView = null;
+
 		//
 		// User configuration properties
 		//
@@ -83,7 +85,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			set
 			{
-				panelOptions.Controls.Add(value);
+				if(m_OptionsView != null)
+				{
+					panelOptions.Controls.Remove(m_OptionsView);
+					m_OptionsView.Dispose();
+				}
+				m_OptionsView = value;
+				panelOptions.Controls.Add(m_OptionsView);
 				value.Dock = DockStyle.Fill;
 				value.Location = new Point(0, 0);
 			}

@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Runtime.Remoting;
 using System.Windows.Forms;
-using System.Windows.Forms.Layout;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
-	public interface IDictionaryListOptionsView
+	public interface IDictionaryListOptionsView : IDisposable
 	{
 		/// <summary>
 		/// Returns all items in the list control

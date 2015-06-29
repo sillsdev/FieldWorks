@@ -45,13 +45,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			set
 			{
-				if(detailsView != null)
-					detailsView.Dispose();
-
-				detailsView = (DetailsView) value;
-				previewDetailSplit.Panel2.Controls.Add(detailsView);
-				detailsView.Dock = DockStyle.Fill;
-				detailsView.Location = new Point(0, 0);
+				if(detailsView == null)
+				{
+					detailsView = (DetailsView)value;
+					previewDetailSplit.Panel2.Controls.Add(detailsView);
+					detailsView.Dock = DockStyle.Fill;
+					detailsView.Location = new Point(0, 0);
+				}
 			}
 		}
 

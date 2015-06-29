@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
 {
