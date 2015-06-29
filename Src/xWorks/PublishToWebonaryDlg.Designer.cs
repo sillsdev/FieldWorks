@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.XWorks
@@ -73,6 +74,7 @@ namespace SIL.FieldWorks.XWorks
 			// tableLayoutPanel
 			// 
 			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
+			this.tableLayoutPanel.Anchor=(AnchorStyles.Top|AnchorStyles.Bottom|AnchorStyles.Left|AnchorStyles.Right);
 			this.tableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.publishButton, 0, 5);
 			this.tableLayoutPanel.Controls.Add(this.closeButton, 1, 5);
