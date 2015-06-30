@@ -14,12 +14,14 @@ using System.Text;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.Archiving;
 using SIL.FieldWorks.Common.Framework.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
@@ -32,6 +34,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// <summary>
 	/// Main window class for FW/FLEx.
 	/// </summary>
+#if RANDYTODO
 	/// <remarks>
 	/// Main CollapsingSplitContainer control for XWindow.
 	/// It holds the Sidebar (m_sidebar) in its Panel1 (left side).
@@ -53,6 +56,7 @@ namespace SIL.FieldWorks.Common.Framework
 	///		1. printToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 	/// </remarks>
+#endif
 	public partial class FwMainWnd : Form, IFwMainWnd
 	{
 		/// <summary>
@@ -60,8 +64,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		private string m_webBrowserProgramLinux = "firefox";
 		private IAreaRepository m_areaRepository;
-
+		private ActiveViewHelper m_viewHelper;
 		private IArea m_currentArea;
+		private FwStyleSheet m_stylesheet;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -105,6 +110,8 @@ namespace SIL.FieldWorks.Common.Framework
 			PropTable.RestoreFromFile(PropTable.GlobalSettingsId);
 			PropTable.RestoreFromFile(PropTable.LocalSettingsId);
 
+			m_viewHelper = new ActiveViewHelper(this);
+
 			// NOTE: The "lexicon" area must be present.
 			// The persisted area could be obsolete, and not present,
 			// so we'll use "lexicon", if the stored one cannot be found.
@@ -115,6 +122,20 @@ namespace SIL.FieldWorks.Common.Framework
 			m_currentArea.Activate();
 
 			SetWindowTitle();
+		}
+
+		private void SaveSettings()
+		{
+			// Have current IArea put any needed properties into the table.
+#if RANDYTODO
+			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
+			// RR TODO: Delete GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
+#endif
+			m_currentArea.EnsurePropertiesAreCurrent(Cache.ServiceLocator, PropTable);
+			// first save global settings, ignoring database specific ones.
+			PropTable.SaveGlobalSettings();
+			// now save database specific settings.
+			PropTable.SaveLocalSettings();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -202,7 +223,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			CheckDisposed();
 
-#if USEXMLCONFIG
+#if RANDYTODO
 			if (m_startupLink != null)
 				m_mediator.SendMessage("FollowLink", m_startupLink);
 			UpdateControls();
@@ -229,6 +250,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// TODO (RandyR): Remove all of these comments, when XWorksViewBase or InterlinMaster code is put back in service.
 			// the original code in otherMainWindow.PrepareToRefresh() did this: m_mediator.SendMessageToAllNow("PrepareToRefresh", null);
 			// There are/were three impls of "OnPrepareToRefresh": XWindow, XWorksViewBase, and InterlinMaster
 			// The IArea & ITool interfaces have "PrepareToRefresh()" methods now.
@@ -236,7 +259,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// TODO: XWorksViewBase or InterlinMaster code, then those area/tool impls will need to call the
 			// TODO: "OnPrepareToRefresh" (renamed to simply ""PrepareToRefresh"") methods on those classes.
 			// TODO: The 'XWindow class will need nothing done to it, since it is just going to be deleted.
-			// TODO (RandyR): Remove all of these comments, when XWorksViewBase or InterlinMaster code is put back in service.
+#endif
 			m_currentArea.PrepareToRefresh();
 		}
 
@@ -256,7 +279,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Refreshes all the views in this wiondow and in all others in the app.
+		/// Refreshes all the views in this window and in all others in the app.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void RefreshAllViews()
@@ -362,7 +385,7 @@ namespace SIL.FieldWorks.Common.Framework
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		#endregion
@@ -407,11 +430,11 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			try
 			{
-				var pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
+				var pathMovies = string.Format(FwDirectoryFinder.CodeDirectory +
 					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
 					Path.DirectorySeparatorChar);
 
-				OpenDocument<Win32Exception>(pathMovies, (win32err) =>
+				OpenDocument<Win32Exception>(pathMovies, win32err =>
 				{
 					if (win32err.NativeErrorCode == 1155)
 					{
@@ -424,11 +447,11 @@ namespace SIL.FieldWorks.Common.Framework
 					else
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
-						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
+						var pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
 							"{0}Language Explorer{0}Movies{0}notfound.html",
 							Path.DirectorySeparatorChar);
 
-						OpenDocument<Win32Exception>(pathNoMovies, (win32err2) =>
+						OpenDocument<Win32Exception>(pathNoMovies, win32err2 =>
 						{
 							if (win32err2.NativeErrorCode == 1155)
 							{
@@ -447,7 +470,7 @@ namespace SIL.FieldWorks.Common.Framework
 			catch (Exception)
 			{
 				// Some other unforeseen error:
-				MessageBox.Show(null, String.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
 					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
 					Path.DirectorySeparatorChar)), FrameworkStrings.ksError);
 			}
@@ -504,13 +527,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void Help_Technical_Notes_on_FieldWorks_Send_Receive(object sender, EventArgs e)
 		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
+			var path = string.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
 				Path.DirectorySeparatorChar);
 
-			OpenDocument(path, (err) =>
+			OpenDocument(path, err =>
 			{
-				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotLaunchX, path),
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotLaunchX, path),
 					FrameworkStrings.ksError);
 			});
 		}
@@ -567,9 +590,9 @@ namespace SIL.FieldWorks.Common.Framework
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 				return;
 
-			bool fDbRenamed = false;
-			string sProject = cache.ProjectId.Name;
-			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
+			var fDbRenamed = false;
+			var sProject = cache.ProjectId.Name;
+			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, FwApp.App, FwApp.App, FontHeightAdjuster.StyleSheetFromPropertyTable(PropTable)))
 			{
 				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
@@ -585,7 +608,7 @@ namespace SIL.FieldWorks.Common.Framework
 					{
 						sProject = dlg.ProjectName;
 					}
-					bool fFilesMoved = false;
+					var fFilesMoved = false;
 					if (dlg.LinkedFilesChanged())
 					{
 						fFilesMoved = FwApp.App.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -637,13 +660,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void File_Back_up_this_Project(object sender, EventArgs e)
 		{
-			// Have current IArea put any needed properties into the table.
-			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
-			m_currentArea.EnsurePropertiesAreCurrent(PropTable);
-			// first save global settings, ignoring database specific ones.
-			PropTable.SaveGlobalSettings();
-			// now save database specific settings.
-			PropTable.SaveLocalSettings();
+			SaveSettings();
 
 			FwApp.App.FwManager.BackupProject(this);
 		}
@@ -686,7 +703,7 @@ namespace SIL.FieldWorks.Common.Framework
 				var launcherPath = Path.Combine(directory, projectName + pathExtension);
 
 				// Choose a different name if already in use
-				int tailNumber = 2;
+				var tailNumber = 2;
 				while (FileUtils.SimilarFileExists(launcherPath))
 				{
 					var tail = "-" + tailNumber;
@@ -698,7 +715,7 @@ namespace SIL.FieldWorks.Common.Framework
 				const string iconPath = "fieldworks-flex";
 				if (string.IsNullOrEmpty(applicationExecutablePath))
 					return;
-				var content = String.Format(
+				var content = string.Format(
 					"[Desktop Entry]{0}" +
 					"Version=1.0{0}" +
 					"Terminal=false{0}" +
@@ -794,6 +811,117 @@ namespace SIL.FieldWorks.Common.Framework
 						}
 					});
 			}
+		}
+
+		private void NewWindow_Clicked(object sender, EventArgs e)
+		{
+			SaveSettings();
+			FwApp.App.FwManager.OpenNewWindowForApp();
+		}
+
+		private void Help_Training_Writing_Systems(object sender, EventArgs e)
+		{
+			var pathnameToWritingSystemHelpFile = string.Format(FwDirectoryFinder.CodeDirectory +
+				"{0}Language Explorer{0}Training{0}Technical Notes on Writing Systems.pdf",
+				Path.DirectorySeparatorChar);
+
+			OpenDocument(pathnameToWritingSystemHelpFile, err =>
+			{
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, pathnameToWritingSystemHelpFile),
+					FrameworkStrings.ksError);
+			});
+		}
+
+		private void Help_XLingPaper(object sender, EventArgs e)
+		{
+			var xLingPaperPathname = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}XLingPap{0}UserDoc.htm",
+				Path.DirectorySeparatorChar);
+
+			OpenDocument(xLingPaperPathname, err =>
+			{
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, xLingPaperPathname),
+					FrameworkStrings.ksError);
+			});
+		}
+
+		private void Edit_Cut(object sender, EventArgs e)
+		{
+			using (new DataUpdateMonitor(this, "EditCut"))
+			{
+				m_viewHelper.ActiveView.EditingHelper.CutSelection();
+			}
+		}
+
+		private void Edit_Copy(object sender, EventArgs e)
+		{
+			m_viewHelper.ActiveView.EditingHelper.CopySelection();
+		}
+
+		private void Edit_Paste(object sender, EventArgs e)
+		{
+			string stUndo, stRedo;
+			ResourceHelper.MakeUndoRedoLabels("kstidEditPaste", out stUndo, out stRedo);
+			using (var undoHelper = new UndoableUnitOfWorkHelper(Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
+			using (new DataUpdateMonitor(this, "EditPaste"))
+			{
+				if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard())
+				{
+					undoHelper.RollBack = false;
+				}
+			}
+		}
+
+		private void EditMenu_Opening(object sender, EventArgs e)
+		{
+			var hasActiveView = m_viewHelper.ActiveView != null;
+			cutToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanCut());
+			copyToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanCopy());
+			pasteToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanPaste());
+			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView
+				&& m_viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper
+				&& ((RootSiteEditingHelper)m_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
+#if RANDYTODO
+			// TODO: Handle enabling/disabling other Edit menu/toolbar itmes, such as Undo & Redo.
+#else
+			// TODO: In the meantime, just go with disabled.
+			undoToolStripMenuItem.Enabled = false;
+			redoToolStripMenuItem.Enabled = false;
+			undoToolStripButton.Enabled = false;
+			redoToolStripButton.Enabled = false;
+#endif
+		}
+
+		private void File_Export_Global(object sender, EventArgs e)
+		{
+#if RANDYTODO
+			// TODO: This is the event handler for the File->Export menu.
+			// TODO: The original code had two possible implementors:
+			// TODO:	GeneratedHtmlViewer (Grammar area)
+			// TODO:	RecordClerk (Notebook and global, unless some lexical custom fields might be an export problem.)
+			// TODO: Options:
+			// TODO:	1) Let area/tool add an event handler, when activated and remove it when deactivated.
+			// TODO:	2) ???
+#else
+			MessageBox.Show(this, @"Export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
+#endif
+		}
+
+		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
+		{
+			if (m_stylesheet == null)
+			{
+				m_stylesheet = new FwStyleSheet();
+				m_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+#if RANDYTODO
+				// TODO: I (RandyR) don't think there is a reason to do this now,
+				// unless there is some style UI widget on the toolbar (menu?) that needs to be updated.
+				if (m_rebarAdapter is IUIAdapterForceRegenerate)
+				{
+					((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();
+				}
+#endif
+			}
+			((RootSiteEditingHelper)m_viewHelper.ActiveView.EditingHelper).PasteUrl(m_stylesheet);
 		}
 	}
 }

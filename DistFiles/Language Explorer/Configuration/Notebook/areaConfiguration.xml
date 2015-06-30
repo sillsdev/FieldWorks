@@ -4,6 +4,11 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
+		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>
+			</parameters>
+		</command>
 		<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
 			<params className="RnGenericRec"/>
 		</command>
@@ -52,7 +57,7 @@
 	<!-- ******** controls (dialog or embedded browse view) ******* -->
 	<!-- ********************************************************** -->
 	<controls>
-		<parameters id="guicontrols">
+	<parameters id="guicontrols">
 			<guicontrol id="matchingRecords">
 				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					altTitleId="RnGenericRec-Plural" editable="false">
@@ -69,14 +74,14 @@
 			<clerks />
 		</parameters>
 	</controls>
-	<!-- ******************************************************** -->
-	<!-- ************************ menus *********************** -->
-	<!-- ******************************************************** -->
-	<menubar />
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
-	<menuAddOn>
+		<menuAddOn>
+			<menu id="File_Import">
+				<!-- Last sub-menu of main File->Import menu. -->
+				<item command="CmdImportSFMNotebook"/>
+			</menu>
 		<menu id="Insert">
 			<item command="CmdInsertRecord" defaultVisible="false"/>
 			<item command="CmdInsertSubrecord" defaultVisible="false"/>
@@ -126,10 +131,6 @@
 	<sidebar>
 		<tab label="Notebook Tools" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 	</sidebar>
-	<!-- ********************************************************** -->
-	<!-- ************************ toolbars *********************** -->
-	<!-- ********************************************************** -->
-	<toolbars/>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -181,9 +182,6 @@
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
 					</sortMethods>
 				</clerk>
-				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="Browse/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="Document/toolConfiguration.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>

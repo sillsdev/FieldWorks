@@ -87,6 +87,8 @@
 		<command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass"/>
 		<command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass"/>
 		<command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme"/>
+
+		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
 	</commands>
 	<!--  **********************************************************   -->
 	<!--  ************************ lists ***********************   -->
@@ -98,7 +100,7 @@
 	<!-- ************* controls (embedded browse view) ************ -->
 	<!-- ********************************************************** -->
 	<controls>
-		<parameters id="guicontrols">
+	<parameters id="guicontrols">
 			<guicontrol id="PhonemeFlatList">
 				<parameters id="phonemeList" listItemsClass="PhTerminalUnit" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					editable="false" selectColumn="true">
@@ -247,10 +249,6 @@
 			<clerks/>
 		</parameters>
 	</controls>
-	<!--  **********************************************************   -->
-	<!--  ************************ menus ***********************   -->
-	<!--  **********************************************************   -->
-	<menubar/>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -289,6 +287,10 @@
 			<item command="CmdInsertMorphemeACP" defaultVisible="false"/>
 			<item command="CmdInsertAllomorphACP" defaultVisible="false"/>
 			<item command="CmdInsertACPGroup" defaultVisible="false"/>
+		</menu>
+		<menu id="Help_Resources">
+			<!-- Right above main S/R menu. -->
+			<item command="CmdHelpMorphologyInto"/>
 		</menu>
 	</menuAddOn>
 	<!-- ********************************************************** -->
@@ -333,10 +335,6 @@
 	<sidebar>
 		<tab label="Grammar Tools" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 	</sidebar>
-	<!--  **********************************************************   -->
-	<!--  ************************ toolbars ***********************   -->
-	<!--  **********************************************************   -->
-	<toolbars/>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -463,7 +461,6 @@
 					</filters>
 					<sortMethods/>
 				</clerk>
-				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>

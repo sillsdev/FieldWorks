@@ -236,4 +236,7 @@ This version of the program requires version {1}.</value>
   <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
     <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
   </data>
+  <data name="ksCannotShowX" xml:space="preserve">
+    <value>Sorry, could not show {0}.</value>
+  </data>
 </root>

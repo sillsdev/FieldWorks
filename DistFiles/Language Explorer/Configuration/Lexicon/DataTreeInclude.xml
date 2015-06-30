@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<!--<include path="../CommonDataTreeInclude.xml"/> -->
 	<!--
   ===========================================================
   Commands
   ===========================================================
   -->
 	<commands>
-		<!--<include query="window/commands/*"/> -->
 		<!--
 	No-op - no operation makes sense here
 	-->
@@ -296,7 +294,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<!--<include query="window/contextMenus/*"/> -->
 		<menu id="mnuDataTree-Help">
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>

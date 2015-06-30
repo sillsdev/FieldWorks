@@ -145,7 +145,7 @@
 	<!-- ************* controls (embedded browse view) ************ -->
 	<!-- ********************************************************** -->
 	<controls>
-		<parameters id="guicontrols">
+	<parameters id="guicontrols">
 			<guicontrol id="PeopleFlatList">
 				<parameters id="peopleList" listItemsClass="CmPerson" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					editable="false" selectColumn="true">
@@ -164,10 +164,6 @@
 			<clerks />
 		</parameters>
 	</controls>
-	<!-- ******************************************************** -->
-	<!-- ************************ menus *********************** -->
-	<!-- ******************************************************** -->
-	<menubar />
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -198,7 +194,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdAddCustomList" defaultVisible="false"/>
 		</menu>
-		<menu id="Data"/>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
 			<item command="CmdConfigureList" defaultVisible="false"/>
@@ -216,10 +211,6 @@
 	<sidebar>
 		<tab label="List Tools" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 	</sidebar>
-	<!-- ********************************************************** -->
-	<!-- ************************ toolbars *********************** -->
-	<!-- ********************************************************** -->
-	<toolbars />
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -249,14 +240,6 @@
 		</toolbar>
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
-	<!-- ************************ resources ********************* -->
-	<!-- ********************************************************** -->
-	<resources />
-	<!-- ********************************************************** -->
-	<!-- ************************ listeners *********************** -->
-	<!-- ********************************************************** -->
-	<listeners />
-	<!-- ********************************************************** -->
 	<!-- ************************ defaultProperties ********************* -->
 	<!-- ********************************************************** -->
 	<defaultProperties>
@@ -272,7 +255,6 @@
 			</panels>
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
-				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
 				<clerk id="SemanticDomainList">
 					<recordList owner="LangProject" property="SemanticDomainList">
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>

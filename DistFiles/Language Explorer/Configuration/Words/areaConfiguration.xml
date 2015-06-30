@@ -32,6 +32,9 @@
 		<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
 		<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary"/>
 		<command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote"/>
+		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
+		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
+		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 
 		<!--Note: -->
 		<!--the shortcut="Enter" does not actually work.  Other options like shortcut="Ctrl+W: do work. Therefore code was added to
@@ -65,7 +68,6 @@
 		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
 		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
 		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
-		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
 		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
@@ -136,6 +138,24 @@
 		<command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence"/>
 		<command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria"/>
 		<command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup"/>
+		
+		<!-- Help/Resources/Technical Notes on Interlinear Import... -->
+		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
+		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
+			</parameters>
+		</command>
+		<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
+			</parameters>
+		</command>
+		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
+			</parameters>
+		</command>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -249,6 +269,7 @@
 	<!-- ************************ menus *********************** -->
 	<!-- ********************************************************** -->
 	<menubar>
+		<!-- The 'Parser' menu goes between the global 'Tools' & 'Help' main menus. -->
 		<menu id="Parser" label="Pa_rser">
 			<item command="CmdParseAllWords"/>
 			<item command="CmdReparseAllWords"/>
@@ -271,7 +292,14 @@
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
+		<menu id="File_Import">
+			<!-- These three comme right after  <item command="CmdImportLiftData"/> Lexicon -->
+			<item command="CmdImportInterlinearSfm"/>
+			<item command="CmdImportWordsAndGlossesSfm"/>
+			<item command="CmdImportInterlinearData"/>
+		</menu>
 		<menu id="FileExport">
+			<!-- Main File menu, but follows its "Import" menu. NB: These are *not* sub-menus of the main File->Export, but siblings of it. -->
 			<item command="CmdExportInterlinear" defaultVisible="false"/>
 			<item command="CmdExportDiscourseChart" defaultVisible="false"/>
 		</menu>
@@ -280,11 +308,11 @@
 		</menu>
 		<menu id="View">
 			<item command="CmdChooseTexts" defaultVisible="false"/>
-			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
 			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
 		</menu>
 
 		<menu id="Data">
+			<item label="-" translate="do not translate"/>
 			<item command="CmdParse" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdApproveAndMoveNext" defaultVisible="false"/>
@@ -329,9 +357,23 @@
 			<item command="CmdLexiconLookup" defaultVisible="false"/>
 			<item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon"/>
 		</menu>
+		<!-- This is really the Tools-Spelling submenu.-->
+		<menu id="Spelling_A">
+			<item command="CmdEditSpellingStatus" defaultVisible="false"/>
+			<item command="CmdViewIncorrectWords" defaultVisible="false"/>
+		</menu>
+		<!-- This is really the Tools-Spelling submenu.-->
+		<menu id="Spelling_B">
+			<item label="-" translate="do not translate"/>
+			<item command="CmdChangeSpelling" defaultVisible="false"/>
+		</menu>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
 			<item command="CmdConfigureInterlinear" defaultVisible="false"/>
+		</menu>
+		<menu id="Help_Resources">
+			<!-- "CmdHelpNotesInterlinearImport" goes between global: CmdHelpNotesLinguaLinksDatabaseImport and CmdHelpNotesWritingSystems on the Help->Resources menu. -->
+			<item command="CmdHelpNotesInterlinearImport"/>
 		</menu>
 	</menuAddOn>
 	<!-- ********************************************************** -->
@@ -496,10 +538,6 @@
 		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 	</sidebar>
 	<!-- ********************************************************** -->
-	<!-- ************************ toolbars *********************** -->
-	<!-- ********************************************************** -->
-	<toolbars />
-	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
@@ -612,9 +650,7 @@
 					</sortMethods>
 					<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>
 				</clerk>
-				<include path="Analyses/toolConfiguration.xml" query="root/clerks/*"/>
 				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="BulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>

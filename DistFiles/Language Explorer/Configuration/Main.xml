@@ -9,7 +9,7 @@
 	   to toolbars-->
 	<!--See the Properties section at the end of this file. This included Properties sections of other files
 	   where the default tool is defined for each 'Area' of FLEX-->
-	<!--The main sections of this file are the following
+	<!-- The main sections of this file are the following
 	commands
 	lists
 	controls (dialog or embedded browse view
@@ -49,46 +49,16 @@
 		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
 		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
-		<command id="CmdNewWindow" label="_New Window" message="NewWindow"/>
 		<command id="CmdProjectUtilities" label="_Utilities..." message="Utilities">
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
-		</command>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
-		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>
-			</parameters>
 		</command>
 		<command id="CmdImportLinguaLinksData" label="_LinguaLinks Data..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.LinguaLinksImportDlg"/>
 			</parameters>
 		</command>
-		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
-			</parameters>
-		</command>
-		<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
-			</parameters>
-		</command>
-		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
-			</parameters>
-		</command>
-		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
-			</parameters>
-		</command>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
-		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
-		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
-		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
 		<command id="CmdConfigHomographs" label="Homograph Number..." message="ConfigureHomographs"/>
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
@@ -104,32 +74,13 @@
 			 configuration files of various applications. we could perhaps make it possible to define the label here
 			 using the property value: label="{MainObjectLabel}" and then add to XCore the ability to define this:
 			 <property id="MainObjectLabel">Lexical Database</property>-->
-		<command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z"/>
-		<command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y"/>
-		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C"/>
-		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X"/>
-		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V"/>
-		<command id="CmdPasteHyperlink" label="Paste _Hyperlink" message="PasteUrl"/>
+		<!-- DONE (stub only) <command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z"/> -->
+		<!-- DONE (stub only) <command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y"/> -->
 		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
 		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A"/>
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
-		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
-		<command id="CmdHelpXLingPap" label="Editing Linguistics Papers Using _XLingPaper ..." message="HelpHelpsFile">
-			<parameters file="XLingPap/UserDoc.htm"/>
-		</command>
-		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro">
-			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
-		</command>
-		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
-		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
-		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
-		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
-		<!-- Help/Resources/Technical Notes on Interlinear Import... -->
-		<command id="CmdHelpNotesWritingSystems" label="Technical Notes on _Writing Systems..." message="HelpTrainingFile">
-			<parameters file="Technical Notes on Writing Systems.pdf"/>
-		</command>
 		<command id="CmdTestFollowLink" label="Test Follow Link" message="TestFollowLink" shortcut="F12"/>
 		<command id="CmdHistoryBack" label="Go Back" message="HistoryBack" icon="historyBack" shortcut="Alt+Left"/>
 		<command id="CmdHistoryForward" label="Go Forward" message="HistoryForward" icon="historyForward" shortcut="Alt+Right"/>
@@ -412,18 +363,11 @@
 	-->
 	<menubar>
 		<menu id="File" label="_File" b4InsertMenu="true">
-			<item label="-" translate="do not translate"/>
-			<menu id="Import" label="_Import">
-				<!-- All Area/Tool specific, not global -->
-				<item command="CmdImportSFMLexicon"/>
-				<item command="CmdImportLinguaLinksData"/>
-				<item command="CmdImportLiftData"/>
-				<item command="CmdImportInterlinearSfm"/>
-				<item command="CmdImportWordsAndGlossesSfm"/>
-				<item command="CmdImportInterlinearData"/>
-				<item command="CmdImportSFMNotebook"/>
-			</menu>
-			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
+			<!-- There are handlers for a generic "Export..." menu (follows Import menu).
+				Two are area-specific (Notebook & Grammar "Grammar Sketch" tool's GeneratedHtmlViewer class).
+				One seems to be more global, or at least it appears to be able to handle cross domain exports (with some custom field restrictions on a few classes).
+				So, leave the "Export" menu pending for the moment.
+				In the end, I expect one of the three possible event handlers will be wired up/removed, as the user switches from place to place. -->
 		</menu>
 		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true">
 			<item command="CmdFLExBridge"/>
@@ -442,14 +386,14 @@
 			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true">
-			<item command="CmdUndo"/>
-			<item command="CmdRedo"/>
-			<item label="-" translate="do not translate"/>
+			<!-- DONE (stub only) <item command="CmdUndo"/> -->
+			<!-- DONE (stub only) <item command="CmdRedo"/> -->
+			<!-- DONE <item label="-" translate="do not translate"/>
 			<item command="CmdCut"/>
 			<item command="CmdCopy"/>
 			<item command="CmdPaste"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdPasteHyperlink"/>
+			<item command="CmdPasteHyperlink"/> -->
 			<item command="CmdCopyLocationAsHyperlink"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdGoToEntry"/>
@@ -464,7 +408,6 @@
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		</menu>
 		<menu id="View" label="_View" b4InsertMenu="true">
 			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
@@ -475,29 +418,15 @@
 			<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local"/>
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<item label="-" translate="do not translate"/>
-			<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES"
-				settingsGroup="local"/>
+			<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 		</menu>
-		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
-			property="areaChoice" />
-			<menu id="Tools" label="_Tools" list="ToolsList" behavior="singlePropertyAtomicValue"
-			property="currentContentControl" />
-		-->
 		<menu id="Data" label="_Data">
 			<item command="CmdFirstRecord"/>
 			<item command="CmdPreviousRecord"/>
 			<item command="CmdNextRecord"/>
 			<item command="CmdLastRecord"/>
-			<item label="-" translate="do not translate"/>
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
 		</menu>
 		<menu id="Insert" label="_Insert">
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*"/>
@@ -520,8 +449,6 @@
 				<!-- This is the insertion point for Area-specific Configure menu items.	-->
 				<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
-				<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
-				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
 				<item command="CmdConfigHomographs"/>
@@ -531,20 +458,14 @@
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
 			<item label="-" translate="do not translate"/>
-			<item command="CmdMergeEntry" defaultVisible="false"/>
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 			<!-- Non-area-specific Tools go here. -->
 			<item label="-" translate="do not translate"/>
 			<menu label="Spelling">
-				<item command="CmdEditSpellingStatus" defaultVisible="false"/>
-				<item command="CmdViewIncorrectWords" defaultVisible="false"/>
+				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Spelling_A']/*"/>
 				<item command="CmdUseVernSpellingDictionary" defaultVisible="false"/>
-				<item label="-" translate="do not translate"/>
-				<item command="CmdChangeSpelling" defaultVisible="false"/>
+				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Spelling_B']/*"/>
 			</menu>
 			<item command="CmdProjectUtilities"/>
 			<item label="-" translate="do not translate"/>
@@ -559,27 +480,6 @@
 			<item command="CmdMacroF10" defaultVisible="false"/>
 			<item command="CmdMacroF11" defaultVisible="false"/>
 			<item command="CmdMacroF12" defaultVisible="false"/>
-		</menu>
-		<include path="Lexicon/areaConfiguration.xml" query="root/menubar/*"/>
-		<include path="Words/areaConfiguration.xml" query="root/menubar/*"/>
-		<include path="Grammar/areaConfiguration.xml" query="root/menubar/*"/>
-		<include path="Notebook/areaConfiguration.xml" query="root/menubar/*"/>
-		<include path="Lists/areaConfiguration.xml" query="root/menubar/*"/>
-		<menu id="Window" label="_Window">
-			<item command="CmdNewWindow"/>
-		</menu>
-		<menu id="Help" label="_Help">
-			<menu id="Resources" label="_Resources">
-				<!-- Have non-visible placeholders in menu. BUT, they need to be handled in area/tool space, since they aren't really global. 
-				<item command="CmdHelpLexicographyIntro"/>
-				<item command="CmdHelpMorphologyInto"/>
-				S/R help menu was here.-->
-				<item command="CmdHelpNotesSFMDatabaseImport"/>
-				<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
-				<item command="CmdHelpNotesInterlinearImport"/>
-				<item command="CmdHelpNotesWritingSystems"/>
-				<item command="CmdHelpXLingPap"/>
-			</menu>
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->
@@ -743,27 +643,12 @@
 		<include path="Grammar/areaConfiguration.xml" query="root/sidebar/*"/>
 		<tab label="Areas" list="AreasList" behavior="singlePropertyAtomicValue" property="areaChoice"/>
 		<tab label="Tools" list="ToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-		<!-- The original WWBaseConfigurationInclude file had these, as well, but they don't yet have a place in LexText.
-I (RandyR) brought them into this file, just to keep track of them for the time they get dealt with.
-		<tab label="Views" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-		<tab label="Filters">
-			<item id="noFilter" label="No Filter" boolProperty="foo" icon="NoFilter" />
-		</tab>
-		<tab label="Sort Methods">
-			<item id="defaultSort" label="Default" boolProperty="foo" icon="DefaultSort" />
-		</tab>
--->
 	</sidebar>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbars *********************** -->
 	<!-- ********************************************************** -->
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
-		<include path="Lexicon/areaConfiguration.xml" query="root/toolbars/*"/>
-		<include path="Words/areaConfiguration.xml" query="root/toolbars/*"/>
-		<include path="Notebook/areaConfiguration.xml" query="root/toolbars/*"/>
-		<include path="Lists/areaConfiguration.xml" query="root/toolbars/*"/>
-		<include path="Grammar/areaConfiguration.xml" query="root/toolbars/*"/>
 		<toolbar id="Format">
 			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150"/>
 			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250"/>
@@ -785,8 +670,8 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDeleteRecord"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdUndo"/>
-			<item command="CmdRedo"/>
+			<!-- DONE (stub only) <item command="CmdUndo"/> -->
+			<!-- DONE (stub only) <item command="CmdRedo"/> -->
 			<!-- DONE <item command="CmdRefresh"/> -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdFirstRecord"/>
@@ -838,11 +723,9 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallCommandImages" size="small"
 			labels="findWordform, addNewAnalysis"/>
 
-		<include path="Lexicon/areaConfiguration.xml" query="root/resources/*"/>
 		<include path="Words/areaConfiguration.xml" query="root/resources/*"/>
 		<include path="Grammar/areaConfiguration.xml" query="root/resources/*"/>
 		<include path="Notebook/areaConfiguration.xml" query="root/resources/*"/>
-		<include path="Lists/areaConfiguration.xml" query="root/resources/*"/>
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
@@ -850,12 +733,10 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 	<!--Listeners are classes that are instantiated and added to the mediator's list of colleagues (message handlers)
   to handle messages that are not specific to one particular tool.-->
 	<listeners>
-		<listener assemblyPath="xCore.dll" class="XCore.MockupDialogLauncher"/>
 		<include path="Lexicon/areaConfiguration.xml" query="root/listeners/*"/>
 		<include path="Notebook/areaConfiguration.xml" query="root/listeners/*"/>
 		<include path="Words/areaConfiguration.xml" query="root/listeners/*"/>
 		<include path="Grammar/areaConfiguration.xml" query="root/listeners/*"/>
-		<include path="Lists/areaConfiguration.xml" query="root/listeners/*"/>
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
@@ -910,10 +791,6 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
 		So, add a default value here in order to prevent it from persisting -->
 		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
-		<!-- Default splitter values -->
-		<!--		<property name="PartsOfSpeech.editBasic.DataTree-Splitter" intValue="200"/>
-		<property name="PartsOfSpeech.editPlus.DataTree-Splitter" intValue="200"/>
--->
 		<!-- set this property to the item with the id "pos" of the list "AreasList". will also set the "areaChoiceParameters" property to the contents of the corresponding <parameters> node.
 		note that this currently should match the tool chosen below, under <contentClass> -->
 		<!-- simple string properties can be set like this: <property name ="UserName" value="Leroy"/> -->
@@ -926,9 +803,4 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<property name="SuspendLoadListUntilOnChangeFilter" value="" persist="false" settingsGroup="local"/>
 		<property name="SuspendLoadingRecordUntilOnJumpToRecord" value="" persist="false" settingsGroup="local"/>
 	</defaultProperties>
-	<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar).
-	this path is relative to be executing application.-->
-	<!-- contentClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView">
-		<parameters field="PartsOfSpeech" templatePath="MorphologyEditor/XDEs"/>
-	</contentClass-->
 </window>

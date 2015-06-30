@@ -49,12 +49,6 @@
 	<!--
 		  Edit menu
 		  -->
-	<item id="CmdUndo">Undo previous actions.</item>
-	<item id="CmdRedo">Redo previous actions.</item>
-	<item id="CmdCut">Cut</item>
-	<item id="CmdCopy">Copy</item>
-	<item id="CmdPaste">Paste</item>
-	<item id="CmdPasteHyperlink">Paste clipboard content as hyperlink.</item>
 	<item id="CmdCopyLocationAsHyperlink">Create a hyperlink to this location and copy it to the clipboard.</item>
 	<item id="CmdGoToEntry">Find a lexical entry.</item> <!-- Replaced "CmdFind" -->
 	<item id="CmdDeleteRecord">Delete this {0}.</item>
@@ -198,15 +192,10 @@
 	<item id="CmdParseCurrentWord">Have the Parser parse just the current word.</item>
 	<item id="CmdEditParserParameters">Edit the special parameters for the Parser.</item>
 	<!--
-		 Window menu
-		 -->
-	<item id="CmdNewWindow">Launch a new window of this editor.</item>
-	<!--
 		 Help menu
 		 -->
 	<item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
 	<item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
-	<item id="CmdHelpXLingPap">You can edit your Grammar Sketch in XLingPaper format using an XML editor (only available in English).</item>
 	<item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>
 	<item id="CmdHelpDemoOverview">Tour of Language Explorer.</item>
 	<item id="CmdHelpDemoConfigColumns">Examples of configuring columns.</item>
@@ -231,7 +220,6 @@
 	<item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
 	<item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
 	<item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
-	<item id="CmdHelpNotesWritingSystems">Display technical notes on Writing Systems (only available in English).</item>
 	<!--
 =======================
   LexText Slices

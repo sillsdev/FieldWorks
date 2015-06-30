@@ -538,29 +538,6 @@ Old Mediator methods/commands
 		}
 
 		/// <summary>
-		/// Display a file from the Language Explorer\Training directory.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnHelpTrainingFile(object commandObject)
-		{
-			CheckDisposed();
-
-			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
-			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
-					LexTextStrings.ksError);
-			});
-
-			return true;
-		}
-
-		/// <summary>
 		/// Display a file given a path relative to the FieldWorks/Helps directory.
 		/// </summary>
 		/// <param name="commandObject"></param>

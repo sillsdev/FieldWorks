@@ -1302,7 +1302,8 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new XCore.Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				m_mediator.SendMessage("AddContextToHistory", link, false);
+				var linkListener = m_propertyTable.GetValue<LinkListener>("LinkListener");
+				linkListener.OnAddContextToHistory(link);
 			}
 		}
 

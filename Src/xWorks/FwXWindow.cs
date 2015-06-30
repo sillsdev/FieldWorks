@@ -589,96 +589,6 @@ namespace SIL.FieldWorks.XWorks
 
 
 		#region XCore Message Handlers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnEditCut(object arg)
-		{
-			CheckDisposed();
-
-			if (m_viewHelper.ActiveView != null)
-			{
-				using (new DataUpdateMonitor(this, "EditCut"))
-					return m_viewHelper.ActiveView.EditingHelper.CutSelection();
-			}
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnEditCopy(object arg)
-		{
-			CheckDisposed();
-
-			if (m_viewHelper.ActiveView != null)
-				return m_viewHelper.ActiveView.EditingHelper.CopySelection();
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnEditPaste(object arg)
-		{
-			CheckDisposed();
-
-			if (m_viewHelper.ActiveView != null)
-			{
-				string stUndo, stRedo;
-				ResourceHelper.MakeUndoRedoLabels("kstidEditPaste", out stUndo, out stRedo);
-				using (UndoableUnitOfWorkHelper undoHelper = new UndoableUnitOfWorkHelper(
-					Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
-				using (new DataUpdateMonitor(this, "EditPaste"))
-				{
-					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard())
-						undoHelper.RollBack = false;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Paste what is in the clipboard as a URL
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		public bool OnPasteUrl(object arg)
-		{
-			CheckDisposed();
-
-			if (EditingHelper is RootSiteEditingHelper)
-				return ((RootSiteEditingHelper)EditingHelper).PasteUrl(StyleSheet);
-			return false;
-		}
-
-		/// <summary>
-		/// Enable the PasteUrl command
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayPasteUrl(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanPasteUrl();
-			return true;
-		}
 
 		/// <summary>
 		/// Handle the InsertLinkToFile command
@@ -735,60 +645,6 @@ namespace SIL.FieldWorks.XWorks
 				display.Visible = false;
 			}
 
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is very similar to OnUpdateEditCut, but for xCore applications.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayEditCut(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_viewHelper != null && m_viewHelper.ActiveView != null &&
-				m_viewHelper.ActiveView.EditingHelper.CanCut();
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is very similar to OnUpdateEditCopy, but for xCore applications.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayEditCopy(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_viewHelper.ActiveView != null &&
-				m_viewHelper.ActiveView.EditingHelper.CanCopy();
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is very similar to OnUpdateEditPaste, but for xCore applications.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayEditPaste(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_viewHelper.ActiveView != null &&
-				m_viewHelper.ActiveView.EditingHelper.CanPaste();
 			return true;
 		}
 
@@ -1121,12 +977,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private Control GetFocusControl()
 		{
-			Control focusControl = null;
-			if (m_propertyTable.PropertyExists("FirstControlToHandleMessages"))
-			{
-				focusControl = m_propertyTable.GetValue<Control>("FirstControlToHandleMessages");
-			}
-			if (focusControl == null || focusControl.IsDisposed)
+			Control focusControl;
+			if (!m_propertyTable.TryGetValue("FirstControlToHandleMessages", out focusControl) || focusControl.IsDisposed)
 			{
 				focusControl = FocusedControl();
 			}

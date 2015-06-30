@@ -198,7 +198,6 @@
     <Compile Include="PaneBarContainer.Designer.cs">
       <DependentUpon>PaneBarContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="MockupDialogLauncher.cs" />
     <Compile Include="MultiPane.cs">
       <SubType>Component</SubType>
     </Compile>

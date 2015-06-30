@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<reusableControls/>
   <!-- On 1 Sep in ww branch, removed BaseRecords clerk, which allowed doc view showing only top-level records.-->
 	<tools>
 		<tool label="Document" value="notebookDocument" icon="DocumentView">

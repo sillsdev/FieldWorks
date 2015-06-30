@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			m_propertyTable.SetProperty("LinkListener", this, true);
+			m_propertyTable.SetProperty("LinkListener", this, false);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
 		}
 

@@ -4,6 +4,10 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
+		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
+		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro">
+			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
+		</command>
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
 		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F">
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
@@ -53,6 +57,13 @@
 		</command>
 		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureXmlDocView"/>
+		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
+		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
+			</parameters>
+		</command>
+		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -176,14 +187,16 @@
 			</clerks>
 		</parameters>
 	</controls>
-	<!-- ******************************************************** -->
-	<!-- ************************ menus *********************** -->
-	<!-- ******************************************************** -->
-	<menubar />
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
+		<menu id="File_Import">
+			<!-- Goes right after the global "Translated List Content" menu.-->
+			<item command="CmdImportSFMLexicon"/>
+			<item command="CmdImportLinguaLinksData"/>
+			<item command="CmdImportLiftData"/>
+		</menu>
 		<menu id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
 			<item command="CmdInsertSense" defaultVisible="false"/>
@@ -208,6 +221,18 @@
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
 			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+		</menu>
+		<menu id="Tools">
+			<item command="CmdMergeEntry" defaultVisible="false"/>
+		</menu>
+		<menu id="Help_Resources_A">
+			<!-- First in the Help->Resources menu. -->
+			<item command="CmdHelpLexicographyIntro"/>
+		</menu>
+		<menu id="Help_Resources_B">
+			<!-- Goes right below the S/R menu. -->
+			<item command="CmdHelpNotesSFMDatabaseImport"/>
+			<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
 		</menu>
 	</menuAddOn>
 	<!-- ********************************************************** -->
@@ -260,17 +285,9 @@
 		<tab label="Lexical Tools" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 	</sidebar>
 	<!-- ********************************************************** -->
-	<!-- ************************ toolbars *********************** -->
-	<!-- ********************************************************** -->
-	<toolbars/>
-	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
-		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
-
-		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
-		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
 			<item command="CmdGoToEntry" defaultVisible="false"/>
@@ -278,10 +295,6 @@
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
 		</toolbar>
 	</toolbarsAddOn>
-	<!-- ********************************************************** -->
-	<!-- ************************ resources ********************* -->
-	<!-- ********************************************************** -->
-	<resources />
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
@@ -436,12 +449,7 @@
 						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
 					</sortMethods>
 				</clerk>
-				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="Browse/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="Dictionary/toolConfiguration.xml" query="root/clerks/*"/>
 				<include path="RDE/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="ReversalIndices/toolConfiguration.xml" query="root/clerks/*"/>
-				<include path="ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>

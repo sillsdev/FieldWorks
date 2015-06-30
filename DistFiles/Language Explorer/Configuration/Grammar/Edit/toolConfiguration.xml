@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <root>
-	<clerks/>
 	<tools>
 		<tool label="Category Edit" value="posEdit" icon="EditView">
 			<control>
@@ -161,9 +160,7 @@
 							bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false"
 								enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
-							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
 							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
-							<!--								<overrides>-->
 							<columns generate="objectValuePartsForParentLayouts">
 								<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 								<!-- Phonological Feature Defns (generated)-->
@@ -177,22 +174,10 @@
 										</dynamicloaderinfo>
 									</column>
 								</generate>
-								<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
-									<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
-										<args>
-											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-										</args>
-									</dynamicloaderinfo>
-									<!-\-<span>
-										<obj field="Features" layout="PhonFeats"/>
-									</span>-\->
-								</column>-->
 								<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
 								<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
 								<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
 							</columns>
-							<!--								</overrides>-->
-							<!--							</include>-->
 						</parameters>
 					</control>
 				</parameters>

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace LexiconAreaPlugin
@@ -27,7 +28,10 @@ namespace LexiconAreaPlugin
 		/// </remarks>
 		public void Deactivate()
 		{
+#if RANDYTODO
+			// Implement and call Deactivate() on current tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Deactivate method.", "Need to implement", MessageBoxButtons.OK);
+#endif
 		}
 
 		/// <summary>
@@ -40,7 +44,10 @@ namespace LexiconAreaPlugin
 		/// </remarks>
 		public void Activate()
 		{
+#if RANDYTODO
+			// Implement and call Activate() on current/default tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Activate method.", "Need to implement", MessageBoxButtons.OK);
+#endif
 		}
 
 		/// <summary>
@@ -51,7 +58,10 @@ namespace LexiconAreaPlugin
 		/// </remarks>
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// Implement and call PrepareToRefresh() on current tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area PrepareToRefresh method.", "Need to implement", MessageBoxButtons.OK);
+#endif
 		}
 
 		/// <summary>
@@ -62,17 +72,24 @@ namespace LexiconAreaPlugin
 		/// </remarks>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// Implement and call FinishRefresh() on current tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area FinishRefresh method.", "Need to implement", MessageBoxButtons.OK);
+#endif
 		}
 
 		/// <summary>
 		/// The properties are about to be saved, so make sure they are all current.
 		/// Add new ones, as needed.
 		/// </summary>
+		/// <param name="fdoServiceLocator">The main system service locator.</param>
 		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		public void EnsurePropertiesAreCurrent(PropertyTable propertyTable)
+		public void EnsurePropertiesAreCurrent(IFdoServiceLocator fdoServiceLocator, PropertyTable propertyTable)
 		{
+#if RANDYTODO
+			// Implement and call EnsurePropertiesAreCurrent() on current tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area EnsurePropertiesAreCurrent method.", "Need to implement", MessageBoxButtons.OK);
+#endif
 		}
 
 		#endregion

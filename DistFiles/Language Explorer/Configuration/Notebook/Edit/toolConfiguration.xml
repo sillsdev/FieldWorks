@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <root>
-	<clerks/>
 	<tools>
 		<tool label="Record Edit" value="notebookEdit" icon="SideBySideView">
 			<control>

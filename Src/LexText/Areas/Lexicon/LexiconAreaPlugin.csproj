@@ -35,8 +35,16 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\..\Output\Release\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=9.0.0.26097, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="Framework">
       <HintPath>..\..\..\..\Output\Release\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="xCoreInterfaces">
