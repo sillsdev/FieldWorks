@@ -255,7 +255,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
@@ -276,8 +276,8 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}_$$SUFFIX.so
 	case $(ARCH) in i686) OTHERSUFFIX=_64;; x86_64) OTHERSUFFIX=;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}$$OTHERSUFFIX.so
-	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu50/tools
-	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu50/Keyboards
+	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
+	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
 
 install-menuentries:
 	# Add to Applications menu
