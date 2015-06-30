@@ -1,4 +1,6 @@
-﻿using SIL.FieldWorks.FDO.Infrastructure;
+﻿using System;
+using System.IO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -48,6 +50,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (ds != null)
 				return false;
 			return true;
+		}
+
+		/// <summary>
+		/// Determines if the project file at the specified path is locked.
+		/// </summary>
+		public static bool IsProjectLocked(string projectPath)
+		{
+			string ext = Path.GetExtension(projectPath);
+			return ext != null && ext.Equals(FdoFileHelper.ksFwDataXmlFileExtension, StringComparison.InvariantCultureIgnoreCase)
+				&& XMLBackendProvider.IsFileLocked(projectPath);
 		}
 	}
 }

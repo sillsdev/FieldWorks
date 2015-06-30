@@ -320,9 +320,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			SaveAllDataToDisk();
 			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 
-			if (ChangeProjectNameIfNeeded())
-				return true;
-
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
@@ -1345,42 +1342,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="tempWindow is a reference")]
-		private bool ChangeProjectNameIfNeeded()
-		{
-			// Enhance GJM: When Hg is upgraded to work with non-Ascii filenames, this section can be removed.
-			if (Unicode.CheckForNonAsciiCharacters(Cache.ProjectId.Name))
-			{
-				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
-				if (revisedProjName == string.Empty)
-				{
-					// The whole pre-existing project name is non-Ascii characters!
-					DisplayAllNonAsciiComplaint();
-					return true;
-				}
-				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
-					return true;
-				// Rename Project
-				var projectFolder = RevisedProjectFolder(Cache.ProjectId.ProjectFolder, revisedProjName);
-				if (CheckForExistingFileName(projectFolder, revisedProjName))
-					return true;
-
-				var app = _propertyTable.GetValue<LexTextApp>("App");
-				if (app.FwManager.RenameProject(revisedProjName, app))
-				{
-					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
-					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
-					var tempWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
-					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
-					// to hopefully come back here after resetting things
-				}
-				return true;
-			}
-			return false;
-		}
-
 		/// <summary>
 		/// Returns true if there are any Chorus Notes to view in the main FW repo or in the Lift repo.
 		/// </summary>
@@ -1438,18 +1399,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
 		{
 			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
-		}
-
-		private static DialogResult DisplayNonAsciiWarning(string revisedProjName)
-		{
-			return MessageBox.Show(string.Format(LexEdStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexEdStrings.ksWarning,
-					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
-		}
-
-		private void DisplayAllNonAsciiComplaint()
-		{
-			MessageBox.Show(LexEdStrings.ksAllNonAsciiProjectNameWarning, LexEdStrings.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)

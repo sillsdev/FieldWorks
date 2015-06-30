@@ -1,23 +1,15 @@
-// Copyright (c) 2004-2013 SIL International
+﻿// Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ResourceHelper.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
 using System.Resources;
-using System.Text;
-using System.Windows.Forms;
+using System.Collections.Generic;
 using SIL.FieldWorks.FDO;
+using System.Drawing;
+using System.Text;
 using SIL.Utils;
+using System.Reflection;
 
 namespace SIL.FieldWorks.Resources
 {
@@ -107,31 +99,28 @@ namespace SIL.FieldWorks.Resources
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Summary description for ResourceHelper.
+	/// Provides access to resources
 	/// </summary>
+	/// <remarks>The non-static methods and fields are in a separate class so that clients can
+	/// use this class without the need for a reference to Windows.Forms if all they need is to
+	/// get some strings.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public partial class ResourceHelper : Form
+	public static class ResourceHelper
 	{
 		#region Member variables
 		/// <summary/>
-		protected static ResourceHelper s_form;
-		private static ResourceManager s_stringResources;
-		private static ResourceManager s_helpResources;
-		private static readonly Dictionary<FileFilterType, string> s_fileFilterExtensions;
-		private static string s_defParaChars;
+		private static ResourceHelperImpl s_form;
+		/// <summary/>
+		internal static ResourceManager s_stringResources;
+		/// <summary/>
+		internal static ResourceManager s_helpResources;
+		/// <summary/>
+		internal static readonly Dictionary<FileFilterType, string> s_fileFilterExtensions;
+		/// <summary/>
+		internal static string s_defParaChars;
 		#endregion
 
 		#region Construction and destruction
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor for ResourceHelper
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ResourceHelper()
-		{
-			InitializeComponent();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor for ResourceHelper
@@ -194,49 +183,21 @@ namespace SIL.FieldWorks.Resources
 			s_form = null;
 		}
 
-		/// <summary>
-		/// Dispose static member variables
-		/// </summary>
-		protected virtual void DisposeStaticMembers()
-		{
-			if (s_stringResources != null)
-				s_stringResources.ReleaseAllResources();
-			s_stringResources = null;
-			if (s_helpResources != null)
-				s_helpResources.ReleaseAllResources();
-			s_helpResources = null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose(disposing);
-		}
 		#endregion
 
-		private static ResourceHelper Helper
+		internal static ResourceHelperImpl Helper
 		{
 			get
 			{
 				if (s_form == null)
-					s_form = new ResourceHelper();
+					s_form = new ResourceHelperImpl();
 				return s_form;
+			}
+			set
+			{
+				if (s_form != null)
+					s_form.Dispose();
+				s_form = value;
 			}
 		}
 
@@ -257,7 +218,7 @@ namespace SIL.FieldWorks.Resources
 
 			// If we get here from a test, it might not find the correct resource.
 			// Just ignore it and set some dummy values
-			if (stRes == null || stRes == string.Empty)
+			if (string.IsNullOrEmpty(stRes))
 			{
 				stUndo = "Resource not found for Undo";
 				stRedo = "Resource not found for Redo";
@@ -827,7 +788,7 @@ namespace SIL.FieldWorks.Resources
 		/// ------------------------------------------------------------------------------------
 		public static string BuildFileFilter(IEnumerable<FileFilterType> types)
 		{
-			StringBuilder bldr = new StringBuilder();
+			var bldr = new StringBuilder();
 			foreach (FileFilterType type in types)
 				bldr.AppendFormat("{0}|", FileFilter(type));
 			bldr.Length--;

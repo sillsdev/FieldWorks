@@ -1,0 +1,52 @@
+<TestTimeoutValues defaultTimeLimit="35">
+	<TimeoutGroup timeLimit="540"><!--9 minutes-->
+		<Project name="FDOTests"/>
+		<Project name="xWorksTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="420">
+		<Project name="FwCoreDlgsTests"/>
+		<Project name="TeDllTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="240">
+		<Project name="TeImportExportTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="150">
+		<Project name="DiffViewTests"/>
+		<Project name="MGATests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="75">
+		<Project name="DiscourseTests"/>
+		<Project name="FwControlsTests"/>
+		<Project name="FwCoreDlgControlsTests"/>
+		<Project name="FwUtilsTests"/>
+		<Project name="ITextDllTests"/>
+		<Project name="LexTextControlsTests"/>
+		<Project name="PrintLayoutTests"/>
+		<Project name="RootSiteTests"/>
+		<Project name="SimpleRootSiteTests"/>
+		<Project name="TeEditingTests"/>
+		<Project name="TeScrInitializerTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="40">
+		<Project name="BasicUtilsTests"/>
+		<Project name="CacheLightTests"/>
+		<Project name="CheckAdminPrivilege"/>
+		<Project name="CoreImplTests"/>
+		<Project name="DetailControlsTests"/>
+		<Project name="FieldWorksTests:"/>
+		<Project name="FrameworkTests"/>
+		<Project name="FwPrintLayoutComponentsTests"/>
+		<Project name="FxtDllTests"/>
+		<Project name="LexEdDllTests"/>
+		<Project name="LexTextDllTests"/>
+		<Project name="NotesViewTests"/>
+		<Project name="ParserCoreTests"/>
+		<Project name="ParserUITests"/>
+		<Project name="PhraseTranslationHelperTests"/>
+		<Project name="ScrControlsTests"/>
+		<Project name="TeDialogsTests"/>
+		<Project name="TePrintLayoutComponentsTests"/>
+		<Project name="TePrintLayoutTests"/>
+		<Project name="XMLViewsTests"/>
+	</TimeoutGroup>
+</TestTimeoutValues>	
