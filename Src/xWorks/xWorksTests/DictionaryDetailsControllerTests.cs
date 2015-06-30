@@ -557,6 +557,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void LoadNode_LoadingNullOptionsAfterListClearsOptionsView()
+		{
+			var listOptions = new DictionaryNodeListOptions
+			{
+				Options = ListOfEnabledDNOsFromStrings(new List<string> { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }),
+				ListId = DictionaryNodeListOptions.ListIds.Variant
+			};
+			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(node);
+			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Test setup failed, OptionsView shoud not be null");
+			var optionlessNode = new ConfigurableDictionaryNode();
+			controller.LoadNode(optionlessNode);
+			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void CannotUncheckOnlyCheckedItemInList()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions

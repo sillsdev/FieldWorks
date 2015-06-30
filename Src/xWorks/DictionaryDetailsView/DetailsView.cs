@@ -91,9 +91,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_OptionsView.Dispose();
 				}
 				m_OptionsView = value;
-				panelOptions.Controls.Add(m_OptionsView);
-				value.Dock = DockStyle.Fill;
-				value.Location = new Point(0, 0);
+				if(value != null)
+				{
+					panelOptions.Controls.Add(m_OptionsView);
+					value.Dock = DockStyle.Fill;
+					value.Location = new Point(0, 0);
+				}
 			}
 		}
 

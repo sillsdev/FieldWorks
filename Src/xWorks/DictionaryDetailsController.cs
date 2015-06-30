@@ -125,7 +125,12 @@ namespace SIL.FieldWorks.XWorks
 				// Special Grammatical Info. options are needed only if the parent is Senses.
 				LoadGrammaticalInfoOptions();
 			}
-			// else, show only the default details (style, before, between, after)
+			else
+			{
+
+				// else, show only the default details (style, before, between, after)
+				View.OptionsView = null;
+			}
 
 			// Register eventhandlers
 			View.StyleSelectionChanged += OnViewOnStyleSelectionChanged;
