@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 			m_logger.WriteLine(String.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
-			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = -1 };
+			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = -1, AllPublications = true};
 			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
 			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
 			convertedModel.Save();

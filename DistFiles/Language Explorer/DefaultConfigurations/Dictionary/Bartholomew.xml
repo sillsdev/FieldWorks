@@ -5,7 +5,7 @@
  name="Hybrid (complex forms as main entries and mini subentries)"
  version="-1"
  lastModified="2014-10-08"
- allPublications="false">
+ allPublications="true">
   <ConfigurationItem name="Main Entry" isEnabled="true" isDuplicate="false" isCustomField="false" field="LexEntry" cssClassNameOverride="entry">
     <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="headword">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
