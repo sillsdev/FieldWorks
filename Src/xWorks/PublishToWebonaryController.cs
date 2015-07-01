@@ -64,7 +64,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!IsSupportedWebonaryFile(file))
 				{
-					webonaryView.UpdateStatus(string.Format("Excluding unsupported file: {0}", Path.GetFileName(file)));
+					webonaryView.UpdateStatus(string.Format("Excluding {0},{1} format is unsupported by Webonary.",
+						Path.GetFileName(file), Path.GetExtension(file)));
 					continue;
 				}
 				zipFile.AddFile(file, dirInZip);

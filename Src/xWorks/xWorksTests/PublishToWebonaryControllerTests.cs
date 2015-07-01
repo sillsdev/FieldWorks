@@ -453,9 +453,9 @@ namespace SIL.FieldWorks.XWorks
 					Assert.True(uploadZip.EntryFileNames.Contains(jpegFilename), "Should have included supported JPEG file in file to upload.");
 				}
 
-				var query = string.Format(".*nsupported.*{0}.*", tiffFilename);
+				var query = string.Format(".*{0}.*nsupported.*", tiffFilename);
 				Assert.True(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
-				query = string.Format(".*nsupported.*{0}.*", jpegFilename);
+				query = string.Format(".*{0}.*nsupported.*", jpegFilename);
 				Assert.False(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
 
 				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, ".*nsupported.*").Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
