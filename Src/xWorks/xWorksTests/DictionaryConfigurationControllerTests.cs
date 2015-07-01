@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -988,6 +987,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(savedPath, controller._model.FilePath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
+				File.Delete(savedPath);
 			}
 		}
 

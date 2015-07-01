@@ -1097,6 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(newReversalConfigLoc);
 			File.AppendAllText(Path.Combine(newReversalConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Bar");
 			Assert.That(!m_migrator.ReversalConfigsNeedMigrating()); // SUT
+			DirectoryUtilities.DeleteDirectoryRobust(newReversalConfigLoc);
 		}
 
 		///<summary/>
