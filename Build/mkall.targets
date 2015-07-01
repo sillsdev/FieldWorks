@@ -555,11 +555,11 @@
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="$(dir-outputBase)"
+			Value="/usr/lib/fieldworks"
 			Condition="'$(OS)'=='Unix'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="$(dir-outputBase)/EC/Plugins"
+			Value="/usr/lib/fieldworks/EC/Plugins"
 			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>

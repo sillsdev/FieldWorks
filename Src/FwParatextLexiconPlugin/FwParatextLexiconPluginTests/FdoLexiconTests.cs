@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -532,6 +533,27 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "dpos"));
 			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("apos");
 			Assert.IsTrue(matchingLexeme.LexicalForm == "a");
+		}
+
+		/// <summary>
+		/// Test when an entry has no morph type specified.
+		/// </summary>
+		[Test]
+		public void NoMorphTypeSpecified()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form", m_cache.DefaultVernWs), "gloss", new SandboxGenericMSA());
+				entry.LexemeFormOA.MorphTypeRA = null;
+			});
+
+			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form").Single();
+			Assert.That(lexeme.LexicalForm, Is.EqualTo("form"));
+			Assert.That(lexeme.Type, Is.EqualTo(LexemeType.Stem));
+			lexeme = m_lexicon.Lexemes.Single();
+			Assert.That(lexeme.LexicalForm, Is.EqualTo("form"));
+			Assert.That(lexeme.Type, Is.EqualTo(LexemeType.Stem));
 		}
 
 		#endregion

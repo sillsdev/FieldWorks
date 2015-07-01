@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				{
 					var lexemes = new List<Lexeme>();
 					// Get all of the lexical entries in the database
-					foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Where(e => e.PrimaryMorphType != null))
+					foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 						lexemes.Add(GetEntryLexeme(entry));
 
 					// Get all the wordforms in the database
@@ -731,40 +731,43 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// ------------------------------------------------------------------------------------
 		private static LexemeType GetLexemeTypeForMorphType(IMoMorphType type)
 		{
-			switch (type.Guid.ToString())
+			if (type != null)
 			{
-				case MoMorphTypeTags.kMorphCircumfix:
-				case MoMorphTypeTags.kMorphInfix:
-				case MoMorphTypeTags.kMorphInfixingInterfix:
-				case MoMorphTypeTags.kMorphSimulfix:
-				case MoMorphTypeTags.kMorphSuprafix:
-				case MoMorphTypeTags.kMorphClitic:
-				case MoMorphTypeTags.kMorphProclitic:
-					// These don't map neatly to a lexeme type, so we just return prefix
-					return LexemeType.Prefix;
+				switch (type.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphCircumfix:
+					case MoMorphTypeTags.kMorphInfix:
+					case MoMorphTypeTags.kMorphInfixingInterfix:
+					case MoMorphTypeTags.kMorphSimulfix:
+					case MoMorphTypeTags.kMorphSuprafix:
+					case MoMorphTypeTags.kMorphClitic:
+					case MoMorphTypeTags.kMorphProclitic:
+						// These don't map neatly to a lexeme type, so we just return prefix
+						return LexemeType.Prefix;
 
-				case MoMorphTypeTags.kMorphEnclitic:
-					// This one also isn't a great match, but there is no better choice
-					return LexemeType.Suffix;
+					case MoMorphTypeTags.kMorphEnclitic:
+						// This one also isn't a great match, but there is no better choice
+						return LexemeType.Suffix;
 
-				case MoMorphTypeTags.kMorphPrefix:
-				case MoMorphTypeTags.kMorphPrefixingInterfix:
-					return LexemeType.Prefix;
+					case MoMorphTypeTags.kMorphPrefix:
+					case MoMorphTypeTags.kMorphPrefixingInterfix:
+						return LexemeType.Prefix;
 
-				case MoMorphTypeTags.kMorphSuffix:
-				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					return LexemeType.Suffix;
+					case MoMorphTypeTags.kMorphSuffix:
+					case MoMorphTypeTags.kMorphSuffixingInterfix:
+						return LexemeType.Suffix;
 
-				case MoMorphTypeTags.kMorphPhrase:
-				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
-					return LexemeType.Phrase;
+					case MoMorphTypeTags.kMorphPhrase:
+					case MoMorphTypeTags.kMorphDiscontiguousPhrase:
+						return LexemeType.Phrase;
 
-				case MoMorphTypeTags.kMorphStem:
-				case MoMorphTypeTags.kMorphRoot:
-				case MoMorphTypeTags.kMorphBoundRoot:
-				case MoMorphTypeTags.kMorphBoundStem:
-				case MoMorphTypeTags.kMorphParticle:
-					return LexemeType.Stem;
+					case MoMorphTypeTags.kMorphStem:
+					case MoMorphTypeTags.kMorphRoot:
+					case MoMorphTypeTags.kMorphBoundRoot:
+					case MoMorphTypeTags.kMorphBoundStem:
+					case MoMorphTypeTags.kMorphParticle:
+						return LexemeType.Stem;
+				}
 			}
 
 			// Shouldn't ever get here, but since we don't know what type it is just return

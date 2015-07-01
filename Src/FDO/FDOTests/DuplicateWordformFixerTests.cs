@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FdoUi;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	public class DuplicateWordformFixerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IWfiWordformFactory m_wfiFactory;
-		private ProgressBarWrapper m_progress;
+		private IProgress m_progress;
 
 		/// <summary>
 		/// Set up some common data
@@ -25,13 +25,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.TestSetup();
 			m_wfiFactory = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
-			m_progress = new ProgressBarWrapper(new ProgressBar());
+			m_progress = new DummyProgressDlg();
 		}
 
 		/// <summary/>
 		public override void TestTearDown()
 		{
-			m_progress.ProgressBar.Dispose();
 			m_progress = null;
 			base.TestTearDown();
 		}

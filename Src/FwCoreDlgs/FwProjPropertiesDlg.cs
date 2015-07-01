@@ -982,11 +982,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					MessageBoxButtons.YesNo);
 			}
 
-			if (DidProjectTabChange())
-			{
-				CheckForAndWarnAboutNonAsciiName(m_txtProjName.Text);
-			}
-
 			using (new WaitCursor(this))
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
@@ -1020,15 +1015,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 			Close();
-		}
-
-		private void CheckForAndWarnAboutNonAsciiName(string newProjName)
-		{
-			if (FwNewLangProject.CheckForNonAsciiProjectName(newProjName))
-			{
-				MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning, FwCoreDlgs.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
 		}
 
 		private bool DidProjectTabChange()

@@ -87,9 +87,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid,
-																															badPartOfSpeech.Owner as IPartOfSpeech);
-				badPartOfSpeech.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
+				IPartOfSpeech badPartOfSpeechOwner = badPartOfSpeech.Owner as IPartOfSpeech;
+				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, badPartOfSpeechOwner);
+				badPartOfSpeechOwner.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
 			}
 			replacementPos.MergeObject(badPartOfSpeech);
 		}

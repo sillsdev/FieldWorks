@@ -1,0 +1,49 @@
+<TestTimeoutValues defaultTimeLimit="50">
+	<TimeoutGroup timeLimit="540"><!--9 minutes-->
+		<Project name="FDOTests"/>
+		<Project name="xWorksTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="420">
+		<Project name="FwCoreDlgsTests"/>
+		<Project name="TeDllTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="240">
+		<Project name="TeImportExportTests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="150">
+		<Project name="DiffViewTests"/>
+		<Project name="MGATests"/>
+	</TimeoutGroup>
+	<TimeoutGroup timeLimit="75">
+		<Project name="BasicUtilsTests"/>
+		<Project name="CacheLightTests"/>
+		<Project name="CoreImplTests"/>
+		<Project name="DetailControlsTests"/>
+		<Project name="DiscourseTests"/>
+		<Project name="FdoUiTests"/>
+		<Project name="FiltersTests"/>
+		<Project name="FrameworkTests"/>
+		<Project name="FwControlsTests"/>
+		<Project name="FwCoreDlgControlsTests"/>
+		<Project name="FwPrintLayoutComponentsTests"/>
+		<Project name="FwUtilsTests"/>
+		<Project name="ITextDllTests"/>
+		<Project name="LexEdDllTests"/>
+		<Project name="LexTextControlsTests"/>
+		<Project name="LexTextDllTests"/>
+		<Project name="NotesViewTests"/>
+		<Project name="ParserCoreTests"/>
+		<Project name="ParserUITests"/>
+		<Project name="PhraseTranslationHelperTests"/>
+		<Project name="PrintLayoutTests"/>
+		<Project name="RootSiteTests"/>
+		<Project name="SimpleRootSiteTests"/>
+		<Project name="TeDialogsTests"/>
+		<Project name="TeEditingTests"/>
+		<Project name="TePrintLayoutComponentsTests"/>
+		<Project name="TePrintLayoutTests"/>
+		<Project name="TeScrInitializerTests"/>
+		<Project name="WidgetsTests"/>
+		<Project name="XMLViewsTests"/>
+	</TimeoutGroup>
+</TestTimeoutValues>	

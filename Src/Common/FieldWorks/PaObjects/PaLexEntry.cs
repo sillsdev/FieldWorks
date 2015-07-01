@@ -62,10 +62,10 @@ namespace SIL.FieldWorks.PaObjects
 
 			xPronunciations = lxEntry.PronunciationsOS.Select(x => new PaLexPronunciation(x)).ToList();
 			xSenses = lxEntry.SensesOS.Select(x => new PaLexSense(x)).ToList();
-			xComplexForms = lxEntry.ComplexFormEntries.Select(x => PaMultiString.Create(x.LexemeFormOA.Form, svcloc)).ToList();
+			xComplexForms = lxEntry.ComplexFormEntries.Where(x => x.LexemeFormOA != null).Select(x => PaMultiString.Create(x.LexemeFormOA.Form, svcloc)).ToList();
 			xAllomorphs = lxEntry.AllAllomorphs.Select(x => PaMultiString.Create(x.Form, svcloc)).ToList();
 
-			xLexemeForm = PaMultiString.Create(lxEntry.LexemeFormOA.Form, svcloc);
+			xLexemeForm = lxEntry.LexemeFormOA != null ? PaMultiString.Create(lxEntry.LexemeFormOA.Form, svcloc) : null;
 			xMorphType = PaCmPossibility.Create(lxEntry.PrimaryMorphType);
 			xCitationForm = PaMultiString.Create(lxEntry.CitationForm, svcloc);
 			xNote = PaMultiString.Create(lxEntry.Comment, svcloc);
