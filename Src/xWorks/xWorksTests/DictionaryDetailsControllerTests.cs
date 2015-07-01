@@ -240,6 +240,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SenseLoadsCharacterStylesWhenShowInParaNotSet()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(testNode);
+			using (var view = controller.View)
+			{
+				// SUT
+				AssertShowingCharacterStyles(view);
+			}
+		}
+
+		[Test]
 		public void NonSenseLoadsCharacterStyles()
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);

@@ -306,17 +306,17 @@
   <data name="&gt;&gt;dropDownStyle.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <metadata name="labelStyle.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="labelStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
-  </data>
-  <data name="labelStyle.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="labelStyle.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 17</value>
   </data>
   <data name="labelStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 13</value>
+    <value>250, 13</value>
   </data>
   <data name="labelStyle.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
