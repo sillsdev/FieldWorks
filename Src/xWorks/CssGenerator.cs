@@ -24,6 +24,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal const int DefaultStyle = -1;
 
+		internal const string BeforeAfterBetweenStyleName = "Dictionary-BeforeAfterBetween";
+		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
@@ -77,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
 			}
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"));
+			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
 			rule.Value = baseSelection;
 			// if the configuration node defines a style then add all the rules generated from that style
 			if(!String.IsNullOrEmpty(configNode.Style))
@@ -265,9 +268,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentSelector,
 																							 ConfigurableDictionaryNode configNode,
-																							 out string baseSelection, FdoCache cache)
+																							 out string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			var rules = new List<StyleRule>();
+			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			if(parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
@@ -275,12 +279,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+
 				if(!String.IsNullOrEmpty(configNode.Between))
 				{
 					// content is generated before each item which follows an item of the same name
 					// eg. .complexformrefs>.complexformref + .complexformref:before { content: "," }
 					var dec = new StyleDeclaration();
 					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Between) });
+					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
+						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = GetSelectorForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
@@ -293,6 +300,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
+				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
+					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
 				var beforeRule = new StyleRule(dec) { Value = baseSelection + ":first-child:before" };
 				rules.Add(beforeRule);
 			}
@@ -300,6 +309,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
+				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
+					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
 				var afterRule = new StyleRule(dec) { Value = baseSelection + ":last-child:after" };
 				rules.Add(afterRule);
 			}
@@ -723,7 +734,7 @@ namespace SIL.FieldWorks.XWorks
 			letterRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			letterRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Dictionary-LetterHeading", cache.DefaultVernWs, mediator));
+			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, cache.DefaultVernWs, mediator));
 			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
 		}
 	}

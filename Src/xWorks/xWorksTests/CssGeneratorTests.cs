@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry"
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
 			//SUT
@@ -119,6 +119,36 @@ namespace SIL.FieldWorks.XWorks
 							  "css before rule with Z content not found on headword");
 			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
 							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterConfigGeneratesBeforeAfterFormattedCss()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "Z",
+				After = "A"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			GeneratePseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';font-size:10pt;color:#00F;}
+			// and .headword span:last-child{content:'A';font-size:10pt;color:#00F;}
+			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*font-size\\s*:\\s*10pt;\\s*color\\s*:\\s*#00F;\\s*}").Success,
+							  "css before rule with Z content with css format not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*font-size\\s*:\\s*10pt;\\s*color\\s*:\\s*#00F;\\s*}").Success,
+							  "css after rule with A content with css format not found on headword");
 		}
 
 		[Test]
@@ -357,7 +387,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
 			var xhtmResult = new StringBuilder();
-			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
@@ -400,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 			var xhtmResult = new StringBuilder();
-			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
@@ -418,7 +448,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] { "en" }),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" }),
 				IsEnabled = true
 			};
 			var testSensesNode = new ConfigurableDictionaryNode
@@ -437,7 +467,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {testEntryNode});
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -448,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
 			var xhtmResult = new StringBuilder();
-			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
@@ -664,7 +694,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "Slots",
 				Children =
-					new List<ConfigurableDictionaryNode> {new ConfigurableDictionaryNode { FieldDescription = "Name" } }
+					new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Name" } }
 			};
 			var gramInfo = new ConfigurableDictionaryNode
 			{
@@ -729,7 +759,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_SenseComplexFormsNotSubEntriesHeadWord()
 		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord"};
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord" };
 			var complexformsnotsubentries = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
@@ -870,7 +900,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { BeforeNumber = "[", AfterNumber = "]"}
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { BeforeNumber = "[", AfterNumber = "]" }
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
@@ -903,7 +933,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { senses }
 			};
-
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
@@ -911,6 +941,30 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between selector not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BetweenWorksWithFormatCss()
+		{
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Between = ","
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			GeneratePseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}", RegexOptions.Singleline).Success,
+							  "Between selector with format not generated.");
 		}
 
 		/// <summary>
@@ -932,7 +986,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ClassAttributeForConfig_SubFieldWithOverrideGivesCorrectClass()
 		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "Display", CSSClassNameOverride = "HeadWord"};
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "Display", CSSClassNameOverride = "HeadWord" };
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
@@ -1060,7 +1114,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en","fr" }),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en", "fr" }),
 				IsEnabled = true
 			};
 			var testSensesNode = new ConfigurableDictionaryNode
@@ -1154,6 +1208,44 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
+		/// <summary>
+		/// Generates test styles for the pseudo selectors :before / :after
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		private TestStyle GeneratePseudoStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = FontColor;
+			fontInfo.m_fontSize.ExplicitValue = FontSize;
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
+			if (m_styleSheet.Styles.Count > 0)
+				m_styleSheet.Styles.RemoveAt(0);
+			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
+			m_owningTable.Add(name, style);
+			return style;
+		}
+
+		/// <summary>
+		/// Generates empty test styles for the pseudo selectors :before / :after
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		private TestStyle GenerateEmptyPseudoStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
+			if (m_styleSheet.Styles.Count > 0)
+				m_styleSheet.Styles.RemoveAt(0);
+			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
+			m_owningTable.Add(name, style);
+			return style;
+		}
+
 		private void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)
 		{
 			Assert.That(css, Contains.Substring("color:" + HtmlColor.FromRgb(color.R, color.G, color.B)), "font color missing");
@@ -1168,83 +1260,83 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyExtraFontInfoInCss(int offset, FwSuperscriptVal superscript,
 														  FwUnderlineType underline, Color underlineColor, string css)
 		{
-			switch(underline)
+			switch (underline)
 			{
 				case (FwUnderlineType.kuntSingle):
-				{
-					Assert.That(css, Contains.Substring("text-decoration:underline;"), "underline not applied");
-					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"underline color missing");
-					break;
-				}
+					{
+						Assert.That(css, Contains.Substring("text-decoration:underline;"), "underline not applied");
+						Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"underline color missing");
+						break;
+					}
 				case (FwUnderlineType.kuntDashed):
-				{
-					Assert.That(css, Contains.Substring("border-bottom:1px dashed"), "dashed underline not applied");
-					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"underline color missing");
-					break;
-				}
+					{
+						Assert.That(css, Contains.Substring("border-bottom:1px dashed"), "dashed underline not applied");
+						Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"underline color missing");
+						break;
+					}
 				case (FwUnderlineType.kuntDotted):
-				{
-					Assert.That(css, Contains.Substring("border-bottom:1px dotted"), "dotted underline not applied");
-					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"underline color missing");
-					break;
-				}
+					{
+						Assert.That(css, Contains.Substring("border-bottom:1px dotted"), "dotted underline not applied");
+						Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"underline color missing");
+						break;
+					}
 				case (FwUnderlineType.kuntNone):
-				{
-					Assert.That(css, Is.Not.StringContaining("border-bottom:"), "underline should not have been applied");
-					Assert.That(css, Is.Not.StringContaining("text-decoration:underline"), "underline should not have been applied");
-					break;
-				}
+					{
+						Assert.That(css, Is.Not.StringContaining("border-bottom:"), "underline should not have been applied");
+						Assert.That(css, Is.Not.StringContaining("text-decoration:underline"), "underline should not have been applied");
+						break;
+					}
 				case (FwUnderlineType.kuntStrikethrough):
-				{
-					Assert.That(css, Contains.Substring("text-decoration:line-through;"), "strike through not applied");
-					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"strike through color missing");
-					break;
-				}
+					{
+						Assert.That(css, Contains.Substring("text-decoration:line-through;"), "strike through not applied");
+						Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"strike through color missing");
+						break;
+					}
 				case (FwUnderlineType.kuntDouble):
-				{
-					Assert.That(css, Contains.Substring("border-bottom:1px solid"), "double underline not applied");
-					Assert.That(css, Contains.Substring("text-decoration:underline;"), "double underline not applied");
-					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"underline color missing");
-					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
-									"underline color missing");
-					break;
-				}
+					{
+						Assert.That(css, Contains.Substring("border-bottom:1px solid"), "double underline not applied");
+						Assert.That(css, Contains.Substring("text-decoration:underline;"), "double underline not applied");
+						Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"underline color missing");
+						Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+										"underline color missing");
+						break;
+					}
 				default:
 					Assert.Fail("Um, I don't know how to do that yet");
 					break;
 			}
-			if(offset != 0)
+			if (offset != 0)
 			{
 				Assert.That(css, Contains.Substring("position:relative;"), "offset was not applied");
 				// Offsets are converted into pt values on export
 				Assert.That(css, Contains.Substring("bottom:" + offset / 1000 + ";"), "offset was not applied");
 			}
-			switch(superscript)
+			switch (superscript)
 			{
-				case(FwSuperscriptVal.kssvSub):
-				{
-					Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
-					break;
-				}
-				case (FwSuperscriptVal.kssvSuper):
-				{
-					Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
-					break;
-				}
-				case (FwSuperscriptVal.kssvOff):
-				{
-					//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
-					if(css.Contains("vertical-align"))
+				case (FwSuperscriptVal.kssvSub):
 					{
-						Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
+						Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
+						break;
 					}
-					break;
-				}
+				case (FwSuperscriptVal.kssvSuper):
+					{
+						Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
+						break;
+					}
+				case (FwSuperscriptVal.kssvOff):
+					{
+						//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
+						if (css.Contains("vertical-align"))
+						{
+							Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
+						}
+						break;
+					}
 			}
 		}
 
@@ -1261,7 +1353,8 @@ namespace SIL.FieldWorks.XWorks
 
 	class TestStyle : BaseStyleInfo
 	{
-		public TestStyle(FontInfo defaultFontInfo, FdoCache cache) : base(cache)
+		public TestStyle(FontInfo defaultFontInfo, FdoCache cache)
+			: base(cache)
 		{
 			m_defaultFontInfo = defaultFontInfo;
 		}

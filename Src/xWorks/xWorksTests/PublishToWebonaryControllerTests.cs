@@ -76,9 +76,9 @@ namespace SIL.FieldWorks.XWorks
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
 			var fontInfo = new FontInfo();
-			var style = new TestStyle(fontInfo, Cache) { Name = "Dictionary-LetterHeading", IsParagraphStyle = false };
+			var style = new TestStyle(fontInfo, Cache) { Name = CssGenerator.LetterHeadingStyleName, IsParagraphStyle = false };
 			m_styleSheet.Styles.Add(style);
-			m_owningTable.Add("Dictionary-LetterHeading", style);
+			m_owningTable.Add(CssGenerator.LetterHeadingStyleName, style);
 		}
 
 		[TestFixtureTearDown]
