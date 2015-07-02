@@ -159,31 +159,31 @@ namespace SIL.FieldWorks.XWorks
 		{
 			view.UpdateStatus("Publishing to Webonary.");
 
-			if(model.SiteName == null)
+			if(string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				return;
 			}
 
-			if(model.UserName == null)
+			if(string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus("Error: No username specified.");
 				return;
 			}
 
-			if(model.Password == null)
+			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus("Error: No Password specified.");
 				return;
 			}
 
-			if(model.SelectedPublication == null)
+			if(string.IsNullOrEmpty(model.SelectedPublication))
 			{
 				view.UpdateStatus("Error: No Publication specified.");
 				return;
 			}
 
-			if(model.SelectedConfiguration == null)
+			if(string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
 				view.UpdateStatus("Error: No Configuration specified.");
 				return;

@@ -120,7 +120,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveToModel()
 		{
-			Model.Password = rememberPasswordCheckbox.Checked ? webonaryPasswordTextbox.Text : null;
+			Model.RememberPassword = rememberPasswordCheckbox.Checked ? true : false;
+			Model.Password = webonaryPasswordTextbox.Text;
 			Model.UserName = webonaryUsernameTextbox.Text;
 			Model.SiteName = webonarySiteNameTextbox.Text;
 			Model.Reversals = GetSelectedReversals();
