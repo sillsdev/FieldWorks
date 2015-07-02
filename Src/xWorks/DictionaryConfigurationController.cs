@@ -451,7 +451,11 @@ namespace SIL.FieldWorks.XWorks
 					}
 					return entryWithHeadword;
 				}
-				default :
+				case "Reversal Index":
+				{
+					return serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create(); // TODO pH 2015.07: similar to above
+				}
+				default:
 				{
 					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
 				}

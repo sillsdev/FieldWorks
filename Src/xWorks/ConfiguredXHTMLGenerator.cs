@@ -62,8 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("pubDecorator");
 			}
-			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(entry.Cache.ProjectId.ProjectFolder),
-													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
+			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var stringBuilder = new StringBuilder();
 			using(var writer = XmlWriter.Create(stringBuilder))
