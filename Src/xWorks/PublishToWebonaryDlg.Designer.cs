@@ -74,7 +74,6 @@ namespace SIL.FieldWorks.XWorks
 			// tableLayoutPanel
 			// 
 			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
-			this.tableLayoutPanel.Anchor=(AnchorStyles.Top|AnchorStyles.Bottom|AnchorStyles.Left|AnchorStyles.Right);
 			this.tableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.publishButton, 0, 5);
 			this.tableLayoutPanel.Controls.Add(this.closeButton, 1, 5);

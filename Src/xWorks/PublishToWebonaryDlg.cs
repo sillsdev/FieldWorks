@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog.
-			this.Shown += (sender, args) => { this.Height = tableLayoutPanel.Height - outputLogTextbox.Height; };
+			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
 		}
 
 		private void PopulatePublicationsList()
