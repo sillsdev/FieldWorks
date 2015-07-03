@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal const int DefaultStyle = -1;
 
-		internal const string BeforeAfterBetweenStyleName = "Dictionary-BeforeAfterBetween";
+		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 
 		/// <summary>

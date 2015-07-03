@@ -95,7 +95,7 @@
 			<font bold="true" size="14 pt"/>
 			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
 		</tag>
-		<tag id="Dictionary-BeforeAfterBetween" guid="89670D4F-71D4-4878-B2FF-815E45512BE1" userlevel="1" context="internalConfigureView" type="character">
+		<tag id="Dictionary-Context" guid="89670D4F-71D4-4878-B2FF-815E45512BE1" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Base style for Before/After/Between content in the Dictionary view.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
