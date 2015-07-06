@@ -27,7 +27,7 @@
 		<Project name="TeEditingTests"/>
 		<Project name="TeScrInitializerTests"/>
 	</TimeoutGroup>
-	<TimeoutGroup timeLimit="40">
+	<TimeoutGroup timeLimit="60">
 		<Project name="BasicUtilsTests"/>
 		<Project name="CacheLightTests"/>
 		<Project name="CheckAdminPrivilege"/>
