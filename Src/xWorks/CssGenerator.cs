@@ -96,9 +96,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 				}
-				if (configNode.DisplayLabel == "Gloss" && (wsOptions.Options.Count(s => s.IsEnabled) > 1))
+				if (wsOptions.Options.Count(s => s.IsEnabled) > 1)
 				{
-					GenerateCssForGlossWithMultipleWs(styleSheet, baseSelection);
+					GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
 				}
 			}
 			styleSheet.Rules.AddRange(beforeAfterSelectors);
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssForGlossWithMultipleWs(StyleSheet styleSheet, string baseSelection)
+		private static void GenerateCssForFieldWithMultipleWs(StyleSheet styleSheet, string baseSelection)
 		{
 			var glossRule = new StyleRule {Value = baseSelection + ":not(:last-child):after"};
 			glossRule.Declarations.Properties.Add(new Property("content") {Term = new PrimitiveTerm(UnitType.String, " ")});
