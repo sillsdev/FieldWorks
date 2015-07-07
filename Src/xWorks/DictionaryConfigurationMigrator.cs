@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
 			if (DictionaryConfigsNeedMigrating())
 			{
-				m_logger.WriteLine(String.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
+				m_logger.WriteLine(string.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (ReversalConfigsNeedMigrating())
 			{
-				m_logger.WriteLine(String.Format("{0}: Reversal configurations were found in need of migration. - {1}",
+				m_logger.WriteLine(string.Format("{0}: Reversal configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_reversalIndexConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			//</layoutType>
 			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
 			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
-			m_logger.WriteLine(String.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
+			m_logger.WriteLine(string.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
 			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = -1, AllPublications = true};
@@ -158,11 +158,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty)))
+			if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
 			{
 				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", newPath);
 			}
-			else if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", String.Empty)))
+			else if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty)))
 			{
 				m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newPath);
 			}
@@ -209,13 +209,13 @@ namespace SIL.FieldWorks.XWorks
 						var customSuffixIndex = layout.IndexOf('#');
 						if(customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 						{
-							var customFileName = String.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+							var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
 						}
 						else if(customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 						{
-							var customFileName = String.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+							var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						}
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						// This node does not match anything in the shipping defaults; it is probably a custom field
-						m_logger.WriteLine(String.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
+						m_logger.WriteLine(string.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
 						m_logger.IncreaseIndent();
 						SetupCustomFieldNameDictionaries();
 						var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.XWorks
 				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 				foreach(var newChild in currentDefaultChildren)
 				{
-					m_logger.WriteLine(String.Format("'{0}->{1}' was not in the old version; adding from default config.",
+					m_logger.WriteLine(string.Format("'{0}->{1}' was not in the old version; adding from default config.",
 						BuildPathStringFromNode(convertedNode), newChild)); // BuildPath from convertedNode to ensure display of LabelSuffixes
 					convertedNode.Children.Add(newChild);
 				}
@@ -338,9 +338,9 @@ namespace SIL.FieldWorks.XWorks
 			var oldSenseHeadwordNode = convertedNode.Children.FirstOrDefault(child => child.Label.StartsWith("Referenced Sense"))
 				?? new ConfigurableDictionaryNode();
 			newHeadword.IsEnabled = oldHeadwordNode.IsEnabled || oldSenseHeadwordNode.IsEnabled;
-			newHeadword.Before = !String.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
-			newHeadword.Between = !String.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
-			newHeadword.After = !String.IsNullOrEmpty(oldHeadwordNode.After) ? oldHeadwordNode.After : oldSenseHeadwordNode.After;
+			newHeadword.Before = !string.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
+			newHeadword.Between = !string.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
+			newHeadword.After = !string.IsNullOrEmpty(oldHeadwordNode.After) ? oldHeadwordNode.After : oldSenseHeadwordNode.After;
 			// Set the new Headword options based off the old headword (or old sense headword) settings
 			var oldOptions = oldHeadwordNode.DictionaryNodeOptions ?? oldSenseHeadwordNode.DictionaryNodeOptions;
 			if(oldHeadwordNode.DictionaryNodeOptions != null)
@@ -353,9 +353,9 @@ namespace SIL.FieldWorks.XWorks
 			var oldGlossNode = convertedNode.Children.FirstOrDefault(child => child.Label == "Gloss")
 				?? new ConfigurableDictionaryNode();
 			newGloss.IsEnabled = oldSummaryNode.IsEnabled || oldGlossNode.IsEnabled;
-			newGloss.Before = !String.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
-			newGloss.Between = !String.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
-			newGloss.After = !String.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
+			newGloss.Before = !string.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
+			newGloss.Between = !string.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
+			newGloss.After = !string.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
 			// Set the new gloss options based off the old summary definition (or old gloss) settings
 			oldOptions = oldSummaryNode.DictionaryNodeOptions ?? oldGlossNode.DictionaryNodeOptions;
 			if(oldHeadwordNode.DictionaryNodeOptions != null)
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if(convertedNode.Children.Count != 4)
 			{
-				m_logger.WriteLine(String.Format("{0} had children (probably duplicates) that were not migrated.", BuildPathStringFromNode(convertedNode)));
+				m_logger.WriteLine(string.Format("{0} had children (probably duplicates) that were not migrated.", BuildPathStringFromNode(convertedNode)));
 			}
 			convertedNode.Children = newChildren;
 		}
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.XWorks
 			string nodeName;
 			if (labelToName != null && labelToName.TryGetValue(node.Label, out nodeName))
 			{
-				m_logger.WriteLine(String.Format("Found name '{0}' for Custom Field labeled '{1}'; using.", nodeName, node.Label));
+				m_logger.WriteLine(string.Format("Found name '{0}' for Custom Field labeled '{1}'; using.", nodeName, node.Label));
 				node.FieldDescription = nodeName;
 			}
 			else
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (var child in node.Children)
 				{
-					m_logger.WriteLine(String.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
+					m_logger.WriteLine(string.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
 					SetupCustomField(child, null);
 				}
 			}
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					m_logger.WriteLine(String.Format("The node '{0}' does not seem to be a duplicate; treating as original",
+					m_logger.WriteLine(string.Format("The node '{0}' does not seem to be a duplicate; treating as original",
 						BuildPathStringFromNode(node)));
 					convertedNode.LabelSuffix = null;
 					convertedNode.IsDuplicate = false;
@@ -515,7 +515,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryNodeOptions CreateOptionsFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
 		{
 			DictionaryNodeOptions options = null;
-			if(!String.IsNullOrEmpty(node.WsType))
+			if(!string.IsNullOrEmpty(node.WsType))
 			{
 				options = new DictionaryNodeWritingSystemOptions
 				{
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 			if(node.ShowSenseConfig)
 			{
 				string before = null, style = null, after = null;
-				if(!String.IsNullOrEmpty(node.Number))
+				if(!string.IsNullOrEmpty(node.Number))
 				{
 					node.SplitNumberFormat(out before, out style, out after);
 				}
@@ -542,12 +542,12 @@ namespace SIL.FieldWorks.XWorks
 					NumberStyle = GenerateNumberStyleFromLayoutTreeNode(node)
 				};
 			}
-			if(!String.IsNullOrEmpty(node.LexRelType))
+			if(!string.IsNullOrEmpty(node.LexRelType))
 			{
 				options = new DictionaryNodeListOptions();
 				SetListOptionsProperties(node.LexRelType, node.LexRelTypeSequence, (DictionaryNodeListOptions)options);
 			}
-			if(!String.IsNullOrEmpty(node.EntryType))
+			if(!string.IsNullOrEmpty(node.EntryType))
 			{
 				// Root-based Minor Entry - Components should not have a display-each-in-paragraph checkbox. See LT-15834.
 				if (node.EntryType == "complex" && node.PartName != "LexEntry-Jt-StemMinorComponentsConfig")
@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.XWorks
 					senseNumberStyle.IsBuiltIn = false;
 					var propsBldr = TsPropsBldrClass.Create();
 					propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, node.NumFont);
-					if(!String.IsNullOrEmpty(node.NumStyle))
+					if(!string.IsNullOrEmpty(node.NumStyle))
 					{
 						if(node.NumStyle.Contains("-bold"))
 						{
@@ -631,7 +631,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					senseNumberStyleName = String.Format("{0}-{1}", senseNumberStyleBase, ++styleNumberSuffix);
+					senseNumberStyleName = string.Format("{0}-{1}", senseNumberStyleBase, ++styleNumberSuffix);
 				}
 			} while(!matchedOrCreated);
 			return senseNumberStyleName;
@@ -646,12 +646,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var fontInfo = style.DefaultCharacterStyleInfo;
 			// if nothing about bold or italic are in the node but there is information in the style
-			if(String.IsNullOrEmpty(node.NumStyle) && (fontInfo.Bold.ValueIsSet || fontInfo.Italic.ValueIsSet))
+			if(string.IsNullOrEmpty(node.NumStyle) && (fontInfo.Bold.ValueIsSet || fontInfo.Italic.ValueIsSet))
 			{
 				return false;
 			}
 			// if we have bold or italic info in the node but it doesn't match the style
-			if(!String.IsNullOrEmpty(node.NumStyle) &&
+			if(!string.IsNullOrEmpty(node.NumStyle) &&
 				((node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value) ||
 				 (!node.NumStyle.Contains("-bold") && node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet && !fontInfo.Bold.Value) ||
 				 (node.NumStyle.Contains("bold") && !fontInfo.Bold.ValueIsSet) ||
@@ -664,9 +664,9 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			// if the font doesn't match
-			if(String.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
-				!String.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
-				(fontInfo.FontName.ValueIsSet && String.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0))
+			if(string.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
+				!string.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
+				(fontInfo.FontName.ValueIsSet && string.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0))
 			{
 				// node value was empty but fontInfo isn't or
 				// fontInfo was empty but node value wasn't or

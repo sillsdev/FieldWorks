@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				default:
 				{
-					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
+					throw new NotImplementedException(string.Format("Default entry for {0} type not implemented.", configurationType));
 				}
 			}
 		}
