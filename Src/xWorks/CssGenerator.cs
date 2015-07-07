@@ -38,12 +38,26 @@ namespace SIL.FieldWorks.XWorks
 			if(model == null)
 				throw new ArgumentNullException("model");
 			var styleSheet = new StyleSheet();
+			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			if (mediatorstyleSheet != null && mediatorstyleSheet.Styles.Contains("Normal"))
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator);
 			foreach(var configNode in model.Parts)
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}
 			// Pretty-print the stylesheet
 			return styleSheet.ToString(true, 1);
+		}
+
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				var wsRule = new StyleRule {Value = "span" + String.Format("[lang|=\"{0}\"]", aws.IcuLocale)};
+				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator));
+				styleSheet.Rules.Add(wsRule);
+			}
 		}
 
 		/// <summary>
@@ -185,10 +199,9 @@ namespace SIL.FieldWorks.XWorks
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule();
-				wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
+				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
 				if (!String.IsNullOrEmpty(configNode.Style))
-				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator));
+					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator));
 				styleSheet.Rules.Add(wsRule);
 			}
 		}

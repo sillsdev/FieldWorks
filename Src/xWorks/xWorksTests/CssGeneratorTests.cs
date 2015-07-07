@@ -1145,6 +1145,43 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry .senses .sense .gloss span.writingsystemprefix{font-style:normal;font-size:10pt;}"));
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry .senses .sense .gloss span.writingsystemprefix:after{content:' ';}"));
 		}
+		[Test]
+		public void GenerateCssForConfiguration_WsSpanWithNormalStyle()
+		{
+			var style = GenerateEmptyStyle("Normal");
+			var engFontInfo = new FontInfo {m_fontName = {ExplicitValue = "english"}, m_fontColor = {ExplicitValue = Color.Red}};
+			style.SetWsStyle(engFontInfo, Cache.WritingSystemFactory.GetWsFromStr("en"));
+			var frFontInfo = new FontInfo {m_fontName = {ExplicitValue = "french"}, m_fontColor = {ExplicitValue = Color.Green}};
+			style.SetWsStyle(frFontInfo, Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en", "fr" }),
+				IsEnabled = true
+			};
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""),
+				Contains.Substring(
+					"span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}"));
+		}
 		private TestStyle GenerateStyle(string name)
 		{
 			var fontInfo = new FontInfo();
