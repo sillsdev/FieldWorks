@@ -257,6 +257,7 @@ namespace SIL.FieldWorks.XWorks
 			this.CancelButton = this.closeButton;
 			this.Controls.Add(this.tableLayoutPanel);
 			this.Name = "PublishToWebonaryDlg";
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();
 			this.webonarySettingsGroupbox.ResumeLayout(false);
