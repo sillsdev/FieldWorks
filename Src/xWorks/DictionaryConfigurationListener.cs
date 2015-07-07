@@ -204,12 +204,18 @@ namespace SIL.FieldWorks.XWorks
 				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
 				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
 				{
+					string defaultPublication = "Root";
 					// If no configuration has yet been selected or the previous selection is invalid,
+					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
+					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)
+					{
+						defaultPublication = currentConfig.Replace("publish", string.Empty);
+					}
 					// select the project's Root configuration if available; otherwise, select the default Root configuration
-					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, "Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, "Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					if(!File.Exists(currentConfig))
 					{
-						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					}
 					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
 				}
