@@ -414,7 +414,9 @@ namespace SIL.FieldWorks.XWorks
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			if(!styleSheet.Styles.Contains(styleName))
-				throw new ArgumentException(@"given stylename not found in the FwStyleSheet", styleName);
+			{
+				return declaration;
+			}
 			BaseStyleInfo projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			if(exportStyleInfo.HasAlignment)

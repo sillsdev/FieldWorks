@@ -500,6 +500,17 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
+		private void LoadStylesLists_ResetComboxBox()
+		{
+			LoadStylesLists();
+
+			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			if (isPara)
+				View.SetStyles(m_paraStyles, m_node.Style, true);
+			else
+				View.SetStyles(m_charStyles, m_node.Style, false);
+		}
+
 		/// <summary>
 		/// Get the list label and ListViewItems for the given List ID.
 		/// Each item's Tag is a String representation of the item's GUID (with forward and reverse flags on applicable lex relations).
@@ -684,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
+			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
 				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
 			RefreshPreview();
 		}
