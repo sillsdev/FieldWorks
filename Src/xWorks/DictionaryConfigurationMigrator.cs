@@ -93,6 +93,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void LogConversionError(string errorLog)
+		{
+			m_logger.WriteLine(errorLog);
+		}
+
 		/// <summary>
 		/// Loads the xml configuration for the given tool and returns its configureLayouts child.
 		/// </summary>

@@ -580,6 +580,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void LogConversionError(string errorLog)
+		{
+			//handle error log if required
+		}
+
 		/// <summary>
 		/// Searches a list of ItemTypeInfo items for a specific Guid (usually representing
 		/// an unspecified type 'possibility'. Out variable gives the index at which the Guid is

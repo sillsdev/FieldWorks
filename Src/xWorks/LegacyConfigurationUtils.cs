@@ -221,6 +221,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							var cNew = ltn.Nodes.Count - cOrig;
 							var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
+							converter.LogConversionError(msg);
 							//Debug.Assert(cNew <= 1, msg);
 							//if (cNew > 1)
 							//    Debug.WriteLine(msg);
@@ -374,8 +375,7 @@ namespace SIL.FieldWorks.XWorks
 					// for a writing system.  (We check only for English, being lazy.)
 					var msg = String.Format("Missing jtview layout for class=\"{0}\" name=\"{1}\"",
 													rgsClasses[0], sLayout);
-					Debug.Assert(subLayout != null, msg);
-					//Debug.WriteLine(msg);
+					converter.LogConversionError(msg);
 				}
 			}
 		}

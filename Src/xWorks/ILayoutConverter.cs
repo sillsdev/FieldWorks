@@ -50,5 +50,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		void BuildEntryTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn, string layoutName);
+
+		void LogConversionError(string errorLog);
 	}
 }
