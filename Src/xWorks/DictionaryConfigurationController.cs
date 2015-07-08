@@ -453,7 +453,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				case "Reversal Index":
 				{
-					return serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create(); // TODO pH 2015.07: similar to above
+					var firstNonEmptyReversal = serviceLocator.GetInstance<IReversalIndexRepository>().AllInstances().FirstOrDefault(x => x.AllEntries.Count > 0);
+					if(firstNonEmptyReversal != null)
+					{
+						return firstNonEmptyReversal.AllEntries[0];
+					}
+					return null;
 				}
 				default:
 				{

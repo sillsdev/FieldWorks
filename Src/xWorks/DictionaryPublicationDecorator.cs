@@ -2,17 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -412,6 +415,27 @@ namespace SIL.FieldWorks.XWorks
 		/// should call Refresh() directly.
 		/// </summary>
 		internal ICmPossibility Publication { get; set; }
+
+		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, RecordClerk clerk)
+		{
+			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator))
+			{
+				case "Dictionary":
+					return VecProp(Cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+				case "Reversal Index":
+				{
+					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+					if(reversalIndexGuid != Guid.Empty)
+					{
+						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+						return currentReversalIndex != null ? currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo) : null;
+					}
+					return null;
+				}
+				default:
+				return new int[] { };
+			}
+		}
 
 		public override int[] VecProp(int hvo, int tag)
 		{
