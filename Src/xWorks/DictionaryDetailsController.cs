@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -464,6 +464,11 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
 					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultPronunciation) { Tag = WritingSystemServices.kwsPronunciation });
 					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
+							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
+					wsList.Add(new ListViewItem(xWorksStrings.ksCurrentReversal) { Tag = WritingSystemServices.kwsReversalIndex });
+					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
 							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
 					break;
 			}

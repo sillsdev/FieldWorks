@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The label to display for this node
+		/// The non-editable portion of the label to display for this node
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
 		public string Label { get; set; }
@@ -58,11 +58,17 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isDuplicate")]
 		public bool IsDuplicate { get; set; } // REVIEW (Hasso) 2014.04: could we use get { return !string.IsNullOrEmpty(NameSuffix); }?
 
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		public bool ShouldSerializeIsDuplicate() { return IsDuplicate; }
+
 		/// <summary>
 		/// Whether this element of dictionary data represents a custom field.
 		/// </summary>
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
+
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
 
 		/// <summary>
 		/// The style to apply to the data configured by this node
@@ -87,7 +93,8 @@ namespace SIL.FieldWorks.XWorks
 		public StyleTypes StyleType { get; set; }
 
 		/// <summary>
-		/// Magic method to prevent serialization of the default value.
+		/// ShouldSerialize[Attribute] is a magic method to prevent serialization of the default value.
+		/// XMLSerializer looks for this method to determine whether to serialize each Element and Attribute.
 		/// May not work in Mono until Mono 3.3.0.
 		/// </summary>
 		public bool ShouldSerializeStyleType()

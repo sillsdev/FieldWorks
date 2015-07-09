@@ -640,6 +640,9 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexEntry> PrimaryEntryRoots { get; }
 
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		IEnumerable<ILexEntryType> EntryTypes { get; }
+
 		/// <summary>
 		/// This is the same as PrimaryEntryRoots, except that if the only Component is (or is a sense of) the only PrimaryEntryRoot,
 		/// it produces an empty list.
@@ -5886,6 +5889,11 @@ namespace SIL.FieldWorks.FDO
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
 		/// </summary>
 		ITsString HeadWord { get; }
+
+		/// <summary>
+		/// HeadWordReversal if LexEntry, ReversalName if LexSense
+		/// </summary>
+		IMultiAccessorBase HeadWordReversalName { get; }
 
 		/// <summary>
 		/// The SummaryDefinition property if wrapping LexEntry, or null for LexSense

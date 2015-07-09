@@ -172,7 +172,9 @@ namespace SIL.FieldWorks.XWorks
 			[XmlEnum("both")]
 			Both,
 			[XmlEnum("pronunciation")]
-			Pronunciation
+			Pronunciation,
+			[XmlEnum("reversal")]
+			Reversal
 		}
 
 		// REVIEW (Hasso) 2014.02: since this never changes, we may not need it in the schema; however,

@@ -286,7 +286,7 @@
           <Option id="all analysis" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Restrictions" before=" Restrictions: " between=" " after="] " isEnabled="true" field="Restrictions">
+      <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="all analysis" isEnabled="true"/>
         </WritingSystemOptions>
@@ -466,7 +466,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Status" before=" status " after=" " isEnabled="false" field="StatusRA" cssClassNameOverride="status">
+      <ConfigurationItem name="Status" before="status " after=" " isEnabled="false" field="StatusRA" cssClassNameOverride="status">
         <ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
@@ -583,8 +583,8 @@
         </ConfigurationItem>
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
-    <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
+    <ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
+    <ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
     <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
       <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
         <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
@@ -980,7 +980,7 @@
           <Option id="all analysis" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Restrictions" before=" Restrictions: " between=" " after="] " isEnabled="true" field="Restrictions">
+      <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="all analysis" isEnabled="true"/>
         </WritingSystemOptions>
@@ -1216,7 +1216,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Status" before=" status " after=" " isEnabled="false" field="StatusRA" cssClassNameOverride="status">
+      <ConfigurationItem name="Status" before="status " after=" " isEnabled="false" field="StatusRA" cssClassNameOverride="status">
         <ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
@@ -1278,8 +1278,8 @@
         </ConfigurationItem>
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
-    <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
+    <ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
+    <ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
     <ConfigurationItem name="Referenced Complex Forms" before=" " between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
       <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
         <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>

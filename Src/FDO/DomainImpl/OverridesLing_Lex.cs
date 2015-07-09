@@ -2631,7 +2631,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// The name of a lexical entry as used in cross-refs in the reversls view.  This includes
+		/// The name of a lexical entry as used in cross-refs in the reversals view.  This includes
 		/// CitationFormWithAffixType (in this implementation) with the homograph number
 		/// (if non-zero)appended as a subscript (or superscript, or prepended, or not at all...see HomographConfiguration)
 		/// </summary>
@@ -8469,6 +8469,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return ((ILexEntry) Owner).HeadWord; }
 		}
 
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		public IEnumerable<ILexEntryType> EntryTypes {
+			get
+			{
+				var allEntryTypes = new List<ILexEntryType>();
+				allEntryTypes.AddRange(VariantEntryTypesRS);
+				allEntryTypes.AddRange(ComplexEntryTypesRS);
+				return allEntryTypes;
+			}
+		}
+
 		/// <summary>
 		/// This is the same as PrimaryEntryRoots, except that if the only Component is (or is a sense of) the only PrimaryEntryRoot,
 		/// it produces an empty list.
@@ -9339,6 +9350,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return entry.HeadWord;
 				}
 				return ((LexSense)Item).HeadWord;
+			}
+		}
+
+		public IMultiAccessorBase HeadWordReversalName
+		{
+			get
+			{
+				var entry = Item as LexEntry;
+				if(entry != null)
+				{
+					return entry.HeadWordReversal;
+				}
+				var sense = Item as LexSense;
+				if(sense != null)
+				{
+					return sense.ReversalName;
+				}
+				return null;
 			}
 		}
 

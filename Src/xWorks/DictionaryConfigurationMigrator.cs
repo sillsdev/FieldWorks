@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal bool DictionaryConfigsNeedMigrating()
 		{
-			// If the project already has up to date configurations then we don't need to migrate
+			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
 			if(Directory.Exists(newDictionaryConfigLoc) &&
@@ -690,13 +690,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch(wsType)
 			{
-				case "analysis": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+				case "analysis":
+				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
 				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
 				case "vernacular analysis":
 				case "analysis vernacular":
-				case "vernoranal" : return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
-				case "pronunciation" : return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
-				default : throw new ArgumentException(String.Format("Unknown writing system type {0}", wsType), wsType);
+				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
+				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
+				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
+				default: throw new ArgumentException(string.Format("Unknown writing system type {0}", wsType), wsType);
 			}
 		}
 

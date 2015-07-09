@@ -416,6 +416,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal ICmPossibility Publication { get; set; }
 
+		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
 		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, RecordClerk clerk)
 		{
 			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator))
@@ -428,13 +429,15 @@ namespace SIL.FieldWorks.XWorks
 					if(reversalIndexGuid != Guid.Empty)
 					{
 						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-						return currentReversalIndex != null ? currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo) : null;
+						if (currentReversalIndex != null)
+						{
+							return currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo);
+						}
 					}
-					return null;
+					break;
 				}
-				default:
-				return new int[] { };
 			}
+			return new int[] { };
 		}
 
 		public override int[] VecProp(int hvo, int tag)

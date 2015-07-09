@@ -328,7 +328,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Status" isEnabled="false" isDuplicate="false" isCustomField="false" before=" status " after=" " field="StatusRA" cssClassNameOverride="status">
+      <ConfigurationItem name="Status" isEnabled="false" isDuplicate="false" isCustomField="false" before="status " after=" " field="StatusRA" cssClassNameOverride="status">
         <ConfigurationItem name="Abbreviation" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true" />
@@ -405,7 +405,7 @@
         <Option id="analysis" isEnabled="true" />
       </WritingSystemOptions>
     </ConfigurationItem>
-    <ConfigurationItem name="Restrictions (Entry)" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after=" " field="Restrictions">
+    <ConfigurationItem name="Restrictions (Entry)" isEnabled="false" isDuplicate="false" isCustomField="false" before="(" between=" " after=") " field="Restrictions">
       <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
         <Option id="analysis" isEnabled="true" />
       </WritingSystemOptions>
@@ -888,7 +888,7 @@
           <Option id="all analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Restrictions" isEnabled="false" isDuplicate="false" isCustomField="false" before=" Restrictions: " between=" " after="] " field="Restrictions">
+      <ConfigurationItem name="Restrictions" isEnabled="false" isDuplicate="false" isCustomField="false" before="Restrictions: " between=" " after=". " field="Restrictions">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="all analysis" isEnabled="true" />
         </WritingSystemOptions>
@@ -1099,7 +1099,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Status" isEnabled="false" isDuplicate="false" isCustomField="false" before=" status " after=" " field="StatusRA" cssClassNameOverride="status">
+      <ConfigurationItem name="Status" isEnabled="false" isDuplicate="false" isCustomField="false" before="status " after=" " field="StatusRA" cssClassNameOverride="status">
         <ConfigurationItem name="Abbreviation" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true" />
@@ -1360,8 +1360,8 @@
         </ConfigurationItem>
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Date Created" isEnabled="false" isDuplicate="false" isCustomField="false" before=" created on: " after="" field="DateCreated" />
-    <ConfigurationItem name="Date Modified" isEnabled="false" isDuplicate="false" isCustomField="false" before=" modified on: " after="" field="DateModified" />
+    <ConfigurationItem name="Date Created" isEnabled="false" isDuplicate="false" isCustomField="false" before="created on: " after=" " field="DateCreated" />
+    <ConfigurationItem name="Date Modified" isEnabled="false" isDuplicate="false" isCustomField="false" before="modified on: " after=" " field="DateModified" />
     <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
       <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
         <Option id="" isEnabled="false" />

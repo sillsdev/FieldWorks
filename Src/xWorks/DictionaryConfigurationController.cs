@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -442,23 +442,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "Dictionary":
 				{
-					var entryRepo = serviceLocator.GetInstance<ILexEntryRepository>().AllInstances();
-					// try to find the first entry with a headword not equal to "???"
-					var entryWithHeadword = entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.HeadWord.Text);
-					if(entryWithHeadword == null)
-					{
-						entryWithHeadword = entryRepo.FirstOrDefault();
+					var entryRepo = serviceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToList();
+					// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
+					return entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.HeadWord.Text)
+						?? entryRepo.FirstOrDefault();
 					}
-					return entryWithHeadword;
-				}
 				case "Reversal Index":
 				{
-					var firstNonEmptyReversal = serviceLocator.GetInstance<IReversalIndexRepository>().AllInstances().FirstOrDefault(x => x.AllEntries.Count > 0);
-					if(firstNonEmptyReversal != null)
-					{
-						return firstNonEmptyReversal.AllEntries[0];
-					}
-					return null;
+					var entryRepo = serviceLocator.GetInstance<IReversalIndexEntryRepository>().AllInstances().ToList(); // TODO pH 2015.07: filter by WS
+					// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
+					return entryRepo.FirstOrDefault(
+									entry => StringServices.DefaultHomographString() != entry.ReversalForm.BestAnalysisAlternative.Text)
+						?? entryRepo.FirstOrDefault() ?? serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
 				}
 				default:
 				{
