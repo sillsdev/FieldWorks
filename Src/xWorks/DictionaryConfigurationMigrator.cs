@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -58,11 +57,12 @@ namespace SIL.FieldWorks.XWorks
 		public void MigrateOldConfigurationsIfNeeded()
 		{
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-			if (DictionaryConfigsNeedMigrating())
+			if (ConfigsNeedMigrating())
 			{
-				m_logger.WriteLine(string.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
+				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName;
+				m_logger.WriteLine(string.Format("Migrating dictionary configurations"));
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -70,12 +70,8 @@ namespace SIL.FieldWorks.XWorks
 						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
 						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 					});
-			}
-			if (ReversalConfigsNeedMigrating())
-			{
-				m_logger.WriteLine(string.Format("{0}: Reversal configurations were found in need of migration. - {1}",
-					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_reversalIndexConfigurationDirectoryName;
+				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}", DateTime.Now.ToString("h:mm:ss")));
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -87,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			if(m_logger.HasContent)
 			{
 				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
-					DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
+					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 				Directory.CreateDirectory(configurationDir);
 				File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
 			}
@@ -107,37 +103,33 @@ namespace SIL.FieldWorks.XWorks
 			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
 			m_mediator.SendMessage("GetContentControlParameters", parameter);
 			var controlNode = collector[0];
-			var dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
-			var contentAssemblyPath = XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath");
-			var contentClass = XmlUtils.GetAttributeValue(dynLoaderNode, "class");
-			var control = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass); // REVIEW (Hasso) 2014.10: this var is never used
 			var parameters = controlNode.SelectSingleNode("parameters");
 			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
 			return configureLayouts;
 		}
 
-		internal bool DictionaryConfigsNeedMigrating()
+		/// <summary>
+		/// In the old system, Dictionary and Reversal Index configurations were stored across a hairball of *.fwlayout files. Rather than trying to
+		/// determine what the user has configured, if the user has configured anything, migrate everything.
+		/// </summary>
+		internal bool ConfigsNeedMigrating()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
+			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			if(Directory.Exists(newDictionaryConfigLoc) &&
 				Directory.EnumerateFiles(newDictionaryConfigLoc, "*"+DictionaryConfigurationModel.FileExtension).Any())
 			{
 				return false;
 			}
-			// If the project has old configurations we need to migrate them, if it doesn't there is nothing worth migrating.
-			// Note: This will return true if the user configured only reversal indexes, but that is not a likely real world case
-			return Directory.Exists(configSettingsDir) &&
-					 Directory.EnumerateFiles(configSettingsDir, "*.fwlayout").Any();
-		}
-
-		internal bool ReversalConfigsNeedMigrating()
-		{
-			//todo: Implement reversal configuration migration.
-			return false;
-			//var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
-			//return Directory.Exists(newReversalConfigLoc);
+			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			if(Directory.Exists(newReversalIndexConfigLoc) &&
+				Directory.EnumerateFiles(newReversalIndexConfigLoc, "*"+DictionaryConfigurationModel.FileExtension).Any())
+			{
+				return false;
+			}
+			// If the project has old configurations, we need to migrate them; if it doesn't, there is nothing worth migrating.
+			return Directory.Exists(configSettingsDir) && Directory.EnumerateFiles(configSettingsDir, "*.fwlayout").Any();
 		}
 
 		/// <summary>ILayoutConverter implementation</summary>
@@ -184,27 +176,31 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationModel currentDefaultModel;
 				const string extension = DictionaryConfigurationModel.FileExtension;
+				var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_configDirSuffixBeingMigrated);
 				const string defaultStemName = "Stem" + extension;
 				const string defaultRootName = "Root" + extension;
-				var projectConfigBasePath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				const string defaultReversalName = "AllReversalIndexes" + extension;
 				switch(layout)
 				{
 					case "publishStem":
 					{
-						convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultStemName);
+						convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
 						break;
 					}
 					case "publishRoot":
 					{
-						convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultRootName);
+						convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						break;
 					}
 					case "publishReversal" :
 					{
-						throw new NotImplementedException("Reversal index migration has not yet been implemented.");
+						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
+						// TODO:
+						//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+						return;
 					}
 					default :
 					{
@@ -215,19 +211,25 @@ namespace SIL.FieldWorks.XWorks
 						if(customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 						{
 							var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
-							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
 						}
 						else if(customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 						{
 							var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
-							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						}
-						else // probably a reversal index for a specific language
+						else if(layout.StartsWith("publishReversal")) // probably a reversal index for a specific language
 						{
-							throw new NotImplementedException("Custom reversal index migration has not yet been implemented.");
+							var customFileName = string.Format("{0}{1}", layout, extension); // TODO pH 2015.07: better name
+							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
+							return;
+							// TODO:
+							//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 						}
+						else
+							throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
 						break;
 					}
 				}

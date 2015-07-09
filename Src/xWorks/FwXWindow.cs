@@ -1236,8 +1236,8 @@ namespace SIL.FieldWorks.XWorks
 			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 
-			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
-			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog

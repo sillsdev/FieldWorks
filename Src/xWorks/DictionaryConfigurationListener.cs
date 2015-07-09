@@ -130,8 +130,8 @@ namespace SIL.FieldWorks.XWorks
 			return area == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, area);
 		}
 
-		internal static readonly string s_reversalIndexConfigurationDirectoryName = "ReversalIndex";
-		internal static readonly string s_dictionaryConfigurationDirectoryName = "Dictionary";
+		internal const string ReversalIndexConfigurationDirectoryName = "ReversalIndex";
+		internal const string DictionaryConfigurationDirectoryName = "Dictionary";
 
 		/// <summary>
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
@@ -143,11 +143,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					return s_reversalIndexConfigurationDirectoryName;
+					return ReversalIndexConfigurationDirectoryName;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
-					return s_dictionaryConfigurationDirectoryName;
+					return DictionaryConfigurationDirectoryName;
 				default:
 					return null;
 			}
