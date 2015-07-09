@@ -1329,6 +1329,7 @@ namespace XCore
 
 			m_mainContentPlaceholderPanel = null;
 			m_widgetUpdateTimer = null;
+			m_propertyTable = null;
 			m_mediator = null;
 			//m_adapters = null;
 			m_mainContentControl = null;
@@ -1417,6 +1418,13 @@ namespace XCore
 
 			if (m_propertyTable != null)
 			{
+				if (m_mediator != null && !m_mediator.IsDisposed)
+				{
+					// Need to do this on the Mediator's disposable colleagues here,
+					// or FLEx will crash on close, when some colleagues try to remove themselves
+					// from the newly disposed PropertyTable.
+					m_mediator.PreDisposeColleagues();
+				}
 				m_propertyTable.Dispose();
 			}
 

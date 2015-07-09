@@ -57,7 +57,7 @@ namespace SIL.Utils
 					}
 					// Finally, "parentOfLanguageExplorerFolder" should have the child folder named "Language Explorer" for devs or users.
 					// I suppose I could throw if that is not the case, as StringTable can't load if it isn't.
-					// Naw, just let it crash and someone will make a new
+					// Naw, just let it crash and someone will make a new JIRA issue for the crash. ;-)
 					s_singletonStringTable = new StringTable(Path.Combine(parentOfLanguageExplorerFolder, "Language Explorer", "Configuration"));
 				}
 				return s_singletonStringTable;

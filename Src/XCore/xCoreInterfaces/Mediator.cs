@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
@@ -439,6 +440,34 @@ namespace XCore
 			m_isDisposed = true;
 
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// In app shutdown, we need to dispose of colleagues that are disposable before the call to Dispose.
+		/// The reason is that when the main window (XWindow) is shuttinng down, it first calls Dispose
+		/// on PropertyTable, and then on Mediator. BUT, the Mediator then wants to dispose colleagues,
+		/// which in turn may want to remove themselves from the PropertyTable, which throws, since it
+		/// has already been disposed.
+		/// </summary>
+		public void PreDisposeColleagues()
+		{
+			var disposedColleagues = new HashSet<Tuple<int, IxCoreColleague>>();
+
+			foreach (var key in m_colleagues.Keys.Where(key => key.Item2 is IDisposable))
+			{
+				((IDisposable)key.Item2).Dispose();
+				disposedColleagues.Add(key);
+			}
+			foreach (var disposedKey in disposedColleagues)
+			{
+				m_colleagues.Remove(disposedKey);
+			}
+			if (!(m_temporaryColleague is IDisposable))
+			{
+				return;
+			}
+			((IDisposable)m_temporaryColleague).Dispose();
+			m_temporaryColleague = null;
 		}
 
 		#endregion IDisposable & Co. implementation
