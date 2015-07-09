@@ -374,6 +374,7 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core.dll"
@@ -498,6 +499,7 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
