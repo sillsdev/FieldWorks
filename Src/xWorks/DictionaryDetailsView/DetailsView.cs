@@ -74,6 +74,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		public bool SurroundingCharsVisible
 		{
+			get { return textBoxBefore.Visible; }
 			set
 			{
 				textBoxBefore.Visible = textBoxBetween.Visible = textBoxAfter.Visible = value;

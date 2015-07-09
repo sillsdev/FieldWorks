@@ -181,6 +181,7 @@ namespace SIL.FieldWorks.XWorks
 			view.AfterText = node.After;
 			view.Visible = true;
 			view.Enabled = IsAllParentsChecked(node);
+			view.SurroundingCharsVisible = true;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>

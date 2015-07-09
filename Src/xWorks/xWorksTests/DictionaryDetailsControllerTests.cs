@@ -89,7 +89,8 @@ namespace SIL.FieldWorks.XWorks
 			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			m_staticDDController.LoadNode(new ConfigurableDictionaryNode());
 		}
-
+		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+   Justification = "member is disposed through the property")]
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
@@ -109,7 +110,17 @@ namespace SIL.FieldWorks.XWorks
 			public string Style { get; private set; }
 			public bool StylesVisible { get; set; }
 			public bool SurroundingCharsVisible { get; set; }
-			public UserControl OptionsView { get; set; }
+			private UserControl _mOptionsView = null;
+			public UserControl OptionsView
+			{
+				get { return _mOptionsView; }
+				set
+				{
+					if (_mOptionsView != null)
+						_mOptionsView.Dispose();
+					_mOptionsView = value;
+				}
+			}
 			public bool Visible { get; set; }
 			public Control TopLevelControl { get; private set; }
 			public bool IsDisposed { get; private set; }
@@ -571,6 +582,52 @@ namespace SIL.FieldWorks.XWorks
 				Assert.False(listViewItems[0].Checked, "This item was saved as unchecked");
 				Assert.AreEqual(listViewItems.Count - 1, listViewItems.Count(item => item.Checked), "All new items should be checked");
 			}
+		}
+
+		[Test]
+		public void LoadNode_ContextIsVisibleOnNodeSwitch()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(testNode);
+			testNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				Style = "Dictionary-Subentry",
+				IsEnabled = true,
+				DictionaryNodeOptions =
+					new DictionaryNodeWritingSystemOptions()
+			};
+			controller.LoadNode(testNode);
+			Assert.True(controller.View.SurroundingCharsVisible, "Context should now be visibled");
+			controller.View.Dispose();
+		}
+
+		[Test]
+		public void LoadNode_ContextIsHideOnNodeSwitch()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(testNode);
+			testNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				Style = "Dictionary-Subentry",
+				IsEnabled = true,
+				DictionaryNodeOptions =
+					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
+			};
+			controller.LoadNode(testNode);
+			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
+			controller.View.Dispose();
 		}
 
 		[Test]

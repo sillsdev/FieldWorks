@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 
 		bool StylesVisible { set; }
 
-		bool SurroundingCharsVisible { set; }
+		bool SurroundingCharsVisible { set; get; }
 
 		UserControl OptionsView { set; }
 
