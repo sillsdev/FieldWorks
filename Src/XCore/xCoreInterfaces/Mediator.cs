@@ -451,16 +451,16 @@ namespace XCore
 		/// </summary>
 		public void PreDisposeColleagues()
 		{
-			var disposedColleagues = new HashSet<Tuple<int, IxCoreColleague>>();
-
-			foreach (var key in m_colleagues.Keys.Where(key => key.Item2 is IDisposable))
+			// Use a copy ("ToList" call) to avoid collection changed exception.
+			foreach (var disposedKey in m_colleagues.Keys.Where(key => key.Item2 is IDisposable).ToList())
 			{
-				((IDisposable)key.Item2).Dispose();
-				disposedColleagues.Add(key);
-			}
-			foreach (var disposedKey in disposedColleagues)
-			{
-				m_colleagues.Remove(disposedKey);
+				((IDisposable)disposedKey.Item2).Dispose();
+				if (m_colleagues.ContainsKey(disposedKey))
+				{
+					// If it didn't have the good manners to remove itself,
+					// do it here.
+					m_colleagues.Remove(disposedKey);
+				}
 			}
 			if (!(m_temporaryColleague is IDisposable))
 			{
