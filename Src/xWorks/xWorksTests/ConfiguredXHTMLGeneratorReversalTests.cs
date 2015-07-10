@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ICmObject CreateInterestingReversalEntry()
 		{
-			var entry = CreateInterestingLexEntry();
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var indexfactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			var index = indexfactory.Create();
 			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
@@ -187,35 +187,6 @@ namespace SIL.FieldWorks.XWorks
 			indexEntry.ReversalForm.set_String(m_wsEn, "ReversalForm");
 			entry.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
 			return indexEntry;
-		}
-
-		private ILexEntry CreateInterestingLexEntry()
-		{
-			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			Cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				Cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(
-				Cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			AddHeadwordToEntry(entry, "Citation");
-			entry.Comment.set_String(wsEn, Cache.TsStrFactory.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, "gloss");
-			return entry;
-		}
-
-		private void AddSenseToEntry(ILexEntry entry, string gloss)
-		{
-			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
-			var sense = senseFactory.Create();
-			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
-		}
-
-		private void AddHeadwordToEntry(ILexEntry entry, string headword)
-		{
-			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(m_wsFr, Cache.TsStrFactory.MakeString(headword, m_wsFr));
 		}
 	}
 }

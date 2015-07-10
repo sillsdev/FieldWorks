@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static XmlDocConfigureDlg.LayoutTreeNode BuildMainLayout(XmlNode config, ILayoutConverter converter)
 		{
-			var mainLayoutNode = new XmlDocConfigureDlg.LayoutTreeNode(config, converter.StringTable, null);
+			var mainLayoutNode = new XmlDocConfigureDlg.LayoutTreeNode(config, converter, null);
 			converter.SetOriginalIndexForNode(mainLayoutNode);
 			string className = mainLayoutNode.ClassName;
 			string layoutName = mainLayoutNode.LayoutName;
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 					var cOrig = 0;
 					if (!fHide)
 					{
-						ltn = new XmlDocConfigureDlg.LayoutTreeNode(node, converter.StringTable, className)
+						ltn = new XmlDocConfigureDlg.LayoutTreeNode(node, converter, className)
 							{
 								OriginalIndex = ltnParent.Nodes.Count,
 								ParentLayout = layout,
@@ -220,11 +220,11 @@ namespace SIL.FieldWorks.XWorks
 						if (fHide)
 						{
 							var cNew = ltn.Nodes.Count - cOrig;
-							var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
-							converter.LogConversionError(msg);
-							//Debug.Assert(cNew <= 1, msg);
-							//if (cNew > 1)
-							//    Debug.WriteLine(msg);
+							if(cNew > 1)
+							{
+								var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
+								converter.LogConversionError(msg);
+							}
 						}
 					}
 					finally

@@ -171,8 +171,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var entry = CreateInterestingLexEntry();
-			AddHeadwordToEntry(entry, "HeadWordTest");
+			var entry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			//Fill in the LexemeForm
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			//Create and fill in the Location
 			var pronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = false
 			};
-			var entryOne = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -316,8 +316,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var entryOne = CreateInterestingLexEntry();
-			var entryTwo = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
+			var entryTwo = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -398,10 +398,10 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var entryOne = CreateInterestingLexEntry();
-			AddHeadwordToEntry(entryOne, "FirstHeadword");
-			var entryTwo = CreateInterestingLexEntry();
-			AddHeadwordToEntry(entryTwo, "SecondHeadword");
+			var entryOne = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryOne, "FirstHeadword", m_wsFr, Cache);
+			var entryTwo = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryTwo, "SecondHeadword", m_wsFr, Cache);
 			entryTwo.SensesOS.Clear();
 			var entryOneId = entryOne.Hvo;
 			var entryTwoId = entryTwo.Hvo;
@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.XWorks
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			string defaultRoot =
 				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			var entryOne = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 
 			var sense = entry.SensesOS.First();
 
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -588,7 +588,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 
 			ILangProject lp = Cache.LangProject;
 
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var entryOne = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -741,7 +741,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
-			var entryOne = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -807,11 +807,11 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			// Build up model that will allow for testing of the MLHeadword virtual property under
 			// the NonTrivialEntryRoots back reference field.
-			var entryOne = CreateInterestingLexEntry();
-			var entryTwo = CreateInterestingLexEntry();
-			var entryThree = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
+			var entryTwo = CreateInterestingLexEntry(Cache);
+			var entryThree = CreateInterestingLexEntry(Cache);
 			const string entryThreeForm = "MLHW";
-			AddHeadwordToEntry(entryThree, entryThreeForm);
+			AddHeadwordToEntry(entryThree, entryThreeForm, m_wsFr, Cache);
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			entryTwo.EntryRefsOS.Add(complexEntryRef);
 			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
@@ -855,7 +855,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var entryOne = CreateInterestingLexEntry();
+			var entryOne = CreateInterestingLexEntry(Cache);
 			entryOne.EtymologyOA = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entryOne.EtymologyOA.Source = "George";
 
@@ -1109,8 +1109,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsMinorEntry_ReturnsTrueForMinorEntry()
 		{
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			// SUT
 			Assert.That(ConfiguredXHTMLGenerator.IsMinorEntry(minorEntry));
@@ -1119,8 +1119,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsMinorEntry_ReturnsFalseWhenNotAMinorEntry()
 		{
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			// SUT
 			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(mainEntry));
@@ -1139,8 +1139,8 @@ namespace SIL.FieldWorks.XWorks
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel();
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, true);
 			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor,
@@ -1158,8 +1158,8 @@ namespace SIL.FieldWorks.XWorks
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel();
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
 				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
@@ -1178,8 +1178,8 @@ namespace SIL.FieldWorks.XWorks
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel();
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, false);
 
@@ -1219,8 +1219,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
-			AddSenseToEntry(testEntry, "second gloss");
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
@@ -1264,7 +1264,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -1318,7 +1318,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSubSenseToSense(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -1415,7 +1415,7 @@ namespace SIL.FieldWorks.XWorks
 
 			const string example = "Example Sentence On Entry";
 			const string translation = "Translation of the Example";
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			AddExampleToSense(testEntry.SensesOS[0], example, translation);
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -1466,8 +1466,8 @@ namespace SIL.FieldWorks.XWorks
 
 			const string example = "Example Sentence On Variant Form";
 			const string translation = "Translation of the Sentence";
-			var mainEntry = CreateInterestingLexEntry();
-			var minorEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateComplexForm(mainEntry, minorEntry, false);
 			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
 
@@ -1513,7 +1513,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var mainEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
 			AddAllomorphToEntry(mainEntry);
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -1548,9 +1548,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var mainEntry = CreateInterestingLexEntry();
-			var otherReferencedComplexForm = CreateInterestingLexEntry();
-			var subentry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
 			CreateComplexForm(mainEntry, subentry, true);
 			CreateComplexForm(mainEntry, otherReferencedComplexForm, false);
 
@@ -1568,8 +1568,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsListItemSelectedForExport_Variant_SelectedItemReturnsTrue()
 		{
-			var mainEntry = CreateInterestingLexEntry();
-			var variantForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm (mainEntry, variantForm);
 			var crazyVariantPoss = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
 
@@ -1601,8 +1601,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var variantForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm (mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
 			Assert.IsNotNull(notCrazyVariant);
@@ -1626,8 +1626,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsListItemSelectedForExport_Complex_SelectedItemReturnsTrue()
 		{
-			var mainEntry = CreateInterestingLexEntry();
-			var complexForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var complexForm = CreateInterestingLexEntry(Cache);
 			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
@@ -1653,8 +1653,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsListItemSelectedForExport_Complex_SubentrySelectedItemReturnsTrue()
 		{
-			var mainEntry = CreateInterestingLexEntry();
-			var complexForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var complexForm = CreateInterestingLexEntry(Cache);
 			var complexFormRef = CreateComplexForm(mainEntry, complexForm, true);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
@@ -1687,8 +1687,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var complexForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var complexForm = CreateInterestingLexEntry(Cache);
 			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text != complexRefName);
@@ -1722,8 +1722,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var referencedEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			var lexicalReference = CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
@@ -1760,8 +1760,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var referencedEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			var lexicalReference = CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
@@ -1798,8 +1798,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var referencedEntry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
 			// Make an unused LexRefType
 			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
@@ -1838,8 +1838,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var variantForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm (mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
 			Assert.IsNotNull(notCrazyVariant);
@@ -1877,8 +1877,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var mainEntry = CreateInterestingLexEntry();
-			var variantForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm (mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
 			Assert.IsNotNull(crazyVariant);
@@ -1929,9 +1929,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var mainEntry = CreateInterestingLexEntry();
-			var otherReferencedComplexForm = CreateInterestingLexEntry();
-			var subentry = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
 			CreateComplexForm(mainEntry.SensesOS[0], subentry, true);
 			CreateComplexForm(mainEntry.SensesOS[0], otherReferencedComplexForm, false);
 
@@ -1949,7 +1949,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -1966,7 +1966,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -1983,7 +1983,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-			var entry = CreateInterestingLexEntry();
+			var entry = CreateInterestingLexEntry(Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -2033,7 +2033,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2065,7 +2065,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2099,7 +2099,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2137,7 +2137,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
+			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2172,8 +2172,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
-			AddSenseToEntry(testEntry, "second");
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2241,8 +2241,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var testEntry = CreateInterestingLexEntry();
-			AddSenseToEntry(testEntry, "second");
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -2306,7 +2306,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 
@@ -2344,7 +2344,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 
@@ -2383,7 +2383,7 @@ namespace SIL.FieldWorks.XWorks
 					CSSClassNameOverride = "l"
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom sense data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testSence = testEntry.SensesOS[0];
@@ -2437,7 +2437,7 @@ namespace SIL.FieldWorks.XWorks
 					CSSClassNameOverride = "l"
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom example data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var testSense = testEntry.SensesOS[0];
@@ -2485,7 +2485,7 @@ namespace SIL.FieldWorks.XWorks
 					CSSClassNameOverride = "l"
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom morph data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var allomorph = AddAllomorphToEntry(testEntry);
@@ -2525,7 +2525,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 
@@ -2573,7 +2573,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
@@ -2622,7 +2622,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 
 				// Set custom field data
 				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new [] {possibilityItem1.Hvo, possibilityItem2.Hvo}, 2);
@@ -2660,7 +2660,7 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-				var testEntry = CreateInterestingLexEntry();
+				var testEntry = CreateInterestingLexEntry(Cache);
 				var customData = DateTime.Now;
 
 				// Set custom field data
@@ -2706,8 +2706,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var mainEntry = CreateInterestingLexEntry();
-			var otherReferencedComplexForm = CreateInterestingLexEntry();
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(otherReferencedComplexForm, mainEntry);
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -2804,18 +2804,19 @@ namespace SIL.FieldWorks.XWorks
 			return mainEntryNode;
 		}
 
-		private ILexEntry CreateInterestingLexEntry()
+		static internal ILexEntry CreateInterestingLexEntry(FdoCache cache)
 		{
-			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
-			Cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				Cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(
-				Cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			AddHeadwordToEntry(entry, "Citation");
-			entry.Comment.set_String(wsEn, Cache.TsStrFactory.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, "gloss");
+			cache.LangProject.AddToCurrentAnalysisWritingSystems(
+				cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
+			cache.LangProject.AddToCurrentVernacularWritingSystems(
+				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
+			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = cache.WritingSystemFactory.GetWsFromStr("Fr");
+			AddHeadwordToEntry(entry, "Citation", wsFr, cache);
+			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
+			AddSenseToEntry(entry, "gloss", wsEn, cache);
 			return entry;
 		}
 
@@ -2860,18 +2861,18 @@ namespace SIL.FieldWorks.XWorks
 			return lexRef;
 		}
 
-		private void AddHeadwordToEntry(ILexEntry entry, string headword)
+		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(m_wsFr, Cache.TsStrFactory.MakeString(headword, m_wsFr));
+			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
 		}
 
-		private void AddSenseToEntry(ILexEntry entry, string gloss)
+		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
 		{
-			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
 		}
 
 		private void AddSubSenseToSense(ILexEntry entry, string gloss)

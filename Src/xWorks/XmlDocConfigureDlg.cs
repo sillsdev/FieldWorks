@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void LogConversionError(string errorLog)
 		{
-			//handle error log if required
+			Debug.Fail(errorLog);
 		}
 
 		/// <summary>
@@ -2981,10 +2981,10 @@ namespace SIL.FieldWorks.XWorks
 
 			readonly List<LayoutTreeNode> m_rgltnMerged = new List<LayoutTreeNode>();
 
-			public LayoutTreeNode(XmlNode config, StringTable stringTbl, string classParent)
+			public LayoutTreeNode(XmlNode config, ILayoutConverter converter, string classParent)
 			{
 				m_xnConfig = config;
-				m_sLabel = XmlUtils.GetLocalizedAttributeValue(stringTbl, config, "label", null);
+				m_sLabel = XmlUtils.GetLocalizedAttributeValue(converter.StringTable, config, "label", null);
 				if (config.Name == "configure")
 				{
 					m_sClassName = XmlUtils.GetManditoryAttributeValue(config, "class");
@@ -2996,8 +2996,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					m_sClassName = classParent;
 					string sRef = XmlUtils.GetManditoryAttributeValue(config, "ref");
-					if (m_sLabel == null && stringTbl != null)
-						m_sLabel = stringTbl.LocalizeAttributeValue(sRef);
+					if(m_sLabel == null && converter.StringTable != null)
+						m_sLabel = converter.StringTable.LocalizeAttributeValue(sRef);
 					if (config.ParentNode != null && config.ParentNode.Name == "layout")
 						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.ParentNode, "name");
 					else
@@ -3038,7 +3038,7 @@ namespace SIL.FieldWorks.XWorks
 								refValue = config.Attributes["ref"].Value;
 								wsValue = config.Attributes["ws"].Value;
 							}
-							Debug.Fail(String.Format("This layout node ({0}) does not specify @wsType "
+							converter.LogConversionError(String.Format("This layout node ({0}) does not specify @wsType "
 								+ "and we couldn't compute something reasonable from @ws='{1}' "
 								+ "so we're setting @wsType to 'vernacular analysis'",
 								refValue, wsValue));
