@@ -122,8 +122,6 @@
           <Option id="all analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Restrictive Comment" isEnabled="false" isDuplicate="false" isCustomField="true" before="" after=" " field="Comentario restrictivo" />
-      <ConfigurationItem name="Descriptive Definition" isEnabled="true" isDuplicate="false" isCustomField="true" style="Dictionary-Contrasting" before="" after=" " field="Definición descriptiva" />
       <ConfigurationItem name="Scientific Name" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Contrasting" before="[" after="] " field="ScientificName" />
       <ConfigurationItem name="Gloss" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="Gloss">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -726,9 +724,6 @@
         </WritingSystemOptions>
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Prefix" isEnabled="false" isDuplicate="false" isCustomField="true" field="Prefijo" />
-    <ConfigurationItem name="Brief Description" isEnabled="false" isDuplicate="false" isCustomField="true" field="Descripción breve" />
-    <ConfigurationItem name="Variant Region" isEnabled="false" isDuplicate="false" isCustomField="true" field="Región de la variante "/>
   </ConfigurationItem>
   <ConfigurationItem name="Minor Entry" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Minor" before="" after=" " field="LexEntry" cssClassNameOverride="minorentry">
     <ListTypeOptions list="minor">
@@ -893,8 +888,6 @@
           <Option id="all analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Restrictive Comment" isEnabled="true" isDuplicate="false" isCustomField="true" style="Dictionary-Contrasting" before="(" after=") " field="Comentario restrictivo" />
-      <ConfigurationItem name="Descriptive Definition" isEnabled="true" isDuplicate="false" isCustomField="true" before="" after=" " field="Definición descriptiva" />
       <ConfigurationItem name="Scientific Name" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Contrasting" before="[" after="] " field="ScientificName" />
       <ConfigurationItem name="Gloss" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="Gloss">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1452,9 +1445,6 @@
         <ConfigurationItem name="Reference" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="Reference" />
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Prefix" isEnabled="false" isDuplicate="false" isCustomField="true" field="Prefijo" />
-    <ConfigurationItem name="Brief Description" isEnabled="false" isDuplicate="false" isCustomField="true" field="Descripción breve" />
-    <ConfigurationItem name="Variant Region" isEnabled="false" isDuplicate="false" isCustomField="true" field="Región de la variante "/>
   </ConfigurationItem>
   <Publications />
 </DictionaryConfiguration>
