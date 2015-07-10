@@ -757,12 +757,12 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
 								break;
 							case FxtTypes.kftConfigured:
+							case FxtTypes.kftReversal:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = 1; // todo: pick something legit
 								progressDlg.AllowCancel = true;
 								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
 								break;
-							case FxtTypes.kftReversal:
 							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_seqView.ObjectCount;

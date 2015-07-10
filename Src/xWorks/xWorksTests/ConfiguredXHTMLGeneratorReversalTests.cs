@@ -119,6 +119,63 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
+		{
+			var entry = CreateInterestingReversalEntry();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+				Assert.AreEqual("r", last, "should have updated the last letter header");
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
+		{
+			var entry = CreateInterestingReversalEntry();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				var last = "A a";
+				XHTMLWriter.WriteStartElement("TestElement");
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
+		{
+			var entry = CreateInterestingReversalEntry();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				var last = "A a";
+				XHTMLWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				const string proveOnlyOneHeader = "//div[@class='letHead']/div[@class='letter']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
+			}
+		}
+
+
 		private ICmObject CreateInterestingReversalEntry()
 		{
 			var entry = CreateInterestingLexEntry();

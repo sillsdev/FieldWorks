@@ -54,19 +54,19 @@ namespace SIL.FieldWorks.XWorks
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
 																		 DictionaryPublicationDecorator pubDecorator, Mediator mediator)
 		{
-			if(entry == null)
+			if (entry == null)
 			{
 				throw new ArgumentNullException("entry");
 			}
-			if(pubDecorator == null)
+			if (pubDecorator == null)
 			{
 				throw new ArgumentException("pubDecorator");
 			}
 			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var stringBuilder = new StringBuilder();
-			using(var writer = XmlWriter.Create(stringBuilder))
-			using(var cssWriter = new StreamWriter(previewCssPath, false))
+			using (var writer = XmlWriter.Create(stringBuilder))
+			using (var cssWriter = new StreamWriter(previewCssPath, false))
 			{
 				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), writer, false, false, null);
 				GenerateOpeningHtml(previewCssPath, exportSettings);
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmlWriter = exportSettings.Writer;
 			var lp = exportSettings.Cache.LangProject;
 			var wsList = lp.CurrentAnalysisWritingSystems.Union(lp.CurrentVernacularWritingSystems.Union(lp.CurrentPronunciationWritingSystems));
-			foreach(var ws in wsList)
+			foreach (var ws in wsList)
 			{
 				xhtmlWriter.WriteStartElement("meta");
 				xhtmlWriter.WriteAttributeString("name", "DC.language");
@@ -139,19 +139,19 @@ namespace SIL.FieldWorks.XWorks
 		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
-			using(var cssWriter = new StreamWriter(cssPath, false))
+			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
+			using (var cssWriter = new StreamWriter(cssPath, false))
 			{
 				var settings = new GeneratorSettings(cache, xhtmlWriter, true, true, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(cssPath, settings);
 				string lastHeader = null;
-				foreach(var hvo in entryHvos)
+				foreach (var hvo in entryHvos)
 				{
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					// TODO pH 2014.08: generate only if entry is published (confignode enabled, pubAsMinor, selected complex- or variant-form type)
 					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
 					GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
-					if(progress != null)
+					if (progress != null)
 					{
 						progress.Position++;
 					}
@@ -166,15 +166,15 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, FdoCache cache)
 		{
-			var lexEntry = entry as ILexEntry;
+
 			// If performance is an issue these dummy's can be stored between calls
 			var dummyOne = new Dictionary<string, Set<string>>();
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, Set<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
-			var firstLetter = ConfiguredExport.GetLeadChar(lexEntry.HeadWord.Text, wsString,
+			var firstLetter = ConfiguredExport.GetLeadChar(GetLetHeadbyEntryType(entry), wsString,
 																		  dummyOne, dummyTwo, dummyThree, cache);
-			if(firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
+			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
 				headerTextBuilder.Append(Icu.ToTitle(firstLetter, wsString));
@@ -194,6 +194,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// To generating the letter headers, we need to know which type the entry is to determine to check the first character.
+		/// So, this method will find the correct type by casting the entry with ILexEntry and IReversalIndexEntry
+		/// </summary>
+		/// <param name="entry">entry which needs to find the type</param>
+		/// <returns>letHead text</returns>
+		private static string GetLetHeadbyEntryType(ICmObject entry)
+		{
+			var lexEntry = entry as ILexEntry;
+			if (lexEntry == null)
+			{
+				var revEntry = entry as IReversalIndexEntry;
+				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text : string.Empty;
+			}
+			return lexEntry.HeadWord.Text;
+		}
+
+		/// <summary>
 		/// Generating the xhtml representation for the given ICmObject using the given configuration to select which data to write out
 		/// If it is a Dictionary Main Entry or non-Dictionary entry, uses the first configuration.
 		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
@@ -202,23 +219,23 @@ namespace SIL.FieldWorks.XWorks
 		public static void GenerateXHTMLForEntry(ICmObject entry, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-				if (IsMinorEntry(entry))
+			if (IsMinorEntry(entry))
+			{
+				if (((ILexEntry)entry).PublishAsMinorEntry)
 				{
-					if(((ILexEntry)entry).PublishAsMinorEntry)
+					for (var i = 1; i < configuration.Parts.Count; i++)
 					{
-						for(var i = 1; i < configuration.Parts.Count; i++)
+						if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
 						{
-							if(IsListItemSelectedForExport(configuration.Parts[i], entry, null))
-							{
-								GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-							}
+							GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
 						}
 					}
 				}
-				else
-				{
-					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, settings);
-				}
+			}
+			else
+			{
+				GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, settings);
+			}
 		}
 
 		internal static bool IsMinorEntry(ICmObject entry)
@@ -233,19 +250,19 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="configuration"><remarks>this configuration node must match the entry type</remarks></param>
 		internal static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if(settings == null || entry == null || configuration == null)
+			if (settings == null || entry == null || configuration == null)
 			{
 				throw new ArgumentNullException();
 			}
-			if(String.IsNullOrEmpty(configuration.FieldDescription))
+			if (String.IsNullOrEmpty(configuration.FieldDescription))
 			{
 				throw new ArgumentException(@"Invalid configuration: FieldDescription can not be null", @"configuration");
 			}
-			if(entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
+			if (entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
 			{
 				throw new ArgumentException(@"The given argument doesn't configure this type", @"configuration");
 			}
-			if(!configuration.IsEnabled)
+			if (!configuration.IsEnabled)
 			{
 				return;
 			}
@@ -253,7 +270,7 @@ namespace SIL.FieldWorks.XWorks
 			settings.Writer.WriteStartElement("div");
 			WriteClassNameAttribute(settings.Writer, configuration);
 			settings.Writer.WriteAttributeString("id", "hvo" + entry.Hvo);
-			foreach(var config in configuration.Children)
+			foreach (var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
 			}
@@ -277,71 +294,71 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if(!config.IsEnabled)
+			if (!config.IsEnabled)
 			{
 				return;
 			}
 			var cache = settings.Cache;
 			var entryType = field.GetType();
 			object propertyValue = null;
-			if(config.IsCustomField)
+			if (config.IsCustomField)
 			{
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
 				int customFieldFlid;
 				customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
-				if(customFieldFlid != 0)
+				if (customFieldFlid != 0)
 				{
 					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-					switch(customFieldType)
+					switch (customFieldType)
 					{
 						case (int)CellarPropertyType.ReferenceSequence:
 						case (int)CellarPropertyType.OwningSequence:
-						{
-							var sda = cache.MainCacheAccessor;
-							// This method returns the hvo of the object pointed to
-							var chvo = sda.get_VecSize(((ICmObject)field).Hvo, customFieldFlid);
-							int[] contents;
-							using(var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 							{
-								sda.VecProp(((ICmObject)field).Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
-								contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+								var sda = cache.MainCacheAccessor;
+								// This method returns the hvo of the object pointed to
+								var chvo = sda.get_VecSize(((ICmObject)field).Hvo, customFieldFlid);
+								int[] contents;
+								using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+								{
+									sda.VecProp(((ICmObject)field).Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+									contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+								}
+								// if the hvo is invalid set propertyValue to null otherwise get the object
+								propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+								break;
 							}
-							// if the hvo is invalid set propertyValue to null otherwise get the object
-							propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
-							break;
-						}
 						case (int)CellarPropertyType.ReferenceAtomic:
 						case (int)CellarPropertyType.OwningAtomic:
-						{
-							// This method returns the hvo of the object pointed to
-							propertyValue = cache.MainCacheAccessor.get_ObjectProp(((ICmObject)field).Hvo, customFieldFlid);
-							// if the hvo is invalid set propertyValue to null otherwise get the object
-							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
-							break;
-						}
+							{
+								// This method returns the hvo of the object pointed to
+								propertyValue = cache.MainCacheAccessor.get_ObjectProp(((ICmObject)field).Hvo, customFieldFlid);
+								// if the hvo is invalid set propertyValue to null otherwise get the object
+								propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
+								break;
+							}
 						case (int)CellarPropertyType.Time:
-						{
-							propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(((ICmObject)field).Hvo, customFieldFlid));
-							break;
-						}
+							{
+								propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(((ICmObject)field).Hvo, customFieldFlid));
+								break;
+							}
 						case (int)CellarPropertyType.MultiUnicode:
 						case (int)CellarPropertyType.MultiString:
-						{
-							propertyValue = cache.MainCacheAccessor.get_MultiStringProp(((ICmObject)field).Hvo, customFieldFlid);
-							break;
-						}
+							{
+								propertyValue = cache.MainCacheAccessor.get_MultiStringProp(((ICmObject)field).Hvo, customFieldFlid);
+								break;
+							}
 						case (int)CellarPropertyType.String:
-						{
-							propertyValue = cache.MainCacheAccessor.get_StringProp(((ICmObject)field).Hvo, customFieldFlid);
-							break;
-						}
+							{
+								propertyValue = cache.MainCacheAccessor.get_StringProp(((ICmObject)field).Hvo, customFieldFlid);
+								break;
+							}
 					}
 				}
 			}
 			else
 			{
 				var property = entryType.GetProperty(config.FieldDescription);
-				if(property == null)
+				if (property == null)
 				{
 					Debug.WriteLine("Issue with finding {0}", (object)config.FieldDescription);
 					return;
@@ -349,11 +366,11 @@ namespace SIL.FieldWorks.XWorks
 				propertyValue = property.GetValue(field, new object[] { });
 			}
 			// If the property value is null there is nothing to generate
-			if(propertyValue == null)
+			if (propertyValue == null)
 			{
 				return;
 			}
-			if(!String.IsNullOrEmpty(config.SubField))
+			if (!String.IsNullOrEmpty(config.SubField))
 			{
 				var subType = propertyValue.GetType();
 				var subProp = subType.GetProperty(config.SubField);
@@ -362,54 +379,54 @@ namespace SIL.FieldWorks.XWorks
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
 										: GetPropertyTypeForConfigurationNode(config, cache);
-			switch(typeForNode)
+			switch (typeForNode)
 			{
-				case(PropertyType.CollectionType):
-				{
-					if(!IsCollectionEmpty(propertyValue))
+				case (PropertyType.CollectionType):
 					{
-						GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings);
+						if (!IsCollectionEmpty(propertyValue))
+						{
+							GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings);
+						}
+						return;
 					}
-					return;
-				}
-				case(PropertyType.MoFormType):
-				{
-					GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
-					return;
-				}
-				case(PropertyType.CmObjectType):
-				{
-					GenerateXHTMLForICmObject(propertyValue as ICmObject, config, settings);
-					return;
-				}
+				case (PropertyType.MoFormType):
+					{
+						GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
+						return;
+					}
+				case (PropertyType.CmObjectType):
+					{
+						GenerateXHTMLForICmObject(propertyValue as ICmObject, config, settings);
+						return;
+					}
 				case (PropertyType.CmPictureType):
-				{
-					var fileProperty = propertyValue as ICmFile;
-					if(fileProperty != null)
 					{
-						GenerateXHTMLForPicture(fileProperty, config, settings);
+						var fileProperty = propertyValue as ICmFile;
+						if (fileProperty != null)
+						{
+							GenerateXHTMLForPicture(fileProperty, config, settings);
+						}
+						else
+						{
+							GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+						}
+						return;
 					}
-					else
+				case (PropertyType.CmPossibility):
 					{
-						GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+						GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
+						return;
 					}
-					return;
-				}
-				case(PropertyType.CmPossibility):
-				{
-					GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
-					return;
-				}
 				default:
-				{
-					GenerateXHTMLForValue(field, propertyValue, config, settings);
-					break;
-				}
+					{
+						GenerateXHTMLForValue(field, propertyValue, config, settings);
+						break;
+					}
 			}
 
-			if(config.Children != null)
+			if (config.Children != null)
 			{
-				foreach(var child in config.Children)
+				foreach (var child in config.Children)
 				{
 					GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 				}
@@ -428,7 +445,7 @@ namespace SIL.FieldWorks.XWorks
 				customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName,
 																							config.FieldDescription, false);
 			}
-			catch(FDOInvalidFieldException)
+			catch (FDOInvalidFieldException)
 			{
 				var usefulMessage =
 					String.Format(
@@ -449,11 +466,11 @@ namespace SIL.FieldWorks.XWorks
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
 			// with the parent node returns the collection type. We want the type of the elements in the collection.
 			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
-			if(IsCollectionType(parentNodeType))
+			if (IsCollectionType(parentNodeType))
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
 			}
-			if(parentNodeType.IsInterface)
+			if (parentNodeType.IsInterface)
 			{
 				// Strip off the interface designation since custom fields are added to concrete classes
 				return parentNodeType.Name.Substring(1);
@@ -461,17 +478,17 @@ namespace SIL.FieldWorks.XWorks
 			return parentNodeType.Name;
 		}
 
-		private static void GenerateXHTMLForPossibility(object propertyValue,ConfigurableDictionaryNode config,
+		private static void GenerateXHTMLForPossibility(object propertyValue, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
-			if(config.Children.Any(node => node.IsEnabled))
+			if (config.Children.Any(node => node.IsEnabled))
 			{
 				writer.WriteStartElement("span");
 				writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
-				if(config.Children != null)
+				if (config.Children != null)
 				{
-					foreach(var child in config.Children)
+					foreach (var child in config.Children)
 					{
 						GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 					}
@@ -487,7 +504,7 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteStartElement("div");
 			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
 			// todo: get sense numbers and captions into the same div and get rid of this if else
-			if(config.DictionaryNodeOptions != null)
+			if (config.DictionaryNodeOptions != null)
 			{
 				GenerateXHTMLForStrings(propertyValue as IMultiString, config, settings);
 			}
@@ -516,22 +533,22 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateSrcAttributeFromFilePath(ICmFile file, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
-			if(settings.UseRelativePaths && subFolder != null)
+			if (settings.UseRelativePaths && subFolder != null)
 			{
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(file.InternalPath)));
-				if(settings.CopyFiles)
+				if (settings.CopyFiles)
 				{
 					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
 					var destination = Path.Combine(settings.ExportPath, filePath);
 					var source = MakeSafeFilePath(file.AbsoluteInternalPath);
-					if(!File.Exists(destination))
+					if (!File.Exists(destination))
 					{
-						if(File.Exists(source))
+						if (File.Exists(source))
 						{
 							FileUtils.Copy(source, destination);
 						}
 					}
-					else if(!FileUtils.AreFilesIdentical(source, destination))
+					else if (!FileUtils.AreFilesIdentical(source, destination))
 					{
 						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
 						var fileExtension = Path.GetExtension(filePath);
@@ -541,8 +558,8 @@ namespace SIL.FieldWorks.XWorks
 							++copyNumber;
 							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
 						}
-						while(File.Exists(destination));
-						if(File.Exists(source))
+						while (File.Exists(destination));
+						if (File.Exists(source))
 						{
 							FileUtils.Copy(source, destination);
 						}
@@ -560,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string MakeSafeFilePath(string filePath)
 		{
-			if(Unicode.CheckForNonAsciiCharacters(filePath))
+			if (Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
@@ -596,31 +613,31 @@ namespace SIL.FieldWorks.XWorks
 
 		private static PropertyType GetPropertyTypeFromReflectedTypes(Type fieldType, Type parentType)
 		{
-			if(fieldType == null)
+			if (fieldType == null)
 			{
 				return PropertyType.InvalidProperty;
 			}
-			if(IsCollectionType(fieldType))
+			if (IsCollectionType(fieldType))
 			{
 				return PropertyType.CollectionType;
 			}
-			if(typeof(ICmPicture).IsAssignableFrom(parentType))
+			if (typeof(ICmPicture).IsAssignableFrom(parentType))
 			{
 				return PropertyType.CmPictureType;
 			}
-			if(typeof(ICmFile).IsAssignableFrom(fieldType))
+			if (typeof(ICmFile).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.CmFileType;
 			}
-			if(typeof(IMoForm).IsAssignableFrom(fieldType))
+			if (typeof(IMoForm).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.MoFormType;
 			}
-			if(typeof(ICmPossibility).IsAssignableFrom(fieldType))
+			if (typeof(ICmPossibility).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.CmPossibility;
 			}
-			if(typeof(ICmObject).IsAssignableFrom(fieldType))
+			if (typeof(ICmObject).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.CmObjectType;
 			}
@@ -636,7 +653,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache, out Type parentType)
 		{
-			if(config == null)
+			if (config == null)
 			{
 				throw new ArgumentNullException("config", "The configuration node must not be null.");
 			}
@@ -646,7 +663,7 @@ namespace SIL.FieldWorks.XWorks
 			// Build a list of the direct line up to the top of the configuration
 			lineage.Push(config);
 			var next = config;
-			while(next.Parent != null)
+			while (next.Parent != null)
 			{
 				next = next.Parent;
 				lineage.Push(next);
@@ -655,28 +672,28 @@ namespace SIL.FieldWorks.XWorks
 			var assembly = GetAssemblyForFile(AssemblyFile);
 			var rootNode = lineage.Pop();
 			var lookupType = assembly.GetType(rootNode.FieldDescription);
-			if(lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
+			if (lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
 			{
 				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
 			}
-			if(lookupType == null)
+			if (lookupType == null)
 			{
 				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
 			}
 			var fieldType = lookupType;
 
 			// Traverse the configuration reflectively inspecting the types in parent to child order
-			foreach(var node in lineage)
+			foreach (var node in lineage)
 			{
 				PropertyInfo property;
-				if(node.IsCustomField)
+				if (node.IsCustomField)
 				{
 					fieldType = GetCustomFieldType(lookupType, node, cache);
 				}
 				else
 				{
 					property = GetProperty(lookupType, node);
-					if(property != null)
+					if (property != null)
 					{
 						fieldType = property.PropertyType;
 					}
@@ -684,7 +701,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						return null;
 					}
-					if(IsCollectionType(fieldType))
+					if (IsCollectionType(fieldType))
 					{
 						// When a node points to a collection all the child nodes operate on individual items in the
 						// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
@@ -706,37 +723,37 @@ namespace SIL.FieldWorks.XWorks
 			// FDO doesn't work with interfaces, just concrete classes so chop the I off any interface types
 			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
 			var customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
-			if(customFieldFlid != 0)
+			if (customFieldFlid != 0)
 			{
 				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-				switch(customFieldType)
+				switch (customFieldType)
 				{
 					case (int)CellarPropertyType.ReferenceSequence:
 					case (int)CellarPropertyType.OwningSequence:
-					{
-						return typeof(IFdoVector);
-					}
+						{
+							return typeof(IFdoVector);
+						}
 					case (int)CellarPropertyType.ReferenceAtomic:
 					case (int)CellarPropertyType.OwningAtomic:
-					{
-						return typeof(ICmObject);
-					}
+						{
+							return typeof(ICmObject);
+						}
 					case (int)CellarPropertyType.Time:
-					{
-						return typeof(DateTime);
-					}
+						{
+							return typeof(DateTime);
+						}
 					case (int)CellarPropertyType.MultiUnicode:
-					{
-						return typeof(IMultiUnicode);
-					}
+						{
+							return typeof(IMultiUnicode);
+						}
 					case (int)CellarPropertyType.MultiString:
-					{
-						return typeof(IMultiString);
-					}
+						{
+							return typeof(IMultiString);
+						}
 					case (int)CellarPropertyType.String:
-					{
-						return typeof(string);
-					}
+						{
+							return typeof(string);
+						}
 					default:
 						return null;
 				}
@@ -750,7 +767,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static Assembly GetAssemblyForFile(string assemblyFile)
 		{
-			if(!AssemblyMap.ContainsKey(assemblyFile))
+			if (!AssemblyMap.ContainsKey(assemblyFile))
 			{
 				AssemblyMap[assemblyFile] = Assembly.Load(AssemblyFile);
 			}
@@ -776,34 +793,34 @@ namespace SIL.FieldWorks.XWorks
 				propertyOfInterest = node.FieldDescription;
 				// if there is a SubField we need to use the type of the FieldDescription
 				// for the rest of this method so set current to the FieldDescription type.
-				if(node.SubField != null)
+				if (node.SubField != null)
 				{
 					var property = current.GetProperty(node.FieldDescription);
 					propertyOfInterest = node.SubField;
-					if(property != null)
+					if (property != null)
 					{
 						current = property.PropertyType;
 					}
 				}
 				propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				if(propInfo == null)
+				if (propInfo == null)
 				{
-					foreach(var i in current.GetInterfaces())
+					foreach (var i in current.GetInterfaces())
 					{
 						typesToCheck.Push(i);
 					}
 				}
-			} while(propInfo == null && typesToCheck.Count > 0);
+			} while (propInfo == null && typesToCheck.Count > 0);
 			return propInfo;
 		}
 
 		private static void GenerateXHTMLForMoForm(IMoForm moForm, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// Don't export if there is no such data
-			if(moForm == null)
+			if (moForm == null)
 				return;
 			GenerateXHTMLForStrings(moForm.Form, config, settings);
-			if(config.Children != null && config.Children.Any())
+			if (config.Children != null && config.Children.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
 			}
@@ -818,11 +835,11 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteStartElement("span");
 			WriteClassNameAttribute(writer, config);
 			IEnumerable collection;
-			if(collectionField is IEnumerable)
+			if (collectionField is IEnumerable)
 			{
 				collection = collectionField as IEnumerable;
 			}
-			else if(collectionField is IFdoVector)
+			else if (collectionField is IFdoVector)
 			{
 				collection = (collectionField as IFdoVector).Objects;
 			}
@@ -831,7 +848,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
 			var isSingle = collection.Cast<object>().Count() == 1;
-			foreach(var item in collection)
+			foreach (var item in collection)
 			{
 				GenerateCollectionItemContent(config, publicationDecorator, item, isSingle, collectionOwner, settings);
 			}
@@ -858,9 +875,9 @@ namespace SIL.FieldWorks.XWorks
 
 			writer.WriteStartElement(GetElementNameForProperty(config));
 			WriteCollectionItemClassAttribute(config, writer);
-			if(config.Children != null)
+			if (config.Children != null)
 			{
-				foreach(var child in config.Children)
+				foreach (var child in config.Children)
 					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
 			}
 
@@ -879,7 +896,7 @@ namespace SIL.FieldWorks.XWorks
 																			 object sense, FdoCache cache,
 																			 DictionaryPublicationDecorator publicationDecorator, bool isSingle)
 		{
-			if(senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
+			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
 				return;
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("class", "sensenumber");
@@ -942,12 +959,14 @@ namespace SIL.FieldWorks.XWorks
 			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
 			var selectedListOptions = new List<Guid>();
 			var forwardReverseOptions = new List<Tuple<Guid, string>>();
-			foreach(var option in listOptions.Options)
+			foreach (var option in listOptions.Options)
 			{
-				if (option.IsEnabled) {
+				if (option.IsEnabled)
+				{
 					var forwardReverseIndicator = option.Id.IndexOf(':');
-					if (forwardReverseIndicator > 0) {
-						var guid = new Guid (option.Id.Substring (0, forwardReverseIndicator));
+					if (forwardReverseIndicator > 0)
+					{
+						var guid = new Guid(option.Id.Substring(0, forwardReverseIndicator));
 						forwardReverseOptions.Add(new Tuple<Guid, string>(guid, option.Id.Substring(forwardReverseIndicator)));
 					}
 					else
@@ -956,79 +975,80 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-			switch(listOptions.ListId)
+			switch (listOptions.ListId)
 			{
 				case DictionaryNodeListOptions.ListIds.Variant:
-				{
-					var entryRef = (ILexEntryRef)listItem;
-					var entryTypeGuids = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid);
-					return entryTypeGuids.Intersect (selectedListOptions).Any();
-				}
-				case DictionaryNodeListOptions.ListIds.Minor:
-				{
-					// minor entry list options are a combination of both the variant and complex options
-					var entry = (ILexEntry)listItem;
-					var variantTypeGuids = new Set<Guid>();
-					var complexTypeGuids = new Set<Guid>();
-					foreach(var variantRef in entry.VariantEntryRefs)
-					{
-						variantTypeGuids.AddRange(variantRef.VariantEntryTypesRS.Select(guid => guid.Guid));
-					}
-					foreach(var complexRef in entry.EntryRefsOS)
-					{
-						complexTypeGuids.AddRange(complexRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
-					}
-					var entryTypeGuids = complexTypeGuids.Union(variantTypeGuids);
-					return entryTypeGuids.Intersect(selectedListOptions).Any();
-				}
-				case DictionaryNodeListOptions.ListIds.Complex:
-				{
-					if(listItem is ILexEntryRef)
 					{
 						var entryRef = (ILexEntryRef)listItem;
-						var entryTypeGuids = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
-						if(entryTypeGuids.Intersect(selectedListOptions).Any())
-							return true;
+						var entryTypeGuids = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid);
+						return entryTypeGuids.Intersect(selectedListOptions).Any();
 					}
-					else if(listItem is ILexEntry)
+				case DictionaryNodeListOptions.ListIds.Minor:
 					{
+						// minor entry list options are a combination of both the variant and complex options
 						var entry = (ILexEntry)listItem;
-						var entryTypeGuids = new List<Guid>();
-						foreach(var entryRef in entry.EntryRefsOS)
+						var variantTypeGuids = new Set<Guid>();
+						var complexTypeGuids = new Set<Guid>();
+						foreach (var variantRef in entry.VariantEntryRefs)
 						{
-							entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+							variantTypeGuids.AddRange(variantRef.VariantEntryTypesRS.Select(guid => guid.Guid));
 						}
-						if(entryTypeGuids.Intersect(selectedListOptions).Any())
-							return true;
-					}
-					return false;
-				}
-				case DictionaryNodeListOptions.ListIds.Entry:
-				case DictionaryNodeListOptions.ListIds.Sense:
-				{
-					var entryRef = (ILexReference)listItem;
-					var entryTypeGuid = entryRef.OwnerType.Guid;
-					if (selectedListOptions.Contains (entryTypeGuid)) {
-						return true;
-					}
-					else
-					{
-						foreach (var pair in forwardReverseOptions)
+						foreach (var complexRef in entry.EntryRefsOS)
 						{
-							if(pair.Item1 == entryTypeGuid)
+							complexTypeGuids.AddRange(complexRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+						}
+						var entryTypeGuids = complexTypeGuids.Union(variantTypeGuids);
+						return entryTypeGuids.Intersect(selectedListOptions).Any();
+					}
+				case DictionaryNodeListOptions.ListIds.Complex:
+					{
+						if (listItem is ILexEntryRef)
+						{
+							var entryRef = (ILexEntryRef)listItem;
+							var entryTypeGuids = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
+							if (entryTypeGuids.Intersect(selectedListOptions).Any())
+								return true;
+						}
+						else if (listItem is ILexEntry)
+						{
+							var entry = (ILexEntry)listItem;
+							var entryTypeGuids = new List<Guid>();
+							foreach (var entryRef in entry.EntryRefsOS)
 							{
-								return (entryRef.TargetsRS[0] == parent && pair.Item2 == ":f") ||
-									(entryRef.TargetsRS[1] == parent && pair.Item2 == ":r");
+								entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
 							}
+							if (entryTypeGuids.Intersect(selectedListOptions).Any())
+								return true;
 						}
 						return false;
 					}
-				}
+				case DictionaryNodeListOptions.ListIds.Entry:
+				case DictionaryNodeListOptions.ListIds.Sense:
+					{
+						var entryRef = (ILexReference)listItem;
+						var entryTypeGuid = entryRef.OwnerType.Guid;
+						if (selectedListOptions.Contains(entryTypeGuid))
+						{
+							return true;
+						}
+						else
+						{
+							foreach (var pair in forwardReverseOptions)
+							{
+								if (pair.Item1 == entryTypeGuid)
+								{
+									return (entryRef.TargetsRS[0] == parent && pair.Item2 == ":f") ||
+										(entryRef.TargetsRS[1] == parent && pair.Item2 == ":r");
+								}
+							}
+							return false;
+						}
+					}
 				default:
-				{
-					Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
-					return true;
-				}
+					{
+						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
+						return true;
+					}
 			}
 		}
 
@@ -1040,15 +1060,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static bool IsCollectionEmpty(object collection)
 		{
-			if(collection == null)
+			if (collection == null)
 			{
 				throw new ArgumentNullException("collection");
 			}
-			if(collection is IEnumerable)
+			if (collection is IEnumerable)
 			{
 				return !(((IEnumerable)collection).Cast<object>().Any());
 			}
-			if(collection is IFdoVector)
+			if (collection is IFdoVector)
 			{
 				return ((IFdoVector)collection).ToHvoArray().Length == 0;
 			}
@@ -1065,9 +1085,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		private static void GenerateXHTMLForValue(object field, object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
-			if(propertyValue is ITsString)
+			if (propertyValue is ITsString)
 			{
-				if(!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
+				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
@@ -1075,26 +1095,26 @@ namespace SIL.FieldWorks.XWorks
 					settings.Writer.WriteEndElement();
 				}
 			}
-			else if(propertyValue is IMultiStringAccessor)
+			else if (propertyValue is IMultiStringAccessor)
 			{
 				GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings);
 			}
-			else if(propertyValue is int)
+			else if (propertyValue is int)
 			{
 				WriteElementContents(propertyValue, config, settings.Writer);
 			}
-			else if(propertyValue is DateTime)
+			else if (propertyValue is DateTime)
 			{
 				WriteElementContents(((DateTime)propertyValue).ToLongDateString(), config, settings.Writer);
 			}
-			else if(propertyValue is IMultiAccessorBase)
+			else if (propertyValue is IMultiAccessorBase)
 			{
 				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings);
 			}
-			else if(propertyValue is String)
+			else if (propertyValue is String)
 			{
 				var propValueString = (String)propertyValue;
-				if(!String.IsNullOrEmpty(propValueString))
+				if (!String.IsNullOrEmpty(propValueString))
 				{
 					// write out Strings something like: <span class="foo">Bar</span>
 					settings.Writer.WriteStartElement("span");
@@ -1129,23 +1149,23 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			if(wsOptions == null)
+			if (wsOptions == null)
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			}
 			// TODO pH 2014.12: this can generate an empty span if no checked WS's contain data
 			settings.Writer.WriteStartElement("span");
 			WriteClassNameAttribute(settings.Writer, config);
-			foreach(var option in wsOptions.Options)
+			foreach (var option in wsOptions.Options)
 			{
-				if(!option.IsEnabled)
+				if (!option.IsEnabled)
 				{
 					continue;
 				}
 				var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
 				// The string for the specific wsId in the option, or the best string option in the accessor if the wsId is magic
 				ITsString bestString;
-				if(wsId == 0)
+				if (wsId == 0)
 				{
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
@@ -1175,22 +1195,22 @@ namespace SIL.FieldWorks.XWorks
 																			ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			if(wsOptions == null)
+			if (wsOptions == null)
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			}
 			settings.Writer.WriteStartElement("span");
 			WriteClassNameAttribute(settings.Writer, config);
 
-			foreach(var option in wsOptions.Options)
+			foreach (var option in wsOptions.Options)
 			{
-				if(!option.IsEnabled)
+				if (!option.IsEnabled)
 				{
 					continue;
 				}
 				var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
 				// The string for the specific wsId in the option, or the best string option in the accessor if the wsId is magic
-				if(wsId == 0)
+				if (wsId == 0)
 				{
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
@@ -1220,7 +1240,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.WriteStartElement("span");
 				writer.WriteAttributeString("class", "writingsystemprefix");
-				var prefix = ((IWritingSystem) cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 				writer.WriteString(prefix);
 				writer.WriteEndElement();
 			}
@@ -1250,7 +1270,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string GetElementNameForProperty(ConfigurableDictionaryNode config)
 		{
 			//TODO: Improve this logic to deal with subentries if necessary
-			if(config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions)
+			if (config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions)
 			{
 				return "div";
 			}
@@ -1266,15 +1286,15 @@ namespace SIL.FieldWorks.XWorks
 		private static string GetLanguageFromFirstOption(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
 			const string defaultLang = "en";
-			if(wsOptions == null)
+			if (wsOptions == null)
 				return defaultLang;
-			foreach(var option in wsOptions.Options)
+			foreach (var option in wsOptions.Options)
 			{
-				if(option.IsEnabled)
+				if (option.IsEnabled)
 				{
 					var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
 					// if the writing system isn't a magic name just use it
-					if( wsId == 0)
+					if (wsId == 0)
 					{
 						return option.Id;
 					}
@@ -1289,19 +1309,19 @@ namespace SIL.FieldWorks.XWorks
 		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(Mediator mediator, out int[] entriesToSave)
 		{
 			var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
-			if(cache == null)
+			if (cache == null)
 			{
 				throw new ArgumentException(@"Mediator had no cache", "mediator");
 			}
 			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
-			if(clerk == null)
+			if (clerk == null)
 			{
 				throw new ArgumentException(@"Mediator had no clerk", "mediator");
 			}
 
 			ICmPossibility currentPublication;
 			var currentPublicationString = mediator.PropertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
-			if(currentPublicationString == xWorksStrings.AllEntriesPublication)
+			if (currentPublicationString == xWorksStrings.AllEntriesPublication)
 			{
 				currentPublication = null;
 			}
@@ -1313,12 +1333,12 @@ namespace SIL.FieldWorks.XWorks
 					 select item).FirstOrDefault();
 			}
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.VecProp(cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+			entriesToSave = decorator.GetEntriesToPublish(mediator, clerk).ToArray();
 			return decorator;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="Cache and Mediator are a references")]
+			Justification = "Cache and Mediator are a references")]
 		public class GeneratorSettings
 		{
 			public FdoCache Cache { get; private set; }
@@ -1328,7 +1348,7 @@ namespace SIL.FieldWorks.XWorks
 			public string ExportPath { get; private set; }
 			public GeneratorSettings(FdoCache cache, XmlWriter writer, bool relativePaths, bool copyFiles, string exportPath)
 			{
-				if(cache == null || writer == null)
+				if (cache == null || writer == null)
 				{
 					throw new ArgumentNullException();
 				}
