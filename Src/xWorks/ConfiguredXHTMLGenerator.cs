@@ -847,7 +847,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			// if we are working with senses start wrapping element and write out the sense number sibling item if necessary
-			if(config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
+			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions && config.Children.Count != 0)
 			{
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				writer.WriteStartElement("span");
@@ -863,10 +863,13 @@ namespace SIL.FieldWorks.XWorks
 				foreach(var child in config.Children)
 					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
 			}
-			writer.WriteEndElement();
 
+			if (config.DictionaryNodeOptions != null)
+				GenerateXHTMLForFieldByReflection(item, config, publicationDecorator, settings);
+
+			writer.WriteEndElement();
 			// close out the sense wrapping
-			if(config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
+			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions && config.Children.Count != 0)
 			{
 				writer.WriteEndElement();
 			}
