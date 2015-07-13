@@ -61,8 +61,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				m_logger.WriteLine(string.Format("Migrating dictionary configurations"));
+				var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+
+				m_logger.WriteLine("Migrating dictionary configurations");
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
+				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -72,6 +75,7 @@ namespace SIL.FieldWorks.XWorks
 					});
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}", DateTime.Now.ToString("h:mm:ss")));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -233,7 +237,6 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					}
 				}
-				Directory.CreateDirectory(Path.GetDirectoryName(convertedModel.FilePath));
 				CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			}
 		}
