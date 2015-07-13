@@ -28,6 +28,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxBetween.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+
+			buttonStyles.Click += SwapComboBoxAsSenderForButtonClickEvent;
 		}
 
 		private Control m_OptionsView = null;
@@ -107,14 +109,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { dropDownStyle.SelectedValueChanged -= value; }
 		}
 
-		private EventHandler ButtonStylesOnClick(EventHandler value) { return (sender, e) => value(dropDownStyle, e); }
-
-		/// <summary>Fired when the Styles... button is clicked. Object sender is the Style ComboBox so it can be updated</summary>
-		public event EventHandler StyleButtonClick
+		/// <summary>
+		/// This method lets us hide the specific controls in the DetailsView while still allowing FwStylesDlg.RunStylesDialogForCombo
+		/// to be used by the DictionaryDetailsController. It swaps the sender of the event from the button to the ComboBox which
+		/// holds the styles.
+		/// </summary>
+		private void SwapComboBoxAsSenderForButtonClickEvent(object sender, EventArgs e)
 		{
-			add { buttonStyles.Click += ButtonStylesOnClick(value); }
-			remove { buttonStyles.Click -= ButtonStylesOnClick(value); }
+			// If we have a ButtonStylesOnClick handler event call it passing the dropDownStyle ComboBox as the sender
+			if(StyleButtonClick != null)
+				StyleButtonClick(dropDownStyle, e);
 		}
+
+		/// <summary>Fired when the Styles... button is clicked. Object sender is swapped with the Style ComboBox so it can be updated by clients</summary>
+		public event EventHandler StyleButtonClick;
 
 		public event EventHandler BeforeTextChanged
 		{
