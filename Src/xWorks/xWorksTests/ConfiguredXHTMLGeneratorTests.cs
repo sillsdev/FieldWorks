@@ -1300,7 +1300,15 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
-			var subSenseNode = new ConfigurableDictionaryNode { FieldDescription = "Subsenses", DictionaryNodeOptions = DictionaryNodeSubSenseOptions, IsEnabled = true };
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",

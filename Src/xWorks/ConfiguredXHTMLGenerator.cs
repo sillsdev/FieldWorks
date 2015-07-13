@@ -881,9 +881,6 @@ namespace SIL.FieldWorks.XWorks
 					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
 			}
 
-			if (config.DictionaryNodeOptions != null)
-				GenerateXHTMLForFieldByReflection(item, config, publicationDecorator, settings);
-
 			writer.WriteEndElement();
 			// close out the sense wrapping
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions && config.Children.Count != 0)
