@@ -1122,7 +1122,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				Debug.WriteLine("What do I do with {0}?", (object)propertyValue.GetType().Name);
+				if(propertyValue == null)
+				{
+					Debug.WriteLine(string.Format("Bad configuration node: {0}", config));
+				}
+				else
+				{
+					Debug.WriteLine(string.Format("What do I do with {0}?", propertyValue.GetType().Name));
+				}
 			}
 		}
 

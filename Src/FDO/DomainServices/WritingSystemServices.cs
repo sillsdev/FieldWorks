@@ -723,6 +723,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int defaultUserWs = cache.DefaultUserWs;
 			int defaultAnalWs = cache.DefaultAnalWs;
 			int defaultVernWs = cache.DefaultVernWs;
+			// Default reversals to the default analysis writing system (change if insufficient)
+			// TODO: default the reversalWs to "Current reversal writing system"
+			int defaultReversalWs = cache.DefaultAnalWs;
 			int fallbackUserWs = FallbackUserWs(cache);
 			int englishWs = cache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
 			var writingSystems = cache.ServiceLocator.WritingSystems;
@@ -980,6 +983,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						return null;
 					}
 					retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentPronunciationWritingSystems, hvo, flid, sda);
+					break;
+				}
+				case(kwsReversalIndex):
+				case(kwsAllReversalIndex):
+				{
+					retWs = defaultReversalWs;
 					break;
 				}
 				default:

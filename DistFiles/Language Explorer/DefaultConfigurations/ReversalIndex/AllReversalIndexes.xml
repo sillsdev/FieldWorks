@@ -165,7 +165,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Etymology" isEnabled="true" after=" " field="Owner" subField="EtymologyOA" cssClassNameOverride="etymology">
+      <ConfigurationItem name="Etymology" isEnabled="false" after=" " field="Owner" subField="EtymologyOA" cssClassNameOverride="etymology">
         <ConfigurationItem name="Etymological Form" isEnabled="true" between=" " after=" " field="Form">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
