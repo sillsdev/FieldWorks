@@ -15,6 +15,7 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -574,7 +575,52 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
-
+		private static string GenerateSrcAttributeForAudioFromFilePath(string filename, string subFolder, GeneratorSettings settings)
+		{
+			string filePath;
+			var linkedFilesRootDir = settings.Cache.LangProject.LinkedFilesRootDir;
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, subFolder, filename);
+			if (settings.UseRelativePaths && subFolder != null)
+			{
+				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(filename)));
+				if (settings.CopyFiles)
+				{
+					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
+					var destination = Path.Combine(settings.ExportPath, filePath);
+					var source = MakeSafeFilePath(audioVisualFile);
+					if (!File.Exists(destination))
+					{
+						if (File.Exists(source))
+						{
+							FileUtils.Copy(source, destination);
+						}
+					}
+					else if (!FileUtils.AreFilesIdentical(source, destination))
+					{
+						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+						var fileExtension = Path.GetExtension(filePath);
+						var copyNumber = 0;
+						do
+						{
+							++copyNumber;
+							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
+						}
+						while (File.Exists(destination));
+						if (File.Exists(source))
+						{
+							FileUtils.Copy(source, destination);
+						}
+						// Change the filepath to point to the copied file
+						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
+					}
+				}
+			}
+			else
+			{
+				filePath = MakeSafeFilePath(audioVisualFile);
+			}
+			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
+		}
 		private static string MakeSafeFilePath(string filePath)
 		{
 			if (Unicode.CheckForNonAsciiCharacters(filePath))
@@ -1259,11 +1305,33 @@ namespace SIL.FieldWorks.XWorks
 																 GeneratorSettings settings, string writingSystem = null)
 		{
 			var writer = settings.Writer;
-			//use the passed in writing system unless null
-			//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
-			writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
-			writer.WriteAttributeString("lang", writingSystem);
-			writer.WriteString(fieldValue.Text);
+			if (writingSystem != null && writingSystem.Contains("audio"))
+			{
+				if (fieldValue != null)
+				{
+					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", System.StringComparison.Ordinal));
+					writer.WriteStartElement("audio");
+					writer.WriteAttributeString("id", audioId);
+					writer.WriteStartElement("source");
+					writer.WriteAttributeString("src",
+						GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings));
+					writer.WriteEndElement();
+					writer.WriteEndElement();
+					writer.WriteStartElement("a");
+					writer.WriteAttributeString("class", writingSystem);
+					writer.WriteAttributeString("href", "#");
+					writer.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
+					writer.WriteEndElement();
+				}
+			}
+			else
+			{
+				//use the passed in writing system unless null
+				//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
+				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
+				writer.WriteAttributeString("lang", writingSystem);
+				writer.WriteString(fieldValue.Text);
+			}
 		}
 
 		/// <summary>

@@ -2729,6 +2729,53 @@ namespace SIL.FieldWorks.XWorks
 					.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 1);
 			}
 		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_WsAudiowithHyperlink()
+		{
+			IWritingSystem wsEnAudio;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexemeFormOA",
+				Label = "Lexeme Form",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" }),
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entryOne = CreateInterestingLexEntry(Cache);
+			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entryOne.LexemeFormOA = senseaudio;
+			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+
+				const string audioTagwithSource = "//audio/source/@src";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString())
+					.HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
+				const string audioFileUrl =
+					@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/TestAudio.wav";
+				Assert.That(XHTMLStringBuilder.ToString(), Contains.Substring(audioFileUrl));
+				const string linkTagwithOnClick =
+					"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio'][contains(@onclick,'play()')]";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString())
+					.HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
+
+			}
+		}
+
 		[Test]
 		public void IsCollectionType()
 		{

@@ -39,8 +39,10 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException("model");
 			var styleSheet = new StyleSheet();
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			if (mediatorstyleSheet != null && mediatorstyleSheet.Styles.Contains("Normal"))
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator);
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
+			GenerateCssForAudioWs(styleSheet, mediator,cache);
 			foreach(var configNode in model.Parts)
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
@@ -49,17 +51,37 @@ namespace SIL.FieldWorks.XWorks
 			return styleSheet.ToString(true, 1);
 		}
 
-		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator)
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				var wsRule = new StyleRule {Value = "span" + String.Format("[lang|=\"{0}\"]", aws.IcuLocale)};
+				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
 				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator));
 				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
+		private static void GenerateCssForAudioWs(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		{
+			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (aws.RFC5646.Contains("audio"))
+				{
+					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.RFC5646)};
+					wsaudioRule.Declarations.Properties.Add(new Property("content")
+					{
+						Term = new PrimitiveTerm(UnitType.String, "\uD83D\uDD0A")
+					});
+					styleSheet.Rules.Add(wsaudioRule);
+					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.RFC5646)};
+					wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
+					{
+						Term = new PrimitiveTerm(UnitType.Attribute, "none")
+					});
+					styleSheet.Rules.Add(wsaudioRule);
+				}
+			}
+		}
 		/// <summary>
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
