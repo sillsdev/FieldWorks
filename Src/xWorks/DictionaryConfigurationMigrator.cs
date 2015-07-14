@@ -31,6 +31,12 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
 		private readonly SimpleLogger m_logger = new SimpleLogger();
+		/// <summary>
+		/// The innermost directory of the configurations presently being migrated.
+		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
+		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
+		/// interfaces, so we store it as a member variable.
+		/// </summary>
 		private string m_configDirSuffixBeingMigrated;
 		/// <summary>
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)

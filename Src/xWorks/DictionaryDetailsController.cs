@@ -468,7 +468,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
 					wsList.Add(new ListViewItem(xWorksStrings.ksCurrentReversal) { Tag = WritingSystemServices.kwsReversalIndex });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
 							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
 					break;
 			}

@@ -1301,7 +1301,6 @@ namespace SIL.FieldWorks.XWorks
 			FdoCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
-			string sProjectOrig = sProject;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromMediator(Mediator)))
 			{

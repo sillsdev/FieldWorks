@@ -36,20 +36,15 @@
             <Option id="pronunciation" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
-      <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern" />
-      <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone" />
-      <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
-        <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="true">
-            <Option id="analysis" isEnabled="true" />
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Name" between=" " after=" " isEnabled="true" field="Name">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true" />
+        <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern" />
+        <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone" />
+        <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
+          <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="true">
+              <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-        <ConfigurationItem name="Alias" between=" " after=" " isEnabled="true" field="Alias">
+          <ConfigurationItem name="Name" between=" " after=" " isEnabled="true" field="Name">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>

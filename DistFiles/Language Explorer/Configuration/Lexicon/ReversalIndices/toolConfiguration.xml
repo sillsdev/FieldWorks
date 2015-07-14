@@ -10,11 +10,11 @@
 						<parameters id="reversalIndexEntryList" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlDocView"/>
-								<parameters area="lexicon" clerk="AllReversalEntries" altTitleId="ReversalEntry-Plural" persistContext="Reversal" backColor="White" layout="" layoutProperty="ReversalIndexPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="ReversalIndex">
+								<parameters area="lexicon" clerk="AllReversalEntries" altTitleId="ReversalEntry-Plural-TODO-Remove" persistContext="Reversal" backColor="White" layout="" layoutProperty="ReversalIndexPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="ReversalIndex">
 									<!--decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ReversalEntryPublicationDecorator"/-->
 								</parameters>
 							</control>
-							<!-- The following configureLayouts node is only required to help migrate old configurations to the new format -->
+							<!-- The following configureLayouts node is required only to help migrate old configurations to the new format -->
 							<configureLayouts>
 								<layoutType label="All Reversal Indexes" layout="publishReversal">
 									<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry"/>

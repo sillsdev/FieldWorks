@@ -1377,22 +1377,22 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				((ILexDb) condemnedReversal.Owner).ReversalIndexesOC.Remove(condemnedReversal);
 			}
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances(),
 				WordformLookupListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances(),
 				CmPossibilityListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances(),
 				CmBaseAnnotationTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances(),
 				FsOpenFeatureTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances(),
 				ScrMarkerMappingTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances(),
 				ScrImportSourceTags.kflidWritingSystem, origWsId, newWsId);
 
 			UpdateWritingSystemListField(cache, cache.LanguageProject, LangProjectTags.kflidVernWss, origWsId, newWsId);
