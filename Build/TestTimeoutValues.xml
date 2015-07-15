@@ -1,4 +1,4 @@
-<TestTimeoutValues defaultTimeLimit="50">
+<TestTimeoutValues defaultTimeLimit="60">
 	<TimeoutGroup timeLimit="540"><!--9 minutes-->
 		<Project name="FDOTests"/>
 		<Project name="xWorksTests"/>
