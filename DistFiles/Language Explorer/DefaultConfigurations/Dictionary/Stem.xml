@@ -543,7 +543,7 @@
           <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Subsenses" between="  " after=")" isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+      <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
         <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
         <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
           <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
