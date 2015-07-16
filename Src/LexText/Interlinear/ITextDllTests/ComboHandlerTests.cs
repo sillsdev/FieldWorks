@@ -5,6 +5,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.IText
 			base.TestSetup();
 
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

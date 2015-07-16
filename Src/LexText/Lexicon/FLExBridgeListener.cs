@@ -21,7 +21,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using XCore;
 
@@ -30,7 +29,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	[MediatorDispose]
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification="_mediator is a reference")]
-	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
+	public sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
 		private PropertyTable _propertyTable;
@@ -293,14 +292,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
 					{
-						var app = _propertyTable.GetValue<LexTextApp>("App");
-						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
-						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
+						var sLinkedFilesRootDir = FwApp.App.Cache.LangProject.LinkedFilesRootDir;
+						NonUndoableUnitOfWorkHelper.Do(FwApp.App.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
-								app.Cache.ProjectId.ProjectFolder);
+							FwApp.App.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+								FwApp.App.Cache.ProjectId.ProjectFolder);
 						});
-						app.UpdateExternalLinks(sLinkedFilesRootDir);
+						FwApp.App.UpdateExternalLinks(sLinkedFilesRootDir);
 					}
 				}
 			}
@@ -340,8 +338,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
-				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(_propertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -483,8 +480,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
-				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(_propertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -727,7 +723,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			catch (Exception)
 			{
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, ChorusHelpFile), LexTextStrings.ksError);
+				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotLaunchX, ChorusHelpFile), FrameworkStrings.ksError);
 			}
 
 			return true; // We dealt with it.
@@ -1419,9 +1415,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "FwApp is a reference I guess")]
-		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, PropertyTable propertyTable, string fullProjectFileName)
+		private static FwXWindow RefreshCacheWindowAndAll(PropertyTable propertyTable, string fullProjectFileName)
 		{
-			var manager = app.FwManager;
+			var manager = FwApp.App.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
 				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;

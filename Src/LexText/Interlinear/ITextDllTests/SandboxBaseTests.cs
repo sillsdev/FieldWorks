@@ -7,6 +7,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.IText
 			base.TestSetup();
 
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

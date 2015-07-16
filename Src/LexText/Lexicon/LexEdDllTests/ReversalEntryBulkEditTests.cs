@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.LexEd;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace LexEdDllTests
@@ -20,7 +21,7 @@ namespace LexEdDllTests
 		{
 			const string wsId = "en";
 			using(var mediator = new Mediator())
-			using(var propertyTable = new PropertyTable(mediator))
+			using (var propertyTable = new PropertyTable(new MockPublisher()))
 			using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 			{
 				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, false);
@@ -35,7 +36,7 @@ namespace LexEdDllTests
 		public void PropertyTableIdReturnsNullIfNoActiveReversalIndex()
 		{
 			using(var mediator = new Mediator())
-			using(var propertyTable = new PropertyTable(mediator))
+			using (var propertyTable = new PropertyTable(new MockPublisher()))
 			{
 				using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 				{

@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 		private MacroListener MakeMacroListenerWithCache()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new Test.TestUtils.MockPublisher());
 			m_propertyTable.SetProperty("cache", Cache, true);
 			var ml = new MacroListener();
 			ml.Init(m_mediator, m_propertyTable, null);

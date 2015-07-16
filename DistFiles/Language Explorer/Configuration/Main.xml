@@ -393,9 +393,9 @@
 			<item command="CmdCopy"/>
 			<item command="CmdPaste"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdPasteHyperlink"/> -->
+			<item command="CmdPasteHyperlink"/>
 			<item command="CmdCopyLocationAsHyperlink"/>
-			<item label="-" translate="do not translate"/>
+			<item label="-" translate="do not translate"/> -->
 			<item command="CmdGoToEntry"/>
 			<item command="CmdGoToRecord"/>
 			<!-- for Notebook currently-->

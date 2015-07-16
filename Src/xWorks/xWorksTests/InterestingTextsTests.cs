@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_mockStTextRepo = new MockStTextRepository();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new Test.TestUtils.MockPublisher());
 			m_sections.Clear();
 		}
 

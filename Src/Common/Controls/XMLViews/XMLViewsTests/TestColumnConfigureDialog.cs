@@ -29,7 +29,7 @@ namespace XMLViewsTests
 		public void SetUp()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());

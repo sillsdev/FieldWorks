@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
 				using (Mediator mediator = new Mediator())
-				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				using (PropertyTable propertyTable = new PropertyTable(null)) // Can't possibly need to publish anything, since nobody has subscribed.
 				{
 					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
 					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
 				using (Mediator mediator = new Mediator())
-				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				using (PropertyTable propertyTable = new PropertyTable(null)) // Nobody is subscribed.
 				{
 					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
 					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);

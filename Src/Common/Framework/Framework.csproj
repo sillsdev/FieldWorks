@@ -289,7 +289,7 @@
     <Compile Include="XhtmlHelper.cs" />
     <EmbeddedResource Include="FrameworkStrings.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FrameworkStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="FwMainWnd.resx">

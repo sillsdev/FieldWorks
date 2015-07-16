@@ -2,6 +2,7 @@
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using XCore;
 
@@ -24,7 +25,7 @@ namespace XMLViewsTests
 						</columns>
 					</parameters>");
 				using (var mediator = new Mediator())
-				using (var propertyTable = new PropertyTable(mediator))
+				using (var propertyTable = new PropertyTable(new MockPublisher()))
 				{
 					bv.Init(mediator, propertyTable, xdoc.DocumentElement);
 					bv.SimulateDoubleClick(new EventArgs());
@@ -59,7 +60,7 @@ namespace XMLViewsTests
 				"<column layout=\"CustomPossAtomForExample_ExAtom\" label=\"$label\" visibility=\"menu\"/>" +
 				"</root>";
 			using (var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(mediator))
+			using (var propertyTable = new PropertyTable(new MockPublisher()))
 			{
 				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));

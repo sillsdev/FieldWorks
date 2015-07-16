@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore
@@ -443,11 +444,27 @@ namespace XCore
 		private void BootstrapPart1()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			// No broadcasting until it has our handle (see OnHandleCreated)
 			m_mediator.SpecificToOneMainWindow = true;
 
 			InitializeComponent();
+		}
+
+		private class MockPublisher : IPublisher
+		{
+			#region Implementation of IPublisher
+
+			/// <summary>
+			/// Publish the message using the new value.
+			/// </summary>
+			/// <param name="message">The message to publish.</param>
+			/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
+			public void Publish(string message, object newValue)
+			{
+			}
+
+			#endregion
 		}
 
 		/// <summary>
@@ -1781,7 +1798,7 @@ namespace XCore
 			{
 				SpecificToOneMainWindow = true
 			};
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			ResumeLayout();
 		}
 

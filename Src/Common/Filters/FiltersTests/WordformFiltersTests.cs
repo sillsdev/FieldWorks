@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Filters
@@ -21,7 +22,7 @@ namespace SIL.FieldWorks.Filters
 			var andFilter = new AndFilter();
 			var wsf = new WordSetFilter(wfiset);
 			using (var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(mediator))
+			using (var propertyTable = new PropertyTable(new MockPublisher()))
 			{
 				propertyTable.SetProperty("cache", Cache, true);
 				flp.Init(mediator, propertyTable, null);

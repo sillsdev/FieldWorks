@@ -12,7 +12,6 @@ namespace XCore
 	[TestFixture]
 	public class PropertyTableTests: BaseTest
 	{
-		Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 
 		string m_originalSettingsPath;
@@ -58,8 +57,7 @@ namespace XCore
 		[SetUp]
 		public void SetUp()
 		{
-			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator)
+			m_propertyTable = new PropertyTable(new MockPublisher())
 			{
 				LocalSettingsId = "TestLocal",
 				UserSettingDirectory = m_originalSettingsPath
@@ -71,8 +69,6 @@ namespace XCore
 		[TearDown]
 		public void TearDown()
 		{
-			m_mediator.Dispose();
-			m_mediator = null;
 			m_propertyTable.Dispose();
 			m_propertyTable = null;
 		}

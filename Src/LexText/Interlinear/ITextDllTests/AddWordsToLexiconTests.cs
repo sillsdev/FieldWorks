@@ -8,6 +8,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -97,7 +98,7 @@ namespace SIL.FieldWorks.IText
 																				 InterlinLineChoices.InterlinMode.
 																					 GlossAddWordsToLexicon);
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_sandbox = new SandboxForTests(Cache, m_mediator, m_propertyTable, lineChoices);
 		}
 

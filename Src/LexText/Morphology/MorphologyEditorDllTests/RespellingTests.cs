@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using XCore;
 
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			base.TestSetup();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

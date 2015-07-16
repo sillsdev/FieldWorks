@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Threading;		// for Monitor (dlh)
 using System.Text;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore
@@ -41,7 +42,7 @@ namespace XCore
 		/// </summary>
 		public enum SettingsGroup { Undecided, GlobalSettings, LocalSettings, BestSettings };
 
-		private Mediator Mediator { get; set; }
+		private IPublisher Publisher { get; set; }
 
 		private Dictionary<string, Property> m_properties;
 		/// <summary>
@@ -56,10 +57,10 @@ namespace XCore
 		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public PropertyTable(Mediator mediator)
+		public PropertyTable(IPublisher publisher)
 		{
 			m_properties = new Dictionary<string, Property>(100);
-			Mediator = mediator;
+			Publisher = publisher;
 		}
 
 		#region IDisposable & Co. implementation
@@ -156,9 +157,7 @@ namespace XCore
 					property.value = null;
 				}
 				m_properties.Clear();
-
-				Mediator.Dispose();
-				Mediator = null;
+				Publisher = null;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -598,9 +597,11 @@ namespace XCore
 				m_properties[key] = new Property(key, newValue);
 			}
 
-			if (didChange && doBroadcastIfChanged)
+			if (didChange && doBroadcastIfChanged && Publisher != null)
 			{
-				BroadcastPropertyChange(key);
+				var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
+				var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
+				Publisher.Publish(propertyName, newValue);
 			}
 
 			Monitor.Exit(m_properties);
@@ -611,17 +612,6 @@ namespace XCore
 				TraceVerboseLine("Property '"+key+"' --> '"+newValue.ToString()+"'");
 			}
 #endif
-		}
-
-		private void BroadcastPropertyChange(string key)
-		{
-			var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
-			var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
-
-			if (Mediator != null)
-			{
-				Mediator.BroadcastString("OnPropertyChanged", propertyName);
-			}
 		}
 
 		/// <summary>

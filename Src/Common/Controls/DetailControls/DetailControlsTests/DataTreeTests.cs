@@ -9,6 +9,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.TestSetup();
 			m_dtree = new DataTree();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
@@ -264,7 +265,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);
@@ -289,7 +290,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);
@@ -313,7 +314,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);

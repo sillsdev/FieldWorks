@@ -159,6 +159,7 @@
     </Compile>
     <Compile Include="FluentAssertXml.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="MockPublisher.cs" />
     <Compile Include="XmlHelper.cs" />
     <Compile Include="DummyFileMaker.cs">
       <SubType>Code</SubType>

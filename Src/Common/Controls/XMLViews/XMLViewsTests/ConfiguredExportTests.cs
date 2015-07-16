@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using XCore;
 
@@ -27,7 +28,7 @@ namespace XMLViewsTests
 			base.TestSetup();
 
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

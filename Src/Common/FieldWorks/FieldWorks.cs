@@ -447,10 +447,12 @@ namespace SIL.FieldWorks
 			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
 			if(mainWindow != null)
 			{
+#if RANDYTODO
 				// Try to live without Mediator as long as possible
 				// OnWarnUserAboutFailedLiftImportIfNecessary is in FLExBridgeListener
 				// The S/R menu is global.
 				//mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+#endif
 			}
 		}
 

@@ -1,4 +1,6 @@
-﻿namespace SIL.FieldWorks.Common.Framework
+﻿using System.Windows.Forms;
+
+namespace SIL.FieldWorks.Common.Framework
 {
 	partial class FwMainWnd
 	{
@@ -16,7 +18,6 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwMainWnd));
-			this._statusStrip = new System.Windows.Forms.StatusStrip();
 			this._menuStrip = new System.Windows.Forms.MenuStrip();
 			this._fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFieldWorksProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,9 @@
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
+			this.pasteHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.copyLocationAsHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
 			this._viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
@@ -82,23 +86,20 @@
 			this.toolStripButton_Refresh = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-			this.pasteHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.copyLocationAsHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._statusbar = new System.Windows.Forms.StatusBar();
+			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
+			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
+			this.statusBarPanelArea = new System.Windows.Forms.StatusBarPanel();
+			this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// _statusStrip
-			// 
-			this._statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this._statusStrip.Location = new System.Drawing.Point(0, 532);
-			this._statusStrip.Name = "_statusStrip";
-			this._statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-			this._statusStrip.Size = new System.Drawing.Size(929, 22);
-			this._statusStrip.TabIndex = 0;
-			this._statusStrip.Text = "statusStrip1";
 			// 
 			// _menuStrip
 			// 
@@ -333,7 +334,8 @@
             this.pasteToolStripMenuItem,
             this.toolStripMenuItem12,
             this.pasteHyperlinkToolStripMenuItem,
-            this.copyLocationAsHyperlinkToolStripMenuItem});
+            this.copyLocationAsHyperlinkToolStripMenuItem,
+            this.toolStripMenuItem13});
 			this._editToolStripMenuItem.Name = "_editToolStripMenuItem";
 			this._editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
 			this._editToolStripMenuItem.Text = "&Edit";
@@ -345,7 +347,7 @@
 			this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
 			this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-			this.undoToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.undoToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
 			this.undoToolStripMenuItem.Text = "&Undo";
 			this.undoToolStripMenuItem.ToolTipText = "Undo previous actions.";
 			// 
@@ -355,14 +357,14 @@
 			this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
 			this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-			this.redoToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.redoToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
 			this.redoToolStripMenuItem.Text = "&Redo";
 			this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
 			// 
 			// toolStripMenuItem11
 			// 
 			this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-			this.toolStripMenuItem11.Size = new System.Drawing.Size(178, 6);
+			this.toolStripMenuItem11.Size = new System.Drawing.Size(261, 6);
 			// 
 			// cutToolStripMenuItem
 			// 
@@ -370,7 +372,7 @@
 			this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-			this.cutToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.cutToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
 			this.cutToolStripMenuItem.Text = "Cu&t";
 			this.cutToolStripMenuItem.ToolTipText = "Cut";
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.Edit_Cut);
@@ -381,7 +383,7 @@
 			this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.copyToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
 			this.copyToolStripMenuItem.Text = "&Copy";
 			this.copyToolStripMenuItem.ToolTipText = "Copy";
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.Edit_Copy);
@@ -392,7 +394,7 @@
 			this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
 			this.pasteToolStripMenuItem.Text = "&Paste";
 			this.pasteToolStripMenuItem.ToolTipText = "Paste";
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste);
@@ -400,7 +402,27 @@
 			// toolStripMenuItem12
 			// 
 			this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-			this.toolStripMenuItem12.Size = new System.Drawing.Size(178, 6);
+			this.toolStripMenuItem12.Size = new System.Drawing.Size(261, 6);
+			// 
+			// pasteHyperlinkToolStripMenuItem
+			// 
+			this.pasteHyperlinkToolStripMenuItem.Name = "pasteHyperlinkToolStripMenuItem";
+			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+			this.pasteHyperlinkToolStripMenuItem.Text = "Paste &Hyperlink";
+			this.pasteHyperlinkToolStripMenuItem.ToolTipText = "Paste clipboard content as hyperlink.";
+			this.pasteHyperlinkToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste_Hyperlink);
+			// 
+			// copyLocationAsHyperlinkToolStripMenuItem
+			// 
+			this.copyLocationAsHyperlinkToolStripMenuItem.Name = "copyLocationAsHyperlinkToolStripMenuItem";
+			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+			this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
+			this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
+			// 
+			// toolStripMenuItem13
+			// 
+			this.toolStripMenuItem13.Name = "toolStripMenuItem13";
+			this.toolStripMenuItem13.Size = new System.Drawing.Size(261, 6);
 			// 
 			// _viewToolStripMenuItem
 			// 
@@ -682,20 +704,42 @@
 			// 
 			this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStripStandard);
 			// 
-			// pasteHyperlinkToolStripMenuItem
+			// _statusbar
 			// 
-			this.pasteHyperlinkToolStripMenuItem.Name = "pasteHyperlinkToolStripMenuItem";
-			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(185, 26);
-			this.pasteHyperlinkToolStripMenuItem.Text = "Paste &Hyperlink";
-			this.pasteHyperlinkToolStripMenuItem.ToolTipText = "Paste clipboard content as hyperlink.";
-			this.pasteHyperlinkToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste_Hyperlink);
+			this._statusbar.Location = new System.Drawing.Point(0, 532);
+			this._statusbar.Name = "_statusbar";
+			this._statusbar.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
+            this.statusBarPanelMessage,
+            this.statusBarPanelProgress,
+            this.statusBarPanelArea,
+            this.statusBarPanelRecordNumber});
+			this._statusbar.Size = new System.Drawing.Size(929, 22);
+			this._statusbar.TabIndex = 4;
 			// 
-			// copyLocationAsHyperlinkToolStripMenuItem
+			// statusBarPanelMessage
 			// 
-			this.copyLocationAsHyperlinkToolStripMenuItem.Name = "copyLocationAsHyperlinkToolStripMenuItem";
-			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
-			this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
-			this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
+			this.statusBarPanelMessage.MinWidth = 40;
+			this.statusBarPanelMessage.Name = "statusBarPanelMessage";
+			this.statusBarPanelMessage.Text = "Message";
+			this.statusBarPanelMessage.Width = 40;
+			// 
+			// statusBarPanelProgress
+			// 
+			this.statusBarPanelProgress.MinWidth = 40;
+			this.statusBarPanelProgress.Name = "statusBarPanelProgress";
+			this.statusBarPanelProgress.Text = "Progress";
+			this.statusBarPanelProgress.Width = 40;
+			// 
+			// statusBarPanelArea
+			// 
+			this.statusBarPanelArea.Name = "statusBarPanelArea";
+			this.statusBarPanelArea.Text = "Area";
+			// 
+			// statusBarPanelRecordNumber
+			// 
+			this.statusBarPanelRecordNumber.MinWidth = 40;
+			this.statusBarPanelRecordNumber.Name = "statusBarPanelRecordNumber";
+			this.statusBarPanelRecordNumber.Text = "RecordNumber";
 			// 
 			// FwMainWnd
 			// 
@@ -703,8 +747,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(929, 554);
 			this.Controls.Add(this.toolStripContainer1);
-			this.Controls.Add(this._statusStrip);
 			this.Controls.Add(this._menuStrip);
+			this.Controls.Add(this._statusbar);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this._menuStrip;
 			this.Margin = new System.Windows.Forms.Padding(4);
@@ -718,6 +762,10 @@
 			this.toolStripContainer1.TopToolStripPanel.PerformLayout();
 			this.toolStripContainer1.ResumeLayout(false);
 			this.toolStripContainer1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -725,7 +773,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.StatusStrip _statusStrip;
 		private System.Windows.Forms.MenuStrip _menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem _fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _sendReceiveToolStripMenuItem;
@@ -793,5 +840,11 @@
 		private System.Windows.Forms.ToolStripButton redoToolStripButton;
 		private System.Windows.Forms.ToolStripMenuItem pasteHyperlinkToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem13;
+		private System.Windows.Forms.StatusBar _statusbar;
+		private StatusBarPanel statusBarPanelMessage;
+		private StatusBarPanel statusBarPanelProgress;
+		private StatusBarPanel statusBarPanelArea;
+		private StatusBarPanel statusBarPanelRecordNumber;
 	}
 }

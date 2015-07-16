@@ -9,6 +9,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -144,7 +145,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.Object = obj;
 			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = new PropertyTable(m_Mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_Slice.PropTable = m_propertyTable;
 			m_propertyTable.SetProperty("cache", Cache, false);
 
@@ -166,7 +167,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.Object = obj;
 			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = new PropertyTable(m_Mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_Slice.PropTable = m_propertyTable;
 			m_propertyTable.SetProperty("cache", Cache, false);
 

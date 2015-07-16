@@ -49,6 +49,10 @@
     <Reference Include="COMInterfaces, Version=8.0.5.22774, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="CoreImpl, Version=9.0.0.27894, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="DetailControls, Version=8.0.5.23925, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\DetailControls.dll</HintPath>

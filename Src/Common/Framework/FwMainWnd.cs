@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.Archiving;
@@ -62,11 +63,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
-		private string m_webBrowserProgramLinux = "firefox";
-		private IAreaRepository m_areaRepository;
-		private ActiveViewHelper m_viewHelper;
-		private IArea m_currentArea;
-		private FwStyleSheet m_stylesheet;
+		private string _webBrowserProgramLinux = "firefox";
+		private IAreaRepository _areaRepository;
+		private readonly ActiveViewHelper _viewHelper;
+		private IArea _currentArea;
+		private FwStyleSheet _stylesheet;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -92,13 +95,31 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				throw new NotImplementedException("Support for the 'linkArgs' is not yet implemented.");
 			}
+
+			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
+
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelFilter";
+			_statusbar.Panels[3].Text = @"Filter";
+			_statusbar.Panels[3].MinWidth = 40;
+
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelSort";
+			_statusbar.Panels[3].Text = @"Sort";
+			_statusbar.Panels[3].MinWidth = 40;
+
+			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelProgressBar";
+			_statusbar.Panels[3].Text = @"ProgressBar";
+			_statusbar.Panels[3].MinWidth = 150;
+
 			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
 
-			m_areaRepository = new AreaRepository();
+			_areaRepository = new AreaRepository();
 
-			PropTable = new PropertyTable(new Mediator())
+			PropTable = new PropertyTable(_publisher)
 			{
 				UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(FwApp.App.Cache.ProjectId.ProjectFolder),
 				LocalSettingsId = "local"
@@ -110,16 +131,16 @@ namespace SIL.FieldWorks.Common.Framework
 			PropTable.RestoreFromFile(PropTable.GlobalSettingsId);
 			PropTable.RestoreFromFile(PropTable.LocalSettingsId);
 
-			m_viewHelper = new ActiveViewHelper(this);
+			_viewHelper = new ActiveViewHelper(this);
 
 			// NOTE: The "lexicon" area must be present.
 			// The persisted area could be obsolete, and not present,
 			// so we'll use "lexicon", if the stored one cannot be found.
 			// The "lexicon" area must be available, even if there are no other areas.
-			m_currentArea = m_areaRepository.GetArea(PropTable.GetStringProperty("InitialArea", "lexicon")) ??
-							m_areaRepository.GetArea("lexicon");
+			_currentArea = _areaRepository.GetArea(PropTable.GetStringProperty("InitialArea", "lexicon")) ??
+							_areaRepository.GetArea("lexicon");
 			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
-			m_currentArea.Activate();
+			_currentArea.Activate();
 
 			SetWindowTitle();
 		}
@@ -131,7 +152,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 			// RR TODO: Delete GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 #endif
-			m_currentArea.EnsurePropertiesAreCurrent(Cache.ServiceLocator, PropTable);
+			_currentArea.EnsurePropertiesAreCurrent(Cache.ServiceLocator, PropTable);
 			// first save global settings, ignoring database specific ones.
 			PropTable.SaveGlobalSettings();
 			// now save database specific settings.
@@ -260,7 +281,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// TODO: "OnPrepareToRefresh" (renamed to simply ""PrepareToRefresh"") methods on those classes.
 			// TODO: The 'XWindow class will need nothing done to it, since it is just going to be deleted.
 #endif
-			m_currentArea.PrepareToRefresh();
+			_currentArea.PrepareToRefresh();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -273,7 +294,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void FinishRefresh()
 		{
-			m_currentArea.FinishRefresh();
+			_currentArea.FinishRefresh();
 			Refresh();
 		}
 
@@ -498,7 +519,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
 				{
-					using (Process.Start(m_webBrowserProgramLinux, Enquote(path)))
+					using (Process.Start(_webBrowserProgramLinux, Enquote(path)))
 					{
 					}
 				}
@@ -848,13 +869,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			using (new DataUpdateMonitor(this, "EditCut"))
 			{
-				m_viewHelper.ActiveView.EditingHelper.CutSelection();
+				_viewHelper.ActiveView.EditingHelper.CutSelection();
 			}
 		}
 
 		private void Edit_Copy(object sender, EventArgs e)
 		{
-			m_viewHelper.ActiveView.EditingHelper.CopySelection();
+			_viewHelper.ActiveView.EditingHelper.CopySelection();
 		}
 
 		private void Edit_Paste(object sender, EventArgs e)
@@ -864,7 +885,7 @@ namespace SIL.FieldWorks.Common.Framework
 			using (var undoHelper = new UndoableUnitOfWorkHelper(Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
 			using (new DataUpdateMonitor(this, "EditPaste"))
 			{
-				if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard())
+				if (_viewHelper.ActiveView.EditingHelper.PasteClipboard())
 				{
 					undoHelper.RollBack = false;
 				}
@@ -873,13 +894,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void EditMenu_Opening(object sender, EventArgs e)
 		{
-			var hasActiveView = m_viewHelper.ActiveView != null;
-			cutToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanCut());
-			copyToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanCopy());
-			pasteToolStripMenuItem.Enabled = (hasActiveView && m_viewHelper.ActiveView.EditingHelper.CanPaste());
+			var hasActiveView = _viewHelper.ActiveView != null;
+			cutToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCut());
+			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
+			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
 			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView
-				&& m_viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper
-				&& ((RootSiteEditingHelper)m_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
+				&& _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper
+				&& ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
 #if RANDYTODO
 			// TODO: Handle enabling/disabling other Edit menu/toolbar itmes, such as Undo & Redo.
 #else
@@ -908,10 +929,10 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
-			if (m_stylesheet == null)
+			if (_stylesheet == null)
 			{
-				m_stylesheet = new FwStyleSheet();
-				m_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+				_stylesheet = new FwStyleSheet();
+				_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 #if RANDYTODO
 				// TODO: I (RandyR) don't think there is a reason to do this now,
 				// unless there is some style UI widget on the toolbar (menu?) that needs to be updated.
@@ -921,7 +942,7 @@ namespace SIL.FieldWorks.Common.Framework
 				}
 #endif
 			}
-			((RootSiteEditingHelper)m_viewHelper.ActiveView.EditingHelper).PasteUrl(m_stylesheet);
+			((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).PasteUrl(_stylesheet);
 		}
 	}
 }

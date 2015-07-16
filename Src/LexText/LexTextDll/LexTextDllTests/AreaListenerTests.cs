@@ -14,6 +14,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
@@ -86,7 +87,7 @@ namespace LexTextDllTests
 		private void SetupTestMediator()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable = new PropertyTable(new MockPublisher());
 			m_propertyTable.SetProperty("cache", Cache, true);
 			m_testWindowConfig = SetupMinimalWindowConfig();
 			var cmdSet = new CommandSet(m_mediator);
