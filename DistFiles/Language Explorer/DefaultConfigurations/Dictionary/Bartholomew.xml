@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -47,6 +47,9 @@
             <Option id="analysis" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
+      </ConfigurationItem>
+      <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+        <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
       </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Etymology" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="EtymologyOA" cssClassNameOverride="etymology">
@@ -224,6 +227,9 @@
                 <Option id="analysis" isEnabled="true" />
               </WritingSystemOptions>
             </ConfigurationItem>
+          </ConfigurationItem>
+          <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+            <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">
@@ -559,6 +565,9 @@
                   </WritingSystemOptions>
                 </ConfigurationItem>
             </ConfigurationItem>
+            <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+              <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
+            </ConfigurationItem>
           </ConfigurationItem>
           <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -793,6 +802,9 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
+        <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+          <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
+        </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -851,6 +863,9 @@
               <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
+        </ConfigurationItem>
+        <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+          <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">
@@ -1103,6 +1118,9 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
+      <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+        <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
+      </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Etymology" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " after=" " field="EtymologyOA" cssClassNameOverride="etymology">
       <ConfigurationItem name="Etymological Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="Form">
@@ -1323,6 +1341,9 @@
                 <Option id="analysis" isEnabled="true" />
               </WritingSystemOptions>
             </ConfigurationItem>
+          </ConfigurationItem>
+          <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+            <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">
@@ -1658,6 +1679,9 @@
                   </WritingSystemOptions>
                 </ConfigurationItem>
             </ConfigurationItem>
+            <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+              <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
+            </ConfigurationItem>
           </ConfigurationItem>
           <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1877,6 +1901,9 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
+        <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+          <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
+        </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1935,6 +1962,9 @@
               <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
+        </ConfigurationItem>
+        <ConfigurationItem name="PronounciationMedia" after=" " isEnabled="false" field="MediaFilesOS">
+          <ConfigurationItem name="MediaFiles" after=" " isEnabled="false" field="MediaFileRA"/>
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Comment" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Summary">

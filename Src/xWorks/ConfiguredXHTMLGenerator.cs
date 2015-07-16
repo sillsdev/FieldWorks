@@ -418,6 +418,17 @@ namespace SIL.FieldWorks.XWorks
 						GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
 						return;
 					}
+				case (PropertyType.CmFileType):
+					{
+						var fileProperty = propertyValue as ICmFile;
+						if (fileProperty != null)
+						{
+							var audioId = "hvo" + fileProperty.Hvo;
+							GenerateXHTMLForAudioFile(fileProperty.ClassName, settings.Writer, audioId,
+								GenerateSrcAttributeFromFilePath(fileProperty, settings.UseRelativePaths ? "AudioVisual" : null, settings), "\u25B6");
+						}
+						return;
+					}
 				default:
 					{
 						GenerateXHTMLForValue(field, propertyValue, config, settings);
@@ -526,7 +537,6 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteAttributeString("id", "hvo" + pictureFile.Hvo);
 			writer.WriteEndElement();
 		}
-
 		/// <summary>
 		/// This method will generate a src attribute which will point to the given file from the xhtml.
 		/// </summary>
@@ -1310,18 +1320,8 @@ namespace SIL.FieldWorks.XWorks
 				if (fieldValue != null)
 				{
 					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", System.StringComparison.Ordinal));
-					writer.WriteStartElement("audio");
-					writer.WriteAttributeString("id", audioId);
-					writer.WriteStartElement("source");
-					writer.WriteAttributeString("src",
-						GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings));
-					writer.WriteEndElement();
-					writer.WriteEndElement();
-					writer.WriteStartElement("a");
-					writer.WriteAttributeString("class", writingSystem);
-					writer.WriteAttributeString("href", "#");
-					writer.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
-					writer.WriteEndElement();
+					GenerateXHTMLForAudioFile(writingSystem, writer, audioId,
+						GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings), String.Empty);
 				}
 			}
 			else
@@ -1332,6 +1332,36 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteAttributeString("lang", writingSystem);
 				writer.WriteString(fieldValue.Text);
 			}
+		}
+
+		/// <summary>
+		/// This method Generate XHTML for Audio file
+		/// </summary>
+		/// <param name="classname">value for class attribute for audio tag</param>
+		/// <param name="writer"></param>
+		/// <param name="audioId">value for Id attribute for audio tag</param>
+		/// <param name="srcAttribute">Source location path for audio file</param>
+		/// <param name="caption">Innertext for hyperlink</param>
+		/// <returns></returns>
+		private static void GenerateXHTMLForAudioFile(string classname,
+			XmlWriter writer, string audioId, string srcAttribute,string caption)
+		{
+			writer.WriteStartElement("audio");
+			writer.WriteAttributeString("id", audioId);
+			writer.WriteStartElement("source");
+			writer.WriteAttributeString("src",
+				srcAttribute);
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("a");
+			writer.WriteAttributeString("class", classname);
+			writer.WriteAttributeString("href", "#");
+			writer.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
+			if (!String.IsNullOrEmpty(caption))
+			{
+				writer.WriteString(caption);
+			}
+			writer.WriteEndElement();
 		}
 
 		/// <summary>
