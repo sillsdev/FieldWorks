@@ -280,7 +280,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-          <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+          <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
@@ -628,7 +628,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
               <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
               </WritingSystemOptions>
@@ -1282,7 +1282,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
               <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
               </WritingSystemOptions>
@@ -1627,7 +1627,7 @@
               </WritingSystemOptions>
             </ConfigurationItem>
             <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-              <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+              <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
                 <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                   <Option id="vernacular" isEnabled="true"/>
                 </WritingSystemOptions>
@@ -2347,7 +2347,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-          <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+          <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
@@ -2692,7 +2692,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
-            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+            <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
               <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
               </WritingSystemOptions>
