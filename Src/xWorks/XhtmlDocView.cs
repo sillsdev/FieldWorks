@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override int Priority
 		{
-			get { return (int)ColleaguePriority.Medium; }
+			get { return (int)ColleaguePriority.High; }
 		}
 
 		/// <summary>
@@ -336,6 +336,19 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 		}
+
+		public void OnMasterRefresh(object sender)
+		{
+			var currentConfig = GetCurrentConfiguration();
+			var currentPublication = GetCurrentPublication();
+			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
+			if (validPublication != currentPublication)
+			{
+				m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
+			}
+			UpdateContent(PublicationDecorator, currentConfig);
+		}
+
 		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var pubName = GetCurrentPublication();
