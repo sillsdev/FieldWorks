@@ -944,6 +944,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_BetweenSpanWorks()
+		{
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Headword",
+				CSSClassNameOverride = "Lexemeform",
+				Between = ",",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en", "fr" })
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { headword }
+			};
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.lexemeform>\s*span\s*\+\s*span:before{.*content:','.*}", RegexOptions.Singleline).Success,
+							  "Between span selector not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_BetweenWorksWithFormatCss()
 		{
 			var senses = new ConfigurableDictionaryNode

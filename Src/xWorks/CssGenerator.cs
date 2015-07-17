@@ -345,6 +345,12 @@ namespace SIL.FieldWorks.XWorks
 					var itemSelector = GetSelectorForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
+					if (configNode.DictionaryNodeOptions != null)
+					{
+						// Rule added for all span tag which only having WritingSystems attribute
+						betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+						betweenRule = new StyleRule(dec) { Value = betweenSelector };
+					}
 					rules.Add(betweenRule);
 				}
 				baseSelection = parentSelector + " " + SelectClassName(configNode, cache);
