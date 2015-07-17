@@ -487,6 +487,60 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_TwoSensesWithShowGramInfoFirstOn()
+		{
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				ShowSharedGrammarInfoFirst = true
+			};
+			var categorynfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				Label = "Category Info.",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> {  }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { categorynfo }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string gramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_MakesSpanForRA()
 		{
 			var gramInfoNode = new ConfigurableDictionaryNode

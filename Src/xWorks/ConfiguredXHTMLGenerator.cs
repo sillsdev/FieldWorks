@@ -903,24 +903,119 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
+			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
+			{
+				GenerateXHTMLForSenses(config, publicationDecorator, collectionOwner, settings, collection);
+				writer.WriteEndElement();
+			}
+			else
+			{
+				foreach (var item in collection)
+				{
+					GenerateCollectionItemContent(config, publicationDecorator, item, collectionOwner, settings);
+				}
+				writer.WriteEndElement();
+			}
+		}
+
+		/// <summary>
+		/// This method will generate the XHTML that represents a senses collection and its contents
+		/// </summary>
+		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object collectionOwner, GeneratorSettings settings, IEnumerable collection)
+		{
+			var writer = settings.Writer;
 			var isSingle = collection.Cast<object>().Count() == 1;
+			string lastGrammaticalInfo = string.Empty;
+			string langId = string.Empty;
+			bool isSameGrammaticalInfo = false;
+			isSameGrammaticalInfo = IsAllGramInfoTheSame(config, collection, out lastGrammaticalInfo, out langId);
+			if (isSameGrammaticalInfo)
+				InsertGramInfoBeforeSenses(settings, lastGrammaticalInfo, langId);
+			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			foreach (var item in collection)
 			{
-				GenerateCollectionItemContent(config, publicationDecorator, item, isSingle, collectionOwner, settings);
+				GenerateSenseContent(config, publicationDecorator, item, isSingle, collectionOwner, settings, isSameGrammaticalInfo);
 			}
+		}
+
+		private static void InsertGramInfoBeforeSenses(GeneratorSettings settings, string lastGrammaticalInfo, string langId)
+		{
+			var writer = settings.Writer;
+			writer.WriteStartElement("span");
+			writer.WriteAttributeString("class", "sharedgrammaticalinfo");
+			writer.WriteStartElement("span");
+			writer.WriteAttributeString("lang", langId);
+			writer.WriteString(lastGrammaticalInfo);
+			writer.WriteEndElement();
 			writer.WriteEndElement();
 		}
 
-		private static void GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, object collectionOwner, GeneratorSettings settings)
+		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable collection, out string lastGrammaticalInfo, out string langId)
+		{
+			lastGrammaticalInfo = "";
+			langId = "";
+			string requestedString = string.Empty;
+			bool isSameGrammaticalInfo = false;
+			if (config.FieldDescription == "SensesOS")
+			{
+				var senseNode = (DictionaryNodeSenseOptions) config.DictionaryNodeOptions;
+				if (senseNode == null) return false;
+				if (senseNode.ShowSharedGrammarInfoFirst)
+				{
+					foreach (var item in collection)
+					{
+						var owningObject = (ICmObject)item;
+						var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
+						langId = defaultWs.Id;
+						var entryType = item.GetType();
+						object propertyValue = null;
+						var grammaticalInfo =
+							config.Children.Where(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled)).FirstOrDefault();
+						if (grammaticalInfo == null) return false;
+						var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
+						propertyValue = property.GetValue(item, new object[] {});
+						if (propertyValue == null) return false;
+						var child = grammaticalInfo.Children.Where(e => (e.IsEnabled && e.Children.Count == 0)).FirstOrDefault();
+						if (child == null) return false;
+						entryType = propertyValue.GetType();
+						property = entryType.GetProperty(child.FieldDescription);
+						propertyValue = property.GetValue(propertyValue, new object[] {});
+						if (propertyValue is ITsString)
+						{
+							ITsString fieldValue = (ITsString) propertyValue;
+							requestedString = fieldValue.Text;
+						}
+						else
+						{
+							IMultiAccessorBase fieldValue = (IMultiAccessorBase) propertyValue;
+							requestedString = fieldValue.BestAnalysisAlternative.Text;
+						}
+						if (string.IsNullOrEmpty(lastGrammaticalInfo))
+							lastGrammaticalInfo = requestedString;
+						if (requestedString == lastGrammaticalInfo)
+						{
+							isSameGrammaticalInfo = true;
+						}
+						else
+						{
+							isSameGrammaticalInfo = false;
+							return isSameGrammaticalInfo;
+						}
+					}
+				}
+			}
+			return isSameGrammaticalInfo;
+		}
+
+		private static void GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			object item, bool isSingle, object collectionOwner, GeneratorSettings settings, bool isSameGrammaticalInfo)
 		{
 			var writer = settings.Writer;
 			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
 			{
 				return;
 			}
-			// if we are working with senses start wrapping element and write out the sense number sibling item if necessary
-			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions && config.Children.Count != 0)
+			if (config.Children.Count != 0)
 			{
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				writer.WriteStartElement("span");
@@ -934,15 +1029,42 @@ namespace SIL.FieldWorks.XWorks
 			if (config.Children != null)
 			{
 				foreach (var child in config.Children)
-					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+				{
+					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
+					{
+						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					}
+				}
 			}
 
 			writer.WriteEndElement();
 			// close out the sense wrapping
-			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions && config.Children.Count != 0)
+			if (config.Children.Count != 0)
 			{
 				writer.WriteEndElement();
 			}
+		}
+
+		private static void GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			object item, object collectionOwner, GeneratorSettings settings)
+		{
+			var writer = settings.Writer;
+			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
+			{
+				return;
+			}
+
+			writer.WriteStartElement(GetElementNameForProperty(config));
+			WriteCollectionItemClassAttribute(config, writer);
+			if (config.Children != null)
+			{
+				foreach (var child in config.Children)
+				{
+					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+				}
+			}
+
+			writer.WriteEndElement();
 		}
 
 		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeSenseOptions senseOptions, XmlWriter writer,

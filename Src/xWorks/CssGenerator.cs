@@ -195,6 +195,24 @@ namespace SIL.FieldWorks.XWorks
 				};
 				styleSheet.Rules.Add(blockRule);
 			}
+			if (senseOptions.ShowSharedGrammarInfoFirst)
+			{
+				var blockDeclaration = new StyleDeclaration();
+
+				blockDeclaration.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Attribute, "italic") });
+				var blockRule1 = new StyleRule(blockDeclaration)
+				{
+					Value = String.Format("{0} .{1}> .sharedgrammaticalinfo", baseSelection, GetClassAttributeForConfig(configNode))
+				};
+				styleSheet.Rules.Add(blockRule1);
+
+				blockDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
+				var blockRule2 = new StyleRule(blockDeclaration)
+				{
+					Value = String.Format("{0} .{1}> .sharedgrammaticalinfo:after", baseSelection, GetClassAttributeForConfig(configNode))
+				};
+				styleSheet.Rules.Add(blockRule2);
+			}
 		}
 
 		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection)
