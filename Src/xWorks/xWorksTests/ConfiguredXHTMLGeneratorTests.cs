@@ -111,8 +111,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
 				// ReSharper disable ObjectCreationAsStatement // Justification: We expect the constructor to throw, so there's no created object to assign anywhere :)
-				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(null, XHTMLWriter, false, false, null));
-				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, null, false, false, null));
+				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, null, false, false, null));
+				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(null, m_mediator, XHTMLWriter, false, false, null));
 				// ReSharper restore ObjectCreationAsStatement
 				// ReSharper restore AccessToDisposedClosure
 			}
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				var mainEntryNode = new ConfigurableDictionaryNode();
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
@@ -141,8 +141,9 @@ namespace SIL.FieldWorks.XWorks
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
-// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				// ReSharper disable AccessToDisposedClosure
+				// Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
 				//Test a blank main node description
 				//SUT
 				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
@@ -177,11 +178,11 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[text()='HeadWordTest']";
+				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/a/span[@lang='fr' and text()='HeadWordTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
 			}
 		}
@@ -211,11 +212,11 @@ namespace SIL.FieldWorks.XWorks
 			morph.Form.set_String(wsFr, Cache.TsStrFactory.MakeString("LexemeFormTest", wsFr));
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa']/span[@lang='fr']/a[text()='LexemeFormTest']";
+				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa']/a/span[@lang='fr' and text()='LexemeFormTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 			}
 		}
@@ -267,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 			pronunciation.LocationRA = location;
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -295,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 				Assert.IsEmpty(XHTMLStringBuilder.ToString(), "Should not have generated anything for a disabled node");
@@ -323,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				XHTMLWriter.WriteStartElement("TESTWRAPPER"); //keep the xml valid (single root element)
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
@@ -366,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -410,7 +411,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				XHTMLWriter.WriteStartElement("TESTWRAPPER"); //keep the xml valid (single root element)
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
@@ -438,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -477,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -547,7 +548,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -622,7 +623,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -674,7 +675,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -718,7 +719,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -755,7 +756,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -792,7 +793,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -856,15 +857,19 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 
-				const string gramAbbr = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr' and text()='Blah:Any']";
-				const string gramName = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr' and text()='Blah:Any']";
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr, 1);
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName, 1);
+				const string gramAbbr1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr' and text()='Blah']";
+				const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr' and text()=':Any']";
+				const string gramName1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr' and text()='Blah']";
+				const string gramName2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr' and text()=':Any']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr1, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr2, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName1, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName2, 1);
 			}
 		}
 
@@ -899,7 +904,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -945,7 +950,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
@@ -1023,7 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -1061,7 +1066,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -1423,7 +1428,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -1468,7 +1473,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -1541,7 +1546,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSubSenseToSense(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -1610,7 +1615,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSubSenseToSense(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -1660,7 +1665,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
@@ -1708,7 +1713,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -1761,7 +1766,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -1806,7 +1811,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 				XHTMLWriter.Flush();
@@ -1844,12 +1849,12 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 2);
+					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 4);
 			}
 		}
 
@@ -1895,14 +1900,14 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentrie']/span[@class='headword']/span[@lang='en']/a[@href]", 1);
+					"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentrie']/span[@class='headword']/a[@href]/span[@lang='en']", 2);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']/a[@href]", 1);
+					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']/a[@href]/span[@lang='fr']", 2);
 			}
 		}
 
@@ -1944,12 +1949,12 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr']/a[@href]", 1);
+					"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/a[@href]/span[@lang='fr']", 2);
 			}
 		}
 
@@ -2246,7 +2251,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -2285,12 +2290,12 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']//span[@lang='fr']", 1);
+					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']//span[@lang='fr']", 2);
 			}
 		}
 
@@ -2325,12 +2330,12 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 2);
+					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 4);
 			}
 		}
 
@@ -2436,7 +2441,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -2473,7 +2478,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// generates a src attribute with an absolute file path
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -2504,7 +2509,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, true, true, tempFolder.FullName);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -2540,7 +2545,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, true, true, tempFolder.FullName);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
@@ -2596,7 +2601,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, true, true, tempFolder.FullName);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2653,7 +2658,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, true, true, tempFolder.FullName);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2702,7 +2707,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2780,7 +2785,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2835,7 +2840,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2883,7 +2888,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2923,7 +2928,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, wsEn, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -2969,7 +2974,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -3018,7 +3023,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new [] {possibilityItem1.Hvo, possibilityItem2.Hvo}, 2);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -3057,7 +3062,7 @@ namespace SIL.FieldWorks.XWorks
 				SilTime.SetTimeProperty(Cache.MainCacheAccessor, testEntry.Hvo, customField.Flid, customData);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
-					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
@@ -3101,14 +3106,14 @@ namespace SIL.FieldWorks.XWorks
 			CreateVariantForm(variantForm, mainEntry);
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string referencedEntries =
 					"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentrie']/span[@class='headword']/span[@lang='en']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString())
-					.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 1);
+					.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 2);
 			}
 		}
 
@@ -3138,7 +3143,7 @@ namespace SIL.FieldWorks.XWorks
 			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));

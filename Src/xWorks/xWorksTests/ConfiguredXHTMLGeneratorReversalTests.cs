@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingReversalEntry();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();

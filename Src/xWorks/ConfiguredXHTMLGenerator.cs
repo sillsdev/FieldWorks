@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false))
 			{
-				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), writer, false, false, null);
+				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), mediator, writer, false, false, null);
 				GenerateOpeningHtml(previewCssPath, exportSettings);
 				GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				GenerateClosingHtml(writer);
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false))
 			{
-				var settings = new GeneratorSettings(cache, xhtmlWriter, true, true, Path.GetDirectoryName(xhtmlPath));
+				var settings = new GeneratorSettings(cache, mediator, xhtmlWriter, true, true, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(cssPath, settings);
 				string lastHeader = null;
 				foreach (var hvo in entryHvos)
@@ -1374,12 +1374,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
-					// The CSS selects <span class=""><span lang=""/></span> NOT <span class="" lang=""/>.
-					// Callers must generate this <span/> because GenerateXHTMLForPictureCaption needs to GenerateXHTMLForString in a <div/>.
-					// (lang="" is generated inside the method.)
-					settings.Writer.WriteStartElement("span");
 					GenerateXHTMLForString((ITsString)propertyValue, config, settings, hvo: hvo);
-					settings.Writer.WriteEndElement();
 					settings.Writer.WriteEndElement();
 				}
 			}
@@ -1533,10 +1528,8 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteString(prefix);
 				writer.WriteEndElement();
 			}
-			writer.WriteStartElement("span");
 			var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
 			GenerateXHTMLForString(requestedString, config, settings, wsName, hvo);
-			writer.WriteEndElement();
 		}
 
 		private static void GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
@@ -1547,9 +1540,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (fieldValue != null)
 				{
+					writer.WriteStartElement("span");
 					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", System.StringComparison.Ordinal));
 					GenerateXHTMLForAudioFile(writingSystem, writer, audioId,
 						GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings), String.Empty);
+					writer.WriteEndElement();
 				}
 			}
 			else
@@ -1557,13 +1552,38 @@ namespace SIL.FieldWorks.XWorks
 				//use the passed in writing system unless null
 				//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
 				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
-				writer.WriteAttributeString("lang", writingSystem);
+
 				if (hvo > 0)
 				{
 					settings.Writer.WriteStartElement("a");
 					settings.Writer.WriteAttributeString("href", "#hvo" + hvo);
 				}
-				writer.WriteString(fieldValue.Text);
+				if (fieldValue.RunCount > 1)
+				{
+					for (int i = 0; i < fieldValue.RunCount; i++)
+					{
+						var text = fieldValue.get_RunText(i);
+						var props = fieldValue.get_Properties(i);
+						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+						writer.WriteStartElement("span");
+						// TODO: In case of multi-writingsystem ITsSring, update WS for each run
+						writer.WriteAttributeString("lang", writingSystem);
+						if (!String.IsNullOrEmpty(style))
+						{
+							var css_style = CssGenerator.GenerateCssStyleFromFwStyleSheet(style, settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.Mediator);
+							writer.WriteAttributeString("style", css_style.ToString());
+						}
+						writer.WriteString(text);
+						writer.WriteEndElement();
+					}
+				}
+				else
+				{
+					writer.WriteStartElement("span");
+					writer.WriteAttributeString("lang", writingSystem);
+					writer.WriteString(fieldValue.Text);
+					writer.WriteEndElement();
+				}
 				if (hvo > 0)
 				{
 					settings.Writer.WriteEndElement(); // </a>
@@ -1685,13 +1705,15 @@ namespace SIL.FieldWorks.XWorks
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
-			public GeneratorSettings(FdoCache cache, XmlWriter writer, bool relativePaths, bool copyFiles, string exportPath)
+			public Mediator Mediator { get; private set;}
+			public GeneratorSettings(FdoCache cache, Mediator mediator, XmlWriter writer, bool relativePaths, bool copyFiles, string exportPath)
 			{
 				if (cache == null || writer == null)
 				{
 					throw new ArgumentNullException();
 				}
 				Cache = cache;
+				Mediator = mediator;
 				Writer = writer;
 				UseRelativePaths = relativePaths;
 				CopyFiles = copyFiles;

@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='bolo']";
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='tailwind']";
@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
 				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";

@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			if(!styleSheet.Styles.Contains(styleName))
+			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
 				return declaration;
 			}
