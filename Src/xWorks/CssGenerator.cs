@@ -101,45 +101,47 @@ namespace SIL.FieldWorks.XWorks
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections. Also set display:block on span
-				GenerateCssFromSenseOptions(configNode, senseOptions, styleSheet, baseSelection, mediator);
+				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, mediator);
 			}
-			var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
-			if(complexFormOpts != null)
+			else
 			{
-				// Try to generate the css for the sense number before the baseSelection is updated because
-				// the sense number is a sibling of the sense element and we are normally applying styles to the
-				// children of collections.
-				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection);
-			}
-			var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
-			if(pictureOptions != null)
-			{
-				GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
-			}
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
-			rule.Value = baseSelection;
-			// if the configuration node defines a style then add all the rules generated from that style
-			if(!String.IsNullOrEmpty(configNode.Style))
-			{
-				//Generate the rules for the default font info
-				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
-			}
-			var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			if (wsOptions != null)
-			{
-				GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
-				if (wsOptions.DisplayWritingSystemAbbreviations)
+				var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+				if(complexFormOpts != null)
 				{
-					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
+					// Try to generate the css for the sense number before the baseSelection is updated because
+					// the sense number is a sibling of the sense element and we are normally applying styles to the
+					// children of collections.
+					GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection);
 				}
-				if (wsOptions.Options.Count(s => s.IsEnabled) > 1)
+				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
+				if(pictureOptions != null)
 				{
-					GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
+					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
 				}
+				var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
+				rule.Value = baseSelection;
+				// if the configuration node defines a style then add all the rules generated from that style
+				if(!String.IsNullOrEmpty(configNode.Style))
+				{
+					//Generate the rules for the default font info
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
+				}
+				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				if(wsOptions != null)
+				{
+					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
+					if(wsOptions.DisplayWritingSystemAbbreviations)
+					{
+						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
+					}
+					if(wsOptions.Options.Count(s => s.IsEnabled) > 1)
+					{
+						GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
+					}
+				}
+				styleSheet.Rules.AddRange(beforeAfterSelectors);
+				styleSheet.Rules.Add(rule);
 			}
-			styleSheet.Rules.AddRange(beforeAfterSelectors);
-			styleSheet.Rules.Add(rule);
-
 			if(configNode.Children == null)
 				return;
 			//Recurse into each child
@@ -156,13 +158,17 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(glossRule);
 		}
 
-		private static void GenerateCssFromSenseOptions(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, string baseSelection, Mediator mediator)
+		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
+														StyleSheet styleSheet, ref string baseSelection, Mediator mediator)
 		{
+			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
+			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
+			styleSheet.Rules.AddRange(beforeAfterSelectors);
+
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
-			var senseNumberSelector = String.Format("{0} .{1} .sensenumber", baseSelection, GetClassAttributeForConfig(configNode));
+			var senseNumberSelector = string.Format("{0} .sensenumber", senseContentSelector);
 
 			senseNumberRule.Value = senseNumberSelector;
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
@@ -185,16 +191,28 @@ namespace SIL.FieldWorks.XWorks
 				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
 				styleSheet.Rules.Add(afterRule);
 			}
+			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
 			if(senseOptions.DisplayEachSenseInAParagraph)
 			{
-				var blockDeclaration = new StyleDeclaration();
-				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block")});
-				var blockRule = new StyleRule(blockDeclaration)
+				var senseParaDeclaration = GetOnlyParagraphStyle(styleDeclaration);
+				senseParaDeclaration.Add(new Property("display")
 				{
-					Value = String.Format("{0} .{1}> .sensecontent:not(:first-child)", baseSelection, GetClassAttributeForConfig(configNode))
+					Term = new PrimitiveTerm(UnitType.Ident, "block")
+				});
+				var senseParaRule = new StyleRule(senseParaDeclaration)
+				{
+					// Apply the paragraph style information to all but the first sensecontent block
+					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
-				styleSheet.Rules.Add(blockRule);
+				styleSheet.Rules.Add(senseParaRule);
 			}
+			// Generate the style information specifically for senses
+			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
+			{
+				Value = string.Format(baseSelection)
+			};
+			styleSheet.Rules.Add(senseContentRule);
+
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
 				var blockDeclaration = new StyleDeclaration();
@@ -312,6 +330,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			styleSheet.Rules.Add(pictureRule);
 		}
+
 		/// <summary>
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
@@ -445,6 +464,26 @@ namespace SIL.FieldWorks.XWorks
 				classAttribute += "_" + configNode.LabelSuffix;
 			}
 			return classAttribute.ToLower();
+		}
+
+		internal static StyleDeclaration GetOnlyCharacterStyle(StyleDeclaration fullStyleDeclaration)
+		{
+			var declaration = new StyleDeclaration();
+			foreach(var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("font") || prop.Name.Contains("color")))
+			{
+				declaration.Add(prop);
+			}
+			return declaration;
+		}
+
+		internal static StyleDeclaration GetOnlyParagraphStyle(StyleDeclaration fullStyleDeclaration)
+		{
+			var declaration = new StyleDeclaration();
+			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color")))
+			{
+				declaration.Add(prop);
+			}
+			return declaration;
 		}
 
 		/// <summary>
