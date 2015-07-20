@@ -2198,7 +2198,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>

@@ -920,7 +920,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" isEnabled="true" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Classified-Headword" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Classified-Headword" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -1157,7 +1157,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="SenseHeadWord">
+        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
