@@ -864,7 +864,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.senses\s*>\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.senses\s*>\s*\.sensecontent\s*:not\s*\(:first-child\)\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]

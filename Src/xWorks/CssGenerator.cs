@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block")});
 				var blockRule = new StyleRule(blockDeclaration)
 				{
-					Value = String.Format("{0} .{1}> .sensecontent", baseSelection, GetClassAttributeForConfig(configNode))
+					Value = String.Format("{0} .{1}> .sensecontent:not(:first-child)", baseSelection, GetClassAttributeForConfig(configNode))
 				};
 				styleSheet.Rules.Add(blockRule);
 			}
