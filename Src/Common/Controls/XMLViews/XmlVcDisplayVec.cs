@@ -527,7 +527,6 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
 					new NumberingStyleComboItem("1  1.2  1.2.3", "%O"),
-					new NumberingStyleComboItem("1  b  iii", "%z"),
 					new NumberingStyleComboItem("1  2  3", "%d"),
 					new NumberingStyleComboItem("A  B  C", "%A"),
 					new NumberingStyleComboItem("a  b  c", "%a"),

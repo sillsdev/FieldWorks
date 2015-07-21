@@ -875,7 +875,7 @@ namespace SIL.FieldWorks.XWorks
 			// Don't export if there is no such data
 			if (moForm == null)
 				return;
-			GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Hvo);
+			GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Owner.Hvo);
 			if (config.Children != null && config.Children.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");

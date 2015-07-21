@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberBefore")]
 		public string BeforeNumber { get; set; }
 
-		// Example values: ""->none; %O->1.2.3; %z->1, b, iii
+		// Example values: ""->none; %O->1.2.3; %d->1, 2, 3
 		[XmlAttribute(AttributeName = "numberingStyle")]
 		public string NumberingStyle { get; set; }
 
