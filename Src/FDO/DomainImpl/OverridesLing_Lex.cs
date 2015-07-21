@@ -9340,6 +9340,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		private ICmObject Item { get; set; }
 
+		public int EntryHvo
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				return entry != null ? entry.Hvo : ((ILexSense)Item).Entry.Hvo;
+			}
+		}
+
 		public ITsString HeadWord
 		{
 			get

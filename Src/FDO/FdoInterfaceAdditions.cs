@@ -5886,6 +5886,11 @@ namespace SIL.FieldWorks.FDO
 	public interface ISenseOrEntry
 	{
 		/// <summary>
+		/// The Hvo if LexEntry; the owning entry's Hvo if LexSense
+		/// </summary>
+		int EntryHvo { get; }
+
+		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
 		/// </summary>
 		ITsString HeadWord { get; }

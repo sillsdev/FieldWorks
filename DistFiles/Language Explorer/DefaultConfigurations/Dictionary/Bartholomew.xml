@@ -178,6 +178,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" isEnabled="true" before="" between=", " after=" " field="ConfigTargets">
+          <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
           <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true" />
@@ -515,6 +516,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
+            <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
             <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
                 <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                   <Option id="vernacular" isEnabled="true"/>
@@ -894,7 +896,8 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Targets" isEnabled="true" style="Dictionary-Headword" before="" between=", " after="" field="ConfigTargets">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
+        <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -920,6 +923,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" isEnabled="true" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+        <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
         <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Classified-Headword" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
@@ -1157,7 +1161,8 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
+        <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
+        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
@@ -1292,6 +1297,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" isEnabled="true" before="" between=", " after=" " field="ConfigTargets">
+          <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
           <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true" />
@@ -1629,6 +1635,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
+            <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
             <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
                 <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                   <Option id="vernacular" isEnabled="true"/>
@@ -1998,7 +2005,8 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Targets" isEnabled="true" before="" between=", " after=" " field="ConfigTargets">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
+        <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,13 +42,24 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			if (mediatorstyleSheet != null && mediatorstyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
-			GenerateCssForAudioWs(styleSheet, mediator,cache);
+			MakeLinksLookLikePlainText(styleSheet);
+			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts)
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}
 			// Pretty-print the stylesheet
 			return styleSheet.ToString(true, 1);
+		}
+
+		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
+		{
+			var rule = new StyleRule { Value = "a" };
+			rule.Declarations.Properties.AddRange(new [] {
+				new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") },
+				new Property("color") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") }
+			});
+			styleSheet.Rules.Add(rule);
 		}
 
 		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
@@ -61,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssForAudioWs(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		private static void GenerateCssForAudioWs(StyleSheet styleSheet, FdoCache cache)
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
@@ -82,13 +93,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+
 		/// <summary>
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
-		/// <param name="configNode"></param>
-		/// <param name="styleSheet"></param>
-		/// <param name="baseSelection"></param>
-		/// <param name="mediator"></param>
 		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode,
 																			  StyleSheet styleSheet,
 																			  string baseSelection,

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -512,7 +511,6 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
-			var cache = settings.Cache;
 			writer.WriteStartElement("div");
 			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
 			// todo: get sense numbers and captions into the same div and get rid of this if else
@@ -875,7 +873,7 @@ namespace SIL.FieldWorks.XWorks
 			// Don't export if there is no such data
 			if (moForm == null)
 				return;
-			GenerateXHTMLForStrings(moForm.Form, config, settings);
+			GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Hvo);
 			if (config.Children != null && config.Children.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
@@ -1256,23 +1254,38 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="field">This is the object that owns the property, needed to look up writing system info for virtual string fields</param>
 		/// <param name="propertyValue">data to generate xhtml for</param>
 		/// <param name="config"></param>
-		/// <param name="writer"></param>
-		/// <param name="cache"></param>
+		/// <param name="settings"></param>
 		private static void GenerateXHTMLForValue(object field, object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
+			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's HVO
+			// so we can generate a link to the main or minor entry for this headword.
+			var hvo = 0;
+			if (config.CSSClassNameOverride == "headword")
+			{
+				if (field is ILexEntry)
+					hvo = ((ILexEntry)field).Hvo;
+				else if (field is ILexEntryRef)
+					hvo = ((ILexEntryRef)field).OwningEntry.Hvo;
+				else if (field is ISenseOrEntry)
+					hvo = ((ISenseOrEntry)field).EntryHvo;
+				else
+					Debug.WriteLine("Need to find Entry Hvo for {0}",
+						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name);
+			}
+
 			if (propertyValue is ITsString)
 			{
 				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
-					GenerateXHTMLForString((ITsString)propertyValue, config, settings);
+					GenerateXHTMLForString((ITsString)propertyValue, config, settings, hvo: hvo);
 					settings.Writer.WriteEndElement();
 				}
 			}
 			else if (propertyValue is IMultiStringAccessor)
 			{
-				GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings);
+				GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, hvo);
 			}
 			else if (propertyValue is int)
 			{
@@ -1284,13 +1297,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
-				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings);
+				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, hvo);
 			}
 			else if (propertyValue is String)
 			{
 				var propValueString = (String)propertyValue;
 				if (!String.IsNullOrEmpty(propValueString))
 				{
+					Debug.Assert(hvo == 0, "we have a hvo; make a link!");
 					// write out Strings something like: <span class="foo">Bar</span>
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
@@ -1302,13 +1316,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if(propertyValue == null)
 				{
-					Debug.WriteLine(string.Format("Bad configuration node: {0}", config));
+					Debug.WriteLine("Bad configuration node: {0}", DictionaryConfigurationMigrator.BuildPathStringFromNode(config));
 				}
 				else
 				{
-					Debug.WriteLine(string.Format("What do I do with {0}?", propertyValue.GetType().Name));
+					Debug.WriteLine("What do I do with {0}?", propertyValue.GetType().Name);
 				}
 			}
+
 		}
 
 		private static void WriteElementContents(object propertyValue, ConfigurableDictionaryNode config,
@@ -1324,11 +1339,8 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
-		/// <param name="multiStringAccessor"></param>
-		/// <param name="config"></param>
-		/// <param name="writer"></param>
-		/// <param name="cache"></param>
-		private static void GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static void GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
+			GeneratorSettings settings, int hvo = 0)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -1359,7 +1371,7 @@ namespace SIL.FieldWorks.XWorks
 					// use the method in the multi-string to get the right string and set wsId to the used one
 					bestString = multiStringAccessor.GetAlternativeOrBestTss(wsId, out wsId);
 				}
-				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString);
+				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, hvo);
 			}
 			settings.Writer.WriteEndElement();
 		}
@@ -1368,13 +1380,8 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiAccessorBase
 		/// </summary>
-		/// <param name="owningObject">The object used to access the virtual property</param>
-		/// <param name="multiStringAccessor">Virtual Property Accessor</param>
-		/// <param name="config"></param>
-		/// <param name="writer"></param>
-		/// <param name="cache"></param>
 		private static void GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
-																			ConfigurableDictionaryNode config, GeneratorSettings settings)
+																			ConfigurableDictionaryNode config, GeneratorSettings settings, int hvo)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -1404,13 +1411,13 @@ namespace SIL.FieldWorks.XWorks
 																					owningObject.Hvo, multiStringAccessor.Flid, (IWritingSystem)defaultWs);
 				}
 				var requestedString = multiStringAccessor.get_String(wsId);
-				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString);
+				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, hvo);
 			}
 			settings.Writer.WriteEndElement();
 		}
 
 		private static void GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
-			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString)
+			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, int hvo)
 		{
 			var writer = settings.Writer;
 			var cache = settings.Cache;
@@ -1428,13 +1435,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			writer.WriteStartElement("span");
 			var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
-			GenerateXHTMLForString(requestedString, config, settings, wsName);
+			GenerateXHTMLForString(requestedString, config, settings, wsName, hvo);
 			writer.WriteEndElement();
 		}
 
-		private static void GenerateXHTMLForString(ITsString fieldValue,
-																 ConfigurableDictionaryNode config,
-																 GeneratorSettings settings, string writingSystem = null)
+		private static void GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
+													GeneratorSettings settings, string writingSystem = null, int hvo = 0)
 		{
 			var writer = settings.Writer;
 			if (writingSystem != null && writingSystem.Contains("audio"))
@@ -1452,7 +1458,16 @@ namespace SIL.FieldWorks.XWorks
 				//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
 				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
 				writer.WriteAttributeString("lang", writingSystem);
+				if (hvo > 0)
+				{
+					settings.Writer.WriteStartElement("a");
+					settings.Writer.WriteAttributeString("href", "#hvo" + hvo);
+				}
 				writer.WriteString(fieldValue.Text);
+				if (hvo > 0)
+				{
+					settings.Writer.WriteEndElement(); // </a>
+				}
 			}
 		}
 

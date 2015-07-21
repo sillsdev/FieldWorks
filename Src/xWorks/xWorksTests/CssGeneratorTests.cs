@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
 
+// ReSharper disable InconsistentNaming
 namespace SIL.FieldWorks.XWorks
 {
 	class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
@@ -80,16 +81,39 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// verify that the css result contains a line similar to: .lexentry {
-			Assert.IsTrue(Regex.Match(cssResult, "^\\s*\\.lexentry\\s*{.*").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*{.*").Success,
 							  "Css for root node(lexentry) did not generate a specific match");
 			// verify that the css result contains a line similar to: .lexentry .headword {
-			Assert.IsTrue(Regex.Match(cssResult, "\\.lexentry\\s*\\.headword\\s*span\\s*{.*").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.headword\s*span\s*{.*").Success,
 							  "Css for child node(headword) did not generate a specific match");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_LinksLookLikePlainText()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// verify that the css result contains a line similar to a { text-decoration:inherit; color:inherit; }
+			Assert.IsTrue(Regex.Match(cssResult, @"^\s*a\s*{[^}]*text-decoration:inherit;").Success, "Links should inherit underlines and similar.");
+			Assert.IsTrue(Regex.Match(cssResult, @"^\s*a\s*{[^}]*color:inherit;").Success, "Links should inherit color.");
 		}
 
 		[Test]
@@ -110,8 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
@@ -139,8 +162,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			GeneratePseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';font-size:10pt;color:#00F;}
@@ -291,7 +313,7 @@ namespace SIL.FieldWorks.XWorks
 				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
 			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var parser = new ExCSS.Parser();
+			var parser = new Parser();
 			var styleSheet = parser.Parse(cssResult);
 			Debug.WriteLine(cssResult);
 			Assert.AreEqual(0, styleSheet.Errors.Count);
@@ -1118,7 +1140,7 @@ namespace SIL.FieldWorks.XWorks
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_window.Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
@@ -1273,13 +1295,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates test styles for the pseudo selectors :before / :after
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		private TestStyle GeneratePseudoStyle(string name)
+		private void GeneratePseudoStyle(string name)
 		{
-			var fontInfo = new FontInfo();
-			fontInfo.m_fontColor.ExplicitValue = FontColor;
-			fontInfo.m_fontSize.ExplicitValue = FontSize;
+			var fontInfo = new FontInfo
+			{
+				m_fontColor = { ExplicitValue = FontColor },
+				m_fontSize = { ExplicitValue = FontSize }
+			};
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
 			if (m_styleSheet.Styles.Count > 0)
 				m_styleSheet.Styles.RemoveAt(0);
@@ -1287,15 +1309,12 @@ namespace SIL.FieldWorks.XWorks
 			if (m_owningTable.ContainsKey(name))
 				m_owningTable.Remove(name);
 			m_owningTable.Add(name, style);
-			return style;
 		}
 
 		/// <summary>
 		/// Generates empty test styles for the pseudo selectors :before / :after
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		private TestStyle GenerateEmptyPseudoStyle(string name)
+		private void GenerateEmptyPseudoStyle(string name)
 		{
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
@@ -1305,7 +1324,6 @@ namespace SIL.FieldWorks.XWorks
 			if (m_owningTable.ContainsKey(name))
 				m_owningTable.Remove(name);
 			m_owningTable.Add(name, style);
-			return style;
 		}
 
 		private void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)
@@ -1402,7 +1420,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void VerifyParagraphBorderInCss(Color color, int leading, int trailing, int bottom, int top, string css)
+		private static void VerifyParagraphBorderInCss(Color color, int leading, int trailing, int bottom, int top, string css)
 		{
 			Assert.That(css, Contains.Substring("border-color:" + HtmlColor.FromRgb(color.R, color.G, color.B)));
 			// border widths are converted into pt values on export
