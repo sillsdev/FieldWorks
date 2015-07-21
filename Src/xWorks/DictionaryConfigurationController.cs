@@ -398,7 +398,8 @@ namespace SIL.FieldWorks.XWorks
 				node.IsEnabled = args.Node.Checked;
 
 				// Details may need to be enabled or disabled
-				RefreshView();
+				RefreshPreview();
+				View.TreeControl.Tree.SelectedNode = FindTreeNode(node, View.TreeControl.Tree.Nodes);
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
