@@ -121,6 +121,10 @@
   <data name="manageConfigs_treeDetailButton_split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="manageConfigs_treeDetailButton_split.IsSplitterFixed" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="manageConfigs_treeDetailButton_split.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -131,7 +135,6 @@
   <data name="m_txtPubsForConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>374, 30</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_txtPubsForConfig.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -271,10 +274,10 @@
     <value>4</value>
   </data>
   <data name="m_grpConfigurationManagement.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 7</value>
+    <value>3, 3</value>
   </data>
   <data name="m_grpConfigurationManagement.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 70</value>
+    <value>626, 63</value>
   </data>
   <data name="m_grpConfigurationManagement.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -305,6 +308,9 @@
   </data>
   <data name="treeDetail_Button_Split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="treeDetail_Button_Split.IsSplitterFixed" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="treeDetail_Button_Split.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -373,7 +379,7 @@
     <value>0, 0, 0, 5</value>
   </data>
   <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 101</value>
+    <value>324, 90</value>
   </data>
   <data name="m_preview.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -382,7 +388,7 @@
     <value>m_preview</value>
   </data>
   <data name="&gt;&gt;m_preview.Type" xml:space="preserve">
-    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.132.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_preview.Parent" xml:space="preserve">
     <value>previewDetailSplit.Panel1</value>
@@ -415,10 +421,10 @@
     <value>1</value>
   </data>
   <data name="previewDetailSplit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 558</value>
+    <value>324, 395</value>
   </data>
   <data name="previewDetailSplit.SplitterDistance" type="System.Int32, mscorlib">
-    <value>101</value>
+    <value>90</value>
   </data>
   <data name="previewDetailSplit.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -448,7 +454,7 @@
     <value>1</value>
   </data>
   <data name="tree_Detail_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>632, 558</value>
+    <value>632, 395</value>
   </data>
   <data name="tree_Detail_Split.SplitterDistance" type="System.Int32, mscorlib">
     <value>304</value>
@@ -481,7 +487,7 @@
     <value>0</value>
   </data>
   <data name="buttonLayoutPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+    <value>Top, Bottom, Right</value>
   </data>
   <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -598,7 +604,7 @@
     <value>3, 3</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>626, 37</value>
+    <value>626, 29</value>
   </data>
   <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -628,10 +634,10 @@
     <value>1</value>
   </data>
   <data name="treeDetail_Button_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>632, 602</value>
+    <value>632, 431</value>
   </data>
   <data name="treeDetail_Button_Split.SplitterDistance" type="System.Int32, mscorlib">
-    <value>558</value>
+    <value>395</value>
   </data>
   <data name="treeDetail_Button_Split.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -661,10 +667,10 @@
     <value>1</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>632, 687</value>
+    <value>632, 505</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.SplitterDistance" type="System.Int32, mscorlib">
-    <value>81</value>
+    <value>70</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -688,7 +694,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>634, 687</value>
+    <value>634, 505</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>350, 515</value>

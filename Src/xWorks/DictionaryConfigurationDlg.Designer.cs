@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			// manageConfigs_treeDetailButton_split
 			// 
 			resources.ApplyResources(this.manageConfigs_treeDetailButton_split, "manageConfigs_treeDetailButton_split");
+			this.manageConfigs_treeDetailButton_split.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.manageConfigs_treeDetailButton_split.Name = "manageConfigs_treeDetailButton_split";
 			// 
 			// manageConfigs_treeDetailButton_split.Panel1
@@ -137,6 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			// treeDetail_Button_Split
 			// 
 			resources.ApplyResources(this.treeDetail_Button_Split, "treeDetail_Button_Split");
+			this.treeDetail_Button_Split.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
 			this.treeDetail_Button_Split.Name = "treeDetail_Button_Split";
 			// 
 			// treeDetail_Button_Split.Panel1
