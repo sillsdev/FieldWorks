@@ -136,4 +136,7 @@
   <data name="kstidInvalidInstallation" xml:space="preserve">
     <value>Languages data is not installed correctly. Please re-run the FieldWorks Installer and repair your installation.</value>
   </data>
+  <data name="ProblemRestoringSettings" xml:space="preserve">
+    <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
+  </data>
 </root>

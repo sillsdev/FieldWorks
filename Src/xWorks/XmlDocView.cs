@@ -26,6 +26,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;

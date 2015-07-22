@@ -13,6 +13,7 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;

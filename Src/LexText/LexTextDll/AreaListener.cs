@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using Palaso.Reporting;
+using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;

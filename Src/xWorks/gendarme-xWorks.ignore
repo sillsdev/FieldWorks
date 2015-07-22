@@ -24,7 +24,7 @@ M: System.Void SIL.FieldWorks.XWorks.TreeBarHandler::tree_MouseClicked(System.Ob
 M: System.Boolean SIL.FieldWorks.XWorks.RecordBrowseView::OnRecordNavigation(System.Object)
 M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::get_SkipShowRecord()
 M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::SetCurrentFromRelatedClerk()
-M: System.Void SIL.FieldWorks.XWorks.RecordView::InitBase(XCore.Mediator,XCore.PropertyTable,System.Xml.XmlNode)
+M: System.Void SIL.FieldWorks.XWorks.RecordView::InitBase(XCore.Mediator,SIL.CoreImpl.PropertyTable,System.Xml.XmlNode)
 M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDataTreeCopy(System.Object)
 
 # added to control and disposed there

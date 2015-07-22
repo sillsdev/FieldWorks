@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;

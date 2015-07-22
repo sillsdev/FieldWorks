@@ -35,6 +35,10 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\..\Output\Release\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl, Version=9.0.0.27503, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=9.0.0.26097, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Release\FDO.dll</HintPath>

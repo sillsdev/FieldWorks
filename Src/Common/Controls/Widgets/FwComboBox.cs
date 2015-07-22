@@ -9,6 +9,7 @@ using SIL.FieldWorks.Resources;
 using System.Diagnostics;
 using SIL.Utils; // for Win32 message defns.
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

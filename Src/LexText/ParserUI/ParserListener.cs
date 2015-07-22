@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;

@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.WritingSystems;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;

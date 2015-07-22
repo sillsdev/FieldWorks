@@ -28,6 +28,7 @@ using System;
 using System.Xml;
 using System.Windows.Forms;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore

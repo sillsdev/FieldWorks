@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
 using System.Runtime.InteropServices;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;

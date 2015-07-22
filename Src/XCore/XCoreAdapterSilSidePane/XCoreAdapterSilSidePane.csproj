@@ -77,10 +77,10 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
-	<DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
@@ -104,6 +104,10 @@
     <Reference Include="COMInterfaces">
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=9.0.0.27270, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Release\CoreImpl.dll</HintPath>
     </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>

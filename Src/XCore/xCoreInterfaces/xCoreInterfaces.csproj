@@ -176,9 +176,6 @@
     <Compile Include="PersistenceProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PropertyTable.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="RecordFilterListProvider.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using XCore;
 

@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xnSpec = xnSpec;
 
 			// This column list is saved in BrowseViewer.UpdateColumnList
-			string savedCols = m_xbv.m_bv.PropTable.GetStringProperty(ColListId, null, XCore.PropertyTable.SettingsGroup.LocalSettings);
+			string savedCols = m_xbv.m_bv.PropTable.GetStringProperty(ColListId, null, PropertyTable.SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;

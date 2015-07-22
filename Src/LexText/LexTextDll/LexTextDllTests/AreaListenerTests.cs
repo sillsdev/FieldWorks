@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -39,7 +40,8 @@ namespace LexTextDllTests
 		/// For testing.
 		/// </summary>
 		private Mediator m_mediator;
-
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private PropertyTable m_propertyTable;
 
 		/// <summary>
@@ -87,7 +89,12 @@ namespace LexTextDllTests
 		private void SetupTestMediator()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = new PropertyTable(m_publisher);
+			m_propertyTable.SetProperty("Publisher", m_publisher, false);
+			m_propertyTable.SetPropertyPersistence("Publisher", false);
+			m_propertyTable.SetProperty("Subscriber", m_subscriber, false);
+			m_propertyTable.SetPropertyPersistence("Subscriber", false);
 			m_propertyTable.SetProperty("cache", Cache, true);
 			m_testWindowConfig = SetupMinimalWindowConfig();
 			var cmdSet = new CommandSet(m_mediator);

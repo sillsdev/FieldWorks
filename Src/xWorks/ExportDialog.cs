@@ -23,6 +23,7 @@ using System.Xml.Xsl;
 using Microsoft.Win32;
 using Palaso.Lift;
 using Palaso.Lift.Validation;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.Utils.FileDialog;

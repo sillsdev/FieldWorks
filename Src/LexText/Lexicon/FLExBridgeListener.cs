@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;

@@ -12,7 +12,10 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using Reflector.UserInterface;//commandbar
+using Reflector.UserInterface;
+using SIL.CoreImpl;
+
+//commandbar
 
 namespace XCore
 {

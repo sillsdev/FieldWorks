@@ -22,6 +22,7 @@ using System.Resources;
 using System.Text;
 using System.Xml.Xsl;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.FieldWorks.FDO;

@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
-using XCore.Properties;
 
-namespace XCore
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// PropertyTableTests.
@@ -42,8 +41,8 @@ namespace XCore
 			if (!Directory.Exists(m_originalSettingsPath))
 				Directory.CreateDirectory(m_originalSettingsPath);
 
-			File.WriteAllText(Path.Combine(m_originalSettingsPath, "db$TestLocal$Settings.xml"), Resources.db_TestLocal_Settings_xml);
-			File.WriteAllText(Path.Combine(m_originalSettingsPath, "Settings.xml"), Resources.Settings_xml);
+			File.WriteAllText(Path.Combine(m_originalSettingsPath, "db$TestLocal$Settings.xml"), TestResources.db_TestLocal_Settings_xml);
+			File.WriteAllText(Path.Combine(m_originalSettingsPath, "Settings.xml"), TestResources.Settings_xml);
 
 //			m_originalSettingsPath = Path.Combine(DirectoryFinder.FwSourceDirectory, @"XCore\xCoreInterfaces\xCoreInterfacesTests\settingsBackup");
 //			m_modifiedSettingsPath = Path.Combine(DirectoryFinder.FwSourceDirectory, @"XCore\xCoreInterfaces\xCoreInterfacesTests");
@@ -51,7 +50,7 @@ namespace XCore
 
 		//--------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Set up before each test.
 		/// </summary>
 		//--------------------------------------------------------------------------------------
 		[SetUp]
@@ -66,6 +65,9 @@ namespace XCore
 			LoadOriginalSettings();
 		}
 
+		/// <summary>
+		/// Tear down after each test.
+		/// </summary>
 		[TearDown]
 		public void TearDown()
 		{

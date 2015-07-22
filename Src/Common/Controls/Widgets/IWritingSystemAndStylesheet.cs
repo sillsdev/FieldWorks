@@ -1,4 +1,5 @@
-﻿using SIL.FieldWorks.Common.COMInterfaces;
+﻿using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 

@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls.MGA;

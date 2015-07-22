@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls

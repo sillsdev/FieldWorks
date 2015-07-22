@@ -14,6 +14,7 @@ using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.IText;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Discourse
 {

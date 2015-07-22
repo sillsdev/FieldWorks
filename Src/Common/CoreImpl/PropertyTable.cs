@@ -4,20 +4,22 @@
 //
 // File: PropertyTable.cs
 // Authorship History: John Hatton
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Security;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.IO;
-using System.Threading;		// for Monitor (dlh)
-using System.Text;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Properties;
 using SIL.Utils;
+// for Monitor (dlh)
 
-namespace XCore
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Summary description for PropertyTable.
@@ -29,18 +31,32 @@ namespace XCore
 	{
 		/// <summary>
 		/// Specify where to set/get a property in the property table.
-		///
-		/// Undecided -- indicating that we haven't yet determined
-		///		(from configuration file or otherwise) where the property should be stored.
-		/// GlobalSettings -- typically application wide settings. this is the default group to store a setting, without further specification.
-		/// LocalSettings -- typically project wide settings.
-		/// BestSettings -- we'll try to look up the specified property name in the property table,
-		///		first in LocalSettings and then GlobalSettings. Using BestSettings to establish a new value
-		///		for a property will default to storing the property value in the GlobalSettings,
-		///		if the property does not already exist. Otherwise, it will use the existing	property
-		///		(giving preference to LocalSettings over GlobalSettings).
 		/// </summary>
-		public enum SettingsGroup { Undecided, GlobalSettings, LocalSettings, BestSettings };
+		public enum SettingsGroup
+		{
+			/// <summary>
+			/// Undecided -- indicating that we haven't yet determined
+			///	(from configuration file or otherwise) where the property should be stored.
+			/// </summary>
+			Undecided,
+			/// <summary>
+			/// GlobalSettings -- typically application wide settings.
+			/// This is the default group to store a setting, without further specification.
+			/// </summary>
+			GlobalSettings,
+			/// <summary>
+			/// LocalSettings -- typically project wide settings.
+			/// </summary>
+			LocalSettings,
+			/// <summary>
+			/// BestSettings -- we'll try to look up the specified property name in the property table,
+			///	first in LocalSettings and then GlobalSettings. Using BestSettings to establish a new value
+			///	for a property will default to storing the property value in the GlobalSettings,
+			///	if the property does not already exist. Otherwise, it will use the existing	property
+			///	(giving preference to LocalSettings over GlobalSettings).
+			/// </summary>
+			BestSettings
+		};
 
 		private IPublisher Publisher { get; set; }
 
@@ -151,13 +167,20 @@ namespace XCore
 				// Dispose managed resources here.
 				foreach (var property in m_properties.Values)
 				{
+					if (property.name == "Subscriber")
+					{
+						// Leave this for now, as stuff that is being disposed,
+						// may want to unsubscribe.
+						continue;
+					}
 					if (property.doDispose)
+					{
 						((IDisposable)property.value).Dispose();
+					}
 					property.name = null;
 					property.value = null;
 				}
 				m_properties.Clear();
-				Publisher = null;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -165,12 +188,19 @@ namespace XCore
 			m_userSettingDirectory = null;
 			m_properties = null;
 			m_traceSwitch = null;
+			Publisher = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
+		/// <summary>
+		/// Get a string representing the properties.
+		///
+		/// Used only for tests and an unsed "Ticker" class in xcore.
+		/// </summary>
+		/// <returns></returns>
 		public string GetPropertiesDumpString()
 		{
 			CheckDisposed();
@@ -739,12 +769,23 @@ namespace XCore
 			return GetValueInternal(name, defaultValue);
 		}
 
+		/// <summary>
+		/// Declare if the property is to be disposed by the table.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="doDispose"></param>
 		public void SetPropertyDispose(string name, bool doDispose)
 		{
 			CheckDisposed();
 			SetPropertyDispose(name, doDispose, SettingsGroup.BestSettings);
 		}
 
+		/// <summary>
+		/// Declare if the property is to be disposed by the table.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="doDispose"></param>
+		/// <param name="settingsGroup"></param>
 		public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
 		{
 			CheckDisposed();
@@ -781,6 +822,13 @@ namespace XCore
 
 		#region persistence stuff
 
+		/// <summary>
+		/// Declare if the property is to be persisted.
+		/// Default is 'true' to persist it.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="doPersist"></param>
+		/// <param name="settingsGroup"></param>
 		public void SetPropertyPersistence(string name, bool doPersist, SettingsGroup settingsGroup)
 		{
 			CheckDisposed();
@@ -806,6 +854,12 @@ namespace XCore
 			property.doPersist = doPersist;
 		}
 
+		/// <summary>
+		/// Declare if the property is to be persisted.
+		/// Default is 'true' to persist it.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="doPersist"></param>
 		public void SetPropertyPersistence(string name, bool doPersist)
 		{
 			CheckDisposed();
@@ -1037,11 +1091,11 @@ namespace XCore
 			{
 				var activeForm = Form.ActiveForm;
 				if (activeForm == null)
-					MessageBox.Show(xCoreInterfaces.ProblemRestoringSettings);
+					MessageBox.Show(Resources.ProblemRestoringSettings);
 				else
 				{
 					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, xCoreInterfaces.ProblemRestoringSettings)));
+					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, Resources.ProblemRestoringSettings)));
 				}
 			}
 		}
@@ -1161,6 +1215,9 @@ namespace XCore
 		#endregion
 	}
 
+	/// <summary>
+	/// A property class used in the PropertyTable.
+	/// </summary>
 	[Serializable]
 	//TODO: we can't very well change this source code every time someone adds a new value type!!!
 	[XmlInclude(typeof(System.Drawing.Point))]
@@ -1168,19 +1225,29 @@ namespace XCore
 	[XmlInclude(typeof(System.Windows.Forms.FormWindowState))]
 	public class Property
 	{
+		/// <summary>
+		/// Name of the property.
+		/// </summary>
 		public string name = null;
+		/// <summary>
+		/// Value of the property.
+		/// </summary>
 		public object value = null;
 
-		// it is not clear yet what to do about default persistence;
-		// normally we would want to say false, but we don't you have
-		// a good way to indicate that the property should be saved except for beer code.
-		// therefore, for now, the default will be true said that properties which are introduced
-		// in the configuration file will still be persisted.
+		/// <summary>
+		/// it is not clear yet what to do about default persistence;
+		/// normally we would want to say false, but we don't you have
+		/// a good way to indicate that the property should be saved except for beer code.
+		/// therefore, for now, the default will be true said that properties which are introduced
+		/// in the configuration file will still be persisted.
+		/// </summary>
 		public bool doPersist = true;
 
-		// Up until now there was no way to pass ownership of the object/property
-		// to the property table so that the objects would be disposed of at the
-		// time the property table goes away.
+		/// <summary>
+		/// Up until now there was no way to pass ownership of the object/property
+		/// to the property table so that the objects would be disposed of at the
+		/// time the property table goes away.
+		/// </summary>
 		public bool doDispose = false;
 
 		/// <summary>
@@ -1190,13 +1257,22 @@ namespace XCore
 		{
 		}
 
+		/// <summary>
+		/// Normally used constructor.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
 		public Property(string name, object value)
 		{
 			this.name = name;
 			this.value = value;
 		}
 
-		override public string ToString()
+		/// <summary>
+		/// Override to make sensible string representation of a property.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
 		{
 			if(value == null)
 				return name + "= null";

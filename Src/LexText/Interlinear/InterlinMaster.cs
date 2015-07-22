@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.IText
 				FdoCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
-				link.PropertyTableEntries.Add(new XCore.Property("InterlinearTab",
+				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				var linkListener = m_propertyTable.GetValue<LinkListener>("LinkListener");

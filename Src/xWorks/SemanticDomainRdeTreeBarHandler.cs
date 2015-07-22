@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 using System;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
 {

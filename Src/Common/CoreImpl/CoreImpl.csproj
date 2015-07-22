@@ -103,6 +103,7 @@
     <Compile Include="CaseFunctions.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="ISubscriber.cs" />
+    <Compile Include="PropertyTable.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="StringSearcher.cs" />
     <Compile Include="VersionInfoProvider.cs" />

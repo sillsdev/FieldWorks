@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;

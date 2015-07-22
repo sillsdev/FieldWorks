@@ -25,6 +25,7 @@ using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.PublishingSolution
 {

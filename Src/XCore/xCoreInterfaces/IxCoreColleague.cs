@@ -11,6 +11,7 @@
 using System.Xml;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 
 namespace XCore
 {

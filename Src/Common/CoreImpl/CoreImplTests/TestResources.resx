@@ -117,19 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="HelpFileProblem" xml:space="preserve">
-    <value>Help file problem</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="db_TestLocal_Settings_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>./settingsBackup/db_TestLocal_Settings.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="DonTShowThisAgain" xml:space="preserve">
-    <value>Do not show this again.</value>
-  </data>
-  <data name="CannotRestoreSavedResponses" xml:space="preserve">
-    <value>Information dialogs you previously dismissed with "do not show me this again" will be shown again due to an error. Sorry!</value>
-  </data>
-  <data name="ksRedoCommand" xml:space="preserve">
-    <value>Redo {0}</value>
-  </data>
-  <data name="ksUndoCommand" xml:space="preserve">
-    <value>Undo {0}</value>
+  <data name="Settings_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>./settingsBackup/Settings.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

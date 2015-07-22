@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
+using SIL.CoreImpl;
 using SIL.Utils; // For IFWDisposable
 
 namespace XCore

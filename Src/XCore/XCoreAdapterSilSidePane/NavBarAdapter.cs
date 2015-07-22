@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;  //for ImageList
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.Utils; // for ImageCollection
 using SIL.SilSidePane;
 

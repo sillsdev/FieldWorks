@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using XCore;
 

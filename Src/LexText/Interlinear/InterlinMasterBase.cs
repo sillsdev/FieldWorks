@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using SIL.CoreImpl;
 using XCore;
 using SIL.FieldWorks.XWorks;
 

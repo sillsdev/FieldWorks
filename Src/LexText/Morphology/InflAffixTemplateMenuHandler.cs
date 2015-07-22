@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;

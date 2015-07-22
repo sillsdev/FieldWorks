@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Palaso.Reporting;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using XCore;

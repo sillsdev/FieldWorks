@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.FieldWorks.LexText.Controls;

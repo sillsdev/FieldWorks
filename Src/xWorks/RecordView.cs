@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.Utils;

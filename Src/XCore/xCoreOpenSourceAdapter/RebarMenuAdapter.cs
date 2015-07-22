@@ -13,7 +13,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using Reflector.UserInterface; //commandbar
+using Reflector.UserInterface;
+using SIL.CoreImpl;
+//commandbar
 using SIL.Utils;
 
 namespace XCore

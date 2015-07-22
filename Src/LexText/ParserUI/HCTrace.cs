@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using XCore;
 

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using XCore;

@@ -1,4 +1,5 @@
-﻿using SIL.FieldWorks.FDO;
+﻿using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls

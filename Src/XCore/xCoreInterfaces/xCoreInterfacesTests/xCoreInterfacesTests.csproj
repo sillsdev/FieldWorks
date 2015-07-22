@@ -98,30 +98,11 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="PropertyTableTests.cs">
-    </Compile>
     <Compile Include="TestMessageSequencer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TestTupleComparer.cs" />
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="settingsBackup\Settings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="settingsBackup\db_TestLocal_Settings.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

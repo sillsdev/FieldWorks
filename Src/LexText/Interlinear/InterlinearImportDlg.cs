@@ -2,7 +2,7 @@
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FDO;
 using XCore;

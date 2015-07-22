@@ -7,6 +7,7 @@ using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
 {

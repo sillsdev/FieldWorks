@@ -18,6 +18,7 @@ using System.Drawing;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

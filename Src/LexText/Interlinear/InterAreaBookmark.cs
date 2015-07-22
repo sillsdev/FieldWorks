@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;

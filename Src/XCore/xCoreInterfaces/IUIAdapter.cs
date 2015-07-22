@@ -13,6 +13,7 @@ using System.Windows.Forms;  //for ImageList
 using System.Reflection;
 using System;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore

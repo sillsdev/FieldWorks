@@ -22,6 +22,7 @@
 // </example>
 using System;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore

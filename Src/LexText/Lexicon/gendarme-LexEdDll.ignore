@@ -16,7 +16,7 @@ M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice::DeleteFromRef
 M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice::DeleteReference(SIL.FieldWorks.FDO.ILexReference)
 M: System.Void SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice::FinishInit()
 M: System.Void SIL.FieldWorks.XWorks.LexEd.ReversalClerk::DeleteReversalIndex(SIL.FieldWorks.FDO.IReversalIndex)
-M: System.Void SIL.FieldWorks.XWorks.LexEd.SwapLexemeWithAllomorphDlg::SetDlgInfo(SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,XCore.PropertyTable,SIL.FieldWorks.FDO.ILexEntry)
+M: System.Void SIL.FieldWorks.XWorks.LexEd.SwapLexemeWithAllomorphDlg::SetDlgInfo(SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,SIL.CoreImpl.PropertyTable,SIL.FieldWorks.FDO.ILexEntry)
 M: System.Void SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice/ReversalIndexEntrySliceView::ReversalIndexEntrySliceView_RightMouseClickedEvent(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
 
 # reference only

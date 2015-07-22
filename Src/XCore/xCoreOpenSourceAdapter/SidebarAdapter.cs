@@ -17,6 +17,7 @@ using System.Drawing;
 using System.Diagnostics;
 using SidebarLibrary.WinControls;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace XCore
 {

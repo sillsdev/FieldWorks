@@ -15,6 +15,7 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace XCore

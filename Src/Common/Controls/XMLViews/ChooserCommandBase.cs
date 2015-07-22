@@ -12,7 +12,7 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using XCore;
 

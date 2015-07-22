@@ -13,6 +13,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
