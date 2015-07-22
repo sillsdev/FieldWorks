@@ -1071,10 +1071,68 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
 				return;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle)) return;
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("class", "sensenumber");
-			writer.WriteString(cache.GetOutlineNumber((ICmObject)sense, LexSenseTags.kflidSenses, false, true, publicationDecorator));
+			string senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
+				publicationDecorator);
+			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber);
+			writer.WriteString(formatedSenseNumber);
 			writer.WriteEndElement();
+		}
+
+		private static string GenerateOutlineNumber(string numberingStyle, string senseNumber)
+		{
+			string nextNumber;
+			switch (numberingStyle)
+			{
+				case "%d":
+					nextNumber = GetLastPartOfSenseNumber(senseNumber).ToString();
+					break;
+				case "%a":
+				case "%A":
+					nextNumber = GetAlphaSenseCounter(numberingStyle, senseNumber);
+					break;
+				case "%i":
+				case "%I":
+					nextNumber = GetRomanSenseCounter(numberingStyle, senseNumber);
+					break;
+				default://this handles "%O", "%z"
+					nextNumber = senseNumber;
+					break;
+			}
+			return nextNumber;
+		}
+
+		private static string GetAlphaSenseCounter(string numberingStyle, string senseNumber)
+		{
+			string nextNumber;
+			int asciiBytes = 64;
+			asciiBytes = asciiBytes + GetLastPartOfSenseNumber(senseNumber);
+			nextNumber = ((char) (asciiBytes)).ToString();
+			if (numberingStyle == "%a")
+				nextNumber = nextNumber.ToLower();
+			return nextNumber;
+		}
+
+		private static int GetLastPartOfSenseNumber(string senseNumber)
+		{
+			if (senseNumber.Contains("."))
+				return Int32.Parse(senseNumber.Split('.')[senseNumber.Split('.').Length - 1]);
+			return Int32.Parse(senseNumber);
+		}
+
+		private static string GetRomanSenseCounter(string numberingStyle, string senseNumber)
+		{
+			int num = GetLastPartOfSenseNumber(senseNumber);
+			string[] ten = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
+			string[] ones = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+			string roman = string.Empty;
+			roman += ten[(num / 10)];
+			roman += ones[num % 10];
+			if (numberingStyle == "%i")
+				roman = roman.ToLower();
+			return roman;
 		}
 
 		private static void GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
