@@ -857,10 +857,12 @@ namespace SIL.FieldWorks.XWorks
 			if (showInPara)
 			{
 				View.SetStyles(m_paraStyles, m_node.Style, true);
+				m_node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
 			}
 			else
 			{
 				View.SetStyles(m_charStyles, m_node.Style, false);
+				m_node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			}
 		}
 		#endregion HandleChanges

@@ -381,7 +381,8 @@ namespace SIL.FieldWorks.XWorks
 			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+				DisplayEachComplexFormInAParagraph = true
 			};
 			controller.LoadNode(node); // SUT
 			AssertShowingParagraphStyles(controller.View);
@@ -405,14 +406,19 @@ namespace SIL.FieldWorks.XWorks
 			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+				DisplayEachComplexFormInAParagraph = true
 			};
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(node);
 			AssertShowingParagraphStyles(controller.View);
-			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 
+			//Load character styles
+			node.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+			};
 			// SUT
 			controller.LoadNode(node);
 			AssertShowingCharacterStyles(controller.View);
