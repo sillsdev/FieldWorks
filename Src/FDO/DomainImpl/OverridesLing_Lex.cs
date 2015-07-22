@@ -9358,7 +9358,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					return entry.HeadWord;
 				}
-				return ((LexSense)Item).HeadWord;
+				return ((LexSense)Item).OwnerOutlineName;
 			}
 		}
 
