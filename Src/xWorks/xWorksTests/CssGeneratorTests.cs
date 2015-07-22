@@ -1244,6 +1244,46 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
+		private void GenerateBulletStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = (VwBulNum)105,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+			m_styleSheet.Styles.Add(style);
+			m_owningTable.Add(name, style);
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyle()
+		{
+			GenerateBulletStyle("Bulleted List");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true},
+				Style = "Bulleted List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .senses > .sensecontent .sensenumber:before{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}", RegexOptions.Singleline).Success,
+							  "Bulleted style not generated.");
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();
@@ -1437,6 +1477,12 @@ namespace SIL.FieldWorks.XWorks
 			: base(cache)
 		{
 			m_defaultFontInfo = defaultFontInfo;
+		}
+
+		public TestStyle(InheritableStyleProp<BulletInfo> defaultBulletFontInfo, FdoCache cache)
+			: base(cache)
+		{
+			m_bulletInfo = defaultBulletFontInfo;
 		}
 
 		public void SetWsStyle(FontInfo fontInfo, int wsId)

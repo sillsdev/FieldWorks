@@ -1640,6 +1640,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			get { return m_widowOrphanControl.Value; }
 		}
 
+		/// <summary>
+		/// Gets the value of BulletInfo
+		/// </summary>
+		public BulletInfo BulletInfo
+		{
+			get { return m_bulletInfo.Value; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Gets the alignment</summary>
 		/// ------------------------------------------------------------------------------------

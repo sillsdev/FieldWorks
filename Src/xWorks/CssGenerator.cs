@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-
+		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.XWorks
 			var styleSheet = new StyleSheet();
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			LoadBulletUnicodes();
 			if (mediatorstyleSheet != null && mediatorstyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
 			MakeLinksLookLikePlainText(styleSheet);
@@ -213,6 +214,7 @@ namespace SIL.FieldWorks.XWorks
 					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
 				styleSheet.Rules.Add(senseParaRule);
+				GenerateCssforBulletedList(configNode, styleSheet, senseNumberSelector, mediator);
 			}
 			// Generate the style information specifically for senses
 			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
@@ -238,6 +240,32 @@ namespace SIL.FieldWorks.XWorks
 					Value = String.Format("{0} .{1}> .sharedgrammaticalinfo:after", baseSelection, GetClassAttributeForConfig(configNode))
 				};
 				styleSheet.Rules.Add(blockRule2);
+			}
+		}
+
+		/// <summary>
+		/// Generates Bulleted List style properties
+		/// </summary>
+		/// <param name="configNode">Dictionary Node</param>
+		/// <param name="styleSheet">Stylesheet to add the new rule</param>
+		/// <param name="bulletSelector">Style name for the bullet property</param>
+		/// <param name="mediator">mediator to get the styles</param>
+		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, Mediator mediator)
+		{
+			if (configNode.Style != null)
+			{
+				var bulletRule = new StyleRule { Value = bulletSelector + ":before" };
+				bulletRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
+				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
+				var exportStyleInfo = new ExportStyleInfo(projectStyle);
+				if (exportStyleInfo.NumberScheme != 0)
+				{
+					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
+					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
+					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+				}
+				styleSheet.Rules.Add(bulletRule);
 			}
 		}
 
@@ -586,8 +614,54 @@ namespace SIL.FieldWorks.XWorks
 
 			AddFontInfoCss(projectStyle, declaration, wsId);
 
+			if (exportStyleInfo.NumberScheme != 0)
+			{
+				var numScheme = exportStyleInfo.NumberScheme.ToString();
+				if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				{
+					string selectedBullet = BulletSymbolsCollection[numScheme];
+					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
+				}
+			}
 			return declaration;
 		}
+
+		/// <summary>
+		/// Mapping the bullet symbols with the number system
+		/// </summary>
+		private static void LoadBulletUnicodes()
+		{
+			if (BulletSymbolsCollection.Count > 0)
+				return;
+
+			BulletSymbolsCollection.Add("kvbnBulletBase", "\\00B7");
+			BulletSymbolsCollection.Add("101", "\\2022");
+			BulletSymbolsCollection.Add("102", "\\25CF");
+			BulletSymbolsCollection.Add("103", "\\274D");
+			BulletSymbolsCollection.Add("104", "\\25AA");
+			BulletSymbolsCollection.Add("105", "\\25A0");
+			BulletSymbolsCollection.Add("106", "\\25AB");
+			BulletSymbolsCollection.Add("107", "\\25A1");
+			BulletSymbolsCollection.Add("108", "\\2751");
+			BulletSymbolsCollection.Add("109", "\\2752");
+			BulletSymbolsCollection.Add("110", "\\2B27");
+			BulletSymbolsCollection.Add("111", "\\29EB");
+			BulletSymbolsCollection.Add("112", "\\25C6");
+			BulletSymbolsCollection.Add("113", "\\2756");
+			BulletSymbolsCollection.Add("114", "\\2318");
+			BulletSymbolsCollection.Add("115", "\\261E");
+			BulletSymbolsCollection.Add("116", "\\271E");
+			BulletSymbolsCollection.Add("117", "\\271E");
+			BulletSymbolsCollection.Add("118", "\\2730");
+			BulletSymbolsCollection.Add("119", "\\27A2");
+			BulletSymbolsCollection.Add("120", "\\27B2");
+			BulletSymbolsCollection.Add("121", "\\2794");
+			BulletSymbolsCollection.Add("122", "\\2794");
+			BulletSymbolsCollection.Add("123", "\\21E8");
+			BulletSymbolsCollection.Add("124", "\\2713");
+		}
+
+
 
 		/// <summary>
 		/// In the FwStyles values were stored in millipoints to avoid expensive floating point calculations in c++ code.
