@@ -1372,7 +1372,12 @@ namespace SIL.FieldWorks.XWorks
 				{
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
+					// The CSS selects <span class=""><span lang=""/></span> NOT <span class="" lang=""/>.
+					// Callers must generate this <span/> because GenerateXHTMLForPictureCaption needs to GenerateXHTMLForString in a <div/>.
+					// (lang="" is generated inside the method.)
+					settings.Writer.WriteStartElement("span");
 					GenerateXHTMLForString((ITsString)propertyValue, config, settings, hvo: hvo);
+					settings.Writer.WriteEndElement();
 					settings.Writer.WriteEndElement();
 				}
 			}
