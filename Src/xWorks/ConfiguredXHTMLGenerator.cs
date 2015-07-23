@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 				var revEntry = entry as IReversalIndexEntry;
 				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text : string.Empty;
 			}
-			return lexEntry.HeadWord.Text;
+			return lexEntry.HomographForm;
 		}
 
 		/// <summary>
@@ -985,11 +985,13 @@ namespace SIL.FieldWorks.XWorks
 						else
 						{
 							IMultiAccessorBase fieldValue = (IMultiAccessorBase) propertyValue;
-							requestedString = fieldValue.BestAnalysisAlternative.Text;
+							var bestStringValue = fieldValue.BestAnalysisAlternative.Text;
+							if(bestStringValue != fieldValue.NotFoundTss.Text)
+								requestedString = bestStringValue;
 						}
 						if (string.IsNullOrEmpty(lastGrammaticalInfo))
 							lastGrammaticalInfo = requestedString;
-						if (requestedString == lastGrammaticalInfo)
+						else if (requestedString == lastGrammaticalInfo)
 						{
 							isSameGrammaticalInfo = true;
 						}
@@ -1001,7 +1003,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-			return isSameGrammaticalInfo;
+			return isSameGrammaticalInfo && !string.IsNullOrEmpty(lastGrammaticalInfo);
 		}
 
 		private static void GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,

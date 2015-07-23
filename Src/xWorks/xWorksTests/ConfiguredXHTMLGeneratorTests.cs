@@ -489,7 +489,153 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_TwoSensesWithShowGramInfoFirstOn()
+		public void GenerateXHTMLForEntry_TwoSensesWithSameInfoShowGramInfoFirst()
+		{
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				ShowSharedGrammarInfoFirst = true
+			};
+			var categorynfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				Label = "Category Info.",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>(),
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" } )
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "msas",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { categorynfo }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos);
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			msa.PartOfSpeechRA = pos;
+			msa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Blah");
+			AddSenseToEntry(entry, "second sense", m_wsEn, Cache);
+			var secondMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			var secondSense = entry.SensesOS[1];
+			entry.MorphoSyntaxAnalysesOC.Add(secondMsa);
+			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+			secondMsa.PartOfSpeechRA = pos;
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
+				const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
+				var xhtmlString = XHTMLStringBuilder.ToString();
+				AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
+				AssertThatXmlIn.String(xhtmlString).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfoPath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_TwoSensesWithDifferentGramInfoShowInfoInSenses()
+		{
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				ShowSharedGrammarInfoFirst = true
+			};
+			var categorynfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				Label = "Category Info.",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>(),
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "msas",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { categorynfo }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos);
+			var pos2 = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos2);
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			msa.PartOfSpeechRA = pos;
+			msa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Blah");
+			AddSenseToEntry(entry, "second sense", m_wsEn, Cache);
+			var secondMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			var secondSense = entry.SensesOS[1];
+			entry.MorphoSyntaxAnalysesOC.Add(secondMsa);
+			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+			secondMsa.PartOfSpeechRA = pos2;
+			secondMsa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "NotBlah");
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
+				const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
+				var xhtmlString = XHTMLStringBuilder.ToString();
+				AssertThatXmlIn.String(xhtmlString).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 2);
+				AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(sharedGramInfoPath);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_TwoSensesWithNoGramInfoDisplaysNothingForSharedGramInfo()
 		{
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -524,21 +670,19 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(entry, "sense 2", m_wsEn, Cache);
 
-			var sense = entry.SensesOS.First();
-
-			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
-			entry.MorphoSyntaxAnalysesOC.Add(msa);
-			sense.MorphoSyntaxAnalysisRA = msa;
-
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string gramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+				const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
+				const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
+				var xhtmlString = XHTMLStringBuilder.ToString();
+				AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
+				AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(sharedGramInfoPath);
 			}
 		}
 
