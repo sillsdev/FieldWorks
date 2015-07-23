@@ -95,14 +95,29 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AreaRepositoryFactory.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
+    <Compile Include="IArea.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IAreaRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMajorFlexComponent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="ISubscriber.cs" />
+    <Compile Include="ITool.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PropertyTable.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="StringSearcher.cs" />

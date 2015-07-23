@@ -1,12 +1,13 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-namespace SIL.FieldWorks.Common.Framework
+
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Interface for each Tool in an IArea
 	/// </summary>
-	public interface ITool : IMajorFlexUiComponent
+	public interface ITool : IMajorFlexComponent
 	{
 	}
 }

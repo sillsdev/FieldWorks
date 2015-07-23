@@ -234,6 +234,9 @@
 			<item command="CmdHelpNotesSFMDatabaseImport"/>
 			<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
 		</menu>
+		<menu id="Edit_GoToEntry">
+			<item command="CmdGoToEntry"/>
+		</menu>
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->

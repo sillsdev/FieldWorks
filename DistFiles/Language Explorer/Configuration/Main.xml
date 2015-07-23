@@ -77,7 +77,6 @@
 		<!-- DONE (stub only) <command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z"/> -->
 		<!-- DONE (stub only) <command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y"/> -->
 		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
-		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A"/>
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
@@ -396,13 +395,24 @@
 			<item command="CmdPasteHyperlink"/>
 			<item command="CmdCopyLocationAsHyperlink"/>
 			<item label="-" translate="do not translate"/> -->
-			<item command="CmdGoToEntry"/>
-			<item command="CmdGoToRecord"/>
-			<!-- for Notebook currently-->
-			<item command="CmdFindAndReplaceText" defaultVisible="true"/>
-			<item command="CmdReplaceText" defaultVisible="true"/>
+			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit_GoToEntry']/*"/>
+			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit_GoToRecord']/*"/>
+<!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
+XmlDocView users:
+  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml(28):
+  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml(283):
+  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml(13):
+  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Notebook\Document\toolConfiguration.xml(10):
+  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+InterlinMaster user:
+  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml(16):
+  		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMaster"/>
+			<item command="CmdFindAndReplaceText" defaultVisible="true"/> Disposition: Not global, so let areas/tools add/remove the menu.
+			<item command="CmdReplaceText" defaultVisible="true"/> Disposition: Not global, so let areas/tools add/remove the menu. Same users as CmdFindAndReplaceText -->
 			<item label="-" translate="do not translate"/>
-			<item command="CmdSelectAll"/>
 			<item command="CmdDeleteRecord"/>
 			<item label="-" translate="do not translate"/>
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>

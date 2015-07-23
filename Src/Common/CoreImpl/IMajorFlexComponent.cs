@@ -2,16 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using XCore;
+using System.Windows.Forms;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace SIL.CoreImpl
 {
 	/// <summary>
-	/// Interface for major UI components
+	/// Interface for major FLEx components
 	/// </summary>
-	public interface IMajorFlexUiComponent
+	public interface IMajorFlexComponent
 	{
 		/// <summary>
 		/// Get the internal name of the component.
@@ -23,19 +21,17 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Deactivate the component.
 		/// </summary>
 		/// <remarks>
-		/// This is called on the outgoing Area, when the user switches to a new Area.
+		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		void Deactivate();
+		void Deactivate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
-		/// Activate the area.
+		/// Activate the component.
 		/// </summary>
 		/// <remarks>
-		/// This is called on the area that is becoming active.
-		///
-		/// One of its tools will become active.
+		/// This is called on the component that is becoming active.
 		/// </remarks>
-		void Activate();
+		void Activate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
 		/// Do whatever might be needed to get ready for a refresh.
@@ -57,8 +53,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// The properties are about to be saved, so make sure they are all current.
 		/// Add new ones, as needed.
 		/// </summary>
-		/// <param name="fdoServiceLocator">The main system service locator.</param>
 		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		void EnsurePropertiesAreCurrent(IFdoServiceLocator fdoServiceLocator, PropertyTable propertyTable);
+		void EnsurePropertiesAreCurrent(PropertyTable propertyTable);
 	}
 }

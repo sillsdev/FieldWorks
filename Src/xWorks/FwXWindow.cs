@@ -651,50 +651,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Implement the SelectAll command (for the active view).
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnEditSelectAll(object arg)
-		{
-			CheckDisposed();
-
-			if (m_viewHelper.ActiveView != null)
-			{
-				try
-				{
-					EnableBulkLoadingDisableIdleProcessing(true);
-					m_viewHelper.ActiveView.EditingHelper.SelectAll();
-				}
-				finally
-				{
-					EnableBulkLoadingDisableIdleProcessing(false);
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Enable the SelectAll command if appropriate
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayEditSelectAll(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_viewHelper.ActiveView != null;
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="command"></param>
@@ -777,24 +733,6 @@ namespace SIL.FieldWorks.XWorks
 
 			using (MiscUtils.RunProcess(program, null, errorHandler))
 				return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="command"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnNewWindow(object command)
-		{
-			CheckDisposed();
-
-			// Ensure that the new window opens in the same tool and location as this window.
-			// See LT-1648.
-			SaveSettings();
-			m_app.FwManager.OpenNewWindowForApp();
-			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------

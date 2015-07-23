@@ -240,7 +240,6 @@
     </Compile>
     <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
-    <Compile Include="Impls\AreaRepository.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -269,12 +268,8 @@
     <Compile Include="FwRootSite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IArea.cs" />
-    <Compile Include="IAreaRepository.cs" />
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFwMainWnd.cs" />
-    <Compile Include="IMajorFLExUiComponent.cs" />
-    <Compile Include="ITool.cs" />
     <Compile Include="MainWindowDelegate.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -326,6 +321,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="gendarme-Framework.ignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Impls\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -82,7 +82,10 @@
 				<!-- Last sub-menu of main File->Import menu. -->
 				<item command="CmdImportSFMNotebook"/>
 			</menu>
-		<menu id="Insert">
+			<menu id="Edit_GoToRecord">
+				<item command="CmdGoToRecord"/>
+			</menu>
+			<menu id="Insert">
 			<item command="CmdInsertRecord" defaultVisible="false"/>
 			<item command="CmdInsertSubrecord" defaultVisible="false"/>
 			<item command="CmdInsertSubsubrecord" defaultVisible="false"/>

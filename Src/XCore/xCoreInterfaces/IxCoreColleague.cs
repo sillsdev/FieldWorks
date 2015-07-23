@@ -122,20 +122,6 @@ namespace XCore
 	}
 
 	/// <summary>
-	/// Implementors can provide a PropertyTable
-	/// </summary>
-	public interface IPropertyTableProvider
-	{
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
-		/// </summary>
-		PropertyTable PropTable
-		{
-			get;
-		}
-	}
-
-	/// <summary>
 	/// This is an interface implemented by xWindow (and perhaps other main window classes?)
 	/// that allows a few of their key functions to be called by things that don't reference xCore.
 	/// </summary>

@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-using NUnit.Framework;
-using SIL.FieldWorks.Common.Framework.Impls;
 
-namespace SIL.FieldWorks.Common.Framework
+using NUnit.Framework;
+
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Test the AreaRepository.
@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.Framework
 	[Category("ByHand")] // Needs to be run after everything has been built, or the areas may not be built yet.
 	public class AreaRepositoryTests
 	{
-		private AreaRepository m_areaRepository;
+		private IAreaRepository m_areaRepository;
 
 		/// <summary>
 		/// Set up test fixture.
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.Framework
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_areaRepository = new AreaRepository();
+			m_areaRepository = AreaRepositoryFactory.CreateAreaRepository();
 		}
 
 		/// <summary>

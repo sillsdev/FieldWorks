@@ -49,7 +49,7 @@
 	<!--
 		  Edit menu
 		  -->
-	<item id="CmdGoToEntry">Find a lexical entry.</item> <!-- Replaced "CmdFind" -->
+	<item id="CmdGoToEntry">Find a lexical entry.</item>
 	<item id="CmdDeleteRecord">Delete this {0}.</item>
 	<item id="CmdFindAndReplaceText">Find and Replace Text</item>
 	<item id="CmdBreakPhrase">Break selected phrase into words.</item>

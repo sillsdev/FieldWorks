@@ -3089,31 +3089,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		// sinfo.nPos  - ScrollPosition.Y
 		#endregion
 
-		#region Command handlers
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle the Edit/Select All menu command.
-		/// </summary>
-		/// <param name="args">The arguments</param>
-		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
-		/// -----------------------------------------------------------------------------------
-		protected bool OnEditSelectAll(object args)
-		{
-			using (new WaitCursor(this))
-			{
-				if (DataUpdateMonitor.IsUpdateInProgress())
-					return true;
-
-				if (Visible && !DesignMode)
-				{
-					SelectAll();
-					return true;
-				}
-				return false;
-			}
-		}
-		#endregion
-
 		#region Event handling methods
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

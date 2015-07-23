@@ -186,7 +186,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchivingTests.cs" />
-    <Compile Include="AreaRepositoryTests.cs" />
     <Compile Include="StylesXmlAccessorTests.cs" />
     <Compile Include="XhtmlHelperTests.cs" />
     <None Include="App.config" />

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
 
 namespace LexiconAreaPlugin
 {
@@ -12,7 +12,7 @@ namespace LexiconAreaPlugin
 	/// </summary>
 	public sealed class LexiconArea : IArea
 	{
-		#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -24,28 +24,26 @@ namespace LexiconAreaPlugin
 		/// Deactivate the component.
 		/// </summary>
 		/// <remarks>
-		/// This is called on the outgoing Area, when the user switches to a new Area.
+		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate()
+		public void Deactivate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 #if RANDYTODO
-			// Implement and call Deactivate() on current tool in area.
+			// Implement and call Deactivate(parameters) on current tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Deactivate method.", "Need to implement", MessageBoxButtons.OK);
 #endif
 		}
 
 		/// <summary>
-		/// Activate the area.
+		/// Activate the component.
 		/// </summary>
 		/// <remarks>
-		/// This is called on the area that is becoming active.
-		///
-		/// One of its tools will become active.
+		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate()
+		public void Activate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 #if RANDYTODO
-			// Implement and call Activate() on current/default tool in area.
+			// Implement and call Activate(parameters) on current/default tool in area.
 			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Activate method.", "Need to implement", MessageBoxButtons.OK);
 #endif
 		}
@@ -82,9 +80,8 @@ namespace LexiconAreaPlugin
 		/// The properties are about to be saved, so make sure they are all current.
 		/// Add new ones, as needed.
 		/// </summary>
-		/// <param name="fdoServiceLocator">The main system service locator.</param>
 		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		public void EnsurePropertiesAreCurrent(IFdoServiceLocator fdoServiceLocator, PropertyTable propertyTable)
+		public void EnsurePropertiesAreCurrent(PropertyTable propertyTable)
 		{
 #if RANDYTODO
 			// Implement and call EnsurePropertiesAreCurrent() on current tool in area.

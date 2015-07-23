@@ -17,7 +17,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.Archiving;
-using SIL.FieldWorks.Common.Framework.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -28,7 +27,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -64,12 +62,12 @@ namespace SIL.FieldWorks.Common.Framework
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
-		private IAreaRepository _areaRepository;
+		private readonly IAreaRepository _areaRepository;
 		private readonly ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
 		private FwStyleSheet _stylesheet;
-		private IPublisher _publisher;
-		private ISubscriber _subscriber;
+		private readonly IPublisher _publisher;
+		private readonly ISubscriber _subscriber;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -98,6 +96,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
 
+#region Add custom status bar panels
 			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
 			_statusbar.Panels[3].Name = @"statusBarPanelFilter";
 			_statusbar.Panels[3].Text = @"Filter";
@@ -112,18 +111,20 @@ namespace SIL.FieldWorks.Common.Framework
 			_statusbar.Panels[3].Name = @"statusBarPanelProgressBar";
 			_statusbar.Panels[3].Text = @"ProgressBar";
 			_statusbar.Panels[3].MinWidth = 150;
+#endregion Add custom status bar panels
 
 			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
 
-			_areaRepository = new AreaRepository();
+			_areaRepository = AreaRepositoryFactory.CreateAreaRepository();
 
 			PropTable = new PropertyTable(_publisher)
 			{
 				UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(FwApp.App.Cache.ProjectId.ProjectFolder),
 				LocalSettingsId = "local"
 			};
+
 			if (!Directory.Exists(PropTable.UserSettingDirectory))
 			{
 				Directory.CreateDirectory(PropTable.UserSettingDirectory);
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.Common.Framework
 			_currentArea = _areaRepository.GetArea(PropTable.GetStringProperty("InitialArea", "lexicon")) ??
 							_areaRepository.GetArea("lexicon");
 			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
-			_currentArea.Activate();
+			_currentArea.Activate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
 
 			SetWindowTitle();
 		}
@@ -152,7 +153,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 			// RR TODO: Delete GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 #endif
-			_currentArea.EnsurePropertiesAreCurrent(Cache.ServiceLocator, PropTable);
+			_currentArea.EnsurePropertiesAreCurrent(PropTable);
 			// first save global settings, ignoring database specific ones.
 			PropTable.SaveGlobalSettings();
 			// now save database specific settings.
@@ -895,6 +896,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void EditMenu_Opening(object sender, EventArgs e)
 		{
 			var hasActiveView = _viewHelper.ActiveView != null;
+			selectAllToolStripMenuItem.Enabled = hasActiveView;
 			cutToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCut());
 			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
 			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
@@ -943,6 +945,18 @@ namespace SIL.FieldWorks.Common.Framework
 #endif
 			}
 			((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).PasteUrl(_stylesheet);
+		}
+
+		private void Edit_Select_All(object sender, EventArgs e)
+		{
+			using (new WaitCursor(this))
+			{
+				if (DataUpdateMonitor.IsUpdateInProgress())
+				{
+					return;
+				}
+				_viewHelper.ActiveView.EditingHelper.SelectAll();
+			}
 		}
 	}
 }

@@ -7,10 +7,10 @@
 // Last reviewed:
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {

@@ -1,6 +1,7 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.Framework.Impls
+namespace SIL.CoreImpl.Impls
 {
 	// TODO: Upgrade to .Net 4.5 and use MEF 2.0 instead of reflection. (Ok, MEF will use Reflection, but that is fine.)
 	// TODO: MEF will need to create the AreaRepository, and thus the areas, on a per window scope.
