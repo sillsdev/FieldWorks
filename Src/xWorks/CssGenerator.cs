@@ -395,7 +395,7 @@ namespace SIL.FieldWorks.XWorks
 					var dec = new StyleDeclaration();
 					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Between) });
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
+						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = GetSelectorForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
+					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 				var beforeRule = new StyleRule(dec) { Value = baseSelection + ":first-child:before" };
 				rules.Add(beforeRule);
 			}
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.XWorks
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultVernWs, mediator));
+					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 				var afterRule = new StyleRule(dec) { Value = baseSelection + ":last-child:after" };
 				rules.Add(afterRule);
 			}
