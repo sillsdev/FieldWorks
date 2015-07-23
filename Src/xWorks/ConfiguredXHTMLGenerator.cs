@@ -38,7 +38,6 @@ namespace SIL.FieldWorks.XWorks
 		internal static Dictionary<string, Assembly> AssemblyMap = new Dictionary<string, Assembly>();
 
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
-		private static int ParentEntryhvo = 0;
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
 		/// </summary>
@@ -147,7 +146,6 @@ namespace SIL.FieldWorks.XWorks
 				string lastHeader = null;
 				foreach (var hvo in entryHvos)
 				{
-					ParentEntryhvo = hvo;
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					// TODO pH 2014.08: generate only if entry is published (confignode enabled, pubAsMinor, selected complex- or variant-form type)
 					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
@@ -268,7 +266,6 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			ParentEntryhvo = entry.Hvo;
 			settings.Writer.WriteStartElement("div");
 			WriteClassNameAttribute(settings.Writer, configuration);
 			settings.Writer.WriteAttributeString("id", "hvo" + entry.Hvo);
@@ -1053,23 +1050,54 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-			if (item is ISenseOrEntry)
-			{
-				var hvo = ((ISenseOrEntry)item).EntryHvo;
-				if (ParentEntryhvo == hvo)
-					return;
-			}
 			writer.WriteStartElement(GetElementNameForProperty(config));
 			WriteCollectionItemClassAttribute(config, writer);
 			if (config.Children != null)
 			{
-				foreach (var child in config.Children)
+				var listOptionsNode = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+				// sense and entry options types suggest that we are working with a cross reference
+				if (listOptionsNode != null &&
+					(listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Sense ||
+					 listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Entry))
 				{
-					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					GenerateCrossReferenceChildren(config, publicationDecorator, item, collectionOwner, settings);
+				}
+				else
+				{
+					foreach (var child in config.Children)
+					{
+						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					}
 				}
 			}
-
 			writer.WriteEndElement();
+		}
+
+		private static void GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			object item, object collectionOwner, GeneratorSettings settings)
+		{
+			if(config.Children != null)
+			{
+				foreach(var child in config.Children)
+				{
+					if(child.FieldDescription == "ConfigTargets")
+					{
+						settings.Writer.WriteStartElement("span");
+						WriteClassNameAttribute(settings.Writer, child);
+						// ConfigTargets is a field on LexReference only
+						var reference = (ILexReference)item;
+						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Hvo : ((ILexSense)collectionOwner).Owner.Hvo;
+						// Exclude the entry we are displaying. (The LexReference contains all involved entries)
+						foreach(var target in reference.ConfigTargets.Where(x => x.EntryHvo != ownerHvo))
+						{
+							GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
+						}
+						settings.Writer.WriteEndElement();
+					}
+					else
+						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+				}
+			}
 		}
 
 		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeSenseOptions senseOptions, XmlWriter writer,
