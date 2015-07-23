@@ -1280,7 +1280,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .senses > .sensecontent .sensenumber:before{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .senses > .sensecontent:before{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}", RegexOptions.Singleline).Success,
 							  "Bulleted style not generated.");
 		}
 

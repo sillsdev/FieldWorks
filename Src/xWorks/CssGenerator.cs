@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
 				styleSheet.Rules.Add(senseParaRule);
-				GenerateCssforBulletedList(configNode, styleSheet, senseNumberSelector, mediator);
+				GenerateCssforBulletedList(configNode, styleSheet, senseContentSelector, mediator);
 			}
 			// Generate the style information specifically for senses
 			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
