@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -497,7 +497,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		#region overrides
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			return new MockVectorReferenceView();
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_vectorRefView = CreateVectorReverenceView();
+			this.m_vectorRefView = CreateVectorReferenceView();
 			this.SuspendLayout();
 			//
 			// m_panel
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		#endregion
 
-		protected virtual VectorReferenceView CreateVectorReverenceView()
+		protected virtual VectorReferenceView CreateVectorReferenceView()
 		{
 			return new VectorReferenceView();
 		}

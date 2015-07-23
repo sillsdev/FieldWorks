@@ -1,16 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Linq;
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using System;
+using System.Diagnostics;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -85,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			AddItem(obj, LexEdStrings.ksUndoAddRef, LexEdStrings.ksRedoAddRef);
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			LexReferenceSequenceView lrcv = new LexReferenceSequenceView();
 			if (m_displayParent != null)
