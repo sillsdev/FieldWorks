@@ -2,7 +2,9 @@
 <DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="1" lastModified="2014-10-07">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
-    <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+  <!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
+       prevents styles for the main HeadWord from leaking onto other HeadWords -->
+    <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
         <Option id="vernacular" isEnabled="true"/>
       </WritingSystemOptions>
