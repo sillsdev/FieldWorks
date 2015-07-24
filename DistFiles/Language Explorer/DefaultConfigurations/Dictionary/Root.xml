@@ -29,8 +29,7 @@
       <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
         <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
           <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
-            <Option id="fr" isEnabled="true"/>
-            <Option id="en" isEnabled="true"/>
+            <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Name" between=" " after=" " isEnabled="true" field="Name">
@@ -1034,8 +1033,7 @@
         <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
           <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
             <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
-              <Option id="fr" isEnabled="true"/>
-              <Option id="en" isEnabled="true"/>
+              <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Name" between=" " after=" " isEnabled="true" field="Name">
@@ -2015,8 +2013,7 @@
       <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
         <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
           <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
-            <Option id="fr" isEnabled="true"/>
-            <Option id="en" isEnabled="true"/>
+            <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Name" between=" " after=" " isEnabled="true" field="Name">
