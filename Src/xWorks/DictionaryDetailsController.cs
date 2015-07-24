@@ -604,12 +604,7 @@ namespace SIL.FieldWorks.XWorks
 				var listViewItemS = new List<ListViewItem>();
 				var lexRelType = (ILexRefType)relType;
 				var mappingType = (LexRefTypeTags.MappingTypes)lexRelType.MappingType;
-				if (mappingType == LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair ||
-					mappingType == LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair ||
-					mappingType == LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair ||
-					mappingType == LexRefTypeTags.MappingTypes.kmtEntryTree ||
-					mappingType == LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree ||
-					mappingType == LexRefTypeTags.MappingTypes.kmtSenseTree)
+				if (LexRefTypeTags.IsAsymmetric(mappingType))
 				{
 					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
 					{

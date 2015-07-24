@@ -240,9 +240,7 @@ namespace SIL.FieldWorks.FDO
 
 	public abstract partial class LexRefTypeTags
 	{
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		public enum MappingTypes
 		{
 			/// <summary></summary>
@@ -277,6 +275,16 @@ namespace SIL.FieldWorks.FDO
 			kmtEntryOrSenseSequence = 14
 		};
 
+		/// <returns>True if the MappingType is directional (asymmetric); false if it is the same in any direction (symmetric).</returns>
+		public static bool IsAsymmetric(MappingTypes type)
+		{
+			return type == MappingTypes.kmtEntryAsymmetricPair
+				|| type == MappingTypes.kmtEntryOrSenseAsymmetricPair
+				|| type == MappingTypes.kmtSenseAsymmetricPair
+				|| type == MappingTypes.kmtEntryTree
+				|| type == MappingTypes.kmtEntryOrSenseTree
+				|| type == MappingTypes.kmtSenseTree;
+		}
 	}
 
 	public partial class LexEntryTypeTags

@@ -902,7 +902,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
-				GenerateXHTMLForSenses(config, publicationDecorator, collectionOwner, settings, collection);
+				GenerateXHTMLForSenses(config, publicationDecorator, settings, collection);
 				writer.WriteEndElement();
 			}
 			else
@@ -918,20 +918,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a senses collection and its contents
 		/// </summary>
-		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object collectionOwner, GeneratorSettings settings, IEnumerable collection)
+		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable collection)
 		{
-			var writer = settings.Writer;
 			var isSingle = collection.Cast<object>().Count() == 1;
-			string lastGrammaticalInfo = string.Empty;
-			string langId = string.Empty;
-			bool isSameGrammaticalInfo = false;
-			isSameGrammaticalInfo = IsAllGramInfoTheSame(config, collection, out lastGrammaticalInfo, out langId);
+			string lastGrammaticalInfo, langId;
+			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, collection, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo)
 				InsertGramInfoBeforeSenses(settings, lastGrammaticalInfo, langId);
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			foreach (var item in collection)
 			{
-				GenerateSenseContent(config, publicationDecorator, item, isSingle, collectionOwner, settings, isSameGrammaticalInfo);
+				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo);
 			}
 		}
 
@@ -951,8 +948,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			lastGrammaticalInfo = "";
 			langId = "";
-			string requestedString = string.Empty;
-			bool isSameGrammaticalInfo = false;
+			var requestedString = string.Empty;
+			var isSameGrammaticalInfo = false;
 			if (config.FieldDescription == "SensesOS")
 			{
 				var senseNode = (DictionaryNodeSenseOptions) config.DictionaryNodeOptions;
@@ -965,14 +962,12 @@ namespace SIL.FieldWorks.XWorks
 						var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
 						langId = defaultWs.Id;
 						var entryType = item.GetType();
-						object propertyValue = null;
-						var grammaticalInfo =
-							config.Children.Where(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled)).FirstOrDefault();
+						var grammaticalInfo = config.Children.FirstOrDefault(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled));
 						if (grammaticalInfo == null) return false;
 						var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
-						propertyValue = property.GetValue(item, new object[] {});
+						var propertyValue = property.GetValue(item, new object[] {});
 						if (propertyValue == null) return false;
-						var child = grammaticalInfo.Children.Where(e => (e.IsEnabled && e.Children.Count == 0)).FirstOrDefault();
+						var child = grammaticalInfo.Children.FirstOrDefault(e => (e.IsEnabled && e.Children.Count == 0));
 						if (child == null) return false;
 						entryType = propertyValue.GetType();
 						property = entryType.GetProperty(child.FieldDescription);
@@ -997,8 +992,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else
 						{
-							isSameGrammaticalInfo = false;
-							return isSameGrammaticalInfo;
+							return false;
 						}
 					}
 				}
@@ -1007,13 +1001,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, object collectionOwner, GeneratorSettings settings, bool isSameGrammaticalInfo)
+			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo)
 		{
 			var writer = settings.Writer;
-			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
-			{
-				return;
-			}
 			if (config.Children.Count != 0)
 			{
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
@@ -1062,7 +1052,7 @@ namespace SIL.FieldWorks.XWorks
 					(listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Sense ||
 					 listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Entry))
 				{
-					GenerateCrossReferenceChildren(config, publicationDecorator, item, collectionOwner, settings);
+					GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings);
 				}
 				else
 				{
@@ -1076,7 +1066,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, object collectionOwner, GeneratorSettings settings)
+			ILexReference reference, object collectionOwner, GeneratorSettings settings)
 		{
 			if(config.Children != null)
 			{
@@ -1086,18 +1076,34 @@ namespace SIL.FieldWorks.XWorks
 					{
 						settings.Writer.WriteStartElement("span");
 						WriteClassNameAttribute(settings.Writer, child);
-						// ConfigTargets is a field on LexReference only
-						var reference = (ILexReference)item;
 						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Hvo : ((ILexSense)collectionOwner).Owner.Hvo;
-						// Exclude the entry we are displaying. (The LexReference contains all involved entries)
+						// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
 						foreach(var target in reference.ConfigTargets.Where(x => x.EntryHvo != ownerHvo))
 						{
 							GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
 						}
 						settings.Writer.WriteEndElement();
 					}
+					// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
+					// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
+					// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
+					else if(child.FieldDescription == "OwnerType"
+						&& LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType)
+						&& LexRefDirection(reference, collectionOwner) == ":r")
+					{
+						// Changing the SubField changes the default CSS Class name.
+						// If there is no override, override with the default before changing the SubField.
+						if(string.IsNullOrEmpty(child.CSSClassNameOverride))
+							child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
+
+						// Prefix the SubField with "Reverse" just long enough to generate XHTML for this node.
+						var subField = child.SubField;
+						child.SubField = "Reverse" + subField;
+						GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+						child.SubField = subField;
+					}
 					else
-						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+						GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
 				}
 			}
 		}
@@ -1227,10 +1233,8 @@ namespace SIL.FieldWorks.XWorks
 			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
 			var selectedListOptions = new List<Guid>();
 			var forwardReverseOptions = new List<Tuple<Guid, string>>();
-			foreach (var option in listOptions.Options)
+			foreach (var option in listOptions.Options.Where(optn => optn.IsEnabled))
 			{
-				if (option.IsEnabled)
-				{
 					var forwardReverseIndicator = option.Id.IndexOf(':');
 					if (forwardReverseIndicator > 0)
 					{
@@ -1242,7 +1246,6 @@ namespace SIL.FieldWorks.XWorks
 						selectedListOptions.Add(new Guid(option.Id));
 					}
 				}
-			}
 			switch (listOptions.ListId)
 			{
 				case DictionaryNodeListOptions.ListIds.Variant:
@@ -1274,10 +1277,9 @@ namespace SIL.FieldWorks.XWorks
 						{
 							var entryRef = (ILexEntryRef)listItem;
 							var entryTypeGuids = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
-							if (entryTypeGuids.Intersect(selectedListOptions).Any())
-								return true;
+							return entryTypeGuids.Intersect(selectedListOptions).Any();
 						}
-						else if (listItem is ILexEntry)
+						if (listItem is ILexEntry)
 						{
 							var entry = (ILexEntry)listItem;
 							var entryTypeGuids = new List<Guid>();
@@ -1285,39 +1287,38 @@ namespace SIL.FieldWorks.XWorks
 							{
 								entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
 							}
-							if (entryTypeGuids.Intersect(selectedListOptions).Any())
-								return true;
+							return entryTypeGuids.Intersect(selectedListOptions).Any();
 						}
 						return false;
 					}
 				case DictionaryNodeListOptions.ListIds.Entry:
 				case DictionaryNodeListOptions.ListIds.Sense:
 					{
-						var entryRef = (ILexReference)listItem;
-						var entryTypeGuid = entryRef.OwnerType.Guid;
+						var lexRef = (ILexReference)listItem;
+						var entryTypeGuid = lexRef.OwnerType.Guid;
 						if (selectedListOptions.Contains(entryTypeGuid))
 						{
 							return true;
 						}
-						else
-						{
-							foreach (var pair in forwardReverseOptions)
-							{
-								if (pair.Item1 == entryTypeGuid)
-								{
-									return (entryRef.TargetsRS[0] == parent && pair.Item2 == ":f") ||
-										(entryRef.TargetsRS[1] == parent && pair.Item2 == ":r");
+						var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
+						return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
 								}
-							}
-							return false;
-						}
-					}
 				default:
 					{
 						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
 						return true;
 					}
 			}
+		}
+
+		/// <returns>
+		/// ":f" if we are working in the forward direction (the parent is the head of a tree or asymmetric pair);
+		/// ":r" if we are working in the reverse direction (the parent is a subordinate in a tree or asymmetric pair).
+		/// </returns>
+		/// <remarks>This method does not determine symmetry; use <see cref="LexRefTypeTags.IsAsymmetric"/> for that.</remarks>
+		private static string LexRefDirection(ILexReference lexRef, object parent)
+		{
+			return Equals(lexRef.TargetsRS[0], parent) ? ":f" : ":r";
 		}
 
 		/// <summary>
@@ -1541,7 +1542,7 @@ namespace SIL.FieldWorks.XWorks
 				if (fieldValue != null)
 				{
 					writer.WriteStartElement("span");
-					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", System.StringComparison.Ordinal));
+					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
 					GenerateXHTMLForAudioFile(writingSystem, writer, audioId,
 						GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings), String.Empty);
 					writer.WriteEndElement();
