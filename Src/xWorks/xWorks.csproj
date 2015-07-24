@@ -122,10 +122,6 @@
       <HintPath>..\..\Output\Debug\FdoUi.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="FlexUIAdapter, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\FlexUIAdapter.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="Filters, Version=1.0.3685.30427, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

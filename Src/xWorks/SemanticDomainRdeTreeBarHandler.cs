@@ -25,7 +25,13 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
+#if RANDYTODO
+		// Whatever PaneBar did, figure out some other control,
+		// since PaneBar went away, when the Flex UI adapter wevt away.
 		private PaneBar m_titleBar;
+#else
+		private Control m_titleBar;
+#endif
 		private Panel m_headerPanel;
 		private FwTextBox m_textSearch;
 		private FwCancelSearchButton m_btnCancelSearch;
@@ -66,7 +72,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!treeBarControl.HasHeaderControl)
 			{
+#if RANDYTODO
 				m_titleBar = new PaneBar { Dock = DockStyle.Top };
+#else
+				m_titleBar = new Button { Dock = DockStyle.Top };
+#endif
 				var headerPanel = new Panel { Visible = false };
 				headerPanel.Controls.Add(m_titleBar);
 				m_btnCancelSearch = new FwCancelSearchButton();
@@ -193,7 +203,11 @@ namespace SIL.FieldWorks.XWorks
 			return window.TreeBarControl;
 		}
 
+#if RANDYTODO
 		private void SetInfoBarText(XmlNode handlerNode, PaneBar infoBar)
+#else
+		private void SetInfoBarText(XmlNode handlerNode, Control infoBar)
+#endif
 		{
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.

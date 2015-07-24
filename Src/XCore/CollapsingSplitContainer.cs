@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils;
 using System.Xml;
+using SIL.CoreImpl;
 
 namespace XCore
 {

@@ -2462,13 +2462,4 @@ namespace XCore
 			}
 		}
 	}
-
-	/// <summary>
-	/// Interface main content controls may implement if they want to do more initialization after
-	/// the main content control is laid out (e.g., when their true size is known).
-	/// </summary>
-	public interface IPostLayoutInit
-	{
-		void PostLayoutInit();
-	}
 }

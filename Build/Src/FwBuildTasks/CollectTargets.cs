@@ -320,12 +320,6 @@ namespace FwBuildTasks
 						case "COMInterfaces":
 							bldr.Append(";mktlbs");
 							break;
-						case "xWorks":
-							// xWorks now references FlexUIAdapter.dll.
-							// But, we don't discover that dependency, because for some bizarre
-							// historical reason, the project that builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane.
-							bldr.Append(";XCoreAdapterSilSidePane");
-							break;
 						case "TeImportExportTests":
 						case "FwCoreDlgsTests":
 							// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.

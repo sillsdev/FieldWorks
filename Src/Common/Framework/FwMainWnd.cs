@@ -144,6 +144,13 @@ namespace SIL.FieldWorks.Common.Framework
 			_currentArea.Activate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
 
 			SetWindowTitle();
+#if RANDYTODO
+			// Remove this when I'm done with project.
+			// Load xml config files and save merged document.
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
+			var mergedConfigDoc = XWindow.LoadConfigurationWithIncludes(configFilePath, false);
+			mergedConfigDoc.Save(@"C:\xWindowFullConfig.xml");
+#endif
 		}
 
 		private void SaveSettings()
@@ -608,7 +615,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Justification = "cache is disposed elsewhere.")]
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
-			FdoCache cache = FwApp.App.Cache;
+			var cache = FwApp.App.Cache;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 				return;
 
@@ -949,6 +956,27 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void Edit_Select_All(object sender, EventArgs e)
 		{
+#if RANDYTODO
+/*
+	Jason Naylor's expanded comment on potential issues.
+	Things to keep in mind:
+
+	"I think if anything my comment regards a potential design improvement that is
+beyond the scope of this current change. You might want to have a quick look at the
+SIL.FieldWorks.IText.StatisticsView and how it will play into this. You may find nothing
+that needs to change. I wrote that class way back before I understood how many tentacles
+the xWindow and other 'x' classes had. We needed a very simple view of data that wasn't
+in any of our blessed RecordLists. I wrote this view with the idea that it would be tied
+into the xBeast as little as possible. This was years ago.
+
+	After your changes I expect that something like this would be easier to do, and easy to
+make more functional. The fact that the ActiveView is an IRootSite factors in to what kind
+of views we are able to have.
+
+	Just giving you more to think about while you're working on these
+very simple minor adjustments. ;)"
+*/
+#endif
 			using (new WaitCursor(this))
 			{
 				if (DataUpdateMonitor.IsUpdateInProgress())

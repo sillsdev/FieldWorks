@@ -112,6 +112,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="ISubscriber.cs" />

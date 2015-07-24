@@ -179,9 +179,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="ConfigurationLoadTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IncludeXmlTests.cs" />
     <Compile Include="InventoryTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -191,9 +188,6 @@
     </Compile>
     <Compile Include="Tester.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="xCWindowTests.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="XWindowTestsBase.cs">
       <SubType>Code</SubType>

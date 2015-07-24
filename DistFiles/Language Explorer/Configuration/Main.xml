@@ -775,7 +775,6 @@ InterlinMaster user:
 		<include path="Lists/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Grammar/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="CommonDataTreeInclude.xml" query="root/defaultProperties/*"/>
-		<property name="PreferredUILibrary" value="FlexUIAdapter.dll" persist="false"/>
 		<!--
 		We want to only show the sidebar by default.
 		If the user turns it off, than the preference will be saved in their settings file
