@@ -587,30 +587,45 @@
   <data name="ksWhenToSetPartOfSpeechGUIDsToGold" xml:space="preserve">
     <value>If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs).</value>
   </data>
-	<data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
+  <data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
     <value>GUIDs changed</value>
     <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found some.</comment>
   </data>
-	<data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
+  <data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
     <value>No GUIDs changed</value>
     <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found nothing.</comment>
   </data>
-	<data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
+  <data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
     <value>Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced.</value>
     <comment>Message box content for when the utility found GUIDs and changed them.</comment>
   </data>
-	<data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
+  <data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
     <value>No changes were necessary.</value>
     <comment>Message box content for when the POS GUID utility found nothing to change.</comment>
   </data>
-	<data name="GoldEticGuidFixer_Label" xml:space="preserve">
+  <data name="GoldEticGuidFixer_Label" xml:space="preserve">
     <value>Use standard Part of Speech GUIDs</value>
     <comment>Label shown in the Tools:Utilities dialog for the POS GUID utility.</comment>
   </data>
-	<data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
+  <data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
     <value>Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work.</value>
   </data>
-	<data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
+  <data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
     <value>Failed LIFT S/R Detected</value>
+  </data>
+  <data name="ksWhatIsSortReversalSubentries" xml:space="preserve">
+    <value>This utility will sort the reversal subentries in your data by the ICU sort rules for your reversal language</value>
+  </data>
+  <data name="ksWhenToSortReversalSubentries" xml:space="preserve">
+    <value>Run this utility when you want your reversal subentries to be sorted alphabetically</value>
+  </data>
+  <data name="SortReversalSubentries_Label" xml:space="preserve">
+    <value>Sort Reversal Subentries</value>
+  </data>
+	<data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
+    <value>All reversal subentries are now sorted.</value>
+  </data>
+	<data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
+    <value>Reversal subentry sorting is completed</value>
   </data>
 </root>

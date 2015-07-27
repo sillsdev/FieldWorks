@@ -1420,6 +1420,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data by the ICU sort rules for your reversal language.
+        /// </summary>
+        internal static string ksWhatIsSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
         internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
@@ -1456,6 +1465,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically.
+        /// </summary>
+        internal static string ksWhenToSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhenToSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work..
         /// </summary>
         internal static string LiftSRFailureDetectedOnStartupMessage {
@@ -1470,6 +1488,33 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string LiftSRFailureDetectedOnStartupTitle {
             get {
                 return ResourceManager.GetString("LiftSRFailureDetectedOnStartupTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All reversal subentries are now sorted..
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedContent {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal subentry sorting is completed.
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedTitle {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort Reversal Subentries.
+        /// </summary>
+        internal static string SortReversalSubentries_Label {
+            get {
+                return ResourceManager.GetString("SortReversalSubentries_Label", resourceCulture);
             }
         }
     }

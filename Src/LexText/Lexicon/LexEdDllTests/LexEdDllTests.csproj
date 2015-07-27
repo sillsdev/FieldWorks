@@ -100,11 +100,16 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReversalEntryBulkEditTests.cs" />
+    <Compile Include="SortReversalSubEntriesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Controls\XMLViews\XMLViews.csproj">
       <Project>{BC490547-D278-4442-BD34-3580DBEFC405}</Project>
       <Name>XMLViews</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\CoreImpl\CoreImpl.csproj">
+      <Project>{4C7D6B65-A331-4ED7-9B53-3301E714F8E7}</Project>
+      <Name>CoreImpl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
       <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
