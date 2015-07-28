@@ -1,8 +1,11 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -65,11 +68,32 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		#region Dispose
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if(disposing)
+			{
+				if(m_typePopupTreeManager != null)
+				{
+					m_typePopupTreeManager.Dispose();
+					m_typePopupTreeManager = null;
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+		#endregion Dispose
 
 		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject owner)
 		{
