@@ -1,18 +1,11 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DictionaryConfigManagerTests.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.XWorks
 {

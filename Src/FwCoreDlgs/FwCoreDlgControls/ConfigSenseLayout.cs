@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -101,9 +101,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		private void FillNumberStyleComboList()
 		{
-			m_cbNumberStyle.Items.Add(new NumberStyleComboItem(FwCoreDlgControls.ksNone, ""));
-			m_cbNumberStyle.Items.Add(new NumberStyleComboItem("1  1.2  1.2.3", "%O"));
-			m_cbNumberStyle.Items.Add(new NumberStyleComboItem("1  b  iii", "%z"));
+			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem(FwCoreDlgControls.ksNone, ""));
+			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem("1  1.2  1.2.3", "%O"));
+			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem("1  b  iii", "%z"));
 		}
 
 		/// <summary>
@@ -322,101 +322,4 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		// ReSharper restore InconsistentNaming
 		#endregion
 	}
-	#region NumberStyleComboItem class
-
-	/// <summary>
-	/// This class implements an item for the number style combobox list.
-	/// </summary>
-	public class NumberStyleComboItem
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public NumberStyleComboItem(string sLabel, string sFormat)
-		{
-			Label = sLabel;
-			FormatString = sFormat;
-		}
-
-		/// <summary>
-		/// returns the label
-		/// </summary>
-		public override string ToString()
-		{
-			return Label;
-		}
-
-		/// <summary>
-		/// Get the number formatting string for this item.
-		/// </summary>
-		public string FormatString { get; private set; }
-
-		/// <summary>
-		/// Get the label shown in the combobox list.
-		/// </summary>
-		public string Label { get; private set; }
-	}
-
-	#endregion // NumberStyleComboItem class
-
-	#region StyleComboItem class
-
-	/// <summary>
-	///
-	/// </summary>
-	public class StyleComboItem : IComparable
-	{
-		private readonly BaseStyleInfo m_style;
-
-		/// <summary>
-		///
-		/// </summary>
-		public StyleComboItem(BaseStyleInfo sty)
-		{
-			m_style = sty;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public override string ToString()
-		{
-			if (m_style == null)
-				return "(none)";
-			return m_style.Name;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public BaseStyleInfo Style
-		{
-			get { return m_style; }
-		}
-
-		#region IComparable Members
-
-		/// <summary>
-		///
-		/// </summary>
-		public int CompareTo(object obj)
-		{
-			var that = obj as StyleComboItem;
-			if (this == that)
-				return 0;
-			if (that == null)
-				return 1;
-			if (Style == that.Style)
-				return 0;
-			if (that.Style == null)
-				return 1;
-			if (Style == null)
-				return -1;
-			return Style.Name.CompareTo(that.Style.Name);
-		}
-
-		#endregion
-	}
-
-	#endregion // StyleComboItem class
 }

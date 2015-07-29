@@ -235,10 +235,12 @@
     <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
       <Package>Geckofx-Core</Package>
       <HintPath>..\..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
+      <SpecificVersion>False</SpecificVersion>
+	</Reference>
     <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>

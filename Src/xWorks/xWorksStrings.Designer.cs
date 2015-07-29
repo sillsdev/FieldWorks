@@ -88,11 +88,29 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $$all_entries$$.
+        /// </summary>
+        internal static string AllEntriesPublication {
+            get {
+                return ResourceManager.GetString("AllEntriesPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allomorph.
         /// </summary>
         internal static string Allomorph {
             get {
                 return ResourceManager.GetString("Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All publications.
+        /// </summary>
+        internal static string Allpublications {
+            get {
+                return ResourceManager.GetString("Allpublications", resourceCulture);
             }
         }
         
@@ -124,11 +142,65 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compressing data before sending to Webonary..
+        /// </summary>
+        internal static string BeginCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("BeginCompressingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Sound or Movie File.
         /// </summary>
         internal static string ChooseSoundOrMovieFile {
             get {
                 return ResourceManager.GetString("ChooseSoundOrMovieFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration.
+        /// </summary>
+        internal static string Configuration {
+            get {
+                return ResourceManager.GetString("Configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear All Children.
+        /// </summary>
+        internal static string ConfigurationTreeControl_ClearAllChildren {
+            get {
+                return ResourceManager.GetString("ConfigurationTreeControl_ClearAllChildren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select All Children.
+        /// </summary>
+        internal static string ConfigurationTreeControl_SelectAllChildren {
+            get {
+                return ResourceManager.GetString("ConfigurationTreeControl_SelectAllChildren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure {0}.
+        /// </summary>
+        internal static string ConfigureTitle {
+            get {
+                return ResourceManager.GetString("ConfigureTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
+        internal static string Confirm {
+            get {
+                return ResourceManager.GetString("Confirm", resourceCulture);
             }
         }
         
@@ -191,6 +263,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DeletingTheObject {
             get {
                 return ResourceManager.GetString("DeletingTheObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary.
+        /// </summary>
+        internal static string Dictionary {
+            get {
+                return ResourceManager.GetString("Dictionary", resourceCulture);
             }
         }
         
@@ -258,6 +339,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string ExportingEntriesToWebonary {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export of lexicon completed..
+        /// </summary>
+        internal static string ExportingEntriesToWebonaryCompleted {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export to {0}.
         /// </summary>
         internal static string ExportTo0 {
@@ -276,6 +375,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to rename. Use a name that is not already in use..
+        /// </summary>
+        internal static string FailedToRename {
+            get {
+                return ResourceManager.GetString("FailedToRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field Names should not be empty. Please choose a different name..
         /// </summary>
         internal static string FieldNameShouldNotBeEmpty {
@@ -290,6 +398,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Filtered {
             get {
                 return ResourceManager.GetString("Filtered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compression complete..
+        /// </summary>
+        internal static string FinishedCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("FinishedCompressingDataForWebonary", resourceCulture);
             }
         }
         
@@ -335,6 +452,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string HaveLaunchedFLEXTenTimes {
             get {
                 return ResourceManager.GetString("HaveLaunchedFLEXTenTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
+        /// </summary>
+        internal static string InvalidRootConfigurationNode {
+            get {
+                return ResourceManager.GetString("InvalidRootConfigurationNode", resourceCulture);
             }
         }
         
@@ -794,6 +920,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksDictionaryView {
             get {
                 return ResourceManager.GetString("ksDictionaryView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each Complex Form in a paragraph.
+        /// </summary>
+        internal static string ksDisplayComplexFormsInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayComplexFormsInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each Subentry in a paragraph.
+        /// </summary>
+        internal static string ksDisplaySubentriesInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplaySubentriesInParagraphs", resourceCulture);
             }
         }
         
@@ -1527,7 +1671,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variant Types.
+        ///   Looks up a localized string similar to Variant Types:.
         /// </summary>
         internal static string ksVariantTypes {
             get {
@@ -1635,6 +1779,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No configurations match the current publication..
+        /// </summary>
+        internal static string NoConfigsMatchPub {
+            get {
+                return ResourceManager.GetString("NoConfigsMatchPub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no description available for this item..
         /// </summary>
         internal static string NoDescriptionForItem {
@@ -1676,6 +1829,16 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Promote {
             get {
                 return ResourceManager.GetString("Promote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
+            get {
+                return ResourceManager.GetString("PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0_" +
+                        "_publication_using_the__1__configuration", resourceCulture);
             }
         }
         
@@ -1740,6 +1903,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string RedoMoveItem {
             get {
                 return ResourceManager.GetString("RedoMoveItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Index.
+        /// </summary>
+        internal static string ReversalIndex {
+            get {
+                return ResourceManager.GetString("ReversalIndex", resourceCulture);
             }
         }
         
@@ -1875,6 +2056,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string VisibleLabel {
             get {
                 return ResourceManager.GetString("VisibleLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to continue?.
+        /// </summary>
+        internal static string WantContinue {
+            get {
+                return ResourceManager.GetString("WantContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are resetting the following to factory defaults:.
+        /// </summary>
+        internal static string YouAreResetting {
+            get {
+                return ResourceManager.GetString("YouAreResetting", resourceCulture);
             }
         }
     }

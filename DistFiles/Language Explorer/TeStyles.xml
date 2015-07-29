@@ -5,7 +5,7 @@
 	guidgen. Be sure to validate any changes against Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2011-07-14" DTDver="B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F" label="Scripture">
+<Styles date="2011-07-14" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Scripture">
 	<markup version="04D4DC0C-9754-4072-BFE7-DE116967732B">
 		<tag id="Abbreviation" guid="0225A2C8-0803-4E40-921A-2CBD97C13018" userlevel="3" context="general" type="character">
 			<usage wsId="en">Abbreviation identifies an abbreviation (usually in a note or introduction).</usage>

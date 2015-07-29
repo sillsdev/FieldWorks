@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews.Name = "m_linkManageViews";
 			this.m_linkManageViews.TabStop = true;
 			this.m_linkManageViews.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageViews_LinkClicked);
-			//
+			// 
 			// XmlDocConfigureDlg
 			//
 			resources.ApplyResources(this, "$this");

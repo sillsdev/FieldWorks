@@ -251,27 +251,6 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// to be included in the RAMP package.
 		/// </summary>
 		/// <param name="filesToArchive">The files to include</param>
-		/// <returns>Groups of files to archive and descriptive progress messages</returns>
-		/// ------------------------------------------------------------------------------------
-		private IDictionary<string, Tuple<IEnumerable<string>, string>> GetFilesToArchive(IEnumerable<string> filesToArchive)
-		{
-			// Explanation:
-			//   IDictionary<string1, Tuple<IEnumerable<string2>, string3>>
-			//     string1 = group name or key (used for normalizing file names in the zip file)
-			//     string2 = file name (a list of the files in this group)
-			//     string3 = progress message (a progress message for this group)
-			var files = new Dictionary<string, Tuple<IEnumerable<string>, string>>();
-			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
-				ResourceHelper.GetResourceString("kstidAddingFwProject"));
-			return files;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called by the Archiving Dialog to retrieve the lists of the files and description
-		/// to be included in the RAMP package.
-		/// </summary>
-		/// <param name="filesToArchive">The files to include</param>
 		/// ------------------------------------------------------------------------------------
 		private static Action<ArchivingDlgViewModel> SetFilesToArchive(IEnumerable<string> filesToArchive)
 		{

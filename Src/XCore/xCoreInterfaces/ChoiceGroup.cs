@@ -483,7 +483,14 @@ namespace XCore
 
 			foreach (ListItem item in list)
 			{
-				Add(new ListPropertyChoice(m_mediator, m_propertyTable, item,m_adapter , this));
+				if(item is SeparatorItem)
+				{
+					Add(new SeparatorChoice(null, null, null, null, null));
+				}
+				else
+				{
+					Add(new ListPropertyChoice(m_mediator, m_propertyTable, item, m_adapter, this));
+				}
 			}
 
 			// select the first one if none is selected

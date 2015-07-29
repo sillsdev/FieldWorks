@@ -108,6 +108,7 @@
     <Compile Include="RomanNumeralsTests.cs" />
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="SetTests.cs" />
+    <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="SingletonsContainerTests.cs" />
     <Compile Include="TestSmallDictionary.cs" />
     <Compile Include="UtilsTest.cs" />
