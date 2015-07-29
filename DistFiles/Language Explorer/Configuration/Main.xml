@@ -65,7 +65,8 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
-    <command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
+		<command id="CmdPublishToWebonary" label="Publish to _Webonary..." message="PublishToWebonary"/>
+		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
@@ -181,6 +182,9 @@
 		</command>
 		<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+		</command>
+		<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
 		</command>
 		<command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
@@ -311,6 +315,7 @@
 			<parameters file="Play_all"/>
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
+		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<!-- F1 is omitted because used for Help-->
 		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
 			<parameters key="2"/>
@@ -456,8 +461,9 @@
 				<item command="CmdDeleteProject"/>
 				<item command="CmdCreateProjectShortcut"/>
 			</menu>
-      <item label="-" translate="do not translate"/>
-      <item command="CmdArchiveWithRamp" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdArchiveWithRamp" />
+			<item command="CmdPublishToWebonary" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>
@@ -952,6 +958,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
+		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
 		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->

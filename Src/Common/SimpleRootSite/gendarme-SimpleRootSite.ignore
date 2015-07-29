@@ -39,3 +39,4 @@ T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProvider
 T: SIL.FieldWorks.Common.RootSites.BaseFragmentProvider`1
 T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTextRangeProvider
 T: SIL.FieldWorks.Common.RootSites.VwBaseVc
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSite/WindowsLanguageProfileSink

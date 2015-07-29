@@ -330,6 +330,9 @@ Change the writing system of one of these columns or remove the duplicated colum
   <data name="ksNonBlanks" xml:space="preserve">
     <value>Non-blanks</value>
   </data>
+  <data name="ksNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
   <data name="ksNoneOf_" xml:space="preserve">
     <value>None of...</value>
   </data>

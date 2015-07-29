@@ -214,6 +214,12 @@
     <Compile Include="LabeledMultiStringView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="PasswordBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PasswordBox.Designer.cs">
+      <DependentUpon>PasswordBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="PopupTree.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -254,6 +260,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwTextBox.resx">
       <DependentUpon>FwTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PasswordBox.resx">
+      <DependentUpon>PasswordBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PopupTree.resx">
@@ -313,6 +323,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

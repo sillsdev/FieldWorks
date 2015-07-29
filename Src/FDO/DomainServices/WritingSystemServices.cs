@@ -1,3 +1,7 @@
+// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,20 +54,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>(-10) The first available vernacular ws with data in the current sequence,
 		/// or the first available analysis ws in that sequence.</summary>
 		public const int kwsFirstVernOrAnal = -10;
-		/// <summary>The first pronunciation writing system.</summary>
+		/// <summary>(-11) The first pronunciation writing system.</summary>
 		public const int kwsPronunciation = -11;
-		/// <summary>The first pronunciation writing system with data.</summary>
+		/// <summary>(-12) The first pronunciation writing system with data.</summary>
 		public const int kwsFirstPronunciation = -12;
-		/// <summary>All pronunciation writing systems.</summary>
+		/// <summary>(-13) All pronunciation writing systems.</summary>
 		public const int kwsPronunciations = -13;
-		/// <summary>The primary writing system for the current reversal index.</summary>
+		/// <summary>(-14) The primary writing system for the current reversal index.</summary>
 		public const int kwsReversalIndex = -14;
-		/// <summary>The full list of writing systems for the current reversal index.</summary>
+		/// <summary>(-15) The full list of writing systems for the current reversal index.</summary>
 		public const int kwsAllReversalIndex = -15;
-		/// <summary>The ws of the relevant text at an offset in its paragraph</summary>
+		/// <summary>(-16) The ws of the relevant text at an offset in its paragraph</summary>
 		public const int kwsVernInParagraph = -16;
-		/// <summary>(-17) The first available vern ws with data in the current sequence
-		/// or else a ws named in the database. </summary>
+		/// <summary>(-17) The first available vern ws with data in the current sequence or else a ws named in the database. </summary>
 		public const int kwsFirstVernOrNamed = -17;
 		/// <summary> One beyond the last magic value.</summary>
 		public const int kwsLim = -18;
@@ -720,8 +723,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int defaultUserWs = cache.DefaultUserWs;
 			int defaultAnalWs = cache.DefaultAnalWs;
 			int defaultVernWs = cache.DefaultVernWs;
+			// Default reversals to the default analysis writing system (change if insufficient)
+			// TODO: default the reversalWs to "Current reversal writing system"
+			int defaultReversalWs = cache.DefaultAnalWs;
 			int fallbackUserWs = FallbackUserWs(cache);
 			int englishWs = cache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
+			var writingSystems = cache.ServiceLocator.WritingSystems;
 
 			switch (ws)
 			{
@@ -777,26 +784,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultAnalWs;
 						return null;
 					}
-					foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-					{
-						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-						if (retTss.Length > 0)
-						{
-							retWs = wsLoop.Handle;
-							break;
-						}
-					}
+					retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss.Length <= 0) continue;
-
-							retWs = wsLoop.Handle;
-							break;
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.AnalysisWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
@@ -844,7 +836,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						break;
 					}
 					// Try non-current vernacular WSes.
-					if (TryFirstWsInList(sda, hvo, flid, cache.LanguageProject.CurrentVernacularWritingSystems.Handles(),
+					if (TryFirstWsInList(sda, hvo, flid, cache.LanguageProject.VernacularWritingSystems.Handles(),
 						ref triedWsList, out retWs, out retTss))
 					{
 						break;
@@ -884,52 +876,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultAnalWs;
 						return null;
 					}
-					foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-					{
-						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-						if (retTss != null && retTss.Length > 0)
-						{
-							retWs = wsLoop.Handle;
-							break;
-						}
-					}
+					retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
 					if (retWs == 0)
 					{
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentVernacularWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.AnalysisWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
 						// Try non-current vernacular WSes.
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.VernacularWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
@@ -968,52 +928,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultVernWs;
 						return null;
 					}
-					foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
-					{
-						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-						if (retTss != null && retTss.Length > 0)
-						{
-							retWs = wsLoop.Handle;
-							break;
-						}
-					}
+					retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentVernacularWritingSystems, hvo, flid, sda);
 					if (retWs == 0)
 					{
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
 						// Try non-current vernacular WSes.
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.VernacularWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (IWritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
-						{
-							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
-							if (retTss != null && retTss.Length > 0)
-							{
-								retWs = wsLoop.Handle;
-								break;
-							}
-						}
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.AnalysisWritingSystems, hvo, flid, sda);
 					}
 					if (retWs == 0)
 					{
@@ -1046,6 +974,23 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						}
 					}
 					break;
+				case(kwsPronunciation):
+				case(kwsFirstPronunciation):
+				{
+					if (flid == 0) // sometimes used this way, just trying for a ws...make robust
+					{
+						retWs = writingSystems.DefaultPronunciationWritingSystem.Handle;
+						return null;
+					}
+					retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentPronunciationWritingSystems, hvo, flid, sda);
+					break;
+				}
+				case(kwsReversalIndex):
+				case(kwsAllReversalIndex):
+				{
+					retWs = defaultReversalWs;
+					break;
+				}
 				default:
 					retWs = ws;
 					break;
@@ -1055,6 +1000,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				retTss = sda.get_MultiStringAlt(hvo, flid, retWs);
 			}
 			return retTss;
+		}
+
+		private static int GetStringFromWsCollection(out ITsString retTss, ICollection<IWritingSystem> wsList, int hvo, int flid, ISilDataAccess sda)
+		{
+			foreach(var ws in wsList)
+			{
+				retTss = sda.get_MultiStringAlt(hvo, flid, ws.Handle);
+				if(retTss != null && retTss.Length > 0)
+				{
+					return ws.Handle;
+				}
+			}
+			retTss = null;
+			return 0;
 		}
 
 
@@ -1251,8 +1210,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			switch (wsMagic)
 			{
 				case kwsAnals:
+				case kwsAnal:
 					return AnalysisWss(cache, fIncludeUncheckedActiveWss);
 				case kwsVerns:
+				case kwsVern:
 					return VernWss(cache, fIncludeUncheckedActiveWss);
 				case kwsAnalVerns:
 					return AnalysisVernacularWss(cache, fIncludeUncheckedActiveWss);
@@ -1416,22 +1377,22 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				((ILexDb) condemnedReversal.Owner).ReversalIndexesOC.Remove(condemnedReversal);
 			}
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances(),
 				WordformLookupListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances(),
 				CmPossibilityListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances(),
 				CmBaseAnnotationTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances(),
 				FsOpenFeatureTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances(),
 				ScrMarkerMappingTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances(),
 				ScrImportSourceTags.kflidWritingSystem, origWsId, newWsId);
 
 			UpdateWritingSystemListField(cache, cache.LanguageProject, LangProjectTags.kflidVernWss, origWsId, newWsId);

@@ -52,8 +52,7 @@
 		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
-		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
-		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureXmlDocView"/>
+		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -205,7 +204,7 @@
 		</menu>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
-			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+			<item label="{0}" command="CmdConfigureDictionary" defaultVisible="false"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>
@@ -235,15 +234,17 @@
 		<menu id="PaneBar-Dictionary" label="">
 		<!-- *** Put any alignment="right" menus in first. *** -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
-				<menu list="Layouts" inline="true" emptyAllowed="true"
+				<menu list="Configurations" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 				<item label="-" translate="do not translate"/>
 				<item command="CmdConfigureDictionary"/>
 			</menu>
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
+				<item command="CmdShowAllPublications"/>
 				<menu list="Publications" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
-				<item command="CmdShowAllPublications"/>
+				<item label="-" translate="do not translate"/> <!-- separator -->
+				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 		</menu>
 		<menu id="PaneBar-ReversalEntryDetail" label="">

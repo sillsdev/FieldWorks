@@ -377,6 +377,9 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksUnspecified" xml:space="preserve">
     <value>(unspecified)</value>
   </data>
+  <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
+    <value>Display each Complex Form in a paragraph</value>
+  </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
     <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
   </data>
@@ -680,7 +683,7 @@ Are you sure you want to delete this list?</value>
     <value>No Variant Type</value>
   </data>
   <data name="ksVariantTypes" xml:space="preserve">
-    <value>Variant Types</value>
+    <value>Variant Types:</value>
   </data>
   <data name="ksDictConfigMultiCopyOf" xml:space="preserve">
     <value>Copy of {0} ({1})</value>
@@ -793,5 +796,84 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsText" xml:space="preserve">
     <value>Custom Fields cannot be added when there is more than one application using this project.</value>
+  </data>
+  <data name="FailedToRename" xml:space="preserve">
+    <value>Failed to rename. Use a name that is not already in use.</value>
+    <comment>String similar 'Failed to rename. Use a name that is not already in use'
+</comment>
+  </data>
+  <data name="Allpublications" xml:space="preserve">
+    <value>All publications</value>
+  </data>
+  <data name="ConfigureTitle" xml:space="preserve">
+    <value>Configure {0}</value>
+    <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index</value>
+  </data>
+  <data name="AllEntriesPublication" xml:space="preserve">
+    <value>$$all_entries$$</value>
+    <comment>Do Not Translate</comment>
+  </data>
+  <data name="InvalidRootConfigurationNode" xml:space="preserve">
+    <value>The root node in your configuration is invalid. The field attribute '{0}' must match a class name.</value>
+    <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
+  </data>
+  <data name="NoConfigsMatchPub" xml:space="preserve">
+    <value>No configurations match the current publication.</value>
+    <comment>If a user selects a publication, but has deselected that publication from all their configurations, this will be the content of the dictionary preview pane.</comment>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment>As in setting some settings back to what they were before customization.</comment>
+  </data>
+  <data name="YouAreResetting" xml:space="preserve">
+    <value>You are resetting the following to factory defaults:</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>Configuration</value>
+    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.</comment>
+  </data>
+  <data name="WantContinue" xml:space="preserve">
+    <value>Do you want to continue?</value>
+    <comment>whether to continue with the resetting of a configuration</comment>
+  </data>
+	<data name="PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log when exporting to webonary</comment>
+  </data>
+	<data name="ExportingEntriesToWebonary" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log box when exporting to Webonary</comment>
+  </data>
+	<data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+    <value>Export of lexicon completed.</value>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported</comment>
+  </data>
+	<data name="BeginCompressingDataForWebonary" xml:space="preserve">
+    <value>Compressing data before sending to Webonary.</value>
+    <comment>Displayed in the log box of PublishToWebonaryDlg when data is being zipped up.</comment>
+  </data>
+	<data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+    <value>Compression complete.</value>
+    <comment>Displayed in the PublishToWebonaryDlg log box</comment>
+  </data>
+	<data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
+    <value>Select All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for selecting a node and all its children in the Configuration Dialog</comment>
+  </data>
+	<data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
+    <value>Clear All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
+  </data>
+  <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
+    <value>Display each Subentry in a paragraph</value>
   </data>
 </root>

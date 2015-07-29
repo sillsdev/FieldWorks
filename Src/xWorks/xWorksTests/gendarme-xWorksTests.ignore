@@ -31,6 +31,9 @@ M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests/PusAndShowAll
 M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests/PusAndShowAll::FinalBehavior()
 M: System.Void SIL.FieldWorks.XWorks.XWorksAppTestBase::DoCommand(System.String)
 
+# TempFiles created in loop and Disposed after loop before Assertions
+M: System.Void SIL.FieldWorks.XWorks.XhtmlDocViewTests::GetValidConfigurationForPublication_PublicationThatMatchesNoConfigReturnsNull()
+
 # Disposed in teardown method
 M: System.Void SIL.FieldWorks.XWorks.ExportDialogTests::CreateMockCache()
 
@@ -47,6 +50,7 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.XWorks.ExportDialogTests
 T: SIL.FieldWorks.XWorks.XWorksAppTestBase
 T: SIL.FieldWorks.XWorks.InterestingTextsTests
+T: SIL.FieldWorks.XWorks.CssGeneratorTests
 
 # Reference only
 T: SIL.FieldWorks.XWorks.MockFwManager

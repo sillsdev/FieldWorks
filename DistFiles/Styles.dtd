@@ -1,7 +1,12 @@
 <!-- Styles.dtd -->
+<!--
+	Copyright (c) 2014 SIL International
+	This software is licensed under the LGPL, version 2.1 or later
+	(http://www.gnu.org/licenses/lgpl-2.1.html)
+-->
 <!-- IMPORTANT NOTE TO MAINTAINERS
 	*********************************************************************************************
-	ANY change to this DTD must be accompanied by the generation of a new DTDVer using guidgen.
+	ANY change to this DTD must be accompanied by the generation of a new DTDVer guid.
 	The DTD version should be changed below, in TeStyles.xml, in FlexStyles.xml, and in StylesXmlAccessor.cs. The
 	TE and Flex programs will only work with a stylesheet having the DTD version for which they were created.
 	TE and Flex must be modified and recompiled to process a file having an updated DTD. Field personnel
@@ -11,7 +16,7 @@
 <!ELEMENT Styles (markup, replacements, ImportMappingSets)>
 <!ATTLIST Styles
 	date CDATA #REQUIRED
-	DTDver (B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F) #REQUIRED
+	DTDver (B8521229-70FB-4DD9-A022-434714B8DE4B) #REQUIRED
 	label CDATA #IMPLIED
 >
 <!ELEMENT markup (tag+)>
@@ -52,7 +57,7 @@
 	subscript (true | false) #IMPLIED
 	dropCap CDATA #IMPLIED
 	smallCaps (true | false) #IMPLIED
-	underline (none | single | double | dotted | dashed | squiggle) #IMPLIED
+	underline (none | single | double | dotted | dashed | squiggle | strikethrough) #IMPLIED
 	spellcheck (true | false) #IMPLIED
 >
 <!ELEMENT override EMPTY>
@@ -79,6 +84,8 @@
 	keepWithNext (true | false) #IMPLIED
 	keepTogether (true | false) #IMPLIED
 	widowOrphan (true | false) #IMPLIED
+	bulNumScheme CDATA #IMPLIED
+	bulNumStartAt CDATA #IMPLIED
 >
 <!ELEMENT replacements (change*)>
 <!ELEMENT change EMPTY>

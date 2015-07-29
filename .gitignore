@@ -113,6 +113,7 @@ Src/Language/libLanguage
 Lib/src/HermitCrab.NET/HermitCrabExe/bin
 Lib/src/HermitCrab.NET/HermitCrab/bin
 Downloads/*
+xulrunner/*
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks

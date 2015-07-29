@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tree.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="tree.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="tree.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 388</value>
+  </data>
+  <data name="tree.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tree.Name" xml:space="preserve">
+    <value>tree</value>
+  </data>
+  <data name="&gt;&gt;tree.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tree.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;tree.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="moveUp.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="moveUp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAACGUlEQVQ4T2PAC/JY9Rly
+        mPWhPNIAUyV/fcAu3v+R+7n+i9Sx1kOFiQDVwvxcHaL7ZZcp/TfYo/l/0mej/xMeG/3XnSC8nyGbkR+q
+        CgdokLCXmS3+3na/zH/7Uyr/na9ogXHTK9f/O76m/Q9YZvCeIYvBHqoaFfBOlKm33Sn6P/aGyH+/a0r/
+        vW+oo+Dchw7/z/+Z+r/jeNp/mRoxJC/1qvErLpHZn3aL93/Bc4H/IXeU/gfdVsaKo+/q/j/ybcH/g49X
+        /7fpN98PdA3QS33q+ubbJf+7HhT9r7NZ4b/OJvn/sms1/2vu1PofdV8ejOs+CP0vfsz/X2clUM1ykf/F
+        W/L/xy2K/Q80AEsMtcvb88/T/K++VeN/4mNpMJ76Q+F/zV2Z/wxlfNj9jwI6lexlVqj+N9uv9D/zmQQY
+        L/hh+r/1rsl/hkoBIgzoUbXX2qj43+2k7P/CVyJgvPqn9/++e97/GWqEiTCgX8PefLfs/9DL4v8r3gmA
+        8dZfCf+n30/6z1AnRoQBE7XtXY9K/k+5K/S//hMPGB/4Xfp/wf3K/wyNkkQYMEXXPuic2P+S57z/279x
+        gPHpP93/Vz6Y8J+hRYYIA6YZ2CfcEPrf/JH9f99PVjC+9nfh/00PV/xnaJMjwoAZRvYB58T/5zzk+5//
+        iAeMVzya+L/nzLT/DJ2KRBgw05gfZAjIJSDvgMIEFLCg2GHoVkbLTAwMAFQJFQ01K+8VAAAAAElFTkSu
+        QmCC
+</value>
+  </data>
+  <data name="moveUp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>241, 3</value>
+  </data>
+  <data name="moveUp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="moveUp.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="moveUp.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;moveUp.Name" xml:space="preserve">
+    <value>moveUp</value>
+  </data>
+  <data name="&gt;&gt;moveUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;moveUp.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;moveUp.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="moveDown.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="moveDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAACFUlEQVQ4T42TfUhTURyG
+        T1kSzHab123mxj5zTvS2KAp0xYEykCLIrCAwCpQQNU1DKZWtQWUjTQe2SgjEYORIgrAYyLiQhQQWChUa
+        bs4tiPSPEaMvU97sMIhKuz7w/HfOy++85xzyD9fNHGnPpqTTSoknj5JugRLvNkpub6fkzg4uueo/uI20
+        Y7QH/uhN1EdlqI+loS66EaVjarAQSa7q6OOZAUwu+tA1v47ZlkhF+TsF2CSSXNbSBxEvXi164P66gXnh
+        owzHxpVgx5HEtZnem3ZgeKEFroSMWRlRoHgkE6wTSRwq2jNdicCPM2iOc8wTb1WwB7VgxUrSylNPuAQD
+        84fRMMczD4xqIAwawG5Hkoub6LVQAfq+21H9Qc0sfGqE3r8FxG1aRUCTnDpDJtz6lo3y91nMvIAF6b05
+        IG36ZQKqiO1U32k0Dp6HcJ+H0K9EY4yH65MSZREdM3/ICsNDK4RHOnaU4uEMFASWSr2RY/sVwO3pLBSf
+        x57gxZd+nAzn4+iUaVmPhwxompPjbFgGs08jkg7L75epbVU720dq8XqhF+ei+3BowvKHJRNGVEylY2+Q
+        h9yjcSa3/UUVoUd8O+PBzw24MnsQ+9/kMotemlD0LAv6u6o4uZQpUWT1Gm5rl0rsju2GN2HHLtEKs1+P
+        NHeGSFr4VXymJEpHqrNMVKB0iMfaZvkKI0tRk2IjteuXml4JQn4Co7gXKK0OhwEAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="moveDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>241, 41</value>
+  </data>
+  <data name="moveDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="moveDown.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="moveDown.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;moveDown.Name" xml:space="preserve">
+    <value>moveDown</value>
+  </data>
+  <data name="&gt;&gt;moveDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;moveDown.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;moveDown.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="duplicate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11.25pt</value>
+  </data>
+  <data name="duplicate.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAACg0lEQVQ4T32RS2gTURSG
+        Z+XCjeBaKK4UNxVd6EKYQu3KhYIotCAq+KQVlNpK62KUFmlx00W1FATFbnxULDUSKNYJFmu1pklMo+nb
+        mub9mEwmr3n+njuJIhp7mH8x957v/8+9l+OOT9btu+EWG3v9/6i+2y/Sfj23aZ14xz98L8EdBTwxwBcH
+        /AlgntTrtLC/LyFxJ6c3MWme40fdOXgJDhC0kAKWM8CaBHQ+trCrk0z6MxLX4vuPyakg/9pXQCAJLKYr
+        4A8ZCOeA2VUL424LUysWqE+oEn/V2XV+IlDCEsHfCd4geNIbRdd9F7pJN4dcEIZd2NL0SNx68LZQ1bYq
+        TXUuzk9+U+1kBsfzwKWe55j5EsFHfxSf5qOYDcTwmelrDC9dK2jpeuHZ3tBXNbmY5d8GdYQIjilAqgi0
+        3hnFSiiLpZCE1bCM9VgOGwkFkWQe/U99aB/6gNPCuGfHkQEyuVzkxQUDETpzsgBIJeDa3THE0wWsRWSE
+        4hWQ/SelIrzLKYjeMJ69CWLnsXs8x7VqvLho2ulpSpfLdPsDDshK2YajqTwSBKblEqRcGVlal/Mqprwh
+        7Gl+QAZtJhlY9tkzlK6oQPegE4WS9hvOEMzAXEFFvqjZezPzEew9M0IGVyzbQDUA3QQM0q3hCZRUHfFM
+        JZklKjaoo1TWUabm2WAMBy48YQaoIwl/avd5p6hqBlLZSrJS0FAkmIFsXaOkucUEDrWNkkGNarg6Jmi6
+        YY/O0tnIbCKV1nQa0TAteJaSoL7aBo3t42Rg2pem0LmLNDZL/gWblkWvkQT11TY4fP2VwBrt1OrIBsEm
+        rVkE02c/J/XVNmjqcBztGXGLm6l9aFps6nDU/QRvWZb3GbmPtQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="duplicate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>241, 79</value>
+  </data>
+  <data name="duplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="duplicate.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="duplicate.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;duplicate.Name" xml:space="preserve">
+    <value>duplicate</value>
+  </data>
+  <data name="&gt;&gt;duplicate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;duplicate.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;duplicate.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="remove.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="remove.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAKWSURBVDhPlVNbSFRRFL2vc+6cc6/jjKOTlTqjpqaN
+        EQQGVmOTg1rNVJLlEFQSSKA1QqZNapCPnz4sFISgD6ms70gqMwh6QERkTAUFQVQY1F9Gfe/2OV1FE4I2
+        LO7dr8V+HeVv2eJmSiTLVqLZblX8/5eUE02pIJpxhpMu/GYjNMclfYuxTByHcZaT9EhRHjQxowV15tjV
+        Vmb4T3Kyo42RMOpuhCZ8CyKUXk4Gp/fvhQfNjdBu0RtYwQoRiBW1DmS4vo+v8sNYViZ0cHIZ7TkI1UmX
+        BFofJ4++jQ7D7GAfnF+Z/TPCSG0XJ23DOR54tmkjPF+/Dh4HAjBgmRBzGbsxhzrpkkDFCq7PdLRJgodN
+        cejh5OuFXB/MRMPwsroKJouD0G+7fiU5nYybegwrdDnpf1pIMlI9UlwAH3pPwcfO4zAV3Qrpxp3wumE7
+        3CwvgZRFP9VY5r4KqhVgPEeCJS0I6Fhy30TVBknwvvUQvD2wB+6hftqin8OcNmKMD7F0gPPikNi4ibkX
+        RxILBNfKCqHDok8qqB5CP3XinCyUeQOC4Bwm7sbqllQgWrgSXA0pTmYOMyOGcV4ElS1s81jieEg3J824
+        hVeT8QY5REEwVpQP46VBSSCGOFVSBGNeN5yzzC/tjPRgnq3U+jJUTLx1NbwZ0j0pmF/j7foInLDN+3g8
+        05fycxfW+DRYCBfdFiQYSSGBR4l4bTn9oRzP3LuhfkkgDklOnFNRrh8PpxMP6cdEXq48pKRF74RMo1JU
+        Lh8PBunHmBHB/mdH1wSg26JvahgVh5KFEBOnu0y97CgjLQlODoZMfS3a5JkvHqKOjL5KUy8NUb0Y/zPQ
+        Jvfs+FWEgSCI5WuUzxjbqfd7tDp/phrxWo7nX6IovwHfkOQbPu4SaAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="remove.Location" type="System.Drawing.Point, System.Drawing">
+    <value>241, 117</value>
+  </data>
+  <data name="remove.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="remove.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="remove.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;remove.Name" xml:space="preserve">
+    <value>remove</value>
+  </data>
+  <data name="&gt;&gt;remove.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;remove.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;remove.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="rename.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="rename.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAAB60lEQVQ4T2P4//8/A7Eg
+        zdg4P93EqD7L3JAfxAfrJdaAUieD+fc2aPw/srzw/9SCyPdF9rryRBtQ7aWf/2ibwv+SdL3/gd72/+dM
+        KPnfm+C2nigDgM6OPzpL7X9LmcF/W1vb/8lx1v+fnjX/35dkeJ+gAUDN+kfnaPxfPUP/v6Oj4/8Af+f/
+        F/fp/F/eqvK+1ktDH68BIM2LK3Tf71xm8N/Nze1/SLD7/4uH9P+v7lP5X+et7g9Sg9MAoGb+5XW69+8e
+        1/0fFuLx38/P7/+mFRb/N8wEa46HKsNuAEhzZ6zh+SsHDP9HRfr+DwwM/L95qcX/TdMV/jcFq/ZDlYEB
+        VgN6Eg33v7qm/78wz+u/p6fn/4ZCk/+7p0n8bwpUnQ9VAgcYBpS5Gc1/c1Xvf3qKw38LC4v/pfGq/7e2
+        Cf5vCVE4D1WCAlAMAKaw+EeHXf7XFGj/V1VV/e9oJP5/SxXn/5Yg+fONfmrglIcOUAyYlJu5ftWcwv9C
+        QkL/jRTZ/69MZ/7f7Cf+HpdmEIAbkGtlwL9vxZL/P99d+Z8aavl/ZgTD/0YfEZBmfaharABuQL6NXn5a
+        fOz/m6dX/V/Snf6/MVTvPiHNIAA3INPN8ry3vcX/bFed+8jxTAjADShz1s6vdNMiWiMM/P//nwEAu7kj
+        YWz+cKoAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="rename.Location" type="System.Drawing.Point, System.Drawing">
+    <value>241, 155</value>
+  </data>
+  <data name="rename.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="rename.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="rename.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;rename.Name" xml:space="preserve">
+    <value>rename</value>
+  </data>
+  <data name="&gt;&gt;rename.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rename.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;rename.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="tableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 394</value>
+  </data>
+  <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Name" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tree" Row="0" RowSpan="5" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="moveUp" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="moveDown" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="duplicate" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="remove" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="rename" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38" /&gt;&lt;Rows Styles="Absolute,38,Absolute,38,Absolute,38,Absolute,38,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 394</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>DictionaryConfigurationTreeControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>
