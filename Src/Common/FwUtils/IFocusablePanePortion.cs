@@ -1,4 +1,8 @@
-﻿namespace SIL.FieldWorks.Common.FwUtils
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// This interface MUST be implemented by any control which is configured with a defaultFocusControl.
