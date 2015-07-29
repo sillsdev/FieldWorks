@@ -1,3 +1,5 @@
+// Original author or copyright holder unknown.
+
 #if USE_THIS
 
 using System;
