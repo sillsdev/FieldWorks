@@ -1601,17 +1601,24 @@ namespace SIL.FieldWorks.IText
 				IMoForm mf = null;
 				if (hvoMorphEntry != 0)
 				{
-					realEntry =
-						m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
-					mf = realEntry.LexemeFormOA;
+					var realHvo = m_caches.RealHvo(hvoMorphEntry);
+					if(m_caches.MainCache.ServiceLocator.IsValidObjectId(realHvo))
+					{
+						realEntry = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(realHvo);
+						mf = realEntry.LexemeFormOA;
+					}
 				}
 				ILexSense realSense = null;
 				ILexEntryRef ler = null;
 				if (hvoMorphSense != 0)
 				{
-					realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(m_caches.RealHvo(hvoMorphSense));
-					if (realEntry != null)
-						realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					var realHvo = m_caches.RealHvo(hvoMorphSense);
+					if(m_caches.MainCache.ServiceLocator.IsValidObjectId(realHvo))
+					{
+						realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(realHvo);
+						if (realEntry != null)
+							realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					}
 				}
 
 				//var mi = new MorphItem(options);
