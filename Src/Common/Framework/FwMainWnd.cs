@@ -351,6 +351,30 @@ namespace SIL.FieldWorks.Common.Framework
 
 		#endregion
 
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher
+		{
+			get { return _publisher; }
+		}
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber
+		{
+			get { return _subscriber; }
+		}
+
+		#endregion
+
 		#region Implementation of IFWDisposable
 
 		/// <summary>

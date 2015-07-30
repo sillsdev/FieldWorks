@@ -2,17 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-#if __MonoCS__
-using Mono.Unix.Native;
-#endif
 
 namespace SIL.Utils
 {
@@ -147,5 +138,11 @@ namespace SIL.Utils
 
 		/// <summary/>
 		void CreateDirectory(string directory);
+
+		/// <summary>
+		/// Returns the length of the file
+		/// </summary>
+		/// <param name="filePath"></param>
+		long FileLength(string filePath);
 	}
 }

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Run command in environment
+
+set -e -o pipefail
+cd "$(dirname "$0")"/..
+. environ
+cd - >/dev/null
+"$@"

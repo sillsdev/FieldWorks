@@ -1,18 +1,20 @@
-﻿using System;
+﻿// Copyright (c) 2012-2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -47,7 +49,6 @@ namespace SIL.FieldWorks.XWorks
 		private int m_senseOutlineFlid;
 		private int m_mlOwnerOutlineFlid;
 		private int m_publishAsMinorEntryFlid;
-		private int m_doNotShowMainEntryInFlid;
 		private int m_headwordRefFlid;
 		private int m_headwordReversalFlid;
 		private int m_reversalNameFlid;
@@ -66,7 +67,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make one. By default we filter to the main dictionary.
 		/// </summary>
-		/// <param name="cache"></param>
 		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
 			: this(cache, domainDataByFlid, mainFlid, cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0])
 		{}
@@ -75,8 +75,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Create one. The SDA passed MAY be the DomainDataByFlid of the cache, but it is usually another
 		/// decorator.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="domainDataByFlid"></param>
 		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
 			: base(domainDataByFlid)
 		{
@@ -92,7 +90,6 @@ namespace SIL.FieldWorks.XWorks
 			m_senseOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false);
 			m_mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
 			m_publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
-			m_doNotShowMainEntryInFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "DoNotShowMainEntryIn", false);
 			m_headwordRefFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordRef", false);
 			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordReversal", false);
 			m_reversalNameFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "ReversalName", false);
@@ -199,8 +196,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (tag == m_publishAsMinorEntryFlid)
 			{
-				return VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer))
-					.Any(ler => ler.HideMinorEntry == 0);
+				return VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer)).Any(ler => ler.HideMinorEntry == 0);
 			}
 			return base.get_BooleanProp(hvo, tag);
 		}
@@ -225,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, Cache.DefaultVernWs, hn);
+					return StringServices.HeadWordForWsAndHn(entry, Cache.DefaultVernWs, hn);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
@@ -256,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.Main);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -267,7 +263,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -278,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -418,6 +414,30 @@ namespace SIL.FieldWorks.XWorks
 		/// should call Refresh() directly.
 		/// </summary>
 		internal ICmPossibility Publication { get; set; }
+
+		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
+		public IEnumerable<int> GetEntriesToPublish(PropertyTable propertyTable, RecordClerk clerk)
+		{
+			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable))
+			{
+				case "Dictionary":
+					return VecProp(Cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+				case "Reversal Index":
+				{
+					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+					if(reversalIndexGuid != Guid.Empty)
+					{
+						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+						if (currentReversalIndex != null)
+						{
+							return currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo);
+						}
+					}
+					break;
+				}
+			}
+			return new int[] { };
+		}
 
 		public override int[] VecProp(int hvo, int tag)
 		{

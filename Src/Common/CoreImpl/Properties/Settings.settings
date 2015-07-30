@@ -23,5 +23,11 @@
     <Setting Name="LocalKeyboards" Description="Setting to store current keyboard assignments for writing systems" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="WebonaryUser" Description="Stores last used user for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WebonaryPass" Description="stores last password for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

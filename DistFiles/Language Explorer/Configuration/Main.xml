@@ -57,6 +57,7 @@
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.LinguaLinksImportDlg"/>
 			</parameters>
 		</command>
+		<command id="CmdPublishToWebonary" label="Publish to _Webonary..." message="PublishToWebonary"/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
@@ -104,6 +105,9 @@
 		</command>
 		<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
+		</command>
+		<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
 		</command>
 		<command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
@@ -233,6 +237,7 @@
 			<parameters file="Play_all"/>
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
+		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<!-- F1 is omitted because used for Help-->
 		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
 			<parameters key="2"/>
@@ -362,6 +367,8 @@
 	-->
 	<menubar>
 		<menu id="File" label="_File" b4InsertMenu="true">
+			<!-- CmdPublishToWebonary goes below RAMP menu  -->
+			<item command="CmdPublishToWebonary" />
 			<!-- There are handlers for a generic "Export..." menu (follows Import menu).
 				Two are area-specific (Notebook & Grammar "Grammar Sketch" tool's GeneratedHtmlViewer class).
 				One seems to be more global, or at least it appears to be able to handle cross domain exports (with some custom field restrictions on a few classes).
@@ -759,6 +766,7 @@ InterlinMaster user:
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
+		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
 		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->

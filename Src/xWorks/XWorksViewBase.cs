@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
@@ -62,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected int m_fakeFlid; // the list
 		/// <summary>
-		/// Mediator that passes off messages.
+		/// PropertyTable that passes off messages.
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
@@ -364,6 +365,79 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
+		private const string kEllipsis = "...";
+		protected string TrimToMaxPixelWidth(int pixelWidthAllowed, string sToTrim)
+		{
+			int sPixelWidth;
+			int charsAllowed;
+
+			if(sToTrim.Length == 0)
+				return sToTrim;
+
+			sPixelWidth = GetWidthOfStringInPixels(sToTrim);
+			var avgPxPerChar = sPixelWidth / Convert.ToSingle(sToTrim.Length);
+			charsAllowed = Convert.ToInt32(pixelWidthAllowed / avgPxPerChar);
+			if(charsAllowed < 5)
+				return String.Empty;
+			return sPixelWidth < pixelWidthAllowed ? sToTrim : sToTrim.Substring(0, charsAllowed-4) + kEllipsis;
+		}
+
+		private int GetWidthOfStringInPixels(string sInput)
+		{
+			using(var g = Graphics.FromHwnd(Handle))
+			{
+				return Convert.ToInt32(g.MeasureString(sInput, TitleBarFont).Width);
+			}
+		}
+
+		protected Control TitleBar
+		{
+			get { return m_informationBar.Controls[0]; }
+		}
+
+		protected Font TitleBarFont
+		{
+			get { return TitleBar.Font; }
+		}
+
+		protected void ResetSpacer(int spacerWidth, string activeLayoutName)
+		{
+			var bar = TitleBar;
+			if(bar is Panel && bar.Controls.Count > 1)
+			{
+				var cctrls = bar.Controls.Count;
+				bar.Controls[cctrls - 1].Width = spacerWidth;
+				bar.Controls[cctrls - 1].Text = activeLayoutName;
+			}
+		}
+
+		protected string GetBaseTitleStringFromConfig()
+		{
+			string titleStr = "";
+			// See if we have an AlternativeTitle string table id for an alternate title.
+			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters,
+																	  "altTitleId");
+			if(titleId != null)
+			{
+				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
+				if(Clerk.OwningObject != null &&
+					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+				{
+					// Originally this option was added to enable the Reversal Index title bar to show
+					// which reversal index was being shown.
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName,
+													 titleStr);
+				}
+			}
+			else if(Clerk.OwningObject != null)
+			{
+				if(XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
+																 "ShowOwnerShortname"))
+					titleStr = Clerk.OwningObject.ShortName;
+			}
+			return titleStr;
+		}
+
 		/// <summary>
 		/// When our parent changes, we may need to re-evaluate whether to show our info bar.
 		/// </summary>
@@ -412,6 +486,9 @@ namespace SIL.FieldWorks.XWorks
 			// Do nothing here.
 		}
 
+		/// <summary>
+		/// Sets the title string to an appropriate default when nothing is specified in the xml configuration for the view
+		/// </summary>
 		protected virtual void SetInfoBarText()
 		{
 			if (m_informationBar == null)

@@ -134,6 +134,7 @@ namespace XMLViewsTests
 			string max = XmlViewsUtils.AlphaCompNumberString(Int32.MaxValue);
 			string min = XmlViewsUtils.AlphaCompNumberString(Int32.MinValue);
 			IcuComparer comp = new IcuComparer("en");
+			comp.OpenCollatingEngine();
 			Assert.IsTrue(comp.Compare(zero, one) < 0);
 			Assert.IsTrue(comp.Compare(one, two) < 0);
 			Assert.IsTrue(comp.Compare(two, ten) < 0);
@@ -151,6 +152,7 @@ namespace XMLViewsTests
 			Assert.IsTrue(comp.Compare(one, one) == 0);
 			Assert.IsTrue(comp.Compare(ten, ten) == 0);
 			Assert.IsTrue(comp.Compare(minus1, minus1) == 0);
+			comp.CloseCollatingEngine();
 		}
 
 		[Test]

@@ -114,6 +114,10 @@
       <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.1.1.30361, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -154,12 +158,20 @@
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="MessageBoxExLib, Version=8.0.8.15166, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -169,7 +181,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Palaso, Version=2.5.174.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
@@ -198,9 +210,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="UIAdapterInterfaces, Version=8.0.4.14059, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
@@ -257,7 +272,66 @@
     <Compile Include="AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ConfigurableDictionaryNode.cs" />
+    <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="CssGenerator.cs" />
+    <Compile Include="DictionaryConfigurationController.cs" />
+    <Compile Include="DictionaryConfigurationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryConfigurationListener.cs" />
+    <Compile Include="DictionaryConfigurationManagerController.cs" />
+    <Compile Include="DictionaryConfigurationManagerDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationManagerDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryConfigurationMigrator.cs" />
+    <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationNodeRenameDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryConfigurationModel.cs" />
+    <Compile Include="DictionaryConfigurationTreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationTreeControl.Designer.cs">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\DetailsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IDictionaryListOptionsView.cs" />
+    <Compile Include="DictionaryDetailsView\SenseOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\SenseOptionsView.Designer.cs">
+      <DependentUpon>SenseOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ListOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ListOptionsView.Designer.cs">
+      <DependentUpon>ListOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\SpecialCharacterHandling.cs" />
+    <Compile Include="IDictionaryConfigurationView.cs" />
+    <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="IDictionaryDetailsView.cs" />
+    <Compile Include="IDictionarySenseOptionsView.cs" />
+    <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
       <SubType>Form</SubType>
@@ -326,6 +400,14 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PublishToWebonaryController.cs" />
+    <Compile Include="PublishToWebonaryDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PublishToWebonaryDlg.Designer.cs">
+      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PublishToWebonaryModel.cs" />
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>
@@ -358,7 +440,11 @@
     <Compile Include="TextListeners.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UnicodeCharacterEditingHelper.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
+    <Compile Include="XhtmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -392,6 +478,28 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationDlg.resx">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationManagerDlg.resx">
+      <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationNodeRenameDlg.resx">
+      <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\SenseOptionsView.resx">
+      <DependentUpon>SenseOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ListOptionsView.resx">
+      <DependentUpon>ListOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -417,6 +525,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LiftExportMessageDlg.resx">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PublishToWebonaryDlg.resx">
+      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordBrowseView.resx">

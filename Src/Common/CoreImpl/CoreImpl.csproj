@@ -115,7 +115,9 @@
     <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
+    <Compile Include="IPublisherProvider.cs" />
     <Compile Include="ISubscriber.cs" />
+    <Compile Include="ISubscriberProvider.cs" />
     <Compile Include="ITool.cs">
       <SubType>Code</SubType>
     </Compile>

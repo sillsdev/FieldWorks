@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ksFlexFolderName = "Language Explorer";
 
+
 		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
 		private const string ksProjectsDir = "ProjectsDir";
@@ -571,6 +572,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (key != null)
 						key.SetValue("DefaultBackupDirectory", value);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Location of the DefaultConfigurations folder (root for  Dictionary, Reversal, and other default configurations)
+		/// </summary>
+		public static string DefaultConfigurations
+		{
+			get
+			{
+				return Path.Combine(Path.Combine(CodeDirectory, "Language Explorer"), "DefaultConfigurations");
 			}
 		}
 

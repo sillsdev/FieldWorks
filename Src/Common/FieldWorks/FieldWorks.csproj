@@ -107,6 +107,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <Package>Geckofx-Core</Package>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
+	</Reference>
+    <Reference Include="Geckofx-Winforms">
+      <Package>Geckofx-WinForms</Package>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -186,14 +196,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
-    </Reference>
+    <None Condition="'$(OS)'=='Windows_NT'" Include="..\..\..\Downloads\Geckofx-Core.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 

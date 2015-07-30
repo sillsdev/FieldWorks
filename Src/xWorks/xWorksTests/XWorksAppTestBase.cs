@@ -511,6 +511,7 @@ namespace SIL.FieldWorks.XWorks
 		public void FixtureInit()
 		{
 			FwRegistrySettings.Init();
+			SetupEverythingButBase();
 			Init(); // subclass version must create and set m_application
 
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
@@ -555,6 +556,7 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			if (m_window != null)
 			{
+				m_window.Close();
 				m_window.Dispose();
 				m_window = null;
 			}

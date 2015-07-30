@@ -488,6 +488,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Text = String.Format(display.Text, m_configObjectName + "...");
 			return true; //we've handled this
 		}
+
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
@@ -496,12 +497,11 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			CheckDisposed();
-
-			using (XmlDocConfigureDlg dlg = new XmlDocConfigureDlg())
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			if(String.IsNullOrEmpty(sProp))
+				sProp = "DictionaryPublicationLayout";
+			using(var dlg = new XmlDocConfigureDlg())
 			{
-				string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
-				if (String.IsNullOrEmpty(sProp))
-					sProp = "DictionaryPublicationLayout";
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable),
 					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)

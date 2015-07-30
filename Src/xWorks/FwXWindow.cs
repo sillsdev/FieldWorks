@@ -36,6 +36,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
@@ -302,16 +303,11 @@ namespace SIL.FieldWorks.XWorks
 			if (app != null) // if configFile in FwXApp == null
 			{
 				m_delegate.App = app;
-				string path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
-				Directory.CreateDirectory(path);
-				m_propertyTable.UserSettingDirectory = path;
 
 				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
 				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-
 				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
 				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-
 				m_propertyTable.SetProperty("App", app, true);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
@@ -518,6 +514,9 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence("cache", false);
 			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
 			m_propertyTable.SetPropertyPersistence("DocumentName", false);
+			var path = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			Directory.CreateDirectory(path);
+			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 		}
 
@@ -809,21 +808,59 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Update Archive With RAMP menu item
+		/// Handle whether to enable menu item.
 		/// </summary>
-		/// <param name="args">the toolbar/menu item properties</param>
-		/// <returns>true if handled</returns>
+		/// <param name="command">Not used</param>
+		/// <param name="display">Display properties</param>
+		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnUpdateArchiveWithRamp(object args)
+		public bool OnDisplayPublishToWebonary(object command, ref UIItemDisplayProperties display)
 		{
-			TMItemProperties itemProps = args as TMItemProperties;
-			if (itemProps != null)
+			display.Enabled = true;
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnPublishToWebonary(object command)
+		{
+			CheckDisposed();
+			ShowPublishToWebonaryDialog(m_mediator, PropTable);
+			return true;
+		}
+
+		internal static void ShowPublishToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
+		{
+			var cache = propertyTable.GetValue<FdoCache>("cache");
+
+			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
+			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+
+			// show dialog
+			var controller = new PublishToWebonaryController
 			{
-				itemProps.Visible = !(MiscUtils.IsMono);
-				itemProps.Update = true;
-				return true;
+				Cache = cache,
+				PropertyTable = propertyTable
+			};
+			var model = new PublishToWebonaryModel(propertyTable)
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications
+			};
+			using(var dialog = new PublishToWebonaryDlg(controller, model, propertyTable))
+			{
+				dialog.ShowDialog();
 			}
-			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1228,7 +1265,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="paraStyleName">Name of the initially selected paragraph style.</param>
 		/// <param name="charStyleName">Name of the initially selected character style.</param>
 		/// <param name="setPropsToFactorySettings">Delegate to set style info properties back
-		/// to the default facotry settings</param>
+		/// to the default factory settings</param>
 		/// <returns>true if refresh should be called to reload the cache</returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ShowStylesDialog(string paraStyleName, string charStyleName,
@@ -1843,6 +1880,24 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { return ((int)ColleaguePriority.Medium) - 1; }
 		}
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
 	}
 
 	/// <summary>

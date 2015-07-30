@@ -102,6 +102,10 @@
       <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -118,8 +122,16 @@
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FwCoreDlgControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="LexEdDll, Version=8.0.4.12240, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -133,7 +145,10 @@
       <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="RootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -198,6 +213,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -235,12 +251,21 @@
     <Compile Include="AllReversalEntriesRecordListTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
-    <Compile Include="CustomListDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="CssGeneratorTests.cs" />
+    <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="DictionaryConfigurationControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationListenerTests.cs" />
+    <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
+    <Compile Include="DictionaryDetailsControllerTests.cs" />
+    <Compile Include="DictionaryNodeOptionsTests.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="ExportDialogTests.cs" />
     <Compile Include="GenericUITests.cs">
@@ -251,11 +276,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="PublishToWebonaryControllerTests.cs" />
+    <Compile Include="PublishToWebonaryModelTests.cs" />
+    <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XmlDocConfigureDlgTests.cs" />
-    <Compile Include="XWorksAppTestBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="XhtmlDocViewTests.cs" />
+    <Compile Include="XWorksAppTestBase.cs" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>

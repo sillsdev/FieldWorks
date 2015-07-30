@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -640,11 +640,30 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexEntry> PrimaryEntryRoots { get; }
 
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		IEnumerable<ILexEntryType> EntryTypes { get; }
+
 		/// <summary>
 		/// This is the same as PrimaryEntryRoots, except that if the only Component is (or is a sense of) the only PrimaryEntryRoot,
 		/// it produces an empty list.
 		/// </summary>
 		IEnumerable<ILexEntry> NonTrivialEntryRoots { get; }
+
+		/// <summary>
+		/// Accessor for the entry that owns this ILexEntryRef
+		/// </summary>
+		ILexEntry OwningEntry { get; }
+
+		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
+		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
+
+
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> ConfigReferencedEntries { get; }
 	}
 
 	public partial interface ILexReference
@@ -681,6 +700,17 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="hvoMember"></param>
 		/// <returns></returns>
 		int SequenceIndex(int hvoMember);
+
+		/// <summary>
+		/// The ILexRefType that references this ILexReference in a member or member collection
+		/// </summary>
+		ILexRefType OwnerType { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="TargetsRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> ConfigTargets { get; }
 	}
 
 	public partial interface ICmMajorObject
@@ -1029,6 +1059,28 @@ namespace SIL.FieldWorks.FDO
 		/// Note this is called on SFM export by mdf.xml so needs to be a property.
 		/// </summary>
 		IEnumerable<ILexReference> LexSenseReferences { get; }
+
+		/// <summary>
+		/// Convenience method for returning the contents of the Definition field or of the
+		/// Gloss field if the Definition is undefined.
+		/// </summary>
+		IMultiStringAccessor DefinitionOrGloss { get; }
+
+		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
+		/// <summary>
+		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
+		/// </summary>
+		IEnumerable<ILexEntryRef> ComplexFormsNotSubentries { get; }
+
+		/// <summary>
+		/// This returns the subentries of this sense
+		/// </summary>
+		IEnumerable<ILexEntry> Subentries { get; }
 	}
 
 	/// <summary>
@@ -1129,10 +1181,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> Subentries { get; }
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary/>
 		IMoMorphSynAnalysis FindOrCreateDefaultMsa();
 
 		/// <summary>
@@ -1150,10 +1199,7 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ls"></param>
+		/// <summary/>
 		void MoveSenseToCopy(ILexSense ls);
 
 		/// <summary>
@@ -1174,73 +1220,55 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IFdoSet<ICmPossibility> ShowMainEntryIn { get; }
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string CitationFormWithAffixType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographForm
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographFormKey
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		ITsString HeadWord
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IMoMorphType PrimaryMorphType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		bool IsMorphTypesMixed
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<IMoMorphType> MorphTypes
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IMoForm[] AllAllomorphs
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<ILexSense> AllSenses
 		{
 			get;
@@ -1376,6 +1404,36 @@ namespace SIL.FieldWorks.FDO
 		/// Note this is called on SFM export by mdf.xml so needs to be a property.
 		/// </summary>
 		IEnumerable<ILexReference> LexEntryReferences { get; }
+
+		/// <summary>
+		/// Collection of the pictures of senses
+		/// </summary>
+		IEnumerable<ICmPicture> PicturesOfSenses { get; }
+
+		/// <summary>
+		/// Get the minimal set of LexReferences for this entry.
+		/// This is a virtual, backreference property.
+		/// </summary>
+		List<ILexReference> MinimalLexReferences { get; }
+
+		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
+		/// <summary>
+		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
+		/// </summary>
+		IEnumerable<ILexEntryRef> ComplexFormsNotSubentries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all the LexEntryRef
+		/// objects owned by this LexEntry that have HideMinorEntry set to zero and that define
+		/// this LexEntry as a variant.
+		/// </summary>
+		/// <value>The visible variant entry refs.</value>
+		IEnumerable<ILexEntryRef> VisibleVariantEntryRefs { get; }
 	}
 
 	/// <summary>
@@ -1529,6 +1587,15 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="ws">The ws.</param>
 		/// <returns></returns>
 		ITsString PartOfSpeechForWsTSS(int ws);
+
+		/// <summary/>
+		ITsMultiString MLPartOfSpeech { get; }
+
+		/// <summary/>
+		ITsMultiString MLInflectionClass { get; }
+
+		/// <summary/>
+		IEnumerable<IMoInflAffixSlot> Slots { get; }
 	}
 
 	/// <summary>
@@ -1947,23 +2014,20 @@ namespace SIL.FieldWorks.FDO
 		/// Return a marked form in the desired writing system.
 		/// </summary>
 		string GetFormWithMarkers(int ws);
+
+		/// <returns>PhoneEnvRC on <see cref="IMoStemAllomorph"/> or <see cref="IMoAffixAllomorph"/> for Dictionary publication</returns>
+		IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments { get; }
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixTemplate : ICloneableCmObject
 	{
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixSlot
 	{
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IEnumerable<IMoInflAffMsa> Affixes { get; }
 		/// <summary>
 		/// Get a list of inflectional affix LexEntries which do not already refer to this slot
@@ -4501,6 +4565,11 @@ namespace SIL.FieldWorks.FDO
 		/// caption</param>
 		/// ------------------------------------------------------------------------------------
 		void UpdatePicture(string srcFilename, ITsString captionTss, string sFolder, int ws);
+
+		/// <summary>
+		/// Get the sense number of the owning LexSense.
+		/// </summary>
+		ITsString SenseNumberTSS { get; }
 	}
 
 	/// ----------------------------------------------------------------------------------------
@@ -5807,5 +5876,41 @@ namespace SIL.FieldWorks.FDO
 		/// RoledParticipant object. Caller is responsible to make UOW.
 		/// </summary>
 		IRnRoledPartic MakeDefaultRoledParticipant();
+	}
+
+	/// <summary>
+	/// Interface wrapping some fields of ILexSense and ILexEntry used for dictionary configuration and display
+	/// </summary>
+	public interface ISenseOrEntry
+	{
+		/// <summary>
+		/// The Hvo if LexEntry; the owning entry's Hvo if LexSense
+		/// </summary>
+		int EntryHvo { get; }
+
+		/// <summary>
+		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		ITsString HeadWord { get; }
+
+		/// <summary>
+		/// HeadWordReversal if LexEntry, ReversalName if LexSense
+		/// </summary>
+		IMultiAccessorBase HeadWordReversalName { get; }
+
+		/// <summary>
+		/// The SummaryDefinition property if wrapping LexEntry, or null for LexSense
+		/// </summary>
+		IMultiString SummaryDefinition { get; }
+
+		/// <summary>
+		/// The Gloss property if wrapping LexSense, or null for LexEntry
+		/// </summary>
+		IMultiUnicode Gloss { get; }
+
+		/// <summary>
+		/// Returns the SummaryDefinition on Entry, or DefinitionOrGloss on Sense
+		/// </summary>
+		IMultiAccessorBase DefinitionOrGloss { get; }
 	}
 }

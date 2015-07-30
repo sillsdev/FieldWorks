@@ -635,8 +635,10 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			StVc vc = null;
 			IVwRootSite activeViewSite = null;
-			if (EditingHelper == null)
-				return true;
+			if(EditingHelper == null) // If the calling location doesn't provide this just bring up the dialog with normal selected
+			{
+				paraStyleName = "Normal";
+			}
 			if (ActiveView != null)
 			{
 				vc = ActiveView.EditingHelper.ViewConstructor as StVc;

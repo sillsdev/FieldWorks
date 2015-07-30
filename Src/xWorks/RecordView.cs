@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Component Designer generated code
 		/// <summary>
-		/// Mediator message handling Priority
+		/// PropertyTable message handling Priority
 		/// </summary>
 		public override int Priority
 		{

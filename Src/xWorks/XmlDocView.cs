@@ -1,9 +1,6 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordView.cs
-// Responsibility: WordWorks
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -151,22 +148,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion
 
 		/// <summary>
-		/// Populate the list of publications for the first dictionary titlebar menu.
-		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplayPublications(object parameter, ref UIListDisplayProperties display)
-		{
-			foreach (var pub in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS)
-			{
-				var name = pub.Name.UserDefaultWritingSystem.Text;
-				display.List.Add(name, name, null, null, true);
-			}
-			return true;
-		}
-
-		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public void OnPropertyChanged(string name)
@@ -178,7 +159,7 @@ namespace SIL.FieldWorks.XWorks
 					if (pubDecorator != null)
 					{
 						var pubName = GetSelectedPublication();
-						if (kallEntriesSelectedPublicationValue == pubName)
+						if (xWorksStrings.AllEntriesPublication == pubName)
 						{   // A null publication means show everything
 							pubDecorator.Publication = null;
 							m_mainView.RefreshDisplay();
@@ -208,24 +189,6 @@ namespace SIL.FieldWorks.XWorks
 			return;
 		}
 
-		// A string the user is very unlikely to choose as the name of a publication,
-		// stored in the property table as the value of SelectedPublication when
-		// the separate All Entries menu item is chosen.
-		const string kallEntriesSelectedPublicationValue = "$$all_entries$$";
-
-		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var pubName = GetSelectedPublication();
-			display.Enabled = true;
-			display.Checked = (kallEntriesSelectedPublicationValue == pubName);
-			return true;
-		}
-
-		public bool OnShowAllEntries(object args)
-		{
-			m_propertyTable.SetProperty("SelectedPublication", kallEntriesSelectedPublicationValue, true);
-			return true;
-		}
 
 		public DictionaryPublicationDecorator GetPubDecorator()
 		{
@@ -282,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Sometimes we just want the string value which might be '$$all_entries$$'
 			return m_propertyTable.GetStringProperty("SelectedPublication",
-				kallEntriesSelectedPublicationValue);
+				xWorksStrings.AllEntriesPublication);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -313,22 +276,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // Consruction and disposal
 
-		#region Properties
-
-		private Control TitleBar
-		{
-			// XmlDocView probably isn't supposed to know how to get this...
-			// but I need it.
-			get { return m_informationBar.Controls[0]; }
-		}
-
-		private Font TitleBarFont
-		{
-			get { return TitleBar.Font; }
-		}
-
-		#endregion Properties
-
 		#region Other methods
 
 		protected override void SetInfoBarText()
@@ -341,30 +288,7 @@ namespace SIL.FieldWorks.XWorks
 			// To prevent that, add the following guards:
 			if (m_titleStr != null && NoReasonToChangeTitle(context))
 				return;
-			string titleStr = "";
-			// See if we have an AlternativeTitle string table id for an alternate title.
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters,
-				"altTitleId");
-			if (titleId != null)
-			{
-				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-				if (Clerk.OwningObject != null &&
-					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
-				{
-					// Originally this option was added to enable the Reversal Index title bar to show
-					// which reversal index was being shown.
-					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName, titleStr);
-				}
-			}
-			else if (Clerk.OwningObject != null)
-			{
-
-				if (XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
-					"ShowOwnerShortname"))
-				{
-					titleStr = Clerk.OwningObject.ShortName;
-				}
-			}
+			var titleStr = GetBaseTitleStringFromConfig();
 
 			bool fBaseCalled = false;
 			if (titleStr == string.Empty)
@@ -408,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 				if (match.Groups[1].Value == "SelectedPublication")
 				{
 					replacement = GetSelectedPublication();
-					if (replacement == kallEntriesSelectedPublicationValue)
+					if (replacement == xWorksStrings.AllEntriesPublication)
 						replacement = xWorksStrings.ksAllEntries;
 				}
 				else
@@ -429,17 +353,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Dictionary View TitleBar stuff
-
-		private void ResetSpacer(int spacerWidth, string activeLayoutName)
-		{
-			var bar = TitleBar;
-			if (bar is Panel && bar.Controls.Count > 1)
-			{
-				var cctrls = bar.Controls.Count;
-				bar.Controls[cctrls - 1].Width = spacerWidth;
-				bar.Controls[cctrls - 1].Text = activeLayoutName;
-			}
-		}
 
 		private const int kSpaceForMenuButton = 26;
 
@@ -480,9 +393,9 @@ namespace SIL.FieldWorks.XWorks
 			// Limit length of Publication title to half of available width
 			var maxPublicationTitleWidth = Math.Max(2, Width/2 - kSpaceForMenuButton);
 			if (String.IsNullOrEmpty(m_currentPublication) ||
-				m_currentPublication == kallEntriesSelectedPublicationValue)
+				m_currentPublication == xWorksStrings.AllEntriesPublication)
 			{
-				m_currentPublication = kallEntriesSelectedPublicationValue;
+				m_currentPublication = xWorksStrings.AllEntriesPublication;
 				titleStr = xWorksStrings.ksAllEntries;
 				// Limit length of Publication title to half of available width
 				titleStr = TrimToMaxPixelWidth(maxPublicationTitleWidth, titleStr);
@@ -501,31 +414,6 @@ namespace SIL.FieldWorks.XWorks
 			if (Publication == null || Publication.Name == null || Publication.Name.BestAnalysisAlternative == null)
 				return "***"; // what we show in the menu for a pub with no name in any language.
 			return Publication.Name.BestAnalysisAlternative.Text;
-		}
-
-		private int GetWidthOfStringInPixels(string sInput)
-		{
-			using (var g = Graphics.FromHwnd(Handle))
-			{
-				return Convert.ToInt32(g.MeasureString(sInput, TitleBarFont).Width);
-			}
-		}
-
-		private const string kEllipsis = "...";
-		private string TrimToMaxPixelWidth(int pixelWidthAllowed, string sToTrim)
-		{
-			int sPixelWidth;
-			int charsAllowed;
-
-			if (sToTrim.Length == 0)
-				return sToTrim;
-
-			sPixelWidth = GetWidthOfStringInPixels(sToTrim);
-			var avgPxPerChar = sPixelWidth / Convert.ToSingle(sToTrim.Length);
-			charsAllowed = Convert.ToInt32(pixelWidthAllowed / avgPxPerChar);
-			if (charsAllowed < 5)
-				return String.Empty;
-			return sPixelWidth < pixelWidthAllowed ? sToTrim : sToTrim.Substring(0, charsAllowed-4) + kEllipsis;
 		}
 
 		private bool NoReasonToChangeTitle(string context)
@@ -1008,7 +896,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Now we have our LexEntry
 			// First deal with whether the active Publication excludes it.
-			if (m_currentPublication != kallEntriesSelectedPublicationValue)
+			if (m_currentPublication != xWorksStrings.AllEntriesPublication)
 			{
 				var currentPubPoss = Publication;
 				if (!entry.PublishIn.Contains(currentPubPoss))
@@ -1294,7 +1182,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_configObjectName == null || m_configObjectName == "")
+			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -1324,21 +1212,21 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			using (XmlDocConfigureDlg dlg = new XmlDocConfigureDlg())
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			if(String.IsNullOrEmpty(sProp))
+				sProp = "DictionaryPublicationLayout";
+			using(var dlg = new XmlDocConfigureDlg())
 			{
-				string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
-				if (String.IsNullOrEmpty(sProp))
-					sProp = "DictionaryPublicationLayout";
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
 					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
 				dlg.SetActiveNode(nodePath);
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				if(dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					string sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
 					m_mainView.ResetTables(sNewLayout);
 					SelectAndScrollToCurrentRecord();
 				}
-				if (dlg.MasterRefreshRequired)
+				if(dlg.MasterRefreshRequired)
 					m_mediator.SendMessage("MasterRefresh", null);
 			}
 		}

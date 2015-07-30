@@ -1816,6 +1816,14 @@ namespace SIL.CoreImpl
 			}
 			return false;
 		}
+
+		/// <summary>
+		/// Mimics the String.IsNullOrEmpty method for ITsString
+		/// </summary>
+		public static bool IsNullOrEmpty(ITsString testMe)
+		{
+			return testMe == null || testMe.Length <= 0;
+		}
 	}
 	#endregion
 

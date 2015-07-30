@@ -81,7 +81,8 @@ namespace SIL.FieldWorks.XWorks
 			kftLift = 5,
 			kftGrammarSketch,
 			kftClassifiedDict,
-			kftSemanticDomains
+			kftSemanticDomains,
+			kftWebonary
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -605,6 +606,9 @@ namespace SIL.FieldWorks.XWorks
 						case FxtTypes.kftPathway:
 							ProcessPathwayExport();
 							return;
+						case FxtTypes.kftWebonary:
+							ProcessWebonaryExport();
+							return;
 						default:
 							using (var dlg = new SaveFileDialogAdapter())
 							{
@@ -753,6 +757,11 @@ namespace SIL.FieldWorks.XWorks
 								break;
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = 1; // todo: pick something legit
+								progressDlg.AllowCancel = true;
+								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
+								break;
 							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_seqView.ObjectCount;
@@ -781,6 +790,8 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
 								break;
 							case FxtTypes.kftPathway:
+								break;
+							case FxtTypes.kftWebonary:
 								break;
 							case FxtTypes.kftLift:
 								progressDlg.Minimum = 0;
@@ -827,6 +838,22 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
+		}
+
+		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
+		{
+			if(args.Length < 1)
+			{
+				return null;
+			}
+			var xhtmlPath = (string)args[0];
+			var cssPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), Path.GetFileNameWithoutExtension(xhtmlPath) + ".css");
+			int[] entriesToSave;
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave);
+			progress.Maximum = entriesToSave.Length;
+			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable), m_cache);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath, progress);
+			return null;
 		}
 
 		private object ExportGrammarSketch(IThreadedProgress progress, object[] args)
@@ -1200,6 +1227,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "pathway":
 					ft.m_ft = FxtTypes.kftPathway;
+					break;
+				case "webonary":
+					ft.m_ft = FxtTypes.kftWebonary;
 					break;
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
@@ -1788,6 +1818,14 @@ namespace SIL.FieldWorks.XWorks
 				false, 40, assembly);
 
 			this.Close();
+		}
+
+		/// <summary>
+		/// Hand off to Webonary publishing area.
+		/// </summary>
+		private void ProcessWebonaryExport()
+		{
+			FwXWindow.ShowPublishToWebonaryDialog(m_mediator, m_propertyTable);
 		}
 
 		private bool SelectOption(string exportFormat)

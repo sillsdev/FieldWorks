@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd : IFWDisposable, IPropertyTableProvider
+	public interface IFwMainWnd : IFWDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

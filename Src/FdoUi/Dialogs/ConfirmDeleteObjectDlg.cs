@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -252,6 +253,91 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				CheckDisposed();
 				this.label2.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the top area of the body.
+		/// </summary>
+		public string TopBodyText
+		{
+			get
+			{
+				CheckDisposed();
+				return this.m_descriptionBox3.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.m_descriptionBox3.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the bottom area of the body.
+		/// </summary>
+		public string BottomBodyText
+		{
+			get
+			{
+				CheckDisposed();
+				return this.m_descriptionBox4.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.m_descriptionBox4.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the dialog window title.
+		/// </summary>
+		public string WindowTitle
+		{
+			get
+			{
+				CheckDisposed();
+				return this.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// The text shown on the delete/confirm button.
+		/// </summary>
+		public string DeleteButtonText
+		{
+			get
+			{
+				CheckDisposed();
+				return m_deleteButton.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				m_deleteButton.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// The text shown on the cancel/reject button.
+		/// </summary>
+		public string CancelButtonText
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cancelButton.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				m_cancelButton.Text = value;
 			}
 		}
 
