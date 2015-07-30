@@ -1249,12 +1249,16 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
 			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+			if (m_styleSheet.Styles.Count > 0)
+				m_styleSheet.Styles.RemoveAt(0);
 			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
 			m_owningTable.Add(name, style);
 		}
 
 		[Test]
-		public void GenerateCssForBulletStyle()
+		public void GenerateCssForBulletStyleForSenses()
 		{
 			GenerateBulletStyle("Bulleted List");
 			var senses = new ConfigurableDictionaryNode
@@ -1273,8 +1277,43 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .senses > .sensecontent:before{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}", RegexOptions.Singleline).Success,
+			var regExPected = @".lexentry\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
 							  "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyleForSubSenses()
+		{
+			GenerateBulletStyle("Bulleted List");
+			var subsenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true },
+				Style = "Bulleted List"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true },
+				Style = "Bulleted List",
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
+
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regExPected = @".lexentry\s.senses\s.sense\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
+							  "Bulleted style for SubSenses not generated.");
 		}
 
 		private TestStyle GenerateEmptyStyle(string name)

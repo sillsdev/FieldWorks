@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
 				styleSheet.Rules.Add(senseParaRule);
-				GenerateCssforBulletedList(configNode, styleSheet, senseContentSelector, mediator);
+				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
 			}
 			// Generate the style information specifically for senses
 			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (configNode.Style != null)
 			{
-				var bulletRule = new StyleRule { Value = bulletSelector + ":before" };
+				var bulletRule = new StyleRule { Value = bulletSelector + ":not(:first-child):before" };
 				bulletRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
 				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
