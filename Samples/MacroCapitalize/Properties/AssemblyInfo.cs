@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿// Copyright (c) Microsoft 2012
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
