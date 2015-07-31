@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -46,13 +47,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var allReversalIndexes = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
 			foreach(var reversalIndex in allReversalIndexes)
 			{
-				var ws = reversalIndex.WritingSystem;
-				foreach(var reversalIndexEntry in reversalIndex.EntriesOC)
+				using(var comp = new ReversalSubEntryIcuComparer(cache, reversalIndex.WritingSystem))
 				{
-					if(reversalIndexEntry.SubentriesOS.Count > 0)
+					foreach(var reversalIndexEntry in reversalIndex.EntriesOC.Where(rie => rie.SubentriesOS.Count > 1))
 					{
 						var subEntryArray = reversalIndexEntry.SubentriesOS.ToArray();
-						Array.Sort(subEntryArray, new ReversalSubEntryIcuComparer(cache, ws));
+						Array.Sort(subEntryArray, comp);
 						for(var i = 0; i < subEntryArray.Length; ++i)
 							reversalIndexEntry.SubentriesOS.Insert(i, subEntryArray[i]);
 					}
@@ -60,10 +60,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		internal class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>
+		internal class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
 		{
-			private int m_ws;
-			private ManagedLgIcuCollator m_collator;
+			private readonly int m_ws;
+			private readonly ManagedLgIcuCollator m_collator;
 
 			public ReversalSubEntryIcuComparer(FdoCache cache, string ws)
 			{
@@ -76,12 +76,26 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				var xString = x.ReversalForm.get_String(m_ws);
 				var yString = y.ReversalForm.get_String(m_ws);
-				if(m_collator == null)
-				{
-					return string.Compare(xString.Text, yString.Text, StringComparison.OrdinalIgnoreCase);
-				}
 				return m_collator.Compare(xString.Text, yString.Text, LgCollatingOptions.fcoIgnoreCase);
 			}
+
+#region disposal
+			~ReversalSubEntryIcuComparer() { Dispose(false); }
+
+			public void Dispose() { Dispose(true); }
+
+			protected virtual void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if(disposing)
+				{
+					if(m_collator != null)
+					{
+						m_collator.Dispose();
+					}
+				}
+			}
+#endregion disposal
 		}
 	}
 }
