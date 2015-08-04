@@ -173,7 +173,6 @@ namespace XCore
 			CheckDisposed();
 
 			WriteOutputLine ("--------Properties table");
-			WriteOutputLine(m_propertyTable.GetPropertiesDumpString());
 			return true;//we handled this, no need to ask anyone else.
 		}
 		/// <summary>

@@ -12,7 +12,10 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.FwApp::PreFilterMessage(System.Windows.Forms.Message&)
-M: SIL.FieldWorks.Common.Framework.FwMainWnd::LaunchProjPropertiesDlg(System.Boolean)
+M: System.Void SIL.FieldWorks.Common.Framework.FwMainWnd::LaunchProjPropertiesDlg(System.Boolean)
+M: System.Void SIL.FieldWorks.Common.Framework.FwMainWnd::SetupPropertyTable()
+M: System.Void SIL.FieldWorks.Common.Framework.FwMainWnd::AddCustomStatusBarPanels()
+M: System.Void SIL.FieldWorks.Common.Framework.FwMainWnd::SetupOutlookBar()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

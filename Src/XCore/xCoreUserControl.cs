@@ -39,7 +39,7 @@ namespace XCore
 
 
 	// This is a test to see if the MultiPane can be subclassed further - and eventually
-	// all of the classes like it: RecordView, Ticker, ... can follow and inherit the
+	// all of the classes like it: RecordView, ... can follow and inherit the
 	// accessibility functionality much like the Slice class implements it for the
 	// controls that are derived from it.
 	/// <summary>

@@ -47,7 +47,6 @@
 		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord"/>
 		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P"/>
 		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
-		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdProjectUtilities" label="_Utilities..." message="Utilities">
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>

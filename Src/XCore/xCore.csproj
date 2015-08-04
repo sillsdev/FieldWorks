@@ -207,9 +207,6 @@
     <Compile Include="RecordBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Ticker.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="xCoreStrings.Designer.cs">
       <DependentUpon>xCoreStrings.resx</DependentUpon>
     </Compile>
@@ -262,10 +259,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RecordBar.resx">
       <DependentUpon>RecordBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Ticker.resx">
-      <DependentUpon>Ticker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="xCoreStrings.resx">

@@ -12,12 +12,6 @@ namespace SIL.CoreImpl
 	public interface IMajorFlexComponent
 	{
 		/// <summary>
-		/// Get the internal name of the component.
-		/// </summary>
-		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		string Name { get; }
-
-		/// <summary>
 		/// Deactivate the component.
 		/// </summary>
 		/// <remarks>

@@ -7,7 +7,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Interface for each Tool in an IArea
 	/// </summary>
-	public interface ITool : IMajorFlexComponent
+	public interface ITool : IMajorFlexUiComponent
 	{
 	}
 }

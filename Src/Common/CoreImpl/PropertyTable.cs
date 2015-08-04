@@ -195,22 +195,6 @@ namespace SIL.CoreImpl
 
 		#endregion IDisposable & Co. implementation
 
-		/// <summary>
-		/// Get a string representing the properties.
-		///
-		/// Used only for tests and an unsed "Ticker" class in xcore.
-		/// </summary>
-		/// <returns></returns>
-		public string GetPropertiesDumpString()
-		{
-			CheckDisposed();
-			StringBuilder sb = new StringBuilder();
-			foreach (KeyValuePair<string, Property> kvp in new Dictionary<string, Property>(m_properties))
-				sb.AppendLine(kvp.Value.ToString());
-
-			return sb.ToString();
-		}
-
 		#region Removing
 
 		/// <summary>
@@ -599,7 +583,7 @@ namespace SIL.CoreImpl
 			var didChange = true;
 			if (!Monitor.TryEnter(m_properties))
 			{
-				TraceVerboseLine(">>>>>>>*****  colision: <d>  ********<<<<<<<<<<<");
+				TraceVerboseLine(">>>>>>>*****  collision: <d>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}
 			if (m_properties.ContainsKey(key))

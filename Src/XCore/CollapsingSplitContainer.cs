@@ -203,13 +203,14 @@ namespace XCore
 		/// <remarks>
 		/// This will return null if the data member is null.
 		/// </remarks>
+		[System.ComponentModel.Browsable(false)]
 		public Control FirstControl
 		{
 			get
 			{
 				CheckDisposed();
 
-				return (m_firstMainControl == null) ? null : m_firstMainControl;
+				return m_firstMainControl;
 			}
 			set
 			{
@@ -240,13 +241,14 @@ namespace XCore
 		/// <remarks>
 		/// This will return null if the data member is null.
 		/// </remarks>
+		[System.ComponentModel.Browsable(false)]
 		public Control SecondControl
 		{
 			get
 			{
 				CheckDisposed();
 
-				return (m_secondMainControl == null) ? null : m_secondMainControl;
+				return m_secondMainControl;
 			}
 			set
 			{
@@ -361,30 +363,31 @@ namespace XCore
 			{
 				g.DrawImage(icon, x, y);
 
-				if (label != null && label.Length != 0)
+				if (string.IsNullOrEmpty(label))
 				{
-					Font font = Font; // rather arbitrary, what should we use??
-					using (Brush brush = new SolidBrush(Color.Black)) // what should this really be?
+					return;
+				}
+				Font font = Font; // rather arbitrary, what should we use??
+				using (Brush brush = new SolidBrush(Color.Black)) // what should this really be?
+				{
+					if (Orientation == Orientation.Vertical)
 					{
-						if (Orientation == Orientation.Vertical)
+						y += icon.Height + kLabelOffset;
+						StringFormat format = StringFormat.GenericDefault.Clone() as StringFormat;
+						format.FormatFlags = StringFormatFlags.DirectionVertical;
+						try
 						{
-							y += icon.Height + kLabelOffset;
-							StringFormat format = StringFormat.GenericDefault.Clone() as StringFormat;
-							format.FormatFlags = StringFormatFlags.DirectionVertical;
-							try
-							{
-								g.DrawString(label, font, brush, (float)0.0, (float)y, format);
-							}
-							catch (Exception ex)
-							{
-								System.Diagnostics.Debug.WriteLine(ex.Message);
-							}
+							g.DrawString(label, font, brush, (float)0.0, (float)y, format);
 						}
-						else
+						catch (Exception ex)
 						{
-							x += icon.Width + kLabelOffset;
-							g.DrawString(label, font, brush, (float)x, (float)0.0);
+							System.Diagnostics.Debug.WriteLine(ex.Message);
 						}
+					}
+					else
+					{
+						x += icon.Width + kLabelOffset;
+						g.DrawString(label, font, brush, (float)x, (float)0.0);
 					}
 				}
 			}

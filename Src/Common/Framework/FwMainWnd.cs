@@ -13,7 +13,9 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
+using Palaso.Code;
 using SIL.CoreImpl;
+using SIL.CoreImpl.SilSidePane;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.Archiving;
@@ -27,6 +29,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -58,6 +61,7 @@ namespace SIL.FieldWorks.Common.Framework
 #endif
 	public partial class FwMainWnd : Form, IFwMainWnd
 	{
+		private SidePane _sidePane;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
@@ -66,8 +70,8 @@ namespace SIL.FieldWorks.Common.Framework
 		private readonly ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
 		private FwStyleSheet _stylesheet;
-		private readonly IPublisher _publisher;
-		private readonly ISubscriber _subscriber;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -85,39 +89,106 @@ namespace SIL.FieldWorks.Common.Framework
 		public FwMainWnd(FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
 			: this()
 		{
-			if (wndCopyFrom != null)
-			{
-				throw new NotImplementedException("Support for the 'wndCopyFrom' is not yet implemented.");
-			}
-			if (linkArgs != null)
-			{
-				throw new NotImplementedException("Support for the 'linkArgs' is not yet implemented.");
-			}
+			Guard.AssertThat(wndCopyFrom == null, "Support for the 'wndCopyFrom' is not yet implemented.");
+			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
 
-			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
-
-#region Add custom status bar panels
-			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelFilter";
-			_statusbar.Panels[3].Text = @"Filter";
-			_statusbar.Panels[3].MinWidth = 40;
-
-			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelSort";
-			_statusbar.Panels[3].Text = @"Sort";
-			_statusbar.Panels[3].MinWidth = 40;
-
-			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelProgressBar";
-			_statusbar.Panels[3].Text = @"ProgressBar";
-			_statusbar.Panels[3].MinWidth = 150;
-#endregion Add custom status bar panels
+			AddCustomStatusBarPanels();
 
 			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
 
+			_viewHelper = new ActiveViewHelper(this);
+
+			SetupPropertyTable();
+
 			_areaRepository = AreaRepositoryFactory.CreateAreaRepository();
+
+			SetupOutlookBar();
+
+			_currentArea = _areaRepository.GetPersistedOrDefaultArea(PropTable);
+
+			SetWindowTitle();
+#if RANDYTODO
+			// Remove this when I'm done with project.
+			// Load xml config files and save merged document.
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
+			var mergedConfigDoc = XWindow.LoadConfigurationWithIncludes(configFilePath, false);
+			mergedConfigDoc.Save(@"C:\xWindowFullConfig.xml");
+#endif
+		}
+
+		private void SetupOutlookBar()
+		{
+			mainContainer.SuspendLayout();
+			_sidePane = new SidePane(mainContainer.Panel1)
+			{
+				Dock = DockStyle.Fill,
+				TabStop = true,
+				TabIndex = 0
+			};
+
+			mainContainer.FirstControl = _sidePane;
+			mainContainer.Tag = "SidebarWidthGlobal";
+			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
+			mainContainer.Panel1Collapsed = !PropTable.GetBoolProperty("ShowSidebar", false);
+				// Andy Black wants to collapse it for one of his XCore apps.
+			mainContainer.Panel2Collapsed = false; // Never collapse the main content control, plus optional record list.
+			var sd = PropTable.GetIntProperty("SidebarWidthGlobal", 140);
+			if (!mainContainer.Panel1Collapsed)
+				SetSplitContainerDistance(mainContainer, sd);
+			mainContainer.FirstLabel = PropTable.GetValue<string>("SidebarLabel");
+			mainContainer.SecondLabel = PropTable.GetValue<string>("AllButSidebarLabel");
+			// Add areas and tools to "_sidePane";
+			foreach (var area in _areaRepository.AllAreasInOrder())
+			{
+				var tab = new Tab(StringTable.Table.LocalizeAttributeValue(area.UiName))
+				{
+					Icon = area.Icon,
+					Tag = area,
+					Name = area.MachineName
+				};
+				// TODO: Add tools for area here.
+
+				_sidePane.AddTab(tab);
+			}
+			_sidePane.TabClicked += Area_Clicked;
+			_sidePane.ItemClicked += Tool_Clicked;
+
+			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
+			mainContainer.ResumeLayout(false);
+		}
+
+		void Tool_Clicked(Item itemClicked)
+		{
+#if RANDYTODO
+			// Deactivate old tool & activate newly selected one.
+#endif
+		}
+
+		void Area_Clicked(Tab tabClicked)
+		{
+			var clickedArea = (IArea)tabClicked.Tag;
+			if (_currentArea == clickedArea)
+			{
+				return; // Nothing to do.
+			}
+			if (_currentArea != null)
+			{
+				_currentArea.Deactivate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+			}
+			_currentArea = clickedArea;
+			_currentArea.Activate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+#if RANDYTODO
+			// Activate persisted tool and if not found then the default for the area.
+#endif
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "PropTable is a reference")]
+		private void SetupPropertyTable()
+		{
+			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
 
 			PropTable = new PropertyTable(_publisher)
 			{
@@ -132,25 +203,39 @@ namespace SIL.FieldWorks.Common.Framework
 			PropTable.RestoreFromFile(PropTable.GlobalSettingsId);
 			PropTable.RestoreFromFile(PropTable.LocalSettingsId);
 
-			_viewHelper = new ActiveViewHelper(this);
+			PropTable.SetProperty("cache", Cache, false);
+			PropTable.SetPropertyPersistence("cache", false);
+		}
 
-			// NOTE: The "lexicon" area must be present.
-			// The persisted area could be obsolete, and not present,
-			// so we'll use "lexicon", if the stored one cannot be found.
-			// The "lexicon" area must be available, even if there are no other areas.
-			_currentArea = _areaRepository.GetArea(PropTable.GetStringProperty("InitialArea", "lexicon")) ??
-							_areaRepository.GetArea("lexicon");
-			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
-			_currentArea.Activate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "StatusBarTextBox and StatusBarProgressPanel are references")]
+		private void AddCustomStatusBarPanels()
+		{
+			// Insert first, so it ends up last in the three that are inserted.
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelFilter";
+			_statusbar.Panels[3].Text = @"Filter";
+			_statusbar.Panels[3].MinWidth = 40;
 
-			SetWindowTitle();
-#if RANDYTODO
-			// Remove this when I'm done with project.
-			// Load xml config files and save merged document.
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
-			var mergedConfigDoc = XWindow.LoadConfigurationWithIncludes(configFilePath, false);
-			mergedConfigDoc.Save(@"C:\xWindowFullConfig.xml");
-#endif
+			// Insert second, so it ends up in the middle of the three that are inserted.
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelSort";
+			_statusbar.Panels[3].Text = @"Sort";
+			_statusbar.Panels[3].MinWidth = 40;
+
+			// Insert last, so it ends up first in the three that are inserted.
+			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar));
+			_statusbar.Panels[3].Name = @"statusBarPanelProgressBar";
+			_statusbar.Panels[3].Text = @"ProgressBar";
+			_statusbar.Panels[3].MinWidth = 150;
+		}
+
+		private static void SetSplitContainerDistance(SplitContainer splitCont, int pixels)
+		{
+			if (splitCont.SplitterDistance != pixels)
+			{
+				splitCont.SplitterDistance = pixels;
+			}
 		}
 
 		private void SaveSettings()
@@ -408,6 +493,12 @@ namespace SIL.FieldWorks.Common.Framework
 				{
 					PropTable.Dispose();
 					PropTable = null;
+				}
+
+				if (_sidePane != null)
+				{
+					_sidePane.Dispose();
+					_sidePane = null;
 				}
 			}
 			base.Dispose(disposing);
@@ -1010,5 +1101,23 @@ very simple minor adjustments. ;)"
 				_viewHelper.ActiveView.EditingHelper.SelectAll();
 			}
 		}
+
+		#region Overrides of Form
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.Load"/> event.
+		/// </summary>
+		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+#if RANDYTODO
+			// TODO: Add select previous/default tool for area.
+#endif
+			_sidePane.SelectTab(_sidePane.GetTabByName(_currentArea.MachineName));
+		}
+
+		#endregion
 	}
 }

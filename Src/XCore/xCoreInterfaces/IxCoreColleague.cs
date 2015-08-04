@@ -55,7 +55,6 @@ namespace XCore
 	/// </summary>
 	/// <remarks>
 	/// The only real reason this interface has been defined is so MultiPane is happy.
-	/// It used
 	/// </remarks>
 	public interface IXCoreUserControl
 	{

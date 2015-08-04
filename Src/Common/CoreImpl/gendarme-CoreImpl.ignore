@@ -9,3 +9,24 @@ M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<Runs>*::System.
 M: System.Collections.IEnumerator SIL.CoreImpl.TsRunPart/<Words>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/SortKeyIndex/<GetItems>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/<GetWsStrings>*::System.Collections.IEnumerable.GetEnumerator()
+
+# Reference only
+M: System.Void SIL.CoreImpl.SilSidePane.OutlookBar::OnMouseClick(System.Windows.Forms.MouseEventArgs)
+
+# added to collection and disposed there
+M: System.Void SIL.CoreImpl.SilSidePane.OutlookBar::CreateContextMenu()
+M: System.Void SIL.CoreImpl.SilSidePane.OutlookButtonPanelItemArea::Add(SIL.CoreImpl.SilSidePane.Item)
+M: System.Void SIL.CoreImpl.SilSidePane.SidePane::Init(System.Windows.Forms.Control)
+M: System.Void SIL.CoreImpl.SilSidePane.SidePane::AddTab(SIL.CoreImpl.SilSidePane.Tab)
+M: System.Void SIL.CoreImpl.SilSidePane.OutlookButtonPanel::OverflowButton_DropDownOpening(System.Object,System.EventArgs)
+
+# Disposed in finally block
+M: System.Void SIL.CoreImpl.SilSidePane.OutlookBarPanelRenderer::OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.CoreImpl.SilSidePane.Item
+T: SIL.CoreImpl.SilSidePane.OutlookBarButtonCollection
+T: SIL.CoreImpl.SilSidePane.Tab

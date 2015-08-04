@@ -12,7 +12,7 @@ namespace XCore
 
 	/// <summary>
 	/// This class is used to provide a distinct place an IPaneBar control
-	/// and a main control below it. The IPaneBar instance will be in the Panle1
+	/// and a main control below it. The IPaneBar instance will be in the Pane11
 	/// control of a SplitContainer, and the main control will be located in the Panel2 control.
 	/// The splitter between them will not be movable. in fact, it should not be noticable
 	/// </summary>
@@ -22,7 +22,7 @@ namespace XCore
 	/// This 'extension' is really to ensure all of those interfaces are implemented,
 	/// particularly for m_mainControl.
 	///
-	/// Most of the mehtods in these interfaces wil be pass-thourh methods to m_mainControl,
+	/// Most of the mehtods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
 	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IFWDisposable, IPostLayoutInit

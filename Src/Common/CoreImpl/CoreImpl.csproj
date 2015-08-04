@@ -111,6 +111,7 @@
     <Compile Include="IMajorFlexComponent.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IMajorFlexUiComponent.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
     <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
@@ -123,6 +124,47 @@
     </Compile>
     <Compile Include="PropertyTable.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
+    <Compile Include="SilSidePane\Banner.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\IItemArea.cs" />
+    <Compile Include="SilSidePane\Item.cs" />
+    <Compile Include="SilSidePane\ListViewItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\NavPaneOptionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\NavPaneOptionsDlg.Designer.cs">
+      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SilSidePane\OutlookBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\OutlookBarButton.cs" />
+    <Compile Include="SilSidePane\OutlookBarButtonCollection.cs" />
+    <Compile Include="SilSidePane\OutlookBarSubButtonPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\OutlookButtonPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\OutlookButtonPanelItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\SidePane.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\SidePaneItemAreaStyle.cs" />
+    <Compile Include="SilSidePane\SilSidePane.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SilSidePane.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SilSidePane\StripListItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SilSidePane\Tab.cs" />
     <Compile Include="StringSearcher.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
@@ -182,6 +224,14 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="SilSidePane\NavPaneOptionsDlg.resx">
+      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SilSidePane\SilSidePane.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\lsr-region-utf8.txt" />
@@ -212,6 +262,13 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="gendarme-CoreImpl.ignore" />
+    <None Include="Resources\Arrow_Down.ico" />
+    <None Include="Resources\Arrow_Up.ico" />
+    <None Include="Resources\DefaultIcon.ico" />
+    <None Include="Resources\DropDown2003.ico" />
+    <None Include="Resources\DropDown2007.ico" />
+    <None Include="Resources\Grip2003.ico" />
+    <None Include="Resources\Grip2007.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -15,6 +17,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "TODO-Linux: SplitContainer.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwMainWnd));
@@ -89,6 +93,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.toolStripButton_Refresh = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
+			this.mainContainer = new XCore.CollapsingSplitContainer();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
@@ -96,8 +101,11 @@ namespace SIL.FieldWorks.Common.Framework
 			this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
+			this.toolStripContainer.ContentPanel.SuspendLayout();
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+			this.mainContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
@@ -351,7 +359,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
 			this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-			this.undoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.undoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.undoToolStripMenuItem.Text = "&Undo";
 			this.undoToolStripMenuItem.ToolTipText = "Undo previous actions.";
 			// 
@@ -361,14 +369,14 @@ namespace SIL.FieldWorks.Common.Framework
 			this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
 			this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-			this.redoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.redoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.redoToolStripMenuItem.Text = "&Redo";
 			this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
 			// 
 			// toolStripMenuItem11
 			// 
 			this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-			this.toolStripMenuItem11.Size = new System.Drawing.Size(220, 6);
+			this.toolStripMenuItem11.Size = new System.Drawing.Size(216, 6);
 			// 
 			// cutToolStripMenuItem
 			// 
@@ -376,7 +384,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-			this.cutToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.cutToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.cutToolStripMenuItem.Text = "Cu&t";
 			this.cutToolStripMenuItem.ToolTipText = "Cut";
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.Edit_Cut);
@@ -387,7 +395,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.copyToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.copyToolStripMenuItem.Text = "&Copy";
 			this.copyToolStripMenuItem.ToolTipText = "Copy";
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.Edit_Copy);
@@ -398,7 +406,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.pasteToolStripMenuItem.Text = "&Paste";
 			this.pasteToolStripMenuItem.ToolTipText = "Paste";
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste);
@@ -406,12 +414,12 @@ namespace SIL.FieldWorks.Common.Framework
 			// toolStripMenuItem12
 			// 
 			this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-			this.toolStripMenuItem12.Size = new System.Drawing.Size(220, 6);
+			this.toolStripMenuItem12.Size = new System.Drawing.Size(216, 6);
 			// 
 			// pasteHyperlinkToolStripMenuItem
 			// 
 			this.pasteHyperlinkToolStripMenuItem.Name = "pasteHyperlinkToolStripMenuItem";
-			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.pasteHyperlinkToolStripMenuItem.Text = "Paste &Hyperlink";
 			this.pasteHyperlinkToolStripMenuItem.ToolTipText = "Paste clipboard content as hyperlink.";
 			this.pasteHyperlinkToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste_Hyperlink);
@@ -419,25 +427,25 @@ namespace SIL.FieldWorks.Common.Framework
 			// copyLocationAsHyperlinkToolStripMenuItem
 			// 
 			this.copyLocationAsHyperlinkToolStripMenuItem.Name = "copyLocationAsHyperlinkToolStripMenuItem";
-			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
 			this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
 			// 
 			// toolStripMenuItem13
 			// 
 			this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-			this.toolStripMenuItem13.Size = new System.Drawing.Size(220, 6);
+			this.toolStripMenuItem13.Size = new System.Drawing.Size(216, 6);
 			// 
 			// toolStripMenuItem14
 			// 
 			this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-			this.toolStripMenuItem14.Size = new System.Drawing.Size(220, 6);
+			this.toolStripMenuItem14.Size = new System.Drawing.Size(216, 6);
 			// 
 			// selectAllToolStripMenuItem
 			// 
 			this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
 			this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.selectAllToolStripMenuItem.Text = "Select &All";
 			this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.Edit_Select_All);
 			// 
@@ -660,7 +668,7 @@ namespace SIL.FieldWorks.Common.Framework
             this.toolStripSeparator1});
 			this.toolStripStandard.Location = new System.Drawing.Point(4, 0);
 			this.toolStripStandard.Name = "toolStripStandard";
-			this.toolStripStandard.Size = new System.Drawing.Size(127, 27);
+			this.toolStripStandard.Size = new System.Drawing.Size(96, 27);
 			this.toolStripStandard.TabIndex = 2;
 			this.toolStripStandard.Text = "toolStripStandard";
 			// 
@@ -711,6 +719,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// 
 			// toolStripContainer.ContentPanel
 			// 
+			this.toolStripContainer.ContentPanel.Controls.Add(this.mainContainer);
 			this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(697, 381);
 			this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.toolStripContainer.LeftToolStripPanelVisible = false;
@@ -724,6 +733,23 @@ namespace SIL.FieldWorks.Common.Framework
 			// toolStripContainer.TopToolStripPanel
 			// 
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripStandard);
+			// 
+			// mainContainer
+			// 
+			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
+			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
+			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mainContainer.FirstLabel = "";
+			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.mainContainer.IsInitializing = false;
+			this.mainContainer.Location = new System.Drawing.Point(0, 0);
+			this.mainContainer.Name = "mainContainer";
+			this.mainContainer.Panel1MinSize = 16;
+			this.mainContainer.Panel2MinSize = 16;
+			this.mainContainer.SecondLabel = "";
+			this.mainContainer.Size = new System.Drawing.Size(697, 381);
+			this.mainContainer.TabIndex = 0;
+			this.mainContainer.TabStop = false;
 			// 
 			// _statusbar
 			// 
@@ -779,10 +805,13 @@ namespace SIL.FieldWorks.Common.Framework
 			this._menuStrip.PerformLayout();
 			this.toolStripStandard.ResumeLayout(false);
 			this.toolStripStandard.PerformLayout();
+			this.toolStripContainer.ContentPanel.ResumeLayout(false);
 			this.toolStripContainer.TopToolStripPanel.ResumeLayout(false);
 			this.toolStripContainer.TopToolStripPanel.PerformLayout();
 			this.toolStripContainer.ResumeLayout(false);
 			this.toolStripContainer.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
+			this.mainContainer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();
@@ -870,5 +899,6 @@ namespace SIL.FieldWorks.Common.Framework
 		private ToolStripSeparator toolStripMenuItem14;
 		private ToolStripMenuItem selectAllToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator2;
+		private XCore.CollapsingSplitContainer mainContainer;
 	}
 }
