@@ -82,7 +82,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #region disposal
 			~ReversalSubEntryIcuComparer() { Dispose(false); }
 
-			public void Dispose() { Dispose(true); }
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
 
 			protected virtual void Dispose(bool disposing)
 			{
