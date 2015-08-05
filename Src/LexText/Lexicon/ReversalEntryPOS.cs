@@ -267,8 +267,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "lists"
-					&& m_propertyTable.GetStringProperty("ToolForAreaNamed_lists", null) == "reversalToolReversalIndexPOS");
+				return (m_propertyTable.GetValue<string>("areaChoice") == "lists"
+					&& m_propertyTable.GetValue<string>("ToolForAreaNamed_lists") == "reversalToolReversalIndexPOS");
 			}
 		}
 	}
@@ -280,7 +280,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 
 
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 

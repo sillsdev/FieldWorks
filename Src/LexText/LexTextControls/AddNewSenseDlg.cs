@@ -9,7 +9,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -191,7 +190,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="le"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 

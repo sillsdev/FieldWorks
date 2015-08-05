@@ -155,10 +155,10 @@ namespace SIL.FieldWorks.XWorks
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
 			if (Clerk.IsControllingTheRecordTreeBar
-				&& string.IsNullOrEmpty(m_propertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", null)))
+				&& string.IsNullOrEmpty(m_propertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+				string toolName = m_propertyTable.GetValue("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		protected void InitBase(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
@@ -324,11 +324,11 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						m_propertyTable.SetProperty("ShowRecordList", false, true);
+						m_propertyTable.SetProperty("ShowRecordList", false, true, true);
 						break;
 
 					case TreebarAvailability.Required:
-						m_propertyTable.SetProperty("ShowRecordList", true, true);
+						m_propertyTable.SetProperty("ShowRecordList", true, true, true);
 						break;
 
 					case TreebarAvailability.Optional:

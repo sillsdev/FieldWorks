@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		#endregion Data members
 
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				return (areaChoice == "textsWords");
 			}
 		}
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		#endregion Data members
 
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;

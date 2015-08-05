@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 	public class MacroListener : IxCoreColleague
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// Standard member for IXCoreColleague. The configurationParameters are not currently used.
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;

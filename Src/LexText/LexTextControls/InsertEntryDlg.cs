@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -792,7 +792,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="tssForm">The initial form to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
@@ -856,7 +856,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="filter">The filter.</param>
 		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, PropertyTable propertyTable, MorphTypeFilterType filter)
+			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, IPropertyTable propertyTable, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
 

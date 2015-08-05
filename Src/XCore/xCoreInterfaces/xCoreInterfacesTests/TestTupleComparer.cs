@@ -55,7 +55,7 @@ namespace XCore
 
 		public IxCoreColleague[] GetMessageTargets () { return null;}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{}
 	}
 

@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
 			base.SetDlgInfo(cache, mediator, propertyTable, null);
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, int ws)
+		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, int ws)
 		{
 			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
 				cache, cache.DefaultUserWs);
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
 			SetDlgInfoForComponentLexeme(cache, mediator, propertyTable, componentLexeme);
 		}

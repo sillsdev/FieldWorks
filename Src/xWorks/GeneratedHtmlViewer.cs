@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		protected string m_outputDirectory;
 
@@ -740,21 +740,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_previousShowTreeBarValue = m_propertyTable.GetBoolProperty("ShowRecordList", true);
+			m_previousShowTreeBarValue = m_propertyTable.GetValue("ShowRecordList", true);
 
-			m_propertyTable.SetProperty("ShowRecordList", false, true);
+			m_propertyTable.SetProperty("ShowRecordList", false, true, true);
 
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 
-			m_propertyTable.SetProperty("StatusPanelRecordNumber", "", true);
-			m_propertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
+			m_propertyTable.SetProperty("StatusPanelRecordNumber", "", false, true);
 
 #if notnow
 			m_htmlControl.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);
@@ -769,7 +768,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowSketch();
 
 			//add our current state to the history system
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+			string toolName = m_propertyTable.GetValue("currentContentControl", "");
 			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 #if notnow
@@ -845,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true);
+			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true, true);
 			return true;
 		}
 

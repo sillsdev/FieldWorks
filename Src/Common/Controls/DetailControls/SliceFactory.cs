@@ -33,12 +33,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// If not found, answer 0.
 		/// If found, answer the ID of the appropriate writing system, or throw exception if not valid.
 		/// </summary>
-		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node)
+		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XmlNode node)
 		{
 			return GetWs(cache, propertyTable, node, "ws");
 		}
 
-		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node, string sAttr)
+		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XmlNode node, string sAttr)
 		{
 			string wsSpec = XmlUtils.GetOptionalAttributeValue(node, sAttr);
 			if (wsSpec != null)
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
-			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
+			IPersistenceProvider persistenceProvider, Mediator mediator, IPropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
 			switch(editor)

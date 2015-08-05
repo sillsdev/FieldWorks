@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 		FwStyleSheet m_styleSheet;
 		IMainWindowDelegateCallbacks m_callbacks;
 		Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		string m_sLayoutPropertyName;
 		Inventory m_layouts;
 		Inventory m_parts;
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
 			FwStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
-			Mediator mediator, PropertyTable propertyTable, string sLayoutPropertyName)
+			Mediator mediator, IPropertyTable propertyTable, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
@@ -268,11 +268,8 @@ namespace SIL.FieldWorks.XWorks
 				configurationParameters, "configureObjectName", "");
 			Text = String.Format(Text, m_configObjectName);
 			m_defaultRootLayoutName = XmlUtils.GetAttributeValue(configurationParameters, "layout");
-			string sLayoutType = null;
-			if (m_propertyTable.PropertyExists(m_sLayoutPropertyName))
-			{
-				sLayoutType = m_propertyTable.GetValue<string>(m_sLayoutPropertyName);
-			}
+			string sLayoutType;
+			m_propertyTable.TryGetValue(m_sLayoutPropertyName, out sLayoutType);
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = m_defaultRootLayoutName;
 
@@ -281,11 +278,11 @@ namespace SIL.FieldWorks.XWorks
 			SetSelectedDictionaryTypeItem(sLayoutType);
 
 			// Restore the location and size from last time we called this dialog.
-			if (m_propertyTable.PropertyExists("XmlDocConfigureDlg_Location") && m_propertyTable.PropertyExists("XmlDocConfigureDlg_Size"))
+			Point dlgLocation;
+			Size dlgSize;
+			if (m_propertyTable.TryGetValue("XmlDocConfigureDlg_Location", out dlgLocation) && m_propertyTable.TryGetValue("XmlDocConfigureDlg_Size", out dlgSize))
 			{
-				var locWnd = m_propertyTable.GetValue<Point>("XmlDocConfigureDlg_Location");
-				var szWnd = m_propertyTable.GetValue<Size>("XmlDocConfigureDlg_Size");
-				Rectangle rect = new Rectangle(locWnd, szWnd);
+				Rectangle rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenUtils.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
@@ -687,11 +684,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mediator != null)
 			{
-				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, false);
-				m_propertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Location", true);
-				// No broadcast even if it did change.
-				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, false);
-				m_propertyTable.SetPropertyPersistence("XmlDocConfigureDlg_Size", true);
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, true, false);
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, true, false);
 			}
 			base.OnClosing(e);
 		}
@@ -1207,10 +1201,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty(m_sLayoutPropertyName,
 					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName,
-					PropertyTable.SettingsGroup.LocalSettings,
-					true);
-				m_propertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
-					PropertyTable.SettingsGroup.LocalSettings);
+					SettingsGroup.LocalSettings, true, true);
 				SaveModifiedLayouts();
 				DialogResult = DialogResult.OK;
 			}
@@ -2841,7 +2832,7 @@ namespace SIL.FieldWorks.XWorks
 			StoreNodeData(m_current);
 			if (m_fDeleteCustomFiles)
 				return true;
-			string sOldRootLayout = m_propertyTable.GetStringProperty(m_sLayoutPropertyName, null);
+			string sOldRootLayout = m_propertyTable.GetValue<string>(m_sLayoutPropertyName);
 			string sRootLayout = ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName;
 			if (sOldRootLayout != sRootLayout)
 				return true;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Impls;
 
 namespace TextAndWordsAreaPlugin
 {
@@ -22,7 +23,7 @@ namespace TextAndWordsAreaPlugin
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
+		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
 			ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
@@ -37,14 +38,10 @@ namespace TextAndWordsAreaPlugin
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
+		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
 			ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
-
-		#endregion
-
-		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
 		/// Do whatever might be needed to get ready for a refresh.
@@ -71,7 +68,7 @@ namespace TextAndWordsAreaPlugin
 		/// Add new ones, as needed.
 		/// </summary>
 		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		public void EnsurePropertiesAreCurrent(PropertyTable propertyTable)
+		public void EnsurePropertiesAreCurrent(IPropertyTable propertyTable)
 		{
 		}
 

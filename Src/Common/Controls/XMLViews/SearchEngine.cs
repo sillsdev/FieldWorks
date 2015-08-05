@@ -39,15 +39,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the search engine.
 		/// </summary>
-		public static SearchEngine Get(Mediator mediator, PropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
+		public static SearchEngine Get(Mediator mediator, IPropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
 		{
 			var searchEngine = propertyTable.GetValue<SearchEngine>(propName);
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
-				propertyTable.SetProperty(propName, searchEngine, true);
+				propertyTable.SetProperty(propName, searchEngine, false, true);
 				propertyTable.SetPropertyDispose(propName, true);
-				propertyTable.SetPropertyPersistence(propName, false);
 			}
 			return searchEngine;
 		}

@@ -1677,9 +1677,10 @@ namespace SIL.FieldWorks
 								if (activeWindow != null)
 								{
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+									activeWindowInterface.PropertyTable.SetProperty("LastBridgeUsed",
 										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings,
+										SettingsGroup.LocalSettings,
+										true,
 										true);
 								}
 							}
@@ -1751,9 +1752,10 @@ namespace SIL.FieldWorks
 				if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 				{
 					var activeWindowInterface = (IFwMainWnd)activeWindow;
-					activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+					activeWindowInterface.PropertyTable.SetProperty("LastBridgeUsed",
 						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-						PropertyTable.SettingsGroup.LocalSettings,
+						SettingsGroup.LocalSettings,
+						true,
 						true);
 				}
 
@@ -2745,7 +2747,7 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
 				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
-					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.PropTable, s_activeMainWnd.Publisher);
+					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher);
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
 			}

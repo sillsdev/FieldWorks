@@ -36,7 +36,7 @@ namespace LexiconAreaPlugin
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 #if RANDYTODO
 			// Implement and call Deactivate(parameters) on current tool in area.
@@ -50,7 +50,7 @@ namespace LexiconAreaPlugin
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(PropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 #if RANDYTODO
 			// Implement and call Activate(parameters) on current/default tool in area.
@@ -91,7 +91,7 @@ namespace LexiconAreaPlugin
 		/// Add new ones, as needed.
 		/// </summary>
 		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		public void EnsurePropertiesAreCurrent(PropertyTable propertyTable)
+		public void EnsurePropertiesAreCurrent(IPropertyTable propertyTable)
 		{
 #if RANDYTODO
 			// Implement and call EnsurePropertiesAreCurrent() on current tool in area.

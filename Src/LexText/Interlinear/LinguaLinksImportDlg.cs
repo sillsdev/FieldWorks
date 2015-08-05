@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.Button btnModifyMapping;
 		private System.Windows.Forms.Button btnImport;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		private System.Windows.Forms.Button btn_Cancel;
 		private string m_sTempDir;
 		private string m_sRootDir;
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void Init(FdoCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
+		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 

@@ -32,7 +32,7 @@ namespace XCore
 		public System.Windows.Forms.CheckBox cbModifyVowelList;
 
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -55,7 +55,7 @@ namespace XCore
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

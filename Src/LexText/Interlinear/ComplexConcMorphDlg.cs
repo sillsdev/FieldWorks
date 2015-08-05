@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcMorphNode node)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ComplexConcMorphNode node)
 		{
 			m_cache = cache;
 			m_node = node;

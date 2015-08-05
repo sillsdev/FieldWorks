@@ -293,11 +293,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
+			string areaName = m_propertyTable.GetValue<string>("areaChoice");
 			if (areaName == "textsWords")
-				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
+			{
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+					"khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
+			}
 			else
+			{
 				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
+			}
 		}
 
 		public virtual bool OnDisplayDeleteParticipants(object commandObject, ref UIItemDisplayProperties display)

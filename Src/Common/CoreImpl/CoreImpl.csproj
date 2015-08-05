@@ -113,7 +113,10 @@
     </Compile>
     <Compile Include="IMajorFlexUiComponent.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="IPostLayoutInit.cs" />
+    <Compile Include="IPropertyTable.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="IPublisherProvider.cs" />
@@ -122,8 +125,9 @@
     <Compile Include="ITool.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PropertyTable.cs" />
+    <Compile Include="PropertyTableFactory.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
+    <Compile Include="SettingsGroup.cs" />
     <Compile Include="SilSidePane\Banner.cs">
       <SubType>Component</SubType>
     </Compile>

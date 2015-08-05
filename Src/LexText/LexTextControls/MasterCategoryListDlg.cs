@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FdoCache m_cache;
 		private List<TreeNode> m_nodes = new List<TreeNode>();
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		///  <param name="subItemOwner"></param>
-		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
+		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
 
@@ -133,12 +133,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				if (m_propertyTable.PropertyExists("masterCatListDlgLocation") &&
-					m_propertyTable.PropertyExists("masterCatListDlgSize"))
+				Point dlgLocation;
+				Size dlgSize;
+				if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) &&
+					m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
 				{
-					var locWnd = m_propertyTable.GetValue<Point>("masterCatListDlgLocation");
-					var szWnd = m_propertyTable.GetValue<Size>("masterCatListDlgSize");
-					Rectangle rect = new Rectangle(locWnd, szWnd);
+					Rectangle rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenUtils.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
@@ -503,8 +503,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_mediator != null)
 			{
-				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true, true);
+				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true, true);
 			}
 		}
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -185,7 +184,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.

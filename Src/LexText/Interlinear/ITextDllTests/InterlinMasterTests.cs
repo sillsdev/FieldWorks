@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.IText
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		#region disposal
 		protected virtual void Dispose(bool disposing)
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.IText
 		#region Test Classes
 		private class TestInterlinMaster : InterlinMaster
 		{
-			public TestInterlinMaster(Mediator mediator, PropertyTable propertyTable, IStText stText)
+			public TestInterlinMaster(Mediator mediator, IPropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
 				m_propertyTable = propertyTable;
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.IText
 		{
 			internal readonly IStText m_stText;
 
-			public TestClerk(Mediator mediator, PropertyTable propertyTable, IStText stText)
+			public TestClerk(Mediator mediator, IPropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
 				m_propertyTable = propertyTable;

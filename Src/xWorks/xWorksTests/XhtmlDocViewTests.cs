@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class XhtmlDocViewTests : XWorksAppTestBase, IDisposable
 	{
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		[TestFixtureSetUp]
 		public new void FixtureSetup()
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.XWorks
 				m_mediator = mediator;
 			}
 
-			public void SetPropertyTable(PropertyTable propertyTable)
+			public void SetPropertyTable(IPropertyTable propertyTable)
 			{
 				m_propertyTable = propertyTable;
 			}
@@ -522,7 +522,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 		}
 
-		#region IDisposable Section (aka keep Gendarme happy)
+	#region IDisposable Section (aka keep Gendarme happy)
 		~XhtmlDocViewTests()
 		{
 			Dispose(false);
@@ -540,7 +540,7 @@ namespace SIL.FieldWorks.XWorks
 			if(m_mediator != null)
 				m_mediator.Dispose();
 		}
-		#endregion
+	#endregion
 	}
 #endif
 }

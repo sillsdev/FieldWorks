@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fRootMade;
 		private int m_labelWidth;
 
-		public TryAWordRootSite(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public TryAWordRootSite(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_fdoCache = cache;
 			m_mediator = mediator;

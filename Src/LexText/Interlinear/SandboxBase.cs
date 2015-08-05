@@ -989,7 +989,7 @@ namespace SIL.FieldWorks.IText
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -1008,14 +1008,13 @@ namespace SIL.FieldWorks.IText
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
-			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
+			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
 
 			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
 				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public SandboxBase(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: this(cache, mediator, propertyTable, ss, choices)
 		{
 			// finish setup with the WordBundleAnalysis

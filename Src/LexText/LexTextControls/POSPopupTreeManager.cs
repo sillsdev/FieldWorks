@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
 			:base (treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
 			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}

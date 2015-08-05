@@ -66,9 +66,9 @@ namespace SIL.FieldWorks.XWorks
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
 
 		public IEnumerable<string> Reversals { get; set; }
-		private PropertyTable PropertyTable { get; set; }
+		private IPropertyTable PropertyTable { get; set; }
 
-		public PublishToWebonaryModel(PropertyTable propertyTable)
+		public PublishToWebonaryModel(IPropertyTable propertyTable)
 		{
 			PropertyTable = propertyTable;
 			LoadFromSettings();
@@ -104,10 +104,10 @@ namespace SIL.FieldWorks.XWorks
 			UserName = Settings.Default.WebonaryUser;
 			if(PropertyTable != null)
 			{
-				SiteName = PropertyTable.GetStringProperty(WebonarySite, null);
-				SelectedPublication = PropertyTable.GetStringProperty(WebonaryPublication, null);
-				SelectedConfiguration = PropertyTable.GetStringProperty(WebonaryConfiguration, null);
-				SelectedReversals = SplitReversalSettingString(PropertyTable.GetStringProperty(WebonaryReversals, null));
+				SiteName = PropertyTable.GetValue<string>(WebonarySite);
+				SelectedPublication = PropertyTable.GetValue<string>(WebonaryPublication);
+				SelectedConfiguration = PropertyTable.GetValue<string>(WebonaryConfiguration);
+				SelectedReversals = SplitReversalSettingString(PropertyTable.GetValue<string>(WebonaryReversals));
 			}
 		}
 
@@ -116,19 +116,15 @@ namespace SIL.FieldWorks.XWorks
 			Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
 			Settings.Default.WebonaryUser = UserName;
 
-			PropertyTable.SetProperty(WebonarySite, SiteName, false);
-			PropertyTable.SetPropertyPersistence(WebonarySite, true);
-			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals), false);
-			PropertyTable.SetPropertyPersistence(WebonaryReversals, true);
+			PropertyTable.SetProperty(WebonarySite, SiteName, true, false);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals), true, false);
 			if(m_selectedConfiguration != null)
 			{
-				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, false);
-				PropertyTable.SetPropertyPersistence(WebonaryConfiguration, true);
+				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, false);
 			}
 			if (m_selectedPublication != null)
 			{
-				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, false);
-				PropertyTable.SetPropertyPersistence(WebonaryPublication, true);
+				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, true, false);
 			}
 			PropertyTable.SaveGlobalSettings();
 			Settings.Default.Save();

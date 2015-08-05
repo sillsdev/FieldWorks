@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="currentColumns">The current columns.</param>
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns, PropertyTable propertyTable)
+		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns, IPropertyTable propertyTable)
 		{
 			m_possibleColumns = possibleColumns;
 			m_currentColumns = currentColumns;

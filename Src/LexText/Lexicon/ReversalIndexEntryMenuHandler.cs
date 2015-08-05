@@ -220,8 +220,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "lexicon"
-					&& m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete");
+				return (m_propertyTable.GetValue<string>("areaChoice") == "lexicon"
+					&& m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete");
 			}
 		}
 	}

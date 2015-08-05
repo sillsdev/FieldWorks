@@ -1137,7 +1137,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
 		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec,
-			Mediator mediator, PropertyTable propertyTable)
+			Mediator mediator, IPropertyTable propertyTable)
 		{
 			switch (beSpec)
 			{
@@ -2059,7 +2059,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_leafFlid;
 		FdoCache m_cache;
 		XCore.Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		FwComboBox m_combo;
 		bool m_fAtomic;
 		XmlNode m_colSpec;
@@ -2102,7 +2102,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="filterType">Type of the filter.</param>
 		/// ------------------------------------------------------------------------------------
 		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, FdoCache cache,
-			Mediator mediator, PropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
+			Mediator mediator, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
 			: base(tssName, null, fsi)
 		{
 			m_colSpec = fsi.Spec;

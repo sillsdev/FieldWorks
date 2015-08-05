@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, mediator, propertyTable, configNode, searchEngine, null);
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine, IWritingSystem reversalWs)
 		{
 			CheckDisposed();

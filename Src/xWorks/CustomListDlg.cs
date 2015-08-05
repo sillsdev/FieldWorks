@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		protected string s_helpTopic = "khtpCustomLists";
 		private HelpProvider m_helpProvider;
 		protected readonly Mediator m_mediator;
-		protected readonly PropertyTable m_propertyTable;
+		protected readonly IPropertyTable m_propertyTable;
 		private FdoCache m_cache;
 		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public CustomListDlg(Mediator mediator, PropertyTable propertyTable)
+		public CustomListDlg(Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_finSetup = true;
 			InitializeComponent();
@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:AddListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public AddListDlg(Mediator mediator, PropertyTable propertyTable) :
+		public AddListDlg(Mediator mediator, IPropertyTable propertyTable) :
 			base(mediator, propertyTable)
 		{
 			s_helpTopic = "khtpNewCustomList";
@@ -655,7 +655,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ConfigureListDlg(Mediator mediator, PropertyTable propertyTable, ICmPossibilityList possList) :
+		public ConfigureListDlg(Mediator mediator, IPropertyTable propertyTable, ICmPossibilityList possList) :
 			base(mediator, propertyTable)
 		{
 			m_curList = possList;

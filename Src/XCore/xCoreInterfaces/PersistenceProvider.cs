@@ -16,7 +16,7 @@ namespace XCore
 	{
 		protected string m_contextString;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// create a PersistenceProvider which uses the XCore PropertyTable.
@@ -27,7 +27,7 @@ namespace XCore
 		/// limited to a particular context. For example, if they control is used in
 		/// three different places, we don't necessarily want to control to use the
 		/// same settings each time. So each case would need its own context string.</param>
-		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable, string context)
+		public PersistenceProvider(Mediator mediator, IPropertyTable propertyTable, string context)
 		{
 			m_contextString = context;
 			m_mediator = mediator;
@@ -39,7 +39,7 @@ namespace XCore
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable)
+		public PersistenceProvider(Mediator mediator, IPropertyTable propertyTable)
 			: this(mediator, propertyTable, "Default")
 
 		{
@@ -91,7 +91,7 @@ namespace XCore
 		protected void Set(string id,string label, object value)
 		{
 			var propertyName = GetPrefix(id) + "-" + label;
-			m_propertyTable.SetProperty(propertyName, value, true);
+			m_propertyTable.SetProperty(propertyName, value, true, true);
 		}
 
 		public void PersistWindowSettings(string id,Form form)
@@ -114,7 +114,7 @@ namespace XCore
 		}
 		public void SetInfoObject(string id, Object info)
 		{
-			m_propertyTable.SetProperty(GetPrefix(id), info, false);
+			m_propertyTable.SetProperty(GetPrefix(id), info, true, false);
 		}
 
 	}

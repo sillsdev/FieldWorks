@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FdoCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="rule"></param>
 		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, mediator, propertyTable, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPhRegularRule rule)
 		{
 			CheckDisposed();
 
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IFsFeatStruc fs)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IFsFeatStruc fs)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
@@ -249,21 +249,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			m_fs = fs;
 			m_owningFlid = owningFlid;
@@ -276,12 +276,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				if (m_propertyTable.PropertyExists("phonFeatListDlgLocation")
-					&& m_propertyTable.PropertyExists("phonFeatListDlgSize"))
+				Point dlgLocation;
+				Size dlgSize;
+				if (m_propertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation)
+					&& m_propertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
 				{
-					var locWnd = m_propertyTable.GetValue<Point>("phonFeatListDlgLocation");
-					var szWnd = m_propertyTable.GetValue<Size>("phonFeatListDlgSize");
-					var rect = new Rectangle(locWnd, szWnd);
+					var rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenUtils.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
@@ -790,8 +790,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, true, true);
+				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, true, true);
 			}
 		}
 
@@ -847,7 +847,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			if (m_propertyTable.GetStringProperty("currentContentControl", null).Substring(0, 7) == "natural")
+			if (m_propertyTable.GetValue<string>("currentContentControl").Substring(0, 7) == "natural")
 				m_helpTopic = "khtpChoose-Phonemes";
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}

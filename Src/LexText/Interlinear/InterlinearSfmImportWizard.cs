@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.IText
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
 		protected FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.IText
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;

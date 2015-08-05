@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
 				message = FwControls.kOkbtnGenreSelection;
-				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true);
+				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true, true);
 				showWarning = true;
 			}
 			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)

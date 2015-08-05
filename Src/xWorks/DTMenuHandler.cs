@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// COnfiguration information.
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -1204,7 +1204,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
 				return false;
 			return m_dataEntryForm.Root is ILexEntry;
 		}
@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
 				return false;
 
 			var ent = m_dataEntryForm.Root as ILexEntry;
@@ -1262,7 +1262,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className == current.Object.ClassName)
 			{
 				string tool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
-				if (tool == null || tool == m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+				if (tool == null || tool == m_propertyTable.GetValue("currentContentControl", string.Empty))
 				{
 					int hvo = GetSelectedComponentHvo();
 					var ler = current.Object as ILexEntryRef;

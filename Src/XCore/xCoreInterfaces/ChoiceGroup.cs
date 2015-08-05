@@ -37,13 +37,13 @@ namespace XCore
 			}
 		}
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		protected object m_referenceWidget;
 
 		protected bool m_defaultVisible;
 
-		public ChoiceRelatedClass(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode)
+		public ChoiceRelatedClass(Mediator mediator, IPropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode)
 		{
 			m_adapter = adapter;
 			m_mediator = mediator;
@@ -115,7 +115,7 @@ namespace XCore
 		/// Initializes a new instance of the <see cref="ChoiceGroupCollection"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ChoiceGroupCollection(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode)
+		public ChoiceGroupCollection(Mediator mediator, IPropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode)
 			: base(mediator, propertyTable,  adapter, configurationNode)
 		{
 		}
@@ -217,14 +217,14 @@ namespace XCore
 		/// this is the PropertyTable property which is changed when the user selects an item from the group
 		/// </summary>
 		protected string m_propertyName;
-		protected PropertyTable.SettingsGroup m_settingsGroup = PropertyTable.SettingsGroup.Undecided;
+		protected SettingsGroup m_settingsGroup = SettingsGroup.Undecided;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ControlGroup"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ChoiceGroup(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode, ChoiceGroup parent)
+		public ChoiceGroup(Mediator mediator, IPropertyTable propertyTable, IUIAdapter adapter, XmlNode configurationNode, ChoiceGroup parent)
 			: base(mediator, propertyTable, adapter, configurationNode)
 		{
 			m_parent = parent;
@@ -239,7 +239,7 @@ namespace XCore
 
 		}
 
-		static public PropertyTable.SettingsGroup GetSettingsGroup(XmlNode configurationNode, PropertyTable.SettingsGroup defaultSettings)
+		static public SettingsGroup GetSettingsGroup(XmlNode configurationNode, SettingsGroup defaultSettings)
 		{
 			string settingsGroupValue = XmlUtils.GetAttributeValue(configurationNode, "settingsGroup");
 			if (String.IsNullOrEmpty(settingsGroupValue))
@@ -247,21 +247,21 @@ namespace XCore
 			switch (settingsGroupValue)
 			{
 				case "local":
-					return PropertyTable.SettingsGroup.LocalSettings;
+					return SettingsGroup.LocalSettings;
 				case "global":
-					return PropertyTable.SettingsGroup.GlobalSettings;
+					return SettingsGroup.GlobalSettings;
 				default:
 					throw new Exception(String.Format("GetSettingsGroup does not yet support {0} for 'settingsGroup' attribute.", settingsGroupValue));
 			}
 		}
 
-		internal PropertyTable.SettingsGroup PropertyTableGroup
+		internal SettingsGroup PropertyTableGroup
 		{
 			get
 			{
-				if (m_settingsGroup == PropertyTable.SettingsGroup.Undecided)
+				if (m_settingsGroup == SettingsGroup.Undecided)
 				{
-					m_settingsGroup = ChoiceGroup.GetSettingsGroup(m_configurationNode, PropertyTable.SettingsGroup.BestSettings);
+					m_settingsGroup = ChoiceGroup.GetSettingsGroup(m_configurationNode, SettingsGroup.BestSettings);
 				}
 				return m_settingsGroup;
 			}
@@ -275,7 +275,7 @@ namespace XCore
 		/// <param name="adapter"></param>
 		/// <param name="configurationNodes"></param>
 		/// <param name="parent"></param>
-		public ChoiceGroup(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, List<XmlNode> configurationNodes, ChoiceGroup parent)
+		public ChoiceGroup(Mediator mediator, IPropertyTable propertyTable, IUIAdapter adapter, List<XmlNode> configurationNodes, ChoiceGroup parent)
 			: base(mediator, propertyTable, adapter, configurationNodes[0]) //hack; just give it the first one
 		{
 			m_parent = parent;
@@ -495,8 +495,9 @@ namespace XCore
 			}
 
 			// select the first one if none is selected
+			object propertyValue;
 			if(
-				(!m_propertyTable.PropertyExists(PropertyName, PropertyTableGroup))	// there isn't a value already (from depersisting)
+				(!m_propertyTable.TryGetValue(PropertyName, PropertyTableGroup, out propertyValue))	// there isn't a value already (from depersisting)
 				&& (Count > 0))
 			{
 				//ListPropertyChoice first = (ListPropertyChoice)this[0];
@@ -628,7 +629,7 @@ namespace XCore
 		{
 			get
 			{
-				return m_propertyTable.GetStringProperty(PropertyName, DefaultSinglePropertyValue, PropertyTableGroup);
+				return m_propertyTable.GetValue(PropertyName, PropertyTableGroup, DefaultSinglePropertyValue);
 			}
 		}
 
@@ -696,32 +697,19 @@ namespace XCore
 		/// <param name="choiceParameters"></param>
 		/// <param name="propertyName"></param>
 		/// <param name="settingsGroup"></param>
-		static public void ChooseSinglePropertyAtomicValue(Mediator mediator, PropertyTable propertyTable, string choiceValue,
-			XmlNode choiceParameters,string propertyName, PropertyTable.SettingsGroup settingsGroup)
+		static public void ChooseSinglePropertyAtomicValue(Mediator mediator, IPropertyTable propertyTable, string choiceValue,
+			XmlNode choiceParameters,string propertyName, SettingsGroup settingsGroup)
 		{
-			//a hack (that may be we could live with)
-			//	if(choiceParameters !=null)
-			//	{
-			propertyTable.SetProperty(propertyName + "Parameters", choiceParameters, settingsGroup, true);
 			//it is possible that we would like to persist these parameters
 			//however, as a practical matter, you cannot have XmlNodes witch do not belong to a document.
 			//therefore, they could not be deserialize if we did save them.
 			//unless, of course, we convert them to a string before serializing.
 			//However, when de-serializing, what document would we attach the new xmlnode to?
-			propertyTable.SetPropertyPersistence(propertyName + "Parameters", false, settingsGroup);
-			//}
-
+			propertyTable.SetProperty(propertyName + "Parameters", choiceParameters, settingsGroup, false, true);
 
 			//remember, each of these calls to SetProperty() generate a broadcast, so the order of these two calls
 			//is relevant.
-			propertyTable.SetProperty(propertyName, choiceValue, settingsGroup, true);
-
-			if (choiceParameters != null)
-			{
-				//since we cannot persist the parameters, it's safer to not persist the choice either.
-				propertyTable.SetPropertyPersistence(propertyName, false, settingsGroup);
-			}
-
+			propertyTable.SetProperty(propertyName, choiceValue, settingsGroup, (choiceParameters == null), true);
 		}
 
 		protected void HandleClickedWhenSinglePropertySequenceValue(ListPropertyChoice choice)
@@ -742,12 +730,11 @@ namespace XCore
 			return -1;
 		}
 
-		static public void ChooseSinglePropertySequenceValue(Mediator mediator, PropertyTable propertyTable, string choiceValue,
-			XmlNode choiceParameterNode, string propertyName, bool fEmptyAllowed, PropertyTable.SettingsGroup settingsGroup)
+		static public void ChooseSinglePropertySequenceValue(Mediator mediator, IPropertyTable propertyTable, string choiceValue,
+			XmlNode choiceParameterNode, string propertyName, bool fEmptyAllowed, SettingsGroup settingsGroup)
 		{
-			propertyTable.SetProperty(propertyName + "Parameters", choiceParameterNode, settingsGroup, true);
-			propertyTable.SetPropertyPersistence(propertyName + "Parameters", false, settingsGroup);
-			string sValue = propertyTable.GetStringProperty(propertyName, "", settingsGroup);
+			propertyTable.SetProperty(propertyName + "Parameters", choiceParameterNode, settingsGroup, false, true);
+			string sValue = propertyTable.GetValue(propertyName, settingsGroup, "");
 			string[] rgsValues = sValue.Split(',');
 			int idx = -1;
 			if (sValue == choiceValue)
@@ -778,8 +765,7 @@ namespace XCore
 				else
 					sValue = sValue + "," + choiceValue;
 			}
-			propertyTable.SetProperty(propertyName, sValue, settingsGroup, true);
-			propertyTable.SetPropertyPersistence(propertyName, false, settingsGroup);
+			propertyTable.SetProperty(propertyName, sValue, settingsGroup, false, true);
 		}
 
 		public bool IsTopLevelMenu

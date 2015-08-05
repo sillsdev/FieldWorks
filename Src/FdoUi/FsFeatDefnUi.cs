@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static FsFeatDefnUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public new static FsFeatDefnUi CreateNewUiObject(Mediator mediator, IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			FsFeatDefnUi ffdUi = null;
 			string className = "FsClosedFeature";

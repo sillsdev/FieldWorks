@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 		#endregion IDisposable override
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, ICmObject obj, RuleFormulaControl formulaControl,
+		public void Init(Mediator mediator, IPropertyTable propertyTable, ICmObject obj, RuleFormulaControl formulaControl,
 			RuleFormulaVc vc, int rootFrag)
 		{
 			CheckDisposed();
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 														"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 
 		protected XCore.Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		protected ITsTextProps m_bracketProps;
 		protected ITsTextProps m_pileProps;
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_x;
 		protected ITsString m_zwSpace;
 
-		protected RuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
+		protected RuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
 		{
 			Cache = propertyTable.GetValue<FdoCache>("cache");
 			m_mediator = mediator;

@@ -19,14 +19,14 @@ namespace SIL.FieldWorks.XWorks
 	{
 		MockStTextRepository m_mockStTextRepo;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		[SetUp]
 		public void Initialize()
 		{
 			m_mockStTextRepo = new MockStTextRepository();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new Test.TestUtils.MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new Test.TestUtils.MockPublisher());
 			m_sections.Clear();
 		}
 
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
 			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true);
+				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true, true);
 			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, fIncludeScripture);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			expectedScripture = new List<IStText>();
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
 			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true);
+				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true, true);
 			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, true);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			var expectedScripture = new List<IStText>();
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			VerifyList(expectedScripture, testObj.ScriptureTexts, comment);
 			Assert.AreEqual(InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>()),
-				m_propertyTable.GetStringProperty(InterestingTextList.PersistPropertyName, null));
+				m_propertyTable.GetValue<string>(InterestingTextList.PersistPropertyName));
 		}
 
 		private List<MockScrSection> m_sections = new List<MockScrSection>();

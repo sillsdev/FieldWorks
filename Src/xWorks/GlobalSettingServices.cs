@@ -1,7 +1,6 @@
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -17,18 +16,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Save any appropriate settings to the property table
 		/// </summary>
-		public static void SaveSettings(IFdoServiceLocator services, PropertyTable propertyTable)
+		public static void SaveSettings(IFdoServiceLocator services, IPropertyTable propertyTable)
 		{
 			var hc = services.GetInstance<HomographConfiguration>();
-			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
+			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, true);
 		}
 
 		/// <summary>
 		/// Restore any appropriate settings which have values in the property table
 		/// </summary>
-		public static void RestoreSettings(IFdoServiceLocator services, PropertyTable propertyTable)
+		public static void RestoreSettings(IFdoServiceLocator services, IPropertyTable propertyTable)
 		{
-			var hcSettings = propertyTable.GetStringProperty(khomographconfiguration, null);
+			var hcSettings = propertyTable.GetValue<string>(khomographconfiguration);
 			if (hcSettings != null)
 			{
 				var hc = services.GetInstance<HomographConfiguration>();

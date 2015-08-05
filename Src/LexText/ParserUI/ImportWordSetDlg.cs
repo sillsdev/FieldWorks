@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 		}
 
-		public ImportWordSetDlg(Mediator mediator, PropertyTable propertyTable)
+		public ImportWordSetDlg(Mediator mediator, IPropertyTable propertyTable)
 			: this()
 		{
 			//InitializeComponent();

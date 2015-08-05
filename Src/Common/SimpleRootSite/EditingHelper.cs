@@ -2876,8 +2876,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
-					rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
+					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
 					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
@@ -3043,7 +3042,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string styleName = rs.PropTable == null ? null : rs.PropTable.GetStringProperty("BestStyleName", null);
+			string styleName = rs.PropTable == null ? null : rs.PropTable.GetValue<string>("BestStyleName", null);
 			if (styleName == null)
 				return;
 			rs.Focus();
@@ -3794,7 +3793,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private struct WordEventArgs
 		{
 			/// <summary>The source that kicked off the method</summary>
-			public EditingHelper.WordEventSource Source;
+			public WordEventSource Source;
 			/// <summary>Character that user typed</summary>
 			/// <remarks>Only valid if <see cref="Source"/> is
 			/// <see cref="EditingHelper.WordEventSource.Character"/></remarks>
@@ -3809,7 +3808,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// or <see cref="EditingHelper.WordEventSource.MouseClick"/>
 			/// </summary>
 			/// <param name="source">The source that kicked off the method</param>
-			public WordEventArgs(EditingHelper.WordEventSource source)
+			public WordEventArgs(WordEventSource source)
 				: this(source, char.MinValue, Keys.None)
 			{
 			}
@@ -3819,7 +3818,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// </summary>
 			/// <param name="source">The source that kicked off the method</param>
 			/// <param name="c">The character that the user entered</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, char c)
+			public WordEventArgs(WordEventSource source, char c)
 				: this(source, c, Keys.None)
 			{
 			}
@@ -3829,7 +3828,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// </summary>
 			/// <param name="source">The source that kicked off the method</param>
 			/// <param name="key">The key that the user pressed</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, Keys key)
+			public WordEventArgs(WordEventSource source, Keys key)
 				: this(source, char.MinValue, key)
 			{
 			}
@@ -3840,7 +3839,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <param name="source">The source that kicked off the method</param>
 			/// <param name="c">The character that the user entered</param>
 			/// <param name="key">The key that the user pressed</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, char c, Keys key)
+			public WordEventArgs(WordEventSource source, char c, Keys key)
 			{
 				Source = source;
 				Key = key;

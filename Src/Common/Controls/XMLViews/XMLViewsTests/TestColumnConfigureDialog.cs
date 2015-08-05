@@ -23,18 +23,18 @@ namespace XMLViewsTests
 	public class TestColumnConfigureDialog : BaseTest
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FdoCache m_cache;
 
 		[SetUp]
 		public void SetUp()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
-			m_propertyTable.SetProperty("cache", m_cache, true);
+			m_propertyTable.SetProperty("cache", m_cache, true, true);
 		}
 
 		[TearDown]

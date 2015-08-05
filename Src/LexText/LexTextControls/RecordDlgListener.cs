@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				var areas = new[] { "notebook" };
 				foreach (string area in areas)
 				{

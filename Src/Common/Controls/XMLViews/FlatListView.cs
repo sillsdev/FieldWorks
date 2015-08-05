@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private XmlNode m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="xnConfig">The config node.</param>
 		/// <param name="objs">The objs.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable,
 			XmlNode xnConfig, IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();

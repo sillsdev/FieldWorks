@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void OnMasterRefresh(object sender)
 		{
-			// TODO: This is no longer called by the PropertyTable, since this class
+			// TODO: This is no longer called by the IPropertyTable, since this class
 			// is no longer an xcore colleague. But, it can't be removed either,
 			// since it is used by another method on this clsss. :-(
 			CheckDisposed();

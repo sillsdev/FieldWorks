@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationListenerTests : XWorksAppTestBase, IDisposable
 	{
 		#region Context
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		#endregion
 
 		[Test]
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNull(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 
-		#region Context
+	#region Context
 		protected override void Init()
 		{
 			BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, "TestProject"),

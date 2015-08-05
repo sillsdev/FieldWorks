@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly ITextRepository m_textRepository;
 		private readonly IStTextRepository m_stTextRepository;
 		private readonly Mediator m_mediator;
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 		public const string PersistPropertyName = "InterestingScriptureTexts";
 		public const string ExcludeCoreTextPropertyName = "ExcludedCoreTexts";
 		/// <summary>
@@ -45,12 +45,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public FdoCache Cache { get; set; }
 
-		public InterestingTextList(Mediator mediator, PropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
+		public InterestingTextList(Mediator mediator, IPropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
 			: this(mediator, propertyTable, repo, stTextRepo, true)
 		{
 		}
 
-		public InterestingTextList(Mediator mediator, PropertyTable propertyTable, ITextRepository repo,
+		public InterestingTextList(Mediator mediator, IPropertyTable propertyTable, ITextRepository repo,
 			IStTextRepository stTextRepo, bool includeScripture)
 		{
 			m_textRepository = repo;
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private HashSet<Guid> ExcludedCoreTextIdList()
 		{
-			var idList = m_propertyTable.GetStringProperty(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var idList = m_propertyTable.GetValue(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var excludedGuids = new HashSet<Guid>();
 			foreach (string id in idList)
 			{
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<IStText> GetScriptureTexts()
 		{
 			var result = new List<IStText>();
-			var idList = m_propertyTable.GetStringProperty(PersistPropertyName, "");
+			var idList = m_propertyTable.GetValue(PersistPropertyName, "");
 			foreach (string id in idList.Split(','))
 			{
 				if (id.Length == 0)
@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateExcludedCoreTexts(HashSet<Guid> excludedGuids)
 		{
-			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids), true);
+			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids), true, true);
 		}
 
 		private void UpdatePropertyTable()
@@ -408,9 +408,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="texts"></param>
-		public static void SetScriptureTextsInPropertyTable(Mediator mediator, PropertyTable propertyTable, IEnumerable<IStText> texts)
+		public static void SetScriptureTextsInPropertyTable(Mediator mediator, IPropertyTable propertyTable, IEnumerable<IStText> texts)
 		{
-			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true);
+			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true, true);
 		}
 
 		/// <summary>

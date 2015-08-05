@@ -9,9 +9,6 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections;
-using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using XCore;
@@ -32,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected Mediator m_mediator;
 		/// <summary></summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 #if WhenFigureOutWhatThisShouldBe
 		protected string m_sHelp;
@@ -49,7 +46,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
 		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel,
-			Mediator mediator, PropertyTable propertyTable)
+			Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_fShouldCloseBeforeExecuting = fCloseBeforeExecuting;

@@ -54,9 +54,6 @@ namespace XCore
 
 			m_window = new XWindow();
 			m_window.PropTable.UserSettingDirectory = m_settingsPath;
-			// delete any existing property table settings.
-			m_window.PropTable.RemoveLocalAndGlobalSettings();
-			//m_window.PropertyTable.SetProperty("PreferredUILibrary", "FlexUIAdapter.dll");
 			m_window.LoadUI(ConfigurationFilePath);
 		}
 		/// ------------------------------------------------------------------------------------
@@ -68,8 +65,6 @@ namespace XCore
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			//m_window.Close();
-			m_window.PropTable.RemoveLocalAndGlobalSettings();
 			m_window.Dispose();
 
 			try

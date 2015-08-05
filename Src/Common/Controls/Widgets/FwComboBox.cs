@@ -10,7 +10,6 @@ using System.Diagnostics;
 using SIL.Utils; // for Win32 message defns.
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -947,7 +946,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="parent"></param>
 		/// <param name="grower"></param>
 		/// <param name="propertyTable"></param>
-		public void AdjustForStyleSheet(Form parent, Control grower, PropertyTable propertyTable)
+		public void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 

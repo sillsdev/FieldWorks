@@ -23,9 +23,9 @@ namespace SIL.FieldWorks.Filters
 			var andFilter = new AndFilter();
 			var wsf = new WordSetFilter(wfiset);
 			using (var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(new MockPublisher()))
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
 			{
-				propertyTable.SetProperty("cache", Cache, true);
+				propertyTable.SetProperty("cache", Cache, true, true);
 				flp.Init(mediator, propertyTable, null);
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);

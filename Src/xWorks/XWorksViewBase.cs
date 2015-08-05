@@ -58,18 +58,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Name of the vector we are editing.
 		/// </summary>
 		protected string m_vectorName;
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		protected int m_fakeFlid; // the list
-		/// <summary>
-		/// PropertyTable that passes off messages.
-		/// </summary>
+		/// <summary/>
 		protected Mediator m_mediator;
 		/// <summary>
 		///
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.
@@ -248,7 +244,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public abstract void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters);
+		public abstract void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters);
 
 		/// <summary>
 		/// return an array of all of the objects which should
@@ -587,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			// (areaChoice == "lexicon" or "words" or "grammar" or "lists"
 
 			RecordClerk clerk = Clerk;
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//uncomment the following line if we need to turn on or off the Export menu item
 			//for specific tools in the various areas of the application.
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
@@ -622,8 +618,8 @@ namespace SIL.FieldWorks.XWorks
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
 			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
-			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			string toolChoice = m_propertyTable.GetValue("currentContentControl", string.Empty);
+			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -652,7 +648,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			switch (areaChoice)
 			{
 				case "lexicon":
@@ -676,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -705,7 +701,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -733,7 +729,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			var inFriendlyTerritory = false;
 			switch (areaChoice)
 			{

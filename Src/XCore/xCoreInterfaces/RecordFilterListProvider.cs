@@ -17,7 +17,7 @@ namespace XCore
 	{
 		protected XmlNode m_configuration;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -28,7 +28,7 @@ namespace XCore
 		/// <param name="configuration">The configuration.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public RecordFilterListProvider Create(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		static public RecordFilterListProvider Create(Mediator mediator, IPropertyTable propertyTable, XmlNode configuration)
 		{
 			RecordFilterListProvider p = (RecordFilterListProvider)DynamicLoader.CreateObject(configuration);
 			if (p != null)
@@ -45,7 +45,7 @@ namespace XCore
 		/// <param name="propertyTable">The PropertyTable</param>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configuration)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;

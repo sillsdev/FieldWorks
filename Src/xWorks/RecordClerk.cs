@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected string m_id;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		private XmlNode m_clerkConfiguration;
 		/// <summary>
 		/// this will be null is this clerk is dependent on another one. Only the top-level clerk
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="viewConfiguration"></param>
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode viewConfiguration)
 		{
 			CheckDisposed();
 
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
 							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							m_propertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings, false);
+							m_propertyTable.SetProperty(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
 							fSetFilterMenu = true;
 							break;
 						}
@@ -378,9 +378,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				OnAdjustFilterSelection(null);
 			}
-
-			// we never want to persist this value, since it is dependent upon the filter property.
-			m_propertyTable.SetPropertyPersistence(CurrentFilterPropertyTableId, false, PropertyTable.SettingsGroup.LocalSettings);
 
 			//we handled the tree bar only if we are the root clerk
 			if (m_clerkProvidingRootObject == null)
@@ -481,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, FdoCache cache)
 		{
 			RecordFilter filter = null;
-			string persistFilter = m_propertyTable.GetStringProperty(FilterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistFilter = m_propertyTable.GetValue<string>(FilterPropertyTableId, SettingsGroup.LocalSettings);
 			if (m_list.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
@@ -527,9 +524,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
 		{
-			m_sortName = m_propertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			m_sortName = m_propertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
 
-			string persistSorter = m_propertyTable.GetStringProperty(SorterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistSorter = m_propertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings);
 			var fwdisposable = m_list.Sorter as IFWDisposable;
 			if (fwdisposable != null && fwdisposable.IsDisposed)
 				m_list.Sorter = null;
@@ -594,8 +591,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void StoreClerkInPropertyTable(XmlNode clerkConfiguration)
 		{
 			string property = GetCorrespondingPropertyName(ToolConfiguration.GetIdOfTool(clerkConfiguration));
-			m_propertyTable.SetProperty(property, this, true);
-			m_propertyTable.SetPropertyPersistence(property, false);
+			m_propertyTable.SetProperty(property, this, false, true);
 			m_propertyTable.SetPropertyDispose(property, true);
 		}
 
@@ -629,7 +625,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		protected bool InDesiredTool(string desiredTool)
 		{
-			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
+			string toolChoice = m_propertyTable.GetValue<string>("currentContentControl");
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 
@@ -640,7 +636,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		protected bool InDesiredArea(string desiredArea)
 		{
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			return areaChoice != null && areaChoice == desiredArea;
 		}
 
@@ -655,8 +651,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				string toolName = m_propertyTable.GetStringProperty("SuspendLoadListUntilOnChangeFilter", null,
-					PropertyTable.SettingsGroup.LocalSettings);
+				string toolName = m_propertyTable.GetValue<string>("SuspendLoadListUntilOnChangeFilter", SettingsGroup.LocalSettings);
 				return (!string.IsNullOrEmpty(toolName)) && InDesiredTool(toolName);
 			}
 			set
@@ -665,8 +660,7 @@ namespace SIL.FieldWorks.XWorks
 				if (value == false && SuspendLoadListUntilOnChangeFilter)
 				{
 					// reset this property.
-					m_propertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", "",
-						PropertyTable.SettingsGroup.LocalSettings, true);
+					m_propertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", "", SettingsGroup.LocalSettings, true, true);
 				}
 			}
 		}
@@ -679,8 +673,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				string jumpToInfo = m_propertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
-					PropertyTable.SettingsGroup.LocalSettings);
+				string jumpToInfo = m_propertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", SettingsGroup.LocalSettings, string.Empty);
 				if (String.IsNullOrEmpty(jumpToInfo))
 					return false;
 				string[] jumpToParams = jumpToInfo.Split(new[] { ',' });
@@ -693,9 +686,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// reset this property.
 					m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
-						PropertyTable.SettingsGroup.LocalSettings,
+						SettingsGroup.LocalSettings,
+						false,
 						true);
-					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 
 			}
@@ -1158,7 +1151,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			if (areaChoice == "notebook")
 			{
 				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
@@ -1250,7 +1243,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
-			string filterName = m_propertyTable.GetStringProperty(CurrentFilterPropertyTableId, "", PropertyTable.SettingsGroup.LocalSettings);
+			string filterName = m_propertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, string.Empty);
 			RecordFilter addf = null;
 			RecordFilter remf = null;
 			var nof = new NoFilters();
@@ -1734,7 +1727,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_list.ReloadList(); // clean everything up
 			}
-			bool fIgnore = m_propertyTable.GetBoolProperty("IgnoreStatusPanel", false);
+			bool fIgnore = m_propertyTable.GetValue<bool>("IgnoreStatusPanel");
 			if (fIgnore)
 				return;
 			if (IsControllingTheRecordTreeBar)
@@ -1750,21 +1743,18 @@ namespace SIL.FieldWorks.XWorks
 			var rni = new RecordNavigationInfo(this, m_suppressSaveOnChangeRecord || FwXWindow.InUndoRedo,
 				SkipShowRecord, suppressFocusChange);
 			var id = ClerkSelectedObjectPropertyId(Id);
-			m_propertyTable.SetProperty(id, rni, true);
-			m_propertyTable.SetPropertyPersistence(ClerkSelectedObjectPropertyId(Id), false);
+			m_propertyTable.SetProperty(id, rni, false, true);
 
 			// save the selected record index.
 			string propName = PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
-			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, CurrentIndex, SettingsGroup.LocalSettings, true, true);
 
 			if (IsControllingTheRecordTreeBar)
 			{
 				if (m_recordBarHandler != null)
 					m_recordBarHandler.UpdateSelection(CurrentObject);
 				//used to enable certain dialogs, such as the "change entry type dialog"
-				m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
-				m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
+				m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, false, true);
 			}
 
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
@@ -1899,8 +1889,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ResetStatusBarPanel(string panel, string msg)
 		{
-			m_propertyTable.SetProperty(panel, msg, true);
-			m_propertyTable.SetPropertyPersistence(panel, false);
+			m_propertyTable.SetProperty(panel, msg, false, true);
 		}
 
 		/// <summary>
@@ -1932,7 +1921,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable"></param>
 		/// <param name="id"></param>
 		/// <returns>null if couldn't find an existing clerk.</returns>
-		public static RecordClerk FindClerk(PropertyTable propertyTable, string id)
+		public static RecordClerk FindClerk(IPropertyTable propertyTable, string id)
 		{
 			string name = GetCorrespondingPropertyName(id);
 			var clerk = propertyTable.GetValue<RecordClerk>(name);
@@ -1987,15 +1976,12 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (oldActiveClerk != null)
 						oldActiveClerk.BecomeInactive();
-					m_propertyTable.SetProperty("ActiveClerk", this, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
+					m_propertyTable.SetProperty("ActiveClerk", this, false, true);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
 					// circular dependency in compilation.
-					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-					m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
+					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, false, true);
+					m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, false, true);
 					Cache.DomainDataByFlid.AddNotification(this);
 				}
 			}
@@ -2635,7 +2621,7 @@ namespace SIL.FieldWorks.XWorks
 				m_list.OnChangeFilter(args);
 				// Remember the active filter for this list.
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				m_propertyTable.SetProperty(FilterPropertyTableId, persistFilter, PropertyTable.SettingsGroup.LocalSettings, true);
+				m_propertyTable.SetProperty(FilterPropertyTableId, persistFilter, SettingsGroup.LocalSettings, true, true);
 				// adjust menu bar items according to current state of Filter, where needed.
 				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
 				UpdateFilterStatusBarPanel();
@@ -2666,13 +2652,13 @@ namespace SIL.FieldWorks.XWorks
 			if (m_activeMenuBarFilter == null && Filter != null)
 			{
 				// Resetting the table property value to a bogus value will effectively uncheck this item.
-				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new UncheckAll()).Name, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new UncheckAll()).Name, SettingsGroup.LocalSettings, true, false);
 			}
 				// if no filter is set, then we always want the "No Filter" item selected.
 			else if (Filter == null)
 			{
 				// Resetting the table property value to NoFilters checks this item.
-				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new NoFilters()).Name, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new NoFilters()).Name, SettingsGroup.LocalSettings, true, false);
 			}
 			// allow others to process this.
 			return false;
@@ -2707,7 +2693,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
-			bool fIgnore = m_propertyTable.GetBoolProperty("IgnoreStatusPanel", false);
+			bool fIgnore = m_propertyTable.GetValue<bool>("IgnoreStatusPanel");
 			if (fIgnore)
 			{
 				// Set the value so that it can be picked up by the dialog (or whoever).
@@ -2739,7 +2725,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
-			bool fIgnore = m_propertyTable.GetBoolProperty("IgnoreStatusPanel", false);
+			bool fIgnore = m_propertyTable.GetValue<bool>("IgnoreStatusPanel");
 			if (fIgnore)
 				return;
 
@@ -2822,12 +2808,12 @@ namespace SIL.FieldWorks.XWorks
 			m_isDefaultSort = isDefaultSort;
 
 			m_sortName = sortName;
-			m_propertyTable.SetProperty(SortNamePropertyTableId, m_sortName, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(SortNamePropertyTableId, m_sortName, SettingsGroup.LocalSettings, true, true);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			m_propertyTable.SetProperty(SorterPropertyTableId, persistSorter, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(SorterPropertyTableId, persistSorter, SettingsGroup.LocalSettings, true, true);
 
 			UpdateSortStatusBarPanel();
 		}
@@ -3210,7 +3196,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Objects of this class do not respond to 'propchanged' actions.
 		}
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode viewConfiguration)
 		{
 			base.Init(mediator, propertyTable, viewConfiguration);
 			// If we have a RecordList, it shouldn't generate PropChanged messages.
@@ -3309,7 +3295,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class RecordClerkFactory
 	{
-		static public RecordClerk CreateClerk(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, bool loadList)
+		static public RecordClerk CreateClerk(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, bool loadList)
 		{
 			/*
 				<dynamicloaderinfo/>
@@ -3397,7 +3383,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable"></param>
 		/// <param name="parameterNode">The parameter node.</param>
 		/// <returns></returns>
-		static public RecordClerk FindClerk(PropertyTable propertyTable, XmlNode parameterNode)
+		static public RecordClerk FindClerk(IPropertyTable propertyTable, XmlNode parameterNode)
 		{
 			XmlNode node = GetClerkNodeFromToolParamsNode(parameterNode);
 			// Set the clerk id if the parent control hasn't already set it.

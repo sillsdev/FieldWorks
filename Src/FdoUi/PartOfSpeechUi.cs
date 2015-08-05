@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static PartOfSpeechUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public new static PartOfSpeechUi CreateNewUiObject(Mediator mediator, IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			PartOfSpeechUi posUi = null;
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			Command command = (Command)commandObject;
 			string tool = Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-			string toolChoice = PropTable.GetStringProperty("currentContentControl", null);
+			string toolChoice = PropTable.GetValue<string>("currentContentControl");
 
 			if (tool == "posEdit" && toolChoice == "reversalToolReversalIndexPOS")
 			{

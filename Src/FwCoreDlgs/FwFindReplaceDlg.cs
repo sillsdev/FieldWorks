@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fDisableReplacePatternMatching;
 
 		private Mediator m_mediator; // optional, used for persistence.
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private string s_helpTopic;
 		private System.Windows.Forms.HelpProvider helpProvider;
@@ -584,7 +584,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void RestoreAndPersistSettingsIn(Mediator mediator, PropertyTable propertyTable)
+		public void RestoreAndPersistSettingsIn(Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -1446,10 +1446,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_mediator != null && m_propertyTable != null)
 			{
 				string propertyName = kPersistenceLabel + "DlgLocation";
-				m_propertyTable.SetProperty(propertyName, Location, true);
+				m_propertyTable.SetProperty(propertyName, Location, true, true);
 				propertyName = kPersistenceLabel + "ShowMore";
 				m_propertyTable.SetProperty(propertyName,
 					Height == m_heightDlgMore ? "true" : "false",
+					true,
 					true);
 			}
 			base.OnClosing(e);

@@ -34,9 +34,9 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmObject _previewEntry;
 
 		/// <summary>
-		/// PropertyTable to use
+		/// IPropertyTable to use
 		/// </summary>
-		internal PropertyTable _propertyTable;
+		internal IPropertyTable _propertyTable;
 
 		/// <summary>
 		/// The view to display the model in
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="view"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="previewEntry"></param>
-		public DictionaryConfigurationController(IDictionaryConfigurationView view, PropertyTable propertyTable, ICmObject previewEntry)
+		public DictionaryConfigurationController(IDictionaryConfigurationView view, IPropertyTable propertyTable, ICmObject previewEntry)
 		{
 			_propertyTable = propertyTable;
 			var cache = propertyTable.GetValue<FdoCache>("cache");
@@ -483,10 +483,10 @@ namespace SIL.FieldWorks.XWorks
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
-			_propertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
+			_propertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true, true);
 		}
 
-		internal string GetProjectConfigLocationForPath(string filePath, PropertyTable propertyTable)
+		internal string GetProjectConfigLocationForPath(string filePath, IPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate options pane, from model.
 		/// </summary>
-		private void BuildAndShowOptions(ConfigurableDictionaryNode node, PropertyTable propertyTable)
+		private void BuildAndShowOptions(ConfigurableDictionaryNode node, IPropertyTable propertyTable)
 		{
 			if (DetailsController == null)
 			{

@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private IMoForm m_allomorph;
 		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private Label label2;
 		private PictureBox pictureBox1;
 		private Button btnOK;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="entry">LexEntry</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry entry)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ILexEntry entry)
 		{
 			CheckDisposed();
 
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("swapDlgLocation", Location, true);
+				m_propertyTable.SetProperty("swapDlgLocation", Location, true, true);
 			}
 		}
 

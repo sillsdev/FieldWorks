@@ -1,6 +1,5 @@
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -16,6 +15,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="result">XML of the parse trace output</param>
 		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace);
+		string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace);
 	}
 }

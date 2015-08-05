@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public FdoCache Cache { private get; set; }
 
-		public PropertyTable PropertyTable { private get; set; }
+		public IPropertyTable PropertyTable { private get; set; }
 
 
 		/// <summary>

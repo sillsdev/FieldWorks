@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
+		public string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			var args = new XsltArgumentList();
 			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<FdoCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));

@@ -4,10 +4,6 @@
 //
 // File: MorphologyListener.cs
 // Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Mediator that passes off messages.
 		/// </summary>
 		private XCore.Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IWfiWordformRepository m_wordformRepos;
 
 		#endregion Data members
@@ -176,7 +172,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region IxCoreColleague implementation
 
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -266,8 +262,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				OnEnableVernacularSpelling();
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
-			m_propertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
+			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true, true);
 			RestartSpellChecking();
 			return true;
 		}
@@ -275,7 +270,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
-			return m_propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return m_propertyTable.GetValue("UseVernSpellingDictionary", true);
 		}
 
 		private void RestartSpellChecking()
@@ -353,7 +348,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// If successful return its guid, otherwise, return Guid.Empty.
 		/// </summary>
 		/// <returns></returns>
-		internal static Guid ActiveWordform(FdoCache cache, PropertyTable propertyTable)
+		internal static Guid ActiveWordform(FdoCache cache, IPropertyTable propertyTable)
 		{
 			IApp app = propertyTable.GetValue<IApp>("App");
 			if (app == null)
@@ -457,7 +452,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetValue<string>("areaChoice") == "textsWords");
 			}
 		}
 
@@ -587,7 +582,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetValue<string>("areaChoice") == "textsWords");
 			}
 		}
 

@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.CoreImpl;
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	{
 		private const int kObjectListFlid = 89999956;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		public override void FixtureSetup()
 		{
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			base.TestSetup();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+			XCore.Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		ITsString m_doubleArrow;
 		ITsString m_space;
 
-		public AffixRuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
+		public AffixRuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
 			: base(mediator, propertyTable)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();

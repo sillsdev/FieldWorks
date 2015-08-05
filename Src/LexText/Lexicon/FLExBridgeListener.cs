@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	public sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
-		private PropertyTable _propertyTable;
+		private IPropertyTable _propertyTable;
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
@@ -76,15 +76,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			_mediator = mediator;
 			_propertyTable = propertyTable;
 			Cache = _propertyTable.GetValue<FdoCache>("cache");
-			_propertyTable.SetProperty("FLExBridgeListener", this, true);
-			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
+			_propertyTable.SetProperty("FLExBridgeListener", this, false, true);
 			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
 		}
@@ -114,8 +113,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			var bridgeLastUsed = _propertyTable.GetStringProperty(
-				"LastBridgeUsed", "NoBridgeUsedYet", PropertyTable.SettingsGroup.LocalSettings);
+			var bridgeLastUsed = _propertyTable.GetValue(
+				"LastBridgeUsed", SettingsGroup.LocalSettings, "NoBridgeUsedYet");
 			if (bridgeLastUsed == "FLExBridge")
 			{
 				// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
@@ -162,12 +161,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void RunFLExLiftBridge(object commandObject)
 		{
-			var bridgeLastUsed = _propertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			var bridgeLastUsed = _propertyTable.GetValue("LastBridgeUsed", SettingsGroup.LocalSettings, "FLExBridge");
 			if (bridgeLastUsed == "FLExBridge")
+			{
 				OnFLExBridge(commandObject);
-
+			}
 			else if (bridgeLastUsed == "LiftBridge")
+			{
 				OnLiftBridge(commandObject);
+			}
 		}
 		#endregion FLExLiftBridge Toolbar messages
 
@@ -194,7 +196,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
 			_propertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-				PropertyTable.SettingsGroup.LocalSettings, true);
+				SettingsGroup.LocalSettings, true, true);
 
 			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
 
@@ -244,7 +246,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			 // Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
 			return true;
@@ -317,7 +319,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			StopParser();
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", SettingsGroup.LocalSettings, true, true);
 
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
@@ -447,7 +449,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
@@ -1393,9 +1395,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
-		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
+		private static bool IsVernacularSpellingEnabled(IPropertyTable propertyTable)
 		{
-			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return propertyTable.GetValue("UseVernSpellingDictionary", true);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
@@ -1416,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "FwApp is a reference I guess")]
-		private static FwXWindow RefreshCacheWindowAndAll(PropertyTable propertyTable, string fullProjectFileName)
+		private static FwXWindow RefreshCacheWindowAndAll(IPropertyTable propertyTable, string fullProjectFileName)
 		{
 			var manager = FwApp.App.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);

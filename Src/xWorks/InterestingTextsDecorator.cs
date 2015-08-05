@@ -55,14 +55,14 @@ namespace SIL.FieldWorks.XWorks
 			m_notifieeCount++;
 		}
 
-		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
+		public void SetMediator(Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_interestingTexts = GetInterestingTextList(mediator, propertyTable, m_services);
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(Mediator mediator, PropertyTable propertyTable, IFdoServiceLocator services)
+		static public InterestingTextList GetInterestingTextList(Mediator mediator, IPropertyTable propertyTable, IFdoServiceLocator services)
 		{
 			var interestingTextList = propertyTable.GetValue<InterestingTextList>(InterestingTextKey, null);
 			if (interestingTextList == null)
@@ -70,8 +70,7 @@ namespace SIL.FieldWorks.XWorks
 				interestingTextList = new InterestingTextList(mediator, propertyTable, services.GetInstance<ITextRepository>(),
 					services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
 				// Make this list available for other tools in this window, but don't try to persist it.
-				propertyTable.SetProperty(InterestingTextKey, interestingTextList, false);
-				propertyTable.SetPropertyPersistence(InterestingTextKey, false);
+				propertyTable.SetProperty(InterestingTextKey, interestingTextList, false, false);
 				// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
 				// I can't find any way to make sure it eventually gets removed from the notification list.
 				services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);

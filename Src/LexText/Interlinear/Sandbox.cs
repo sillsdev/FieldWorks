@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mediator"></param>
 		/// <param name="selected"></param>
 		/// <param name="focusBox"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss,
+		public Sandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
 			: base(cache, mediator, propertyTable, ss, choices)
 		{
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		///  <param name="choices"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+		public Sandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: base(cache, mediator, propertyTable, ss, choices)
 		{
 		}

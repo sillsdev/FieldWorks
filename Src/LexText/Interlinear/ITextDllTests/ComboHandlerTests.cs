@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.IText
 	public class ComboHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.IText
 			base.TestSetup();
 
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// Configuration may well have changed. Reset XML tables and redraw.
-					var sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
+					var sNewLayout = m_propertyTable.GetValue<string>(sProp);
 					ResetTables(sNewLayout);
 				}
 				if (dlg.MasterRefreshRequired)
@@ -438,12 +438,12 @@ namespace SIL.FieldWorks.XWorks
 		/// is (e.g.) publishStemPreview. (This view wraps publishStem with some conditional logic to ensure
 		/// that we display things like "Not published" if the entry is excluded from all publications.)
 		/// </summary>
-		public static string GetLayoutName(XmlNode xnSpec, Mediator mediator, PropertyTable propertyTable)
+		public static string GetLayoutName(XmlNode xnSpec, Mediator mediator, IPropertyTable propertyTable)
 		{
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
-				sLayout = propertyTable.GetStringProperty(sProp, null);
+				sLayout = propertyTable.GetValue<string>(sProp);
 			if (String.IsNullOrEmpty(sLayout))
 				sLayout = XmlUtils.GetManditoryAttributeValue(xnSpec, "layout");
 			var parts = sLayout.Split('#');

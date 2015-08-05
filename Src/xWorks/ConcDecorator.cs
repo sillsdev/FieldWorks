@@ -527,9 +527,9 @@ namespace SIL.FieldWorks.XWorks
 
 		public Mediator Mediator { get; private set; }
 
-		public PropertyTable PropTable { get; private set; }
+		public IPropertyTable PropTable { get; private set; }
 
-		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
+		public void SetMediator(Mediator mediator, IPropertyTable propertyTable)
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;

@@ -142,13 +142,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				string desiredArea = "lexicon";
 
 				// see if it's the right area
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				if (areaChoice != null && areaChoice == desiredArea)
 				{
 					// now see if it's one of the right tools
 					string[] allowedTools = {"simpleLexiconEdit", "lexiconTestEdit",
 							"lexiconEdit", "lexiconEdit", "lexiconFullEdit"};
-					string toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+					string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
 					foreach (string tool in allowedTools)
 					{
 						if (toolChoice != null && toolChoice == tool)

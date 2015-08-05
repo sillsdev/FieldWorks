@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
 			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 			m_closedFeature = closedFeature;

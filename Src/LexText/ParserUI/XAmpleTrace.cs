@@ -15,7 +15,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="result">XML string of the XAmple trace output</param>
 		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
+		public string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			ParserTraceUITransform transform;
 			string baseName;

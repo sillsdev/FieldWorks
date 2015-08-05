@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+			Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 

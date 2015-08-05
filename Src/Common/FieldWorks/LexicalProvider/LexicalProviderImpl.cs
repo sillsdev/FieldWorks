@@ -71,15 +71,13 @@ namespace SIL.FieldWorks.LexicalProvider
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				using (Mediator mediator = new Mediator())
-				using (PropertyTable propertyTable = new PropertyTable(null)) // Can't possibly need to publish anything, since nobody has subscribed.
+				using (var mediator = new Mediator())
+				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(null)) // Can't possibly need to publish anything, since nobody has subscribed.
 				{
-					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
-					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), false, true);
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
-					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-					propertyTable.SetProperty("App", flexApp, true);
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
+					propertyTable.SetProperty("App", flexApp, true, true);
 
 					LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						"UserHelpFile", tss, null);
@@ -107,15 +105,13 @@ namespace SIL.FieldWorks.LexicalProvider
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				using (Mediator mediator = new Mediator())
-				using (PropertyTable propertyTable = new PropertyTable(null)) // Nobody is subscribed.
+				using (var mediator = new Mediator())
+				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(null)) // Nobody is subscribed.
 				{
-					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
-					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), false, true);
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
-					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-					propertyTable.SetProperty("App", flexApp, true);
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
+					propertyTable.SetProperty("App", flexApp, true, true);
 
 					LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						"UserHelpFile", tss);

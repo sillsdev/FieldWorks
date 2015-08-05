@@ -2,7 +2,6 @@
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -13,7 +12,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class InterAreaBookmark : IStTextBookmark
 	{
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		int m_iParagraph;
 		int m_BeginOffset;
 		int m_EndOffset;
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		internal InterAreaBookmark(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)	// For restoring
+		internal InterAreaBookmark(InterlinMaster interlinMaster, FdoCache cache, IPropertyTable propertyTable)	// For restoring
 		{
 			// Note: resist any temptation to save mediator in a memer variable. Bookmarks are kept in a static dictionary
 			// and may well have a longer life than the mediator. There is danger of using if after it is disposed. See LT-12435.
@@ -32,7 +31,7 @@ namespace SIL.FieldWorks.IText
 			Restore(interlinMaster.IndexOfTextRecord);
 		}
 
-		internal void Init(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)
+		internal void Init(InterlinMaster interlinMaster, FdoCache cache, IPropertyTable propertyTable)
 		{
 			Debug.Assert(interlinMaster != null);
 			Debug.Assert(cache != null);
@@ -104,16 +103,10 @@ namespace SIL.FieldWorks.IText
 
 		private void SavePersisted(int recordIndex)
 		{
-			Debug.Assert(!m_propertyTable.IsDisposed);
-			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence(RecordIndexBookmarkName, true, PropertyTable.SettingsGroup.LocalSettings);
-			// propertyTable.SetPropertyPersistence(pfx + "Title", true);
-			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("IndexOfParagraph"), true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("CharBeginOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetPropertyPersistence(BookmarkPropertyName("CharEndOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -122,12 +115,12 @@ namespace SIL.FieldWorks.IText
 		public void Restore(int index)
 		{
 			// verify we're restoring to the right text. Is there a better way to verify this?
-			int restoredRecordIndex = m_propertyTable.GetIntProperty(RecordIndexBookmarkName, -1, PropertyTable.SettingsGroup.LocalSettings);
+			int restoredRecordIndex = m_propertyTable.GetValue(RecordIndexBookmarkName, SettingsGroup.LocalSettings, -1);
 			if (index != restoredRecordIndex)
 				return;
-			m_iParagraph = m_propertyTable.GetIntProperty(BookmarkPropertyName("IndexOfParagraph"), 0, PropertyTable.SettingsGroup.LocalSettings);
-			m_BeginOffset = m_propertyTable.GetIntProperty(BookmarkPropertyName("CharBeginOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
-			m_EndOffset = m_propertyTable.GetIntProperty(BookmarkPropertyName("CharEndOffset"), 0, PropertyTable.SettingsGroup.LocalSettings);
+			m_iParagraph = m_propertyTable.GetValue(BookmarkPropertyName("IndexOfParagraph"), SettingsGroup.LocalSettings, 0);
+			m_BeginOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharBeginOffset"), SettingsGroup.LocalSettings, 0);
+			m_EndOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharEndOffset"), SettingsGroup.LocalSettings, 0);
 		}
 
 		/// <summary>

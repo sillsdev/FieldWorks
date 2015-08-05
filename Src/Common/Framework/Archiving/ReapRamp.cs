@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -14,7 +17,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.Archiving
 {
@@ -53,7 +55,7 @@ namespace SIL.FieldWorks.Common.Framework.Archiving
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
-			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, FdoCache cache)
+			IEnumerable<string> filesToArchive, IPropertyTable propertyTable, FwApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();

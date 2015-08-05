@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.IText
 	public class ConcordanceControlBase : UserControl, IxCoreContentControl, IFWDisposable
 	{
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected XmlNode m_configurationParameters;
 		protected FdoCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.IText
 			return ContainsFocus ? this : null;
 		}
 
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;

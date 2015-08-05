@@ -21,7 +21,7 @@ namespace SIL.CoreImpl
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		IArea GetPersistedOrDefaultArea(PropertyTable propertyTable);
+		IArea GetPersistedOrDefaultArea(IPropertyTable propertyTable);
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.

@@ -15,7 +15,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
@@ -42,7 +41,7 @@ namespace LexTextDllTests
 		private Mediator m_mediator;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// For testing.
@@ -90,12 +89,10 @@ namespace LexTextDllTests
 		{
 			m_mediator = new Mediator();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = new PropertyTable(m_publisher);
-			m_propertyTable.SetProperty("Publisher", m_publisher, false);
-			m_propertyTable.SetPropertyPersistence("Publisher", false);
-			m_propertyTable.SetProperty("Subscriber", m_subscriber, false);
-			m_propertyTable.SetPropertyPersistence("Subscriber", false);
-			m_propertyTable.SetProperty("cache", Cache, true);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_propertyTable.SetProperty("Publisher", m_publisher, false, false);
+			m_propertyTable.SetProperty("Subscriber", m_subscriber, false, false);
+			m_propertyTable.SetProperty("cache", Cache,  true, true);
 			m_testWindowConfig = SetupMinimalWindowConfig();
 			var cmdSet = new CommandSet(m_mediator);
 			cmdSet.Init(m_testWindowConfig);

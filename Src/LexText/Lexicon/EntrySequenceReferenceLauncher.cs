@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_sda = m_cache.MainCacheAccessor;
@@ -350,7 +350,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Form m_parentWindow;
 
 		public AddPrimaryLexemeChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntryRef, /* Why ICmObject? */
+			string sLabel, Mediator mediator, IPropertyTable propertyTable, ICmObject lexEntryRef, /* Why ICmObject? */
 			Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
@@ -418,7 +418,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Form m_parentWindow;
 
 		public AddComplexFormChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntry, /* Why ICmObject? */
+			string sLabel, Mediator mediator, IPropertyTable propertyTable, ICmObject lexEntry, /* Why ICmObject? */
 			Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{

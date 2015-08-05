@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnOk;
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sandboxMsa"></param>
 		/// <param name="hvoOriginalMsa"></param>
 		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+			Mediator mediator, IPropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			CheckDisposed();
@@ -159,16 +159,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Reset window location.
 			// Get location to the stored values, if any.
-			if (m_propertyTable.PropertyExists("msaCreatorDlgLocation"))
+			Point dlgLocation;
+			if (m_propertyTable.TryGetValue("msaCreatorDlgLocation", out dlgLocation))
 			{
-				var locWnd = m_propertyTable.GetValue<Point>("msaCreatorDlgLocation");
 				// JohnT: this dialog can't be resized. So it doesn't make sense to
 				// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 				// to prevent the dialog growing every time at 120 dpi. But such an override
 				// makes it too small to show all the controls at the default size.
 				// It's better just to use the default size until it's resizeable for some reason.
-				//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
-				Rectangle rect = new Rectangle(locWnd, Size);
+				//var dlgSize = m_propertyTable.GetValue<Size>("msaCreatorDlgSize");
+				Rectangle rect = new Rectangle(dlgLocation, Size);
 				ScreenUtils.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
@@ -318,8 +318,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true);
-				//No need, since the dlg isnt; resizable. m_mediator.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
+				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true, true);
+				//No need, since the dlg isn't resizable. m_propertyTable.SetProperty("msaCreatorDlgSize", Size, true, true);
 			}
 		}
 

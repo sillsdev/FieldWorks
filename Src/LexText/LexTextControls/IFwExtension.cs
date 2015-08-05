@@ -15,6 +15,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable);
+		void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable);
 	}
 }

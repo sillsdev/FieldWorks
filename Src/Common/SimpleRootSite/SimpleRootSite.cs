@@ -21,7 +21,6 @@ using Accessibility;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
 using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -383,7 +382,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// The proerty Table provided by XCoreColleague.Init.
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Supports the LayoutSizeChanged event by maintaining a list of who wants it.
 		/// </summary>
@@ -744,9 +743,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Get the PropertyTable.
+		/// Get the IPropertyTable.
 		/// </summary>
-		internal PropertyTable PropTable
+		internal IPropertyTable PropTable
 		{
 			get { return m_propertyTable; }
 		}
@@ -2122,7 +2121,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			// Save the mediator in case a client or subclass wants it.

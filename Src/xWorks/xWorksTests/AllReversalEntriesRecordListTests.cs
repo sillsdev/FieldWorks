@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
 	{
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected List<ICmObject> m_createdObjectList;
 
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
@@ -181,8 +181,6 @@ namespace SIL.FieldWorks.XWorks
 		public void CleanUp()
 		{
 			UndoAllActions();
-			// delete property table settings.
-			m_propertyTable.RemoveLocalAndGlobalSettings();
 		}
 
 		private void UndoAllActions()
@@ -200,8 +198,6 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = m_window.Mediator;
 			m_propertyTable = m_window.PropTable;
 			((MockFwXWindow)m_window).ClearReplacements();
-			// delete property table settings.
-			m_propertyTable.RemoveLocalAndGlobalSettings();
 			ProcessPendingItems();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);

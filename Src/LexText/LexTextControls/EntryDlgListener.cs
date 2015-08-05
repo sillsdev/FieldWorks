@@ -170,13 +170,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				if (areaChoice == null) return false; // happens at start up
 				if ("lexicon" == areaChoice)
 				{
-					string tool = m_propertyTable.GetStringProperty("currentContentControl", null);
-					if (tool == "lexiconEdit") return true;
-					return false;
+					return m_propertyTable.GetValue<string>("currentContentControl") == "lexiconEdit";
 				}
 				return false; //we are not in an area that wants to see the merge command
 			}
@@ -250,11 +248,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				if (m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete")
+				if (m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete")
 					return false;
 
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice",
-					null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				string[] areas = new string[]{"lexicon"};
 				foreach(string area in areas)
 				{

@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	public class TryAWordDlg : Form, IFWDisposable, IMediatorProvider, IPropertyTableProvider
+	public class TryAWordDlg : Form, IFWDisposable, IMediatorProvider
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "Code in question is only compiled on Windows")]
-		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
+		public void SetDlgInfo(Mediator mediator, IPropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;
@@ -378,8 +378,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnClosed(ea);
 			// remember last word used, if possible
-			PropTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), PropertyTable.SettingsGroup.LocalSettings, false);
-			PropTable.SetPropertyPersistence("TryAWordDlg-lastWordToTry", true, PropertyTable.SettingsGroup.LocalSettings);
+			PropTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserListener.Connection != null)
 				m_parserListener.Connection.TryAWordDialogIsRunning = false;
@@ -669,7 +668,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IPropertyTableProvider Members
 
-		public PropertyTable PropTable { get; private set; }
+		public IPropertyTable PropTable { get; private set; }
 
 		#endregion
 	}

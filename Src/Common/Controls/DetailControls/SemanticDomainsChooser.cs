@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			editDomainsLinkPic.Image = DetailControlsStrings.gotoLinkPic;
 		}
 
-		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems, PropertyTable propertyTable)
+		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems, IPropertyTable propertyTable)
 		{
 			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);

@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public interface IFwGuiControl : IFWDisposable
 	{
-		void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject);
+		void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject);
 		void Launch();
 	}
 
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.FdoUi
 		#region Data members
 
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		private Command m_command;
 		protected ICmObject m_obj;
 		protected int m_hvo;
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		public virtual PropertyTable PropTable
+		public virtual IPropertyTable PropTable
 		{
 			set
 			{
@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public static CmObjectUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static CmObjectUi CreateNewUiObject(Mediator mediator, IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			switch (classId)
@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		#region IxCoreColleague implementation/
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 		}
@@ -642,9 +642,10 @@ namespace SIL.FieldWorks.FdoUi
 
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-			//string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_" + areaChoice, null);
-			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
+			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+			//string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_" + areaChoice);
+			string toolChoice = m_propertyTable.GetValue<string>("currentContentControl");
 			if (!IsAcceptableContextToJump(toolChoice, tool))
 			{
 				display.Visible = display.Enabled = false;
@@ -737,7 +738,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="hostControl"></param>
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed)
+		public bool HandleRightClick(Mediator mediator, IPropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed)
 		{
 			CheckDisposed();
 
@@ -753,7 +754,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <param name="adjustMenu"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
+		public bool HandleRightClick(Mediator mediator, IPropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
@@ -830,7 +831,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
 		/// <param name="sMenuId"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
+		public bool HandleRightClick(Mediator mediator, IPropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
 		{
 			return HandleRightClick(mediator, propertyTable, hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
 		}
@@ -845,7 +846,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sMenuId"></param>
 		/// <param name="adjustMenu"></param>
 		/// <returns></returns>
-		public bool HandleRightClick(Mediator mediator, PropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
+		public bool HandleRightClick(Mediator mediator, IPropertyTable propertyTable, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
@@ -1051,7 +1052,7 @@ namespace SIL.FieldWorks.FdoUi
 			ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
 		}
 
-		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator, PropertyTable propertyTable)
+		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator, IPropertyTable propertyTable)
 		{
 			if (file == null)
 				return;
@@ -1070,9 +1071,9 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (mediator != null)
 			{
-				if (propertyTable != null && propertyTable.PropertyExists("App"))
+				FwApp app;
+				if (propertyTable != null && propertyTable.TryGetValue("App", out app))
 				{
-					var app = propertyTable.GetValue<FwApp>("App");
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 				}
 				string fileToDelete = file.AbsoluteInternalPath;
@@ -1644,7 +1645,7 @@ namespace SIL.FieldWorks.FdoUi
 			return false;
 		}
 
-		public static CmObjectUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner,
+		public static CmObjectUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner,
 			int flid, int insertionPosition)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
@@ -2062,7 +2063,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public static LexSenseUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexSenseUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexSenseUi result = null;
 			var cache = propertyTable.GetValue<FdoCache>("cache");

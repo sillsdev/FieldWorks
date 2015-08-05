@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		///
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

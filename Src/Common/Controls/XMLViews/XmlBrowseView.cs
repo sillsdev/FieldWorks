@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// This is invoked by the PropertyTable (because XmlBrowseView is a mediator).
+		/// This is invoked by the IPropertyTable (because XmlBrowseView is a mediator).
 		/// </summary>
 		/// <param name="propName"></param>
 		public override void OnPropertyChanged(string propName)

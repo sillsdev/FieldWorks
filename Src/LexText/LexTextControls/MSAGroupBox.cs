@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region Data members
 
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private Form m_parentForm;
 		private FdoCache m_cache;
 		private Control m_ctrlAssistant;
@@ -490,7 +490,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="ctrlAssistant"></param>
 		/// <param name="parentForm"></param>
 		/// <param name="propertyTable"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, Control ctrlAssistant, Form parentForm)
+		public void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, Control ctrlAssistant, Form parentForm)
 		{
 			CheckDisposed();
 
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="parentForm"></param>
 		/// <param name="sandboxMSA"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
+		public void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			CheckDisposed();
 

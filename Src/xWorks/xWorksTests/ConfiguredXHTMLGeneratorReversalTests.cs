@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private StringBuilder XHTMLStringBuilder { get; set; }
 
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			XHTMLStringBuilder = new StringBuilder();
 		}
 
-		#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

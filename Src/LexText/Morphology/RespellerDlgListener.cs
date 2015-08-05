@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetValue<string>("areaChoice") == "textsWords");
 			}
 		}
 
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return InFriendlyArea && m_propertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null) == "Analyses";
+				return InFriendlyArea && m_propertyTable.GetValue<string>("ToolForAreaNamed_textsWords") == "Analyses";
 			}
 		}
 	}
@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class RespellerRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 

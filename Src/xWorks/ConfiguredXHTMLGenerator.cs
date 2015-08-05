@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The HTML as a string</returns>
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
-																		 DictionaryPublicationDecorator pubDecorator, PropertyTable propertyTable)
+																		 DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable)
 		{
 			if (entry == null)
 			{
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, PropertyTable propertyTable, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
+		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
@@ -1687,7 +1687,7 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(PropertyTable propertyTable, out int[] entriesToSave)
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			if (cache == null)
@@ -1701,7 +1701,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			ICmPossibility currentPublication;
-			var currentPublicationString = propertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
+			var currentPublicationString = propertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
 			if (currentPublicationString == xWorksStrings.AllEntriesPublication)
 			{
 				currentPublication = null;
@@ -1727,8 +1727,8 @@ namespace SIL.FieldWorks.XWorks
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
-			public PropertyTable PropertyTable { get; private set; }
-			public GeneratorSettings(FdoCache cache, PropertyTable propertyTable, XmlWriter writer, bool relativePaths, bool copyFiles, string exportPath)
+			public IPropertyTable PropertyTable { get; private set; }
+			public GeneratorSettings(FdoCache cache, IPropertyTable propertyTable, XmlWriter writer, bool relativePaths, bool copyFiles, string exportPath)
 			{
 				if (cache == null || writer == null)
 				{

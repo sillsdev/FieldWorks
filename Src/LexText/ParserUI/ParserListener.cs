@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class ParserListener : IxCoreColleague, IFWDisposable, IVwNotifyChange
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -214,8 +214,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void UpdateStatusPanelProgress()
 		{
 			var statusMessage = ParserQueueString + " " + ParserActivityString;
-			m_propertyTable.SetProperty("StatusPanelProgress", statusMessage, true);
-			m_propertyTable.SetPropertyPersistence("StatusPanelProgress", false);
+			m_propertyTable.SetProperty("StatusPanelProgress", statusMessage, false, true);
 
 			if (m_parserConnection != null)
 			{
@@ -520,7 +519,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", "");
+				string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 				return areaChoice == "textsWords";
 			}
 		}
@@ -529,7 +528,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+				string toolName = m_propertyTable.GetValue("currentContentControl", string.Empty);
 				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "toolBulkEditWordforms");
 			}
 		}
@@ -538,8 +537,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
-				string tabName = m_propertyTable.GetStringProperty("InterlinearTab", "");
+				string toolName = m_propertyTable.GetValue("currentContentControl", string.Empty);
+				string tabName = m_propertyTable.GetValue("InterlinearTab", string.Empty);
 				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}

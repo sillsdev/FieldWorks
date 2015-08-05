@@ -20,9 +20,9 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationListener : IxCoreColleague
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_propertyTable = propertyTable;
 			m_mediator = mediator;
@@ -83,9 +83,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the localizable name of the area in FLEx being configured, such as Dictionary of Reversal Index.
 		/// </summary>
-		internal static string GetDictionaryConfigurationType(PropertyTable propertyTable)
+		internal static string GetDictionaryConfigurationType(IPropertyTable propertyTable)
 		{
-			var toolName = propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			var toolName = propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
 			switch(toolName)
 			{
 				case "reversalToolBulkEditReversalEntries":
@@ -104,14 +104,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the project-specific directory for holding configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		internal static string GetProjectConfigurationDirectory(PropertyTable propertyTable)
+		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
 			return GetProjectConfigurationDirectory(propertyTable, lastDirectoryPart);
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
-		internal static string GetProjectConfigurationDirectory(PropertyTable propertyTable, string area)
+		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable, string area)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			return area == null ? null : Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the directory for the shipped default configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		internal static string GetDefaultConfigurationDirectory(PropertyTable propertyTable)
+		internal static string GetDefaultConfigurationDirectory(IPropertyTable propertyTable)
 		{
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
 			return GetDefaultConfigurationDirectory(lastDirectoryPart);
@@ -140,9 +140,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		private static string GetInnermostConfigurationDirectory(PropertyTable propertyTable)
+		private static string GetInnermostConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			switch(propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null))
+			switch (propertyTable.GetValue<string>("ToolForAreaNamed_lexicon"))
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				var areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				var areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				return areaChoice == "lexicon";
 			}
 		}
@@ -196,14 +196,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the current Dictionary configuration file
 		/// </summary>
 		/// <returns></returns>
-		public static string GetCurrentConfiguration(PropertyTable propertyTable)
+		public static string GetCurrentConfiguration(IPropertyTable propertyTable)
 		{
 			string currentConfig = null;
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
 			if(propertyTable != null)
 			{
-				currentConfig = propertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
+				currentConfig = propertyTable.GetValue("DictionaryPublicationLayout", string.Empty);
 				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
 				{
 					string defaultPublication = "Root";
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					}
-					propertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
+					propertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true, true);
 				}
 			}
 			return currentConfig;

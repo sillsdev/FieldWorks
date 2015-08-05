@@ -3,20 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		/// m_window is needed for processing xcore messages when simulating user events.
 		/// </summary>
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
 		protected List<ICmObject> m_createdObjectList;
@@ -62,8 +58,6 @@ namespace SIL.FieldWorks.XWorks
 		public void CleanUp()
 		{
 			UndoAllActions();
-			// delete property table settings.
-			m_propertyTable.RemoveLocalAndGlobalSettings();
 
 			//if (m_bulkEditBar != null)
 			//    m_bulkEditBar.Dispose();
@@ -93,8 +87,6 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = m_window.Mediator;
 			m_propertyTable = m_window.PropTable;
 			((MockFwXWindow)m_window).ClearReplacements();
-			// delete property table settings.
-			m_propertyTable.RemoveLocalAndGlobalSettings();
 			ProcessPendingItems();
 			ControlAssemblyReplacements();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
@@ -201,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			readonly MockFwXWindow m_wnd;
 
-			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
 				: base(bv, spec, mediator, propertyTable, cache)
 			{
 				m_wnd = propertyTable.GetValue<MockFwXWindow>("window");
@@ -315,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 			MockFwXWindow m_wnd = null;
 
 			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-				Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
+				Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
 				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
 			{
 				m_wnd = m_propertyTable.GetValue<MockFwXWindow>("window");
@@ -331,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="propertyTable"></param>
 			/// <param name="cache"></param>
 			///  <returns></returns>
-			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
 			{
 				return new BulkEditBarForTests(bv, spec, mediator, propertyTable, cache);
 			}
@@ -462,11 +454,10 @@ namespace SIL.FieldWorks.XWorks
 		protected class RecordBrowseViewForTests : RecordBrowseView
 		{
 			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-				FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+				FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
 				var app = propertyTable.GetValue<MockFwXApp>("App");
-				propertyTable.SetProperty("FeedbackInfoProvider", app, true);
-				propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+				propertyTable.SetProperty("FeedbackInfoProvider", app, false, true);
 				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache,
 					mediator, propertyTable,
 					sortItemProvider, sda);

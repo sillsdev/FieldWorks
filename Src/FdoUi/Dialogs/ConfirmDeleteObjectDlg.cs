@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -138,7 +137,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();

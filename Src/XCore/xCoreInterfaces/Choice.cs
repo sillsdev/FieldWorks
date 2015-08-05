@@ -42,15 +42,15 @@ namespace XCore
 	abstract public class ChoiceBase : ChoiceRelatedClass
 	{
 		protected ChoiceGroup m_parent;
-		protected PropertyTable.SettingsGroup m_settingsGroup = PropertyTable.SettingsGroup.Undecided;
+		protected SettingsGroup m_settingsGroup = SettingsGroup.Undecided;
 
-		protected virtual PropertyTable.SettingsGroup PropertyTableGroup
+		protected virtual SettingsGroup PropertyTableGroup
 		{
 			get
 			{
-				if (m_settingsGroup == PropertyTable.SettingsGroup.Undecided)
+				if (m_settingsGroup == SettingsGroup.Undecided)
 				{
-					m_settingsGroup = ChoiceGroup.GetSettingsGroup(m_configurationNode, PropertyTable.SettingsGroup.BestSettings);
+					m_settingsGroup = ChoiceGroup.GetSettingsGroup(m_configurationNode, SettingsGroup.BestSettings);
 				}
 				return m_settingsGroup;
 			}
@@ -59,7 +59,7 @@ namespace XCore
 		/// <summary>
 		/// Factory method. Will make the appropriate class, based on the configurationNode.
 		/// </summary>
-		static public ChoiceBase Make(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		static public ChoiceBase Make(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 		{
 			if (XmlUtils.GetAttributeValue(configurationNode, "command","") == "")
 			{
@@ -92,7 +92,7 @@ namespace XCore
 		/// <param name="configurationNode"></param>
 		/// <param name="adapter"></param>
 		/// <returns></returns>
-		static public StringPropertyChoice MakeListPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		static public StringPropertyChoice MakeListPropertyChoice(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 		{
 			//string listId=XmlUtils.GetAttributeValue(configurationNode, "list", "");
 			//			ListItem item = new ListItem();
@@ -109,12 +109,12 @@ namespace XCore
 		}
 
 
-		public ChoiceBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		public ChoiceBase(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, adapter,configurationNode)
 		{
 			m_parent  = parent;
 		}
-		public ChoiceBase(Mediator mediator, PropertyTable propertyTable, IUIAdapter adapter, ChoiceGroup parent)
+		public ChoiceBase(Mediator mediator, IPropertyTable propertyTable, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, adapter,null)
 		{
 			m_parent  = parent;
@@ -171,7 +171,7 @@ namespace XCore
 		/// <param name="configurationNode"></param>
 		///  <param name="adapter"></param>
 		///  <param name="parent"></param>
-		public CommandChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		public CommandChoice(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 			m_idOfCorrespondingCommand = XmlUtils.GetAttributeValue(m_configurationNode, "command");
@@ -313,7 +313,7 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class BoolPropertyChoice : ChoiceBase
 	{
-		public BoolPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		public BoolPropertyChoice(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}
@@ -350,7 +350,7 @@ namespace XCore
 		{
 			get
 			{
-				return m_propertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, this.PropertyTableGroup);
+				return m_propertyTable.GetValue<bool>(BoolPropertyName, PropertyTableGroup, DefaultBoolPropertyValue);
 			}
 		}
 
@@ -361,8 +361,10 @@ namespace XCore
 			{
 				// JohnT: this is bizarre, but I've seen it sometimes on shutdown.
 				if (m_mediator == null)
+				{
 					return DefaultBoolPropertyValue;
-				return m_propertyTable.GetBoolProperty(BoolPropertyName, DefaultBoolPropertyValue, PropertyTableGroup);
+				}
+				return m_propertyTable.GetValue<bool>(BoolPropertyName, PropertyTableGroup, DefaultBoolPropertyValue);
 			}
 		}
 
@@ -381,7 +383,7 @@ namespace XCore
 			//if we are a a boolProperty widget, the parent will call us back at HandleClick()
 			Debug.Assert(this.BoolPropertyName != "");
 			//toggle our value
-			m_propertyTable.SetProperty(BoolPropertyName, !BoolPropertyValue, PropertyTableGroup, true);
+			m_propertyTable.SetProperty(BoolPropertyName, !BoolPropertyValue, PropertyTableGroup, true, true);
 		}
 
 		/// <summary>
@@ -431,7 +433,7 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class StringPropertyChoice : ChoiceBase
 	{
-		public StringPropertyChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		public StringPropertyChoice(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}
@@ -539,7 +541,7 @@ namespace XCore
 		static bool m_fHandlingClick = false;	// prevent multiple simultaneous OnClick operations.
 		#endregion
 
-		public ListPropertyChoice(Mediator mediator, PropertyTable propertyTable, ListItem listItem, IUIAdapter adapter, ChoiceGroup parent)
+		public ListPropertyChoice(Mediator mediator, IPropertyTable propertyTable, ListItem listItem, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable,  adapter, parent)
 		{
 			m_listItem = listItem;
@@ -675,7 +677,7 @@ namespace XCore
 	//--------------------------------------------------------------------
 	public class SeparatorChoice : ChoiceBase
 	{
-		public SeparatorChoice(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
+		public SeparatorChoice(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, IUIAdapter adapter, ChoiceGroup parent)
 			: base(mediator, propertyTable, configurationNode, adapter, parent)
 		{
 		}

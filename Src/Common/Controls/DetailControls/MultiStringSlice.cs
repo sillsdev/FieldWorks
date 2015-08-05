@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			display.List.Clear();
-			m_propertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), false);
+			m_propertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), true, false);
 			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			switch (name)
 			{
 				case "SelectedWritingSystemHvosForCurrentContextMenu":
-					string singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
+					string singlePropertySequenceValue = m_propertyTable.GetValue<string>("SelectedWritingSystemHvosForCurrentContextMenu");
 					PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
 					break;
 				default:

@@ -21,7 +21,7 @@ namespace XCore
 	public interface IUIAdapter
 	{
 		Control Init(Form window, IImageCollection smallImages,
-			IImageCollection largeImages, Mediator mediator, PropertyTable propertyTable);
+			IImageCollection largeImages, Mediator mediator, IPropertyTable propertyTable);
 		void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection);
 		void CreateUIForChoiceGroup(ChoiceGroup group);
 		void OnIdle();

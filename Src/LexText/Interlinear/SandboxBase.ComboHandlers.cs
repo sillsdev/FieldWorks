@@ -1300,7 +1300,7 @@ namespace SIL.FieldWorks.IText
 			internal string EditMorphBreaks()
 			{
 				string sMorphs = null;
-				var propTable = ((IxWindow) m_sandbox.FindForm()).PropTable;
+				var propTable = ((IPropertyTableProvider) m_sandbox.FindForm()).PropertyTable;
 				using (var dlg = new EditMorphBreaksDlg(propTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					ITsString tssWord = m_sandbox.SbWordForm(m_sandbox.RawWordformWs);

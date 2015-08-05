@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		FdoCache m_cache;
 		Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		XmlNode m_configurationNode;
 		ILexExampleSentence m_les;
 		ILexSense m_owningSense;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region IFwGuiControl Members
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
 		{
 			CheckDisposed();
 
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		XmlView m_previewPane;
 		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
 
-		internal void Init(Mediator mediator, PropertyTable propertyTable, XmlNode xnBrowseViewControlParameters, XmlView pubView, ISilDataAccess sda)
+		internal void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode xnBrowseViewControlParameters, XmlView pubView, ISilDataAccess sda)
 		{
 			m_previewPane = pubView;
 			m_decoratedSda = sda;

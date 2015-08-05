@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.IText
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;

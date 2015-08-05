@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -11,53 +11,22 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using SIL.CoreImpl.Properties;
 using SIL.Utils;
-// for Monitor (dlh)
 
-namespace SIL.CoreImpl
+namespace SIL.CoreImpl.Impls
 {
 	/// <summary>
-	/// Summary description for PropertyTable.
+	/// Table of properties, some of which are persisted, and some that are not.
 	/// </summary>
 	[Serializable]
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification = "variable is a reference; it is owned by parent")]
-	public sealed class PropertyTable : IFWDisposable
+	internal sealed class PropertyTable : IPropertyTable
 	{
-		/// <summary>
-		/// Specify where to set/get a property in the property table.
-		/// </summary>
-		public enum SettingsGroup
-		{
-			/// <summary>
-			/// Undecided -- indicating that we haven't yet determined
-			///	(from configuration file or otherwise) where the property should be stored.
-			/// </summary>
-			Undecided,
-			/// <summary>
-			/// GlobalSettings -- typically application wide settings.
-			/// This is the default group to store a setting, without further specification.
-			/// </summary>
-			GlobalSettings,
-			/// <summary>
-			/// LocalSettings -- typically project wide settings.
-			/// </summary>
-			LocalSettings,
-			/// <summary>
-			/// BestSettings -- we'll try to look up the specified property name in the property table,
-			///	first in LocalSettings and then GlobalSettings. Using BestSettings to establish a new value
-			///	for a property will default to storing the property value in the GlobalSettings,
-			///	if the property does not already exist. Otherwise, it will use the existing	property
-			///	(giving preference to LocalSettings over GlobalSettings).
-			/// </summary>
-			BestSettings
-		};
-
 		private IPublisher Publisher { get; set; }
 
 		private Dictionary<string, Property> m_properties;
@@ -73,7 +42,7 @@ namespace SIL.CoreImpl
 		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public PropertyTable(IPublisher publisher)
+		internal PropertyTable(IPublisher publisher)
 		{
 			m_properties = new Dictionary<string, Property>(100);
 			Publisher = publisher;
@@ -301,7 +270,7 @@ namespace SIL.CoreImpl
 		/// <param name="settingsGroup"></param>
 		/// <param name="propertyValue">null, if it didn't find the property.</param>
 		/// <returns></returns>
-		internal bool TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
+		public bool TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
 		{
 			CheckDisposed();
 
@@ -371,12 +340,12 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// get the value of the best property (tries local then global),
-		/// set the defaultValue if it doesn't exist. (creates global property)
+		/// Get the property if type "T"
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
+		/// <typeparam name="T">Type of property to return</typeparam>
+		/// <param name="name">Name of property to return</param>
+		/// <param name="defaultValue">Default value of property, if it isn't in the table.</param>
+		/// <returns>The stroed property of type "T", or the defualt value, if not stored.</returns>
 		public T GetValue<T>(string name, T defaultValue)
 		{
 			CheckDisposed();
@@ -527,28 +496,31 @@ namespace SIL.CoreImpl
 			}
 			if (!m_properties.ContainsKey(key))
 			{
-				SetPropertyInternal(key, defaultValue, doBroadcastIfChanged);
+				SetPropertyInternal(key, defaultValue, true, doBroadcastIfChanged);
 			}
 
 			Monitor.Exit(m_properties);
 		}
 
 		/// <summary>
-		/// set the property value for the specified settingsGroup, and allow user to not broadcast the change.
+		/// Set the property value for the specified settingsGroup, and allow user to broadcast the change, or not.
+		/// Caller must also declare if the property is to be persisted, or not.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="newValue"></param>
-		/// <param name="settingsGroup"></param>
+		/// <param name="name">Property name</param>
+		/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
+		/// <param name="settingsGroup">The group to store the property in.</param>
+		/// <param name="persistProperty">
+		/// "true" if the property is to be persited, otherwise "false".</param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
+		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 			string key;
 			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetPropertyInternal(key, newValue, doBroadcastIfChanged);
+			SetPropertyInternal(key, newValue, persistProperty, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -557,14 +529,15 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="newValue"></param>
+		/// <param name="persistProperty"></param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		public void SetProperty(string name, object newValue, bool doBroadcastIfChanged)
+		public void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
-			SetProperty(name, newValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
+			SetProperty(name, newValue, SettingsGroup.BestSettings, persistProperty, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -572,11 +545,12 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="newValue"></param>
+		/// <param name="persistProperty"></param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		private void SetPropertyInternal(string key, object newValue, bool doBroadcastIfChanged)
+		private void SetPropertyInternal(string key, object newValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 
@@ -608,7 +582,10 @@ namespace SIL.CoreImpl
 			}
 			else
 			{
-				m_properties[key] = new Property(key, newValue);
+				m_properties[key] = new Property(key, newValue)
+				{
+					doPersist = persistProperty
+				};
 			}
 
 			if (didChange && doBroadcastIfChanged && Publisher != null)
@@ -626,131 +603,6 @@ namespace SIL.CoreImpl
 				TraceVerboseLine("Property '"+key+"' --> '"+newValue.ToString()+"'");
 			}
 #endif
-		}
-
-		/// <summary>
-		/// Gets boolean value of property for the specified settingsGroup
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
-		public bool GetBoolProperty(string name, bool defaultValue, SettingsGroup settingsGroup)
-		{
-			CheckDisposed();
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			return GetBoolPropertyInternal(key, defaultValue);
-		}
-
-		/// <summary>
-		/// Gets the boolean value of property in the best settings group (trying local first then global)
-		/// and creates the (global) property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		public bool GetBoolProperty(string name, bool defaultValue)
-		{
-			CheckDisposed();
-			return GetBoolProperty(name, defaultValue, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// Gets the boolean value of property
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		private bool GetBoolPropertyInternal(string key, bool defaultValue)
-		{
-			return GetValueInternal(key, defaultValue);
-		}
-
-		/// <summary>
-		/// Gets string value of property for the specified settingsGroup
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
-		public string GetStringProperty(string name, string defaultValue, SettingsGroup settingsGroup)
-		{
-			CheckDisposed();
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			return GetStringPropertyInternal(key, defaultValue);
-		}
-
-		/// <summary>
-		/// Gets the string value of property in the best settings group (trying local first then global)
-		/// and creates the (global) property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		public string GetStringProperty(string name, string defaultValue)
-		{
-			CheckDisposed();
-			return GetStringProperty(name, defaultValue, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// Gets the string value of property
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		private string GetStringPropertyInternal(string key, string defaultValue)
-		{
-			return GetValueInternal(key, defaultValue);
-		}
-
-		/// <summary>
-		/// Gets string value of property for the specified settingsGroup
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
-		public int GetIntProperty(string name, int defaultValue, SettingsGroup settingsGroup)
-		{
-			CheckDisposed();
-
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			return GetIntPropertyInternal(key, defaultValue);
-		}
-
-		/// <summary>
-		/// Gets the int value of property in the best settings group (trying local first then global)
-		/// and creates the (global) property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		public int GetIntProperty(string name, int defaultValue)
-		{
-			CheckDisposed();
-			return GetIntProperty(name, defaultValue, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// Gets the string value of property
-		/// and creates the property with the default value if it doesn't exist yet.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		private int GetIntPropertyInternal(string name, int defaultValue)
-		{
-			CheckDisposed();
-			return GetValueInternal(name, defaultValue);
 		}
 
 		/// <summary>
@@ -807,51 +659,6 @@ namespace SIL.CoreImpl
 		#region persistence stuff
 
 		/// <summary>
-		/// Declare if the property is to be persisted.
-		/// Default is 'true' to persist it.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="doPersist"></param>
-		/// <param name="settingsGroup"></param>
-		public void SetPropertyPersistence(string name, bool doPersist, SettingsGroup settingsGroup)
-		{
-			CheckDisposed();
-
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <f>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-			// Will properly throw if not in Dictionary.
-			Property property = null;
-			try
-			{
-				property = m_properties[key];
-			}
-			finally
-			{
-				Monitor.Exit(m_properties);
-			}
-
-			property.doPersist = doPersist;
-		}
-
-		/// <summary>
-		/// Declare if the property is to be persisted.
-		/// Default is 'true' to persist it.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="doPersist"></param>
-		public void SetPropertyPersistence(string name, bool doPersist)
-		{
-			CheckDisposed();
-
-			SetPropertyPersistence(name, doPersist, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
 		/// Save general application settings
 		/// </summary>
 		public void SaveGlobalSettings()
@@ -875,27 +682,11 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Remove the settings files saved from PropertyTable.Save()
-		/// </summary>
-		public void RemoveLocalAndGlobalSettings()
-		{
-			CheckDisposed();
-			// first remove local settings file.
-			string path = SettingsPath(LocalSettingsId);
-			if (File.Exists(path))
-				File.Delete(path);
-			// next remove global settings file.
-			path = SettingsPath("");
-			if (File.Exists(path))
-				File.Delete(path);
-		}
-
-		/// <summary>
 		/// save the project and its contents to a file
 		/// </summary>
 		/// <param name="settingsId">save settings starting with this, and use as part of file name</param>
 		/// <param name="omitSettingIds">skip settings starting with any of these.</param>
-		public void Save(string settingsId, string[] omitSettingIds)
+		private void Save(string settingsId, string[] omitSettingIds)
 		{
 			CheckDisposed();
 			try
@@ -924,31 +715,6 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		/// <summary>
-		/// Save database specific settings for the renamed Fieldworks project.
-		/// Rename settings starting with the old project name (oldSettingsId) to the new project name (newSettingsId).
-		/// Also write it to a file using the new project name.
-		/// </summary>
-		/// <param name="oldSettingsId">This is the old project name.</param>
-		/// <param name="newSettingsId">Save settings starting with this string, and use as part of file name</param>
-		public void SaveLocalSettingsForNewProjectName(string oldSettingsId, string newSettingsId)
-		{
-			CheckDisposed();
-			try
-			{
-				XmlSerializer szr = new XmlSerializer(typeof(Property[]));
-				string path = SettingsPath(newSettingsId);
-				using (var writer = new System.IO.StreamWriter(path))
-				{
-					szr.Serialize(writer, MakePropertyArrayForSerializingForNewProjectName(oldSettingsId, newSettingsId));
-				}
-			}
-			catch (Exception err)
-			{
-				throw new ApplicationException("There was a problem saving your settings.", err);
-			}
-		}
-
 		private string GetPathPrefixForSettingsId(string settingsId)
 		{
 			if (String.IsNullOrEmpty(settingsId))
@@ -962,7 +728,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="settingsId"></param>
 		/// <returns></returns>
-		public string SettingsPath(string settingsId)
+		private string SettingsPath(string settingsId)
 		{
 			CheckDisposed();
 			string pathPrefix = GetPathPrefixForSettingsId(settingsId);
@@ -1147,36 +913,6 @@ namespace SIL.CoreImpl
 
 			return list.ToArray();
 		}
-
-		private Property[] MakePropertyArrayForSerializingForNewProjectName(string oldSettingsId, string newSettingsId)
-		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <i>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-			List<Property> list = new List<Property>(m_properties.Count);
-			foreach (KeyValuePair<string, Property> kvp in m_properties)
-			{
-				Property property = kvp.Value;
-				if (!property.doPersist)
-					continue;
-				if (!property.name.StartsWith(GetPathPrefixForSettingsId(oldSettingsId)))
-					continue;
-
-				//Change the property.name's to match the new project name.
-				StringBuilder strBuild = new StringBuilder("");
-				strBuild.Append(property.name.ToString());
-				String oldPathPrefix = GetPathPrefixForSettingsId(oldSettingsId);
-				String newPathPrefix = GetPathPrefixForSettingsId(newSettingsId);
-				strBuild.Replace(oldPathPrefix, newPathPrefix);
-				property.name = strBuild.ToString();
-				list.Add(property);
-			}
-			Monitor.Exit(m_properties);
-
-			return list.ToArray();
-		}
 		#endregion
 
 		#region TraceSwitch methods
@@ -1197,71 +933,5 @@ namespace SIL.CoreImpl
 //		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// A property class used in the PropertyTable.
-	/// </summary>
-	[Serializable]
-	//TODO: we can't very well change this source code every time someone adds a new value type!!!
-	[XmlInclude(typeof(System.Drawing.Point))]
-	[XmlInclude(typeof(System.Drawing.Size))]
-	[XmlInclude(typeof(System.Windows.Forms.FormWindowState))]
-	public class Property
-	{
-		/// <summary>
-		/// Name of the property.
-		/// </summary>
-		public string name = null;
-		/// <summary>
-		/// Value of the property.
-		/// </summary>
-		public object value = null;
-
-		/// <summary>
-		/// it is not clear yet what to do about default persistence;
-		/// normally we would want to say false, but we don't you have
-		/// a good way to indicate that the property should be saved except for beer code.
-		/// therefore, for now, the default will be true said that properties which are introduced
-		/// in the configuration file will still be persisted.
-		/// </summary>
-		public bool doPersist = true;
-
-		/// <summary>
-		/// Up until now there was no way to pass ownership of the object/property
-		/// to the property table so that the objects would be disposed of at the
-		/// time the property table goes away.
-		/// </summary>
-		public bool doDispose = false;
-
-		/// <summary>
-		/// required for XML serialization
-		/// </summary>
-		public Property()
-		{
-		}
-
-		/// <summary>
-		/// Normally used constructor.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		public Property(string name, object value)
-		{
-			this.name = name;
-			this.value = value;
-		}
-
-		/// <summary>
-		/// Override to make sensible string representation of a property.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			if(value == null)
-				return name + "= null";
-			else
-				return name + "= " + value.ToString();
-		}
 	}
 }

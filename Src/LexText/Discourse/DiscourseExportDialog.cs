@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
-using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
@@ -26,7 +25,7 @@ namespace SIL.FieldWorks.Discourse
 		IVwViewConstructor m_vc;
 		int m_wsLineNumber;
 
-		public DiscourseExportDialog(Mediator mediator, PropertyTable propertyTable, int hvoRoot, IVwViewConstructor vc,
+		public DiscourseExportDialog(Mediator mediator, IPropertyTable propertyTable, int hvoRoot, IVwViewConstructor vc,
 			int wsLineNumber) : base(mediator, propertyTable)
 		{
 			m_hvoRoot = hvoRoot;

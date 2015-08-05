@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.IText
 
 		#region IxCoreColleague Members
 
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			base.Init(mediator, propertyTable, configurationParameters);
@@ -123,8 +123,7 @@ namespace SIL.FieldWorks.IText
 
 		private void LoadSettings()
 		{
-			string sLine = m_propertyTable.GetStringProperty("ConcordanceLine", "kBaseline",
-						 PropertyTable.SettingsGroup.LocalSettings);
+			string sLine = m_propertyTable.GetValue("ConcordanceLine", SettingsGroup.LocalSettings, "kBaseline");
 			ConcordanceLines line;
 			try
 			{
@@ -136,8 +135,7 @@ namespace SIL.FieldWorks.IText
 			}
 			SetConcordanceLine(line);
 
-			string sWs = m_propertyTable.GetStringProperty("ConcordanceWs", null,
-				PropertyTable.SettingsGroup.LocalSettings);
+			string sWs = m_propertyTable.GetValue<string>("ConcordanceWs", SettingsGroup.LocalSettings);
 			int ws = 0;
 			if (sWs != null)
 			{
@@ -148,21 +146,17 @@ namespace SIL.FieldWorks.IText
 			ws = CurrentSelectedWs();
 			m_tbSearchText.WritingSystemCode = ws;
 
-			string sText = m_propertyTable.GetStringProperty("ConcordanceText", null,
-				PropertyTable.SettingsGroup.LocalSettings);
+			string sText = m_propertyTable.GetValue<string>("ConcordanceText", SettingsGroup.LocalSettings);
 			if (sText != null)
 				m_tbSearchText.Text = sText;
 
-			bool fMatchCase = m_propertyTable.GetBoolProperty("ConcordanceMatchCase",
-				m_chkMatchCase.Checked, PropertyTable.SettingsGroup.LocalSettings);
+			bool fMatchCase = m_propertyTable.GetValue("ConcordanceMatchCase", SettingsGroup.LocalSettings, m_chkMatchCase.Checked);
 			m_chkMatchCase.Checked = fMatchCase;
 
-			bool fMatchDiacritics = m_propertyTable.GetBoolProperty("ConcordanceMatchDiacritics",
-				m_chkMatchDiacritics.Checked, PropertyTable.SettingsGroup.LocalSettings);
+			bool fMatchDiacritics = m_propertyTable.GetValue("ConcordanceMatchDiacritics", SettingsGroup.LocalSettings, m_chkMatchDiacritics.Checked);
 			m_chkMatchDiacritics.Checked = fMatchDiacritics;
 
-			string sConcordanceOption = m_propertyTable.GetStringProperty("ConcordanceOption",
-				null, PropertyTable.SettingsGroup.LocalSettings);
+			string sConcordanceOption = m_propertyTable.GetValue<string>("ConcordanceOption", SettingsGroup.LocalSettings);
 			SetConcordanceOption(sConcordanceOption);
 		}
 
@@ -285,36 +279,24 @@ namespace SIL.FieldWorks.IText
 			// Save our settings for later.
 			m_propertyTable.SetProperty("ConcordanceLine",
 				((ConcordLine) m_cbLine.SelectedItem).Line.ToString(),
-				PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceLine", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				SettingsGroup.LocalSettings, true, false);
 
 			m_propertyTable.SetProperty("ConcordanceWs",
 				((IWritingSystem) m_cbWritingSystem.SelectedItem).Id,
-				PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceWs", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				SettingsGroup.LocalSettings, true, false);
 
 			m_propertyTable.SetProperty("ConcordanceText",
-				m_tbSearchText.Text.Trim(), PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceText", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				m_tbSearchText.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 
 			m_propertyTable.SetProperty("ConcordanceMatchCase",
-				m_chkMatchCase.Checked, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceMatchCase", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				m_chkMatchCase.Checked, SettingsGroup.LocalSettings, true, false);
 
 			m_propertyTable.SetProperty("ConcordanceMatchDiacritics",
-				m_chkMatchDiacritics.Checked, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceMatchDiacritics", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				m_chkMatchDiacritics.Checked, SettingsGroup.LocalSettings, true, false);
 
 			string sConcordanceOption = GetConcordanceOption();
 			m_propertyTable.SetProperty("ConcordanceOption",
-				sConcordanceOption, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence("ConcordanceOption", true,
-				PropertyTable.SettingsGroup.LocalSettings);
+				sConcordanceOption, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
@@ -347,7 +329,7 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
+			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent) :
 				base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
 			{
 				Sorted = true;
@@ -1580,9 +1562,9 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
-			string concordOn = m_propertyTable.GetStringProperty("ConcordOn", null);
+			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+			string areaName = m_propertyTable.GetValue<string>("areaChoice");
+			string concordOn = m_propertyTable.GetValue<string>("ConcordOn");
 			m_propertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
 			if (areaName != "textsWords" || toolName != "concordance")
@@ -1697,7 +1679,7 @@ namespace SIL.FieldWorks.IText
 	{
 		internal ConcordanceControlBase OwningControl { get; set; }
 
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
 		{
 			base.Init(cache, mediator, propertyTable, recordListNode);
 			m_owningObject = cache.LangProject;

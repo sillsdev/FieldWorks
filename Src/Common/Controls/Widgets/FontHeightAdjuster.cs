@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using System.Diagnostics;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -237,7 +236,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static Font GetFontForNormalStyle(int hvoWs, ILgWritingSystemFactory wsf, PropertyTable propertyTable)
+		public static Font GetFontForNormalStyle(int hvoWs, ILgWritingSystemFactory wsf, IPropertyTable propertyTable)
 		{
 			return GetFontForNormalStyle(hvoWs, StyleSheetFromPropertyTable(propertyTable), wsf);
 		}
@@ -284,19 +283,19 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determine a stylesheet from a PropertyTable. Currently this is done by looking for the main window
+		/// Determine a stylesheet from a IPropertyTable. Currently this is done by looking for the main window
 		/// and seeing whether it has a StyleSheet property that returns one. (We use reflection
 		/// because the relevant classes are in DLLs we can't reference.)
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static FwStyleSheet StyleSheetFromPropertyTable(PropertyTable propertyTable)
+		public static FwStyleSheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
 		{
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;
 			if (mainWindow != null)
 			{
-				string areaChoice = propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = propertyTable.GetValue<string>("areaChoice");
 				if (areaChoice != null && areaChoice.ToLowerInvariant() == "notebook")
 					pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
 				if (pi == null)

@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "forceReloadListOnInitOrChangeRoot", false))
 			{
-				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true);
+				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
 				// the list does not get reloaded until ListUpdateHelper is disposed, but the views property
 				// will get cleared to prevent these views from accessing invalid objects.
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void SetupLinkScripture()
 		{
-			string booksWanted = m_propertyTable.GetStringProperty("LinkScriptureBooksWanted", null);
+			string booksWanted = m_propertyTable.GetValue<string>("LinkScriptureBooksWanted");
 			if (booksWanted == null)
 				return;
 			m_propertyTable.RemoveProperty("LinkScriptureBooksWanted");
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, PropertyTable propertyTable,
+			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			int currentIndex = clerk.CurrentIndex;
 
-			int storedIndex = m_propertyTable.GetIntProperty(Clerk.PersistedIndexProperty, currentIndex, PropertyTable.SettingsGroup.LocalSettings);
+			int storedIndex = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
 			if (storedIndex != currentIndex && storedIndex >= 0 && !clerk.HasEmptyList)
 			{
 				try
@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			InitBase(mediator, propertyTable, configurationParameters);
@@ -782,8 +782,7 @@ namespace SIL.FieldWorks.XWorks
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string propName = Clerk.PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
-			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
 		}
 
 		/// <summary>
@@ -845,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 
 		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, PropertyTable propertyTable,
+			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,

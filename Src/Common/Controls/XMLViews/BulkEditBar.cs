@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private System.ComponentModel.IContainer components;
 
 		Mediator m_mediator;
-		PropertyTable m_propertyTable;
+		IPropertyTable m_propertyTable;
 		XmlNode m_configurationNode = null;
 		/// <summary>
 		/// Browse viewer
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+		public BulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
 			: this()
 		{
 			m_mediator = mediator;
@@ -1461,7 +1461,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string helpTopic = "";
 
-			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
+			switch (m_propertyTable.GetValue<string>("currentContentControl"))
 			{
 				case "bulkEditEntriesOrSenses":
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
@@ -2888,12 +2888,10 @@ namespace SIL.FieldWorks.Common.Controls
 				string settingsXml = SerializeSettings();
 				// first store current tab settings in the property table.
 				string currentTabSettingsKey = BuildCurrentTabSettingsKey(bulkEditBar);
-				bulkEditBar.m_propertyTable.SetProperty(currentTabSettingsKey, settingsXml, PropertyTable.SettingsGroup.LocalSettings, false);
-				bulkEditBar.m_propertyTable.SetPropertyPersistence(currentTabSettingsKey, true);
+				bulkEditBar.m_propertyTable.SetProperty(currentTabSettingsKey, settingsXml, SettingsGroup.LocalSettings, true, false);
 				// next store the *key* to the current tab settings in the property table.
 				string lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
-				bulkEditBar.m_propertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, PropertyTable.SettingsGroup.LocalSettings, false);
-				bulkEditBar.m_propertyTable.SetPropertyPersistence(lastTabSettingsKey, true);
+				bulkEditBar.m_propertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, SettingsGroup.LocalSettings, true, false);
 			}
 
 			private string SerializeSettings()
@@ -2910,7 +2908,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				string lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
 				// the value of LastTabSettings is the key to the tab settings in the property table.
-				string tabSettingsKey = bulkEditBar.m_propertyTable.GetStringProperty(lastTabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
+				string tabSettingsKey = bulkEditBar.m_propertyTable.GetValue(lastTabSettingsKey, SettingsGroup.LocalSettings, "");
 				return DeserializeTabPageSettings(bulkEditBar, tabSettingsKey);
 			}
 
@@ -2918,7 +2916,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				string settingsXml = "";
 				if (tabSettingsKey.Length > 0)
-					settingsXml = bulkEditBar.m_propertyTable.GetStringProperty(tabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
+					settingsXml = bulkEditBar.m_propertyTable.GetValue(tabSettingsKey, SettingsGroup.LocalSettings, "");
 				BulkEditTabPageSettings restoredTabPageSettings = null;
 				if (settingsXml.Length > 0)
 				{
@@ -3527,8 +3525,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bulkEditBar.m_pattern.ReplaceWith = m_bulkEditBar.m_tssReplace;
 				VwPatternSerializableSettings patternSettings = new VwPatternSerializableSettings(m_bulkEditBar.m_pattern);
 				string patternAsXml = XmlUtils.SerializeObjectToXmlString(patternSettings);
-				bulkEditBar.m_propertyTable.SetProperty(keyFindPattern, patternAsXml, false);
-				bulkEditBar.m_propertyTable.SetPropertyPersistence(keyFindPattern, true);
+				bulkEditBar.m_propertyTable.SetProperty(keyFindPattern, patternAsXml, true, false);
 			}
 
 			/// <summary>
@@ -3589,8 +3586,7 @@ namespace SIL.FieldWorks.Common.Controls
 						else
 						{
 							// next see if we can restore the pattern from deserializing settings stored in the property table.
-							string patternAsXml = m_bulkEditBar.m_propertyTable.GetStringProperty(BuildFindPatternKey(m_bulkEditBar), null);
-
+							string patternAsXml = m_bulkEditBar.m_propertyTable.GetValue<string>(BuildFindPatternKey(m_bulkEditBar));
 							VwPatternSerializableSettings settings = (VwPatternSerializableSettings)XmlUtils.DeserializeXmlString(patternAsXml,
 								typeof(VwPatternSerializableSettings));
 							if (settings != null)
@@ -4476,7 +4472,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>Get and set the mediator.</summary>
 		Mediator Mediator { get; set; }
 		/// <summary>Get/Set the property table.</summary>
-		PropertyTable PropTable { get; set; }
+		IPropertyTable PropTable { get; set; }
 		/// <summary>Retrieve the control that does the work.</summary>
 		Control Control { get; }
 		/// <summary>Get or set the cache. Client promises to set this immediately after creation.</summary>
@@ -5714,7 +5710,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		public FdoCache Cache
 		{
@@ -5869,7 +5865,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		public Control Control
 		{
@@ -6246,7 +6242,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
+		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
@@ -6347,7 +6343,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		public Control Control
 		{
@@ -6668,7 +6664,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
+		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
 			base(cache, mediator, propertyTable, colSpec)
 		{
 			m_suggestButton = new Button();
@@ -6827,7 +6823,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		internal VariantEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
+		internal VariantEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
 			: base(cache, mediator, propertyTable, colSpec)
 		{
 		}
@@ -6837,7 +6833,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		Set<int> m_complexEntryRefs = null;
 
-		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
+		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
 			: base(cache, mediator, propertyTable, colSpec)
 		{
 		}

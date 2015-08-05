@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -38,7 +32,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public static LexPronunciationUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexPronunciationUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexPronunciationUi result = null;
 			FdoCache cache = propertyTable.GetValue<FdoCache>("cache");

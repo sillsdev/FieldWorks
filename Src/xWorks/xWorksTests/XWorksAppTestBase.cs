@@ -57,13 +57,11 @@ namespace SIL.FieldWorks.XWorks
 			m_windowConfigurationNode = configuration.SelectSingleNode("window");
 			ReplaceControlAssemblies();
 
-			PropTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
-			PropTable.SetPropertyPersistence("WindowConfiguration", false);
+			PropTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, false, true);
 
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
-			PropTable.SetProperty("window", this, true);
-			PropTable.SetPropertyPersistence("window", false);
+			PropTable.SetProperty("window", this, false, true);
 
 			CommandSet commandset = new CommandSet(m_mediator);
 			commandset.Init(m_windowConfigurationNode);
@@ -86,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_mediator.IsDisposed)
 			{
 				m_mediator.ProcessMessages = false;
-				PropTable.SetProperty("windowState", WindowState, false);
+				PropTable.SetProperty("windowState", WindowState, true, false);
 			}
 		}
 
@@ -112,10 +110,8 @@ namespace SIL.FieldWorks.XWorks
 		public XmlNode ActivateTool(string toolName)
 		{
 			XmlNode configurationNode = GetToolNode(toolName);
-			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), true);
-			PropTable.SetPropertyPersistence("currentContentControlParameters", false);
-			PropTable.SetProperty("currentContentControl", toolName, true);
-			PropTable.SetPropertyPersistence("currentContentControl", false);
+			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), false, true);
+			PropTable.SetProperty("currentContentControl", toolName, false, true);
 			ProcessPendingItems();
 			return configurationNode;
 		}

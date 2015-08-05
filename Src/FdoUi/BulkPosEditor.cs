@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.

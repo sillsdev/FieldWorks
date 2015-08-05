@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected internal Mediator m_mediator;
 		/// <summary></summary>
-		protected internal PropertyTable m_propertyTable;
+		protected internal IPropertyTable m_propertyTable;
 
 		/// <summary></summary>
 		public event FilterChangeHandler FilterChanged;
@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda);
 		}
@@ -874,7 +874,7 @@ namespace SIL.FieldWorks.Common.Controls
 			= new Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>>();
 
 		internal void ContructorSurrogate(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			CheckDisposed();
 
@@ -965,10 +965,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetDefault("SortedFromEnd", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetDefault("SortedByLength", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
 
 			//
 			// FilterBar
@@ -1142,7 +1142,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
 		{
 			return new BulkEditBar(bv, spec, mediator, propertyTable, cache);
 		}
@@ -1292,7 +1292,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return ch;
 		}
 
-		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, Mediator mediator, PropertyTable propertyTable)
+		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, Mediator mediator, IPropertyTable propertyTable)
 		{
 			if (m_nodeSpec.Attributes["editRowModelClass"] != null)
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
@@ -1838,7 +1838,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_xbv.Mediator != null)
 			{
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				width = m_propertyTable.GetIntProperty(PropName, -1, PropertyTable.SettingsGroup.LocalSettings);
+				width = m_propertyTable.GetValue(PropName, SettingsGroup.LocalSettings, -1);
 			}
 			return width;
 		}
@@ -1899,7 +1899,7 @@ namespace SIL.FieldWorks.Common.Controls
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
 				IVwStylesheet styleSheet, BrowseViewer bv)
 			{
 				base.Init(mediator, propertyTable, nodeSpec);
@@ -2137,13 +2137,13 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				m_propertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings, true);
+				m_propertyTable.SetProperty(PropName, nNewWidth, SettingsGroup.LocalSettings, true, true);
 			}
 		}
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			string Id1 = m_propertyTable.GetStringProperty("currentContentControl", "");
+			string Id1 = m_propertyTable.GetValue("currentContentControl", "");
 			string Id2 = BrowseView.GetCorrespondingPropertyName("Column");
 			string PropName = Id1 + "_" + Id2 + "_" + iCol + "_Width";
 			return PropName;
@@ -2763,7 +2763,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public RecordFilter FilterFromLink()
 		{
-			string linkSetupInfo = m_propertyTable.GetStringProperty("LinkSetupInfo", null);
+			string linkSetupInfo = m_propertyTable.GetValue<string>("LinkSetupInfo");
 			if (linkSetupInfo == null)
 				return null;
 			m_propertyTable.RemoveProperty("LinkSetupInfo");
@@ -2810,7 +2810,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else if (linkSetupInfo == "FilterAnthroItems")
 			{
-				var itemHvos = m_propertyTable.GetStringProperty("HvoOfAnthroItem", null);
+				var itemHvos = m_propertyTable.GetValue<string>("HvoOfAnthroItem");
 				if (itemHvos == null)
 					return null;
 				m_propertyTable.RemoveProperty("HvoOfAnthroItem");
@@ -2997,7 +2997,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			colList.Append("</root>");
-			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), SettingsGroup.LocalSettings, true, true);
 		}
 
 		/// <summary>
@@ -3216,7 +3216,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -3260,7 +3260,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal PropertyTable PropTable
+		internal IPropertyTable PropTable
 		{
 			get { return m_propertyTable; }
 		}
@@ -4083,7 +4083,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-								  FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider,
+								  FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{
@@ -4211,7 +4211,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			base.Init(mediator, propertyTable, configurationParameters);
 

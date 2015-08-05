@@ -17,7 +17,7 @@ M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice::Fi
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice::FinishInit()
 
 # Disposed in Dispose(bool) method
-M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.ConcordanceDlg::Init(XCore.Mediator,SIL.CoreImpl.PropertyTable,System.Xml.XmlNode,SIL.FieldWorks.FDO.ICmObject)
+M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.ConcordanceDlg::Init(XCore.Mediator,SIL.CoreImpl.IPropertyTable,System.Xml.XmlNode,SIL.FieldWorks.FDO.ICmObject)
 M: System.Boolean SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlg::SetDlgInfo(SIL.FieldWorks.FDO.IWfiWordform,System.Windows.Forms.Form,SIL.FieldWorks.Common.RootSites.IApp)
 
 # Reference only

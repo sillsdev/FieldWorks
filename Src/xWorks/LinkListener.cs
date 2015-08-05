@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected LinkedList<FwLinkArgs> m_backStack;
 		protected LinkedList<FwLinkArgs> m_forwardStack;
 		protected FwLinkArgs m_currentContext;
@@ -146,8 +146,10 @@ namespace SIL.FieldWorks.XWorks
 				if (m_mediator != null)
 				{
 					m_mediator.RemoveColleague(this);
-					m_propertyTable.SetProperty("LinkListener", null, false);
-					m_propertyTable.SetPropertyPersistence("LinkListener", false);
+				}
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty("LinkListener", null, false, false);
 				}
 				if (m_backStack != null)
 					m_backStack.Clear();
@@ -178,15 +180,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			m_propertyTable.SetProperty("LinkListener", this, false);
-			m_propertyTable.SetPropertyPersistence("LinkListener", false);
+			m_propertyTable.SetProperty("LinkListener", this, false, false);
 		}
 
 		/// <summary>
@@ -507,9 +508,9 @@ namespace SIL.FieldWorks.XWorks
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
 					m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
 						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid,
-						PropertyTable.SettingsGroup.LocalSettings,
+						SettingsGroup.LocalSettings,
+						false,
 						true);
-					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
@@ -525,7 +526,7 @@ namespace SIL.FieldWorks.XWorks
 						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(obj.Owner.Guid))
 						{
-							m_propertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString(), true);
+							m_propertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString(), true, true);
 						}
 					}
 					// Allow this to happen after the processing of the tool change above by using the Broadcast
@@ -536,7 +537,7 @@ namespace SIL.FieldWorks.XWorks
 
 				foreach (Property property in m_lnkActive.PropertyTableEntries)
 				{
-					m_propertyTable.SetProperty(property.name, property.value, true);
+					m_propertyTable.SetProperty(property.name, property.value, true, true);
 					//TODO: I can't think at the moment of what to do about setting
 					//the persistence or ownership of the property...at the moment the only values we're putting
 					//in there are strings or bools

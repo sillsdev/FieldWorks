@@ -45,8 +45,6 @@ namespace SIL.FieldWorks.Common.Framework
 	/// when the record list and the main control are both showing.
 	///
 	/// Controlling properties are:
-	/// This is always true.
-	/// property name="ShowSidebar" bool="true" persist="true"
 	/// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 	/// property name="SidebarWidthGlobal" intValue="140" persist="true"
 	/// This property is driven by the needs of the current main control, not the user.
@@ -85,7 +83,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Create new instance of window.
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "PropTable is disposed when closed.")]
+			Justification = "IPropertyTable is disposed when closed.")]
 		public FwMainWnd(FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
 			: this()
 		{
@@ -106,7 +104,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			SetupOutlookBar();
 
-			_currentArea = _areaRepository.GetPersistedOrDefaultArea(PropTable);
+			_currentArea = _areaRepository.GetPersistedOrDefaultArea(PropertyTable);
 
 			SetWindowTitle();
 #if RANDYTODO
@@ -131,14 +129,13 @@ namespace SIL.FieldWorks.Common.Framework
 			mainContainer.FirstControl = _sidePane;
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
-			mainContainer.Panel1Collapsed = !PropTable.GetBoolProperty("ShowSidebar", false);
-				// Andy Black wants to collapse it for one of his XCore apps.
-			mainContainer.Panel2Collapsed = false; // Never collapse the main content control, plus optional record list.
-			var sd = PropTable.GetIntProperty("SidebarWidthGlobal", 140);
+			mainContainer.Panel1Collapsed = false;
+			mainContainer.Panel2Collapsed = false;
+			var sd = PropertyTable.GetValue("SidebarWidthGlobal", 140);
 			if (!mainContainer.Panel1Collapsed)
 				SetSplitContainerDistance(mainContainer, sd);
-			mainContainer.FirstLabel = PropTable.GetValue<string>("SidebarLabel");
-			mainContainer.SecondLabel = PropTable.GetValue<string>("AllButSidebarLabel");
+			mainContainer.FirstLabel = PropertyTable.GetValue<string>("SidebarLabel");
+			mainContainer.SecondLabel = PropertyTable.GetValue<string>("AllButSidebarLabel");
 			// Add areas and tools to "_sidePane";
 			foreach (var area in _areaRepository.AllAreasInOrder())
 			{
@@ -175,36 +172,33 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			if (_currentArea != null)
 			{
-				_currentArea.Deactivate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+				_currentArea.Deactivate(PropertyTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentArea = clickedArea;
-			_currentArea.Activate(PropTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+			_currentArea.Activate(PropertyTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
 #if RANDYTODO
 			// Activate persisted tool and if not found then the default for the area.
 #endif
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "PropTable is a reference")]
+			Justification = "IPropertyTable is a reference")]
 		private void SetupPropertyTable()
 		{
 			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
 
-			PropTable = new PropertyTable(_publisher)
-			{
-				UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(FwApp.App.Cache.ProjectId.ProjectFolder),
-				LocalSettingsId = "local"
-			};
+			PropertyTable = PropertyTableFactory.CreatePropertyTable(_publisher);
+			PropertyTable.UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(FwApp.App.Cache.ProjectId.ProjectFolder);
+			PropertyTable.LocalSettingsId = "local";
 
-			if (!Directory.Exists(PropTable.UserSettingDirectory))
+			if (!Directory.Exists(PropertyTable.UserSettingDirectory))
 			{
-				Directory.CreateDirectory(PropTable.UserSettingDirectory);
+				Directory.CreateDirectory(PropertyTable.UserSettingDirectory);
 			}
-			PropTable.RestoreFromFile(PropTable.GlobalSettingsId);
-			PropTable.RestoreFromFile(PropTable.LocalSettingsId);
+			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
+			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
 
-			PropTable.SetProperty("cache", Cache, false);
-			PropTable.SetPropertyPersistence("cache", false);
+			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -245,11 +239,11 @@ namespace SIL.FieldWorks.Common.Framework
 			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 			// RR TODO: Delete GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 #endif
-			_currentArea.EnsurePropertiesAreCurrent(PropTable);
+			_currentArea.EnsurePropertiesAreCurrent(PropertyTable);
 			// first save global settings, ignoring database specific ones.
-			PropTable.SaveGlobalSettings();
+			PropertyTable.SaveGlobalSettings();
 			// now save database specific settings.
-			PropTable.SaveLocalSettings();
+			PropertyTable.SaveLocalSettings();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -257,7 +251,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
 		/// </summary>
-		public PropertyTable PropTable { get; private set; }
+		public IPropertyTable PropertyTable { get; private set; }
 
 		#endregion
 
@@ -489,10 +483,10 @@ namespace SIL.FieldWorks.Common.Framework
 				// message loop.
 				FwApp.App.FwManager.ExecuteAsync(FwApp.App.RemoveWindow, this);
 
-				if (PropTable != null)
+				if (PropertyTable != null)
 				{
-					PropTable.Dispose();
-					PropTable = null;
+					PropertyTable.Dispose();
+					PropertyTable = null;
 				}
 
 				if (_sidePane != null)
@@ -737,7 +731,7 @@ namespace SIL.FieldWorks.Common.Framework
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, FwApp.App, FwApp.App, FontHeightAdjuster.StyleSheetFromPropertyTable(PropTable)))
+			using (var dlg = new FwProjPropertiesDlg(cache, FwApp.App, FwApp.App, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)))
 			{
 				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
 				if (startOnWSPage)
@@ -913,7 +907,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			// show the RAMP dialog
 			var ramp = new ReapRamp();
-			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropTable, FwApp.App, FwApp.App.Cache);
+			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, FwApp.App, FwApp.App.Cache);
 		}
 
 		private void File_Page_Setup(object sender, EventArgs e)

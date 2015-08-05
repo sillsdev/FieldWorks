@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected FdoCache m_cache;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		private Label label1;
 		protected ColumnHeader columnHeader1;
 		protected ColumnHeader columnHeader2;
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public ExportDialog(Mediator mediator, PropertyTable propertyTable)
+		public ExportDialog(Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks
 			m_fExportPicturesAndMedia = false;
 
 			//Set  m_chkShowInFolder to it's last state.
-			var showInFolder = m_propertyTable.GetStringProperty("ExportDlgShowInFolder", "true");
+			var showInFolder = m_propertyTable.GetValue("ExportDlgShowInFolder", "true");
 			if (showInFolder.Equals("true"))
 				m_chkShowInFolder.Checked = true;
 			else
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string area = "lexicon";
 			string tool = "lexiconDictionary";
-			m_areaOrig = m_propertyTable.GetStringProperty("areaChoice", null);
+			m_areaOrig = m_propertyTable.GetValue<string>("areaChoice");
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
@@ -526,8 +526,7 @@ namespace SIL.FieldWorks.XWorks
 							m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
-						dlg.SelectedPath = m_propertyTable.GetStringProperty("ExportDir",
-							Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+						dlg.SelectedPath = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 						if (dlg.ShowDialog(this) != DialogResult.OK)
 							return;
 						sDirectory = dlg.SelectedPath;
@@ -616,8 +615,7 @@ namespace SIL.FieldWorks.XWorks
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
 								dlg.Filter = m_exportItems[0].SubItems[3].Text;
 								dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
-								dlg.InitialDirectory = m_propertyTable.GetStringProperty("ExportDir",
-									Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+								dlg.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 								if (dlg.ShowDialog(this) != DialogResult.OK)
 									return;
 								sFileName = dlg.FileName;
@@ -628,8 +626,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (sDirectory != null)
 				{
-					m_propertyTable.SetProperty("ExportDir", sDirectory, true);
-					m_propertyTable.SetPropertyPersistence("ExportDir", true);
+					m_propertyTable.SetProperty("ExportDir", sDirectory, true, true);
 				}
 				if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
 				{
@@ -642,13 +639,11 @@ namespace SIL.FieldWorks.XWorks
 				if (m_chkShowInFolder.Checked)
 				{
 					OpenExportFolder(sDirectory, sFileName);
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "true", true);
-					m_propertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+					m_propertyTable.SetProperty("ExportDlgShowInFolder", "true", true, true);
 				}
 				else
 				{
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "false", true);
-					m_propertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+					m_propertyTable.SetProperty("ExportDlgShowInFolder", "false", true, true);
 				}
 			}
 			finally
@@ -1280,7 +1275,7 @@ namespace SIL.FieldWorks.XWorks
 					m_chkExportPictures.Enabled = true;
 					if (!m_fLiftExportPicturesSet)
 					{
-						m_chkExportPictures.Checked = m_propertyTable.GetBoolProperty(ksLiftExportPicturesPropertyName, true);
+						m_chkExportPictures.Checked = m_propertyTable.GetValue(ksLiftExportPicturesPropertyName, true);
 						m_fLiftExportPicturesSet = true;
 					}
 					m_fExportPicturesAndMedia = m_chkExportPictures.Checked;
@@ -1683,8 +1678,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_chkExportPictures_CheckedChanged(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, true);
-			m_propertyTable.SetPropertyPersistence(ksLiftExportPicturesPropertyName, true);
+			m_propertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, true, true);
 			m_fExportPicturesAndMedia = m_chkExportPictures.Checked;
 		}
 

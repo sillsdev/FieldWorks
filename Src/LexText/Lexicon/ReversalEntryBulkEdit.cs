@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class AllReversalEntriesRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		internal static Guid GetReversalIndexGuid(Mediator mediator, PropertyTable propertyTable)
+		internal static Guid GetReversalIndexGuid(Mediator mediator, IPropertyTable propertyTable)
 		{
 			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override string PropertyTableId(string sorterOrFilter)
 		{
-			var reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			var reversalPub = m_propertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)
 				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"

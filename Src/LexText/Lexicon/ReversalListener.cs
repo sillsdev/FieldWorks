@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Mediator that passes off messages.
 		/// </summary>
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private XmlNode m_configurationParameters;
 
 		#region IDisposable & Co. implementation
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region IxCoreColleague implementation
 
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -216,8 +216,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true);
-			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true, true);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -383,8 +382,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
-				string toolFor = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string toolFor = m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
 
 				return areaChoice == "lexicon" && toolFor.StartsWith("reversalTool");
 			}
@@ -399,7 +398,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public abstract class ReversalClerk : RecordClerk
 	{
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode viewConfiguration)
 		{
 			CheckDisposed();
 
@@ -426,7 +425,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				// We need to find another reversal index. Any will do.
 				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
-				m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true);
+				m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true);
 			}
 
 			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
@@ -436,7 +435,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
-			m_propertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true);
+			m_propertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 
 			ICmObject newOwningObj = NewOwningObject(ri);
 			if (newOwningObj != OwningObject)
@@ -444,8 +443,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 				OnChangeSorter(); // Update the column headers with sort arrows
 				OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-				m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
-				m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+				m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, false, true);
 				m_mediator.SendMessage("ClerkOwningObjChanged", this);
 			}
 		}
@@ -761,8 +759,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Cache.ServiceLocator.GetObject(ReversalIndexGuid) is IReversalIndex)
 			{
-				m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true);
-				m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+				m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true, true);
 			}
 		}
 

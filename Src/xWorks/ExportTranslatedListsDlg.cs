@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// ----------------------------------------------------------------------------------------
 	public partial class ExportTranslatedListsDlg : Form
 	{
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		FdoCache m_cache;
 		string m_titleFrag;
 		string m_defaultExt;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog with all needed information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(PropertyTable propertyTable, FdoCache cache, string titleFrag,
+		public void Initialize(IPropertyTable propertyTable, FdoCache cache, string titleFrag,
 			string defaultExt, string filter)
 		{
 			m_propertyTable = propertyTable;
@@ -182,8 +182,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Filter = String.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
 				dlg.Title = String.Format(xWorksStrings.ExportTo0,
 					String.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
-				dlg.InitialDirectory = m_propertyTable.GetStringProperty("ExportDir",
-					Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+				dlg.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 				if (dlg.ShowDialog(this) != DialogResult.OK)
 					return;
 				m_tbFilepath.Text = dlg.FileName;

@@ -18,7 +18,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using L10NSharp;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -31,7 +30,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using XCore;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
@@ -45,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Summary description for FwXWindow.
 	/// </summary>
-	public class FwXWindow : XWindow, IFwMainWnd, ISettings, IRecordListOwner,
+	public class FwXWindow : XWindow, ISettings, IRecordListOwner,
 		IMainWindowDelegatedFunctions, IMainWindowDelegateCallbacks, IFindAndReplaceContext
 	{
 		#region Member variables
@@ -304,12 +302,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_delegate.App = app;
 
-				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
-				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
-				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-				m_propertyTable.SetProperty("App", app, true);
-				m_propertyTable.SetPropertyPersistence("App", false);
+				m_propertyTable.SetProperty("HelpTopicProvider", app, false, true);
+				m_propertyTable.SetProperty("FeedbackInfoProvider", app, false, true);
+				m_propertyTable.SetProperty("App", app, false, true);
 			}
 		}
 
@@ -435,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 					// already disposed of. This is needed for side-effects that require a running
 					// message loop (such as closing the TE notes view which would normally
 					// happen at this call without a running message loop)
-					m_app.FwManager.ExecuteAsync(m_app.RemoveWindow, this);
+					//.m_app.FwManager.ExecuteAsync(m_app.RemoveWindow, this);
 				}
 			}
 
@@ -510,10 +505,8 @@ namespace SIL.FieldWorks.XWorks
 		protected void InitMediatorValues(FdoCache cache)
 		{
 			m_propertyTable.LocalSettingsId = "local";
-			m_propertyTable.SetProperty("cache", cache, true);
-			m_propertyTable.SetPropertyPersistence("cache", false);
-			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
-			m_propertyTable.SetPropertyPersistence("DocumentName", false);
+			m_propertyTable.SetProperty("cache", cache, false, true);
+			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), false, true);
 			var path = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
@@ -550,7 +543,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable"></param>
 		/// <param name="taskLabel"></param>
 		/// <returns></returns>
-		public static ProgressState CreatePredictiveProgressState(PropertyTable propertyTable, string taskLabel)
+		public static ProgressState CreatePredictiveProgressState(IPropertyTable propertyTable, string taskLabel)
 		{
 			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
@@ -565,7 +558,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateMilestoneProgressState(PropertyTable propertyTable)
+		public static ProgressState CreateMilestoneProgressState(IPropertyTable propertyTable)
 		{
 			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
@@ -578,7 +571,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateSimpleProgressState(PropertyTable propertyTable)
+		public static ProgressState CreateSimpleProgressState(IPropertyTable propertyTable)
 		{
 			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
@@ -631,7 +624,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			bool fAllow = m_propertyTable.GetBoolProperty("AllowInsertLinkToFile", true);
+			bool fAllow = m_propertyTable.GetValue("AllowInsertLinkToFile", true);
 
 			if (fAllow)
 			{
@@ -834,7 +827,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		internal static void ShowPublishToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
+		internal static void ShowPublishToWebonaryDialog(Mediator mediator, IPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 

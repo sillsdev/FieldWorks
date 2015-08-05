@@ -45,9 +45,9 @@ namespace XCore
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
-		/// The PropertyTable
+		/// The IPropertyTable
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -183,7 +183,7 @@ namespace XCore
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

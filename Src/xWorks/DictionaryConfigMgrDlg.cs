@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopicId = "khtpDictConfigManager"; // use as default?
 		private readonly HelpProvider m_helpProvider;
 		private readonly Mediator m_mediator;
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 		private readonly string m_objType;
 
 		/// ------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:DictionaryConfigMgrDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DictionaryConfigMgrDlg(Mediator mediator, PropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
+		public DictionaryConfigMgrDlg(Mediator mediator, IPropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
 		{
 			InitializeComponent();
 

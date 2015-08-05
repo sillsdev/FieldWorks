@@ -49,8 +49,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private ITsString m_tssWf;
 		private XmlView m_xv;
 		private FdoCache m_cache;
-		private XCore.Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private Mediator m_mediator;
+		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
 //		private IVwStylesheet m_vss;

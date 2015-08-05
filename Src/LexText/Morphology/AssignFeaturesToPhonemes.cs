@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="configurationParameters"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "bulkEditBar is a reference")]
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			base.Init(mediator, propertyTable, configurationParameters);
 			CheckDisposed();
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	#endregion
 		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, PropertyTable propertyTable,
+			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new FdoUi.BrowseViewerPhonologicalFeatures(nodeSpec,

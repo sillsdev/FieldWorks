@@ -10,10 +10,7 @@
 // </remarks>
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
@@ -45,7 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected System.Windows.Forms.Button m_btnLauncher;
 		protected IPersistenceProvider m_persistProvider;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
 		// The following variables control features of the chooser dialog.
@@ -151,7 +148,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
 		public virtual void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(flid != 0);

@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private IPublisher m_publisher;
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 		private readonly SimpleLogger m_logger = new SimpleLogger();
 		/// <summary>
 		/// The innermost directory of the configurations presently being migrated.
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 		private Dictionary<string, Dictionary<string, string>> m_classToCustomFieldsLabelToName;
 
 
-		public DictionaryConfigurationMigrator(PropertyTable propertyTable, IPublisher publisher)
+		public DictionaryConfigurationMigrator(IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -168,13 +168,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_propertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
+			if (oldLayout.Equals(m_propertyTable.GetValue("DictionaryPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true);
+				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true, true);
 			}
-			else if (oldLayout.Equals(m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty)))
+			else if (oldLayout.Equals(m_propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true);
+				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true, true);
 			}
 		}
 

@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="treeBarControl is a reference")]
-		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
+		internal override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
 		{
 			base.Init(mediator, propertyTable, node);
 
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Semantic Domains should be editable only in the Lists area.
-		protected bool Editable { get { return "lists".Equals(m_propertyTable.GetStringProperty("areaChoice", null)); } }
+		protected bool Editable { get { return "lists".Equals(m_propertyTable.GetValue<string>("areaChoice")); } }
 
 		private FwTextBox CreateSearchBox()
 		{

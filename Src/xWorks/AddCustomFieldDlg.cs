@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// variables for managing the dlg
 		private readonly Mediator m_mediator;
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 
 		private readonly Inventory m_layouts;
 		private readonly Dictionary<int, ModifiedLabel> m_dictModLabels = new Dictionary<int, ModifiedLabel>();
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Provide access (via reflection) to this dialog for use by the
 		/// Data Notebook standard format importer.
 		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(Mediator mediator, PropertyTable propertyTable)
+		public static void ShowNotebookCustomFieldDlg(Mediator mediator, IPropertyTable propertyTable)
 		{
 			using (var dlg = new AddCustomFieldDlg(mediator, propertyTable, LocationType.Notebook))
 			{
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public AddCustomFieldDlg(Mediator mediator, PropertyTable propertyTable, LocationType locationType)
+		public AddCustomFieldDlg(Mediator mediator, IPropertyTable propertyTable, LocationType locationType)
 		{
 			// create member variables
 			m_mediator = mediator;

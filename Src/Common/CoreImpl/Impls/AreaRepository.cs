@@ -56,7 +56,7 @@ namespace SIL.CoreImpl.Impls
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		public IArea GetPersistedOrDefaultArea(PropertyTable propertyTable)
+		public IArea GetPersistedOrDefaultArea(IPropertyTable propertyTable)
 		{
 			// The persisted area could be obsolete or simply not present,
 			// so we'll use "lexicon", if the stored one cannot be found.

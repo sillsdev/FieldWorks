@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	public class WritingSystemListHandler : IxCoreColleague, IFWDisposable
 	{
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		public enum WritingSystemSet {All, AllCurrent, AllAnalysis, AllVernacular, CurrentAnalysis, CurrentVernacular, CurrentPronounciation};
 		private WritingSystemSet m_currentSet = WritingSystemSet.AllCurrent;
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -142,8 +142,7 @@ namespace SIL.FieldWorks.XWorks
 			//don't know just what good having this default is, but it's at least safer
 			m_propertyTable.SetProperty("WritingSystemHvo",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
-				true);
-			m_propertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+				false, true);
 		}
 
 		/// <summary>
@@ -271,7 +270,7 @@ namespace SIL.FieldWorks.XWorks
 				case WritingSystemSet.CurrentPronounciation:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					string sValue = DomainObjectServices.JoinIds(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(ws => ws.Handle).ToArray(), ",");
-					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, true);
+					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, true, true);
 					break;
 			}
 			return true;//we handled this, no need to ask anyone else.
@@ -398,7 +397,7 @@ namespace SIL.FieldWorks.XWorks
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

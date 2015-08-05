@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_dxpLastRightPaneWidth = -1;  // width of right pane (if any) the last time we did a layout.
 		// to allow slices to handle events (e.g. InflAffixTemplateSlice)
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected IRecordChangeHandler m_rch = null;
 		protected IRecordListUpdater m_rlu = null;
 		protected string m_listName;
@@ -921,18 +921,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
 			// Initialize our internal state with the state of the PropertyTable
-			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_fShowAllFields = m_propertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
-			m_currentSlicePartName = m_propertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
-			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, PropertyTable.SettingsGroup.LocalSettings, Guid.Empty);
-			m_propertyTable.SetProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_currentSlicePartName = m_propertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
+			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
+			m_propertyTable.SetProperty(m_sPartNameProperty, null, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, SettingsGroup.LocalSettings, true, false);
 			m_currentSliceNew = null;
 			m_fSetCurrentSliceNew = false;
 
@@ -1031,8 +1028,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (String.IsNullOrEmpty(m_sPartNameProperty) || String.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				string sTool = m_propertyTable.GetStringProperty("currentContentControl", String.Empty);
-				string sArea = m_propertyTable.GetStringProperty("areaChoice", String.Empty);
+				string sTool = m_propertyTable.GetValue("currentContentControl", String.Empty);
+				string sArea = m_propertyTable.GetValue("areaChoice", String.Empty);
 				m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
 				m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
 			}
@@ -3140,10 +3137,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					guidCurrentObj = m_currentSlice.Object.Guid;
 			}
 			SetCurrentSlicePropertyNames();
-			m_propertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, SettingsGroup.LocalSettings, true, false);
 			return true;
 		}
 
@@ -3623,7 +3618,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
@@ -3681,15 +3676,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool fAllow = m_propertyTable.GetBoolProperty("AllowShowNormalFields", true);
+			bool fAllow = m_propertyTable.GetValue("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
 
 			if (display.Enabled)
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-				display.Checked = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
+				string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+				display.Checked = m_propertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
 			}
 
 			return true; //we've handled this
@@ -3970,17 +3965,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+				string toolName = m_propertyTable.GetValue<string>("currentContentControl");
 				name = "ShowHiddenFields-" + toolName;
 
 				// Invert the status of the real property
-				bool oldShowValue = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_propertyTable.SetProperty(name, !oldShowValue, PropertyTable.SettingsGroup.LocalSettings, true); // update the pane bar check box.
+				bool oldShowValue = m_propertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty(name, !oldShowValue, SettingsGroup.LocalSettings, true, true); // update the pane bar check box.
 				HandleShowHiddenFields(!oldShowValue);
 			}
 			else if (name.StartsWith("ShowHiddenFields-"))
 			{
-				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+				bool fShowAllFields = m_propertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
 				HandleShowHiddenFields(fShowAllFields);
 			}
 			else if (name == "currentContentControlObject")
@@ -4271,7 +4266,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
 				return display.Enabled = false;
 			return display.Enabled = true;
 		}
@@ -4289,7 +4284,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))

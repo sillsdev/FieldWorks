@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class UtilityDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private string m_whenDescription;
 		private string m_whatDescription;
 		private string m_redoDescription;
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Get the property table.
 		/// </summary>
-		public PropertyTable PropTable
+		public IPropertyTable PropTable
 		{
 			get
 			{
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="configurationParameters"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void SetDlgInfo(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

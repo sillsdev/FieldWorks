@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			base.Init(mediator, propertyTable, configurationParameters);
@@ -96,8 +96,7 @@ namespace SIL.FieldWorks.IText
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
-				m_propertyTable.SetProperty("ComplexConcPattern", pattern, true);
-				m_propertyTable.SetPropertyPersistence("ComplexConcPattern", false);
+				m_propertyTable.SetProperty("ComplexConcPattern", pattern, false, true);
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
 

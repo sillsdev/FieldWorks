@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -63,7 +62,7 @@ namespace SIL.FieldWorks.IText
 		// spacing between contexts
 		private const int PileMargin = 1000;
 
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 
 		private readonly ITsTextProps m_bracketProps;
 		private readonly ITsTextProps m_pileProps;
@@ -92,7 +91,7 @@ namespace SIL.FieldWorks.IText
 
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
-		public ComplexConcPatternVc(FdoCache cache, PropertyTable propertyTable)
+		public ComplexConcPatternVc(FdoCache cache, IPropertyTable propertyTable)
 		{
 			Cache = cache;
 			m_propertyTable = propertyTable;

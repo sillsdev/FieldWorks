@@ -701,7 +701,7 @@ namespace SIL.FieldWorks.XWorks
 			private MockFwXWindow window;
 
 			public Mediator Mediator { get; set; }
-			public PropertyTable PropertyTable { get; set; }
+			public IPropertyTable PropertyTable { get; set; }
 
 			public MockWindowSetup(FdoCache cache)
 			{
@@ -711,8 +711,8 @@ namespace SIL.FieldWorks.XWorks
 				window = new MockFwXWindow(application, Path.GetTempFileName());
 				window.Init(cache); // initializes Mediator values
 				Mediator = window.Mediator;
-				PropertyTable = new PropertyTable(window.Publisher);
-				PropertyTable.SetProperty("cache", cache, false);
+				PropertyTable = PropertyTableFactory.CreatePropertyTable(window.Publisher);
+				PropertyTable.SetProperty("cache", cache, true, false);
 			}
 
 			public void Dispose()
@@ -984,7 +984,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// SUT
 				controller.SaveModel();
-				var savedPath = mockWindow.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+				var savedPath = mockWindow.PropertyTable.GetValue<string>("DictionaryPublicationLayout");
 				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 				Assert.AreEqual(savedPath, controller._model.FilePath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");

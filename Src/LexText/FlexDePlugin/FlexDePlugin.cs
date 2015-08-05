@@ -320,8 +320,7 @@ namespace SIL.PublishingSolution
 				File.Delete(filePath);
 			if (!ChangeAreaTool(areaChoice, toolChoice))
 				return;
-			exportDialog.PropTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), true);
-			exportDialog.PropTable.SetPropertyPersistence("ExportDir", true);
+			exportDialog.PropTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), true, true);
 			using (DeExportDialog ed = new DeExportDialog(exportDialog.Mediator, exportDialog.PropTable))
 			{
 				ed.Show();
@@ -366,13 +365,12 @@ namespace SIL.PublishingSolution
 			//MessageBox.Show("AreaName=" + ((IxCoreContentControl)current).AreaName);
 			if (currentAreaControl.AreaName != areaChoice)
 			{
-				exportDialog.PropTable.SetProperty("areaChoice", areaChoice, true);
-				exportDialog.PropTable.SetPropertyPersistence("areaChoice", false);
+				exportDialog.PropTable.SetProperty("areaChoice", areaChoice, false, true);
 				while (mediator.JobItems > 0)
 					mediator.ProcessItem();
 			}
 			string toolSelector = "ToolForAreaNamed_" + areaChoice;
-			string toolName = exportDialog.PropTable.GetStringProperty(toolSelector, "");
+			string toolName = exportDialog.PropTable.GetValue(toolSelector, string.Empty);
 			//MessageBox.Show("toolName=" + toolName);
 			if (toolName != toolChoice)
 			{
@@ -381,10 +379,8 @@ namespace SIL.PublishingSolution
 				XmlNode node = windowConfiguration.SelectSingleNode(xpath);
 				if (node == null)
 					return false;
-				exportDialog.PropTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
-				exportDialog.PropTable.SetPropertyPersistence("currentContentControlParameters", false);
-				exportDialog.PropTable.SetProperty("currentContentControl", toolChoice, true);
-				exportDialog.PropTable.SetPropertyPersistence("currentContentControl", false);
+				exportDialog.PropTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
+				exportDialog.PropTable.SetProperty("currentContentControl", toolChoice, false, true);
 				while (mediator.JobItems > 0)
 					mediator.ProcessItem();
 			}
@@ -432,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="mediator">this is a pointer to the current state</param>
 		/// <param name="propertyTable"></param>
-		public DeExportDialog(Mediator mediator, PropertyTable propertyTable)
+		public DeExportDialog(Mediator mediator, IPropertyTable propertyTable)
 			: base(mediator, propertyTable)
 		{
 		}

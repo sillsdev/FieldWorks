@@ -894,7 +894,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool HasPersistantColWidths
 		{
-			get { return m_propertyTable.GetStringProperty(ColWidthId(), null) != null; }
+			get { return m_propertyTable.GetValue<string>(ColWidthId()) != null; }
 		}
 
 		/// <summary>
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_mediator == null)
 				return false;
-			string savedCols = m_propertyTable.GetStringProperty(ColWidthId(), null);
+			string savedCols = m_propertyTable.GetValue<string>(ColWidthId());
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
@@ -951,7 +951,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 			colList.Append("</root>");
 			var cwId = ColWidthId();
-			m_propertyTable.SetProperty(cwId, colList.ToString(), true);
+			m_propertyTable.SetProperty(cwId, colList.ToString(), true, true);
 		}
 
 		private string ColWidthId()
@@ -1150,7 +1150,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -1208,7 +1208,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private InterlinLineChoices GetLineChoices()
 		{
@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.Discourse
 			string persist = null;
 			if (m_propertyTable != null)
 			{
-				persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				persist = m_propertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)

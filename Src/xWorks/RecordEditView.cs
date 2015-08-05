@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(configurationParameters, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
-			int idx = m_propertyTable.GetIntProperty(Clerk.PersistedIndexProperty, -1, PropertyTable.SettingsGroup.LocalSettings);
+			int idx = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
 			int lim = Clerk.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
@@ -182,8 +182,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
-			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
 			var window = m_propertyTable.GetValue<XWindow>("window");
 
 			try
@@ -592,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
-			var area = m_propertyTable.GetStringProperty("areaChoice", null);
+			var area = m_propertyTable.GetValue<string>("areaChoice");
 			string toolId;
 			switch (area)
 			{

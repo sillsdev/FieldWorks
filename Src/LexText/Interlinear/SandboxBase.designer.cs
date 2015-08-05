@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Impls;
 using SIL.FieldWorks.Common.RootSites;
 using XCore;
 
@@ -28,8 +29,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, PropertyTable.SettingsGroup.LocalSettings, false);
-					m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
+					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, SettingsGroup.LocalSettings, false, false);
 				}
 			}
 

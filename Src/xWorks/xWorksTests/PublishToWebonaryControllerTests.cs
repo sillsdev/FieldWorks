@@ -31,12 +31,12 @@ namespace SIL.FieldWorks.XWorks
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FwStyleSheet m_styleSheet;
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
-		#region Environment
+	#region Environment
 		[TestFixtureSetUp]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Clerk disposed in TearDown")]
 		public override void FixtureSetup()
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks
 			Dispose();
 		}
 
-		#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 		}
 
-		#region Test connection to local Webonary instance
+	#region Test connection to local Webonary instance
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void CanConnectAtAll()
@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region Helpers
+	#region Helpers
 		/// <summary>
 		/// Helper.
 		/// </summary>

@@ -27,12 +27,12 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryDetailsControllerTests : XWorksAppTestBase, IDisposable
 	{
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		private FwStyleSheet m_styleSheet;
 		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_propertyTable
 
-		#region IDisposable and Gendarme requirements
+	#region IDisposable and Gendarme requirements
 		~DictionaryDetailsControllerTests()
 		{
 			Dispose(false);
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable and Gendarme Requirements
 
-		#region Setup and Teardown
+	#region Setup and Teardown
 		protected override void Init()
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public void ResumeLayout() { }
 
-			#region Methods to support unit tests
+	#region Methods to support unit tests
 			public IList<StyleComboItem> GetStyles()
 			{
 				return m_styles;
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Setup and Teardown
 
-		#region Helpers
+	#region Helpers
 		public static List<DictionaryNodeListOptions.DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<String> idList)
 		{
 			return idList.Select(id => new DictionaryNodeListOptions.DictionaryNodeOption { Id = id, IsEnabled = true }).ToList();
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Helpers
 
-		#region Sense tests
+	#region Sense tests
 		[Test]
 		public void SenseLoadsParagraphStylesWhenShowInParaSet()
 		{
@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Sense tests
 
-		#region List tests
+	#region List tests
 		[Test]
 		public void FlattenPossibilityList()
 		{
@@ -789,7 +789,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region Writing System tests
+	#region Writing System tests
 		[Test]
 		// REVIEW (Hasso) 2014.02: would we like to permit checking both defaults, when available?  Default Anal + named Vernac?
 		public void CheckDefaultWsUnchecksAllOthers()

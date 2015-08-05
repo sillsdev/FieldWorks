@@ -117,7 +117,7 @@ namespace XCore
 
 		#region IxCoreColleague implementation
 		/// <summary></summary>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -301,7 +301,7 @@ namespace XCore
 		#region Data Members
 
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected IPaneBar m_paneBar;
 
 		#endregion Data Members
@@ -312,7 +312,7 @@ namespace XCore
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="mainControl"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, Control mainControl)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, Control mainControl)
 		{
 			if (m_mediator != null && m_mediator != mediator)
 				throw new ArgumentException("Mis-matched mediators being set for this object.");

@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionClassPopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, PropertyTable propertyTable, bool useAbbr, Form parent, int wsDisplay)
+		public InflectionClassPopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, bool useAbbr, Form parent, int wsDisplay)
 			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}

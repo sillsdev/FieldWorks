@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.IText
 		private FDO.IText m_text1;
 		private SandboxForTests m_sandbox;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// <summary>
 		///
@@ -98,14 +98,13 @@ namespace SIL.FieldWorks.IText
 																				 InterlinLineChoices.InterlinMode.
 																					 GlossAddWordsToLexicon);
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_sandbox = new SandboxForTests(Cache, m_mediator, m_propertyTable, lineChoices);
 		}
 
-
 		internal class SandboxForTests : Sandbox
 		{
-			internal SandboxForTests(FdoCache cache, Mediator mediator, PropertyTable propertyTable, InterlinLineChoices lineChoices)
+			internal SandboxForTests(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, InterlinLineChoices lineChoices)
 				: base(cache, mediator, propertyTable, null, lineChoices)
 			{
 			}

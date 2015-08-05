@@ -17,7 +17,7 @@ namespace XMLViewsTests
 	public class ConfiguredExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -29,7 +29,7 @@ namespace XMLViewsTests
 			base.TestSetup();
 
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 		}
 
 		/// ------------------------------------------------------------------------------------

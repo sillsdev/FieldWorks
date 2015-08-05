@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class RecordBarHandler : IFWDisposable
 	{
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected FdoCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(Mediator mediator, PropertyTable propertyTable, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(Mediator mediator, IPropertyTable propertyTable, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
+		internal virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_propertyTable.GetBoolProperty("ShowRecordList", false);
+				return m_propertyTable.GetValue<bool>("ShowRecordList");
 			}
 		}
 
@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
+		internal override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
 		{
 			base.Init(mediator, propertyTable, node);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();

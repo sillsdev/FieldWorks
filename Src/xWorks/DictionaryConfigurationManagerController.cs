@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
 
-		private readonly PropertyTable _propertyTable;
+		private readonly IPropertyTable _propertyTable;
 		private readonly FdoCache _cache;
 
 		private readonly string _projectConfigDir;
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 			_defaultConfigDir = defaultConfigDir;
 		}
 
-		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, PropertyTable propertyTable,
+		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, IPropertyTable propertyTable,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir, DictionaryConfigurationModel currentConfig) :
 			this(propertyTable.GetValue<FdoCache>("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
 		{

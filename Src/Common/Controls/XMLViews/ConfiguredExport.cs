@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// element start tag to the output.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, PropertyTable propertyTable, TextWriter w, string sDataType,
+		public void Initialize(FdoCache cache, IPropertyTable propertyTable, TextWriter w, string sDataType,
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;

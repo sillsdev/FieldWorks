@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject owner)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject owner)
 		{
 			CheckDisposed();
 
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_titleTextBox.Select();
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject owner, ITsString tssTitle)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject owner, ITsString tssTitle)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, owner);
 			m_titleTextBox.Tss = tssTitle;

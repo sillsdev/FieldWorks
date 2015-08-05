@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.IText
 
 		private string _areaName;
 		private Mediator _mediator;
-		private PropertyTable _propertyTable;
+		private IPropertyTable _propertyTable;
 		private FdoCache _cache;
 		private InterlinearTextsRecordClerk m_clerk;
 
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.IText
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="RecordClerk.FindClerk() returns a reference")]
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			_mediator = mediator; //allows the Cache property to function
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.IText
 			//add ourselves so that we can receive messages (related to the text selection currently misnamed AddTexts)
 			mediator.AddColleague(this);
 			//add our current state to the history system
-			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
+			string toolName = _propertyTable.GetValue("currentContentControl", "");
 			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 

@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.IText
 	{
 		internal IAnalysisControlInternal m_sandbox;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		private IVwStylesheet m_stylesheet;
 		protected InterlinLineChoices m_lineChoices;
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.IText
 				m_sandbox.UpdateLineChoices(choices);
 		}
 
-		public FocusBoxController(Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
+		public FocusBoxController(Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
 			: this()
 		{
 			m_mediator = mediator;
@@ -545,7 +545,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public partial class FocusBoxControllerForDisplay : FocusBoxController, IxCoreColleague
 	{
-		public FocusBoxControllerForDisplay(Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
+		public FocusBoxControllerForDisplay(Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
 			: base(mediator, propertyTable, stylesheet, lineChoices)
 		{
 			m_fRightToLeft = rightToLeft;
@@ -560,7 +560,7 @@ namespace SIL.FieldWorks.IText
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			// Do nothing.
 		}

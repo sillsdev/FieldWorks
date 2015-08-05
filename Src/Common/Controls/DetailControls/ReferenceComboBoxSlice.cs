@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">The configuration parameters.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			base.Init(mediator, propertyTable, configurationParameters);
 

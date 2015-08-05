@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+			Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -845,7 +845,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
+		public RegRuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
 			: base(mediator, propertyTable)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();

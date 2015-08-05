@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public event EventHandler PossibilitySelected;
 
-		public PossibilityAutoComplete(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, Control control,
+		public PossibilityAutoComplete(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
 			string displayNameProperty, string displayWs)
 		{
 			m_cache = cache;

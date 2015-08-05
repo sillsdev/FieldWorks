@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				string Id1 = m_xbv.m_bv.PropTable.GetStringProperty("currentContentControl", "");
+				string Id1 = m_xbv.m_bv.PropTable.GetValue("currentContentControl", "");
 				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
 				return String.Format("{0}_{1}", Id1, Id2);
 			}
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xnSpec = xnSpec;
 
 			// This column list is saved in BrowseViewer.UpdateColumnList
-			string savedCols = m_xbv.m_bv.PropTable.GetStringProperty(ColListId, null, PropertyTable.SettingsGroup.LocalSettings);
+			string savedCols = m_xbv.m_bv.PropTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SetupSelectColumn();
 		}
 
-		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, PropertyTable propertyTable, string colListId)
+		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, IPropertyTable propertyTable, string colListId)
 		{
 			XmlDocument doc;
 			string target;
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 						case 15:
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
-							propertyTable.SetProperty(colListId, savedCols, true);
+							propertyTable.SetProperty(colListId, savedCols, true, true);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.Common.Controls
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
 							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							propertyTable.SetProperty(colListId, "", PropertyTable.SettingsGroup.LocalSettings, true);
+							propertyTable.SetProperty(colListId, "", SettingsGroup.LocalSettings, true, true);
 							break;
 					}
 				}

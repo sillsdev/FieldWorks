@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	public class MacroListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		public override void TestTearDown()
 		{
@@ -98,8 +98,8 @@ namespace SIL.FieldWorks.XWorks
 		private MacroListener MakeMacroListenerWithCache()
 		{
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new Test.TestUtils.MockPublisher());
-			m_propertyTable.SetProperty("cache", Cache, true);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new Test.TestUtils.MockPublisher());
+			m_propertyTable.SetProperty("cache", Cache, true, true);
 			var ml = new MacroListener();
 			ml.Init(m_mediator, m_propertyTable, null);
 			return ml;

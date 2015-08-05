@@ -1,7 +1,6 @@
 ﻿using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="control"></param>
 		/// <param name="cache"></param>
 		/// <param name="wsDefault">used to set WritingSytemCode and Font for the control</param>
-		public static void SetupWritingSystemAndStylesheetInfo(PropertyTable propertyTable, IWritingSystemAndStylesheet control,
+		public static void SetupWritingSystemAndStylesheetInfo(IPropertyTable propertyTable, IWritingSystemAndStylesheet control,
 			FdoCache cache, int wsDefault)
 		{
 			control.WritingSystemFactory = cache.WritingSystemFactory;

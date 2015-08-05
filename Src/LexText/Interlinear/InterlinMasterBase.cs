@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			throw new NotSupportedException();
 		}

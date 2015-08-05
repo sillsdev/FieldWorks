@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -22,12 +21,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_transform = XmlUtils.CreateTransform(xslName, "PresentationTransforms");
 		}
 
-		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName)
+		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName)
 		{
 			return Transform(propertyTable, doc, baseName, new XsltArgumentList());
 		}
 
-		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
+		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
@@ -38,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return filePath;
 		}
 
-		private void SetWritingSystemBasedArguments(FdoCache cache, PropertyTable propertyTable, XsltArgumentList argumentList)
+		private void SetWritingSystemBasedArguments(FdoCache cache, IPropertyTable propertyTable, XsltArgumentList argumentList)
 		{
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;

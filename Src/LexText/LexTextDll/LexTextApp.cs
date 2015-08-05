@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.ComponentModel;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -323,7 +322,7 @@ Old Mediator methods/commands
 				case "CmdImportInterlinearSfm": // Fall through
 				case "CmdImportWordsAndGlossesSfm": // Fall through
 				case "CmdImportInterlinearData":
-					if (wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance" || wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance")
+					if (wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance" || wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance")
 
 					{
 						fEnabled = false;

@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="model"></param>
 		/// <param name="propertyTable">Necessary to access the styles as configured in FLEx</param>
 		/// <returns></returns>
-		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, PropertyTable propertyTable)
+		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, IPropertyTable propertyTable)
 		{
 			if(model == null)
 				throw new ArgumentNullException("model");
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(rule);
 		}
 
-		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, PropertyTable propertyTable, FdoCache cache)
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, IPropertyTable propertyTable, FdoCache cache)
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode,
 																			  StyleSheet styleSheet,
 																			  string baseSelection,
-																			  PropertyTable propertyTable)
+																			  IPropertyTable propertyTable)
 		{
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, ref string baseSelection, PropertyTable propertyTable)
+														StyleSheet styleSheet, ref string baseSelection, IPropertyTable propertyTable)
 		{
 			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<FdoCache>("cache"), propertyTable);
 			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="styleSheet">Stylesheet to add the new rule</param>
 		/// <param name="bulletSelector">Style name for the bullet property</param>
 		/// <param name="mediator">mediator to get the styles</param>
-		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, PropertyTable propertyTable)
+		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, IPropertyTable propertyTable)
 		{
 			if (configNode.Style != null)
 			{
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
-																	StyleSheet styleSheet, string baseSelection, PropertyTable propertyTable)
+																	StyleSheet styleSheet, string baseSelection, IPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			foreach(var ws in wsOptions.Options)
@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-																		  StyleSheet styleSheet, string baseSelection, PropertyTable propertyTable)
+																		  StyleSheet styleSheet, string baseSelection, IPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			var pictureAndCaptionRule = new StyleRule();
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentSelector,
 																							 ConfigurableDictionaryNode configNode,
-																							 out string baseSelection, FdoCache cache, PropertyTable propertyTable)
+																							 out string baseSelection, FdoCache cache, IPropertyTable propertyTable)
 		{
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsId">writing system id</param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, PropertyTable propertyTable)
+		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, IPropertyTable propertyTable)
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -901,7 +901,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static string GenerateLetterHeaderCss(PropertyTable propertyTable)
+		public static string GenerateLetterHeaderCss(IPropertyTable propertyTable)
 		{
 			var letHeadRule = new StyleRule { Value = ".letHead" };
 			letHeadRule.Declarations.Properties.Add(new Property("-moz-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });

@@ -780,8 +780,8 @@ namespace SIL.FieldWorks.IText
 				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
 				m_propertyTable.SetProperty("TextSelectedWord",
 					value != null && value.HasWordform ? value.Analysis.Wordform : null,
+					false,
 					true);
-				m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 			}
 		}
 
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.IText
 
 		internal InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode()
 		{
-			return m_propertyTable.GetBoolProperty(ksPropertyAddWordsToLexicon, false) ?
+			return m_propertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ?
 				InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 		}
 

@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private DataTree m_DataTree;
 		private Slice m_Slice;
 		private Mediator m_Mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// <summary/>
 		public override void TestTearDown()
@@ -146,9 +146,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.Object = obj;
 			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_Slice.PropTable = m_propertyTable;
-			m_propertyTable.SetProperty("cache", Cache, false);
+			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Expand();
 		}
@@ -168,9 +168,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.Object = obj;
 			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_Slice.PropTable = m_propertyTable;
-			m_propertyTable.SetProperty("cache", Cache, false);
+			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Collapse();
 		}

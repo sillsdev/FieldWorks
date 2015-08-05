@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.FdoUi
 		///  <param name="helpFileKey">string key to get the help file name</param>
 		///  ------------------------------------------------------------------------------------
 		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
+			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.FdoUi
 			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
+		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
@@ -241,13 +241,13 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
+		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			DisplayEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
+		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
-			Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet,
+			Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
@@ -331,13 +331,13 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
-		/// Determine a stylesheet from a PropertyTable, or create a new one. Currently this is done
+		/// Determine a stylesheet from an IPropertyTable, or create a new one. Currently this is done
 		/// by looking for the main window and seeing whether it has a StyleSheet property that
 		/// returns one. (We use reflection because the relevant classes are in DLLs we can't
 		/// reference.)
 		/// </summary>
 		/// <returns></returns>
-		private static IVwStylesheet StyleSheetFromPropertyTable(PropertyTable propertyTable)
+		private static IVwStylesheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
 		{
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			if (mainWindow == null)
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.FdoUi
 			return pi.GetValue(mainWindow, null) as IVwStylesheet;
 		}
 
-		private static IVwStylesheet GetStyleSheet(FdoCache cache, PropertyTable propertyTable)
+		private static IVwStylesheet GetStyleSheet(FdoCache cache, IPropertyTable propertyTable)
 		{
 			IVwStylesheet vss = StyleSheetFromPropertyTable(propertyTable);
 			if (vss != null)
@@ -357,12 +357,11 @@ namespace SIL.FieldWorks.FdoUi
 			// (new) mediator.
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("FwStyleSheet", styleSheet, true);
-			propertyTable.SetPropertyPersistence("FwStyleSheet", false);
+			propertyTable.SetProperty("FwStyleSheet", styleSheet, false, true);
 			return styleSheet;
 		}
 
-		private static void EnsureWindowConfiguration(PropertyTable propertyTable)
+		private static void EnsureWindowConfiguration(IPropertyTable propertyTable)
 		{
 			XmlNode xnWindow = propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
@@ -372,13 +371,12 @@ namespace SIL.FieldWorks.FdoUi
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
-				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, true);
-				propertyTable.SetPropertyPersistence("WindowConfiguration", false);
+				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, false, true);
 			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
+		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
 			DisplayRelatedEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tss, true);
@@ -400,7 +398,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
-			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			Mediator mediator, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
 			if (tssWf == null || tssWf.Length == 0)
@@ -444,7 +442,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="helpFileKey"></param>
 		/// ------------------------------------------------------------------------------------
 		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
-			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
+			Mediator mediator, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			if (sel == null)
 				return;
@@ -508,7 +506,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
 			ITsString tssForm, IWin32Window owner)
 		{
 			using (EntryGoDlg entryGoDlg = new EntryGoDlg())

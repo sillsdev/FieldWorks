@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private DummyCmObject m_obj;
 		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mergeCandidates"></param>
 		/// <param name="guiControl"></param>
 		/// <param name="helpTopic"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			// to prevent the dialog growing every time at 120 dpi. But such an override
 			// makes it too small to show all the controls at the default size.
 			// It's better just to use the default size until it's resizeable for some reason.
-			//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
+			//m_propertyTable.GetValue("msaCreatorDlgSize");
 			object szWnd = Size;
 			if (locWnd != null && szWnd != null)
 			{
@@ -404,8 +404,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("mergeDlgLocation", Location, true);
-				m_propertyTable.SetProperty("mergeDlgSize", Size, true);
+				m_propertyTable.SetProperty("mergeDlgLocation", Location, true, true);
+				m_propertyTable.SetProperty("mergeDlgSize", Size, true, true);
 			}
 		}
 

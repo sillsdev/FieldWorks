@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		StringBuilder XHTMLStringBuilder { get; set; }
 
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			Dispose();
 		}
 
-		#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -3181,7 +3181,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.VirtualStringAccessor")));
 		}
 
-		#region Helpers
+	#region Helpers
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
 		{

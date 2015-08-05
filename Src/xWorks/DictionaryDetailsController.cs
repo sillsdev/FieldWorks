@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryDetailsController
 	{
-		private readonly PropertyTable m_propertyTable;
+		private readonly IPropertyTable m_propertyTable;
 		private readonly FdoCache m_cache;
 		private readonly FwStyleSheet m_styleSheet;
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
 
-		public DictionaryDetailsController(IDictionaryDetailsView view, PropertyTable propertyTable)
+		public DictionaryDetailsController(IDictionaryDetailsView view, IPropertyTable propertyTable)
 		{
 			// one-time setup
 			m_propertyTable = propertyTable;

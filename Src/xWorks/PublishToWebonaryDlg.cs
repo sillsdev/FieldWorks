@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromModel();
 		}
 
-		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, PropertyTable propertyTable)
+		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
 			m_controller = controller;

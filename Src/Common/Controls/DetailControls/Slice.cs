@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public event TreeNodeEventHandler ShowContextMenu;
 
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		// These two variables allow us to save the parameters passed in IxCoreColleage.Init
 		// so we can pass them on when our control is set.
 		protected Mediator m_mediator;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public PropertyTable PropTable
+		public IPropertyTable PropTable
 		{
 			get { return m_propertyTable; }
 			set { m_propertyTable = value; }
@@ -1135,7 +1135,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (fUsePersistentExpansion && m_mediator != null) // mediator null only in testing?
 				{
 					Expansion = DataTree.TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.
-					fExpand = m_propertyTable.GetBoolProperty(ExpansionStateKey, fExpand);
+					fExpand = m_propertyTable.GetValue(ExpansionStateKey, fExpand);
 				}
 				if (fExpand)
 				{
@@ -1351,8 +1351,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaName = m_propertyTable.GetStringProperty("areaChoice", null);
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			String areaName = m_propertyTable.GetValue<string>("areaChoice");
+			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
 			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
@@ -1405,12 +1405,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		return generatedHelpTopicID;
 		}
 
-		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
+		private string GetGeneratedHelpTopicId(string helpTopicPrefix, string fieldName)
 		{
 			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
 
-			String generatedHelpTopicID;
+			string generatedHelpTopicID;
 
 			generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + className + "-" + fieldName;
 
@@ -1589,7 +1589,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, true, true);
+					m_propertyTable.SetProperty(ExpansionStateKey, true, true, true);
 				}
 			}
 			finally
@@ -1647,7 +1647,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Expansion = DataTree.TreeItemState.ktisCollapsed;
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, false, true);
+					m_propertyTable.SetProperty(ExpansionStateKey, false, true, true);
 				}
 			}
 			finally
@@ -2013,7 +2013,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -2712,7 +2712,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region IxCoreColleague implementation
 
 		/// <summary></summary>
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

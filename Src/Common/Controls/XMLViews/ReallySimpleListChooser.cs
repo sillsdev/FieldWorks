@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected Mediator m_mediator;
 		/// <summary></summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary></summary>
 		protected string m_fieldName = null;
 		private int m_cLinksShown = 0;
@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void InitializeExtras(XmlNode configNode, Mediator mediator, PropertyTable propertyTable)
+		public void InitializeExtras(XmlNode configNode, Mediator mediator, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -1058,8 +1058,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_persistProvider != null)
 			{
 				m_persistProvider.RestoreWindowSettings("SimpleListChooser-HelpBrowser", this);
-				splitterDistance = m_propertyTable.GetIntProperty("SimpleListChooser-HelpBrowserSplitterDistance",
-					m_splitContainer.Width);
+				splitterDistance = m_propertyTable.GetValue("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.Width);
 			}
 
 			// only create the web browser if we needed, because this control is pretty resource intensive
@@ -1423,7 +1422,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="sGuiControl"></param>
-		public void ReplaceTreeView(Mediator mediator, PropertyTable propertyTable, string sGuiControl)
+		public void ReplaceTreeView(Mediator mediator, IPropertyTable propertyTable, string sGuiControl)
 		{
 			if (m_fFlatList)
 			{
@@ -1571,7 +1570,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sTool">The s tool.</param>
 		/// <param name="sWs">The s ws.</param>
 		/// ------------------------------------------------------------------------------------
-		public void InitializeRaw(Mediator mediator, PropertyTable propertyTable, string sTitle, string sText,
+		public void InitializeRaw(Mediator mediator, IPropertyTable propertyTable, string sTitle, string sText,
 			string sGotoLabel, string sTool, string sWs)
 		{
 			CheckDisposed();
@@ -2323,7 +2322,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_webBrowser != null)
 				{
-					m_propertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance, true);
+					m_propertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance, true, true);
 					m_persistProvider.PersistWindowSettings("SimpleListChooser-HelpBrowser", this);
 				}
 				else
@@ -2577,7 +2576,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
 		public static bool ChooseNaturalClass(IVwRootBox rootb, FdoCache cache,
-			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
+			IPersistenceProvider persistenceProvider, Mediator mediator, IPropertyTable propertyTable)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.Cast<ICmObject>(), "",

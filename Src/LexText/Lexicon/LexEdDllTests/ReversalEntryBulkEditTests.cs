@@ -22,10 +22,10 @@ namespace LexEdDllTests
 		{
 			const string wsId = "en";
 			using(var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(new MockPublisher()))
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
 			using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 			{
-				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
 
 				var propTableId = recordList.GetPropertyTableId(FieldName);
 				StringAssert.Contains(FieldName, propTableId);
@@ -37,7 +37,7 @@ namespace LexEdDllTests
 		public void PropertyTableIdReturnsNullIfNoActiveReversalIndex()
 		{
 			using(var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(new MockPublisher()))
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
 			{
 				using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 				{
@@ -48,7 +48,7 @@ namespace LexEdDllTests
 
 		class TestReversalRecordList : AllReversalEntriesRecordList
 		{
-			public TestReversalRecordList(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+			public TestReversalRecordList(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 			{
 				Init(cache, mediator, propertyTable, null);
 			}

@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationMigrator m_migrator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
@@ -852,7 +852,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
-		#region Minor Entry Componenents Referenced Entries Tests
+	#region Minor Entry Componenents Referenced Entries Tests
 		private const string HwBefore = "H.before";
 		private const string GlsBefore = "G.before";
 		private const string HwAfter = "H.after";
@@ -1103,7 +1103,7 @@ namespace SIL.FieldWorks.XWorks
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
-		#region Helper
+	#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = m_styleSheet.FindStyle(styleName);

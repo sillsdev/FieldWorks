@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public partial class RespellerDlg : Form
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private bool m_fDisposeMediator;
 		private FdoCache m_cache;
 		private XMLViewsDataCache m_specialSda;
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// build the concordance, but on FLEx's list, and we can assume all the parts and layouts
 		/// are loaded.
 		/// </summary>
-		internal bool SetDlgInfo(IWfiWordform wf, Mediator mediator, PropertyTable propertyTable, XmlNode configurationParams)
+		internal bool SetDlgInfo(IWfiWordform wf, Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParams)
 		{
 			using (var dlg = new ProgressDialogWorkingOn())
 			{
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		internal bool SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		internal bool SetDlgInfo(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_wfClerk = propertyTable.GetValue<RecordClerk>("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return SetDlgInfoPrivate(mediator, propertyTable, configurationParameters);
 		}
 
-		private bool SetDlgInfoPrivate(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		private bool SetDlgInfoPrivate(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			using (new WaitCursor(this))
 			{
@@ -152,15 +152,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				m_btnRefresh.Image = ResourceHelper.RefreshIcon;
 
-				m_rbDiscardAnalyses.Checked = m_propertyTable.GetBoolProperty("RemoveAnalyses", true);
+				m_rbDiscardAnalyses.Checked = m_propertyTable.GetValue("RemoveAnalyses", true);
 				m_rbKeepAnalyses.Checked = !m_rbDiscardAnalyses.Checked;
 				m_rbDiscardAnalyses.Click += m_rbDiscardAnalyses_Click;
 				m_rbKeepAnalyses.Click += m_rbDiscardAnalyses_Click;
 
-				m_cbUpdateLexicon.Checked = m_propertyTable.GetBoolProperty("UpdateLexiconIfPossible", true);
-				m_cbCopyAnalyses.Checked = m_propertyTable.GetBoolProperty("CopyAnalysesToNewSpelling", true);
+				m_cbUpdateLexicon.Checked = m_propertyTable.GetValue("UpdateLexiconIfPossible", true);
+				m_cbCopyAnalyses.Checked = m_propertyTable.GetValue("CopyAnalysesToNewSpelling", true);
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
-				m_cbMaintainCase.Checked = m_propertyTable.GetBoolProperty("MaintainCaseOnChangeSpelling", true);
+				m_cbMaintainCase.Checked = m_propertyTable.GetValue("MaintainCaseOnChangeSpelling", true);
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
 				m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 
@@ -480,26 +480,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void m_cbUpdateLexicon_Click(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, false);
-			m_propertyTable.SetPropertyPersistence("UpdateLexiconIfPossible", true);
+			m_propertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, true, false);
 		}
 
 		void m_rbDiscardAnalyses_Click(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, false);
-			m_propertyTable.SetPropertyPersistence("RemoveAnalyses", true);
+			m_propertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, true, false);
 		}
 
 		void m_cbCopyAnalyses_Click(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, false);
-			m_propertyTable.SetPropertyPersistence("CopyAnalysesToNewSpelling", true);
+			m_propertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, true, false);
 		}
 
 		void m_cbMaintainCase_Click(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, false);
-			m_propertyTable.SetPropertyPersistence("MaintainCaseOnChangeSpelling", true);
+			m_propertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, true, false);
 		}
 
 		protected override void OnClosed(EventArgs e)

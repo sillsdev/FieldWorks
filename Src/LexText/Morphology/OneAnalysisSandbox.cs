@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: base(cache, mediator, propertyTable, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;

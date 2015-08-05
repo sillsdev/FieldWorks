@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private FwStyleSheet m_styleSheet;
 		private MockFwXApp m_application;
 		private string m_configFilePath;

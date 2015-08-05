@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmPossibility Publication { get; set; }
 
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
-		public IEnumerable<int> GetEntriesToPublish(PropertyTable propertyTable, RecordClerk clerk)
+		public IEnumerable<int> GetEntriesToPublish(IPropertyTable propertyTable, RecordClerk clerk)
 		{
 			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable))
 			{

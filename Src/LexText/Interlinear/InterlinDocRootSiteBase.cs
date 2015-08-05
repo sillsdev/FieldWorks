@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_fdoCache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
+			m_vc.ShowMorphBundles = m_propertyTable.GetValue("ShowMorphBundles", true);
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 
@@ -818,7 +818,7 @@ namespace SIL.FieldWorks.IText
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
-			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			var persist = m_propertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, m_fdoCache.LanguageWritingSystemFactoryAccessor,
@@ -862,8 +862,7 @@ namespace SIL.FieldWorks.IText
 		{
 			m_propertyTable.SetProperty(ConfigPropName,
 				m_vc.LineChoices.Persist(m_fdoCache.LanguageWritingSystemFactoryAccessor),
-				PropertyTable.SettingsGroup.LocalSettings,
-				true);
+				SettingsGroup.LocalSettings, true, true);
 			UpdateDisplayForNewLineChoices();
 		}
 

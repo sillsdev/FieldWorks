@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.IText
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 		private IBookImporter m_bookImporter;
 
-		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
+		public InterlinearExportDialog(Mediator mediator, IPropertyTable propertyTable, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
 			: base(mediator, propertyTable)
 		{
 			m_objRoot = objRoot;

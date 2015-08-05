@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
+		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, IPropertyTable propertyTable)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
+		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, IPropertyTable propertyTable)
 			: base(cache, obj, flid, mediator, propertyTable)
 		{
 			if (m_tree != null)

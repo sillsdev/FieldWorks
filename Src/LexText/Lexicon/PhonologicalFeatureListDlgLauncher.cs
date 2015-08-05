@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Initialize the launcher.
 		/// </summary>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 

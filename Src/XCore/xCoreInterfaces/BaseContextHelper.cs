@@ -38,7 +38,7 @@ namespace XCore
 		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IFWDisposable
 	{
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		protected Mediator m_mediator;
 		protected XmlDocument m_document;
 		protected Dictionary<string, XmlNode> m_helpIdToElt = new Dictionary<string, XmlNode>();
@@ -136,8 +136,7 @@ namespace XCore
 				if (m_mediator != null)
 				{
 					m_mediator.RemoveColleague(this);
-					m_propertyTable.SetProperty("ContextHelper", null, false);
-					m_propertyTable.SetPropertyPersistence("ContextHelper", false);
+					m_propertyTable.SetProperty("ContextHelper", null, false, false);
 				}
 				if (m_helpIdToElt != null)
 					m_helpIdToElt.Clear();
@@ -167,14 +166,13 @@ namespace XCore
 
 		#region IxCoreColleague
 		/// <summary/>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			m_propertyTable.SetProperty("ContextHelper", this, false);
-			m_propertyTable.SetPropertyPersistence("ContextHelper", false);
+			m_propertyTable.SetProperty("ContextHelper", this, false, false);
 
 			ParentControl = m_propertyTable.GetValue<Control>("window");
 			m_document= new XmlDocument();

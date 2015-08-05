@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator m_pubDecorator;
 		internal string m_configObjectName;
 
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
 			m_configurationParameters = configurationParameters;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 			var validConfiguration = GetValidConfigurationForPublication(pubName);
 			if(validConfiguration != currentConfig)
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
+				m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
 			}
 			UpdateContent(PublicationDecorator, validConfiguration);
 		}
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 					var validConfiguration = GetValidConfigurationForPublication(pubName);
 					if(validConfiguration != currentConfiguration)
 					{
-						m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
+						m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
 					}
 					UpdateContent(pubDecorator, validConfiguration);
 					break;
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if(validPublication != currentPublication)
 					{
-						m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
+						m_propertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 			if (validPublication != currentPublication)
 			{
-				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
+				m_propertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 			}
 			UpdateContent(PublicationDecorator, currentConfig);
 		}
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnShowAllEntries(object args)
 		{
-			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true);
+			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, true);
 			return true;
 		}
 
@@ -387,8 +387,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return m_propertyTable.GetStringProperty("SelectedPublication",
-			 xWorksStrings.AllEntriesPublication);
+			return m_propertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
 		}
 
 		private string GetCurrentConfiguration()

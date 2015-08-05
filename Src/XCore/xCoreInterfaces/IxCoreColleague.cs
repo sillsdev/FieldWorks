@@ -27,7 +27,7 @@ namespace XCore
 		/// <summary>
 		/// Initialize the colleague with the given Mediator, PropertyTable and xml Configuration node.
 		/// </summary>
-		void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters);
+		void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters);
 
 		/// <summary>
 		/// In OnInvokeRecursive in the mediator this list will determine order.
@@ -124,7 +124,7 @@ namespace XCore
 	/// This is an interface implemented by xWindow (and perhaps other main window classes?)
 	/// that allows a few of their key functions to be called by things that don't reference xCore.
 	/// </summary>
-	public interface IxWindow : IMediatorProvider, IPropertyTableProvider
+	public interface IxWindow : IMediatorProvider
 	{
 		/// <summary>
 		/// Call this for the duration of a block of code where we don't want idle events.

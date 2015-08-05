@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		#region Member variables
 
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// Keeps track of how many lists are loaded into List area
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -164,10 +164,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 					* next time we come back to this area, we can remember to use this same tool.
 					*/
 				case "currentContentControlObject":
-					string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+					string toolName = m_propertyTable.GetValue("currentContentControl", "");
 					var c = m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
 					var propName = "ToolForAreaNamed_" + c.AreaName;
-					m_propertyTable.SetProperty(propName, toolName, true);
+					m_propertyTable.SetProperty(propName, toolName, true, true);
 					Logger.WriteEvent("Switched to " + toolName);
 					// Should we report a tool change?
 					if (m_lastToolChange.Date != DateTime.Now.Date)
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 						m_toolsReportedToday.Clear();
 						m_lastToolChange = DateTime.Now;
 					}
-					string areaNameForReport = m_propertyTable.GetStringProperty("areaChoice", null);
+					string areaNameForReport = m_propertyTable.GetValue<string>("areaChoice");
 					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
 					{
 						m_toolsReportedToday.Add(toolName);
@@ -185,13 +185,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 					break;
 
 				case "areaChoice":
-					string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
+					string areaName = m_propertyTable.GetValue<string>("areaChoice");
 
 					if(string.IsNullOrEmpty(areaName))
 						break;//this can happen when we use this property very early in the initialization
 
 					//for next startup
-					m_propertyTable.SetProperty("InitialArea", areaName, true);
+					m_propertyTable.SetProperty("InitialArea", areaName, true, true);
 
 					ActivateToolForArea(areaName);
 					break;
@@ -562,8 +562,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private void UpdateMediatorConfig(XmlNode windowConfig)
 		{
 			// We have to update this because other things besides 'tools' need to get set.
-			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, true);
-			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, false, true);
 		}
 
 		/// <summary>
@@ -864,7 +863,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string areaName = m_propertyTable.GetStringProperty("InitialArea", "");
+			string areaName = m_propertyTable.GetValue("InitialArea", "");
 			Debug.Assert( areaName !="", "The configuration files should set a default for 'InitialArea' under <defaultProperties>");
 
 			// if an old configuration is preserving an obsolete InitialArea, reset it now, so we don't crash (cf. LT-7977)
@@ -876,8 +875,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 
 			//this will cause our "onPropertyChanged" method to fire, and it will then set the tool appropriately.
-			m_propertyTable.SetProperty("areaChoice", areaName, true);
-			m_propertyTable.SetPropertyPersistence("areaChoice", false);
+			m_propertyTable.SetProperty("areaChoice", areaName, false, true);
 
 			ActivateToolForArea(areaName);
 
@@ -953,16 +951,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			string toolName;
 			XmlNode node = GetToolNodeForArea(areaName, out toolName);
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolName, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
+			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
+			m_propertyTable.SetProperty("currentContentControl", toolName, false, true);
 		}
 
 		private XmlNode GetToolNodeForArea(string areaName, out string toolName)
 		{
 			string property = "ToolForAreaNamed_" + areaName;
-			toolName = m_propertyTable.GetStringProperty(property, "");
+			toolName = m_propertyTable.GetValue(property, "");
 			if (toolName == "")
 				throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
 
@@ -1037,8 +1033,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 					// Before switching areas, we need to fix the tool recorded for that area,
 					// otherwise ActivateToolForArea will override our tool choice with the last
 					// tool active in the area (LT-4696).
-					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-					m_propertyTable.SetProperty("areaChoice", area, true);
+					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
+					m_propertyTable.SetProperty("areaChoice", area, true, true);
 				}
 			}
 			else
@@ -1047,11 +1043,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// the currentContentControl (is that partly obsolete?).
 				if (area != null)
 				{
-					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
+					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
 				}
 			}
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
-			m_propertyTable.SetProperty("currentContentControl", toolName, true);
+			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
+			m_propertyTable.SetProperty("currentContentControl", toolName, true, true);
 			return true;
 		}
 

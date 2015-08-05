@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, ITsString tssform, int hvoType)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
 

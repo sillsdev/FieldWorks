@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IFwMetaDataCacheManaged m_mdc;
 		private IVwStylesheet m_stylesheet;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IWritingSystemManager m_wsManager;
 		private IStTextFactory m_factStText;
 		private IStTextRepository m_repoStText;
@@ -734,7 +734,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -743,9 +743,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			lblMappingLanguagesInstructions.Text = String.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
 
-			m_tbDatabaseFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportDb", String.Empty);
-			m_tbProjectFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportPrj", String.Empty);
-			m_tbSettingsFileName.Text = m_propertyTable.GetStringProperty("DataNotebookImportMap", String.Empty);
+			m_tbDatabaseFileName.Text = m_propertyTable.GetValue("DataNotebookImportDb", String.Empty);
+			m_tbProjectFileName.Text = m_propertyTable.GetValue("DataNotebookImportPrj", String.Empty);
+			m_tbSettingsFileName.Text = m_propertyTable.GetValue("DataNotebookImportMap", String.Empty);
 			if (String.IsNullOrEmpty(m_tbSettingsFileName.Text) || m_tbSettingsFileName.Text == m_sStdImportMap)
 			{
 				m_tbSettingsFileName.Text = m_sStdImportMap;
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(PropertyTable propertyTable)
+		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(IPropertyTable propertyTable)
 		{
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;
@@ -1220,12 +1220,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void SaveSettings()
 		{
-			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, true);
-			m_propertyTable.SetPropertyPersistence("DataNotebookImportDb", true);
-			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, true);
-			m_propertyTable.SetPropertyPersistence("DataNotebookImportPrj", true);
-			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, true);
-			m_propertyTable.SetPropertyPersistence("DataNotebookImportMap", true);
+			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, true, true);
+			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, true, true);
+			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, true, true);
 			using (TextWriter tw = FileUtils.OpenFileForWrite(m_tbSaveAsFileName.Text, Encoding.UTF8))
 			{
 				try

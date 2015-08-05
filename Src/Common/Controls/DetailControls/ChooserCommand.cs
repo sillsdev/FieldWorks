@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected IMoInflAffixSlot m_slot;
 
 		public MakeInflAffixEntryChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, bool fPrefix, IMoInflAffixSlot slot, Mediator mediator, PropertyTable propertyTable)
+			string sLabel, bool fPrefix, IMoInflAffixSlot slot, Mediator mediator, IPropertyTable propertyTable)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_fPrefix = fPrefix;
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_posHvo;
 		protected bool m_fOptional;
 
-		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, Mediator mediator, PropertyTable propertyTable)
+		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, Mediator mediator, IPropertyTable propertyTable)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_posHvo = posHvo;

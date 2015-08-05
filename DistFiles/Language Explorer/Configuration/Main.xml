@@ -782,12 +782,6 @@ InterlinMaster user:
 		<include path="Lists/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Grammar/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="CommonDataTreeInclude.xml" query="root/defaultProperties/*"/>
-		<!--
-		We want to only show the sidebar by default.
-		If the user turns it off, than the preference will be saved in their settings file
-		Note: As of 8 February 2007 (and even well before then), we don't support the user hiding the sidebar completely.
-		-->
-		<property name="ShowSidebar" bool="true" persist="true" settingsGroup="global"/>
 		<!-- This is the splitter distance for the sidebar/secondary splitter pair of controls. -->
 		<property name="SidebarWidthGlobal" intValue="140" persist="true"/>
 		<!-- Label when collapsed to icon. -->

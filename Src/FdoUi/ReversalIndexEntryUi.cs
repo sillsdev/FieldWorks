@@ -9,7 +9,6 @@ using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -54,9 +53,9 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="key">Property name</param>
 		/// <returns>The ReversalIndexGuid, or empty GUID if there is a problem</returns>
-		public static Guid GetObjectGuidIfValid(PropertyTable propertyTable, string key)
+		public static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
 		{
-			var sGuid = propertyTable.GetStringProperty(key, "");
+			var sGuid = propertyTable.GetValue(key, "");
 			if (string.IsNullOrEmpty(sGuid))
 				return Guid.Empty;
 

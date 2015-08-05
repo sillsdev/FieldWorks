@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
 			{
-				return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+				return m_propertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
 					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 			}
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -1117,7 +1117,7 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+			string toolName = m_propertyTable.GetValue("currentContentControl", "");
 			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea
 				&& toolName != "wordListConcordance";
 			display.Visible = fVisible;
@@ -1208,7 +1208,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_mediator == null)
 					return TabPageSelection.RawText;
-				string val = m_propertyTable.GetStringProperty("InterlinearTab", TabPageSelection.RawText.ToString());
+				string val = m_propertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
 				TabPageSelection tabSelection;
 				if (string.IsNullOrEmpty(val))
 				{
@@ -1231,7 +1231,7 @@ namespace SIL.FieldWorks.IText
 
 			set
 			{
-				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), true);
+				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), true, true);
 			}
 		}
 
@@ -1292,7 +1292,7 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+				string toolName = m_propertyTable.GetValue("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
@@ -1318,7 +1318,7 @@ namespace SIL.FieldWorks.IText
 				string desiredArea = "textsWords";
 
 				// see if it's the right area
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 				return areaChoice != null && areaChoice == desiredArea;
 			}
 		}
@@ -1330,7 +1330,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		protected bool InFriendlyTool(string desiredTool)
 		{
-			var toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null);
+			var toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_textsWords");
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 

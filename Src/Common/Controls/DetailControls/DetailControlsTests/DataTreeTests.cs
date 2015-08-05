@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ILexEntry m_entry; // test object.
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private DataTree m_dtree;
 		private Form m_parent;
 
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.TestSetup();
 			m_dtree = new DataTree();
 			m_mediator = new Mediator();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);
@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = new PropertyTable(new MockPublisher());
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.Init(m_mediator, m_propertyTable, null);

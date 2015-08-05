@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="fs"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="pos"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPartOfSpeech pos)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPartOfSpeech pos)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
 		}
@@ -193,12 +193,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Reset window location.
 					// Get location to the stored values, if any.
-					if (m_propertyTable.PropertyExists("msaInflFeatListDlgLocation")
-						&& m_propertyTable.PropertyExists("msaInflFeatListDlgSize"))
+					Point dlgLocation;
+					Size dlgSize;
+					if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation)
+						&& m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
 					{
-						var locWnd = m_propertyTable.GetValue<Point>("msaInflFeatListDlgLocation");
-						var szWnd = m_propertyTable.GetValue<Size>("msaInflFeatListDlgSize");
-						var rect = new Rectangle(locWnd, szWnd);
+						var rect = new Rectangle(dlgLocation, dlgSize);
 						ScreenUtils.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
@@ -631,8 +631,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("msaInflFeatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, true, true);
+				m_propertyTable.SetProperty("msaInflFeatListDlgSize", Size, true, true);
 			}
 		}
 

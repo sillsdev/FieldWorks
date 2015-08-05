@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public PropertyTable PropTable { get; set; }
+		public IPropertyTable PropTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache) :
+		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache) :
 			base(bv, spec, mediator, propertyTable, cache)
 		{
 			m_operationsTabControl.Controls.Remove(BulkCopyTab);
@@ -793,7 +793,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewerPhonologicalFeatures(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{ }
 
@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
 		{
 			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, propertyTable, cache);
 		}

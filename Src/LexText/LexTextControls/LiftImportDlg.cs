@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
 		private OpenFileDialogAdapter openFileDialog1;
@@ -58,18 +58,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		void IFwExtension.Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			string sPrevFile = m_propertyTable.GetStringProperty(FilePropertyName, null);
+			string sPrevFile = m_propertyTable.GetValue<string>(FilePropertyName);
 			if (!String.IsNullOrEmpty(sPrevFile))
 			{
 				tbPath.Text = sPrevFile;
 				UpdateButtons();
 			}
-			string sMergeStyle = m_propertyTable.GetStringProperty(MergeStylePropertyName, null);
+			string sMergeStyle = m_propertyTable.GetValue<string>(MergeStylePropertyName);
 			if (!String.IsNullOrEmpty(sMergeStyle))
 			{
 				m_msImport = (FlexLiftMerger.MergeStyle)Enum.Parse(typeof(FlexLiftMerger.MergeStyle), sMergeStyle, true);
@@ -146,8 +146,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateButtons();
 			if (btnOK.Enabled)
 			{
-				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true);
-				m_propertyTable.SetPropertyPersistence(FilePropertyName, true);
+				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true, true);
 			}
 		}
 
@@ -433,8 +432,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_msImport = ms;
 			m_propertyTable.SetProperty(MergeStylePropertyName,
 				Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport),
-				true);
-			m_propertyTable.SetPropertyPersistence(MergeStylePropertyName, true);
+				true, true);
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)

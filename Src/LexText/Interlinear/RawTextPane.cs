@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true);
+				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
 			}
 		}
 
@@ -390,18 +390,18 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true);
+				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
 			}
 		}
 
 		private bool ShowInvisibleSpaces
 		{
-			get { return m_propertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
+			get { return m_propertyTable.GetValue<bool>("ShowInvisibleSpaces"); }
 		}
 
 		private bool ClickInvisibleSpace
 		{
-			get { return m_propertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
+			get { return m_propertyTable.GetValue<bool>("ClickInvisibleSpace"); }
 		}
 
 		#region Overrides of RootSite
@@ -486,8 +486,7 @@ namespace SIL.FieldWorks.IText
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			m_propertyTable.SetProperty("TextSelectedWord", wordform, true);
-			m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
+			m_propertyTable.SetProperty("TextSelectedWord", wordform, false, true);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
@@ -911,7 +910,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

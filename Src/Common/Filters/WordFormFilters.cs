@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="propertyTable"></param>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configuration)
 		{
 			base.Init(mediator, propertyTable, configuration);
 			m_mediator.AddColleague(this);

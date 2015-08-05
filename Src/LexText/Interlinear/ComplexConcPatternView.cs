@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion IDisposable override
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, ComplexConcControl concordanceControl)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, ComplexConcControl concordanceControl)
 		{
 			CheckDisposed();
 			m_concordanceControl = concordanceControl;

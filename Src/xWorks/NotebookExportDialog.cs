@@ -9,14 +9,11 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using Palaso.WritingSystems;
 using XCore;
 using System.Text;
 using SIL.CoreImpl;
@@ -27,8 +24,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Xml.Xsl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -49,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public NotebookExportDialog(Mediator mediator, PropertyTable propertyTable)
+		public NotebookExportDialog(Mediator mediator, IPropertyTable propertyTable)
 			: base(mediator, propertyTable)
 		{
 			m_helpTopic = "khtpExportNotebook";

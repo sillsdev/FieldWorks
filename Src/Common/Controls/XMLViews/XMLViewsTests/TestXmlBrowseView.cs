@@ -26,7 +26,7 @@ namespace XMLViewsTests
 						</columns>
 					</parameters>");
 				using (var mediator = new Mediator())
-				using (var propertyTable = new PropertyTable(new MockPublisher()))
+				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
 				{
 					bv.Init(mediator, propertyTable, xdoc.DocumentElement);
 					bv.SimulateDoubleClick(new EventArgs());
@@ -61,17 +61,17 @@ namespace XMLViewsTests
 				"<column layout=\"CustomPossAtomForExample_ExAtom\" label=\"$label\" visibility=\"menu\"/>" +
 				"</root>";
 			using (var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(new MockPublisher()))
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
 			{
 				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
 				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
-				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
 				var weatherNode = output.SelectSingleNode("//column[@layout='Weather']");
 				Assert.That(weatherNode, Is.Null);
-				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("EntryHeadwordForFindEntry"));
+				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
 				// Should not affect other nodes
 				var unknownNode = output.SelectSingleNode("//column[@layout='Unknown Test']");
 				Assert.That(unknownNode, Is.Not.Null);
@@ -127,7 +127,7 @@ namespace XMLViewsTests
 				Assert.That(isAHeadwordNode, Is.Null);
 				publishAsHeadwordNode = output.SelectSingleNode("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
-				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("PublishAsHeadword"));
+				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("PublishAsHeadword"));
 			}
 		}
 

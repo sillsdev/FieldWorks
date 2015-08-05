@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
 		{
 			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:

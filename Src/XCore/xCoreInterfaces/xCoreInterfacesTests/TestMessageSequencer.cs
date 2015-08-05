@@ -484,7 +484,7 @@ namespace XCore
 	{
 		#region Implementation of IxCoreColleague
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			throw new NotSupportedException();
 		}

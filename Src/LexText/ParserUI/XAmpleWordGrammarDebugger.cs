@@ -11,7 +11,6 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -39,12 +38,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the latest word grammar debugging step xml document
 		/// </summary>
 		private XDocument m_wordGrammarDebuggerXml;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private readonly XslCompiledTransform m_intermediateTransform;
 		private readonly FdoCache m_cache;
 		private readonly XDocument m_parseResult;
 
-		public XAmpleWordGrammarDebugger(PropertyTable propertyTable, XDocument parseResult)
+		public XAmpleWordGrammarDebugger(IPropertyTable propertyTable, XDocument parseResult)
 		{
 			m_propertyTable = propertyTable;
 			m_parseResult = parseResult;

@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private IWfiWordform m_wordform;
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private XmlNode m_configurationNode;
 		private RecordBrowseView m_currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="configurationNode">NB: In this case it is the main 'window' element node,
 		/// se we have to drill down to find the control definition node(s).</param>
 		/// <param name="sourceObject"></param>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
 		{
 			CheckDisposed();
 
@@ -293,8 +293,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			helpProvider.SetShowHelp(this, true);
 
 
-			m_propertyTable.SetProperty("IgnoreStatusPanel", true, true);
-			m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
+			m_propertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
 			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
 
 			// Gather up the nodes.
@@ -560,8 +559,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (!IsDisposed && m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("IgnoreStatusPanel", false, true);
-				m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
+				m_propertyTable.SetProperty("IgnoreStatusPanel", false, false, true);
 			}
 		}
 
@@ -605,8 +603,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_currentBrowseView.Init(m_mediator, m_propertyTable, configurationNode);
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
-				m_propertyTable.SetProperty(sPropName, true, false);
-				m_propertyTable.SetPropertyPersistence(sPropName, false);
+				m_propertyTable.SetProperty(sPropName, true, false, false);
 				m_currentBrowseView.Dock = DockStyle.Fill;
 				m_pnlConcBrowseHolder.Controls.Add(m_currentBrowseView);
 				m_currentBrowseView.CheckBoxChanged += m_currentBrowseView_CheckBoxChanged;
@@ -639,7 +636,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 
 				// Set the initial value for the filtering status.
-				var sFilterMsg = m_propertyTable.GetStringProperty("DialogFilterStatus", String.Empty);
+				var sFilterMsg = m_propertyTable.GetValue("DialogFilterStatus", string.Empty);
 				if (sFilterMsg != null)
 					sFilterMsg = sFilterMsg.Trim();
 				SetFilterStatus(!String.IsNullOrEmpty(sFilterMsg));

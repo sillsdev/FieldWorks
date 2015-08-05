@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.IText
 		// Local variables.
 		private FdoCache m_cache;
 		Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		RecordEditView m_xrev;
 		int m_currentRoot = 0;		// Stores the root (IStText) Hvo.
 
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 		}
 
-		public InfoPane(FdoCache cache, Mediator mediator, PropertyTable propertyTable, RecordClerk clerk)
+		public InfoPane(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, RecordClerk clerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Initialize the pane with a Mediator and a RecordClerk.
 		/// </summary>
-		internal void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, RecordClerk clerk)
+		internal void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, RecordClerk clerk)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.IText
 			if (xnControl == null)
 				return;
 			var activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-			var toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
+			var toolChoice = m_propertyTable.GetValue<string>("currentContentControl");
 			if(m_xrev != null)
 			{
 				//when re-using the infoview we want to remove and dispose of the old recordeditview and
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.IText
 			var activeClerkNew = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
 			{
-				m_propertyTable.SetProperty("ActiveClerk", activeClerk, true);
+				m_propertyTable.SetProperty("ActiveClerk", activeClerk, true, true);
 				activeClerk.ActivateUI(true);
 			}
 		}

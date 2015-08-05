@@ -463,12 +463,11 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-				string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
+				string oldBest = m_propertyTable.GetValue<string>("BestStyleName");
 				if (oldBest != bestStyle)
 				{
 					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
-					m_propertyTable.SetPropertyPersistence("BestStyleName", false);
+					m_propertyTable.SetProperty("BestStyleName", bestStyle, false, true);
 				}
 				return bestStyle;
 			}
@@ -1869,7 +1868,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
 		}

@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		protected Mediator m_mediator;
 
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 
 		// These variables are used for the popup menus.
 		private ComboListBox m_clb;
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

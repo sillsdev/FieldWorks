@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private RegistryKey m_registryKey;
 		private string m_supportEmailAddress;
 
-		internal PalasoErrorReportingAdapter(Form parentForm, PropertyTable propertyTable)
+		internal PalasoErrorReportingAdapter(Form parentForm, IPropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
 			m_registryKey = propertyTable.GetValue<IApp>("App").SettingsKey;

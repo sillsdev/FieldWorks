@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// </summary>
-		protected PropertyTable m_propertyTable;
+		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -227,12 +227,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, int ws)
+		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, int ws)
 		{
 			CheckDisposed();
 
@@ -247,12 +247,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				if (m_propertyTable.PropertyExists(PersistenceLabel + "DlgLocation")
-					&& m_propertyTable.PropertyExists(PersistenceLabel + "DlgSize"))
+				Point dlgLocation;
+				Size dlgSize;
+				if (m_propertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation)
+					&& m_propertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
 				{
-					var locWnd = m_propertyTable.GetValue<Point>(PersistenceLabel + "DlgLocation");
-					var szWnd = m_propertyTable.GetValue<Size>(PersistenceLabel + "DlgSize");
-					var rect = new Rectangle(locWnd, szWnd);
+					var rect = new Rectangle(dlgLocation, dlgSize);
 
 					//grow it if it's too small.  This will happen when we add new controls to the dialog box.
 					if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
@@ -491,13 +491,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form)
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form)
 		{
 			CheckDisposed();
 			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form, int ws)
+		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form, int ws)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, ws);
 			Form = form;
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, ITsString tssform)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, ITsString tssform)
 		{
 			CheckDisposed();
 			SetDlgInfo(cache, wp, mediator, propertyTable, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
@@ -832,13 +832,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void BaseGoDlg_Closed(object sender, EventArgs e)
 		{
 			// Save location.
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
 				var propName = PersistenceLabel + "DlgLocation";
-				m_propertyTable.SetProperty(propName, Location, true);
+				m_propertyTable.SetProperty(propName, Location, true, true);
 				var sz = new Size(0, m_delta);
 				propName = PersistenceLabel + "DlgSize";
-				m_propertyTable.SetProperty(propName, Size - sz, true);
+				m_propertyTable.SetProperty(propName, Size - sz, true, true);
 			}
 		}
 
