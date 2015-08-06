@@ -18,7 +18,7 @@
 	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
 		<palaso:abbreviation value="Ind" />
 		<palaso:defaultFontFamily value="Times New Roman" />
-		<palaso:languageName value="Bahasa Indonesia" />
+		<palaso:languageName value="Indonesian" />
 		<palaso:version value="2" />
 	</special>
 	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
