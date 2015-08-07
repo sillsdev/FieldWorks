@@ -354,6 +354,7 @@
     <Compile Include="MissingOldFieldWorksDlg.Designer.cs">
       <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="MoveOrCopyFilesController.cs" />
     <Compile Include="MoveOrCopyFilesDlg.cs">
       <SubType>Form</SubType>
     </Compile>

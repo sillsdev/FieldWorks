@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.XWorks
 					dialogResult = dlg.ShowDialog();
 					if (dialogResult == DialogResult.OK)
 					{
-						string file = MoveOrCopyFilesDlg.MoveCopyOrLeaveMediaFile(dlg.FileName,
+						string file = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFile(dlg.FileName,
 							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider, Cache.ProjectId.IsLocal);
 						if (String.IsNullOrEmpty(file))
 							return true;
