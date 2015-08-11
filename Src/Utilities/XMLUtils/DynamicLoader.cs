@@ -182,7 +182,7 @@ namespace SIL.Utils
 
 		public static List<T> GetPlugins<T>(string pattern) where T: class
 		{
-			var codeBasePath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var codeBasePath = DirectoryUtils.DirectoryOfExecutingAssembly();
 			return GetPlugins<T>(codeBasePath, pattern);
 		}
 		/// <summary>

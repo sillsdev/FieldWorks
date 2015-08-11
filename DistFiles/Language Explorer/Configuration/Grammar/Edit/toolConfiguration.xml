@@ -150,7 +150,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Bulk Edit Phoneme Features" value="toolBulkEditPhonemes" icon="BrowseView">
+		<tool label="Bulk Edit Phoneme Features" value="bulkEditPhonemes" icon="BrowseView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="PhonemesBulkEdit">
@@ -183,7 +183,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassedit" icon="SideBySideView">
+		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassEdit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
 				<parameters area="grammar" id="NaturalClassItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -207,7 +207,7 @@
 					<!-- this will fill the pane on the right -->
 					<control>
 						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
-						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-naturalClassedit" collapse="144000">
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-naturalClassEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView" emptyTitleId="No-PhNCSegments"/>
 								<parameters clerk="naturalClasses" layout="Edit" treeBarAvailability="NotAllowed"/>
@@ -284,7 +284,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibEdit" icon="SideBySideView">
+		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibitionRuleEdit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
 				<parameters area="grammar" id="AdhocCoprohibItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">

@@ -6,15 +6,25 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Impls;
 
 namespace TextAndWordsAreaPlugin
 {
 	/// <summary>
 	/// IArea implementation for the area: "textAndWords".
 	/// </summary>
-	public class TextAndWordsArea : IArea
+	internal sealed class TextAndWordsArea : IArea
 	{
+		private readonly IToolRepository m_toolRepository;
+
+		/// <summary>
+		/// Contructor used by Reflection to feed the tool repository to the area.
+		/// </summary>
+		/// <param name="toolRepository"></param>
+		internal TextAndWordsArea(IToolRepository toolRepository)
+		{
+			m_toolRepository = toolRepository;
+		}
+
 		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
@@ -23,7 +33,7 @@ namespace TextAndWordsAreaPlugin
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
+		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip,
 			ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
@@ -38,7 +48,7 @@ namespace TextAndWordsAreaPlugin
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
+		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip,
 			ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
@@ -98,9 +108,43 @@ namespace TextAndWordsAreaPlugin
 		#region Implementation of IArea
 
 		/// <summary>
+		/// Get the most recently persisted tool, or the default tool if
+		/// the persisted one is no longer available.
+		/// </summary>
+		/// <returns>The last persisted tool or the default tool for the area.</returns>
+		public ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable)
+		{
+			return m_toolRepository.GetPersistedOrDefaultToolForArea(propertyTable, this);
+		}
+
+		/// <summary>
+		/// Get the machine name of the area's default tool.
+		/// </summary>
+		public string DefaultToolMachineName
+		{
+			get { return "interlinearEdit"; }
+		}
+
+		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public List<ITool> AllToolsInOrder { get; private set; }
+		public IList<ITool> AllToolsInOrder
+		{
+			get
+			{
+				var myToolsInOrder = new List<string>
+				{
+					"interlinearEdit",
+					"concordance",
+					"complexConcordance",
+					"wordListConcordance",
+					"Analyses",
+					"bulkEditWordforms",
+					"corpusStatistics"
+				};
+				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+			}
+		}
 
 		/// <summary>
 		/// Get the image for the area.

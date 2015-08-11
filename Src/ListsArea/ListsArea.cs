@@ -8,8 +8,19 @@ using SIL.CoreImpl;
 
 namespace ListsAreaPlugin
 {
-	public class ListsArea : IArea
+	internal sealed class ListsArea : IArea
 	{
+		private readonly IToolRepository m_toolRepository;
+
+		/// <summary>
+		/// Contructor used by Reflection to feed the tool repository to the area.
+		/// </summary>
+		/// <param name="toolRepository"></param>
+		internal ListsArea(IToolRepository toolRepository)
+		{
+			m_toolRepository = toolRepository;
+		}
+
 		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
@@ -18,8 +29,10 @@ namespace ListsAreaPlugin
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
-			ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber,
+			ICollapsingSplitContainer mainCollapsingSplitContainer,
+			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
 
@@ -29,8 +42,10 @@ namespace ListsAreaPlugin
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
-			ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber,
+			ICollapsingSplitContainer mainCollapsingSplitContainer,
+			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
 
@@ -89,9 +104,73 @@ namespace ListsAreaPlugin
 		#region Implementation of IArea
 
 		/// <summary>
+		/// Get the most recently persisted tool, or the default tool if
+		/// the persisted one is no longer available.
+		/// </summary>
+		/// <returns>The last persisted tool or the default tool for the area.</returns>
+		public ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable)
+		{
+			return m_toolRepository.GetPersistedOrDefaultToolForArea(propertyTable, this);
+		}
+
+		/// <summary>
+		/// Get the machine name of the area's default tool.
+		/// </summary>
+		public string DefaultToolMachineName
+		{
+			get { return "domainTypeEdit"; }
+		}
+
+		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public List<ITool> AllToolsInOrder { get; private set; }
+		public IList<ITool> AllToolsInOrder
+		{
+			get
+			{
+				var myToolsInOrder = new List<string>
+				{
+					"domainTypeEdit",
+					"anthroEdit",
+					"complexEntryTypeEdit",
+					"confidenceEdit",
+					"chartmarkEdit",
+					"charttempEdit",
+					"educationEdit",
+					"roleEdit",
+					"featureTypesAdvancedEdit",
+					"genresEdit",
+					"lexRefEdit",
+					"locationsEdit",
+					"publicationsEdit",
+					"morphTypeEdit",
+					"peopleEdit",
+					"positionsEdit",
+					"restrictionsEdit",
+					"semanticDomainEdit",
+					"senseTypeEdit",
+					"statusEdit",
+					"textMarkupTagsEdit",
+					"translationTypeEdit",
+					"usageTypeEdit",
+					"variantEntryTypeEdit",
+					"recTypeEdit",
+					"timeOfDayEdit",
+					"reversalToolReversalIndexPOS"
+				};
+
+#if RANDYTODO
+				// TODO: Add user-defined tools in some kind of generic list area that can work with user-defined lists.
+				// TODO: That generic list tools will *not* be located by reflection in a plugin assembly like all other tools,
+				// TODO: but it/they will be created by this area, as/if needed for each user-defined tool.
+
+				// TODO: Q: should they be added to the tool repository?
+				// TODO: A1: Probably, since the tool repository really only needs to be create once per project, but...
+				// TODO:	In that case, then creation of the area and tool repository needs to be rethought. Work for another day....
+#endif
+				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+			}
+		}
 
 		/// <summary>
 		/// Get the image for the area.

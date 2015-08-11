@@ -55,19 +55,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>The ReversalIndexGuid, or empty GUID if there is a problem</returns>
 		public static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
 		{
-			var sGuid = propertyTable.GetValue(key, "");
+			var sGuid = propertyTable.GetValue<string>(key);
 			if (string.IsNullOrEmpty(sGuid))
 				return Guid.Empty;
 
 			Guid guid;
-			try
-			{
-				guid = new Guid(sGuid);
-			}
-			catch
-			{
+			if (!Guid.TryParse(sGuid, out guid))
 				return Guid.Empty;
-			}
 
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			if (!cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))

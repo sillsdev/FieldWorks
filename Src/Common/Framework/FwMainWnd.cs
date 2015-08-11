@@ -119,35 +119,47 @@ namespace SIL.FieldWorks.Common.Framework
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
-			_sidePane = new SidePane(mainContainer.Panel1)
+			_sidePane = new SidePane(_leftPanel, SidePaneItemAreaStyle.List)
 			{
 				Dock = DockStyle.Fill,
 				TabStop = true,
 				TabIndex = 0
 			};
 
-			mainContainer.FirstControl = _sidePane;
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
 			mainContainer.Panel1Collapsed = false;
 			mainContainer.Panel2Collapsed = false;
 			var sd = PropertyTable.GetValue("SidebarWidthGlobal", 140);
 			if (!mainContainer.Panel1Collapsed)
+			{
 				SetSplitContainerDistance(mainContainer, sd);
+			}
 			mainContainer.FirstLabel = PropertyTable.GetValue<string>("SidebarLabel");
 			mainContainer.SecondLabel = PropertyTable.GetValue<string>("AllButSidebarLabel");
 			// Add areas and tools to "_sidePane";
 			foreach (var area in _areaRepository.AllAreasInOrder())
 			{
-				var tab = new Tab(StringTable.Table.LocalizeAttributeValue(area.UiName))
+				var tab = new Tab(StringTable.Table.LocalizeLiteralValue(area.UiName))
 				{
 					Icon = area.Icon,
 					Tag = area,
 					Name = area.MachineName
 				};
-				// TODO: Add tools for area here.
 
 				_sidePane.AddTab(tab);
+
+				// Add tools for area.
+				foreach (var tool in area.AllToolsInOrder)
+				{
+					var item = new Item(StringTable.Table.LocalizeLiteralValue(tool.UiName))
+					{
+						Icon = tool.Icon,
+						Tag = tool,
+						Name = tool.MachineName
+					};
+					_sidePane.AddItem(tab, item);
+				}
 			}
 			_sidePane.TabClicked += Area_Clicked;
 			_sidePane.ItemClicked += Tool_Clicked;
@@ -172,10 +184,10 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			if (_currentArea != null)
 			{
-				_currentArea.Deactivate(PropertyTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+				_currentArea.Deactivate(PropertyTable, _publisher, _subscriber, mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentArea = clickedArea;
-			_currentArea.Activate(PropertyTable, _publisher, _subscriber, _menuStrip, toolStripContainer, _statusbar);
+			_currentArea.Activate(PropertyTable, _publisher, _subscriber, mainContainer, _menuStrip, toolStripContainer, _statusbar);
 #if RANDYTODO
 			// Activate persisted tool and if not found then the default for the area.
 #endif
@@ -1106,10 +1118,9 @@ very simple minor adjustments. ;)"
 		{
 			base.OnLoad(e);
 
-#if RANDYTODO
-			// TODO: Add select previous/default tool for area.
-#endif
-			_sidePane.SelectTab(_sidePane.GetTabByName(_currentArea.MachineName));
+			var tab = _sidePane.GetTabByName(_currentArea.MachineName);
+			_sidePane.SelectTab(tab);
+			_sidePane.SelectItem(tab, _currentArea.GetPersistedOrDefaultToolForArea(PropertyTable).MachineName);
 		}
 
 		#endregion

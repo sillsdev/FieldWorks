@@ -510,7 +510,7 @@ namespace SIL.CoreImpl.Impls
 		/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
 		/// <param name="settingsGroup">The group to store the property in.</param>
 		/// <param name="persistProperty">
-		/// "true" if the property is to be persited, otherwise "false".</param>
+		/// "true" if the property is to be persisted, otherwise "false".</param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.

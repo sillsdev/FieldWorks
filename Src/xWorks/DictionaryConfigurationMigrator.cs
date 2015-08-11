@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.XWorks
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
 					() =>
 					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
+						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalEditComplete");
 						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 					});
 			}

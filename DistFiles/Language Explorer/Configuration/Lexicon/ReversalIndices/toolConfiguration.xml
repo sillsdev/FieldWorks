@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<tools>
-		<tool label="Reversal Indexes" value="reversalToolEditComplete" icon="SideBySideView">
+		<tool label="Reversal Indexes" value="reversalEditComplete" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
 				<parameters area="lexicon" id="ReversalIndexItemsAndDetailMultiPane" firstLabel="Doc Reversals" secondLabel="Browse Entries"

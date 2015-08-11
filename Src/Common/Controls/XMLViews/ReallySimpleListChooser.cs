@@ -2604,7 +2604,7 @@ namespace SIL.FieldWorks.Common.Controls
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
 				chooser.InitializeRaw(mediator, propertyTable, sTitle, sDescription, sJumpLabel,
-					"naturalClassedit", "analysis vernacular");
+					"naturalClassEdit", "analysis vernacular");
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)

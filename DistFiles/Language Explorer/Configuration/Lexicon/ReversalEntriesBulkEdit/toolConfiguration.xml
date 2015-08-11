@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<tools>
-		<tool label="Bulk Edit Reversal Entries" value="reversalToolBulkEditReversalEntries" icon="BrowseView">
+		<tool label="Bulk Edit Reversal Entries" value="reversalBulkEditReversalEntries" icon="BrowseView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="ReversalEntriesEdit" PaneBarGroupId="PaneBar-ReversalIndicesMenu">

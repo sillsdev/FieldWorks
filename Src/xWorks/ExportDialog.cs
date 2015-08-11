@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.XWorks
 					case FxtTypes.kftConfigured:
 						break;
 					case FxtTypes.kftReversal:
-						tool = "reversalToolEditComplete";
+						tool = "reversalEditComplete";
 						break;
 					case FxtTypes.kftClassifiedDict:
 						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in

@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 				IReversalIndexEntry rie = cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs("reversalToolEditComplete", rie.MainEntry.Guid));
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid));
 			}
 
 			/// <summary>

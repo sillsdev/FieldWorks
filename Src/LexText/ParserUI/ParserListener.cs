@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				string toolName = m_propertyTable.GetValue("currentContentControl", string.Empty);
-				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "toolBulkEditWordforms");
+				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "bulkEditWordforms");
 			}
 		}
 

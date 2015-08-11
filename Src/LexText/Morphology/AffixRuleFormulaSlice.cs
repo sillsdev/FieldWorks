@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IMoModifyFromInput mapping = RuleFormulaControl.CurrentObject as IMoModifyFromInput;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassedit", mapping.ModificationRA.Guid));
+			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid));
 			return true;
 		}
 

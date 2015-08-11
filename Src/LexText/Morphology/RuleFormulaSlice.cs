@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IPhSimpleContextNC ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassedit",
+			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassEdit",
 				ctxt.FeatureStructureRA.Guid));
 			return true;
 		}

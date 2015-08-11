@@ -1466,13 +1466,13 @@ namespace SIL.FieldWorks.Common.Controls
 				case "bulkEditEntriesOrSenses":
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
 					break;
-				case "reversalToolBulkEditReversalEntries":
+				case "reversalBulkEditReversalEntries":
 					helpTopic = "khtpBulkEditBarReversalEntries";
 					break;
-				case "toolBulkEditWordforms":
+				case "bulkEditWordforms":
 					helpTopic = "khtpBulkEditBarWordforms";
 					break;
-				case "toolBulkEditPhonemes":
+				case "bulkEditPhonemes":
 					helpTopic = "khtpBulkEditBarPhonemes";
 					break;
 			}

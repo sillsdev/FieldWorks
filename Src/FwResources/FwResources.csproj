@@ -134,6 +134,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="Resources\FWDocument-Small.bmp" />
+    <None Include="Resources\FWDataEntry-Small.bmp" />
     <EmbeddedResource Include="FwStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FwStrings.Designer.cs</LastGenOutput>
@@ -211,6 +213,8 @@
     <None Include="Images\arrowleft.png" />
     <None Include="Images\arrowright.png" />
     <Content Include="Images\BlueCircleDownArrow.bmp" />
+    <None Include="Images\CommonToolImages\BrowseView.bmp" />
+    <Content Include="Images\CommonToolImages\SideBySideView.bmp" />
     <Content Include="Images\FWButtonMenuArrow.bmp" />
     <Content Include="Images\FWCharacterStyle-Small.bmp" />
     <Content Include="Images\FWComboMenuArrow.bmp" />
@@ -228,7 +232,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

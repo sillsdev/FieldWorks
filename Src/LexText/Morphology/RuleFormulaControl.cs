@@ -592,7 +592,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case RuleInsertType.NaturalClass:
 					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OrderBy(natc => natc.ShortName);
 					ICmObject ncObj = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
-						"naturalClassedit", "RuleNaturalClassFlatList", natClasses);
+						"naturalClassEdit", "RuleNaturalClassFlatList", natClasses);
 					var nc = ncObj as IPhNaturalClass;
 					if (nc == null)
 						return;

@@ -277,7 +277,7 @@
 			</menu>
 		</menu>
 		<menu id="PaneBar-ReversalEntryDetail" label="">
-			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalToolEditComplete" defaultVisible="true" settingsGroup="local"/>
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local"/>
 		</menu>
 		<menu id="PaneBar-ShowFailingItems-Classified" label="">
 			<item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local"/>

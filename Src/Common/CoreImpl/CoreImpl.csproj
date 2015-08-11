@@ -108,11 +108,13 @@
     <Compile Include="IAreaRepository.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ICollapsingSplitContainer.cs" />
     <Compile Include="IMajorFlexComponent.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IMajorFlexUiComponent.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="IToolRepository.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="IPostLayoutInit.cs" />
@@ -170,6 +172,7 @@
     </Compile>
     <Compile Include="SilSidePane\Tab.cs" />
     <Compile Include="StringSearcher.cs" />
+    <Compile Include="Impls\ToolRepository.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />

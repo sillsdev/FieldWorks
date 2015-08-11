@@ -121,7 +121,7 @@
 			<parameters tool="phonemeEdit" className="PhPhoneme"/>
 		</command>
 		<command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
-			<parameters tool="naturalClassedit" className="PhNCSegments"/>
+			<parameters tool="naturalClassEdit" className="PhNCSegments"/>
 		</command>
 		<command id="CmdEnvironmentsJumpToDefault" label="Show in Environments Editor" message="JumpToTool">
 			<parameters tool="EnvironmentEdit" className="PhEnvironment"/>
@@ -796,7 +796,6 @@ InterlinMaster user:
 		<property name="MainContentLabel" value="Main Content" persist="true"/>
 		<property name="AllButSidebarLabel" value="Record List &amp; MainContent" persist="true"/>
 
-		<property name="InitialArea" value="lexicon" settingsGroup="local"/>
 		<property name="DoLog" bool="true" persist="false"/>
 		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
 		So, add a default value here in order to prevent it from persisting -->

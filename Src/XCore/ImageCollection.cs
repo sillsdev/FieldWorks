@@ -131,8 +131,7 @@ namespace XCore
 				string assemblyName = XmlUtils.GetAttributeValue(node, "assemblyPath").Trim();
 				// Prepend the directory where the current DLL lives.  This should fix
 				// LT-1541 (and similar bugs) once and for all!
-				string codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
-				string baseDir = Path.GetDirectoryName(codeBasePath);
+				string baseDir = DirectoryUtils.DirectoryOfExecutingAssembly();
 				string assemblyPath = Path.Combine(baseDir, assemblyName);
 				string className = XmlUtils.GetAttributeValue(node, "class").Trim();
 				string field = XmlUtils.GetAttributeValue(node, "field").Trim();

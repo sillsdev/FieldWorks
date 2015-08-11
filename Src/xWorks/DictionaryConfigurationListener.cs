@@ -88,8 +88,8 @@ namespace SIL.FieldWorks.XWorks
 			var toolName = propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
 			switch(toolName)
 			{
-				case "reversalToolBulkEditReversalEntries":
-				case "reversalToolEditComplete":
+				case "reversalBulkEditReversalEntries":
+				case "reversalEditComplete":
 					return xWorksStrings.ReversalIndex;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
@@ -144,8 +144,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (propertyTable.GetValue<string>("ToolForAreaNamed_lexicon"))
 			{
-				case "reversalToolBulkEditReversalEntries":
-				case "reversalToolEditComplete":
+				case "reversalBulkEditReversalEntries":
+				case "reversalEditComplete":
 					return ReversalIndexConfigurationDirectoryName;
 				case "lexiconBrowse":
 				case "lexiconDictionary":

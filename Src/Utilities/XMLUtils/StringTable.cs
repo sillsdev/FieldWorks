@@ -44,7 +44,7 @@ namespace SIL.Utils
 				if (s_singletonStringTable == null)
 				{
 					// Half my kingdom to be able to get at FwDirectoryFinder.FlexFolder from here!
-					var parentOfLanguageExplorerFolder = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					var parentOfLanguageExplorerFolder = DirectoryUtils.DirectoryOfExecutingAssembly();
 					while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
 					{
 						// If a dev machine, move up to parent of 'output' folder.

@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 			var projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete", true);
+			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalEditComplete", true);
 			projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
 			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete", true);
+			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalEditComplete", true);
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 

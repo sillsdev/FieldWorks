@@ -20,14 +20,16 @@ namespace SIL.CoreImpl.Impls
 	internal sealed class AreaRepository : IAreaRepository
 	{
 		private const string DefaultAreaMachineName = "lexicon";
-		private readonly Dictionary<string, IArea> m_areas;
+		private readonly Dictionary<string, IArea> m_areas = new Dictionary<string, IArea>();
+		private readonly IToolRepository m_toolRepository = new ToolRepository();
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		internal AreaRepository()
 		{
-			m_areas = new Dictionary<string, IArea>();
 			// Use Reflection (for now) to get all implementations of IArea.
-			var coreImplAssembly = Assembly.GetExecutingAssembly();
-			var baseDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(coreImplAssembly.CodeBase));
+			var baseDir = DirectoryUtils.DirectoryOfExecutingAssembly();
 			// We use 'installedAreaPluginAssemblies' for the var name, since theory has it the user can
 			// select to not install some optional areas.
 			var installedAreaPluginAssemblies = new List<Assembly>();
@@ -35,15 +37,19 @@ namespace SIL.CoreImpl.Impls
 				.GetFiles(baseDir, "*AreaPlugin.dll", SearchOption.TopDirectoryOnly)
 				.Select(areaPluginDllPathname => Assembly.LoadFrom(Path.Combine(baseDir, areaPluginDllPathname))));
 
+			var parmTypes = new Type[1];
+			parmTypes[0] = typeof (IToolRepository);
+			var parms = new object[1];
+			parms[0] = m_toolRepository;
 			foreach (var pluginAssembly in installedAreaPluginAssemblies)
 			{
 				var areaTypes = (pluginAssembly.GetTypes().Where(typeof(IArea).IsAssignableFrom)).ToList();
 				foreach (var areaType in areaTypes)
 				{
-					var constInfo = areaType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+					var constInfo = areaType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parmTypes, null);
 					if (constInfo == null)
-						continue; // It does need at least one public or non-public default constructor.
-					var currentArea = (IArea) constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
+						continue; // It does need at least one public or non-public constructor that takes the IToolRepository parameter.
+					var currentArea = (IArea)constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, parms, null);
 					m_areas.Add(currentArea.MachineName, currentArea);
 				}
 			}
@@ -61,7 +67,7 @@ namespace SIL.CoreImpl.Impls
 			// The persisted area could be obsolete or simply not present,
 			// so we'll use "lexicon", if the stored one cannot be found.
 			// The "lexicon" area must be available, even if there are no other areas.
-			return GetArea(propertyTable.GetValue("InitialArea", DefaultAreaMachineName)) ?? GetArea(DefaultAreaMachineName);
+			return GetArea(propertyTable.GetValue("InitialArea", SettingsGroup.LocalSettings, DefaultAreaMachineName));
 		}
 
 		/// <summary>

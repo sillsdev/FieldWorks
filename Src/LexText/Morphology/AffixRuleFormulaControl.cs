@@ -828,7 +828,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					natClasses.Add(nc);
 			}
 			var selectedNc = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
-				"naturalClassedit", "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
+				"naturalClassEdit", "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
 			m_view.Select();
 			if (selectedNc != null)
 			{

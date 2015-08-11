@@ -32,7 +32,7 @@ namespace XCore
 	/// will have to do that.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CollapsingSplitContainer : SplitContainer, IFWDisposable, IPostLayoutInit
+	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
 	{
 		public const int kCollapsedSize = 16;
 		public const int kCollapseZone = 35;
@@ -203,7 +203,6 @@ namespace XCore
 		/// <remarks>
 		/// This will return null if the data member is null.
 		/// </remarks>
-		[System.ComponentModel.Browsable(false)]
 		public Control FirstControl
 		{
 			get
@@ -241,7 +240,6 @@ namespace XCore
 		/// <remarks>
 		/// This will return null if the data member is null.
 		/// </remarks>
-		[System.ComponentModel.Browsable(false)]
 		public Control SecondControl
 		{
 			get

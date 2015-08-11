@@ -144,7 +144,7 @@ namespace SIL.PublishingSolution
 			Debug.Assert(sf != null);
 			FdoCache cache = exportDialog.PropTable.GetValue<FdoCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
-			bool fContentsExists = ContentsExists("lexicon", "reversalToolEditComplete", "ReversalIndexXHTML");
+			bool fContentsExists = ContentsExists("lexicon", "reversalEditComplete", "ReversalIndexXHTML");
 			ReflectionHelper.SetProperty(sf, "ExportReversal", fContentsExists);
 			ReflectionHelper.SetProperty(sf, "ReversalExists", fContentsExists);
 			ReflectionHelper.SetProperty(sf, "GrammarExists", false);
@@ -278,7 +278,7 @@ namespace SIL.PublishingSolution
 				}
 				if (revFullXhtml != "")
 				{
-					ExportTool("lexicon", "reversalToolEditComplete", "ReversalIndexXHTML", revFullXhtml);
+					ExportTool("lexicon", "reversalEditComplete", "ReversalIndexXHTML", revFullXhtml);
 					currInput = "Reversal";
 					ValidXmlFile(revFullXhtml);
 

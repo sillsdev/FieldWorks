@@ -94,6 +94,8 @@ namespace SIL.FieldWorks.Common.Framework
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new XCore.CollapsingSplitContainer();
+			this._leftPanel = new System.Windows.Forms.Panel();
+			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
@@ -105,6 +107,8 @@ namespace SIL.FieldWorks.Common.Framework
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+			this.mainContainer.Panel1.SuspendLayout();
+			this.mainContainer.Panel2.SuspendLayout();
 			this.mainContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
@@ -739,17 +743,43 @@ namespace SIL.FieldWorks.Common.Framework
 			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
 			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
 			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mainContainer.FirstControl = this._leftPanel;
 			this.mainContainer.FirstLabel = "";
 			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.mainContainer.IsInitializing = false;
 			this.mainContainer.Location = new System.Drawing.Point(0, 0);
 			this.mainContainer.Name = "mainContainer";
+			// 
+			// mainContainer.Panel1
+			// 
+			this.mainContainer.Panel1.Controls.Add(this._leftPanel);
 			this.mainContainer.Panel1MinSize = 16;
+			// 
+			// mainContainer.Panel2
+			// 
+			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
 			this.mainContainer.Panel2MinSize = 16;
+			this.mainContainer.SecondControl = this._rightPanel;
 			this.mainContainer.SecondLabel = "";
 			this.mainContainer.Size = new System.Drawing.Size(697, 381);
 			this.mainContainer.TabIndex = 0;
 			this.mainContainer.TabStop = false;
+			// 
+			// _leftPanel
+			// 
+			this._leftPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._leftPanel.Location = new System.Drawing.Point(0, 0);
+			this._leftPanel.Name = "_leftPanel";
+			this._leftPanel.Size = new System.Drawing.Size(50, 381);
+			this._leftPanel.TabIndex = 1;
+			// 
+			// _rightPanel
+			// 
+			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rightPanel.Location = new System.Drawing.Point(0, 0);
+			this._rightPanel.Name = "_rightPanel";
+			this._rightPanel.Size = new System.Drawing.Size(643, 381);
+			this._rightPanel.TabIndex = 1;
 			// 
 			// _statusbar
 			// 
@@ -810,6 +840,8 @@ namespace SIL.FieldWorks.Common.Framework
 			this.toolStripContainer.TopToolStripPanel.PerformLayout();
 			this.toolStripContainer.ResumeLayout(false);
 			this.toolStripContainer.PerformLayout();
+			this.mainContainer.Panel1.ResumeLayout(false);
+			this.mainContainer.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
 			this.mainContainer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
@@ -900,5 +932,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private ToolStripMenuItem selectAllToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator2;
 		private XCore.CollapsingSplitContainer mainContainer;
+		private Panel _leftPanel;
+		private Panel _rightPanel;
 	}
 }

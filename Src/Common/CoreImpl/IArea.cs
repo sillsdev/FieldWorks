@@ -13,9 +13,21 @@ namespace SIL.CoreImpl
 	public interface IArea : IMajorFlexUiComponent
 	{
 		/// <summary>
+		/// Get the most recently persisted tool, or the default tool if
+		/// the persisted one is no longer available.
+		/// </summary>
+		/// <returns>The last persisted tool or the default tool for the area.</returns>
+		ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable);
+
+		/// <summary>
+		/// Get the machine name of the area's default tool.
+		/// </summary>
+		string DefaultToolMachineName { get; }
+
+		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		List<ITool> AllToolsInOrder { get; }
+		IList<ITool> AllToolsInOrder { get; }
 
 		/// <summary>
 		/// Get the image for the area.

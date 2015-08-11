@@ -1,4 +1,6 @@
-﻿
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 namespace SIL.CoreImpl
 {
 	/// <summary>
@@ -7,7 +9,7 @@ namespace SIL.CoreImpl
 	public enum SettingsGroup
 	{
 #if RANDYTODO
-		// TODO: Are there other setting type to add, such as to support minimal UI for select users?
+		// TODO: Are there other setting types to add, such as to support minimal UI for select users?
 #endif
 #if RANDYTODO
 		// TODO: Remove "Undecided", as client better know what they are doing with properties.
@@ -29,9 +31,6 @@ namespace SIL.CoreImpl
 		/// </summary>
 		LocalSettings,
 
-#if RANDYTODO
-		// TODO: Remove "BestSettings", as client better know what they are doing with properties.
-#endif
 		/// <summary>
 		/// BestSettings -- we'll try to look up the specified property name in the property table,
 		///	first in LocalSettings and then GlobalSettings. Using BestSettings to establish a new value

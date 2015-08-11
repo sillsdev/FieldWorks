@@ -43,8 +43,8 @@
 	<menu id="PaneBar-ShowHiddenFields-phonemeEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonemeEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
-	<menu id="PaneBar-ShowHiddenFields-naturalClassedit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassedit" defaultVisible="true" settingsGroup="local"/>
+	<menu id="PaneBar-ShowHiddenFields-naturalClassEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local"/>
@@ -52,8 +52,8 @@
 	<menu id="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
-	<menu id="PaneBar-ShowHiddenFields-AdhocCoprohibEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibEdit" defaultVisible="true" settingsGroup="local"/>
+	<menu id="PaneBar-ShowHiddenFields-AdhocCoprohibitionRuleEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
 	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>

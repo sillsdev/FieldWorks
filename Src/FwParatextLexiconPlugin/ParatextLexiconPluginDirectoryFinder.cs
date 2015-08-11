@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase))); }
+			get { return GetDirectory(RootCodeDir, DirectoryUtils.DirectoryOfExecutingAssembly()); }
 		}
 
 		private static string GetDirectory(string registryValue, string defaultDir)

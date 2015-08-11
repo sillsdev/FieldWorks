@@ -17,7 +17,7 @@ namespace SIL.CoreImpl
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
+		void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
 		/// Activate the component.
@@ -25,7 +25,7 @@ namespace SIL.CoreImpl
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
+		void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
 		/// Do whatever might be needed to get ready for a refresh.

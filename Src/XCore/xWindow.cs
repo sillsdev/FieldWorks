@@ -862,8 +862,7 @@ namespace XCore
 			Assembly adaptorAssembly = null;
 			// load an adapter library from the same directory as the .dll we're running
 			// We strip file:/ because that's not accepted by LoadFrom()
-			var codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
-			string baseDir = Path.GetDirectoryName(codeBasePath);
+			string baseDir = DirectoryUtils.DirectoryOfExecutingAssembly();
 
 			string preferredLibrary = m_propertyTable.GetValue(
 				"PreferredUILibrary", "xCoreOpenSourceAdapter.dll");

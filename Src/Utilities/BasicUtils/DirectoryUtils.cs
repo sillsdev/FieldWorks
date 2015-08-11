@@ -8,12 +8,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace SIL.Utils
 {
 	/// <summary></summary>
 	public static class DirectoryUtils
 	{
+		/// <summary>
+		/// Get the directory path of the currently executing assembly.
+		/// </summary>
+		/// <returns></returns>
+		public static string DirectoryOfExecutingAssembly()
+		{
+			return Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+		}
+
 		internal static IOrderedEnumerable<string> OrderByAscendingCaseInsensitive(this IEnumerable<string> source)
 		{
 			return source.OrderBy(path => path.ToLowerInvariant());

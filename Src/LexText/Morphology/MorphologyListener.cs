@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// fields for the ActiveWordform() result, it's too likely that the user
 			// will get a puzzling "Target not found" message popping up.  See LT-8717.
 			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
-				"toolBulkEditWordforms", Guid.Empty);
+				"bulkEditWordforms", Guid.Empty);
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));

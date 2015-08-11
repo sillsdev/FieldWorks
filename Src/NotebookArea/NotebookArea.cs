@@ -8,8 +8,19 @@ using SIL.CoreImpl;
 
 namespace NotebookAreaPlugin
 {
-	public class NotebookArea : IArea
+	internal sealed class NotebookArea : IArea
 	{
+		private readonly IToolRepository m_toolRepository;
+
+		/// <summary>
+		/// Contructor used by Reflection to feed the tool repository to the area.
+		/// </summary>
+		/// <param name="toolRepository"></param>
+		internal NotebookArea(IToolRepository toolRepository)
+		{
+			m_toolRepository = toolRepository;
+		}
+
 		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
@@ -18,8 +29,10 @@ namespace NotebookAreaPlugin
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
-			ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber,
+			ICollapsingSplitContainer mainCollapsingSplitContainer,
+			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
 
@@ -29,8 +42,10 @@ namespace NotebookAreaPlugin
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, MenuStrip menuStrip,
-			ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber,
+			ICollapsingSplitContainer mainCollapsingSplitContainer,
+			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
 		}
 
@@ -89,9 +104,39 @@ namespace NotebookAreaPlugin
 		#region Implementation of IArea
 
 		/// <summary>
+		/// Get the most recently persisted tool, or the default tool if
+		/// the persisted one is no longer available.
+		/// </summary>
+		/// <returns>The last persisted tool or the default tool for the area.</returns>
+		public ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable)
+		{
+			return m_toolRepository.GetPersistedOrDefaultToolForArea(propertyTable, this);
+		}
+
+		/// <summary>
+		/// Get the machine name of the area's default tool.
+		/// </summary>
+		public string DefaultToolMachineName
+		{
+			get { return "notebookEdit"; }
+		}
+
+		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public List<ITool> AllToolsInOrder { get; private set; }
+		public IList<ITool> AllToolsInOrder
+		{
+			get
+			{
+				var myToolsInOrder = new List<string>
+				{
+					"notebookEdit",
+					"notebookBrowse",
+					"notebookDocument"
+				};
+				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+			}
+		}
 
 		/// <summary>
 		/// Get the image for the area.

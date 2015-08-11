@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<tools>
-		<tool label="Bulk Edit Wordforms" value="toolBulkEditWordforms" icon="BrowseView">
+		<tool label="Bulk Edit Wordforms" value="bulkEditWordforms" icon="BrowseView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="WordformsEdit">
