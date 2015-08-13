@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Drawing.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -55,7 +56,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_cbSenseParaStyle.Enabled = false;
 			m_btnMoreStyles.Enabled = false;
 			m_btnMoreStyles.Click += m_btnMoreStyles_Click;
-			m_chkSenseParagraphStyle.CheckedChanged +=new EventHandler(m_chkSenseParagraphStyle_CheckedChanged);
+			m_chkSenseParagraphStyle.CheckedChanged += m_chkSenseParagraphStyle_CheckedChanged;
+			m_tbBeforeNumber.TextChanged += m_tb_TextChanged;
+			m_tbAfterNumber.TextChanged += m_tb_TextChanged;
 		}
 
 		/// <summary>
@@ -319,6 +322,21 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
+		/// <summary>
+		/// Certain characters are not allowed in XML, even escaped, including 0x0 through 0x1F. Prevent these characters from being entered.
+		/// (actually, tabs and linebreaks are in that range and legal, but they cause other problems, so we remove them, too)
+		/// </summary>
+		static void m_tb_TextChanged(object sender, EventArgs e)
+		{
+			const string illegalChars = "[\u0000-\u001F]";
+			var tb = (TextBox)sender;
+			if (Regex.IsMatch(tb.Text, illegalChars))
+			{
+				tb.Text = Regex.Replace(tb.Text, illegalChars, string.Empty);
+				MessageBox.Show(FwCoreDlgControls.ksIllegalXmlChars, FwCoreDlgControls.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
 		// ReSharper restore InconsistentNaming
 		#endregion
 	}
@@ -412,7 +430,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				return 1;
 			if (Style == null)
 				return -1;
-			return Style.Name.CompareTo(that.Style.Name);
+			return string.Compare(Style.Name, that.Style.Name, StringComparison.InvariantCulture);
 		}
 
 		#endregion

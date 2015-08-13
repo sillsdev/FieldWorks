@@ -491,4 +491,10 @@
     <value>The text will get its font properties from the paragraph to which it belongs</value>
     <comment>Usage information for Default Paragraph Characters</comment>
   </data>
+  <data name="ksWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="ksIllegalXmlChars" xml:space="preserve">
+    <value>Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed.</value>
+  </data>
 </root>

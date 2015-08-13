@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,6 +22,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -320,6 +321,9 @@ namespace SIL.FieldWorks.XWorks
 			m_tbBefore.GotFocus += m_tbBefore_GotFocus;
 			m_tbBetween.GotFocus += m_tbBetween_GotFocus;
 			m_tbAfter.GotFocus += m_tbAfter_GotFocus;
+			m_tbBefore.TextChanged += m_tb_TextChanged;
+			m_tbBetween.TextChanged += m_tb_TextChanged;
+			m_tbAfter.TextChanged += m_tb_TextChanged;
 
 			m_unspecComplexFormType = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType();
 			m_unspecVariantType = XmlViewsUtils.GetGuidForUnspecifiedVariantType();
@@ -1272,6 +1276,21 @@ namespace SIL.FieldWorks.XWorks
 		void m_tbAfter_GotFocus(object sender, EventArgs e)
 		{
 			m_tbAfter.Select(m_tbAfter.Text.Length, 0);
+		}
+
+		/// <summary>
+		/// Certain characters are not allowed in XML, even escaped, including 0x0 through 0x1F. Prevent these characters from being entered.
+		/// (actually, tabs and linebreaks are in that range and legal, but they cause other problems, so we remove them, too)
+		/// </summary>
+		static void m_tb_TextChanged(object sender, EventArgs e)
+		{
+			const string illegalChars = "[\u0000-\u001F]";
+			var tb = (TextBox)sender;
+			if (Regex.IsMatch(tb.Text, illegalChars))
+			{
+				tb.Text = Regex.Replace(tb.Text, illegalChars, string.Empty);
+				MessageBox.Show(xWorksStrings.ksIllegalXmlChars, xWorksStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private void m_cbDictType_SelectedIndexChanged(object sender, EventArgs e)
