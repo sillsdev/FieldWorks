@@ -1471,6 +1471,10 @@ getNumSuffix(text)
 <xsl:param name="text"/>
    <xsl:variable name="len" select="string-length($text)"/>
    <xsl:choose>
+   <!-- Don't strip digits from .mp3 audio names -->
+   <xsl:when test="'.mp3'=substring($text,$len - 3,4)">
+	  <xsl:value-of select="$text"/>
+   </xsl:when>
    <xsl:when test="'0' = translate(substring($text,$len,1),'0123456789','0000000000')">
 	  <!-- the last character is a number: ignore it -->
 	  <xsl:call-template name="getPreText">
