@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -34,6 +35,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[SetUp]
 		public void SetUp()
 		{
+			Icu.InitIcuDataDir();
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
 			using (m_activationContext.Activate())
 			{

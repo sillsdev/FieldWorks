@@ -7,14 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class ParatextLexiconPluginRegistryHelper
 	{
-		private const string ProductName = "FieldWorks";
 		private const string FdoVersion = "8";
 
 		static ParatextLexiconPluginRegistryHelper()
@@ -38,8 +36,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				if (Directory.Exists(fwRegLoc))
 					DirectoryUtils.CopyDirectory(fwRegLoc, ptRegLoc, true, true);
 			}
-			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
-			RegistryHelper.ProductName = ProductName;
 		}
 
 		public static bool IsFieldWorksInstalled

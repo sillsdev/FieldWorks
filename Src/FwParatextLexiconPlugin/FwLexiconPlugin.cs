@@ -46,6 +46,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
+			// initialize ICU
+			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
+			RegistryHelper.ProductName = "FieldWorks";
+			Icu.InitIcuDataDir();
+
 			// setup necessary environment variables on Linux
 			if (MiscUtils.IsUnix)
 			{
@@ -115,7 +120,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public bool ChooseLexicalProject(out string projectId)
 		{
 			using (m_activationContext.Activate())
-			using (var dialog = new ChooseFdoProjectForm(m_ui))
+			using (var dialog = new ChooseFdoProjectForm(m_ui, m_fdoCacheCache))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{
