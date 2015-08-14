@@ -610,9 +610,9 @@ namespace SIL.FieldWorks.IText
 			if (Decorator.get_IsPropInCache(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid,
 				(int)CellarPropertyType.ReferenceAtomic, 0))
 			{
-				int hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
-				if (hvoResult != 0)
-					return hvoResult;  // may have been cleared by setting to zero.
+				var hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
+					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
 			}
 			return analysis.Hvo;
 		}

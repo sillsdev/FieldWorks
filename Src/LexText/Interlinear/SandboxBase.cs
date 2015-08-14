@@ -1627,6 +1627,10 @@ namespace SIL.FieldWorks.IText
 					InterlinDoc.RecordGuessIfNotKnown(m_occurrenceSelected);
 				}
 				hvoDefault = sda.get_ObjectProp(HvoAnnotation, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				// In certain cases like during an undo the Decorator data might be stale, so validate the result before we continue
+				// to prevent using data that does not exist anymore
+				if(!Cache.ServiceLocator.IsValidObjectId(hvoDefault))
+					hvoDefault = 0;
 			}
 			else
 			{
