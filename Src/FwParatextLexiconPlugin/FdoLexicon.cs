@@ -631,8 +631,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
 				LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
-				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize();
-				var key = new LexemeKey(type, form);
+				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+				var key = new LexemeKey(type, form.Normalize());
 
 				SortedSet<ILexEntry> entries;
 				if (!m_entryIndex.TryGetValue(key, out entries))
@@ -703,7 +703,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			CreateEntryIndexIfNeeded();
 			LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
 			HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
-			return new FdoLexEntryLexeme(this, new LexemeKey(type, entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize(), hn.Number));
+			string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			return new FdoLexEntryLexeme(this, new LexemeKey(type, form.Normalize(), hn.Number));
 		}
 
 		internal void OnLexemeAdded(Lexeme lexeme)

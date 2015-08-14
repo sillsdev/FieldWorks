@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
+						m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
 						m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
 					});
 			}
@@ -560,6 +561,21 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			lexeme = m_lexicon.Lexemes.Single();
 			Assert.That(lexeme.LexicalForm, Is.EqualTo("form"));
 			Assert.That(lexeme.Type, Is.EqualTo(LexemeType.Stem));
+		}
+
+		/// <summary>
+		/// Test when an entry has a lexeme form with an empty default vernacular.
+		/// </summary>
+		[Test]
+		public void EmptyDefaultVernLexemeForm()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+			});
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
+			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
 		}
 
 		#endregion
