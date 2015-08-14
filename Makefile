@@ -234,8 +234,6 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Create temporary symlinks for shared Icu libs on Dictionary branch
 	ln -sf $(DESTDIR)/usr/lib/fieldworks/libicuuc.so.54.1 $(DESTDIR)/usr/lib/fieldworks/libicuuc.so.50
 	ln -sf $(DESTDIR)/usr/lib/fieldworks/libicui18n.so.54.1 $(DESTDIR)/usr/lib/fieldworks/libicui18n.so.50
-	# Install read-only configuration files
-	install -m 644 $(OUT_DIR)/remoting_tcp_server.config $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install DistFiles/*.exe $(DESTDIR)/usr/lib/fieldworks
