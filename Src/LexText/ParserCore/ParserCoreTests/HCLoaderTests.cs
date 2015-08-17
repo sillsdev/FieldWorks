@@ -249,6 +249,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return inflClass;
 		}
 
+		private IMoInflClass AddInflectiononSubclass(IMoInflClass parent, string name)
+		{
+			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			parent.SubclassesOC.Add(inflClass);
+			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
+			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
+			return inflClass;
+		}
+
 		private ICmPossibility AddExceptionFeature(string name)
 		{
 			var excFeat = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
@@ -372,7 +381,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			allo.PhoneEnvRC.Add(AddEnvironment("/ #[C] _ [C]"));
 			allo.MsEnvFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, allo.MsEnvFeaturesOA, new FS {{"tense", "pres"}});
-			allo.InflectionClassesRC.Add(AddInflectionClass(m_verb, "inflClass"));
+			IMoInflClass inflClass = AddInflectionClass(m_verb, "inflClass");
+			AddInflectiononSubclass(inflClass, "inflSubclass");
+			allo.InflectionClassesRC.Add(inflClass);
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
@@ -383,14 +394,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 		}
 

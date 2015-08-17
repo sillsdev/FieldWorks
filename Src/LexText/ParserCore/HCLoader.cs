@@ -85,8 +85,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (IPartOfSpeech pos in m_cache.LanguageProject.AllPartsOfSpeech)
 			{
 				posSymbols.Add(new FeatureSymbol(pos.Guid.ToString()) {Description = pos.Name.BestAnalysisAlternative.Text});
-				foreach (IMoInflClass inflClass in pos.AllInflectionClasses)
-					LoadMprFeature(inflClass, inflClassesGroup);
+				foreach (IMoInflClass inflClass in pos.InflectionClassesOC)
+					LoadInflClassMprFeature(inflClass, inflClassesGroup);
 			}
 
 			var prodRestrictsGroup = new MprFeatureGroup { Name = "exceptionFeatures", MatchType = MprFeatureGroupMatchType.All };
@@ -244,6 +244,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			m_loadErrorsWriter.WriteEndElement();
+		}
+
+		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
+		{
+			LoadMprFeature(inflClass, inflClassesGroup);
+			foreach (IMoInflClass subclass in inflClass.SubclassesOC)
+				LoadInflClassMprFeature(subclass, inflClassesGroup);
 		}
 
 		private bool HasValidRuleForm(ILexEntry entry)
