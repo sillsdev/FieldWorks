@@ -613,6 +613,11 @@ STDMETHODIMP VwGraphics::DrawGlyphs(int x, int y, int cgi, const GlyphInfo * prg
 			deltas[(i * 2) + 1] = i == cgi - 1 ? 0 : prggi[i + 1].y - prggi[i].y;
 		}
 
+		if (cgi > 0)
+		{
+			x += prggi[0].x;
+			y -= prggi[0].y;
+		}
 		// MSDN says that ExtTextOut cannot render more than 8192 characters, so we just cut it off if it is too long
 		// ENHANCE: call this multiple times if the string is too long
 		BOOL res = ::ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX | ETO_PDY, NULL, glyphs, min(cgi, 8192), deltas);

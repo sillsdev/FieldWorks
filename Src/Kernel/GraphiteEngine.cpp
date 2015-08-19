@@ -427,10 +427,15 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	int dpiY;
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
 
+	int dirDepth = chrp.nDirDepth;
+	if (fParaRtoL && dirDepth == 0)
+		dirDepth = 2;
+	bool isRtl = (dirDepth % 2) == 1;
+
 	gr_font* font = gr_make_font(float(MulDiv(chrp.dympHeight, dpiY, kdzmpInch)), m_face);
 	gr_segment* segment = NULL;
 	if (font != NULL)
-		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, segmentLen + (extraSlot ? 1 : 0), fParaRtoL ? gr_rtl : 0);
+		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, segmentLen + (extraSlot ? 1 : 0), isRtl ? gr_rtl : 0);
 	if (segment == NULL && font != NULL)
 	{
 		gr_font_destroy(font);
@@ -468,15 +473,23 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 	}
 
+	float segmentWidth = 0;
+	if (isRtl)
+	{
+		const gr_slot* firstSlot = gr_seg_first_slot(segment);
+		if (firstSlot != NULL)
+			segmentWidth = gr_slot_origin_X(firstSlot) + gr_slot_advance_X(firstSlot, m_face, font);
+	}
 	int width = 0;
 	for (const gr_slot* s = gr_seg_first_slot(segment); s != end; s = gr_slot_next_in_segment(s))
 	{
+		float x = gr_slot_origin_X(s);
+		width = Max(width, Round(isRtl ? segmentWidth - x : x + gr_slot_advance_X(s, m_face, font)));
 		if (width > dxMaxWidth)
 		{
 			breakSlot = s;
 			break;
 		}
-		width += Round(gr_slot_advance_X(s, m_face, font));
 	}
 
 	if (breakSlot != NULL)
@@ -544,30 +557,31 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 	}
 
+	// if we had to break somewhere before the end, then recalculate width
 	if (breakSlot != NULL)
 	{
-		// we had to break somewhere before the end so recalculate width and segment length
 		width = 0;
 		for (const gr_slot* s = gr_seg_first_slot(segment); s != breakSlot; s = gr_slot_next_in_segment(s))
-			width += Round(gr_slot_advance_X(s, m_face, font));
-		segmentLen = gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(breakSlot)));
+		{
+			float x = gr_slot_origin_X(s);
+			width = Max(width, Round(isRtl ? segmentWidth - x : x + gr_slot_advance_X(s, m_face, font)));
+		}
 	}
 
 	*pdxWidth = width;
-	*pdichLimSeg = segmentLen;
 	*pest = est;
 
 	if (segmentLen > 0 && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
 	{
 		// Views expects a NULL segment when a non-zero length segment was requested and nothing fit
+		*pdichLimSeg = 0;
 		*ppsegRet = NULL;
 	}
 	else
 	{
-		int dirDepth = chrp.nDirDepth;
-		if (fParaRtoL && dirDepth == 0)
-			dirDepth = 2;
-
+		// if we had to break somewhere before the end, then recalculate segment length
+		if (breakSlot != NULL)
+			segmentLen = gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(breakSlot)));
 		bool wsOnly = segmentLen > 0;
 		if (twsh != ktwshOnlyWs)
 		{
@@ -584,6 +598,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 			}
 		}
 
+		*pdichLimSeg = segmentLen;
 		*ppsegRet = NewObj GraphiteSegment(pts, this, ichMinSeg, ichMinSeg + segmentLen, dirDepth, fParaRtoL, wsOnly);
 	}
 
