@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string sRedo = String.Format(DetailControlsStrings.ksRedoCreate0, sClass);
 				int hvoNewObj = 0;
 				int hvoStringObj = 0;
-				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents
 					// of an StTxtPara, make the intermediate objects
