@@ -114,9 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private int m_cReplace;
 		private bool m_fEmptySearch;
 		private Stack<bool> m_ReadOnlyStack = new Stack<bool>();
-		private bool m_fReadOnly = false;
-		/// <summary>ORCs to move after the replaced text</summary>
-		private ITsString m_ORCsToMove;
+		private bool m_fReadOnly;
 		#endregion
 
 		#region Constructor
@@ -290,19 +288,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region Public properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the ORC that need to be moved to the end of the text that was replaced.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ITsString ORCsToMove
-		{
-			get { return m_ORCsToMove; }
-			set { m_ORCsToMove = value; }
-		}
-		#endregion
-
 		#region Overrides
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -370,14 +355,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			base.CloseTheObject();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// <param name="tpt"></param>
-		/// <param name="tpv"></param>
-		/// <param name="nValue"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public override void set_IntProperty(int tpt, int tpv, int nValue)
 		{
 			if (tpt == (int)FwTextPropType.ktptEditable)

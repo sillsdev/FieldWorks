@@ -1718,7 +1718,7 @@ namespace SIL.CoreImpl
 			// "insert. " or ". insert"), but we definitely don't want to return any negative numbers,
 			// and we choose to make the longer match at the start.
 			// On the other hand, if the two strings are "xxxabc xxxdef" and "xxxdef", we could have deleted
-			// "xxxabc " or "abc xxx", and we'd prefer the first interpretation.
+			// "xxxabc " or "abc xxx", and we'd prefer the first interpretation, so we choose the longer match at the end.
 			ITsString longerString = null;
 			// only used and valid if cvIns or cvDel < 0
 			int offsetIchMin = 0;

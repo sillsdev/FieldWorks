@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,13 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
-using NUnit.Framework;
-using SIL.Utils;
 using System.IO;
-using System.Text;	// for ILgWritingSystemFactory
+using System.Text; // for ILgWritingSystemFactory
+using System.Xml;
 using NMock;
+using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
 
 namespace SIL.CoreImpl
 {
@@ -26,6 +26,7 @@ namespace SIL.CoreImpl
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - m_DebugProces gets disposed in FixtureTeardown")]
+	[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Our test methods have their own naming convention")]
 	public class TsStringUtilsTests
 	// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
@@ -72,17 +73,17 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetOwnedGuidFromRun_WithOwnNameGuidHotORC()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtOwnNameGuidHot, 1);
 			FwObjDataTypes odt;
 
-			Guid returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
+			var returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
 
 			Assert.AreEqual(testGuid, returnGuid);
 			Assert.AreEqual(FwObjDataTypes.kodtOwnNameGuidHot, odt);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 
@@ -95,17 +96,17 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetOwnedGuidFromRun_WithGuidMoveableObjDispORC()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtGuidMoveableObjDisp, 1);
 			FwObjDataTypes odt;
 
-			Guid returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
+			var returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
 
 			Assert.AreEqual(testGuid, returnGuid);
 			Assert.AreEqual(FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 
@@ -118,16 +119,16 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetOwnedGuidFromRun_ORCForUnownedObject()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtPictOddHot, 1);
 			FwObjDataTypes odt;
 
-			Guid returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
+			var returnGuid = TsStringUtils.GetOwnedGuidFromRun(tss, 0, out odt);
 
 			Assert.AreEqual(Guid.Empty, returnGuid);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 
@@ -140,16 +141,16 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetGuidFromRun_ORCMatchesSpecifiedType()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
-			Guid returnGuid = TsStringUtils.GetGuidFromRun(tss, 0,
+			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0,
 				FwObjDataTypes.kodtOwnNameGuidHot);
 
 			Assert.AreEqual(testGuid, returnGuid);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 		#endregion
@@ -164,25 +165,25 @@ namespace SIL.CoreImpl
 		public void GetOwnedORCs_TssHasORCs()
 		{
 			// Create two owned ORCs
-			Guid testGuid1 = Guid.NewGuid();
-			Guid testGuid2 = Guid.NewGuid();
-			ITsString tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
-			ITsString tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var testGuid1 = Guid.NewGuid();
+			var testGuid2 = Guid.NewGuid();
+			var tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();
-			ITsTextProps plainProps = StyleUtils.CharStyleTextProps(null, 1);
+			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.ReplaceRgch(0, 0, "String start", 12, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
 			tssBldr.ReplaceRgch(tssBldr.Length, tssBldr.Length, " middle", 7, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC2);
 			tssBldr.ReplaceRgch(tssBldr.Length, tssBldr.Length, " End", 4, plainProps);
-			ITsString tss = tssBldr.GetString();
+			var tss = tssBldr.GetString();
 			Assert.AreEqual("String start" + StringUtils.kChObject + " middle" + StringUtils.kChObject + " End", tss.Text);
 			Assert.AreEqual(5, tss.RunCount);
 
 			// Test GetOwnedORCs
-			ITsString orcTss = TsStringUtils.GetOwnedORCs(tss);
+			var orcTss = TsStringUtils.GetOwnedORCs(tss);
 
 			// Confirm that the ORCs were returned correctly.
 			Assert.AreEqual(2, orcTss.Length);
@@ -190,7 +191,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(testGuid1, TsStringUtils.GetGuidFromRun(orcTss, 0));
 			Assert.AreEqual(testGuid2, TsStringUtils.GetGuidFromRun(orcTss, 1));
 			int var;
-			int ws = orcTss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = orcTss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 
 			ws = orcTss.get_Properties(1).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
@@ -206,26 +207,25 @@ namespace SIL.CoreImpl
 		public void GetCleanTsString_TssHasORCs()
 		{
 			// Create two owned ORCs
-			Guid testGuid1 = Guid.NewGuid();
-			Guid testGuid2 = Guid.NewGuid();
-			ITsString tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
-			ITsString tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var testGuid1 = Guid.NewGuid();
+			var testGuid2 = Guid.NewGuid();
+			var tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
-			ITsString tss;
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();
-			ITsTextProps plainProps = StyleUtils.CharStyleTextProps(null, 1);
+			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.ReplaceRgch(0, 0, "String start", 12, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
 			tssBldr.ReplaceRgch(tssBldr.Length, tssBldr.Length, " middle", 7, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC2);
 			tssBldr.ReplaceRgch(tssBldr.Length, tssBldr.Length, " End", 4, plainProps);
-			tss = tssBldr.GetString();
+			var tss = tssBldr.GetString();
 			Assert.AreEqual("String start" + StringUtils.kChObject + " middle" + StringUtils.kChObject + " End", tss.Text);
 			Assert.AreEqual(5, tss.RunCount);
 
 			// Test RemoveOwnedORCs
-			ITsString noORCText = TsStringUtils.GetCleanTsString(tss, null);
+			var noORCText = TsStringUtils.GetCleanTsString(tss, null);
 
 			// Confirm that the ORCs were removed.
 			Assert.IsFalse(noORCText.Text.Contains(new string(StringUtils.kChObject, 1)));
@@ -243,25 +243,24 @@ namespace SIL.CoreImpl
 		public void GetCleanTsString_NumbersWithinSpaces()
 		{
 			// Create two owned ORCs
-			Guid testGuid1 = Guid.NewGuid();
-			Guid testGuid2 = Guid.NewGuid();
-			ITsString tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
-			ITsString tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var testGuid1 = Guid.NewGuid();
+			var testGuid2 = Guid.NewGuid();
+			var tssORC1 = TsStringUtils.CreateOrcFromGuid(testGuid1, FwObjDataTypes.kodtOwnNameGuidHot, 1);
+			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
-			ITsString tss;
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();
-			ITsTextProps plainProps = StyleUtils.CharStyleTextProps(null, 1);
+			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.Replace(0, 0, " 55String start", plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
 			tssBldr.Replace(tssBldr.Length, tssBldr.Length, " middle", plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC2);
 			tssBldr.Replace(tssBldr.Length, tssBldr.Length, "End!22 ", plainProps);
-			tss = tssBldr.GetString();
+			var tss = tssBldr.GetString();
 			Assert.AreEqual(" 55String start" + StringUtils.kChObject + " middle" + StringUtils.kChObject + "End!22 ", tss.Text);
 			Assert.AreEqual(5, tss.RunCount);
 
-			ITsString tssORCsRemoved = TsStringUtils.GetCleanTsString(tss, null);
+			var tssORCsRemoved = TsStringUtils.GetCleanTsString(tss, null);
 
 			// We expect that the text would include the numbers, but not the leading and trailing spaces
 			// nor the ORCs.
@@ -276,7 +275,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_SingleSpace()
 		{
-			ITsString tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(" ", 42), null);
+			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(" ", 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 		}
 
@@ -288,7 +287,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_Empty()
 		{
-			ITsString tssClean = TsStringUtils.GetCleanTsString(
+			var tssClean = TsStringUtils.GetCleanTsString(
 				TsStringUtils.MakeTss(String.Empty, 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 			Assert.AreEqual(42, tssClean.get_WritingSystemAt(0));
@@ -302,7 +301,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_SingleUnknownORC_Remove()
 		{
-			ITsString tssClean = TsStringUtils.GetCleanTsString(
+			var tssClean = TsStringUtils.GetCleanTsString(
 				TsStringUtils.MakeTss(StringUtils.kChObject.ToString(), 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 			Assert.AreEqual(42, tssClean.get_WritingSystemAt(0));
@@ -316,8 +315,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_SingleUnknownORC_Preserve()
 		{
-			ITsString tss = TsStringUtils.MakeTss(StringUtils.kChObject.ToString(), 42);
-			ITsString tssClean = TsStringUtils.GetCleanTsString(tss, null, false, true, false);
+			var tss = TsStringUtils.MakeTss(StringUtils.kChObject.ToString(), 42);
+			var tssClean = TsStringUtils.GetCleanTsString(tss, null, false, true, false);
 			Assert.AreEqual(1, tssClean.Length);
 			Assert.AreEqual(StringUtils.kChObject, tssClean.get_RunText(0)[0]);
 			Assert.AreEqual(42, tssClean.get_WritingSystemAt(0));
@@ -343,11 +342,11 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetGuidFromRun_ORCDoesNotMatchSpecifiedType()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
-			Guid returnGuid = TsStringUtils.GetGuidFromRun(tss, 0,
+			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0,
 				FwObjDataTypes.kodtGuidMoveableObjDisp);
 
 			Assert.AreEqual(Guid.Empty, returnGuid);
@@ -361,14 +360,14 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetGuidFromRun_WithOwningORC()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
-			Guid returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
+			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
 			Assert.AreEqual(testGuid, returnGuid);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 
@@ -380,14 +379,14 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetGuidFromRun_WithRefORC()
 		{
-			Guid testGuid = Guid.NewGuid();
-			ITsString tss = TsStringUtils.CreateOrcFromGuid(testGuid,
+			var testGuid = Guid.NewGuid();
+			var tss = TsStringUtils.CreateOrcFromGuid(testGuid,
 				FwObjDataTypes.kodtNameGuidHot, 1);
 
-			Guid returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
+			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
 			Assert.AreEqual(testGuid, returnGuid);
 			int var;
-			int ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Assert.AreEqual(1, ws);
 		}
 
@@ -401,9 +400,9 @@ namespace SIL.CoreImpl
 		public void GetGuidFromRun_NoORC()
 		{
 			ITsStrFactory strFactory = TsStrFactoryClass.Create();
-			ITsString tss = strFactory.MakeString("This string has no ORCS", 1);
+			var tss = strFactory.MakeString("This string has no ORCS", 1);
 
-			Guid returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
+			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
 			Assert.AreEqual(Guid.Empty, returnGuid);
 		}
 
@@ -415,13 +414,13 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_OwnedOrc_Run0()
 		{
-			Guid expectedGuid = Guid.NewGuid();
+			var expectedGuid = Guid.NewGuid();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
 			FwObjDataTypes odt;
-			Guid guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
+			var guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
 			Assert.AreEqual(1, bldr.RunCount);
 			Assert.AreEqual(StringUtils.kChObject.ToString(), bldr.Text);
 			Assert.AreEqual(1, bldr.get_Properties(0).StrPropCount);
@@ -439,7 +438,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_OwnedOrc_DifferentRun()
 		{
-			Guid expectedGuid = Guid.NewGuid();
+			var expectedGuid = Guid.NewGuid();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "monkey", StyleUtils.CharStyleTextProps(null, 5));
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 6, 6, 5);
@@ -451,7 +450,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(1, bldr.get_Properties(0).IntPropCount);
 
 			FwObjDataTypes odt;
-			Guid guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(1), null, out odt);
+			var guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(1), null, out odt);
 			Assert.AreEqual(1, bldr.get_Properties(1).StrPropCount);
 			Assert.AreEqual(1, bldr.get_Properties(1).IntPropCount);
 			Assert.AreEqual(expectedGuid, guid);
@@ -467,13 +466,13 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_UnownedOrc()
 		{
-			Guid expectedGuid = Guid.NewGuid();
+			var expectedGuid = Guid.NewGuid();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
 			FwObjDataTypes odt;
-			Guid guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
+			var guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
 			Assert.AreEqual(1, bldr.RunCount);
 			Assert.AreEqual(StringUtils.kChObject.ToString(), bldr.Text);
 			Assert.AreEqual(1, bldr.get_Properties(0).StrPropCount);
@@ -492,13 +491,13 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_PictureOrc()
 		{
-			Guid expectedGuid = Guid.NewGuid();
+			var expectedGuid = Guid.NewGuid();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtGuidMoveableObjDisp, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
 			FwObjDataTypes odt;
-			Guid guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
+			var guid = TsStringUtils.GetGuidFromProps(bldr.get_Properties(0), null, out odt);
 			Assert.AreEqual(1, bldr.RunCount);
 			Assert.AreEqual(StringUtils.kChObject.ToString(), bldr.Text);
 			Assert.AreEqual(1, bldr.get_Properties(0).StrPropCount);
@@ -515,7 +514,6 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_NoOrc()
 		{
-			Guid expectedGuid = Guid.NewGuid();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "test", StyleUtils.CharStyleTextProps(null, 5));
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
@@ -542,14 +540,14 @@ namespace SIL.CoreImpl
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 9250);
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, 17);
 			tssBldr.Replace(tssBldr.Length, tssBldr.Length, "This string has a font size property.", tppBldr.GetTextProps());
-			ITsString tss = tssBldr.GetString();
+			var tss = tssBldr.GetString();
 			// Confirm that the ITsString has the font size property set.
 			int value, nvar;
 			tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
 			Assert.AreEqual(17, value);
 			Assert.IsTrue(FindIntPropInTss(tss, (int)FwTextPropType.ktptFontSize));
 
-			ITsString newTss = TsStringUtils.RemoveIntProp(tss, (int)FwTextPropType.ktptFontSize);
+			var newTss = TsStringUtils.RemoveIntProp(tss, (int)FwTextPropType.ktptFontSize);
 
 			// Confirm that the ITsString has had the font size property removed.
 			Assert.IsFalse(FindIntPropInTss(newTss, (int)FwTextPropType.ktptFontSize));
@@ -573,14 +571,14 @@ namespace SIL.CoreImpl
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 9250);
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, 17);
 			tssBldr.Replace(0, 0, string.Empty, tppBldr.GetTextProps());
-			ITsString tss = tssBldr.GetString();
+			var tss = tssBldr.GetString();
 			// Confirm that the ITsString has the font size property set.
 			int value, nvar;
 			tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
 			Assert.AreEqual(17, value);
 			Assert.IsTrue(FindIntPropInTss(tss, (int)FwTextPropType.ktptFontSize));
 
-			ITsString newTss = TsStringUtils.RemoveIntProp(tss, (int)FwTextPropType.ktptFontSize);
+			var newTss = TsStringUtils.RemoveIntProp(tss, (int)FwTextPropType.ktptFontSize);
 
 			// Confirm that the ITsString has had the font size property removed.
 			Assert.IsFalse(FindIntPropInTss(newTss, (int)FwTextPropType.ktptFontSize));
@@ -601,12 +599,12 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private bool FindIntPropInTss(ITsString tss, int intProp)
 		{
-			for (int iRun = 0; iRun < tss.RunCount; iRun++)
+			for (var iRun = 0; iRun < tss.RunCount; iRun++)
 			{
 				// Check the integer properties of each run.
-				ITsTextProps tpp = tss.get_PropertiesAt(iRun);
+				var tpp = tss.get_PropertiesAt(iRun);
 
-				for (int iProp = 0; iProp < tpp.IntPropCount; iProp++)
+				for (var iProp = 0; iProp < tpp.IntPropCount; iProp++)
 				{
 					int var;
 					int propType;
@@ -650,12 +648,12 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TrimNonWordFormingCharsTest_WithNewLine()
 		{
-			ILgWritingSystem ws = m_wsf.get_Engine("en");
+			var ws = m_wsf.get_Engine("en");
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "This is my text", StyleUtils.CharStyleTextProps(null, ws.Handle));
 			bldr.Replace(0, 0, Environment.NewLine, StyleUtils.CharStyleTextProps(null, -1));
 
-			ITsString result = TsStringUtils.TrimNonWordFormingChars(bldr.GetString(), m_wsf);
+			var result = TsStringUtils.TrimNonWordFormingChars(bldr.GetString(), m_wsf);
 			Assert.AreEqual("This is my text", result.Text);
 		}
 
@@ -701,9 +699,9 @@ namespace SIL.CoreImpl
 		bool FindWordFormInString(string wordForm, string source,
 			ILgWritingSystemFactory wsf, out int ichMin, out int ichLim)
 		{
-			int ws = wsf.get_Engine("en").Handle;
-			ITsString tssWordForm = TsStringUtils.MakeTss(wordForm, ws);
-			ITsString tssSource = TsStringUtils.MakeTss(source, ws);
+			var ws = wsf.get_Engine("en").Handle;
+			var tssWordForm = TsStringUtils.MakeTss(wordForm, ws);
+			var tssSource = TsStringUtils.MakeTss(source, ws);
 			return TsStringUtils.FindWordFormInString(tssWordForm, tssSource, wsf, out ichMin, out ichLim);
 		}
 		#endregion
@@ -943,8 +941,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_IchOutOfRange()
 		{
-			ITsString tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(4000, cpe));
 			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(-1, cpe));
 		}
@@ -957,7 +955,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_NullCharacterPropertyEngine()
 		{
-			ITsString tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
 			Assert.Throws(typeof(ArgumentNullException), () => tss.FindWordBoundary(0, null));
 		}
 
@@ -969,8 +967,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AlreadyAtStartOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("A munky", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("A munky", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(2, tss.FindWordBoundary(2, cpe));
 		}
 
@@ -982,8 +980,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtStartOfString()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Another munky", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("Another munky", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe));
 		}
 
@@ -995,8 +993,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtEndOfString()
 		{
-			ITsString tss = TsStringUtils.MakeTss("One guy", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("One guy", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(7, tss.FindWordBoundary(7, cpe));
 		}
 
@@ -1008,8 +1006,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_MiddleOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Happiness is good.", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("Happiness is good.", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(4, cpe));
 			Assert.AreEqual(13, tss.FindWordBoundary(tss.Length - 3, cpe));
 		}
@@ -1023,8 +1021,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Gold is good.", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("Gold is good.", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(5, tss.FindWordBoundary(4, cpe));
 		}
 
@@ -1036,8 +1034,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundPunctuation()
 		{
-			ITsString tss = TsStringUtils.MakeTss("God 'is good.'", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("God 'is good.'", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 2, cpe));
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 1, cpe));
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length, cpe));
@@ -1052,8 +1050,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfSentence()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Good. Yeah!", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("Good. Yeah!", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(6, tss.FindWordBoundary(4, cpe));
 		}
 
@@ -1065,8 +1063,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundNumbers()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Gideon had 300 men.", m_wsf.UserWs);
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = TsStringUtils.MakeTss("Gideon had 300 men.", m_wsf.UserWs);
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(11, tss.FindWordBoundary(11, cpe));
 			Assert.AreEqual(11, tss.FindWordBoundary(12, cpe));
 			Assert.AreEqual(15, tss.FindWordBoundary(14, cpe));
@@ -1083,10 +1081,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "12", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num"), "Failed to find position following chapter number when ich == 0");
-			for (int ich = 1; ich < 4; ich++)
+			for (var ich = 1; ich < 4; ich++)
 				Assert.AreEqual(2, tss.FindWordBoundary(ich, cpe, "Chap Num"), "Failed to find position following chapter number when ich == " + ich);
 		}
 
@@ -1101,11 +1099,11 @@ namespace SIL.CoreImpl
 		{
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "Preceding text. ", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			int ichEndOfPrecedingText = bldr.Length;
+			var ichEndOfPrecedingText = bldr.Length;
 			bldr.Replace(bldr.Length, bldr.Length, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Following text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(ichEndOfPrecedingText - 6, tss.FindWordBoundary(ichEndOfPrecedingText - 3, cpe, "Chap Num"));
 			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 2, cpe, "Chap Num"));
 			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 1, cpe, "Chap Num"));
@@ -1123,10 +1121,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "a2b", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num"), "Failed to find position following invalid chapter number when ich == 0");
-			for (int ich = 1; ich < 5; ich++)
+			for (var ich = 1; ich < 5; ich++)
 				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Chap Num"), "Failed to find position following invalid chapter number when ich == " + ich);
 		}
 
@@ -1142,8 +1140,8 @@ namespace SIL.CoreImpl
 			bldr.Replace(0, 0, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(1, 1, "5", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num", "Vers Num"));
 			Assert.AreEqual(1, tss.FindWordBoundary(1, cpe, "Chap Num", "Vers Num"));
 			Assert.AreEqual(2, tss.FindWordBoundary(2, cpe, "Chap Num", "Vers Num"));
@@ -1161,10 +1159,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "51", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following verse number when ich == 0");
-			for (int ich = 1; ich < 4; ich++)
+			for (var ich = 1; ich < 4; ich++)
 				Assert.AreEqual(2, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following verse number when ich == " + ich);
 		}
 
@@ -1179,10 +1177,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "a1b", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following invalid verse number when ich == 0");
-			for (int ich = 1; ich < 5; ich++)
+			for (var ich = 1; ich < 5; ich++)
 				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following invalid verse number when ich == " + ich);
 		}
 
@@ -1197,10 +1195,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "5-8", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			ITsString tss = bldr.GetString();
-			ILgCharacterPropertyEngine cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
+			var tss = bldr.GetString();
+			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following verse bridge when ich == 0");
-			for (int ich = 1; ich < 5; ich++)
+			for (var ich = 1; ich < 5; ich++)
 				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following verse bridge when ich == " + ich);
 		}
 		#endregion
@@ -1298,7 +1296,7 @@ namespace SIL.CoreImpl
 				{
 					writer.WriteStartElement("span");
 
-					StringBuilder strBldr = new StringBuilder("c:\\autoexec.bat");
+					var strBldr = new StringBuilder("c:\\autoexec.bat");
 					strBldr.Insert(0, Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName));
 
 					Assert.IsTrue(TsStringUtils.WriteHref((int)FwTextPropType.ktptObjData,
@@ -1324,7 +1322,7 @@ namespace SIL.CoreImpl
 				{
 					writer.WriteStartElement("span");
 
-					StringBuilder strBldr = new StringBuilder("http://www.myspace.com");
+					var strBldr = new StringBuilder("http://www.myspace.com");
 					strBldr.Insert(0, Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName));
 
 					Assert.IsTrue(TsStringUtils.WriteHref((int)FwTextPropType.ktptObjData,
@@ -1347,7 +1345,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleLineSeparator()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccZl, typeof(int));
 			Assert.AreEqual("\u2028", TsStringUtils.ValidateCharacterSequence("\u2028",
 				(ILgCharacterPropertyEngine)cpe.MockInstance));
@@ -1361,7 +1359,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleSpace()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccZs, typeof(int));
 			Assert.AreEqual(" ", TsStringUtils.ValidateCharacterSequence(" ",
 				(ILgCharacterPropertyEngine)cpe.MockInstance));
@@ -1375,7 +1373,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleFormatCharacter()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCf, typeof(int));
 			Assert.AreEqual("\u200c", TsStringUtils.ValidateCharacterSequence("\u200c",
 				(ILgCharacterPropertyEngine)cpe.MockInstance));
@@ -1389,7 +1387,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleLetter()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
 			cpe.SetupResult("get_IsLetter", true, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1408,7 +1406,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleNumber()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", true, typeof(int));
@@ -1427,7 +1425,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SinglePUA()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCo, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1446,7 +1444,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleUndefinedChar()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCn, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1465,7 +1463,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SinglePunctuation()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccPs, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1484,7 +1482,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleSymbol()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccSc, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1503,7 +1501,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_BaseCharacterPlusDiacritic()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'n');
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0301);
 			cpe.SetupResultForParams("get_IsLetter", true, (int)'n');
@@ -1525,7 +1523,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_BaseCharacterPlusMultipleDiacritics()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
@@ -1554,7 +1552,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleDiacritic()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccMn, typeof(int));
 			cpe.SetupResult("get_IsLetter", false, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1573,7 +1571,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleLetters()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'n');
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'o');
 			cpe.SetupResultForParams("get_IsLetter", true, (int)'n');
@@ -1594,7 +1592,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_DiacriticBeforeLetter()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x0301);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'o');
 			cpe.SetupResultForParams("get_IsLetter", false, 0x0301);
@@ -1617,7 +1615,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsThatComposeIntoASingleBaseChar()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
@@ -1644,7 +1642,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void IsValidChar_SingleBaseCharThatDecomposesIntoMultipleBaseChars()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
@@ -1672,7 +1670,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void IsValidChar_MultipleBaseCharsThatComposeIntoASingleBaseChar()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
@@ -1700,7 +1698,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsJoinedByZWJ()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
@@ -1734,7 +1732,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsJoinedByZWNJ()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
@@ -1766,7 +1764,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_AllowZwnj()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200C);
 			cpe.SetupResultForParams("get_IsLetter", false, 0x200C);
 			cpe.SetupResultForParams("get_IsNumber", false, 0x200C);
@@ -1785,7 +1783,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_AllowZwnjAndZwj()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200D);
 			cpe.SetupResultForParams("get_IsLetter", false, 0x200D);
 			cpe.SetupResultForParams("get_IsNumber", false, 0x200D);
@@ -1807,7 +1805,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ParseCharString_Simple()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
 			cpe.SetupResult("get_IsLetter", true, typeof(int));
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1815,7 +1813,7 @@ namespace SIL.CoreImpl
 			cpe.SetupResult("get_IsSymbol", false, typeof(int));
 			cpe.SetupResult("get_IsMark", false, typeof(int));
 			List<string> invalidChars;
-			List<string> validChars = TsStringUtils.ParseCharString("a b c", " ",
+			var validChars = TsStringUtils.ParseCharString("a b c", " ",
 				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
 			Assert.AreEqual(3, validChars.Count);
 			Assert.AreEqual("a", validChars[0]);
@@ -1833,7 +1831,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ParseCharString_LeadingSpace()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'a');
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'b');
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccZs, (int)' ');
@@ -1845,7 +1843,7 @@ namespace SIL.CoreImpl
 			cpe.SetupResult("get_IsSymbol", false, typeof(int));
 			cpe.SetupResult("get_IsMark", false, typeof(int));
 			List<string> invalidChars;
-			List<string> validChars = TsStringUtils.ParseCharString("  a b", " ",
+			var validChars = TsStringUtils.ParseCharString("  a b", " ",
 				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
 			Assert.AreEqual(3, validChars.Count);
 			Assert.AreEqual(" ", validChars[0]);
@@ -1865,7 +1863,7 @@ namespace SIL.CoreImpl
 		//	ExpectedMessage = "The character \u0301 (U+0301) is not valid\r\nParameter name: chars")]
 		public void ParseCharString_BogusCharacter()
 		{
-			DynamicMock cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
+			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
 			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0301);
 			cpe.SetupResultForParams("get_IsLetter", false, 0x0301);
 			cpe.SetupResult("get_IsNumber", false, typeof(int));
@@ -1873,7 +1871,7 @@ namespace SIL.CoreImpl
 			cpe.SetupResult("get_IsSymbol", false, typeof(int));
 			cpe.SetupResultForParams("get_IsMark", true, 0x0301);
 			List<string> invalidChars;
-			List<string> validChars = TsStringUtils.ParseCharString("\u0301", " ",
+			var validChars = TsStringUtils.ParseCharString("\u0301", " ",
 				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
 			Assert.AreEqual(0, validChars.Count);
 			Assert.AreEqual(1, invalidChars.Count);
@@ -1891,11 +1889,11 @@ namespace SIL.CoreImpl
 		public void Words_OneRun()
 		{
 			ITsStrFactory fact = TsStrFactoryClass.Create();
-			ITsString tss = fact.MakeString("   This is  some text.  ", 1);
-			string[] expectedWords = new[] { "This", "is", "some", "text." };
+			var tss = fact.MakeString("   This is  some text.  ", 1);
+			var expectedWords = new[] { "This", "is", "some", "text." };
 
-			int i = 0;
-			foreach (TsRunPart word in tss.Words())
+			var i = 0;
+			foreach (var word in tss.Words())
 				Assert.AreEqual(expectedWords[i++], word.Text);
 		}
 
@@ -1910,10 +1908,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Append("   This  is", StyleUtils.CharStyleTextProps("Monkey", 1));
 			bldr.Append("some text.  ", StyleUtils.CharStyleTextProps("Soup", 1));
-			string[] expectedWords = new[] { "This", "is", "some", "text." };
+			var expectedWords = new[] { "This", "is", "some", "text." };
 
-			int i = 0;
-			foreach (TsRunPart word in bldr.GetString().Words())
+			var i = 0;
+			foreach (var word in bldr.GetString().Words())
 				Assert.AreEqual(expectedWords[i++], word.Text);
 		}
 
@@ -1926,7 +1924,7 @@ namespace SIL.CoreImpl
 		public void LastWord_OneRun()
 		{
 			ITsStrFactory fact = TsStrFactoryClass.Create();
-			ITsString tss = fact.MakeString("  This is  some text. ", 1);
+			var tss = fact.MakeString("  This is  some text. ", 1);
 			Assert.AreEqual("text.", tss.LastWord().Text);
 			tss = fact.MakeString("  text. ", 1);
 			Assert.AreEqual("text.", tss.LastWord().Text);
@@ -1965,18 +1963,27 @@ namespace SIL.CoreImpl
 		#endregion
 
 		#region Helper methods
-		void VerifyStringDiffs(ITsString tss1, ITsString tss2, bool fEqual, int ichMinEx, int cchInsEx, int cchDelEx, string id)
+		private static void VerifyStringDiffs(ITsString tss1, ITsString tss2, int ichMinExpected, int cchInsExpected, int cchDelExpected, string id)
 		{
-			int ichMin, cchIns, cchDel;
-			TsStringDiffInfo diffInfo = TsStringUtils.GetDiffsInTsStrings(tss1, tss2);
-			if (fEqual)
-				Assert.IsNull(diffInfo);
+			VerifyStringDiffs(tss1, tss2, new TsStringDiffInfo(ichMinExpected, cchInsExpected, cchDelExpected), id);
+		}
+
+		private static void VerifyNoStringDiffs(ITsString tss1, ITsString tss2, string id)
+		{
+			VerifyStringDiffs(tss1, tss2, null, id);
+		}
+
+		private static void VerifyStringDiffs(ITsString tss1, ITsString tss2, TsStringDiffInfo diffInfoExpected, string id)
+		{
+			var diffInfo = TsStringUtils.GetDiffsInTsStrings(tss1, tss2);
+			if (diffInfoExpected == null)
+				Assert.Null(diffInfo, id);
 			else
 			{
-				Assert.IsNotNull(diffInfo, id + " result");
-				Assert.AreEqual(ichMinEx, diffInfo.IchFirstDiff, id + " ichMin");
-				Assert.AreEqual(cchInsEx, diffInfo.CchInsert, id + " cchIns");
-				Assert.AreEqual(cchDelEx, diffInfo.CchDeleteFromOld, id + " cchDel");
+				Assert.NotNull(diffInfo, id);
+				Assert.AreEqual(diffInfoExpected.IchFirstDiff, diffInfo.IchFirstDiff, id + " ichMin");
+				Assert.AreEqual(diffInfoExpected.CchInsert, diffInfo.CchInsert, id + " cchIns");
+				Assert.AreEqual(diffInfoExpected.CchDeleteFromOld, diffInfo.CchDeleteFromOld, id + " cchDel");
 			}
 		}
 
@@ -2010,8 +2017,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ObjDataCorrect()
 		{
-			Guid guid = Guid.NewGuid();
-			byte[] objData = TsStringUtils.GetObjData(guid, (byte)'X');
+			var guid = Guid.NewGuid();
+			var objData = TsStringUtils.GetObjData(guid, (byte)'X');
 
 			Assert.AreEqual(18, objData.Length);
 			Assert.AreEqual((byte)'X', objData[0]);
@@ -2025,8 +2032,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetAbbreviationsNameOnly()
 		{
-			string decomposed = "E\u0324\u0301PI\u0302TRE";
-			string composed = TsStringUtils.Compose(decomposed);
+			var decomposed = "E\u0324\u0301PI\u0302TRE";
+			var composed = TsStringUtils.Compose(decomposed);
 			Assert.IsFalse(decomposed == composed);
 			Assert.AreEqual("\u00c9\u0324P\u00CETRE", composed);
 
@@ -2049,7 +2056,7 @@ namespace SIL.CoreImpl
 		{
 			const string threeRunString = "<Str><Run ws=\"en\" namedStyle=\"Chapter Number\">1</Run><Run ws=\"en\" namedStyle=\"Verse Number\">1</Run><Run ws=\"en\">Laa yra la m\u00E9n ne nak xpenkwlal Jesucrist nee ne z\u00EB\u00EBd xn\u00EBz rey David ne z\u00EB\u00EBd xn\u00EBz Abraham.</Run></Str>";
 			// This works sans the chars with diacritics. var threeRunString = "<Str><Run ws=\"en\" namedStyle=\"Chapter Number\">1</Run><Run ws=\"en\" namedStyle=\"Verse Number\">1</Run><Run ws=\"en\">Laa yra la men ne nak xpenkwlal Jesucrist nee ne zeed xnez rey David ne zeed xnez Abraham.</Run></Str>";
-			ITsString tss = TsStringSerializer.DeserializeTsStringFromXml(threeRunString, m_wsf);
+			var tss = TsStringSerializer.DeserializeTsStringFromXml(threeRunString, m_wsf);
 			Assert.AreEqual("11Laa yra la me\u0301n ne nak xpenkwlal Jesucrist nee ne ze\u0308e\u0308d xne\u0308z rey David ne ze\u0308e\u0308d xne\u0308z Abraham.",
 				tss.Text);
 		}
@@ -2063,166 +2070,166 @@ namespace SIL.CoreImpl
 		public void FindStringDiffs()
 		{
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			ITsString tssEmpty1 = tsf.MakeString("", 1);
-			VerifyStringDiffs(tssEmpty1, tssEmpty1, true, -1, 0, 0, "empty string equals itself");
-			ITsString tssAbc1 = tsf.MakeString("abc", 1);
-			VerifyStringDiffs(tssAbc1, tssAbc1, true, -1, 0, 0, "one-run string equals itself");
-			VerifyStringDiffs(tssEmpty1, tssAbc1, false, 0, 3, 0, "added 3 chars to empty string");
-			ITsString tssEmpty2 = tsf.MakeString("", 2);
-			VerifyStringDiffs(tssEmpty1, tssEmpty2, false, 0, 0, 0, "two empty strings in different wss are not equal");
-			ITsString tssAbc2 = tsf.MakeString("abc", 2);
-			VerifyStringDiffs(tssAbc1, tssAbc2, false, 0, 3, 3, "two non-empty strings in different wss are not equal");
-			ITsString tssAbc1b = tsf.MakeString("abc", 1);
-			VerifyStringDiffs(tssAbc1, tssAbc1b, true, -1, 0, 0, "one-run string equals an identical string");
+			var tssEmpty1 = tsf.MakeString("", 1);
+			VerifyNoStringDiffs(tssEmpty1, tssEmpty1, "empty string equals itself");
+			var tssAbc1 = tsf.MakeString("abc", 1);
+			VerifyNoStringDiffs(tssAbc1, tssAbc1, "one-run string equals itself");
+			VerifyStringDiffs(tssEmpty1, tssAbc1, 0, 3, 0, "added 3 chars to empty string");
+			var tssEmpty2 = tsf.MakeString("", 2);
+			VerifyStringDiffs(tssEmpty1, tssEmpty2, 0, 0, 0, "two empty strings in different wss are not equal");
+			var tssAbc2 = tsf.MakeString("abc", 2);
+			VerifyStringDiffs(tssAbc1, tssAbc2, 0, 3, 3, "two non-empty strings in different wss are not equal");
+			var tssAbc1b = tsf.MakeString("abc", 1);
+			VerifyNoStringDiffs(tssAbc1, tssAbc1b, "one-run string equals an identical string");
 
-			ITsTextProps props1 = TsStringUtils.PropsForWs(1);
-			ITsTextProps props2 = TsStringUtils.PropsForWs(2);
-			ITsTextProps props3 = TsStringUtils.PropsForWs(3);
+			var props1 = TsStringUtils.PropsForWs(1);
+			var props2 = TsStringUtils.PropsForWs(2);
+			var props3 = TsStringUtils.PropsForWs(3);
 
-			ITsStrBldr bldr = tssAbc1.GetBldr();
+			var bldr = tssAbc1.GetBldr();
 			bldr.Replace(3, 3, "def", props2);
-			ITsString tssAbc1Def2 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2, tssAbc1Def2, true, -1, 0, 0, "two-run string equals itself");
-			VerifyStringDiffs(tssAbc1Def2, tssAbc1Def2.GetBldr().GetString(), true, -1, 0, 0, "two-run string equals identical string");
-			VerifyStringDiffs(tssAbc1Def2, tssAbc1, false, 3, 0, 3, "two-run string shortened to one-run");
-			VerifyStringDiffs(tssAbc1, tssAbc1Def2, false, 3, 3, 0, "one-run string added second run");
+			var tssAbc1Def2 = bldr.GetString();
+			VerifyNoStringDiffs(tssAbc1Def2, tssAbc1Def2, "two-run string equals itself");
+			VerifyNoStringDiffs(tssAbc1Def2, tssAbc1Def2.GetBldr().GetString(), "two-run string equals identical string");
+			VerifyStringDiffs(tssAbc1Def2, tssAbc1, 3, 0, 3, "two-run string shortened to one-run");
+			VerifyStringDiffs(tssAbc1, tssAbc1Def2, 3, 3, 0, "one-run string added second run");
 
-			ITsString tssAbd1 = tsf.MakeString("abd", 1);
-			VerifyStringDiffs(tssAbc1, tssAbd1, false, 2, 1, 1, "one-run string different last character");
-			ITsString tssAb1 = tsf.MakeString("ab", 1);
-			VerifyStringDiffs(tssAbc1, tssAb1, false, 2, 0, 1, "one-run string remove last character");
-			VerifyStringDiffs(tssAb1, tssAbc1, false, 2, 1, 0, "one-run string add last character");
+			var tssAbd1 = tsf.MakeString("abd", 1);
+			VerifyStringDiffs(tssAbc1, tssAbd1, 2, 1, 1, "one-run string different last character");
+			var tssAb1 = tsf.MakeString("ab", 1);
+			VerifyStringDiffs(tssAbc1, tssAb1, 2, 0, 1, "one-run string remove last character");
+			VerifyStringDiffs(tssAb1, tssAbc1, 2, 1, 0, "one-run string add last character");
 
 			bldr = tssAbc1Def2.GetBldr();
 			bldr.Replace(6, 6, "ghi", props1);
-			ITsString tssAbc1Def2Ghi1 = bldr.GetString();
+			var tssAbc1Def2Ghi1 = bldr.GetString();
 
 			bldr = tssAbc1Def2Ghi1.GetBldr();
 			bldr.SetProperties(3, 6, props3);
-			ITsString tssAbc1Def3Ghi1 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi1, tssAbc1Def3Ghi1, false, 3, 3, 3, "three-run string differs by middle props");
+			var tssAbc1Def3Ghi1 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi1, tssAbc1Def3Ghi1, 3, 3, 3, "three-run string differs by middle props");
 
-			VerifyStringDiffs(tssAbc1Def2, tssAbc1Def2Ghi1, false, 6, 3, 0, "two-run string added run at end");
-			VerifyStringDiffs(tssAbc1Def2Ghi1, tssAbc1Def2, false, 6, 0, 3, "three-run string deleted run at end");
+			VerifyStringDiffs(tssAbc1Def2, tssAbc1Def2Ghi1, 6, 3, 0, "two-run string added run at end");
+			VerifyStringDiffs(tssAbc1Def2Ghi1, tssAbc1Def2, 6, 0, 3, "three-run string deleted run at end");
 
 			bldr = tssAbc1Def2Ghi1.GetBldr();
 			bldr.SetProperties(6, 9, props3);
-			ITsString tssAbc1Def2Ghi3 = bldr.GetString();
+			var tssAbc1Def2Ghi3 = bldr.GetString();
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(3, 6, null, null);
-			ITsString tssAbc1Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Ghi3, tssAbc1Def2Ghi3, false, 3, 3, 0, "two-run string added run middle");
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Ghi3, false, 3, 0, 3, "three-run string deleted run middle");
+			var tssAbc1Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Ghi3, tssAbc1Def2Ghi3, 3, 3, 0, "two-run string added run middle");
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Ghi3, 3, 0, 3, "three-run string deleted run middle");
 
-			VerifyStringDiffs(tssAbc1, tssAbc1Def2Ghi3, false, 3, 6, 0, "one-run string added two runs end");
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1, false, 3, 0, 6, "three-run string deleted last two runs");
+			VerifyStringDiffs(tssAbc1, tssAbc1Def2Ghi3, 3, 6, 0, "one-run string added two runs end");
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1, 3, 0, 6, "three-run string deleted last two runs");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(0, 3, null, null);
-			ITsString tssDef2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssDef2Ghi3, tssAbc1Def2Ghi3, false, 0, 3, 0, "two-run string added run start");
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssDef2Ghi3, false, 0, 0, 3, "three-run string deleted run start");
+			var tssDef2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssDef2Ghi3, tssAbc1Def2Ghi3, 0, 3, 0, "two-run string added run start");
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssDef2Ghi3, 0, 0, 3, "three-run string deleted run start");
 
-			ITsString tssAxc1 = tsf.MakeString("axc", 1);
-			VerifyStringDiffs(tssAbc1, tssAxc1, false, 1, 1, 1, "one-run string different mid character");
-			ITsString tssAc1 = tsf.MakeString("ac", 1);
-			VerifyStringDiffs(tssAbc1, tssAc1, false, 1, 0, 1, "one-run string remove mid character");
-			VerifyStringDiffs(tssAc1, tssAbc1, false, 1, 1, 0, "one-run string add mid character");
+			var tssAxc1 = tsf.MakeString("axc", 1);
+			VerifyStringDiffs(tssAbc1, tssAxc1, 1, 1, 1, "one-run string different mid character");
+			var tssAc1 = tsf.MakeString("ac", 1);
+			VerifyStringDiffs(tssAbc1, tssAc1, 1, 0, 1, "one-run string remove mid character");
+			VerifyStringDiffs(tssAc1, tssAbc1, 1, 1, 0, "one-run string add mid character");
 
-			ITsString tssXbc1 = tsf.MakeString("xbc", 1);
-			VerifyStringDiffs(tssAbc1, tssXbc1, false, 0, 1, 1, "one-run string different first character");
-			ITsString tssBc1 = tsf.MakeString("bc", 1);
-			VerifyStringDiffs(tssAbc1, tssBc1, false, 0, 0, 1, "one-run string remove first character");
-			VerifyStringDiffs(tssBc1, tssAbc1, false, 0, 1, 0, "one-run string add first character");
+			var tssXbc1 = tsf.MakeString("xbc", 1);
+			VerifyStringDiffs(tssAbc1, tssXbc1, 0, 1, 1, "one-run string different first character");
+			var tssBc1 = tsf.MakeString("bc", 1);
+			VerifyStringDiffs(tssAbc1, tssBc1, 0, 0, 1, "one-run string remove first character");
+			VerifyStringDiffs(tssBc1, tssAbc1, 0, 1, 0, "one-run string add first character");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(0, 1, "x", null);
-			ITsString tssXbc1Def2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssXbc1Def2Ghi3, false, 0, 1, 1, "three-run string different first character");
+			var tssXbc1Def2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssXbc1Def2Ghi3, 0, 1, 1, "three-run string different first character");
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(0, 1, "", null);
-			ITsString tssBc1Def2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssBc1Def2Ghi3, false, 0, 0, 1, "three-run string delete first character");
-			VerifyStringDiffs(tssBc1Def2Ghi3, tssAbc1Def2Ghi3, false, 0, 1, 0, "three-run string insert first character");
+			var tssBc1Def2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssBc1Def2Ghi3, 0, 0, 1, "three-run string delete first character");
+			VerifyStringDiffs(tssBc1Def2Ghi3, tssAbc1Def2Ghi3, 0, 1, 0, "three-run string insert first character");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(8, 9, "x", null);
-			ITsString tssAbc1Def2Ghx3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Def2Ghx3, false, 8, 1, 1, "three-run string different last character");
+			var tssAbc1Def2Ghx3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Def2Ghx3, 8, 1, 1, "three-run string different last character");
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(8, 9, "", null);
-			ITsString tssAbc1Def2Gh3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Def2Gh3, false, 8, 0, 1, "three-run string delete last character");
-			VerifyStringDiffs(tssAbc1Def2Gh3, tssAbc1Def2Ghi3, false, 8, 1, 0, "three-run string insert last character");
+			var tssAbc1Def2Gh3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Def2Gh3, 8, 0, 1, "three-run string delete last character");
+			VerifyStringDiffs(tssAbc1Def2Gh3, tssAbc1Def2Ghi3, 8, 1, 0, "three-run string insert last character");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(4, 5, "x", null);
-			ITsString tssAbc1Dxf2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dxf2Ghi3, false, 4, 1, 1, "three-run string different mid character");
+			var tssAbc1Dxf2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dxf2Ghi3, 4, 1, 1, "three-run string different mid character");
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(4, 5, "", null);
-			ITsString tssAbc1Df2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Df2Ghi3, false, 4, 0, 1, "three-run string delete mid character");
-			VerifyStringDiffs(tssAbc1Df2Ghi3, tssAbc1Def2Ghi3, false, 4, 1, 0, "three-run string insert mid character");
+			var tssAbc1Df2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Df2Ghi3, 4, 0, 1, "three-run string delete mid character");
+			VerifyStringDiffs(tssAbc1Df2Ghi3, tssAbc1Def2Ghi3, 4, 1, 0, "three-run string insert mid character");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(3, 4, "x", null);
-			ITsString tssAbc1Xef2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Xef2Ghi3, false, 3, 1, 1, "three-run string replace first char of mid run");
+			var tssAbc1Xef2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Xef2Ghi3, 3, 1, 1, "three-run string replace first char of mid run");
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(3, 4, "", null);
-			ITsString tssAbc1Ef2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Ef2Ghi3, false, 3, 0, 1, "three-run string delete first char of mid run");
-			VerifyStringDiffs(tssAbc1Ef2Ghi3, tssAbc1Def2Ghi3, false, 3, 1, 0, "three-run string insert first char of mid run");
+			var tssAbc1Ef2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Ef2Ghi3, 3, 0, 1, "three-run string delete first char of mid run");
+			VerifyStringDiffs(tssAbc1Ef2Ghi3, tssAbc1Def2Ghi3, 3, 1, 0, "three-run string insert first char of mid run");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(5, 6, "x", null);
-			ITsString tssAbc1Dex2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dex2Ghi3, false, 5, 1, 1, "three-run string replace last char of mid run");
+			var tssAbc1Dex2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dex2Ghi3, 5, 1, 1, "three-run string replace last char of mid run");
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(5, 6, "", null);
-			ITsString tssAbc1De2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1De2Ghi3, false, 5, 0, 1, "three-run string delete last char of mid run");
-			VerifyStringDiffs(tssAbc1De2Ghi3, tssAbc1Def2Ghi3, false, 5, 1, 0, "three-run string insert last char of mid run");
+			var tssAbc1De2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1De2Ghi3, 5, 0, 1, "three-run string delete last char of mid run");
+			VerifyStringDiffs(tssAbc1De2Ghi3, tssAbc1Def2Ghi3, 5, 1, 0, "three-run string insert last char of mid run");
 
 			// Different numbers of runs, part of each border run the same.
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(4, 5, "x", null);
 			bldr.Replace(6, 6, "xyz", props1);
 			bldr.Replace(9, 9, "xyf", props2);
-			ITsString tssAbc1Dxf2Xyz1Xyf2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dxf2Xyz1Xyf2Ghi3, false, 4, 7, 1, "three-run string replace runs and text mid");
-			VerifyStringDiffs(tssAbc1Dxf2Xyz1Xyf2Ghi3, tssAbc1Def2Ghi3, false, 4, 1, 7, "five-run string replace runs and text mid");
+			var tssAbc1Dxf2Xyz1Xyf2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dxf2Xyz1Xyf2Ghi3, 4, 7, 1, "three-run string replace runs and text mid");
+			VerifyStringDiffs(tssAbc1Dxf2Xyz1Xyf2Ghi3, tssAbc1Def2Ghi3, 4, 1, 7, "five-run string replace runs and text mid");
 
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssXbc1, false, 0, 3, 9, "three-run string replace all one run");
-			VerifyStringDiffs(tssXbc1, tssAbc1Def2Ghi3, false, 0, 9, 3, "one-run string replace all three runs");
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssXbc1, 0, 3, 9, "three-run string replace all one run");
+			VerifyStringDiffs(tssXbc1, tssAbc1Def2Ghi3, 0, 9, 3, "one-run string replace all three runs");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(5, 9, "x", null);
-			ITsString tssAbc1Dex2 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dex2, false, 5, 1, 4, "three-run string replace last and part of mid");
-			VerifyStringDiffs(tssAbc1Dex2, tssAbc1Def2Ghi3, false, 5, 4, 1, "two-run string replace text and add run at end");
+			var tssAbc1Dex2 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssAbc1Dex2, 5, 1, 4, "three-run string replace last and part of mid");
+			VerifyStringDiffs(tssAbc1Dex2, tssAbc1Def2Ghi3, 5, 4, 1, "two-run string replace text and add run at end");
 
 			bldr = tssAbc1Def2Ghi3.GetBldr();
 			bldr.Replace(0, 4, "", null);
-			ITsString tssEf2Ghi3 = bldr.GetString();
-			VerifyStringDiffs(tssAbc1Def2Ghi3, tssEf2Ghi3, false, 0, 0, 4, "three-run string delete first and part of mid");
-			VerifyStringDiffs(tssEf2Ghi3, tssAbc1Def2Ghi3, false, 0, 4, 0, "two-run string insert run and text at start");
+			var tssEf2Ghi3 = bldr.GetString();
+			VerifyStringDiffs(tssAbc1Def2Ghi3, tssEf2Ghi3, 0, 0, 4, "three-run string delete first and part of mid");
+			VerifyStringDiffs(tssEf2Ghi3, tssAbc1Def2Ghi3, 0, 4, 0, "two-run string insert run and text at start");
 
 			var s1 = tsf.MakeString("abc. def.", 1);
 			var s2 = tsf.MakeString("abc. insert. def.", 1);
-			VerifyStringDiffs(s1, s2, false, 5, 8, 0, "insert with dup material before and in insert");
-			VerifyStringDiffs(s2, s1, false, 5, 0, 8, "delete with dup material before and at and of stuff deleted.");
+			VerifyStringDiffs(s1, s2, 5, 8, 0, "insert with dup material before and in insert");
+			VerifyStringDiffs(s2, s1, 5, 0, 8, "delete with dup material before and at and of stuff deleted.");
 
 			s1 = tsf.MakeString("xxxabc xxxdef.", 1);
 			s2 = tsf.MakeString("xxxdef.", 1);
-			VerifyStringDiffs(s1, s2, false, 0, 0, 7, "delete whole word ambiguous with delete part of two words");
-			VerifyStringDiffs(s2, s1, false, 0, 7, 0, "insert whole word ambiguous with insert part of two words");
+			VerifyStringDiffs(s1, s2, 0, 0, 7, "delete whole word ambiguous with delete part of two words");
+			VerifyStringDiffs(s2, s1, 0, 7, 0, "insert whole word ambiguous with insert part of two words");
 
 			s1 = tsf.MakeString("pus pus yalola.", 1);
 			s2 = tsf.MakeString("pus yalola.", 1);
-			VerifyStringDiffs(s1, s2, false, 4, 0, 4, "delete first word ambiguous with delete second word");
-			VerifyStringDiffs(s2, s1, false, 4, 4, 0, "insert first word ambiguous with insert second words");
+			VerifyStringDiffs(s1, s2, 4, 0, 4, "delete first word ambiguous with delete second word");
+			VerifyStringDiffs(s2, s1, 4, 4, 0, "insert first word ambiguous with insert second words");
 
 		}
 
@@ -2248,7 +2255,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCharPropEngineAtOffset_AtNewline()
 		{
-			ILgWritingSystem ws = m_wsf.get_Engine("en");
+			var ws = m_wsf.get_Engine("en");
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "This is my text", StyleUtils.CharStyleTextProps(null, ws.Handle));
 			bldr.Replace(4, 4, Environment.NewLine, StyleUtils.CharStyleTextProps(null, -1));
@@ -2266,13 +2273,13 @@ namespace SIL.CoreImpl
 		public void GetXmlRep_EmptyTss()
 		{
 			// Setup an empty TsString
-			ITsString tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(String.Empty, m_wsf.UserWs), null);
+			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(String.Empty, m_wsf.UserWs), null);
 			Assert.AreEqual(null, tssClean.Text);
 			Assert.AreEqual(1, tssClean.RunCount);
 			Assert.AreEqual(m_wsf.UserWs, tssClean.get_WritingSystem(0));
 
 			// Test method GetXmlRep
-			string result = TsStringUtils.GetXmlRep(tssClean, m_wsf, 0, true); // 0 means Str not AStr
+			var result = TsStringUtils.GetXmlRep(tssClean, m_wsf, 0, true); // 0 means Str not AStr
 
 			// Confirm that the xml output has 'ws' information in it.
 			Assert.AreEqual(String.Format("<Str>{0}<Run ws=\"en\"></Run>{0}</Str>{0}", Environment.NewLine), result);

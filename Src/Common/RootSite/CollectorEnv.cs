@@ -1361,11 +1361,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			throw new NotImplementedException("AddDerivedProp not implemented by CollectorEnv");
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public virtual void CloseSpan()
 		{
 			CloseFlowObject();
@@ -1380,11 +1376,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public void OpenDiv()
 		{
 			OpenFlowObject();
@@ -1403,39 +1395,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			OpenParagraph();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public void OpenTableHeaderCell(int nRowSpan, int nColSpan)
 		{
 			OpenFlowObject();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Member AddSimpleRect
-		/// </summary>
-		/// <param name="rgb">rgb</param>
-		/// <param name="dmpWidth">dmpWidth</param>
-		/// <param name="dmpHeight">dmpHeight</param>
-		/// <param name="dmpBaselineOffset">dmpBaselineOffset</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public void AddSimpleRect(int rgb, int dmpWidth, int dmpHeight, int dmpBaselineOffset)
 		{
 			NoteAddingSomething();
 			AddResultString("A rectangle"); // makes it non-empty, at least.
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the obj vec items.
-		/// </summary>
-		/// <param name="tag">The tag.</param>
-		/// <param name="vc">The vc.</param>
-		/// <param name="frag">The frag.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public virtual void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
 			if (Finished)
@@ -1446,7 +1419,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			int cobj;
 			if (managedSda != null)
 			{
-				// We only have to compute the vector, if it should be virtual, once.
+				// If the vector should be virtual, we have to compute it only once.
 				// Note: we COULD do this with the VecProp method of the regular ISilDataAccess.
 				// But in practice the SDA will (almost?) always be a managed one, and using the
 				// COM VecProp involves marshalling that is messy and slow on both sides.

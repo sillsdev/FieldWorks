@@ -255,8 +255,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public static void AdjustAnalysis(IStTxtPara para, ITsString oldContents)
 		{
-			int ichFirstDiff, cchInsert, cchDeleteFromOld;
-			TsStringDiffInfo diffInfo = TsStringUtils.GetDiffsInTsStrings(oldContents, para.Contents);
+			var diffInfo = TsStringUtils.GetDiffsInTsStrings(oldContents, para.Contents);
 			if (diffInfo != null)
 				AdjustAnalysis(para, oldContents, diffInfo);
 		}
