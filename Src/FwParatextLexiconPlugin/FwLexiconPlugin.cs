@@ -69,11 +69,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				// update COMPONENTS_MAP_PATH to point to code directory so that COM objects can be loaded properly
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COMPONENTS_MAP_PATH")))
 				{
-#if DEBUG
 					string compMapPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-#else
-					string compMapPath = ParatextLexiconPluginDirectoryFinder.CodeDirectory;
-#endif
 					Environment.SetEnvironmentVariable("COMPONENTS_MAP_PATH", compMapPath);
 				}
 				// update FW_ROOTCODE so that strings-en.txt file can be found
