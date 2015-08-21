@@ -84,7 +84,7 @@ Item "displaytype" Values (applies to item types 0 - 3):
 		<systemstringids assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ToolBarSystemStrings"/>
 
 		<imageList assemblyPath="FwResources.dll"
-			class="SIL.FieldWorks.Resources.ResourceHelper"
+			class="SIL.FieldWorks.Resources.ResourceHelperImpl"
 			field="menuToolBarImages"
 			labels="CmdOpen, CmdSave, CmdPrint, CmdCut, CmdCopy, CmdPaste, CmdUndo, CmdRedo,
 			8, CmdAbout, CmdFontBold, CmdFontItalic, CmdDecreaseIndent, CmdIncreaseIndent,
