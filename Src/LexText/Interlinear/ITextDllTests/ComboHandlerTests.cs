@@ -2,12 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using NUnit.Framework;
+using Rhino.Mocks;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -58,7 +54,7 @@ namespace SIL.FieldWorks.IText
 				using (var sandbox = new SandboxBase(Cache, null, null, lineChoices, wa.Hvo))
 				{
 					sut.SetSandboxForTesting(sandbox);
-					var mockList = new MockComboList();
+					var mockList = MockRepository.GenerateMock<IComboList>();
 					sut.SetComboListForTesting(mockList);
 					sut.SetMorphForTesting(0);
 					sut.LoadMorphItems();
@@ -77,32 +73,13 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 		}
-	}
 
-	class MockComboList : IComboList
-	{
-		public MockComboList()
+		[Test]
+		public void MakeCombo_SelectionIsInvalid_Throws()
 		{
-			SelectedIndexChanged += OnSelectedIndexChanged; // stupid compiler insists event must be used.
-			SelectedIndexChanged(this, new EventArgs());
+			var vwsel = MockRepository.GenerateMock<IVwSelection>();
+			vwsel.Stub(s => s.IsValid).Return(false);
+			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
 		}
-
-		private void OnSelectedIndexChanged(object sender, EventArgs eventArgs)
-		{
-		}
-
-		public event EventHandler SelectedIndexChanged;
-		public ComboBoxStyle DropDownStyle { get; set; }
-		public int SelectedIndex { get; set; }
-		public string Text { get; set; }
-		public FwListBox.ObjectCollection Items { get {throw new NotImplementedException();} }
-		public int FindStringExact(string str)
-		{
-			throw new NotImplementedException();
-		}
-
-		public ILgWritingSystemFactory WritingSystemFactory { get; set; }
-		public object SelectedItem { get; set; }
-		public IVwStylesheet StyleSheet { get; set; }
 	}
 }

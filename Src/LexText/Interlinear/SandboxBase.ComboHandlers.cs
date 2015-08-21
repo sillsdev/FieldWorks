@@ -246,6 +246,8 @@ namespace SIL.FieldWorks.IText
 			static internal IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider,
 				IVwSelection vwselNew, SandboxBase sandbox, bool fMouseDown)
 			{
+				if (!vwselNew.IsValid)
+					throw new ArgumentException("The selection is invalid.", "vwselNew");
 				// Figure what property is selected and create a suitable class if appropriate.
 				int cvsli = vwselNew.CLevels(false);
 				// CLevels includes the string property itself, but AllTextSelInfo doesn't need

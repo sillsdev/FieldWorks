@@ -2059,7 +2059,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_listForm.Deactivate -= m_ListForm_Deactivate;
 					m_listForm.Controls.Remove(this);
-					m_listForm.Close();
+					if (m_listForm.Visible)
+						m_listForm.Close();
 					m_listForm.Dispose();
 				}
 				if (m_comboMessageFilter != null)
