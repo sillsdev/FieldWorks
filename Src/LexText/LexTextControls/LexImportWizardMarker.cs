@@ -3,65 +3,66 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
-#if __MonoCS__
 using Gecko;
-#endif
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
+using Sfm2Xml;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using XCore;
+using TreeView = System.Windows.Forms.TreeView;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary></summary>
 	public class LexImportWizardMarker : Form, IFWDisposable
 	{
-		private System.Windows.Forms.Label lblMarker;
-		private System.Windows.Forms.Label m_lblMarker;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.CheckBox chkbxExclude;
-		private System.Windows.Forms.Label m_lblInstances;
-		private System.Windows.Forms.Label lblDestinationInFlex;
-		private System.Windows.Forms.TreeView tvDestination;
-		private System.Windows.Forms.TreeNode m_StoredTreeNode = null;
-		private System.Windows.Forms.Label blbLangDesc;
+		private Label lblMarker;
+		private Label m_lblMarker;
+		private Panel panel1;
+		private CheckBox chkbxExclude;
+		private Label m_lblInstances;
+		private Label lblDestinationInFlex;
+		private TreeView tvDestination;
+		private TreeNode m_StoredTreeNode = null;
+		private Label blbLangDesc;
 		private FwOverrideComboBox cbLangDesc;
-		private System.Windows.Forms.Button btnAddLangDesc;
-		private System.Windows.Forms.Button btnAddCustomField;
-		private System.Windows.Forms.Button btnOK;
-		private System.Windows.Forms.Button btnCancel;
+		private Button btnAddLangDesc;
+		private Button btnAddCustomField;
+		private Button btnOK;
+		private Button btnCancel;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		private Hashtable m_uiLangs;
-		private System.Windows.Forms.RadioButton rbAbbrName;
-		private System.Windows.Forms.RadioButton rbAbbrAbbr;
-		private System.Windows.Forms.Label lblAbbr;
-		private System.Windows.Forms.Panel panel5;
+		private RadioButton rbAbbrName;
+		private RadioButton rbAbbrAbbr;
+		private Label lblAbbr;
+		private Panel panel5;
 		private FwOverrideComboBox cbFunction;
-		private System.Windows.Forms.Label lblFunction;
-		private System.Windows.Forms.CheckBox chkbxAutoField;
+		private Label lblFunction;
+		private CheckBox chkbxAutoField;
 		private FdoCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
 		private string m_refFuncString;
 		private string m_refFuncStringOrig;
-		private System.Windows.Forms.Button buttonHelp;	// initial value
+		private Button buttonHelp;	// initial value
 		private Hashtable m_htNameToAbbr = new Hashtable();
 		struct NameWSandAbbr	// objects that are stuffed in the m_htNameToAbbr hashtable
 		{
@@ -73,11 +74,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string s_helpTopic = "khtpImportSFMModifyMapping";
 		private Panel panelBottom;
 		private Button btnShowInfo;
-#if !__MonoCS__
-		private WebBrowser webBrowserInfo;
-#else // use geckofx on Linux
 		private GeckoWebBrowser m_browser;
-#endif
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
 		private string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/Help.htm");
@@ -130,7 +127,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (m_customFields.FieldsForClass(className) == null)
 					continue;
 
-				foreach (Sfm2Xml.LexImportField field in m_customFields.FieldsForClass(className))
+				foreach (LexImportField field in m_customFields.FieldsForClass(className))
 				{
 					TreeNode cnode = new TreeNode(field.UIName + " (Custom Field)");
 					cnode.Tag = field;
@@ -159,13 +156,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			bool found = false;
 			foreach (TreeNode classNode in tvDestination.Nodes)
 			{
-				if (currentMarker.ClsFieldDescription is Sfm2Xml.ClsCustomFieldDescription &&
+				if (currentMarker.ClsFieldDescription is ClsCustomFieldDescription &&
 					currentMarker.DestinationClass != classNode.Text.Trim(new char[] {'(', ')'}))
 					continue;
 
 				foreach (TreeNode fieldNode in classNode.Nodes)
 				{
-					if ((fieldNode.Tag as Sfm2Xml.LexImportField).ID == currentMarker.FwId)
+					if ((fieldNode.Tag as LexImportField).ID == currentMarker.FwId)
 					{
 						tvDestination.SelectedNode = fieldNode;
 						found = true;
@@ -181,7 +178,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// set the writing system combo box
 			foreach (DictionaryEntry lang in m_uiLangs)
 			{
-				Sfm2Xml.LanguageInfoUI langInfo = lang.Value as Sfm2Xml.LanguageInfoUI;
+				LanguageInfoUI langInfo = lang.Value as LanguageInfoUI;
 				// make sure there is only one entry for each writing system (especially 'ignore')
 				if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 				{
@@ -211,7 +208,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				TreeNode node = tvDestination.SelectedNode;
 				if (node != null)
 				{
-					Sfm2Xml.LexImportField field = node.Tag as Sfm2Xml.LexImportField;
+					LexImportField field = node.Tag as LexImportField;
 					if (field != null)
 					{
 						FillLexicalRefTypesCombo(field);
@@ -279,7 +276,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 
-				Sfm2Xml.LanguageInfoUI langinfo = cbLangDesc.SelectedItem as Sfm2Xml.LanguageInfoUI;
+				LanguageInfoUI langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
 				return langinfo.FwName;
 //				return cbLangDesc.SelectedItem.ToString();
 			}
@@ -290,7 +287,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 
-				Sfm2Xml.LanguageInfoUI langinfo = cbLangDesc.SelectedItem as Sfm2Xml.LanguageInfoUI;
+				LanguageInfoUI langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
 				return langinfo.Key;
 			}
 		}
@@ -303,7 +300,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				TreeNode node = m_StoredTreeNode ?? tvDestination.SelectedNode;
 				if (node == null)
 					return "";
-				return (node.Tag as Sfm2Xml.LexImportField).ID;
+				return (node.Tag as LexImportField).ID;
 			}
 		}
 
@@ -328,7 +325,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				TreeNode node = m_StoredTreeNode ?? tvDestination.SelectedNode;
 				if (node == null)
 					return false;
-				return (node.Tag is Sfm2Xml.LexImportCustomField);//.IsCustomField;
+				return (node.Tag is LexImportCustomField);//.IsCustomField;
 			}
 		}
 
@@ -387,10 +384,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 
 //		private Dictionary<Sfm2Xml.ILexImportField, TreeNode> m_customFieldNodes = new Dictionary<Sfm2Xml.ILexImportField, TreeNode>();
-		private Sfm2Xml.ILexImportFields m_customFields = new Sfm2Xml.LexImportFields();
-		public Sfm2Xml.ILexImportFields CustomFields { get { return m_customFields; } }
+		private ILexImportFields m_customFields = new LexImportFields();
+		public ILexImportFields CustomFields { get { return m_customFields; } }
 
-		public LexImportWizardMarker(Sfm2Xml.ILexImportFields fwFields)
+		public LexImportWizardMarker(ILexImportFields fwFields)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -407,7 +404,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				TreeNode tnode = new TreeNode( String.Format("({0})", className));
 //				tnode.Tag = className;
-				foreach (Sfm2Xml.LexImportField field in fwFields.FieldsForClass(className))
+				foreach (LexImportField field in fwFields.FieldsForClass(className))
 				{
 					TreeNode cnode = new TreeNode(field.UIName);
 					cnode.Tag = field;
@@ -437,7 +434,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -484,11 +481,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.chkbxAutoField = new System.Windows.Forms.CheckBox();
 			this.buttonHelp = new System.Windows.Forms.Button();
 			this.panelBottom = new System.Windows.Forms.Panel();
-#if !__MonoCS__
-			this.webBrowserInfo = new System.Windows.Forms.WebBrowser();
-#else
-			this.m_browser = new GeckoWebBrowser();
-#endif
+			this.m_browser = new Gecko.GeckoWebBrowser();
 			this.btnShowInfo = new System.Windows.Forms.Button();
 			this.panelBottom.SuspendLayout();
 			this.SuspendLayout();
@@ -535,8 +528,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tvDestination.ShowPlusMinus = false;
 			this.tvDestination.ShowRootLines = false;
 			this.tvDestination.Sorted = true;
-			this.tvDestination.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvDestination_AfterSelect);
 			this.tvDestination.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvDestination_BeforeSelect);
+			this.tvDestination.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvDestination_AfterSelect);
 			//
 			// blbLangDesc
 			//
@@ -621,27 +614,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			// panelBottom
 			//
-#if !__MonoCS__
-			this.panelBottom.Controls.Add(this.webBrowserInfo);
-#else
 			this.panelBottom.Controls.Add(this.m_browser);
-#endif
 			resources.ApplyResources(this.panelBottom, "panelBottom");
 			this.panelBottom.Name = "panelBottom";
-#if !__MonoCS__
 			//
-			// webBrowserInfo
+			// m_browser
 			//
-			resources.ApplyResources(this.webBrowserInfo, "webBrowserInfo");
-			this.webBrowserInfo.IsWebBrowserContextMenuEnabled = false;
-			this.webBrowserInfo.MinimumSize = new System.Drawing.Size(20, 20);
-			this.webBrowserInfo.Name = "webBrowserInfo";
-			this.webBrowserInfo.WebBrowserShortcutsEnabled = false;
-#else
+			resources.ApplyResources(this.m_browser, "m_browser");
+			this.m_browser.Name = "m_browser";
 			this.m_browser.NoDefaultContextMenu = true;
-			this.m_browser.MinimumSize = new System.Drawing.Size(20, 20);
-			this.m_browser.Dock = System.Windows.Forms.DockStyle.Fill;
-#endif
+			this.m_browser.UseHttpActivityObserver = false;
 			//
 			// btnShowInfo
 			//
@@ -688,12 +670,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 		#endregion
 
-		private void LexImportWizardMarker_Load(object sender, System.EventArgs e)
+		private void LexImportWizardMarker_Load(object sender, EventArgs e)
 		{
 
 		}
 
-		private void tvDestination_BeforeSelect(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
+		private void tvDestination_BeforeSelect(object sender, TreeViewCancelEventArgs e)
 		{
 			// don't allow the class nodes to be selected
 			if (e.Node.Tag == null)
@@ -741,7 +723,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (LexImportWizard.Wizard().AddLanguage(langDesc, ws, ec, wsId))
 				{
 					// this was added to the list of languages, so add it to the dlg and select it
-					var langInfo = new Sfm2Xml.LanguageInfoUI(langDesc, ws, ec, wsId);
+					var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
 					if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 					{
 						cbLangDesc.Items.Add(langInfo);
@@ -752,7 +734,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void EnableControlsFromField(Sfm2Xml.LexImportField field)
+		private void EnableControlsFromField(LexImportField field)
 		{
 			// see if the abbr controls should be enabled or not
 			bool enable = false;
@@ -770,12 +752,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				lblFunction.Text = "Not An Active Field :";
 		}
 
-		Sfm2Xml.LexImportField m_LastSelectedField;
+		LexImportField m_LastSelectedField;
 
 		private void tvDestination_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			UpdateOKButtonState();
-			Sfm2Xml.LexImportField field = e.Node.Tag as Sfm2Xml.LexImportField;
+			LexImportField field = e.Node.Tag as LexImportField;
 			if (field == null)
 				return;
 
@@ -851,7 +833,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void FillLexicalRefTypesCombo(Sfm2Xml.LexImportField field)
+		private void FillLexicalRefTypesCombo(LexImportField field)
 		{
 			if (m_LastSelectedField == field)
 				return;		// don't change
@@ -976,7 +958,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}
 
-		private void chkbxAutoField_CheckedChanged(object sender, System.EventArgs e)
+		private void chkbxAutoField_CheckedChanged(object sender, EventArgs e)
 		{
 			tvDestination.Enabled = !chkbxExclude.Checked && !chkbxAutoField.Checked;
 			UpdateOKButtonState();
@@ -1003,25 +985,24 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void cbFunction_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void cbFunction_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (cbFunction.SelectedIndex >= 0)
 				m_refFuncString = cbFunction.SelectedItem as string;
 		}
 
-		private void buttonHelp_Click(object sender, System.EventArgs e)
+		private void buttonHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 		private void InitBottomPanel()
 		{
 
-#if !__MonoCS__
-			webBrowserInfo.Navigate(m_sHelpHtm);
-#else
 			if (m_browser.Handle != IntPtr.Zero)
-				m_browser.Navigate(m_sHelpHtm);
-#endif
+			{
+				var uri = new Uri(m_sHelpHtm);
+				m_browser.Navigate(uri.AbsoluteUri);
+			}
 
 			// init transform used in help panel
 			m_xslShowInfoTransform = new XslCompiledTransform();
@@ -1030,7 +1011,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
 		}
-		private void ShowInfo(Sfm2Xml.LexImportField field)
+		private void ShowInfo(LexImportField field)
 		{
 			XmlNode node = field.Node;
 			////if (node == null)
@@ -1039,23 +1020,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			////    webBrowserInfo.DocumentText = "";	// just make it empty for now
 			////    return;
 			////}
-#if __MonoCS__
 			var tempfile = Path.Combine(Path.GetTempPath(), "temphelp.htm");
 			using (StreamWriter w = new StreamWriter(tempfile, false))
-#else
-			using (StringWriter w = new StringWriter())
-#endif
 			using (XmlTextWriter tw = new XmlTextWriter(w))
 			{
 				m_xmlShowInfoDoc.LoadXml(node.OuterXml); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
 				m_xslShowInfoTransform.Transform(m_xmlShowInfoDoc, tw);
-#if !__MonoCS__
-				webBrowserInfo.DocumentText = w.GetStringBuilder().ToString();
-#endif
 			}
-#if __MonoCS__
-			m_browser.Navigate(tempfile);
-#endif
+			var uri = new Uri(tempfile);
+			m_browser.Navigate(uri.AbsoluteUri);
 		}
 
 		private void btnShowInfo_Click(object sender, EventArgs e)
@@ -1082,7 +1055,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// Mediator accessor in the LexImportWizard now checks to make sure that
 			// it's not disposed - if it is it creates a new one.
-			XCore.Mediator med = null;
+			Mediator med = null;
 			LexImportWizard wiz = LexImportWizard.Wizard();
 			if (wiz != null)
 				med = wiz.Mediator;
@@ -1125,7 +1098,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				classNameNode.Nodes.CopyTo(leaves, 0);
 				foreach (TreeNode leafNode in leaves)
 				{
-					if (leafNode.Tag is Sfm2Xml.LexImportCustomField)
+					if (leafNode.Tag is LexImportCustomField)
 						classNameNode.Nodes.Remove(leafNode);
 				}
 
@@ -1134,7 +1107,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (m_customFields.FieldsForClass(className) == null)
 					continue;
 
-				foreach (Sfm2Xml.LexImportField field in m_customFields.FieldsForClass(className))
+				foreach (LexImportField field in m_customFields.FieldsForClass(className))
 				{
 					TreeNode cnode = new TreeNode(field.UIName + " (Custom Field)");
 					cnode.Tag = field;
@@ -1167,7 +1140,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// found case where the user has entered their own text and want to add it to the proper list
 					TreeNode tn = tvDestination.SelectedNode;
-					var field = tn.Tag as Sfm2Xml.LexImportField;
+					var field = tn.Tag as LexImportField;
 					if (field != null && field.IsRef)
 					{
 						var entryTypefactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();

@@ -97,9 +97,9 @@ Main template
 				<style type="text/css">
 					.interblock {
 						display: -moz-inline-box;
-						display:
-						inline-block;
+						display: inline-block;
 						vertical-align: top;
+						cursor: pointer;
 					}</style>
 			</head>
 			<body style="font-family:Times New Roman">
@@ -380,18 +380,6 @@ Script
 	<xsl:template name="Script">
 		<script language="JavaScript" id="clientEventHandlersJS">
 			<xsl:text>
-	function ButtonShowWGDetails(nodeId)
-	{
-		window.external.ShowWordGrammarDetail(nodeId);
-	}
-	function JumpToToolBasedOnHvo(hvo)
-	{
-		window.external.JumpToToolBasedOnHvo(hvo);
-	}
-	function MouseMove()
-	{
-		window.external.MouseMove();
-	}
 	function ButtonShowDetails()
 	{
 	if (TraceSection.style.display == 'none')
@@ -582,16 +570,14 @@ ShowAnyFailure
 					</xsl:when>
 					<xsl:when test="contains(@test,'PC-PATR word parse')">
 						<xsl:text>Word grammar failed&#xa0;&#xa0;</xsl:text>
-						<input type="button" value="Tell me more" name="BWGDetails" id="ShowWGDetailsButton" style="width: 100px; height: 26px">
-							<xsl:attribute name="onclick">
-								<xsl:text>ButtonShowWGDetails(</xsl:text>
+						<input type="button" value="Tell me more" name="ShowWordGrammarDetail" style="width: 100px; height: 26px">
+							<xsl:attribute name="id">
 								<xsl:choose>
-									<xsl:when test="@id">"<xsl:value-of select="@id"/>"</xsl:when>
+									<xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
 									<xsl:otherwise>
 										<xsl:text>0</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
-								<xsl:text>)</xsl:text>
 							</xsl:attribute>
 						</input>
 						<xsl:text>&#xa0;&#xa0;</xsl:text>
@@ -978,13 +964,8 @@ ShowMorph
 						<xsl:text>; text-align:right;</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
-				<xsl:attribute name="onclick">
-					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+				<xsl:attribute name="id">
 					<xsl:value-of select="morph/@alloid"/>
-					<xsl:text>)</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="onmousemove">
-					<xsl:text>MouseMove()</xsl:text>
 				</xsl:attribute>
 				<tr>
 					<td>
@@ -1128,7 +1109,7 @@ ShowTracePath
 		<xsl:param name="parseNodes"/>
 		<xsl:if test="$parseNodes">
 			<xsl:for-each select="$parseNodes/parseNode[morph | leftover | maxReached]">
-				<table border="0" style="cursor:pointer;">
+				<table border="0">
 					<tr>
 						<td width="10"/>
 						<td style="border:solid; border-width:thin;">

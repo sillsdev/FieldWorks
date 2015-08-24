@@ -52,12 +52,9 @@ using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
-
-#if __MonoCS__
 using Gecko;
-#else
+#if !__MonoCS__
 using NetSparkle;
-
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
@@ -131,11 +128,6 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Main Method and Initialization Methods
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("kernel32.dll")]
-		public extern static IntPtr LoadLibrary(string fileName);
-#endif
 
 		/// ----------------------------------------------------------------------------
 		/// <summary>
@@ -158,17 +150,19 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-#if __MonoCS__
 				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 				if (String.IsNullOrEmpty(xulRunnerLocation))
 					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+#if __MonoCS__
 				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+#else
+				xulRunnerLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "xulrunner");
+#endif
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-#endif
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
@@ -221,13 +215,6 @@ namespace SIL.FieldWorks
 				// by a bug in XP.
 				Application.EnableVisualStyles();
 
-#if !__MonoCS__
-				// JohnT: this allows us to use Graphite in all in-process controls, even those
-				// we don't have custom versions of.
-				LoadLibrary("multiscribe.dll");
-#else
-				// TODO-Linux: review this - what is this used for?
-#endif
 				// initialize ICU
 				Icu.InitIcuDataDir();
 
@@ -365,7 +352,6 @@ namespace SIL.FieldWorks
 			finally
 			{
 				StaticDispose();
-#if __MonoCS__
 				if (Xpcom.IsInitialized)
 				{
 					// The following line appears to be necessary to keep Xpcom.Shutdown()
@@ -377,7 +363,6 @@ namespace SIL.FieldWorks
 					var foo = new GeckoWebBrowser();
 					Xpcom.Shutdown();
 				}
-#endif
 			}
 			return 0;
 		}

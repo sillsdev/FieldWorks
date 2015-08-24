@@ -60,8 +60,7 @@ Main template
 				<style type="text/css">
 					.interblock {
 						display: -moz-inline-box;
-						display:
-						inline-block;
+						display: inline-block;
 						vertical-align: top;
 					}</style>
 			</head>
@@ -425,18 +424,6 @@ ShowMsaInfo
 	<xsl:template name="Script">
 		<script language="JavaScript" id="clientEventHandlersJS">
 			<xsl:text>
-	function ButtonShowWGDetails(nodeId)
-	{
-		window.external.ShowWordGrammarDetail(nodeId);
-	}
-	function JumpToToolBasedOnHvo(hvo)
-	{
-		window.external.JumpToToolBasedOnHvo(hvo);
-	}
-	function MouseMove()
-	{
-		window.external.MouseMove();
-	}
 	function ButtonShowDetails()
 	{
 	if (TraceSection.style.display == 'none')
@@ -643,26 +630,16 @@ function Toggle(node, path, imgOffset)
 											<xsl:text>cursor:pointer</xsl:text>
 											<xsl:call-template name="GetVernacularFont"/>
 										</xsl:attribute>
-										<xsl:attribute name="onclick">
-											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:attribute name="id">
 											<xsl:value-of select="Allomorph/@id"/>
-											<xsl:text>)</xsl:text>
-										</xsl:attribute>
-										<xsl:attribute name="onmousemove">
-											<xsl:text>MouseMove()</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="Allomorph/LongName"/>
 									</span>
 								</xsl:if>
 								<xsl:if test="Morpheme">
 									<span style="cursor:pointer;">
-										<xsl:attribute name="onclick">
-											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:attribute name="id">
 											<xsl:value-of select="KeyMorpheme/@id"/>
-											<xsl:text>)</xsl:text>
-										</xsl:attribute>
-										<xsl:attribute name="onmousemove">
-											<xsl:text>MouseMove()</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="Morpheme/Gloss"/>
 									</span>
@@ -696,13 +673,8 @@ function Toggle(node, path, imgOffset)
 								</xsl:choose>
 								<xsl:for-each select="Others/Morpheme">
 									<span style="cursor:pointer;">
-										<xsl:attribute name="onclick">
-											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:attribute name="id">
 											<xsl:value-of select="@id"/>
-											<xsl:text>)</xsl:text>
-										</xsl:attribute>
-										<xsl:attribute name="onmousemove">
-											<xsl:text>MouseMove()</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="Gloss"/>
 									</span>
@@ -716,13 +688,8 @@ function Toggle(node, path, imgOffset)
 											<xsl:text>cursor:pointer</xsl:text>
 											<xsl:call-template name="GetVernacularFont"/>
 										</xsl:attribute>
-										<xsl:attribute name="onclick">
-											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:attribute name="id">
 											<xsl:value-of select="@id"/>
-											<xsl:text>)</xsl:text>
-										</xsl:attribute>
-										<xsl:attribute name="onmousemove">
-											<xsl:text>MouseMove()</xsl:text>
 										</xsl:attribute>
 										<xsl:value-of select="LongName"/>
 									</span>
@@ -757,13 +724,8 @@ function Toggle(node, path, imgOffset)
 										<xsl:text>cursor:pointer</xsl:text>
 										<xsl:call-template name="GetVernacularFont"/>
 									</xsl:attribute>
-									<xsl:attribute name="onclick">
-										<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+									<xsl:attribute name="id">
 										<xsl:value-of select="Allomorph/@id"/>
-										<xsl:text>)</xsl:text>
-									</xsl:attribute>
-									<xsl:attribute name="onmousemove">
-										<xsl:text>MouseMove()</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="Allomorph/LongName"/>
 								</span>
@@ -778,13 +740,8 @@ function Toggle(node, path, imgOffset)
 										<xsl:text>cursor:pointer</xsl:text>
 										<xsl:call-template name="GetVernacularFont"/>
 									</xsl:attribute>
-									<xsl:attribute name="onclick">
-										<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+									<xsl:attribute name="id">
 										<xsl:value-of select="Allomorph/@id"/>
-										<xsl:text>)</xsl:text>
-									</xsl:attribute>
-									<xsl:attribute name="onmousemove">
-										<xsl:text>MouseMove()</xsl:text>
 									</xsl:attribute>
 									<xsl:value-of select="Allomorph/LongName"/>
 								</span>
@@ -801,13 +758,8 @@ function Toggle(node, path, imgOffset)
 												<xsl:text>cursor:pointer</xsl:text>
 												<xsl:call-template name="GetVernacularFont"/>
 											</xsl:attribute>
-											<xsl:attribute name="onclick">
-												<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+											<xsl:attribute name="id">
 												<xsl:value-of select="Allomorph/@id"/>
-												<xsl:text>)</xsl:text>
-											</xsl:attribute>
-											<xsl:attribute name="onmousemove">
-												<xsl:text>MouseMove()</xsl:text>
 											</xsl:attribute>
 											<xsl:value-of select="Allomorph/LongName"/>
 										</span>
@@ -965,13 +917,15 @@ ShowMorph
 						<xsl:text>; text-align:right;</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
-				<xsl:attribute name="onclick">
-					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-					<xsl:value-of select="Allomorph/@id"/>
-					<xsl:text>)</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="onmousemove">
-					<xsl:text>MouseMove()</xsl:text>
+				<xsl:attribute name="id">
+					<xsl:choose>
+						<xsl:when test="MorphologicalRule/@type = 'compound'">
+							<xsl:value-of select="MorphologicalRule/@id"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="Allomorph/@id"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:attribute>
 				<xsl:if test="name()='WordSynthesisTrace'">
 					<tr>
@@ -1107,13 +1061,8 @@ ShowMorph
 						<xsl:text>; text-align:right;</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
-				<xsl:attribute name="onclick">
-					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+				<xsl:attribute name="id">
 					<xsl:value-of select="@id"/>
-					<xsl:text>)</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="onmousemove">
-					<xsl:text>MouseMove()</xsl:text>
 				</xsl:attribute>
 				<tr>
 					<td>
@@ -1196,13 +1145,8 @@ ShowMorph
 			<xsl:for-each select="$phonologicalRules">
 				<tr style="cursor:pointer;">
 					<th>
-						<xsl:attribute name="onclick">
-							<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+						<xsl:attribute name="id">
 							<xsl:value-of select="PhonologicalRule/@id"/>
-							<xsl:text>)</xsl:text>
-						</xsl:attribute>
-						<xsl:attribute name="onmousemove">
-							<xsl:text>MouseMove()</xsl:text>
 						</xsl:attribute>
 						<xsl:choose>
 							<xsl:when test="string-length(normalize-space(PhonologicalRule)) &gt; 0">

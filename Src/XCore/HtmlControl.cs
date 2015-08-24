@@ -14,9 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using MsHtmHstInterop;
 using System.Runtime.InteropServices;
-#if __MonoCS__
 using Gecko;
-#endif
 
 namespace XCore
 {
@@ -26,11 +24,8 @@ namespace XCore
 	public class HtmlControl : XCoreUserControl
 	{
 		private string m_url;
-#if !__MonoCS__
-		private WebBrowser m_browser;
-#else // use geckofx on Linux
 		private GeckoWebBrowser m_browser;
-#endif
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -46,11 +41,8 @@ namespace XCore
 				HCBeforeNavigate(this, e);
 			}
 		}
-#if !__MonoCS__
-		public WebBrowser Browser
-#else
+
 		public GeckoWebBrowser Browser
-#endif
 		{
 			get
 			{
@@ -72,10 +64,8 @@ namespace XCore
 				// Review (Hasso): is there a case in which we would *want* to set m_url to null specifically (not about:blank)?
 				m_url = value ?? "about:blank";
 
-#if __MonoCS__
 				if (m_browser.Handle == IntPtr.Zero)
 					return; // This should never happen.
-#endif
 				m_browser.Navigate(m_url);
 			}
 		}
@@ -104,20 +94,12 @@ namespace XCore
 		{
 			get
 			{
-#if !__MonoCS__
-				return m_browser.DocumentText;
-#else
 				// TODO pH 2013.09: GeckoFX implementation
 				return @"<!DOCTYPE HTML><HTML/>";
-#endif
 			}
 			set
 			{
-#if !__MonoCS__
-				m_browser.DocumentText = value;
-#else
 				m_browser.LoadHtml(value);
-#endif
 			}
 		}
 
@@ -142,16 +124,8 @@ namespace XCore
 			axDocumentV1.BeforeNavigate += new SHDocVw.DWebBrowserEvents_BeforeNavigateEventHandler(OnBeforeNavigate);
 #endif
 			base.AccNameDefault = "HtmlControl";	// default accessibility name
-#if !__MonoCS__ // FWNX-254
-			m_browser.AccessibleName = "SHDocVw.WebBrowser_V1";
-			// no right context menu needed:
-			m_browser.IsWebBrowserContextMenuEnabled = false;
-			// no need to allow the user to drag and drop a web page on the control:
-			m_browser.AllowWebBrowserDrop = false;
-#else
 			// no right-click context menu needed
 			this.m_browser.NoDefaultContextMenu = true;
-#endif
 
 		}
 
@@ -294,11 +268,7 @@ namespace XCore
 		{
 //			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HtmlControl));
 			//this.m_browser = new AxSHDocVw.AxWebBrowser();
-#if !__MonoCS__
-			this.m_browser = new WebBrowser();
-#else
 			this.m_browser = new GeckoWebBrowser();
-#endif
 			//((System.ComponentModel.ISupportInitialize)(this.m_browser)).BeginInit();
 			this.SuspendLayout();
 			//

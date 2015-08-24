@@ -58,7 +58,6 @@ Main template
 						vertical-align: top;
 
 					}</style>
-				<xsl:call-template name="Script"/>
 			</head>
 			<body style="font-family:Times New Roman">
 				<h1>
@@ -305,27 +304,6 @@ ShowMsaInfo
 		</xsl:for-each>
 	</xsl:template>
 	<!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		Script
-		Output the JavaScript script to handle dynamic "tree"
-		Parameters: none
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-	<xsl:template name="Script">
-		<script language="JavaScript" id="clientEventHandlersJS">
-			<xsl:text>
-			function JumpToToolBasedOnHvo(hvo)
-			{
-			window.external.JumpToToolBasedOnHvo(hvo);
-			}
-			function MouseMove()
-			{
-			window.external.MouseMove();
-			}
-			</xsl:text>
-		</script>
-	</xsl:template>
-	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ShowMorph
 	Show the morpheme information
@@ -342,13 +320,8 @@ ShowMorph
 						<xsl:text>; text-align:right;</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
-				<xsl:attribute name="onclick">
-					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+				<xsl:attribute name="id">
 					<xsl:value-of select="MoForm/@DbRef"/>
-					<xsl:text>)</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="onmousemove">
-					<xsl:text>MouseMove()</xsl:text>
 				</xsl:attribute>
 				<tr>
 					<td>

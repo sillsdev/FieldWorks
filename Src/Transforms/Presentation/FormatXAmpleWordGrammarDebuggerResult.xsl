@@ -67,7 +67,6 @@ Main template
    <xsl:template match="/word">
 	  <html>
 		 <head>
-			<xsl:call-template name="Script"/>
 		 </head>
 		 <body>
 			<h1>
@@ -88,10 +87,7 @@ Main template
 			   <xsl:when test="//seq">
 				  <xsl:call-template name="ShowSteps"/>
 				  <hr/>
-				  <input type="button" name="BBack" id="GoBack" style="width: 220px; height: 26px">
-					 <xsl:attribute name="onclick">
-						<xsl:text>ButtonGoBack()</xsl:text>
-					 </xsl:attribute>
+				  <input type="button" name="GoToPreviousWordGrammarPage" style="width: 220px; height: 26px">
 					 <xsl:attribute name="value">
 						<xsl:value-of select="$sPreviousButtonText"/>
 					 </xsl:attribute>
@@ -113,10 +109,7 @@ Main template
 					 <xsl:text>' button.</xsl:text>
 				  </p>
 				  <hr/>
-				  <input type="button" name="BBack" id="GoBack" style="width: 220px; height: 26px">
-					 <xsl:attribute name="onclick">
-						<xsl:text>ButtonGoBack()</xsl:text>
-					 </xsl:attribute>
+				  <input type="button" name="GoToPreviousWordGrammarPage" style="width: 220px; height: 26px">
 					 <xsl:attribute name="value">
 						<xsl:value-of select="$sPreviousButtonText"/>
 					 </xsl:attribute>
@@ -185,38 +178,6 @@ GetVernacularFont
    </xsl:template>
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Script
-	Output the JavaScript script to handle dynamic "tree"
-		Parameters: none
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
-   <xsl:template name="Script">
-	  <script language="JavaScript" id="clientEventHandlersJS">
-		 <xsl:text>
-	function ButtonTryNextPass(nodeId)
-	{
-	  window.external.TryWordGrammarAgain(nodeId);
-	}
-
-	function ButtonGoBack()
-	{
-	  window.external.GoToPreviousWordGrammarPage();
-	}
-
-	function JumpToToolBasedOnHvo(hvo)
-	{
-	window.external.JumpToToolBasedOnHvo(hvo);
-	}
-
-	function MouseMove()
-	{
-	window.external.MouseMove();
-	}
-	</xsl:text>
-	  </script>
-   </xsl:template>
-   <!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ShowFeatures
 	Show the allomorph form, the gloss, and citation form of a morpheme
 		Parameters: none
@@ -276,14 +237,15 @@ ShowFormGlossCitation
 -->
    <xsl:template name="ShowFormGlossCitation">
 	  <table cellpadding="0" cellspacing="0">
-		 <xsl:if test="$prmVernacularRTL='Y'">
-			<xsl:attribute name="style">
-			   <xsl:text> direction:rtl; text-align:right</xsl:text>
-			</xsl:attribute>
-		 </xsl:if>
-		 <xsl:call-template name="CreateJumpToAttributes">
-			<xsl:with-param name="hvo" select="@alloid"/>
-		 </xsl:call-template>
+		 <xsl:attribute name="style">
+			<xsl:text>cursor:pointer;</xsl:text>
+			<xsl:if test="$prmVernacularRTL='Y'">
+			   <xsl:text>direction:rtl; text-align:right;</xsl:text>
+			</xsl:if>
+		 </xsl:attribute>
+		 <xsl:attribute name="id">
+			<xsl:value-of select="@alloid"/>
+		 </xsl:attribute>
 		 <tr>
 			<td>
 			   <xsl:attribute name="style">
@@ -415,12 +377,12 @@ ShowOtherInfo
    <xsl:template name="ShowOtherInfo">
 	  <td>
 		 <xsl:attribute name="style">
-			<xsl:text>color:</xsl:text>
+			<xsl:text>cursor:pointer;color:</xsl:text>
 			<xsl:value-of select="$sOtherInfoColor"/>
 		 </xsl:attribute>
-		 <xsl:call-template name="CreateJumpToAttributes">
-			<xsl:with-param name="hvo" select="@morphname"/>
-		 </xsl:call-template>
+		 <xsl:attribute name="id">
+			<xsl:value-of select="@morphname"/>
+		 </xsl:attribute>
 		 <xsl:choose>
 			<xsl:when test="@wordType='root'">
 			   <table cellpadding="0" cellspacing="0">
@@ -652,24 +614,6 @@ ShowOtherInfo
 	  </tr>
    </xsl:template>
    <!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		CreateJumpToAttributes
-		Create attributes needed for jump ablity in FLEx
-		Parameters: hvo - the element containing the hvo to jump to
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-   <xsl:template name="CreateJumpToAttributes">
-	  <xsl:param name="hvo"/>
-	  <xsl:attribute name="onclick">
-		 <xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-		 <xsl:value-of select="$hvo"/>
-		 <xsl:text>)</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="onmousemove">
-		 <xsl:text>MouseMove()</xsl:text>
-	  </xsl:attribute>
-   </xsl:template>
-   <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ShowProdRestrict
 	Show the the steps tried
@@ -830,9 +774,9 @@ ShowSteps
 							  <xsl:text/>
 						   </xsl:attribute>
 						   <xsl:text>This succeeded.&#xa0;&#xa0;</xsl:text>
-						   <input type="button" name="BWGDetails" id="TryNextPassButton" style="width: 120px; height: 26px">
-							  <xsl:attribute name="onclick">
-								 <xsl:text>ButtonTryNextPass(</xsl:text>"<xsl:value-of select="position()"/>"<xsl:text>)</xsl:text>
+						   <input type="button" name="TryWordGrammarAgain" style="width: 120px; height: 26px">
+							  <xsl:attribute name="id">
+								 <xsl:value-of select="position()"/>
 							  </xsl:attribute>
 							  <xsl:attribute name="value">
 								 <xsl:value-of select="$sTryNextPass"/>
