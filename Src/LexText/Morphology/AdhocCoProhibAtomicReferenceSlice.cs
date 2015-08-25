@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			//We need to set the Font so the height of this slice will be
 			//set appropriately to fit the text.
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			int fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
 					"Normal", stylesheet,
 					m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);

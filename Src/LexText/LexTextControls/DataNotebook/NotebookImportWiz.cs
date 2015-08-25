@@ -18,7 +18,6 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -55,8 +54,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private FdoCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
 		private IVwStylesheet m_stylesheet;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		private IWritingSystemManager m_wsManager;
 		private IStTextFactory m_factStText;
 		private IStTextRepository m_repoStText;
@@ -734,11 +733,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			lblMappingLanguagesInstructions.Text = String.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
@@ -1095,7 +1094,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				RnSfMarker rsfm = lvi.Tag as RnSfMarker;
 				var app = m_propertyTable.GetValue<IApp>("App");
 				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm,
-					m_SfmFile, m_mapFlidName, m_stylesheet, m_mediator);
+					m_SfmFile, m_mapFlidName, m_stylesheet, m_propertyTable, m_publisher);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					rsfm = dlg.Results;

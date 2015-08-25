@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -139,7 +140,7 @@ namespace SIL.FieldWorks.Common.Controls
 															ObtainProjectMethod.PickAnthroClass);
 			Assert.NotNull(type, "Class used for PickAnthroList moved.");
 			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod,
-												 new [] { typeof(String), typeof(XCore.IHelpTopicProvider) });
+												 new [] { typeof(String), typeof(IHelpTopicProvider) });
 			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 

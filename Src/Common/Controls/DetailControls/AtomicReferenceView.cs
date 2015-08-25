@@ -18,7 +18,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -73,12 +72,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_displayNameProperty = null;
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
-			Mediator mediator, string displayWs)
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			m_displayWs = displayWs;
-			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty, mediator);
+			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty);
 		}
 
 		/// <summary>

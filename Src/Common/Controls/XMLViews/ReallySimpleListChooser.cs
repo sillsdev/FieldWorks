@@ -29,7 +29,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -84,11 +83,10 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_hvoObject;
 		/// <summary></summary>
 		protected int m_flidObject;
-
-		/// <summary></summary>
-		protected Mediator m_mediator;
 		/// <summary></summary>
 		protected IPropertyTable m_propertyTable;
+		/// <summary></summary>
+		protected IPublisher m_publisher;
 		/// <summary></summary>
 		protected string m_fieldName = null;
 		private int m_cLinksShown = 0;
@@ -835,16 +833,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initialize the behavior from an XML configuration node.
 		/// </summary>
 		/// <param name="configNode"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void InitializeExtras(XmlNode configNode, Mediator mediator, IPropertyTable propertyTable)
+		public void InitializeExtras(XmlNode configNode, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(m_cache != null);
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			int ws = m_cache.DefaultAnalWs;
 			SetFontFromWritingSystem(ws);
@@ -1419,15 +1415,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Access for outsiders who don't call InitializExtras.
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="sGuiControl"></param>
-		public void ReplaceTreeView(Mediator mediator, IPropertyTable propertyTable, string sGuiControl)
+		public void ReplaceTreeView(IPropertyTable propertyTable, string sGuiControl)
 		{
 			if (m_fFlatList)
 			{
-				if (m_mediator == null)
-					m_mediator = mediator;
 				if (m_propertyTable == null)
 					m_propertyTable = propertyTable;
 				ReplaceTreeView(sGuiControl);
@@ -1457,7 +1450,7 @@ namespace SIL.FieldWorks.Common.Controls
 			};
 			m_flvLabels.SelectionChanged += m_flvLabels_SelectionChanged;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			m_flvLabels.Initialize(m_cache, stylesheet, m_mediator, m_propertyTable, configNode, m_objs);
+			m_flvLabels.Initialize(m_cache, stylesheet, m_propertyTable, configNode, m_objs);
 			if (m_chosenObjs != null)
 				m_flvLabels.SetCheckedItems(m_chosenObjs);
 			m_viewPanel.Controls.Remove(m_labelsTreeView);
@@ -1562,22 +1555,22 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes the raw.
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="sTitle">The s title.</param>
 		/// <param name="sText">The s text.</param>
 		/// <param name="sGotoLabel">The s goto label.</param>
 		/// <param name="sTool">The s tool.</param>
 		/// <param name="sWs">The s ws.</param>
 		/// ------------------------------------------------------------------------------------
-		public void InitializeRaw(Mediator mediator, IPropertyTable propertyTable, string sTitle, string sText,
+		public void InitializeRaw(IPropertyTable propertyTable, IPublisher publisher, string sTitle, string sText,
 			string sGotoLabel, string sTool, string sWs)
 		{
 			CheckDisposed();
 
 			Debug.Assert(m_cache != null);
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			if (sTitle != null)
 				Title = sTitle;
 			if (sText != null)
@@ -1653,9 +1646,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_mediator != null && m_linkJump != null)
+			if (m_publisher != null && m_linkJump != null)
 			{
-				m_mediator.PostMessage("FollowLink", m_linkJump);
+				m_publisher.Publish("AboutToFollowLink", null);
+				m_publisher.Publish("FollowLink", m_linkJump);
 				return true;
 			}
 			else
@@ -1669,13 +1663,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// location in the program.
 		/// </summary>
 		/// <returns><c>true</c> if a jump taken, <c>false</c> otherwise</returns>
-		public bool HandleAnyJump(Mediator mediator)
+		public bool HandleAnyJump(IPublisher publisher)
 		{
 			CheckDisposed();
 
-			if (mediator != null && m_linkJump != null)
+			if (publisher != null && m_linkJump != null)
 			{
-				mediator.PostMessage("FollowLink", m_linkJump);
+				m_publisher.Publish("AboutToFollowLink", null);
+				m_publisher.Publish("FollowLink", m_linkJump);
 				return true;
 			}
 			else
@@ -2572,11 +2567,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rootb"></param>
 		/// <param name="cache"></param>
 		/// <param name="persistenceProvider"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <returns></returns>
 		public static bool ChooseNaturalClass(IVwRootBox rootb, FdoCache cache,
-			IPersistenceProvider persistenceProvider, Mediator mediator, IPropertyTable propertyTable)
+			IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.Cast<ICmObject>(), "",
@@ -2603,7 +2598,7 @@ namespace SIL.FieldWorks.Common.Controls
 				chooser.Cache = cache;
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
-				chooser.InitializeRaw(mediator, propertyTable, sTitle, sDescription, sJumpLabel,
+				chooser.InitializeRaw(propertyTable, publisher, sTitle, sDescription, sJumpLabel,
 					"naturalClassEdit", "analysis vernacular");
 
 				DialogResult res = chooser.ShowDialog();

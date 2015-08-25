@@ -8,7 +8,6 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -22,6 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		#region Data members
 
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		private Form m_parentForm;
 		private FdoCache m_cache;
 		private Control m_ctrlAssistant;
@@ -486,28 +486,28 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize the control.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="ctrlAssistant"></param>
 		/// <param name="parentForm"></param>
-		/// <param name="propertyTable"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, Control ctrlAssistant, Form parentForm)
+		public void Initialize(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, Control ctrlAssistant, Form parentForm)
 		{
 			CheckDisposed();
 
 			Debug.Assert(ctrlAssistant != null);
 			m_ctrlAssistant = ctrlAssistant;
-			Initialize(cache, mediator, propertyTable, parentForm, new SandboxGenericMSA());
+			Initialize(cache, propertyTable, publisher, parentForm, new SandboxGenericMSA());
 		}
 
 		/// <summary>
 		/// Initialize the control.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="parentForm"></param>
 		/// <param name="sandboxMSA"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
+		public void Initialize(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			CheckDisposed();
 
@@ -515,6 +515,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_tsf = cache.TsStrFactory;
 			m_cache = cache;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			int defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
@@ -552,17 +553,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
 			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache,
 				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, mediator, m_propertyTable,
-				m_parentForm);
-			m_mainPOSPopupTreeManager.NotSureIsAny = true;
+				defAnalWs.Handle, false, m_propertyTable, m_publisher,
+				m_parentForm)
+			{
+				NotSureIsAny = true
+			};
 			m_mainPOSPopupTreeManager.LoadPopupTree(m_selectedMainPOS != null ? m_selectedMainPOS.Hvo : 0);
 			m_mainPOSPopupTreeManager.AfterSelect += m_mainPOSPopupTreeManager_AfterSelect;
 			m_fwcbSlots.SelectedIndexChanged += HandleComboSlotChange;
 			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache,
 				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, mediator, m_propertyTable,
-				m_parentForm);
-			m_secPOSPopupTreeManager.NotSureIsAny = true; // only used for affixes.
+				defAnalWs.Handle, false, m_propertyTable, m_publisher,
+				m_parentForm)
+			{
+				NotSureIsAny = true
+			};
+			// only used for affixes.
 			m_selectedSecondaryPOS = sandboxMSA.SecondaryPOS;
 			m_secPOSPopupTreeManager.LoadPopupTree(m_selectedSecondaryPOS != null ? m_selectedSecondaryPOS.Hvo : 0);
 			m_secPOSPopupTreeManager.AfterSelect += m_secPOSPopupTreeManager_AfterSelect;

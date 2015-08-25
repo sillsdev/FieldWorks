@@ -167,10 +167,6 @@
       <HintPath>..\..\..\DistFiles\WindowsBase.dll</HintPath>
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=7.0.0.40569, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="ManagedVwDrawRootBuffered">
       <HintPath>..\..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
     </Reference>

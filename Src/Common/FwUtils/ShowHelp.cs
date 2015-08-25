@@ -12,10 +12,7 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
-using SIL.Utils;
-using System.Diagnostics;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

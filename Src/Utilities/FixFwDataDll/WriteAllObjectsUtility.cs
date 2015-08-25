@@ -1,6 +1,5 @@
 ﻿using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.FixData
 {
@@ -44,7 +43,7 @@ namespace SIL.FieldWorks.FixData
 
 		public void Process()
 		{
-			var cache = _utilityDlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = _utilityDlg.PropertyTable.GetValue<FdoCache>("cache");
 			cache.ExportEverythingAsModified();
 		}
 	}

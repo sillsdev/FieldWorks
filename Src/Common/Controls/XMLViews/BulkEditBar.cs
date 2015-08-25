@@ -19,7 +19,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.FieldWorks.FDO.Application;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
@@ -66,7 +65,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected Control m_listChoiceControl;
 		private System.ComponentModel.IContainer components;
 
-		Mediator m_mediator;
 		IPropertyTable m_propertyTable;
 		XmlNode m_configurationNode = null;
 		/// <summary>
@@ -183,14 +181,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bv">The BrowseViewer that it is part of.</param>
 		/// <param name="spec">The parameters element of the BV, containing the
 		/// 'columns' elements that specify the BE bar (among other things).</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
+		public BulkEditBar(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache)
 			: this()
 		{
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_bv = bv;
 			m_bv.FilterChanged += BrowseViewFilterChanged;
@@ -374,7 +370,6 @@ namespace SIL.FieldWorks.Common.Controls
 				DisposeBulkEditItems();
 			}
 			m_beItems = null;
-			m_mediator = null;
 			m_bv = null;
 			m_cache = null;
 
@@ -693,7 +688,7 @@ namespace SIL.FieldWorks.Common.Controls
 					var list = (ICmPossibilityList) m_cache.ServiceLocator.GetObject(hvoList);
 					if (RequiresDialogChooser(list))
 					{
-						besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
+						besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
 						break;
 					}
 					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
@@ -707,7 +702,7 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_propertyTable, colSpec);
 					break;
 				case "integer":
 					flid = GetFlidFromClassDotName(colSpec, "field");
@@ -739,16 +734,16 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new BooleanChooserBEditControl(items, flid);
 					break;
 				case "complexListMultiple":
-					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
 					break;
 				case "semanticDomainListMultiple":
-					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, m_propertyTable, this, colSpec);
+					besc = new SemanticDomainChooserBEditControl(m_cache, m_propertyTable, this, colSpec);
 					break;
 				case "variantEntryTypes":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_propertyTable, colSpec);
 					break;
 				case "complexEntryTypes":
-					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
 					break;
 				default:
 					return null;
@@ -756,13 +751,9 @@ namespace SIL.FieldWorks.Common.Controls
 			besc.Cache = m_bv.Cache;
 			besc.DataAccess = m_bv.SpecialCache;
 			besc.Stylesheet = m_bv.StyleSheet;
-			if (besc.Mediator != m_mediator)
+			if (besc.PropertyTable != m_propertyTable)
 			{
-				besc.Mediator = m_mediator;
-			}
-			if (besc.PropTable != m_propertyTable)
-			{
-				besc.PropTable = m_propertyTable;
+				besc.PropertyTable = m_propertyTable;
 			}
 			if (besc is IGhostable)
 				(besc as IGhostable).InitForGhostItems(besc.Cache, colSpec);
@@ -1938,7 +1929,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a default progress state that we can update simply by setting PercentDone
 		/// and calling Breath.
-		/// Note that most of the methods for doing this are methods of FwXWindow. But we can't use those
+		/// Note that most of the methods for doing this are methods of FwMainWnd. But we can't use those
 		/// because this project can't reference XWorks.
 		/// Possibly all of them could be moved to the project that defines StatusBarProgressPanel?
 		/// </summary>
@@ -2848,9 +2839,6 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <returns></returns>
 			private static string BuildLastTabSettingsKey(BulkEditBar bulkEditBar)
 			{
-#pragma warning disable 219
-				Mediator mediator = bulkEditBar.m_mediator;
-#pragma warning restore 219
 				string toolId = GetBulkEditBarToolId(bulkEditBar);
 				string property = String.Format("{0}_LastTabPageSettings", toolId);
 				return property;
@@ -2858,9 +2846,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			private static string BuildCurrentTabSettingsKey(BulkEditBar bulkEditBar)
 			{
-#pragma warning disable 219
-				Mediator mediator = bulkEditBar.m_mediator;
-#pragma warning restore 219
 				string toolId = GetBulkEditBarToolId(bulkEditBar);
 				string property = String.Format("{0}_{1}_TabPageSettings", toolId, GetCurrentTabPageName(bulkEditBar));
 				return property;
@@ -2875,7 +2860,11 @@ namespace SIL.FieldWorks.Common.Controls
 			internal static string GetBulkEditBarToolId(BulkEditBar bulkEditBar)
 			{
 				XmlNode configurationNode = bulkEditBar.m_configurationNode;
+#if RANDYTODO
 				return XWindow.GetToolIdFromControlConfiguration(configurationNode);
+#else
+				throw new NotImplementedException("BulkEditBar GetBulkEditBarToolId needs to be implemented.");
+#endif
 			}
 
 			/// <summary>
@@ -3795,7 +3784,7 @@ namespace SIL.FieldWorks.Common.Controls
 				IApp app = m_propertyTable.GetValue<IApp>("App");
 				findDlg.SetDialogValues(m_cache, m_pattern, m_bv.BrowseView.StyleSheet,
 					FindForm(), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
-				findDlg.RestoreAndPersistSettingsIn(m_mediator, m_propertyTable);
+				findDlg.RestoreAndPersistSettingsIn(m_propertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = m_tssReplace;
 
@@ -4469,10 +4458,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public interface IBulkEditSpecControl
 	{
-		/// <summary>Get and set the mediator.</summary>
-		Mediator Mediator { get; set; }
 		/// <summary>Get/Set the property table.</summary>
-		IPropertyTable PropTable { get; set; }
+		IPropertyTable PropertyTable { get; set; }
 		/// <summary>Retrieve the control that does the work.</summary>
 		Control Control { get; }
 		/// <summary>Get or set the cache. Client promises to set this immediately after creation.</summary>
@@ -5693,7 +5680,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 	abstract class BulkEditSpecControl : IBulkEditSpecControl, IGhostable
 	{
-		protected Mediator m_mediator;
 		protected FdoCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected GhostParentHelper m_ghostParentHelper;
@@ -5701,16 +5687,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IBulkEditSpecControl Members
 
-		public Mediator Mediator
-		{
-			get { return m_mediator; }
-			set { m_mediator = value; }
-		}
-
 		/// <summary>
-		/// Get/Set the property table'
+		/// Get/Set the property table.
 		/// </summary>
-		public IPropertyTable PropTable { get; set; }
+		public IPropertyTable PropertyTable { get; set; }
 
 		public FdoCache Cache
 		{
@@ -5828,7 +5808,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class FlatListChooserBEditControl : IBulkEditSpecControl, IGhostable, IDisposable
 	{
-		protected Mediator m_mediator;
 		protected FdoCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected FwComboBox m_combo;
@@ -5856,16 +5835,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IBulkEditSpecControl Members
 
-		public Mediator Mediator
-		{
-			get { return m_mediator; }
-			set	{ m_mediator = value; }
-		}
-
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public IPropertyTable PropTable { get; set; }
+		public IPropertyTable PropertyTable { get; set; }
 
 		public Control Control
 		{
@@ -6221,7 +6194,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class ComplexListChooserBEditControl : IBulkEditSpecControl
 	{
-		protected Mediator m_mediator;
 		protected FdoCache m_cache;
 		private XMLViewsDataCache m_sda;
 		protected Button m_launcher;
@@ -6242,7 +6214,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
+		public ComplexListChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
@@ -6250,8 +6222,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayWs", "best analorvern"),
 			BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec))
 		{
-			Mediator = mediator;
-			PropTable = propertyTable;
+			PropertyTable = propertyTable;
 		}
 
 		/// <summary>
@@ -6284,11 +6255,11 @@ namespace SIL.FieldWorks.Common.Controls
 			using (new WaitCursor(this.Control))
 			{
 				var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList);
-				var persistProvider = new PersistenceProvider(m_mediator, PropTable);
+				var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, list.PossibilitiesOS,
 					m_displayNameProperty, m_displayWs);
 				using (var chooser = new ReallySimpleListChooser(persistProvider,
-					labels, m_fieldName, m_cache, m_chosenObjs, PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+					labels, m_fieldName, m_cache, m_chosenObjs, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					chooser.Atomic = Atomic;
 					chooser.Cache = m_cache;
@@ -6334,16 +6305,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IBulkEditSpecControl Members
 
-		public Mediator Mediator
-		{
-			get { return m_mediator; }
-			set { m_mediator = value; }
-		}
-
 		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public IPropertyTable PropTable { get; set; }
+		public IPropertyTable PropertyTable { get; set; }
 
 		public Control Control
 		{
@@ -6664,8 +6629,8 @@ namespace SIL.FieldWorks.Common.Controls
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
-			base(cache, mediator, propertyTable, colSpec)
+		public SemanticDomainChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
+			base(cache, propertyTable, colSpec)
 		{
 			m_suggestButton = new Button();
 			m_suggestButton.Text = XMLViewsStrings.ksSuggestButtonText;
@@ -6823,8 +6788,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		internal VariantEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
-			: base(cache, mediator, propertyTable, colSpec)
+		internal VariantEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
+			: base(cache, propertyTable, colSpec)
 		{
 		}
 	}
@@ -6833,8 +6798,8 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		Set<int> m_complexEntryRefs = null;
 
-		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode colSpec)
-			: base(cache, mediator, propertyTable, colSpec)
+		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
+			: base(cache, propertyTable, colSpec)
 		{
 		}
 

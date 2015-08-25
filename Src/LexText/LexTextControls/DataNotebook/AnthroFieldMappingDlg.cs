@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -42,8 +41,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		StringFieldOptions m_stringOpt;
 		LinkFieldOptions m_linkOpt;
 		DiscardOptions m_discardOpt;
-		Mediator m_mediator;
 		Dictionary<int, string> m_mapFlidName;
+		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 
 		Point m_locSubCtrl = new Point(2, 20);
 		Sfm2Xml.SfmFile m_sfmFile;
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
 			NotebookImportWiz.RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
 			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
-			Mediator mediator)
+			IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -122,7 +122,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_sfmFile = sfmFile;
 			m_stylesheet = stylesheet;
 			m_mdc = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_mapFlidName = mapFlidName;
 
 			FillInFieldList();
@@ -293,8 +294,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				"AnthroFieldMappingDlg.m_btnAddCustom_Click()", out typeFound);
 			if (mi != null)
 			{
-				var parameters = new object[1];
-				parameters[0] = m_mediator;
+				var parameters = new object[2];
+				parameters[0] = m_propertyTable;
+				parameters[1] = m_publisher;
 				mi.Invoke(typeFound,
 					System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public |
 					System.Reflection.BindingFlags.NonPublic, null, parameters, null);

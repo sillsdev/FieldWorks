@@ -17,11 +17,11 @@ M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice::Fi
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice::FinishInit()
 
 # Disposed in Dispose(bool) method
-M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.ConcordanceDlg::Init(XCore.Mediator,SIL.CoreImpl.IPropertyTable,System.Xml.XmlNode,SIL.FieldWorks.FDO.ICmObject)
 M: System.Boolean SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlg::SetDlgInfo(SIL.FieldWorks.FDO.IWfiWordform,System.Windows.Forms.Form,SIL.FieldWorks.Common.RootSites.IApp)
 
 # Reference only
 M: System.Boolean SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
+M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
 
 # reference/disposed in finally block
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicLauncher::HandleChooser()

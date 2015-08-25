@@ -12,7 +12,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -21,7 +20,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
 	{
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
@@ -110,7 +108,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fs = null;
 			m_highestPOS = null;
 			m_poses = null;
-			m_mediator = null;
 			m_cache = null;
 			helpProvider = null;
 
@@ -123,32 +120,53 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// This constructor is used in MsaInflectionFeatureListDlgLauncher.HandleChooser.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="fs"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
 			m_propertyTable = propertyTable;
-			Mediator = mediator;
+			SetPropertyTableSideEffects();
 			m_cache = cache;
 			m_owningFlid = owningFlid;
 			LoadInflFeats(fs);
 			EnableLink();
 		}
 
+		private void SetPropertyTableSideEffects()
+		{
+// Reset window location.
+			// Get location to the stored values, if any.
+			Point dlgLocation;
+			Size dlgSize;
+			if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation)
+				&& m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
+			{
+				var rect = new Rectangle(dlgLocation, dlgSize);
+				ScreenUtils.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
+			}
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null) // Will be null when running tests
+			{
+				helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
+				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
+				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			}
+		}
+
 		/// <summary>
 		/// Init the dialog with an MSA and flid that does not yet contain a feature structure.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -156,7 +174,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_owningFlid = owningFlid;
 			m_hvoOwner = cobj.Hvo;
 			m_propertyTable = propertyTable;
-			Mediator = mediator;
+			SetPropertyTableSideEffects();
 			m_cache = cache;
 			LoadInflFeats(cobj, owningFlid);
 			EnableLink();
@@ -169,49 +187,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// to store previously used feature structures.)
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="pos"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPartOfSpeech pos)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPartOfSpeech pos)
 		{
-			SetDlgInfo(cache, mediator, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
+			SetDlgInfo(cache, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
 		}
 
 		protected virtual void EnableLink()
 		{
 			linkLabel1.Enabled = m_highestPOS != null;
-		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="helpProvider gets disposed in Dispose()")]
-		private Mediator Mediator
-		{
-			set
-			{
-				m_mediator = value;
-				if (m_mediator != null)
-				{
-					// Reset window location.
-					// Get location to the stored values, if any.
-					Point dlgLocation;
-					Size dlgSize;
-					if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation)
-						&& m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
-					{
-						var rect = new Rectangle(dlgLocation, dlgSize);
-						ScreenUtils.EnsureVisibleRect(ref rect);
-						DesktopBounds = rect;
-						StartPosition = FormStartPosition.Manual;
-					}
-					var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-					if (helpTopicProvider != null) // Will be null when running tests
-					{
-						helpProvider = new HelpProvider { HelpNamespace = helpTopicProvider.HelpFile };
-						helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
-						helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-					}
-				}
-			}
 		}
 
 		/// <summary>

@@ -21,7 +21,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -30,19 +29,61 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// JohnT: rather contrary to its name, appears to be a place to put handlers for commands common
 	/// to tools in the Words area.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public class MorphologyListener : IxCoreColleague, IVwNotifyChange, IFWDisposable
+	public class MorphologyListener : IFlexComponent, IVwNotifyChange, IFWDisposable
 	{
 		#region Data members
 
-		/// <summary>
-		/// Mediator that passes off messages.
-		/// </summary>
-		private XCore.Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		private IWfiWordformRepository m_wordformRepos;
 
 		#endregion Data members
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			Cache.DomainDataByFlid.AddNotification(this);
+			if (IsVernacularSpellingEnabled())
+				OnEnableVernacularSpelling();
+		}
+
+		#endregion
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -155,63 +196,23 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 				if (Cache != null && !Cache.IsDisposed && Cache.DomainDataByFlid != null)
 					Cache.DomainDataByFlid.RemoveNotification(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
-			m_propertyTable = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		#region IxCoreColleague implementation
-
-		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_mediator.AddColleague(this);
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
-			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			Cache.DomainDataByFlid.AddNotification(this);
-			if (IsVernacularSpellingEnabled())
-				OnEnableVernacularSpelling();
-		}
-
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			List<IxCoreColleague> targets = new List<IxCoreColleague>();
-			targets.Add(this);
-			return targets.ToArray();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion IxCoreColleague implementation
-
 		#region XCore Message handlers
 
+#if RANDYTODO
 		/// <summary>
 		///
 		/// </summary>
@@ -226,6 +227,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
+
 		public bool OnMergeWordform(object argument)
 		{
 			CheckDisposed();
@@ -236,6 +239,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable the spelling tool always. Correct the property value if need be to match whether
 		/// we are actually showing vernacular spelling.
@@ -254,6 +258,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Checked = IsVernacularSpellingEnabled();
 			return true; //we've handled this
 		}
+#endif
 
 		public bool OnUseVernSpellingDictionary(object argument)
 		{
@@ -262,7 +267,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				OnEnableVernacularSpelling();
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true, true);
+			PropertyTable.SetProperty("UseVernSpellingDictionary", checking, true, true);
 			RestartSpellChecking();
 			return true;
 		}
@@ -270,12 +275,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
-			return m_propertyTable.GetValue("UseVernSpellingDictionary", true);
+			return PropertyTable.GetValue("UseVernSpellingDictionary", true);
 		}
 
 		private void RestartSpellChecking()
 		{
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			if (app != null)
 			{
 				app.RestartSpellChecking();
@@ -320,6 +325,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			OnAddWordsToSpellDict(null);
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayGotoWfiWordform(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -342,6 +348,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = display.Visible = false;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Try to find a WfiWordform object corresponding the the focus selection.
@@ -378,12 +385,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 #endif
 		}
 
+#if RANDYTODO
 		public bool OnDisplayEditSpellingStatus(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Called by reflection to implement the command.
@@ -400,25 +409,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
-			m_mediator.PostMessage("FollowLink", link);
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", link);
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayViewIncorrectWords(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		public bool OnViewIncorrectWords(object argument)
 		{
 			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
-				"Analyses", ActiveWordform(Cache, m_propertyTable));
+				"Analyses", ActiveWordform(Cache, PropertyTable));
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
-			m_mediator.PostMessage("FollowLink", link);
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", link);
 			return true;
 		}
 
@@ -433,9 +446,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var dlg = new WordformGoDlg())
 			{
-				dlg.SetDlgInfo(Cache, null, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(Cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
 			}
 			return true;
 		}
@@ -452,7 +465,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetValue<string>("areaChoice") == "textsWords");
+				return (PropertyTable.GetValue<string>("areaChoice") == "textsWords");
 			}
 		}
 
@@ -466,14 +479,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (!InFriendlyArea)
 				return false;
+#if RANDYTODO
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
 				var tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, command.TargetId));
+				Publisher.Publish("AboutToFollowLink", null);
+				Publisher.Publish("FollowLink", new FwLinkArgs(tool, command.TargetId));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
+#endif
 			return false;
 		}
 		#endregion XCore Message handlers
@@ -498,7 +514,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				if (m_mainWindowNode == null)
-					m_mainWindowNode = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+					m_mainWindowNode = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 				return m_mainWindowNode;
 			}
 		}
@@ -582,7 +598,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_propertyTable.GetValue<string>("areaChoice") == "textsWords");
+				return (PropertyTable.GetValue<string>("areaChoice") == "textsWords");
 			}
 		}
 
@@ -632,9 +648,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void ShowConcDlg(ICmObject concordOnObject)
 		{
-			using (IFwGuiControl ctrl = new ConcordanceDlg())
+			using (var ctrl = new ConcordanceDlg(concordOnObject))
 			{
-				ctrl.Init(m_mediator, m_propertyTable, MainWindowNode, concordOnObject);
+				ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				ctrl.Launch();
 			}
 		}
@@ -645,13 +661,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Concordance Message handlers
 
-		//
+#if RANDYTODO
 		public virtual bool OnDisplayShowWordformConc(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -669,12 +686,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayShowWordGlossConc(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -692,12 +711,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayShowHumanApprovedAnalysisConc(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -715,6 +736,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		///
 		/// </summary>
@@ -778,15 +800,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (guid != Guid.Empty)
 			{
 				var tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+				Publisher.Publish("AboutToFollowLink", null);
+				Publisher.Publish("FollowLink", new FwLinkArgs(tool, guid));
 				return true;
 			}
 			return false;
 		}
+#endif
 		#endregion Concordance Message handlers
 
 		#region Approval Status Message handlers
 
+#if RANDYTODO
 		public virtual bool OnDisplayAnalysisApprove(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -794,6 +819,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Checked = Analysis != null && Analysis.ApprovalStatusIcon == 1;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -809,6 +835,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayAnalysisUnknown(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -816,6 +843,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Checked = Analysis.ApprovalStatusIcon == 0;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -831,6 +859,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayAnalysisDisapprove(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -838,6 +867,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Checked = Analysis.ApprovalStatusIcon == 2;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -920,6 +950,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Wordform edit Message handlers
 
+#if RANDYTODO
 		protected override bool DeleteObject(Command command)
 		{
 			if (base.DeleteObject(command))
@@ -939,6 +970,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -952,12 +984,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayWordformChangeCase(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -975,8 +1009,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region New analysis message handler
 
-		//
-
+#if RANDYTODO
 		public virtual bool OnDisplayAddApprovedAnalysis(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -994,6 +1027,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -1002,8 +1036,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns>true</returns>
 		public bool OnAddApprovedAnalysis(object argument)
 		{
-			var mainWnd = (FwXWindow)m_dataEntryForm.FindForm();
-			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			var mainWnd = (IFwMainWnd)m_dataEntryForm.FindForm();
+			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IWfiWordform wf = Wordform;
 				if (wf == null)
@@ -1015,8 +1049,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					cache, m_dataEntryForm.StyleSheet);
 				// Making the form active fixes problems like LT-2619.
 				// I'm (RandyR) not sure what adverse impact might show up by doing this.
-				mainWnd.Activate();
-				if (dlg.ShowDialog(mainWnd) == DialogResult.OK)
+				((Form)mainWnd).Activate();
+				if (dlg.ShowDialog(((Form)mainWnd)) == DialogResult.OK)
 				{
 					morphs = dlg.GetMorphs().Trim();
 					if (morphs.Length == 0)
@@ -1044,6 +1078,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 					string fullForm = SandboxBase.MorphemeBreaker.DoBasicFinding(morphs, breakMarkers, prefixMarkers, postfixMarkers);
 
+#if RANDYTODO
 					var command = (Command) argument;
 					UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, cache.ActionHandlerAccessor,
 						() =>
@@ -1062,6 +1097,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									}
 								}
 							});
+#endif
 				}
 			}
 			return true;

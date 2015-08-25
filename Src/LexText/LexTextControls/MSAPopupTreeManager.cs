@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -47,8 +46,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
-			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
+			int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
 		}
@@ -57,8 +56,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
-			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
+			int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+			: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
 		}
@@ -356,7 +355,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// for the dialog we're about to show below.
 			pt.HideForm();
 
-			new MasterCategoryListChooserLauncher(ParentForm, m_mediator, m_propertyTable, List, FieldName, m_sense);
+			new MasterCategoryListChooserLauncher(ParentForm, m_propertyTable, m_publisher, List, FieldName, m_sense);
 		}
 
 		private bool AddNewMsa()
@@ -377,7 +376,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				SandboxGenericMSA dummyMsa = new SandboxGenericMSA();
 				dummyMsa.MsaType = m_sense.GetDesiredMsaType();
-				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa, 0, false, null);
+				dlg.SetDlgInfo(Cache, m_persistProvider, m_propertyTable, m_publisher, m_sense.Entry, dummyMsa, 0, false, null);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
 					Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
@@ -408,7 +407,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			SandboxGenericMSA dummyMsa = SandboxGenericMSA.Create(m_sense.MorphoSyntaxAnalysisRA);
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
-				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa,
+				dlg.SetDlgInfo(Cache, m_persistProvider, m_propertyTable, m_publisher, m_sense.Entry, dummyMsa,
 					m_sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
@@ -434,16 +433,16 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly ILexSense m_sense;
 		private readonly Form m_parentOfPopupMgr;
-		private readonly Mediator m_mediator;
 		private readonly IPropertyTable m_propertyTable;
+		private readonly IPublisher m_publisher;
 		private readonly string m_field;
 
-		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator, IPropertyTable propertyTable,
+		public MasterCategoryListChooserLauncher(Form popupMgrParent, IPropertyTable propertyTable, IPublisher publisher,
 			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
 		{
 			m_parentOfPopupMgr = popupMgrParent;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			CategoryList = possibilityList;
 			m_sense = sense;
 			FieldName = fieldName;
@@ -463,7 +462,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// now launch the dialog
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 			{
-				dlg.SetDlginfo(CategoryList, m_mediator, m_propertyTable, false, null);
+				dlg.SetDlginfo(CategoryList, m_propertyTable, false, null);
 				switch (dlg.ShowDialog(m_parentOfPopupMgr))
 				{
 					case DialogResult.OK:
@@ -489,7 +488,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						// NOTE: We use PostMessage here, rather than SendMessage which
 						// disposes of the PopupTree before we and/or our parents might
 						// be finished using it (cf. LT-2563).
-						m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
+						m_publisher.Publish("AboutToFollowLink", null);
+						m_publisher.Publish("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
 						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)
 						{
 							// Close the dlg that opened the master POS dlg,

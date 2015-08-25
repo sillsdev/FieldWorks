@@ -8,15 +8,14 @@ using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace XMLViewsTests
 {
 	public class ConfiguredExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private Mediator m_mediator;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
 
 		/// ------------------------------------------------------------------------------------
@@ -28,8 +27,8 @@ namespace XMLViewsTests
 		{
 			base.TestSetup();
 
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -40,10 +39,10 @@ namespace XMLViewsTests
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			m_mediator.Dispose();
-			m_mediator = null;
 			m_propertyTable.Dispose();
 			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 
 			base.TestTearDown();
 		}

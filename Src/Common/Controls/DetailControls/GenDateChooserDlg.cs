@@ -8,7 +8,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

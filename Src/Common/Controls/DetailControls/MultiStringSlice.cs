@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -96,8 +94,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			e.EventHandled = true;
 			e.Selection.Install();
-			var xwind = m_propertyTable.GetValue<XWindow>("window");
-			xwind.ShowContextMenu(sMenu, new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
+			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
+#if RANDYTODO
+			fwMainWnd.ShowContextMenu(sMenu, new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
+#endif
 		}
 
 		/// <summary>
@@ -137,7 +137,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var wsIds = (from ws in wss
 						 select ws.Id).ToArray();
+#if RANDYTODO
 			return ChoiceGroup.EncodeSinglePropertySequenceValue(wsIds);
+#else
+			return string.Empty;
+#endif
 		}
 
 		/// <summary>
@@ -146,11 +150,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private IEnumerable<IWritingSystem> GetVisibleWritingSystems(string singlePropertySequenceValue)
 		{
+#if RANDYTODO
 			string[] wsIds = ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue);
 			var wsIdSet = new HashSet<string>(wsIds);
 			return from ws in WritingSystemOptionsForDisplay
 				   where wsIdSet.Contains(ws.Id)
 				   select ws;
+#else
+			return new List<IWritingSystem>();
+#endif
 		}
 
 		public override void Install(DataTree parent)
@@ -241,7 +249,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			ReloadWssToDisplayForPart();
 			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = String.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, Label);
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -279,6 +287,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Populate the writing system options for the slice.
 		/// </summary>
@@ -289,7 +298,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			display.List.Clear();
-			m_propertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), true, false);
+			PropertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), true, false);
 			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -310,6 +319,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
 			}
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -324,13 +334,70 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			switch (name)
 			{
 				case "SelectedWritingSystemHvosForCurrentContextMenu":
-					string singlePropertySequenceValue = m_propertyTable.GetValue<string>("SelectedWritingSystemHvosForCurrentContextMenu");
+					string singlePropertySequenceValue = PropertyTable.GetValue<string>("SelectedWritingSystemHvosForCurrentContextMenu");
 					PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
 					break;
 				default:
 					break;
 			}
 		}
+
+		#region Overrides of Slice
+
+		#region Overrides of ViewSlice
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Subscriber.Unsubscribe("SelectedWritingSystemHvosForCurrentContextMenu", SelectedWritingSystemHvosForCurrentContextMenu);
+			}
+
+			base.Dispose(disposing);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			Subscriber.Subscribe("SelectedWritingSystemHvosForCurrentContextMenu", SelectedWritingSystemHvosForCurrentContextMenu);
+		}
+
+		private void SelectedWritingSystemHvosForCurrentContextMenu(object newValue)
+		{
+			PersistAndRedisplayWssToDisplayForPart((string)newValue);
+		}
+
+		#endregion
 
 		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<IWritingSystem> wssToDisplay)
 		{

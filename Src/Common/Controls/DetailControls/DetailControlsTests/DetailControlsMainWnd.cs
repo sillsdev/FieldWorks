@@ -15,7 +15,6 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

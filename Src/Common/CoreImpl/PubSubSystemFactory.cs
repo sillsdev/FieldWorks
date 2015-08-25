@@ -58,6 +58,28 @@ namespace SIL.CoreImpl
 				}
 			}
 
+			/// <summary>
+			/// Publish an ordered sequence of messages, each of which has a newValue (which may be null).
+			/// </summary>
+			/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (shich may be null).</param>
+			/// <param name="newValues">Ordered list of new values. Each value matches a message.</param>
+			/// <exception cref="ArgumentNullException">Thrown if either <paramref name="messages"/> or <paramref name="newValues"/> are null.</exception>
+			/// <exception cref="InvalidOperationException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
+			public void Publish(IList<string> messages, IList<object> newValues)
+			{
+				if (messages == null) throw new ArgumentNullException("messages");
+				if (newValues == null) throw new ArgumentNullException("newValues");
+				if (messages.Count != newValues.Count) throw new InvalidOperationException("'messages' and 'newValues' counts are not the same.");
+
+				int idx;
+				for (idx = 0; idx < messages.Count; ++idx)
+				{
+					var currentMessage = messages[idx];
+					var currentNewValue = newValues[idx];
+					Publish(currentMessage, currentNewValue);
+				}
+			}
+
 			#endregion
 
 			#region Implementation of ISubscriber

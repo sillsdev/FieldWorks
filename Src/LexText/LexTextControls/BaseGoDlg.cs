@@ -13,7 +13,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
@@ -33,13 +32,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
 		protected ITsStrFactory m_tsf;
-		/// <summary>
-		/// </summary>
-		protected Mediator m_mediator;
 
 		/// <summary>
 		/// </summary>
 		protected IPropertyTable m_propertyTable;
+		/// <summary>
+		/// </summary>
+		protected IPublisher m_publisher;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -225,14 +224,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, int ws)
+		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, int ws)
 		{
 			CheckDisposed();
 
@@ -240,8 +239,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = cache;
 			m_tsf = cache.TsStrFactory; // do this very early, other initializers may depend on it.
 
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 
 			if (m_propertyTable != null)
 			{
@@ -488,18 +487,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form)
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form, int ws)
+		protected void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form, int ws)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, ws);
+			SetDlgInfo(cache, wp, propertyTable, publisher, ws);
 			Form = form;
 		}
 
@@ -508,13 +507,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		///  </summary>
 		///  <param name="cache"></param>
 		///  <param name="wp"></param>
-		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, ITsString tssform)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ITsString tssform)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, propertyTable, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
+			SetDlgInfo(cache, wp, propertyTable, publisher, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
 		#endregion Construction and Destruction

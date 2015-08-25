@@ -11,10 +11,10 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -56,17 +56,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var linkCommandNode = m_configurationNode.SelectSingleNode("descendant::chooserLink");
 			var chooser = new SemanticDomainsChooser
 				{
-					Mediator = m_mediator,
 					Cache = m_cache,
 					DisplayWs = displayWs,
 					Sense = sense,
 					LinkNode = linkCommandNode,
-					HelpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")
+					HelpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")
 			};
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
 				m_displayNameProperty, displayWs);
-			chooser.Initialize(labels, sense.SemanticDomainsRC, m_propertyTable);
+			chooser.Initialize(labels, sense.SemanticDomainsRC, PropertyTable, Publisher);
 			var result = chooser.ShowDialog();
 			if(result == DialogResult.OK)
 			{

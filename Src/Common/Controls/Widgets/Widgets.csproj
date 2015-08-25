@@ -166,10 +166,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">

@@ -5,7 +5,6 @@ using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -17,8 +16,7 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinearImportDlg : Form, IFwExtension
 	{
 		private FdoCache m_cache;
-		private Mediator m_mediator;
-
+		private IPublisher m_publisher;
 		private readonly StringBuilder m_messages = new StringBuilder();
 
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -70,9 +68,9 @@ namespace SIL.FieldWorks.IText
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
 							var firstNewText = import.FirstNewText;
-							if (firstNewText != null && m_mediator != null)
+							if (firstNewText != null && m_publisher != null)
 							{
-								m_mediator.SendMessage("JumpToRecord", firstNewText.Hvo);
+								m_publisher.Publish("JumpToRecord", firstNewText.Hvo);
 							}
 						}
 						else
@@ -112,11 +110,11 @@ namespace SIL.FieldWorks.IText
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
-			if (m_mediator != null)
+			m_publisher = publisher;
+			if (propertyTable != null)
 			{
 				m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			}

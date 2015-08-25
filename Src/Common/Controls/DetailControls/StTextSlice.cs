@@ -2,13 +2,12 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -35,9 +34,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var textHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
-			((StTextView) RootSite).Init(Mediator, textHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo), m_ws);
+			((StTextView) RootSite).Init(textHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo), m_ws);
 		}
 
+#if RANDYTODO
 		public bool OnDisplayLexiconLookup(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -55,6 +55,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				display.Enabled = true;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Select at the specified position in the first paragraph.
@@ -99,7 +100,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+					PropertyTable, Publisher, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 				return true;
 			}
 			return false;
@@ -122,6 +123,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
+#if RANDYTODO
 		public bool OnDisplayAddToLexicon(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -142,6 +144,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				display.Enabled = true;
 			return true;
 		}
+#endif
 
 		private static int GetWsFromString(ITsString tss, int ichMin, int ichLim)
 		{
@@ -184,7 +187,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ITsString tssForm = tsb.GetString();
 				using (var dlg = new InsertEntryDlg())
 				{
-					dlg.SetDlgInfo(m_cache, tssForm, m_mediator, m_propertyTable);
+					dlg.SetDlgInfo(m_cache, tssForm, PropertyTable, Publisher);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						// is there anything special we want to do?
@@ -265,12 +268,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
-		public void Init(Mediator mediator, IStText text, int ws)
+		public void Init(IStText text, int ws)
 		{
 			CheckDisposed();
-			Mediator = mediator;
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
-			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_text = text;
 			m_vc = new StVc("Normal", ws) {Cache = m_fdoCache, Editable = true};
 			DoSpellCheck = true;
@@ -351,12 +353,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot))
 				return true;
-			var mainWind = ParentForm as XWindow;
+			var mainWind = ParentForm as IFwMainWnd;
 			IVwSelection sel = RootBox == null ? null : RootBox.Selection;
 			if (mainWind == null || sel == null)
 				return false;
+#if RANDYTODO
 			mainWind.ShowContextMenu("mnuStTextChoices", new Point(Cursor.Position.X, Cursor.Position.Y),
 				null, null);
+#endif
 			return true;
 		}
 	}

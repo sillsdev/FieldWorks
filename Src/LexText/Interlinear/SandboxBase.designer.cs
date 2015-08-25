@@ -3,11 +3,10 @@ using System.Runtime.InteropServices;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Impls;
 using SIL.FieldWorks.Common.RootSites;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	partial class SandboxBase : RootSite
+	partial class SandboxBase
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -27,9 +26,9 @@ namespace SIL.FieldWorks.IText
 
 			if (disposing)
 			{
-				if (m_propertyTable != null)
+				if (PropertyTable != null)
 				{
-					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, SettingsGroup.LocalSettings, false, false);
+					PropertyTable.SetProperty("FirstControlToHandleMessages", null, SettingsGroup.LocalSettings, false, false);
 				}
 			}
 
@@ -60,7 +59,6 @@ namespace SIL.FieldWorks.IText
 
 			m_editMonitor = null;
 			m_vc = null;
-			m_propertyTable = null;
 			if (m_rawWordform != null)
 			{
 				m_rawWordform = null;

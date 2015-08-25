@@ -11,7 +11,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -21,8 +20,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private DataTree m_DataTree;
 		private Slice m_Slice;
-		private Mediator m_Mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 
 		/// <summary/>
 		public override void TestTearDown()
@@ -36,11 +36,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_DataTree.Dispose();
 				m_DataTree = null;
-			}
-			if (m_Mediator != null)
-			{
-				m_Mediator.Dispose();
-				m_Mediator = null;
 			}
 			if (m_propertyTable != null)
 			{
@@ -139,15 +134,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[Test]
 		public void Expand()
 		{
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
+			m_DataTree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = new Mediator();
-			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
-			m_Slice.PropTable = m_propertyTable;
+			m_Slice.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Expand();
@@ -162,14 +157,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_DataTree = new DataTree();
+			m_DataTree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = new Mediator();
-			m_Slice.Mediator = m_Mediator;
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
-			m_Slice.PropTable = m_propertyTable;
+			m_Slice.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Collapse();

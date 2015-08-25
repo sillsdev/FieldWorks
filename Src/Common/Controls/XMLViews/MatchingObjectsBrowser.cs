@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
@@ -55,7 +54,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 
 		private BrowseViewer m_bvMatches;
@@ -156,14 +154,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine)
 		{
-			Initialize(cache, stylesheet, mediator, propertyTable, configNode, searchEngine, null);
+			Initialize(cache, stylesheet, propertyTable, configNode, searchEngine, null);
 		}
 
 		/// <summary>
@@ -171,19 +168,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine, IWritingSystem reversalWs)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_stylesheet = stylesheet;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
@@ -321,8 +316,11 @@ namespace SIL.FieldWorks.Common.Controls
 		private void CreateBrowseViewer(XmlNode configNode, IWritingSystem reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
-			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache, m_mediator,
-				m_propertyTable, null, m_listPublisher);
+#if RANDYTODO
+			// TODO: Call InitializeFlexComponent on m_bvMatches.
+#endif
+			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache,
+				null, m_listPublisher);
 			m_bvMatches.SuspendLayout();
 			m_bvMatches.Location = new Point(0, 0);
 			m_bvMatches.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;

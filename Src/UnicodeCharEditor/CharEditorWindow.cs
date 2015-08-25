@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using System.Collections;
 using System.Resources;
 using SIL.FieldWorks.Common.FwUtils;

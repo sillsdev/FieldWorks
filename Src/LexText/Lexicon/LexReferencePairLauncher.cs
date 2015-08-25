@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					wp.m_btnText = LexEdStrings.ks_Replace;
 				}
 
-				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

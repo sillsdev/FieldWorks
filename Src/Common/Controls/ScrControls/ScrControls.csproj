@@ -110,6 +110,10 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl, Version=9.0.0.12149, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\debug\FDO.dll</HintPath>
@@ -174,10 +178,6 @@
     </Reference>
     <Reference Include="TeScrInitializer, Version=7.1.0.19461, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils, Version=7.1.0.17244, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

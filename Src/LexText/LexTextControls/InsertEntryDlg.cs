@@ -30,7 +30,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
@@ -52,7 +51,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		#region Data members
 
 		private FdoCache m_cache;
-		private Mediator m_mediator;
+		private IPublisher m_publisher;
 		private IPropertyTable m_propertyTable;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
@@ -373,27 +372,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the mediator.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private Mediator Mediator
-		{
-			set
-			{
-				Debug.Assert(value != null);
-				m_mediator = value;
-				var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-				if (helpTopicProvider != null)
-				{
-					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
-					m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
-				}
-				m_btnHelp.Enabled = (helpTopicProvider != null);
-			}
-		}
-
 		public MsaType MsaType
 		{
 			get
@@ -583,9 +561,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-				SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
+				SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, m_propertyTable, configNode,
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_propertyTable, configNode,
 					searchEngine);
 
 				m_cache = cache;
@@ -659,7 +637,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
 
-				m_msaGroupBox.Initialize(cache, m_mediator, m_propertyTable, m_lnkAssistant, this);
+				m_msaGroupBox.Initialize(cache, m_propertyTable, m_publisher, m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				int oldHeight = m_msaGroupBox.Height;
 				int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
@@ -790,14 +768,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="tssForm">The initial form to use.</param>
-		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher">The publisher to use.</param>
+		public void SetDlgInfo(FdoCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 
 			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
-			Mediator = mediator;
+			m_publisher = publisher;
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null)
+			{
+				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
+			}
+			m_btnHelp.Enabled = (helpTopicProvider != null);
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
@@ -831,16 +816,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
-		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher">The publisher.</param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
 			Debug.Assert(persistProvider != null);
 			m_propertyTable = propertyTable;
-			Mediator = mediator;
+			m_publisher = publisher;
 
 			SetDlgInfo(cache);
 		}
@@ -852,16 +837,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="morphType">The morpheme type</param>
 		/// <param name="msaType">The type of msa</param>
 		/// <param name="slot">The default slot of the inflectional affix msa to</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher">The publisher.</param>
 		/// <param name="filter">The filter.</param>
 		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, IPropertyTable propertyTable, MorphTypeFilterType filter)
+			MsaType msaType, IMoInflAffixSlot slot, IPropertyTable propertyTable, IPublisher publisher, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
 
 			m_propertyTable = propertyTable;
-			Mediator = mediator;
+			m_publisher = publisher;
 
 			SetDlgInfo(cache, morphType, 0, filter);
 			m_msaGroupBox.MSAType = msaType;

@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -31,17 +30,10 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class ImportWordSetDlg : Form, IFWDisposable
 	{
 		#region Data members
-
-		/// <summary>
-		/// xCore Mediator.
-		/// </summary>
-		protected Mediator m_mediator;
-		/// <summary>
-		///
-		/// </summary>
-		protected IHelpTopicProvider m_helpTopicProvider;
-		protected FdoCache m_cache;
-		protected string[] m_paths;
+		private IPublisher m_publisher;
+		private IHelpTopicProvider m_helpTopicProvider;
+		private FdoCache m_cache;
+		private string[] m_paths;
 
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button btnCancel;
@@ -71,16 +63,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 		}
 
-		public ImportWordSetDlg(Mediator mediator, IPropertyTable propertyTable)
+		public ImportWordSetDlg(IPropertyTable propertyTable, IPublisher publisher)
 			: this()
 		{
 			//InitializeComponent();
-			m_mediator = mediator;
+			m_publisher = publisher;
 			m_cache = propertyTable.GetValue<FdoCache>("cache");
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
@@ -113,8 +107,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					components.Dispose();
 				}
 			}
-			m_mediator = null;
+			m_publisher = null;
 			m_cache = null;
+			m_helpTopicProvider = null;
 
 			base.Dispose( disposing );
 		}
@@ -212,14 +207,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 
-			m_mediator.SendMessage("StopParser", null);
+			m_publisher.Publish("StopParser", null);
 
 			CreateWordsetFromFiles(m_paths);
 
 			//starting up the parser without the user asking for that pain is a bit over ambitious at the moment:
-			//m_mediator.SendMessage("StartParser", null);
+			//m_publisher.Publish("StartParser", null);
 
-			m_mediator.SendMessage("FilterListChanged", null); // let record clerk know the list of filters has changed.
+			m_publisher.Publish("FilterListChanged", null); // let record clerk know the list of filters has changed.
 			DialogResult = DialogResult.OK;
 		}
 

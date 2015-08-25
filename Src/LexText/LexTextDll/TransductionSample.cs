@@ -4,7 +4,6 @@ using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -107,7 +106,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			try
 			{
-				FdoCache cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+				FdoCache cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 				m_dlg.ProgressBar.Maximum = cache.LanguageProject.LexDbOA.Entries.Count();
 				m_dlg.ProgressBar.Step=1;
 				string locale = InvokePython("-icu"); //ask the python script for the icu local

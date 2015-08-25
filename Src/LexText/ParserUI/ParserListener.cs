@@ -22,13 +22,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.XWorks;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -39,11 +36,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// this class just gets all the parser calling and event and receiving
 	/// out of the form code. It is scheduled for refactoring
 	/// </summary>
-	[MediatorDispose]
-	public class ParserListener : IxCoreColleague, IFWDisposable, IVwNotifyChange
+	public class ParserListener : IFlexComponent, IFWDisposable, IVwNotifyChange
 	{
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -61,45 +55,50 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
-			mediator.AddColleague(this);
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			m_sda = m_cache.MainCacheAccessor;
-			m_sda.AddNotification(this);
 		}
 
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
+		#endregion
 
 		public ParserConnection Connection
 		{
@@ -124,7 +123,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
 			{
-				var wordform = m_propertyTable.GetValue<IWfiWordform>(propertyName);
+				var wordform = PropertyTable.GetValue<IWfiWordform>(propertyName);
 				if (wordform != null)
 					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
 			}
@@ -183,7 +182,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
 					return false;
+#if RANDYTODO
 				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue);
+#endif
 			}
 			StartProgressUpdateTimer();
 			return true;
@@ -214,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void UpdateStatusPanelProgress()
 		{
 			var statusMessage = ParserQueueString + " " + ParserActivityString;
-			m_propertyTable.SetProperty("StatusPanelProgress", statusMessage, false, true);
+			PropertyTable.SetProperty("StatusPanelProgress", statusMessage, false, true);
 
 			if (m_parserConnection != null)
 			{
@@ -232,7 +233,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					else
 					{
-						var app = m_propertyTable.GetValue<IApp>("App");
+						var app = PropertyTable.GetValue<IApp>("App");
 						ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
 													  app.ActiveMainWindow, false);
 					}
@@ -241,7 +242,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					string notification = m_parserConnection.GetAndClearNotification();
 					if (notification != null)
-						m_mediator.SendMessage("ShowNotification", notification);
+					{
+						Publisher.Publish("ShowNotification", notification);
+					}
 				}
 			}
 			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled)
@@ -384,7 +387,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
-				m_mediator.RemoveColleague(this);
 				if (m_parserConnection != null)
 					m_parserConnection.Dispose();
 			}
@@ -392,10 +394,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_timer = null;
 			m_sda = null;
-			m_mediator = null;
 			m_cache = null;
 			m_traceSwitch = null;
 			m_parserConnection = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
@@ -406,7 +410,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				return InInterlinearText ? m_propertyTable.GetValue<IStText>("ActiveClerkSelectedObject") : null;
+				return InInterlinearText ? PropertyTable.GetValue<IStText>("ActiveClerkSelectedObject") : null;
 			}
 		}
 		private IWfiWordform CurrentWordform
@@ -415,15 +419,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IWfiWordform wordform = null;
 				if (InInterlinearText)
-					wordform = m_propertyTable.GetValue<IWfiWordform>("TextSelectedWord");
+					wordform = PropertyTable.GetValue<IWfiWordform>("TextSelectedWord");
 				else if (InWordAnalyses)
-					wordform = m_propertyTable.GetValue<IWfiWordform>("ActiveClerkSelectedObject");
+					wordform = PropertyTable.GetValue<IWfiWordform>("ActiveClerkSelectedObject");
 				return wordform;
 			}
 		}
 
 		#region ClearSelectedWordParserAnalyses handlers
 
+#if RANDYTODO
 		public bool OnDisplayClearSelectedWordParserAnalyses(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -434,6 +439,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return true;	//we handled this.
 		}
+#endif
 
 		public bool OnClearSelectedWordParserAnalyses(object dummyObj)
 		{
@@ -458,6 +464,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion ClearSelectedWordParserAnalyses handlers
 
+#if RANDYTODO
 		public bool OnDisplayParseCurrentWord(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -468,6 +475,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return true;	//we handled this.
 		}
+#endif
 
 		public bool OnParseCurrentWord(object argument)
 		{
@@ -482,6 +490,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		public bool OnDisplayParseWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -492,6 +501,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return true;	//we handled this.
 		}
+#endif
 
 		public bool OnParseWordsInCurrentText(object argument)
 		{
@@ -519,7 +529,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
+				string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
 				return areaChoice == "textsWords";
 			}
 		}
@@ -528,7 +538,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_propertyTable.GetValue("currentContentControl", string.Empty);
+				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
 				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "bulkEditWordforms");
 			}
 		}
@@ -537,12 +547,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_propertyTable.GetValue("currentContentControl", string.Empty);
-				string tabName = m_propertyTable.GetValue("InterlinearTab", string.Empty);
+				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
+				string tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
 				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		///
 		/// </summary>
@@ -559,6 +570,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = m_parserConnection == null;
 			return true;	//we handled this.
 		}
+
 		public bool OnDisplayReInitParser(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -566,6 +578,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = m_parserConnection != null;
 			return true;	//we handled this.
 		}
+
 		public bool OnDisplayStopParser(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -573,6 +586,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = m_parserConnection != null;
 			return true;	//we handled this.
 		}
+
 		public bool OnDisplayReparseAllWords(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -582,6 +596,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return true;	//we handled this.
 		}
+#endif
 
 		public bool OnStopParser(object argument)
 		{
@@ -611,6 +626,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayChooseParser(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -638,6 +654,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Handles the xWorks message for Try A Word
@@ -651,13 +668,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_dialog == null || m_dialog.IsDisposed)
 			{
 				m_dialog = new TryAWordDlg();
+				//m_dialog.InitializeFlexComponent(Proper);
 				m_dialog.SizeChanged += (sender, e) =>
 											{
 												if (m_dialog.WindowState != FormWindowState.Minimized)
 													m_prevWindowState = m_dialog.WindowState;
 											};
-				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, CurrentWordform, this);
-				var form = m_propertyTable.GetValue<FwXWindow>("window");
+				m_dialog.SetDlgInfo(CurrentWordform, this);
+				var form = PropertyTable.GetValue<Form>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
 				// Marc Durdin suggested switching to a different window and back.

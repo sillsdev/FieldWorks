@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		private int m_wsEn, m_wsFr;
 
 		private FwXApp m_application;
-		private FwXWindow m_window;
+		private IFwMainWnd m_window;
 		private IPropertyTable m_propertyTable;
 
 		private StringBuilder XHTMLStringBuilder { get; set; }
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(true);
 		}
-		#endregion disposal
+	#endregion disposal
 
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()

@@ -161,10 +161,6 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
       <Private>True</Private>
     </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
     </Reference>

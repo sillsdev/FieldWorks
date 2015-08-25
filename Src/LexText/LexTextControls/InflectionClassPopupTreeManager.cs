@@ -4,7 +4,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -28,8 +27,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionClassPopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, bool useAbbr, Form parent, int wsDisplay)
-			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public InflectionClassPopupTreeManager(TreeCombo treeCombo, FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, bool useAbbr, Form parent, int wsDisplay)
+			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
 

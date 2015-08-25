@@ -7,11 +7,11 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.XWorks;
-using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Widgets;
 
@@ -267,6 +267,8 @@ namespace SIL.FieldWorks.IText
 			TurnOffClickInvisibleSpace();
 			base.OnLostFocus(e);
 		}
+
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -308,11 +310,12 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = isTextPresent;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
-		public override void OnPropertyChanged(string name)
+		public void OnPropertyChanged(string name)
 		{
 			var wsBefore = 0;
 			// We want to know below whether a base class changed the ws or not.
@@ -322,7 +325,6 @@ namespace SIL.FieldWorks.IText
 					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
 			}
 
-			base.OnPropertyChanged(name);
 			bool newVal; // used in two cases below
 			switch (name)
 			{
@@ -380,28 +382,28 @@ namespace SIL.FieldWorks.IText
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
-				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
+				PropertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
 			}
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
-				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
+				PropertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
 			}
 		}
 
 		private bool ShowInvisibleSpaces
 		{
-			get { return m_propertyTable.GetValue<bool>("ShowInvisibleSpaces"); }
+			get { return PropertyTable.GetValue<bool>("ShowInvisibleSpaces"); }
 		}
 
 		private bool ClickInvisibleSpace
 		{
-			get { return m_propertyTable.GetValue<bool>("ClickInvisibleSpace"); }
+			get { return PropertyTable.GetValue<bool>("ClickInvisibleSpace"); }
 		}
 
 		#region Overrides of RootSite
@@ -486,7 +488,7 @@ namespace SIL.FieldWorks.IText
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			m_propertyTable.SetProperty("TextSelectedWord", wordform, false, true);
+			PropertyTable.SetProperty("TextSelectedWord", wordform, false, true);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
@@ -580,22 +582,22 @@ namespace SIL.FieldWorks.IText
 			if (base.DoContextMenu(sel, pt, rcSrcRoot, rcDstRoot))
 				return true;
 
-			var mainWind = ParentForm as XWindow;
+			var mainWind = ParentForm as IFwMainWnd;
 			if (mainWind == null || sel == null)
 				return false;
 			CmObjectUi ui = null;
 			try
 			{
-				TemporaryColleagueParameter tempColleague = null;
 				IWfiWordform wordform;
 				if (GetSelectedWordform(m_rootb.Selection, out wordform))
 				{
 					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
-					ui.Mediator = m_mediator;
-					tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
+					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				}
+#if RANDYTODO
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),
 					tempColleague, null);
+#endif
 
 				return true;
 			}
@@ -610,7 +612,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				return m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+				return PropertyTable.GetValue<RecordClerk>("ActiveClerk");
 			}
 		}
 
@@ -714,7 +716,7 @@ namespace SIL.FieldWorks.IText
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_fdoCache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+					PropertyTable, Publisher, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 			return true;
 		}
@@ -823,6 +825,7 @@ namespace SIL.FieldWorks.IText
 			return anal;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayGuessWordBreaks(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -842,6 +845,7 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = isTextPresent;
 			return true;
 		}
+#endif
 
 		void Swap(ref int first, ref int second)
 		{
@@ -904,21 +908,27 @@ namespace SIL.FieldWorks.IText
 			TurnOnShowInvisibleSpaces();
 		}
 
-		/// <summary>
-		/// Save the configuration parameters in case we want to use them locally.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+		#region Overrides of SimpleRootSite
 
-			base.Init (mediator, propertyTable, configurationParameters);
-			m_configurationParameters = configurationParameters;
-			m_clerk = ToolConfiguration.FindClerk(m_propertyTable, m_configurationParameters);
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+#if RANDYTODO
+			m_clerk = ToolConfiguration.FindClerk(PropertyTable, configurationParameters);
+#else
+			m_clerk = ToolConfiguration.FindClerk(PropertyTable, null); // TODO: need alternate way to get clerk.
+#endif
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
+
+		#endregion
 	}
 
 	// Raw text VC extracts displays the Contents of a Text using the regular StVc.

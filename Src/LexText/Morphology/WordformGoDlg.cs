@@ -6,7 +6,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -49,9 +48,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			var configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index

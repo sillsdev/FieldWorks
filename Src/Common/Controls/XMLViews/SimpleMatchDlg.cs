@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
@@ -8,7 +9,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {

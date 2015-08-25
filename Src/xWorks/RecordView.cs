@@ -14,11 +14,10 @@ using System.IO;
 using System.Diagnostics;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -119,7 +118,9 @@ namespace SIL.FieldWorks.XWorks
 			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
 			options.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			using (new RecordClerk.ListUpdateHelper(Clerk, options))
+			{
 				ShowRecord(rni);
+			}
 			return true;	//we handled this.
 		}
 
@@ -155,15 +156,15 @@ namespace SIL.FieldWorks.XWorks
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
 			if (Clerk.IsControllingTheRecordTreeBar
-				&& string.IsNullOrEmpty(m_propertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
+				&& string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
-				string toolName = m_propertyTable.GetValue("currentContentControl", "");
+				string toolName = PropertyTable.GetValue("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, guid), false);
+				Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, guid));
 			}
 		}
 
@@ -189,15 +190,12 @@ namespace SIL.FieldWorks.XWorks
 		/// This was done, rather than providing an Init() here in the normal way,
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		protected void InitBase(IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 
 			ReadParameters();
@@ -237,7 +235,6 @@ namespace SIL.FieldWorks.XWorks
 
 				//Historical comments here indicated that the Clerk should be processed by the mediator before the
 				//view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
-				mediator.AddColleague(this);
 				SetupDataContext();
 				// Only if it was just now created should we try to restore from what we persisted.
 				// Otherwise (e.g., FWR-1128) we may miss changes made to the list in other tools.
@@ -262,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var filename = clerkId + "_SortSeq";
 			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
-			// Also to FwXWindow.DiscardProperties().
+			// Also to IFwMainWnd.DiscardProperties().
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
 			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
 			if (!Directory.Exists(tempDirectory))
@@ -324,11 +321,11 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						m_propertyTable.SetProperty("ShowRecordList", false, true, true);
+						PropertyTable.SetProperty("ShowRecordList", false, true, true);
 						break;
 
 					case TreebarAvailability.Required:
-						m_propertyTable.SetProperty("ShowRecordList", true, true, true);
+						PropertyTable.SetProperty("ShowRecordList", true, true, true);
 						break;
 
 					case TreebarAvailability.Optional:
@@ -353,13 +350,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Other methods
 
 		#region Component Designer generated code
-		/// <summary>
-		/// PropertyTable message handling Priority
-		/// </summary>
-		public override int Priority
-		{
-			get { return RecordClerk.DefaultPriority + 1; } //Views should follow Clerks in processing order.
-		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

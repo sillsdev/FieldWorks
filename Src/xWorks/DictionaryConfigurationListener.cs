@@ -3,38 +3,62 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// This class handles the menu sensitivity and function for the dictionary configuration items under Tools->Configure
 	/// </summary>
-	class DictionaryConfigurationListener : IxCoreColleague
+	class DictionaryConfigurationListener : IFlexComponent
 	{
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
+		#region Implementation of IPropertyTableProvider
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			m_propertyTable = propertyTable;
-			m_mediator = mediator;
-			m_mediator.AddColleague(this);
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 		}
 
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			var targets = new List<IxCoreColleague> { this };
-			return targets.ToArray();
-		}
+		#endregion
 
+#if RANDYTODO
 		/// <summary>
 		/// The configure dictionary dialog may be launched any time this tool is active.
 		/// Its name is derived from the name of the tool.
@@ -79,6 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return false;
 		}
+#endif
 
 		/// <summary>
 		/// Get the localizable name of the area in FLEx being configured, such as Dictionary of Reversal Index.
@@ -165,17 +190,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using(var dlg = new DictionaryConfigurationDlg())
 			{
-				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				var controller = new DictionaryConfigurationController(dlg, m_propertyTable, clerk != null ? clerk.CurrentObject : null);
-				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_propertyTable));
-				dlg.ShowDialog(m_propertyTable.GetValue<IWin32Window>("window"));
+				var clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				var controller = new DictionaryConfigurationController(dlg, PropertyTable, clerk != null ? clerk.CurrentObject : null);
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(PropertyTable));
+				dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window"));
 			}
-			m_mediator.SendMessage("MasterRefresh", null);
+			Publisher.Publish("MasterRefresh", null);
 			return true; // message handled
 		}
-
-		public bool ShouldNotCall { get; private set; }
-		public int Priority { get { return (int)ColleaguePriority.High; } }
 
 		/// <summary>
 		/// Determine if the current area is relevant for this listener.
@@ -187,8 +209,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				var areaChoice = m_propertyTable.GetValue<string>("areaChoice");
-				return areaChoice == "lexicon";
+				return PropertyTable.GetValue<string>("areaChoice") == "lexicon";
 			}
 		}
 

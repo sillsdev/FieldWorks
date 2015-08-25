@@ -20,7 +20,6 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -161,7 +160,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
-	public class BrowseViewer : XCoreUserControl, ISnapSplitPosition, IxCoreContentControl, IPostLayoutInit, IRefreshableRoot
+	public class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
 		/// <summary>
 		/// Check state for items (check and uncheck only).
@@ -228,11 +227,6 @@ namespace SIL.FieldWorks.Common.Controls
 		// This flag is used to minimize redoing the filtering and sorting when
 		// changing the list of columns shown.
 		private bool m_fUpdatingColumnList = false;
-
-		/// <summary></summary>
-		protected internal Mediator m_mediator;
-		/// <summary></summary>
-		protected internal IPropertyTable m_propertyTable;
 
 		/// <summary></summary>
 		public event FilterChangeHandler FilterChanged;
@@ -857,9 +851,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda);
+			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda);
 		}
 
 		/// <summary>
@@ -874,7 +868,7 @@ namespace SIL.FieldWorks.Common.Controls
 			= new Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>>();
 
 		internal void ContructorSurrogate(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			CheckDisposed();
 
@@ -891,8 +885,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_specialCache = new XMLViewsDataCache(sda, nodeSpec);
 			}
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_lvHeader = new DhListView(this);
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -910,7 +902,11 @@ namespace SIL.FieldWorks.Common.Controls
 			// generated properly.
 			m_sortItemProvider = sortItemProvider;
 			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
-			CreateBrowseViewClass(hvoRoot, fakeFlid, mediator, propertyTable);
+#if RANDYTODO
+			// TODO: Before this is called, it will need to call InitializeFlexComponent, or PropertyTable will be null.
+			// TODO: so, this method name (ContructorSurrogate) needs to be renamed and delayed.
+#endif
+			CreateBrowseViewClass(hvoRoot, fakeFlid, PropertyTable);
 			// This would eventually get set in the startup process later, but we need it at least by the time
 			// we make the filter bar so the LayoutCache exists.
 			BrowseView.Vc.Cache = cache;
@@ -965,10 +961,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetProperty("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetProperty("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
 
 			//
 			// FilterBar
@@ -976,7 +972,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlAttribute xa = m_nodeSpec.Attributes["filterBar"];
 			if (xa != null && xa.Value == "true")
 			{
-				m_filterBar = new FilterBar(this, m_nodeSpec, m_propertyTable.GetValue<IApp>("App"));
+				m_filterBar = new FilterBar(this, m_nodeSpec, PropertyTable.GetValue<IApp>("App"));
 				m_filterBar.FilterChanged += FilterChangedHandler;
 				//m_filterBar.Dock = System.Windows.Forms.DockStyle.Top;
 				m_filterBar.Name = "FilterBar";
@@ -988,7 +984,7 @@ namespace SIL.FieldWorks.Common.Controls
 			xa = m_nodeSpec.Attributes["bulkEdit"];
 			if (xa != null && xa.Value == "true")
 			{
-				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, mediator, propertyTable, m_cache);
+				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, PropertyTable, m_cache);
 				m_bulkEditBar.Dock = DockStyle.Bottom;
 				m_bulkEditBar.Name = "BulkEditBar";
 				m_bulkEditBar.AccessibleName = "BulkEditBar";
@@ -1138,13 +1134,12 @@ namespace SIL.FieldWorks.Common.Controls
 		///  </summary>
 		///  <param name="bv"></param>
 		///  <param name="spec"></param>
-		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, FdoCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache)
 		{
-			return new BulkEditBar(bv, spec, mediator, propertyTable, cache);
+			return new BulkEditBar(bv, spec, propertyTable, cache);
 		}
 
 		/// <summary/>
@@ -1292,14 +1287,14 @@ namespace SIL.FieldWorks.Common.Controls
 			return ch;
 		}
 
-		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, Mediator mediator, IPropertyTable propertyTable)
+		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, IPropertyTable propertyTable)
 		{
 			if (m_nodeSpec.Attributes["editRowModelClass"] != null)
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
 			else
 				m_xbv = new XmlBrowseView();
-			m_xbv.Init(mediator, propertyTable, m_nodeSpec); // BEFORE the init that makes the VC...that needs the ID.
-			m_xbv.Init(m_nodeSpec, hvoRoot, fakeFlid, m_cache, mediator, this);
+			m_xbv.InitializeFlexComponent(propertyTable, Publisher, Subscriber); // BEFORE the init that makes the VC...that needs the ID.
+			m_xbv.Init(m_nodeSpec, hvoRoot, fakeFlid, m_cache, this);
 			m_xbv.SelectionChangedEvent += new FwSelectionChangedEventHandler(OnSelectionChanged);
 			m_xbv.SelectedIndexChanged += new EventHandler(m_xbv_SelectedIndexChanged);
 			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
@@ -1530,8 +1525,6 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						m_xbv.SelectionChangedEvent -= OnSelectionChanged;
 						m_xbv.SelectedIndexChanged -= m_xbv_SelectedIndexChanged;
-						if (m_xbv.Mediator != null && !m_xbv.Mediator.IsDisposed)
-							m_xbv.Mediator.RemoveColleague(this);
 						if (!m_scrollContainer.Controls.Contains(m_xbv))
 							m_xbv.Dispose();
 					}
@@ -1835,10 +1828,10 @@ namespace SIL.FieldWorks.Common.Controls
 		private int GetPersistedWidthForColumn(List<XmlNode> colSpecs, int iCol)
 		{
 			int width = -1; // default to trigger percentage width calculation.
-			if (m_xbv.Mediator != null)
+			if (PropertyTable != null)
 			{
-				string PropName = FormatColumnWidthPropertyName(iCol);
-				width = m_propertyTable.GetValue(PropName, SettingsGroup.LocalSettings, -1);
+				var propName = FormatColumnWidthPropertyName(iCol);
+				width = PropertyTable.GetValue(propName, SettingsGroup.LocalSettings, -1);
 			}
 			return width;
 		}
@@ -1893,17 +1886,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.PropTable, bv.StyleSheet, bv)
+				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv)
 			{
 				// add only the specified column to this browseview.
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
+			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, IPropertyTable propertyTable,
 				IVwStylesheet styleSheet, BrowseViewer bv)
 			{
+#if RANDYTODO
 				base.Init(mediator, propertyTable, nodeSpec);
 				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
+#endif
 				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
 				m_bv = null;
 
@@ -2137,13 +2132,13 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				m_propertyTable.SetProperty(PropName, nNewWidth, SettingsGroup.LocalSettings, true, true);
+				PropertyTable.SetProperty(PropName, nNewWidth, SettingsGroup.LocalSettings, true, true);
 			}
 		}
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			string Id1 = m_propertyTable.GetValue("currentContentControl", "");
+			string Id1 = PropertyTable.GetValue("currentContentControl", string.Empty);
 			string Id2 = BrowseView.GetCorrespondingPropertyName("Column");
 			string PropName = Id1 + "_" + Id2 + "_" + iCol + "_Width";
 			return PropName;
@@ -2427,11 +2422,13 @@ namespace SIL.FieldWorks.Common.Controls
 				return;			// Can't sort by this column.
 			m_icolCurrent = e.Column;
 
-			XWindow window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+			IFwMainWnd window = PropertyTable.GetValue<IFwMainWnd>("window");
 			window.ShowContextMenu("mnuBrowseHeader",
 				new Point(Cursor.Position.X, Cursor.Position.Y),
 				new TemporaryColleagueParameter(m_xbv.Mediator, this, false),
 				null); // No MessageSequencer
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2502,7 +2499,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void ConfigMoreChoicesItemClicked(object sender, EventArgs args)
 		{
 			using (ColumnConfigureDialog dlg = new ColumnConfigureDialog(m_xbv.Vc.PossibleColumnSpecs,
-				new List<XmlNode>(ColumnSpecs), m_propertyTable))
+				new List<XmlNode>(ColumnSpecs), PropertyTable))
 			{
 				dlg.RootObjectHvo = RootObjectHvo;
 				dlg.FinishInitialization();
@@ -2741,7 +2738,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", colName);
 			if (colSpec == null)
 				return null;
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, BrowseView.Vc, app);
 			return new FilterBarCellFilter(finder, matcher);
 		}
@@ -2763,10 +2760,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public RecordFilter FilterFromLink()
 		{
-			string linkSetupInfo = m_propertyTable.GetValue<string>("LinkSetupInfo");
+			string linkSetupInfo = PropertyTable.GetValue<string>("LinkSetupInfo");
 			if (linkSetupInfo == null)
 				return null;
-			m_propertyTable.RemoveProperty("LinkSetupInfo");
+			PropertyTable.RemoveProperty("LinkSetupInfo");
 			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling" &&
 				linkSetupInfo != "FilterAnthroItems")
 				return null; // Only setting we know as yet.
@@ -2810,10 +2807,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else if (linkSetupInfo == "FilterAnthroItems")
 			{
-				var itemHvos = m_propertyTable.GetValue<string>("HvoOfAnthroItem");
+				var itemHvos = PropertyTable.GetValue<string>("HvoOfAnthroItem");
 				if (itemHvos == null)
 					return null;
-				m_propertyTable.RemoveProperty("HvoOfAnthroItem");
+				PropertyTable.RemoveProperty("HvoOfAnthroItem");
 
 				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
 				if (colSpec == null)
@@ -2997,7 +2994,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			colList.Append("</root>");
-			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), SettingsGroup.LocalSettings, true, true);
 		}
 
 		/// <summary>
@@ -3099,7 +3096,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (colSpec != null)
 			{
-				IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, m_propertyTable.GetValue<IApp>("App"));
+				var finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, PropertyTable.GetValue<IApp>("App"));
 				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
 			return null;
@@ -3111,6 +3108,7 @@ namespace SIL.FieldWorks.Common.Controls
 				SelectedIndexChanged(this, new EventArgs());
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enable the "Sort from end" menu command.
@@ -3161,6 +3159,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return true;
 		}
+#endif
 
 		private RecordSorter GetCurrentColumnSorter()
 		{
@@ -3206,77 +3205,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			SetAndRaiseSorter(Sorter, true);
 		}
-
-		#region IxCoreColleague Members
-
-		/// <summary>
-		/// Initialize as an xCore colleague. Currently this just passes the information on to the
-		/// main XmlBrowseView.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			base.m_configurationParameters = configurationParameters;
-			m_xbv.Init(mediator, propertyTable, configurationParameters);
-			m_xbv.AccessibleName = "BrowseViewer";
-			m_mediator = mediator;
-		}
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// When Colleagues are added to the mediator this priority will determine the order that they are called
-		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
-		///
-		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
-		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
-		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
-		/// </summary>
-		public int Priority
-		{
-			get { return (int) ColleaguePriority.Medium; }
-		}
-
-		internal Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_mediator != null)
-					return m_mediator;
-				if (m_xbv != null)
-					return m_xbv.Mediator; // sometimes set before our own
-				return null;
-			}
-		}
-
-		internal IPropertyTable PropTable
-		{
-			get { return m_propertyTable; }
-		}
-
-		/// <summary>
-		/// Currently interesting targets are the browse view and this object.
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[] { m_xbv, this };
-		}
-
-		#endregion
 
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
 		{
@@ -3636,6 +3564,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_filterBar.RemoveAllFilters();
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Decide whether to display the Configure menu command for changing browse view column choices.
 		/// </summary>
@@ -3655,6 +3584,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			return result;
 		}
+#endif
 
 		/// <summary>
 		/// Launch dialog for configuring browse view column choices.
@@ -3669,17 +3599,15 @@ namespace SIL.FieldWorks.Common.Controls
 			return true;
 		}
 
-		#region IxCoreContentControl Members
+		#region IMainContentControl Members
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public string AreaName
 		{
 			get
 			{
 				CheckDisposed();
-				return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "area", "unknown");
+				return PropertyTable.GetValue<IArea>("currentArea").MachineName;
 			}
 		}
 
@@ -3695,9 +3623,9 @@ namespace SIL.FieldWorks.Common.Controls
 			return true;
 		}
 
-		#endregion IxCoreContentControl Members
+		#endregion IMainContentControl Members
 
-		#region IxCoreCtrlTabProvider Members
+		#region ICtrlTabProvider Members
 
 		/// <summary>
 		///
@@ -3795,6 +3723,50 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#endregion
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_xbv.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			m_xbv.AccessibleName = "BrowseViewer";
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -4083,9 +4055,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-								  FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider,
+								  FdoCache cache, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
+			: base(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda)
 		{
 
 		}
@@ -4202,18 +4174,17 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#region IxCoreColleague Members
+		#region Overrides of BrowseViewer
 
 		/// <summary>
-		/// Initialize as an xCore colleague. Currently this just passes the information on to the
-		/// main XmlBrowseView.
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(mediator, propertyTable, configurationParameters);
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			// Set the initial value
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);

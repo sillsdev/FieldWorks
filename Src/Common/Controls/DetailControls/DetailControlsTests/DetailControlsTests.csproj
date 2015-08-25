@@ -175,10 +175,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>

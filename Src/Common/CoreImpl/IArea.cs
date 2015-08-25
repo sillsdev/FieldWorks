@@ -17,7 +17,7 @@ namespace SIL.CoreImpl
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable);
+		ITool GetPersistedOrDefaultToolForArea();
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.

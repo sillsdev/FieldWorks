@@ -13,7 +13,6 @@ using Palaso.Reporting;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {

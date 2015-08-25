@@ -14,7 +14,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -96,19 +95,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
+			var ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
 			{
-				Cache = m_propertyTable.GetValue<FdoCache>("cache")
+				Cache = PropertyTable.GetValue<FdoCache>("cache")
 			};
+			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			Control = ctrl;
-			//m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode["deParams"]);
-#if !Want
-			//m_menuHandler.Init(this.Mediator, null);
-#else
-			//m_menuHandler.Init(null, null);
-#endif
-			//ctrl.SetContextMenuHandler(new InflAffixTemplateEventHandler(m_menuHandler.ShowSliceContextMenu));
-			ctrl.Mediator = Mediator;
 			m_sda = ctrl.Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);
 
@@ -289,8 +281,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						return;
 					}
 				}
-				IReversalIndexEntry rie = cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid));
+				Publisher.Publish("AboutToFollowLink", null);
+				var rie = cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+				Publisher.Publish("FollowLink", new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid));
 			}
 
 			/// <summary>

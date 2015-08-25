@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -24,7 +23,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly ITextRepository m_textRepository;
 		private readonly IStTextRepository m_stTextRepository;
-		private readonly Mediator m_mediator;
 		private readonly IPropertyTable m_propertyTable;
 		public const string PersistPropertyName = "InterestingScriptureTexts";
 		public const string ExcludeCoreTextPropertyName = "ExcludedCoreTexts";
@@ -45,16 +43,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public FdoCache Cache { get; set; }
 
-		public InterestingTextList(Mediator mediator, IPropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
-			: this(mediator, propertyTable, repo, stTextRepo, true)
+		public InterestingTextList(IPropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
+			: this(propertyTable, repo, stTextRepo, true)
 		{
 		}
 
-		public InterestingTextList(Mediator mediator, IPropertyTable propertyTable, ITextRepository repo,
+		public InterestingTextList(IPropertyTable propertyTable, ITextRepository repo,
 			IStTextRepository stTextRepo, bool includeScripture)
 		{
 			m_textRepository = repo;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_stTextRepository = stTextRepo;
 			CoreTexts = GetCoreTexts();
@@ -398,17 +395,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdatePropertyTable()
 		{
-			SetScriptureTextsInPropertyTable(m_mediator, m_propertyTable, m_scriptureTexts);
+			SetScriptureTextsInPropertyTable(m_propertyTable, m_scriptureTexts);
 		}
 
 		/// <summary>
 		/// Store in the property table what needs to be there so that we will use the specified set of scripture
 		/// texts as 'interesting'.
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="texts"></param>
-		public static void SetScriptureTextsInPropertyTable(Mediator mediator, IPropertyTable propertyTable, IEnumerable<IStText> texts)
+		public static void SetScriptureTextsInPropertyTable(IPropertyTable propertyTable, IEnumerable<IStText> texts)
 		{
 			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true, true);
 		}
@@ -528,7 +524,7 @@ namespace SIL.FieldWorks.XWorks
 		/// if not in the title, add (section index + 1)*2.
 		/// If in contents add 1.
 		/// </summary>
-		/// <param name="hvoText"></param>
+		/// <param name="text"></param>
 		/// <returns></returns>
 		int TextPosition(IStText text)
 		{

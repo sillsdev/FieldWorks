@@ -9,7 +9,6 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

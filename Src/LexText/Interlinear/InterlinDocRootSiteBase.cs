@@ -15,7 +15,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 using System.Linq;
 
 namespace SIL.FieldWorks.IText
@@ -89,7 +88,7 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_fdoCache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = m_propertyTable.GetValue("ShowMorphBundles", true);
+			m_vc.ShowMorphBundles = PropertyTable.GetValue("ShowMorphBundles", true);
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 
@@ -98,6 +97,7 @@ namespace SIL.FieldWorks.IText
 			m_objRepo = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
+#if RANDYTODO
 		public bool OnDisplayExportInterlinear(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (m_hvoRoot != 0)
@@ -107,6 +107,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = true;
 			return true;
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "parent is a reference")]
 		public bool OnExportInterlinear(object argument)
@@ -129,8 +130,9 @@ namespace SIL.FieldWorks.IText
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc, bookImporter))
+			using (var dlg = new InterlinearExportDialog(objRoot, m_vc, bookImporter))
 			{
+				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				dlg.ShowDialog(this);
 			}
 			if (fFocusBox)
@@ -818,7 +820,7 @@ namespace SIL.FieldWorks.IText
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
-			var persist = m_propertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
+			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, m_fdoCache.LanguageWritingSystemFactoryAccessor,
@@ -833,7 +835,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				m_vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -860,7 +862,7 @@ namespace SIL.FieldWorks.IText
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			m_propertyTable.SetProperty(ConfigPropName,
+			PropertyTable.SetProperty(ConfigPropName,
 				m_vc.LineChoices.Persist(m_fdoCache.LanguageWritingSystemFactoryAccessor),
 				SettingsGroup.LocalSettings, true, true);
 			UpdateDisplayForNewLineChoices();
@@ -1019,7 +1021,9 @@ namespace SIL.FieldWorks.IText
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
+#if RANDYTODO
 						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+#endif
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
@@ -1027,7 +1031,9 @@ namespace SIL.FieldWorks.IText
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
+#if RANDYTODO
 						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+#endif
 					}
 					break;
 			}

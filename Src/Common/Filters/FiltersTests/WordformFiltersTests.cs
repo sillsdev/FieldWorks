@@ -2,8 +2,6 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -22,11 +20,13 @@ namespace SIL.FieldWorks.Filters
 			wfiset.CasesRC.Add(wf1);
 			var andFilter = new AndFilter();
 			var wsf = new WordSetFilter(wfiset);
-			using (var mediator = new Mediator())
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
 				propertyTable.SetProperty("cache", Cache, true, true);
-				flp.Init(mediator, propertyTable, null);
+				flp.InitializeFlexComponent(propertyTable, publisher, subscriber);
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);

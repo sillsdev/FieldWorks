@@ -10,10 +10,7 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
-
 using NUnit.Framework;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Test.TestUtils;

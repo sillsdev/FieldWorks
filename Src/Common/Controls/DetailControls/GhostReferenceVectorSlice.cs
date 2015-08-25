@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -41,7 +41,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 
-			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, m_mediator, m_propertyTable, DisplayNameProperty, BestWsName);
+			((GhostReferenceVectorLauncher)Control).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName);
 		}
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.
@@ -73,13 +74,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 	class GhostReferenceVectorLauncher: ButtonLauncher
 	{
-		protected override XCore.Mediator Mediator
-		{
-			get
-			{
-				return Slice.Mediator;
-			}
-		}
 		// We want to emulate what ReferenceLauncher does, but without the object being created
 		// until the user clicks OK in the simple list chooser.
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -99,7 +93,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				new ICmObject[0],
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
 			chooser.SetObjectAndFlid(0, m_flid);
@@ -119,7 +113,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//    if (referenceTargetOwner != null)
 				//        chooser.TextParamHvo = referenceTargetOwner.Hvo;
 				//    chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-				chooser.InitializeExtras(Slice.ConfigurationNode, Mediator, m_propertyTable);
+				chooser.InitializeExtras(Slice.ConfigurationNode, PropertyTable);
 			}
 			var res = chooser.ShowDialog(FindForm());
 			if (DialogResult.Cancel == res)
@@ -128,7 +122,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (chooser.HandleAnyJump())
 				return;
 
-			if (chooser.ChosenObjects != null && chooser.ChosenObjects.Count() > 0)
+			if (chooser.ChosenObjects != null && chooser.ChosenObjects.Any())
 			{
 				UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj,

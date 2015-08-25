@@ -23,17 +23,13 @@ using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
-	[MediatorDispose]
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification="_mediator is a reference")]
-	public sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
+	public sealed class FLExBridgeListener : IFlexComponent, IFWDisposable
 	{
-		private Mediator _mediator;
-		private IPropertyTable _propertyTable;
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
@@ -69,33 +65,48 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		#region IxCoreColleague Implementation
+		#region Implementation of IPropertyTableProvider
 
-		public IxCoreColleague[] GetMessageTargets()
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			return new IxCoreColleague[] { this };
-		}
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 
-			_mediator = mediator;
-			_propertyTable = propertyTable;
-			Cache = _propertyTable.GetValue<FdoCache>("cache");
-			_propertyTable.SetProperty("FLExBridgeListener", this, false, true);
-			_parentForm = _propertyTable.GetValue<Form>("window");
-			mediator.AddColleague(this);
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		public bool ShouldNotCall
-		{
-			get { return false; }
+			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			PropertyTable.SetProperty("FLExBridgeListener", this, false, true);
+			_parentForm = PropertyTable.GetValue<Form>("window");
 		}
 
 		#endregion
@@ -103,6 +114,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region XCore message handlers
 
 		#region FLExLiftBridge Toolbar messages
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to enable the S/R toolbar icon and its hotkey.
 		/// The button and hotkey always disabled before the first successful S/R.
@@ -133,6 +145,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// This is the button on the toolbar for FlexBridge and doing the last type of S/R (Flex or Lift)
@@ -147,12 +160,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// and does not release it before calling this event handler. If we proceed to run the bridge,
 				// which freezes our UI thread until FlexBridge returns, the mouse stays captured...and the whole
 				// system UI is frozen, for all applications.
+#if RANDYTODO
 				_mediator.IdleQueue.Add(IdleQueuePriority.High,
 					obj =>
 						{
 							RunFLExLiftBridge(commandObject);
 							return true; // task is complete, don't try again, remove from idle queue.
 						});
+#endif
 			}
 			else
 				RunFLExLiftBridge(commandObject); // on windows we can safely do it right away.
@@ -161,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void RunFLExLiftBridge(object commandObject)
 		{
-			var bridgeLastUsed = _propertyTable.GetValue("LastBridgeUsed", SettingsGroup.LocalSettings, "FLExBridge");
+			var bridgeLastUsed = PropertyTable.GetValue("LastBridgeUsed", SettingsGroup.LocalSettings, "FLExBridge");
 			if (bridgeLastUsed == "FLExBridge")
 			{
 				OnFLExBridge(commandObject);
@@ -175,6 +190,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region Obtain a Flex or Lift repo and create a new FW project
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to show/enable the Send/Receive "_Get Project from Colleague" menu item.
 		/// </summary>
@@ -184,6 +200,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// Handle the S/R "_Get Project from Colleague" menu option.
@@ -191,11 +208,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
-			_propertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+			PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 				SettingsGroup.LocalSettings, true, true);
 
 			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
@@ -207,6 +224,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region Obtain a Lift repo and do merciful import into current project
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to show the Send/Receive "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
@@ -222,6 +240,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
@@ -230,7 +249,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
 			{
-				MessageBox.Show(_propertyTable.GetValue<FwApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				MessageBox.Show(PropertyTable.GetValue<FwApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 				return true;
 			}
 
@@ -246,8 +265,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			 // Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
-			_mediator.BroadcastMessage("MasterRefresh", null);
+			PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
+			Publisher.Publish("MasterRefresh", null);
 
 			return true;
 		}
@@ -256,6 +275,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region FLExBridge S/R messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to show the Send/Receive "_Project (with other FLEx users)" menu item.
 		/// </summary>
@@ -273,6 +293,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		private static bool IsConfiguredForSR(string projectFolder)
 		{
@@ -290,7 +311,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (!LinkedFilesLocationIsDefault())
 			{
-				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
@@ -319,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			StopParser();
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", SettingsGroup.LocalSettings, true, true);
 
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
@@ -340,13 +361,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
-				var newAppWindow = RefreshCacheWindowAndAll(_propertyTable, fullProjectFileName);
+				var conflictOccurred = DetectMainConflicts(projectFolder, savedState);
+				var newAppWindow = RefreshCacheWindowAndAll(PropertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewMessages", null);
+					newAppWindow.Publisher.Publish("ViewMessages", null);
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -379,6 +400,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
 		/// </summary>
@@ -392,6 +414,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									!IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
+#endif
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
@@ -402,6 +425,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return !String.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Send/Receive Project menu.
 		/// </summary>
@@ -414,6 +438,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// Called to setup Send/Receive by FLExBridge the first time. Shows a brief instructional message,
@@ -426,6 +451,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
 		/// </summary>
@@ -438,6 +464,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// The method/delegate that gets invoked when Send/Receive "_Lexicon (with programs that use LIFT)" menu is clicked.
@@ -449,7 +476,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", SettingsGroup.LocalSettings, true, true);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
@@ -483,12 +510,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
-				var newAppWindow = RefreshCacheWindowAndAll(_propertyTable, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(PropertyTable, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
+					newAppWindow.Publisher.Publish("ViewLiftMessages", null);
 				}
 			}
 
@@ -516,7 +543,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
-			var activeForm = _propertyTable.GetValue<Form>("window");
+			var activeForm = PropertyTable.GetValue<Form>("window");
 			if (activeForm != null)
 			{
 				activeForm.ValidateChildren(ValidationConstraints.Enabled);
@@ -529,6 +556,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region CheckForFlexBridgeUpdates messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Send/Receive->"Check for _Updates..." menu.
 		/// </summary>
@@ -546,6 +574,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// The method/delegate that gets invoked when Send/Receive->"Check for _Updates..." menu is clicked.
@@ -570,6 +599,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region AboutFlexBridge messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Send/Receive->"About" menu.
 		/// </summary>
@@ -579,6 +609,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// The method/delegate that gets invoked when Send/Receive->"About" menu is clicked.
@@ -603,6 +634,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region ViewMessages (for full FLEx data only) messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to display the Send/Receive->"View Messages" menu item.
 		/// </summary>
@@ -619,6 +651,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// The method/delegate that gets invoked when Send/Receive->View Messages is clicked
@@ -648,6 +681,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region View Lexicon Messages (for Lift data only) messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether or not to display the Send/Receive->"View Lexicon Messages" menu item.
 		/// </summary>
@@ -664,6 +698,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// The method/delegate that gets invoked when Send/Receive->"View Lexicon Messages" is clicked
@@ -693,6 +728,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region Chorus Help messages
 
+#if RANDYTODO
 		/// <summary>
 		/// Checks if the Send/Receive->"_Help..." menu is to be enabled.
 		/// </summary>
@@ -707,6 +743,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; // We dealt with it.
 		}
+#endif
 
 		/// <summary>
 		/// Handles the OnShowChorusHelp Mediator message for the Send/Receive->"_About..." menu.
@@ -859,8 +896,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			if (_mediator != null)
-				_mediator.SendMessage("StopParser", null);
+			if (Publisher != null)
+			{
+				Publisher.Publish("StopParser", null);
+			}
 		}
 
 		/// <summary>
@@ -1418,17 +1457,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "FwApp is a reference I guess")]
-		private static FwXWindow RefreshCacheWindowAndAll(IPropertyTable propertyTable, string fullProjectFileName)
+		private static IFwMainWnd RefreshCacheWindowAndAll(IPropertyTable propertyTable, string fullProjectFileName)
 		{
 			var manager = FwApp.App.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
-				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+				(IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
 			if (IsVernacularSpellingEnabled(propertyTable))
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			//clear out any sort cache files (or whatever else might mess us up) and then refresh
+#if RANDYTODO
 			newAppWindow.ClearInvalidatedStoredData();
 			newAppWindow.RefreshDisplay();
+#endif
 			return newAppWindow;
 		}
 
@@ -1503,35 +1544,36 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
 				var args = new LocalLinkArgs { Link = e.JumpUrl };
-				if (_mediator != null)
-					_mediator.SendMessage("HandleLocalHotlink", args);
+				if (Publisher != null)
+				{
+					Publisher.Publish("HandleLocalHotlink", args);
+				}
 			}
 		}
 
 		private bool ShowMessageBeforeFirstSendReceive_IsUserReady()
 		{
-			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				return DialogResult.OK == FirstTimeDlg.ShowDialog();
 			}
 		}
 
+#if RANDYTODO
 		private static void CheckForFlexBridgeInstalledAndSetMenuItemProperties(UIItemDisplayProperties display)
 		{
 			display.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
-
+#endif
 
 		#region IDisposable implementation
 
-		#if DEBUG
 		/// <summary/>
 		~FLExBridgeListener()
 		{
 			Dispose(false);
 		}
-		#endif
 
 		/// <summary/>
 		public void Dispose()
@@ -1552,13 +1594,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
-				if (_mediator != null) // Fixes LT-14201
-					_mediator.RemoveColleague(this);
 			}
 			_liftPathname = null;
-			_mediator = null;
 			_parentForm = null;
 			_progressDlg = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			IsDisposed = true;
 		}

@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

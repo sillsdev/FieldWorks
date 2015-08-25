@@ -5,9 +5,9 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -19,48 +19,49 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_mediator is a reference")]
-	public class MacroListener : IxCoreColleague
+	public class MacroListener : IFlexComponent
 	{
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
-		/// Standard member for IXCoreColleague. The configurationParameters are not currently used.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_mediator.AddColleague(this);
-		}
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
-		/// Standard member for IXCoreColleague. The only object known to this colleague to handle messages is itself.
+		/// Get the IPublisher.
 		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			return new IxCoreColleague[] {this};
-		}
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
-		/// Nothing to do by way of disposing, so this can be called any time.
+		/// Get the ISubscriber.
 		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return false; }
-		}
+		public ISubscriber Subscriber { get; private set; }
 
 		/// <summary>
-		/// High priority colleague, this is implementing a direct user command, not some background task.
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		public int Priority
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			get { return (int) ColleaguePriority.High; }
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 		}
+
+		#endregion
 
 		// Number of distinct macros we support.
 		// Note that just increasing this won't help. You will also need to add new commands and menu items to the
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private IVwSelection GetSelection()
 		{
-			var window = m_propertyTable.GetValue<FwXWindow>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 			if (window == null || !(window.ActiveView is IVwRootSite))
 				return null;
 			var rootBox = ((IVwRootSite) window.ActiveView).RootBox;
@@ -183,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			// for safety require selection to be in a single property.
 			if (hvoA != hvoE || flid != flidE || ws != wsE)
 				return false;
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			obj = cache.ServiceLocator.ObjectRepository.GetObject(hvoA);
 			start = Math.Min(ichA, ichE);
 			length = Math.Max(ichA, ichE) - start;
@@ -192,7 +193,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private IFlexMacro GetMacro(object commandObject)
 		{
-			var command = (Command) commandObject;
+#if RANDYTODO
+			var command = (Command)commandObject;
 			var paramNode = XmlUtils.GetFirstNonCommentChild(command.ConfigurationNode);
 			if (paramNode == null)
 				throw new ArgumentException("macro configuration must have params node");
@@ -201,8 +203,12 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException("macro configuration must specify a key between 2 and " + (MacroCount + 1));
 			var macro = Macros[index];
 			return macro;
+#else
+			return null; // Fix this.
+#endif
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Invoked by reflection when displaying the appropriate menu item. Which one is indicated by the paramters node.
 		/// This method is responsible to decide whether to display the command, whether to enable it, and what the text of the menu
@@ -238,5 +244,6 @@ namespace SIL.FieldWorks.XWorks
 
 			return true;
 		}
+#endif
 	}
 }

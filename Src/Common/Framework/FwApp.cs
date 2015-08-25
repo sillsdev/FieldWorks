@@ -15,6 +15,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Security;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,10 +26,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-#if DEBUG
-using SIL.CoreImpl; // Needed for DebugProcs in CoreImpl.
-#endif
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {

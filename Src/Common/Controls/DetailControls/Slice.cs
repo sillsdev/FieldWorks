@@ -15,13 +15,13 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -45,10 +45,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// So, I went back to a Slice having a SplitContainer,
 	/// rather than the better option of it being a SplitContainer.
 	///</remarks>
-	public class Slice : SplitContainer, IxCoreColleague, IFWDisposable
+	public class Slice : SplitContainer, IFlexComponent, IFWDisposable
 #else
 	///</remarks>
-	public class Slice : UserControl, IxCoreColleague, IFWDisposable
+	public class Slice : UserControl, IFlexComponent, IFWDisposable
 #endif
 	{
 		#region Constants
@@ -67,15 +67,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public event TreeNodeEventHandler ShowContextMenu;
 
-		protected IPropertyTable m_propertyTable;
-		// These two variables allow us to save the parameters passed in IxCoreColleage.Init
-		// so we can pass them on when our control is set.
-		protected Mediator m_mediator;
 		XmlNode m_configurationParameters;
 
 		//test
 		//		protected MenuController m_menuController= null;
-		protected ImageCollection m_smallImages = null;
 		//end test
 
 		protected int m_indent = 0;
@@ -146,48 +141,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				m_key = value;
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the mediator.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_mediator;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_mediator = value;
-				var rs = Control as SimpleRootSite;
-				if (rs != null)
-				{
-					rs.Init(Mediator, m_propertyTable, m_configurationNode); // Init it as xCoreColleague.
-				}
-				else if (Control != null)
-				{
-					// If not a SimpleRootSite, maybe it owns one. Init that as xCoreColleague.
-					for (int i = 0; i < Control.Controls.Count; ++i)
-					{
-						rs = Control.Controls[i] as SimpleRootSite;
-						if (rs != null)
-							rs.Init(Mediator, m_propertyTable, m_configurationNode);
-					}
-				}
-			}
-		}
-
-		public IPropertyTable PropTable
-		{
-			get { return m_propertyTable; }
-			set { m_propertyTable = value; }
 		}
 
 		/// <summary></summary>
@@ -331,12 +284,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				Debug.Assert(SplitCont.Panel2.Controls.Count == 0);
 
-				if (value != null)
+				if (value == null)
 				{
-					SplitCont.Panel2.Controls.Add(value);
-					// mediator was set first; pass it to colleague.
-					if (m_mediator != null && value is IxCoreColleague)
-						(value as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
+					return;
+				}
+
+				SplitCont.Panel2.Controls.Add(value);
+
+				var asFlexComponent = value as IFlexComponent;
+				if (asFlexComponent  != null && PropertyTable != null && Publisher != null && Subscriber != null)
+				{
+					asFlexComponent.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				}
 			}
 		}
@@ -441,23 +399,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		/// <summary></summary>
-		public ImageCollection SmallImages
-		{
-			get
-			{
-				CheckDisposed();
-
-				return null; //no tree icons
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_smallImages = value;
-			}
-		}
-
 		#endregion Properties
 
 		#region Construction and initialization
@@ -530,11 +471,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (Control != null)//grouping nodes do not have a control
 			{
 				//It's OK to send null as an id
-				if (m_mediator != null) // helpful for robustness and testing.
+				if (Publisher != null) // helpful for robustness and testing.
 				{
-					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-					m_mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[] { Control, caption, HelpId }, false);
+					var caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+					Publisher.Publish("RegisterHelpTargetWithId", new object[] { Control, caption, HelpId });
 				}
 			}
 		}
@@ -1045,17 +985,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_fontLabel = null;
-			m_smallImages = null; // Owned by the property table or XWindow, so just make it null;
 			m_cache = null;
 			m_key = null;
 			m_obj = null;
 			m_callerNode = null;
 			m_configurationNode = null;
-			m_mediator = null;
 			m_configurationParameters = null;
 			m_strLabel = null;
 			m_strAbbr = null;
 			m_parentSlice = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose(disposing);
 		}
@@ -1132,10 +1073,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//				|| (XmlUtils.GetOptionalAttributeValue(caller, "expansion") == "expanded")
 				//				|| Expansion == DataTree.TreeItemState.ktisCollapsedEmpty)
 				bool fExpand = XmlUtils.GetOptionalAttributeValue(node, "expansion") != "doNotExpand";
-				if (fUsePersistentExpansion && m_mediator != null) // mediator null only in testing?
+				if (fUsePersistentExpansion && PropertyTable != null)
 				{
 					Expansion = DataTree.TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.
-					fExpand = m_propertyTable.GetValue(ExpansionStateKey, fExpand);
+					fExpand = PropertyTable.GetValue(ExpansionStateKey, fExpand);
 				}
 				if (fExpand)
 				{
@@ -1351,8 +1292,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaName = m_propertyTable.GetValue<string>("areaChoice");
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+			String areaName = PropertyTable.GetValue<string>("areaChoice");
+			string toolName = PropertyTable.GetValue<string>("currentContentControl");
 			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
@@ -1408,7 +1349,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, string fieldName)
 		{
 			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+			string toolName = PropertyTable.GetValue<string>("currentContentControl");
 
 			string generatedHelpTopicID;
 
@@ -1470,10 +1411,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private bool helpTopicIsValid(String helpStr)
 		{
-			if (m_mediator == null)
+			if (PropertyTable == null)
 				return false;
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			return (helpTopicProvider != null && !String.IsNullOrEmpty(helpStr))
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			return (helpTopicProvider != null && !string.IsNullOrEmpty(helpStr))
 				&& (helpTopicProvider.GetHelpString(helpStr) != null);
 		}
 
@@ -1482,27 +1423,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (SmallImages != null)
+			Image image = null;
+			if (IsSequenceNode)
 			{
-				Image image = null;
-				if (IsSequenceNode)
-				{
-					image = SmallImages.GetImage("sequence");
-				}
-				else if (IsCollectionNode)
-				{
-					image = SmallImages.GetImage("collection");
-				}
-				else if (IsObjectNode || WrapsAtomic)
-				{
-					image = SmallImages.GetImage("atomic");
-				}
-				if (image != null)
-				{
-					((Bitmap)image).MakeTransparent(Color.Fuchsia);
-					gr.DrawImage(image, x, y);
-					x += image.Width;
-				}
+				image = DetailControlsStrings.SequenceSmall;
+			}
+			else if (IsCollectionNode)
+			{
+				image = DetailControlsStrings.CollectionNode;
+			}
+			else if (IsObjectNode || WrapsAtomic)
+			{
+				image = DetailControlsStrings.atomicNode;
+			}
+			if (image != null)
+			{
+				((Bitmap)image).MakeTransparent(Color.Fuchsia);
+				gr.DrawImage(image, x, y);
+				x += image.Width;
 			}
 			var p = new PointF(x, y);
 			using (Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.ControlDarkDark)))
@@ -1587,9 +1525,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
 
 				Expansion = DataTree.TreeItemState.ktisExpanded;
-				if (m_propertyTable != null)
+				if (PropertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, true, true, true);
+					PropertyTable.SetProperty(ExpansionStateKey, true, true, true);
 				}
 			}
 			finally
@@ -1645,9 +1583,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					count--;
 				}
 				Expansion = DataTree.TreeItemState.ktisCollapsed;
-				if (m_propertyTable != null)
+				if (PropertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, false, true, true);
+					PropertyTable.SetProperty(ExpansionStateKey, false, true, true);
 				}
 			}
 			finally
@@ -1989,7 +1927,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int insertionPosition;		// causes return false if not changed.
 				if (m_cache.IsReferenceProperty(flid))
 				{
-					insertionPosition = InsertObjectIntoVirtualBackref(Cache, m_mediator, m_propertyTable, slice.Object.Hvo,
+					insertionPosition = InsertObjectIntoVirtualBackref(Cache, slice.Object.Hvo,
 						newObjectClassId, flid);
 				}
 				else
@@ -2013,7 +1951,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
+		internal int InsertObjectIntoVirtualBackref(FdoCache cache,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -2030,7 +1968,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							var entOld = (ILexEntry) sliceObj;
 							dlg.SetHelpTopic("khtpInsertVariantDlg");
-							dlg.SetDlgInfo(cache, mediator, propertyTable, entOld);
+							dlg.SetDlgInfo(cache, PropertyTable, Publisher, entOld);
 							if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
 							{
 								return entOld.VariantFormEntryBackRefs.Count();
@@ -2145,7 +2083,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						insertionPosition = -2;
 						break;
 				}
-				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(m_mediator, m_propertyTable, newObjectClassId, hvoOwner, flid, insertionPosition))
+				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
 					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
@@ -2195,6 +2133,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						child.FocusSliceOrChild();
 					else
 					{
+#if RANDYTODO
+// TODO: Do we need an option in Pub/Sub that waits for a return value?
+// TODO: If it did the jump, then this Slice would no longer be displaying, no?
 						// If possible, jump to the newly inserted sub item.
 						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
 							return insertionPosition;
@@ -2208,6 +2149,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								break;
 							}
 						}
+#endif
 					}
 				}
 			}
@@ -2324,7 +2266,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Main work of deleting an object; answer true if it was actually deleted.
 		/// </summary>
-		public virtual bool HandleDeleteCommand(Command cmd)
+		public virtual bool HandleDeleteCommand()
 		{
 			CheckDisposed();
 
@@ -2338,22 +2280,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
-			else
+			DataTree dt = ContainingDataTree;
+			try
 			{
-				DataTree dt = ContainingDataTree;
-				try
+				dt.SetCurrentObjectFlids(obj.Hvo, 0);
+				using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 				{
-					dt.SetCurrentObjectFlids(obj.Hvo, 0);
-					using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
-					{
-						ui.Mediator = m_mediator;
-						result = ui.DeleteUnderlyingObject();
-					}
+					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					result = ui.DeleteUnderlyingObject();
 				}
-				finally
-				{
-					dt.ClearCurrentObjectFlids();
-				}
+			}
+			finally
+			{
+				dt.ClearCurrentObjectFlids();
 			}
 			// The slice will likely be disposed in the DeleteUnderlyingObject call,
 			// so make sure we aren't collected until we leave this method, at least.
@@ -2385,6 +2324,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return closeSlices;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Check whether a "Delete Reference" command can be executed.  Currently implemented
 		/// only for the VariantEntryBackRefs / LexEntry/EntryRefs/ComponentLexemes references.
@@ -2417,6 +2357,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 		}
+#endif
 
 		/// <summary>
 		/// gives the object hvo hat should be the target of Delete, copy, etc. for menus operating on this slice label.
@@ -2592,7 +2533,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
-				ui.Mediator = m_mediator;
+				ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				ui.MergeUnderlyingObject(fLoseNoTextData);
 			}
 			// The slice will likely be disposed in the MergeUnderlyingObject call,
@@ -2646,7 +2587,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
-				ui.Mediator = m_mediator;
+				ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				ui.MoveUnderlyingObjectToCopyOfOwner();
 			}
 			// The slice will likely be disposed in the MoveUnderlyingObjectToCopyOfOwner call,
@@ -2708,68 +2649,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#endregion Menu Command Handlers
-
-		#region IxCoreColleague implementation
-
-		/// <summary></summary>
-		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_propertyTable = propertyTable;
-			Mediator = mediator;
-			m_configurationParameters = configurationParameters;
-			if (Control != null && Control is IxCoreColleague)
-			{
-				(Control as IxCoreColleague).Init(mediator, propertyTable, configurationParameters);
-				////				Control.AccessibilityObject.Name = this.Label;
-			}
-		}
-
-		/// <summary></summary>
-		public virtual IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			// Normally a slice should only handle messages if both it and its data tree
-			// are visible. Override this method if there is some reason to handle messages
-			// while not visible. Note however that currently (31 Aug 2005) RecordEditView
-			// hides the data tree but does not remove slices when no record is current.
-			// Thus, a slice that is not visible might belong to a display of a deleted
-			// or unavailable object, so be very careful what you enable!
-			if (Visible && ContainingDataTree.Visible)
-			{
-				if (Control != null && Control.IsDisposed)
-					throw new ObjectDisposedException(ToString() + GetHashCode(), "Trying to use object that no longer exists: ");
-
-				if (Control is IxCoreColleague)
-					return new[] { Control as IxCoreColleague, this };
-				else
-					return new IxCoreColleague[] { this };
-			}
-			else
-				return new IxCoreColleague[0];
-		}
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get
-			{
-				return (int)ColleaguePriority.Medium;
-			}
-		}
-
-		#endregion IxCoreColleague implementation
 
 		/// <summary>
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
@@ -2879,10 +2758,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return null;
 		}
 
+#if RANDYTODO
 		private void CheckVisibilityItem(UIItemDisplayProperties display, string visibility)
 		{
 			display.Checked = IsVisibilityItemChecked(visibility);
 		}
+#endif
 
 		protected bool IsVisibilityItemChecked(string visibility)
 		{
@@ -2929,6 +2810,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary></summary>
 		public virtual bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
 		{
@@ -2958,6 +2840,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckVisibilityItem(display, "never");
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// This is used to control the width of the slice when the data tree is being laid out.
@@ -3020,5 +2903,64 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			if (Control is IFlexComponent)
+			{
+				((IFlexComponent)Control).InitializeFlexComponent(propertyTable, publisher, subscriber);
+			}
+			else if (Control != null)
+			{
+				// If not a SimpleRootSite, maybe it owns one. Init that as Flex component.
+				for (var i = 0; i < Control.Controls.Count; ++i)
+				{
+					var fc = Control.Controls[i] as IFlexComponent;
+					if (fc != null)
+					{
+						fc.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					}
+				}
+			}
+		}
+
+		#endregion
 	}
 }

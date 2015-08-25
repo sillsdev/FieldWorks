@@ -179,6 +179,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		#region Data members
 
+		/// <summary />
+		protected IPropertyTable m_propertyTable;
+		/// <summary />
+		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
+
 		/// <summary>The data cache</summary>
 		protected T m_cache;
 		/// <summary>The draft form</summary>
@@ -218,11 +225,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SetupTestModel(Properties.Resources.TextCacheModel_xml);
 
-			m_cache = new T();
-			m_cache.MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml");
-			m_cache.ParaContentsFlid = SimpleRootsiteTestsConstants.kflidParaContents;
-			m_cache.ParaPropertiesFlid = SimpleRootsiteTestsConstants.kflidParaProperties;
-			m_cache.TextParagraphsFlid = SimpleRootsiteTestsConstants.kflidTextParas;
+			m_cache = new T
+			{
+				MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml"),
+				ParaContentsFlid = SimpleRootsiteTestsConstants.kflidParaContents,
+				ParaPropertiesFlid = SimpleRootsiteTestsConstants.kflidParaProperties,
+				TextParagraphsFlid = SimpleRootsiteTestsConstants.kflidTextParas
+			};
 
 			Debug.Assert(m_wsManager == null);
 			m_wsManager = new PalasoWritingSystemManager();
@@ -291,11 +300,16 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var styleSheet = new SimpleStyleSheet(m_cache);
 
 			Assert.IsNull(m_basicView);
-			m_basicView = new SimpleBasicView();
-			m_basicView.Cache = m_cache;
-			m_basicView.Visible = false;
-			m_basicView.StyleSheet = styleSheet;
-			m_basicView.WritingSystemFactory = m_wsManager;
+			m_basicView = new SimpleBasicView
+			{
+				Cache = m_cache,
+				Visible = false,
+				StyleSheet = styleSheet,
+				WritingSystemFactory = m_wsManager
+			};
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_basicView.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -310,6 +324,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.CloseRootBox();
 			m_basicView.Dispose();
 			m_basicView = null;
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

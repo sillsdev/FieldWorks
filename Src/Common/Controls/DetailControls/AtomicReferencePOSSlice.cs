@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -54,10 +53,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, IPropertyTable propertyTable)
+		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
 				m_tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, m_cache, list, ws, false, mediator, propertyTable, propertyTable.GetValue<Form>("window"));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, m_cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try
@@ -285,11 +284,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// // cache, obj, flid, node, persistenceProvider, stringTbl
-		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, IPropertyTable propertyTable)
-			: base(cache, obj, flid, mediator, propertyTable)
+		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
+			: base(cache, obj, flid, propertyTable, publisher)
 		{
 			if (m_tree != null)
 				m_tree.ForeColor = SystemColors.GrayText;

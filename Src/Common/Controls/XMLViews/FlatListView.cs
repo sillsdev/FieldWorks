@@ -10,7 +10,6 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -34,7 +33,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private XmlNode m_configNode;
 		private BrowseViewer m_bvList;
@@ -60,33 +58,35 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="xnConfig">The config node.</param>
 		/// <param name="objs">The objs.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, IPropertyTable propertyTable,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
 			XmlNode xnConfig, IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();
 			m_cache = cache;
 			m_stylesheet = stylesheet;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_configNode = xnConfig;
 			SuspendLayout();
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
 
 			StoreData(objs);
-			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache, m_mediator, m_propertyTable,
-				null, m_listPublisher);
-			m_bvList.Location = new Point(0, 0);
-			m_bvList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom |
-				AnchorStyles.Right;
-			m_bvList.Name = "m_bvList";
-			m_bvList.Sorter = null;
-			m_bvList.TabStop = true;
-			m_bvList.StyleSheet = m_stylesheet;
-			m_bvList.Dock = DockStyle.Fill;
+#if RANDYTODO
+			// TODO: Call InitializeFlexComponent on m_bvList.
+#endif
+			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache,
+				null, m_listPublisher)
+			{
+				Location = new Point(0, 0),
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
+				Name = "m_bvList",
+				Sorter = null,
+				TabStop = true,
+				StyleSheet = m_stylesheet,
+				Dock = DockStyle.Fill
+			};
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			Controls.Add(m_bvList);
 			ResumeLayout(false);

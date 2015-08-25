@@ -109,7 +109,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=7.0.1.28719, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -125,10 +125,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -197,7 +193,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>

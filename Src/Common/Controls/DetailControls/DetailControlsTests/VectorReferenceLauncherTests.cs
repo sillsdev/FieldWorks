@@ -30,6 +30,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		#region Member variables
 
+		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
+
 		private ILexEntryFactory m_leFact;
 		private ILexEntryRefFactory m_lerFact;
 		//private IMoStemAllomorphFactory m_moFact;
@@ -45,11 +49,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
+
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
 			//m_moFact = servLoc.GetInstance<IMoStemAllomorphFactory>();
 			MockLauncher = new MockVectorReferenceLauncher();
+			MockLauncher.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_wsAnalysis = Cache.DefaultAnalWs;
 			m_wsVern = Cache.DefaultVernWs;
 			m_wsAnalStr = Cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(Cache.DefaultAnalWs);
@@ -60,6 +69,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void TestTearDown()
 		{
 			MockLauncher.Dispose();
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 			base.TestTearDown();
 		}
 
@@ -519,12 +532,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion
 
+		#region Overrides of ButtonLauncher
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			m_vectorRefView.InitializeFlexComponent(propertyTable, publisher, subscriber);
+		}
+
+		#endregion
+
 		public void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
 			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
 			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
+			Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
 		}
 	}
 

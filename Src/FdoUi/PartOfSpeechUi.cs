@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
@@ -28,14 +27,14 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Handle the context menu for inserting a POS.
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static PartOfSpeechUi CreateNewUiObject(Mediator mediator, IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public new static PartOfSpeechUi CreateNewUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			PartOfSpeechUi posUi = null;
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
@@ -43,19 +42,20 @@ namespace SIL.FieldWorks.FdoUi
 				FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
-				dlg.SetDlginfo(newOwner.OwningList, mediator, propertyTable, true, newOwner);
+				dlg.SetDlginfo(newOwner.OwningList, propertyTable, true, newOwner);
 				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						posUi = new PartOfSpeechUi(dlg.SelectedPOS);
-						mediator.SendMessage("JumpToRecord", dlg.SelectedPOS.Hvo);
+						publisher.Publish("JumpToRecord", dlg.SelectedPOS.Hvo);
 						break;
 				}
 			}
 			return posUi;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Override to handle case of improper menu in the reversal cat list tool.
 		/// </summary>
@@ -80,5 +80,6 @@ namespace SIL.FieldWorks.FdoUi
 				return base.OnDisplayJumpToTool(commandObject, ref display);
 			}
 		}
+#endif
 	}
 }

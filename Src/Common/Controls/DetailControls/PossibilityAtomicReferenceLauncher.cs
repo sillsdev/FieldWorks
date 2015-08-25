@@ -11,7 +11,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -42,13 +41,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_autoComplete = new PossibilityAutoComplete(cache, mediator, propertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
+			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
 				m_atomicRefView, displayNameProperty, displayWs);
 			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_atomicRefView.RootBox.DataAccess.AddNotification(this);

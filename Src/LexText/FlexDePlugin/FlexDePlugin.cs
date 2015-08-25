@@ -22,7 +22,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
-using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
@@ -138,11 +137,11 @@ namespace SIL.PublishingSolution
 			const string RevXhtml = "FlexRev.xhtml";
 			const string SketchXml = "sketch.xml";
 
-			IApp app = exportDialog.PropTable.GetValue<IApp>("App");
+			IApp app = exportDialog.PropertyTable.GetValue<IApp>("App");
 			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			FdoCache cache = exportDialog.PropTable.GetValue<FdoCache>("cache");
+			FdoCache cache = exportDialog.PropertyTable.GetValue<FdoCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			bool fContentsExists = ContentsExists("lexicon", "reversalEditComplete", "ReversalIndexXHTML");
 			ReflectionHelper.SetProperty(sf, "ExportReversal", fContentsExists);
@@ -286,7 +285,7 @@ namespace SIL.PublishingSolution
 			}
 			catch (FileNotFoundException )
 			{
-				IApp app = exportDialog.PropTable.GetValue<IApp>("App");
+				IApp app = exportDialog.PropertyTable.GetValue<IApp>("App");
 				MessageBox.Show("The " + currInput + " Section may be Empty (or) Not exported", app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 
@@ -320,9 +319,10 @@ namespace SIL.PublishingSolution
 				File.Delete(filePath);
 			if (!ChangeAreaTool(areaChoice, toolChoice))
 				return;
-			exportDialog.PropTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), true, true);
-			using (DeExportDialog ed = new DeExportDialog(exportDialog.Mediator, exportDialog.PropTable))
+			exportDialog.PropertyTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), true, true);
+			using (DeExportDialog ed = new DeExportDialog())
 			{
+				ed.InitializeFlexComponent(exportDialog.PropertyTable, exportDialog.Publisher, exportDialog.Subscriber);
 				ed.Show();
 				ed.Visible = false;
 				if (ed.SelectItem(exportFormat))
@@ -342,8 +342,9 @@ namespace SIL.PublishingSolution
 		{
 			if (!ChangeAreaTool(areaChoice, toolChoice))
 				return false;
-			using (DeExportDialog ed = new DeExportDialog(exportDialog.Mediator, exportDialog.PropTable))
+			using (DeExportDialog ed = new DeExportDialog())
 			{
+				ed.InitializeFlexComponent(exportDialog.PropertyTable, exportDialog.Publisher, exportDialog.Subscriber);
 				ed.Show();
 				ed.Visible = false;
 				return ed.SelectItem(exportFormat);
@@ -360,29 +361,32 @@ namespace SIL.PublishingSolution
 			Justification = "mediator is a reference")]
 		protected bool ChangeAreaTool(string areaChoice, string toolChoice)
 		{
-			var mediator = exportDialog.Mediator;
-			var currentAreaControl = exportDialog.PropTable.GetValue<IxCoreContentControl>("currentContentControlObject");
-			//MessageBox.Show("AreaName=" + ((IxCoreContentControl)current).AreaName);
+			var currentAreaControl = exportDialog.PropertyTable.GetValue<IMainContentControl>("currentContentControlObject");
+			//MessageBox.Show("AreaName=" + ((IMainContentControl)current).AreaName);
 			if (currentAreaControl.AreaName != areaChoice)
 			{
-				exportDialog.PropTable.SetProperty("areaChoice", areaChoice, false, true);
+				exportDialog.PropertyTable.SetProperty("areaChoice", areaChoice, false, true);
+#if RANDYTODO
 				while (mediator.JobItems > 0)
 					mediator.ProcessItem();
+#endif
 			}
 			string toolSelector = "ToolForAreaNamed_" + areaChoice;
-			string toolName = exportDialog.PropTable.GetValue(toolSelector, string.Empty);
+			string toolName = exportDialog.PropertyTable.GetValue(toolSelector, string.Empty);
 			//MessageBox.Show("toolName=" + toolName);
 			if (toolName != toolChoice)
 			{
 				string xpath = string.Format("//item[@value='lexicon']/parameters/tools/tool[@value = '{0}']", toolChoice);
-				XmlNode windowConfiguration = exportDialog.PropTable.GetValue<XmlNode>("WindowConfiguration");
+				XmlNode windowConfiguration = exportDialog.PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 				XmlNode node = windowConfiguration.SelectSingleNode(xpath);
 				if (node == null)
 					return false;
-				exportDialog.PropTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
-				exportDialog.PropTable.SetProperty("currentContentControl", toolChoice, false, true);
+				exportDialog.PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
+				exportDialog.PropertyTable.SetProperty("currentContentControl", toolChoice, false, true);
+#if RANDYTODO
 				while (mediator.JobItems > 0)
 					mediator.ProcessItem();
+#endif
 			}
 			return true;
 		}
@@ -423,16 +427,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DeExportDialog : ExportDialog
 	{
-		/// <summary>
-		/// Initializes a new instance of the DeExportDialog class by calling the base class constuctor
-		/// </summary>
-		/// <param name="mediator">this is a pointer to the current state</param>
-		/// <param name="propertyTable"></param>
-		public DeExportDialog(Mediator mediator, IPropertyTable propertyTable)
-			: base(mediator, propertyTable)
-		{
-		}
-
 		/// <summary>
 		/// Select the item containing exportFormat in the path name of the xml file name.
 		/// </summary>

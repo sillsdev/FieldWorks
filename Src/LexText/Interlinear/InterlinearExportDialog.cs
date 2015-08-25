@@ -14,7 +14,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.FwUtils;
@@ -34,12 +33,24 @@ namespace SIL.FieldWorks.IText
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 		private IBookImporter m_bookImporter;
 
-		public InterlinearExportDialog(Mediator mediator, IPropertyTable propertyTable, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
-			: base(mediator, propertyTable)
+		public InterlinearExportDialog(ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
 		{
 			m_objRoot = objRoot;
 			m_vc = vc;
 			m_bookImporter = bookImporter;
+		}
+
+		#region Overrides of ExportDialog
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			m_helpTopic = "khtpExportInterlinear";
 			columnHeader1.Text = ITextStrings.ksFormat;
@@ -47,6 +58,8 @@ namespace SIL.FieldWorks.IText
 			Text = ITextStrings.ksExportInterlinear;
 			OnLaunchFilterScrScriptureSectionsDialog += LaunchFilterTextsDialog;
 		}
+
+		#endregion
 
 		protected override string ConfigurationFilePath
 		{
@@ -98,7 +111,7 @@ namespace SIL.FieldWorks.IText
 			IFilterTextsDialog<IStText> dlg = null;
 			try
 			{
-				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
+				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
 				var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
 				var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
 				if (!isOkToDisplayScripture)
@@ -108,11 +121,11 @@ namespace SIL.FieldWorks.IText
 				var interestingTexts = textsToChooseFrom.ToArray();
 				if (isOkToDisplayScripture)
 				{
-					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_bookImporter);
+					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_bookImporter);
 				}
 				else
 				{
-					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+					dlg = new FilterTextsDialog(m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				}
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'

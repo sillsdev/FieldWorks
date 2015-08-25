@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			string sShowAllTypes = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
 			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
-				m_flid, sShowAllTypes, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_flid, sShowAllTypes, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.Cache = m_cache;
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				bool fMadeMorphTypeChange = false;
 				var entry = (ILexEntry) m_obj.Owner;
-				chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
+				chooser.InitializeExtras(m_configurationNode, PropertyTable);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 									// TODO-Linux: Help is not implemented in Mono
 									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
 										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 									{
 										return;

@@ -16,7 +16,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -111,20 +110,20 @@ namespace SIL.FieldWorks.XWorks
 		/// Exception: If owner is "unowned", then property should be a GUID of a list that
 		/// we'll get from the ICmPossibilityListRepository.
 		/// </summary>
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(XmlNode recordListNode)
 		{
 			CheckDisposed();
 
-			BaseInit(cache, mediator, propertyTable, recordListNode);
+			BaseInit(recordListNode);
 			string owner = XmlUtils.GetManditoryAttributeValue(recordListNode, "owner");
 			string property = XmlUtils.GetManditoryAttributeValue(recordListNode, "property");
-			m_owningObject = GetListFromOwnerAndProperty(cache, owner, property);
+			m_owningObject = GetListFromOwnerAndProperty(m_cache, owner, property);
 			Debug.Assert(m_owningObject != null, "Illegal owner or other problem in spec for possibility list.");
 			m_oldLength = 0;
 
 			Debug.Assert(m_owningObject != null, "Failed to find possibility list.");
-			m_fontName = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
-			m_typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+			m_fontName = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
+			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 			m_flid  = CmPossibilityListTags.kflidPossibilities;
 		}
 
@@ -247,6 +246,7 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Adjust the name of the menu item if appropriate. PossibilityRecordList overrides.
 		/// </summary>
@@ -266,6 +266,7 @@ namespace SIL.FieldWorks.XWorks
 			string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
 			command.ToolTipInsert = toolTipInsert.ToLower();
 		}
+#endif
 
 		// For this class we have to reload if sub-possibilities changed, too.
 		// Enhance JohnT: we could attempt to verify that hvo is something owned by our root object,
@@ -566,11 +567,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// this list can work with multiple properties to load its list (e.g. Entries or AllSenses).
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="recordListNode"></param>
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(XmlNode recordListNode)
 		{
 			CheckDisposed();
 			// suspend loading the property until given a class by RecordBrowseView via
@@ -578,12 +576,12 @@ namespace SIL.FieldWorks.XWorks
 			m_suspendReloadUntilOnChangeListItemsClass = true;
 
 			m_configuration = recordListNode;
-			BaseInit(cache, mediator, propertyTable, recordListNode);
+			BaseInit(recordListNode);
 			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
 			// used for finding first relative of corresponding current object
-			m_pot = PartOwnershipTree.Create(cache, this, true);
+			m_pot = PartOwnershipTree.Create(m_cache, this, true);
 
-			GetDefaultFontNameAndSize(analysis, cache, propertyTable, out m_fontName, out m_typeSize);
+			GetDefaultFontNameAndSize(analysis, m_cache, PropertyTable, out m_fontName, out m_typeSize);
 			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			// by default we'll setup for Entries
 			GetTargetFieldInfo(LexEntryTags.kClassId, owner, 0, out m_owningObject, out m_flid, out m_propertyName);
@@ -762,7 +760,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// first try to find the expected source field.
 			flidName = m_pot.GetSourceFieldName(targetClsId, targetFlid);
-			flid = GetFlidOfVectorFromName(flidName, owner, Cache, m_mediator, m_propertyTable, out owningObj);
+			flid = GetFlidOfVectorFromName(flidName, owner, out owningObj);
 			if (!m_reloadNeededForProperty.ContainsKey(flid))
 				m_reloadNeededForProperty.Add(flid, false);
 			if (m_flidEntries == 0 && targetClsId == LexEntryTags.kClassId)
@@ -890,11 +888,11 @@ namespace SIL.FieldWorks.XWorks
 		private XmlNode m_configNode;
 		private IEnumerable<int> m_objs = null;
 
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(XmlNode recordListNode)
 		{
 			m_fEnableSendPropChanged = false;
 			m_configNode = recordListNode;
-			base.Init(cache, mediator, propertyTable, recordListNode);
+			base.Init(recordListNode);
 		}
 
 		public override void InitLoad(bool loadList)
@@ -945,9 +943,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
-	/// <remarks>RecordList is not XCore aware but is aware of RecordSorter and RecordFilter.
-	/// </remarks>
-	public class RecordList : FwDisposableBase, IVwNotifyChange, ISortItemProvider
+	public class RecordList : FwDisposableBase, IFlexComponent, IVwNotifyChange, ISortItemProvider
 	{
 		#region Events
 
@@ -1001,12 +997,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected bool m_fReloadLexEntries;
 		/// <summary>
-		///
-		/// </summary>
-		protected Mediator m_mediator;
-
-		protected IPropertyTable m_propertyTable;
-		/// <summary>
 		/// Collection of ClassAndPropInfo objects.
 		/// </summary>
 		protected List<ClassAndPropInfo> m_insertableClasses;
@@ -1049,7 +1039,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
 		/// </summary>
-		private ObjectListPublisher m_publisher;
+		private ObjectListPublisher m_objectListPublisher;
 
 		// As passed to Init().
 		private XmlNode m_recordListNode;
@@ -1069,21 +1059,26 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="recordListNode"></param>
-		/// <param name="mediator"></param>
+		/// <param name="publisher"></param>
 		/// <returns></returns>
-		static public RecordList Create(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		static public RecordList Create(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XmlNode recordListNode)
 		{
 			RecordList list = null;
 
 			//does the configuration specify a special RecordList class?
 			XmlNode customListNode = recordListNode.SelectSingleNode("dynamicloaderinfo");
 			if (customListNode != null)
+			{
 				list = (RecordList)DynamicLoader.CreateObject(customListNode);
+			}
 			else
+			{
 				list = new RecordList();
+			}
 
-			list.Init(cache, mediator, propertyTable, recordListNode);
+			list.InitializeFlexComponent(propertyTable, publisher, subscriber);
 			return list;
 		}
 
@@ -1121,17 +1116,16 @@ namespace SIL.FieldWorks.XWorks
 			return fontHeight;
 		}
 
-		public virtual void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public virtual void Init(XmlNode recordListNode)
 		{
 			CheckDisposed();
 
-			BaseInit(cache, mediator, propertyTable, recordListNode);
+			BaseInit(recordListNode);
 			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
 			if (!string.IsNullOrEmpty(m_propertyName))
 			{
-				m_flid = GetFlidOfVectorFromName(m_propertyName, owner, analysis, cache,
-					mediator, propertyTable,
+				m_flid = GetFlidOfVectorFromName(m_propertyName, owner, analysis,
 					out m_owningObject, out m_fontName, out m_typeSize);
 				UpdatePrivateList();
 			}
@@ -1149,18 +1143,10 @@ namespace SIL.FieldWorks.XWorks
 			m_oldLength = 0;
 		}
 
-		protected void BaseInit(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		protected void BaseInit(XmlNode recordListNode)
 		{
-			Debug.Assert(mediator != null);
-
 			m_recordListNode = recordListNode;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_propertyName = XmlUtils.GetOptionalAttributeValue(recordListNode, "property", "");
-			m_cache = cache;
-			CurrentIndex = -1;
-			m_hvoCurrent = 0;
-			m_oldLength = 0;
 		}
 
 		#endregion Construction & initialization
@@ -1179,7 +1165,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (m_publisher == null)
+				if (m_objectListPublisher == null)
 				{
 					var baseDa = m_cache.MainCacheAccessor as ISilDataAccessManaged;
 					if (m_recordListNode != null)
@@ -1188,17 +1174,17 @@ namespace SIL.FieldWorks.XWorks
 						if (virtualListSpec != null)
 						{
 							baseDa = GetDynamicListPublisher(virtualListSpec);
-							if (baseDa is ISetMediator)
-								((ISetMediator)baseDa).SetMediator(m_mediator, m_propertyTable);
+							if (baseDa is IFlexComponent)
+								((IFlexComponent)baseDa).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 							if (baseDa is ISetRootHvo)
 								((ISetRootHvo)baseDa).SetRootHvo(m_owningObject.Hvo);
 							if (baseDa is ISetCache)
 								((ISetCache)baseDa).SetCache(m_cache);
 						}
 					}
-					m_publisher = new ObjectListPublisher(baseDa, RecordListFlid);
+					m_objectListPublisher = new ObjectListPublisher(baseDa, RecordListFlid);
 				}
-				return m_publisher;
+				return m_objectListPublisher;
 			}
 		}
 
@@ -1216,7 +1202,7 @@ namespace SIL.FieldWorks.XWorks
 			ISilDataAccessManaged result = null;
 			if (key != null)
 			{
-				result = m_propertyTable.GetValue<ISilDataAccessManaged>(key);
+				result = PropertyTable.GetValue<ISilDataAccessManaged>(key);
 			}
 			if (result == null)
 			{
@@ -1224,7 +1210,7 @@ namespace SIL.FieldWorks.XWorks
 					m_cache.MainCacheAccessor as ISilDataAccessManaged, virtualListSpec, m_cache.ServiceLocator);
 				if (key != null)
 				{
-					m_propertyTable.SetProperty(key, result, false, true);
+					PropertyTable.SetProperty(key, result, false, true);
 				}
 			}
 			return result;
@@ -1647,7 +1633,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_sda = null;
 			m_cache = null;
-			m_mediator = null;
 			m_sorter = null;
 			m_filter = null;
 			m_owningObject = null;
@@ -1656,6 +1641,9 @@ namespace SIL.FieldWorks.XWorks
 			m_insertableClasses = null;
 			m_sortedObjects = null;
 			m_owningObject = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 		}
 
 		#endregion FwDisposableBase
@@ -1745,13 +1733,13 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				}
 			}
-			else if (tag == SegmentTags.kflidAnalyses && m_publisher.OwningFieldName == "Wordforms")
+			else if (tag == SegmentTags.kflidAnalyses && m_objectListPublisher.OwningFieldName == "Wordforms")
 			{
 				// Changing this potentially changes the list of wordforms that occur in the interesting texts.
 				// Hopefully we don't rebuild the list every time; usually this can only be changed in another view.
 				// In case we DO have a concordance active in one window while editing another, if this isn't the
 				// active window postpone until it is.
-				Form window = m_propertyTable.GetValue<Form>("window");
+				Form window = PropertyTable.GetValue<Form>("window");
 				if (window != Form.ActiveForm)
 				{
 					RequestedLoadWhileSuppressed = true;
@@ -2411,7 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 			// add the remaining items.
 			if (m_sorter != null)
 			{
-				m_sorter.DataAccess = m_publisher; // for safety, ensure this any time we use it.
+				m_sorter.DataAccess = m_objectListPublisher; // for safety, ensure this any time we use it.
 				m_sorter.SetPercentDone = DoNothing; // no progress for inserting one item
 				m_sorter.MergeInto(SortedObjects, remainingInsertItems);
 			}
@@ -2634,10 +2622,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 				m_requestedLoadWhileSuppressed = true;
 				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
-				if (m_mediator != null)
+				if (PropertyTable != null)
 				{
-					Form window = m_propertyTable.GetValue<Form>("window");
-					IApp app = m_propertyTable.GetValue<IApp>("App");
+					Form window = PropertyTable.GetValue<Form>("window");
+					IApp app = PropertyTable.GetValue<IApp>("App");
 					if (window != null && app != null && window != app.ActiveMainWindow)
 					{
 						// make sure we don't install more than one.
@@ -2657,7 +2645,7 @@ namespace SIL.FieldWorks.XWorks
 						// is greater than 0.
 						// so, try to force to restore the current index to what we persist.
 						CurrentIndex = -1;
-						m_propertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload,
+						PropertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload,
 							SettingsGroup.LocalSettings, true, true);
 						m_indexToRestoreDuringReload = -1;
 					}
@@ -2762,12 +2750,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private ArrayList HandleInvalidFilterSortField()
 		{
-			ArrayList newSortedObjects;
 			m_filter = null;
 			m_sorter = null;
 			MessageBox.Show(Form.ActiveForm, xWorksStrings.ksInvalidFieldInFilterOrSorter, xWorksStrings.ksErrorCaption,
 				MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			newSortedObjects = GetFilteredSortedList();
+			var newSortedObjects = GetFilteredSortedList();
 			return newSortedObjects;
 		}
 
@@ -2784,7 +2771,9 @@ namespace SIL.FieldWorks.XWorks
 			else if (m_sorter != null)
 				m_sorter.Preload(OwningObject);
 
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
+
+			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
+			using (var progress = (panel == null) ? new NullProgressState() : new ProgressState(panel))
 			{
 				progress.SetMilestone(xWorksStrings.ksSorting);
 				// Allocate an arbitrary 20% for making the items.
@@ -2854,7 +2843,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_sorter != null && !ListAlreadySorted)
 			{
-				m_sorter.DataAccess = m_publisher;
+				m_sorter.DataAccess = m_objectListPublisher;
 				if (m_sorter is IReportsSortProgress)
 				{
 					// Uses the last 80% of the bar (first part used for building the list).
@@ -2879,12 +2868,12 @@ namespace SIL.FieldWorks.XWorks
 				sortedObjects.Add(new ManyOnePathSortItem(hvo, null, null));
 			else
 			{
-				m_sorter.DataAccess = m_publisher;
+				m_sorter.DataAccess = m_objectListPublisher;
 				m_sorter.CollectItems(hvo, sortedObjects);
 			}
 			if (m_filter != null && m_fEnableFilters)
 			{
-				m_filter.DataAccess = m_publisher;
+				m_filter.DataAccess = m_objectListPublisher;
 				for (int i = start; i < sortedObjects.Count; )
 				{
 					if (m_filter.Accept(sortedObjects[i] as IManyOnePathSortItem))
@@ -2930,7 +2919,7 @@ namespace SIL.FieldWorks.XWorks
 			SortedObjects = newSortedObjects;
 			// if we haven't already set an index, see if we can restore one from the property table.
 			if (SortedObjects.Count > 0 && (newCurrentIndex == -1 || m_hvoCurrent == 0))
-				newCurrentIndex = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
+				newCurrentIndex = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
 			// Ensure the index is in bounds.  See LT-10349.
 			if (SortedObjects.Count > 0)
 			{
@@ -3056,7 +3045,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal bool IsVirtualPublisherCreated
 		{
-			get { return m_publisher != null; }
+			get { return m_objectListPublisher != null; }
 		}
 
 		protected virtual IEnumerable<int> GetObjectSet()
@@ -3351,29 +3340,25 @@ namespace SIL.FieldWorks.XWorks
 		///  <param name="owner">the name of the owner of the vector (can be null if using a
 		///  defined type)</param>
 		///  <param name="analysisWs">True to use the analysis font, false otherwise</param>
-		/// <param name="propertyTable"></param>
 		/// <param name="owningObject">the object which owns the vector</param>
 		///  <param name="fontName"></param>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="typeSize"></param>
 		/// <returns>The real flid of the vector in the database.</returns>
-		internal int GetFlidOfVectorFromName(string name, string owner, bool analysisWs,
-			FdoCache cache, Mediator mediator, IPropertyTable propertyTable, out ICmObject owningObject, out string fontName,
+		internal int GetFlidOfVectorFromName(string name, string owner, bool analysisWs, out ICmObject owningObject, out string fontName,
 			out int typeSize)
 		{
 			// Many of these are vernacular, but if not,
 			// they should set it to the default anal font by using the "analysisWs" property.
-			GetDefaultFontNameAndSize(analysisWs, cache, propertyTable, out fontName, out typeSize);
+			GetDefaultFontNameAndSize(analysisWs, m_cache, PropertyTable, out fontName, out typeSize);
 
-			return GetFlidOfVectorFromName(name, owner, cache, mediator, propertyTable, out owningObject, ref fontName, ref typeSize);
+			return GetFlidOfVectorFromName(name, owner, out owningObject, ref fontName, ref typeSize);
 		}
 
-		internal int GetFlidOfVectorFromName(string propertyName, string owner, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, out ICmObject owningObject)
+		internal int GetFlidOfVectorFromName(string propertyName, string owner, out ICmObject owningObject)
 		{
 			string fontName = "";
 			int typeSize = 0;
-			return GetFlidOfVectorFromName(propertyName, owner, cache, mediator, propertyTable, out owningObject, ref fontName, ref typeSize);
+			return GetFlidOfVectorFromName(propertyName, owner, out owningObject, ref fontName, ref typeSize);
 		}
 
 		/// <summary>
@@ -3381,16 +3366,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="owner"></param>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="owningObject"></param>
 		/// <param name="fontName"></param>
 		/// <param name="typeSize"></param>
 		/// <returns></returns>
-		internal int GetFlidOfVectorFromName(string name, string owner, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, out ICmObject owningObject, ref string fontName, ref int typeSize)
+		internal int GetFlidOfVectorFromName(string name, string owner, out ICmObject owningObject, ref string fontName, ref int typeSize)
 		{
-			var defAnalWsFontName = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
+			var defAnalWsFontName = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
 			owningObject = null;
 			int realFlid = 0;
 			switch (name)
@@ -3406,16 +3388,16 @@ namespace SIL.FieldWorks.XWorks
 						switch (owner)
 						{
 							case "LangProject":
-								owningObject = cache.LanguageProject;
+								owningObject = m_cache.LanguageProject;
 								break;
 							case "LexDb":
-								owningObject = cache.LanguageProject.LexDbOA;
+								owningObject = m_cache.LanguageProject.LexDbOA;
 								break;
 							case "RnResearchNbk":
-								owningObject = cache.LanguageProject.ResearchNotebookOA;
+								owningObject = m_cache.LanguageProject.ResearchNotebookOA;
 								break;
 							case "DsDiscourseData":
-								owningObject = cache.LanguageProject.DiscourseDataOA;
+								owningObject = m_cache.LanguageProject.DiscourseDataOA;
 								break;
 							default:
 								Debug.Assert(false, "Illegal owner specified for possibility list.");
@@ -3435,28 +3417,28 @@ namespace SIL.FieldWorks.XWorks
 				case "Entries":
 					if (owner == "ReversalIndex")
 					{
-						if (cache.LangProject.LexDbOA.ReversalIndexesOC.Count == 0)
+						if (m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count == 0)
 						{
 							// invoke the Reversal listener to create the index for this invalid state
-							mediator.SendMessage("InsertReversalIndex_FORCE", null);
+							Publisher.Publish("InsertReversalIndex_FORCE", null);
 						}
 
-						if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+						if (m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
 						{
-							owningObject = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
+							owningObject = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
 							realFlid = ReversalIndexTags.kflidEntries;
 						}
 					}
 					else
 					{
-						owningObject = cache.LanguageProject.LexDbOA;
+						owningObject = m_cache.LanguageProject.LexDbOA;
 						realFlid = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 					}
 					break;
 				case "Scripture_0_0_Content": // StText that is contents of first section of first book.
 					try
 					{
-						var sb = cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS[0];
+						var sb = m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS[0];
 						var ss = sb.SectionsOS[0];
 						owningObject = ss.ContentOA;
 					}
@@ -3468,106 +3450,106 @@ namespace SIL.FieldWorks.XWorks
 					realFlid = StTextTags.kflidParagraphs;
 					break;
 				case "Texts":
-					owningObject = cache.LanguageProject;
-					realFlid = cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
+					owningObject = m_cache.LanguageProject;
+					realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
 					break;
 				case "MsFeatureSystem":
-					owningObject = cache.LanguageProject;
+					owningObject = m_cache.LanguageProject;
 					realFlid = LangProjectTags.kflidMsFeatureSystem;
 					break;
 
 				// phonology
 				case "Phonemes":
-					if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
+					if (m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
 					{
 						// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
-						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
+						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
 						   ()=>
 						   {
-							cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
-								cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+								m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
+								m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
 						   });
 					}
-					owningObject = cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
 					realFlid = PhPhonemeSetTags.kflidPhonemes;
 					break;
 				case "BoundaryMarkers":
-					owningObject = cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
 					realFlid = PhPhonemeSetTags.kflidBoundaryMarkers;
 					break;
 				case "Environments":
-					owningObject = cache.LanguageProject.PhonologicalDataOA;
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
 					realFlid = PhPhonDataTags.kflidEnvironments;
 					break;
 				case "NaturalClasses":
-					owningObject = cache.LanguageProject.PhonologicalDataOA;
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
 					realFlid = PhPhonDataTags.kflidNaturalClasses;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "PhonologicalFeatures":
-					owningObject = cache.LangProject.PhFeatureSystemOA;
+					owningObject = m_cache.LangProject.PhFeatureSystemOA;
 					realFlid = FsFeatureSystemTags.kflidFeatures;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "PhonologicalRules":
-					owningObject = cache.LangProject.PhonologicalDataOA;
+					owningObject = m_cache.LangProject.PhonologicalDataOA;
 					realFlid = PhPhonDataTags.kflidPhonRules;
 					break;
 
 				// morphology
 				case "AdhocCoprohibitions":
-					owningObject = cache.LanguageProject.MorphologicalDataOA;
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
 					realFlid = MoMorphDataTags.kflidAdhocCoProhibitions;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 				case "CompoundRules":
-					owningObject = cache.LanguageProject.MorphologicalDataOA;
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
 					realFlid = MoMorphDataTags.kflidCompoundRules;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "Features":
-					owningObject = cache.LanguageProject.MsFeatureSystemOA;
+					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
 					realFlid = FsFeatureSystemTags.kflidFeatures;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "FeatureTypes":
-					owningObject = cache.LanguageProject.MsFeatureSystemOA;
+					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
 					realFlid = FsFeatureSystemTags.kflidTypes;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "ProdRestrict":
-					owningObject = cache.LanguageProject.MorphologicalDataOA;
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
 					realFlid = MoMorphDataTags.kflidProdRestrict;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 
 				case "Problems":
-					owningObject = cache.LanguageProject;
+					owningObject = m_cache.LanguageProject;
 					realFlid = LangProjectTags.kflidAnnotations;
 					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(cache, propertyTable, true);
+					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 					break;
 				case "Wordforms":
-					owningObject = cache.LanguageProject;
+					owningObject = m_cache.LanguageProject;
 					//realFlid = cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Wordforms", false);
 					realFlid = ObjectListPublisher.OwningFlid;
 					break;
 				case "ReversalIndexes":
 					{
-					owningObject = cache.LanguageProject.LexDbOA;
-					realFlid = cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", "CurrentReversalIndices", false);
+						owningObject = m_cache.LanguageProject.LexDbOA;
+						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", "CurrentReversalIndices", false);
 						break;
 					}
 
@@ -3575,33 +3557,24 @@ namespace SIL.FieldWorks.XWorks
 				case "Analyses":
 					{
 						//TODO: HACK! making it show the first one.
-						var wfRepository = cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+						var wfRepository = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 						if (wfRepository.Count > 0)
 							owningObject = wfRepository.AllInstances().First();
 						realFlid = WfiWordformTags.kflidAnalyses;
 						break;
 					}
 				case "SemanticDomainList":
-					owningObject = cache.LanguageProject.SemanticDomainListOA;
+					owningObject = m_cache.LanguageProject.SemanticDomainListOA;
 					realFlid = CmPossibilityListTags.kflidPossibilities;
 					break;
 				case "AllSenses":
 				case "AllEntryRefs":
 					{
-						owningObject = cache.LanguageProject.LexDbOA;
-						realFlid = cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", name, false);
+						owningObject = m_cache.LanguageProject.LexDbOA;
+						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", name, false);
 						// Todo: something about initial sorting...
 						break;
 					}
-#if NEEDED // not ported from old FW because not currently used.
-				case "AllPossibleAllomorphs":
-					{
-						owningObject = cache.LangProject.LexDbOA;
-						realFlid = BaseVirtualHandler.GetInstalledHandlerTag(cache, "LexDb", "AllPossibleAllomorphs");
-						// Todo: something about initial sorting...
-						break;
-					}
-#endif
 			}
 
 			return realFlid;
@@ -3628,6 +3601,7 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Adjust the name of the menu item if appropriate. PossibilityRecordList overrides.
 		/// </summary>
@@ -3638,6 +3612,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 		}
+#endif
 
 		protected void ComputeInsertableClasses()
 		{
@@ -3792,21 +3767,58 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
 		{
-			var persistedCurrentIndex = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
+			var persistedCurrentIndex = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
 			if (persistedCurrentIndex >= numberOfObjectsInList)
 				persistedCurrentIndex = numberOfObjectsInList - 1;
 			return persistedCurrentIndex;
 		}
-	}
 
-	/// <summary>
-	/// This is an interface that Virtual List Publisher decorators (specified in the decoratorClass child
-	/// of a recordList element in the XML configuration) may implement if they want to be passed the
-	/// mediator.
-	/// </summary>
-	public interface ISetMediator
-	{
-		void SetMediator(Mediator mediator, IPropertyTable propertyTable);
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			CurrentIndex = -1;
+			m_hvoCurrent = 0;
+			m_oldLength = 0;
+		}
+
+		#endregion
 	}
 
 	/// <summary>

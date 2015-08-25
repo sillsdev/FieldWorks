@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -73,12 +72,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable,
+			string fieldName, IPersistenceProvider persistProvider,
 			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
-			m_vectorRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_vectorRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, displayWs);
 		}
 
 		public override System.Xml.XmlNode ConfigurationNode
@@ -102,13 +101,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.OnObjectCreated();
 			m_vectorRefView.UpdateRootObject(m_obj);
-		}
-		/// <summary>
-		/// Get the mediator from the view.
-		/// </summary>
-		protected override Mediator Mediator
-		{
-			get { return m_vectorRefView.Mediator; }
 		}
 
 		/// <summary>
@@ -141,7 +133,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				contents,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		public override void SetItems(IEnumerable<ICmObject> chosenObjs)

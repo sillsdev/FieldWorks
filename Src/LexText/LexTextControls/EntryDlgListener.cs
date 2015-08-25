@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -36,6 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion Construction and Initialization
 
+#if RANDYTODO
 		#region XCORE Message Handlers
 
 		/// <summary>
@@ -73,6 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		#endregion XCORE Message Handlers
+#endif
 	}
 
 	public class MergeEntryDlgListener : DlgListenerBase
@@ -110,11 +111,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool RunMergeEntryDialog(object argument, bool fLoseNoTextData)
 		{
-			ICmObject obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
+			ICmObject obj = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
 			Debug.Assert(obj != null);
 			if (obj == null)
 				return false;		// should never happen, but nothing we can do if it does!
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
 			Debug.Assert(cache != null);
 			Debug.Assert(cache == obj.Cache);
 			ILexEntry currentEntry = obj as ILexEntry;
@@ -128,8 +129,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (MergeEntryDlg dlg = new MergeEntryDlg())
 			{
-				Debug.Assert(argument != null && argument is Command);
-				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, currentEntry);
+				dlg.SetDlgInfo(cache, PropertyTable, currentEntry);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var survivor = dlg.SelectedObject as ILexEntry;
@@ -145,12 +145,19 @@ namespace SIL.FieldWorks.LexText.Controls
 						LexTextControls.ksEntriesHaveBeenMerged,
 						LexTextControls.ksMergeReport,
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
-					m_mediator.SendMessage("JumpToRecord", survivor.Hvo);
+#if RANDYTODO
+				// TODO: Publish doublet:
+				// TODO:	1. "AboutToFollowLink" with null new value
+				// TODO:	2. "FollowLink" with new FwLinkArgs instance.
+				//Publisher.Publish("AboutToFollowLink", null);
+#endif
+					Publisher.Publish("JumpToRecord", survivor.Hvo);
 				}
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayMergeEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -159,6 +166,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Determines in which menus the Merge Entries command item can show up in.
@@ -170,11 +178,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				if (areaChoice == null) return false; // happens at start up
 				if ("lexicon" == areaChoice)
 				{
-					return m_propertyTable.GetValue<string>("currentContentControl") == "lexiconEdit";
+					return PropertyTable.GetValue<string>("currentContentControl") == "lexiconEdit";
 				}
 				return false; //we are not in an area that wants to see the merge command
 			}
@@ -217,16 +225,18 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new EntryGoDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
-				Debug.Assert(cache != null);
-				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				dlg.SetDlgInfo(cache, null, PropertyTable, Publisher);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+				{
+					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+				}
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayGotoLexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -235,6 +245,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		///
@@ -248,10 +259,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				if (m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete")
+				if (PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete")
 					return false;
 
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				string[] areas = new string[]{"lexicon"};
 				foreach(string area in areas)
 				{
@@ -260,7 +271,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						// We want to show goto dialog for dictionary views, but not lists, etc.
 						// that may be in the Lexicon area.
 						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+						var obj = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 						return (obj != null) && (obj.ClassID == LexDbTags.kClassId);
 					}
 				}

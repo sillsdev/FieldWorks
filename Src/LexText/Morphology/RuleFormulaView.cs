@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -79,14 +78,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 		#endregion IDisposable override
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, ICmObject obj, RuleFormulaControl formulaControl,
+		public void Init(ICmObject obj, RuleFormulaControl formulaControl,
 			RuleFormulaVc vc, int rootFrag)
 		{
 			CheckDisposed();
 			m_formulaControl = formulaControl;
-			Mediator = mediator;
-			m_propertyTable = propertyTable;
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			Cache = PropertyTable.GetValue<FdoCache>("cache");
 			m_obj = obj;
 			m_vc = vc;
 			m_rootFrag = rootFrag;
@@ -96,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else if (m_obj != null)
 			{
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
+				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 				m_rootb.Reconstruct();
 			}
 		}
@@ -118,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// view in Undo. (see FWR-3501)
 			//m_fdoCache.MainCacheAccessor.RemoveNotification(m_rootb);
 			if (m_obj != null)
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
+				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 		}
 
 		/// <summary>
@@ -228,8 +225,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		static string[] VARIABLE_NAMES = new string[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
 														"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 
-		protected XCore.Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
+		protected IPublisher m_publisher;
 
 		protected ITsTextProps m_bracketProps;
 		protected ITsTextProps m_pileProps;
@@ -250,11 +247,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_x;
 		protected ITsString m_zwSpace;
 
-		protected RuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
+		protected RuleFormulaVc(IPropertyTable propertyTable, IPublisher publisher)
 		{
 			Cache = propertyTable.GetValue<FdoCache>("cache");
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 
 			// use Doulos SIL because it supports the special characters that are needed for
 			// multiline brackets

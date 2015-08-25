@@ -15,7 +15,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class ImportMatchReplaceDlg : Form
 	{
-		XCore.IHelpTopicProvider m_helpTopicProvider;
+		IHelpTopicProvider m_helpTopicProvider;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ImportMatchReplace"/> class.
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			InitializeComponent();
 		}
 
-		public void Initialize(XCore.IHelpTopicProvider helpTopicProvider, string sMatch, string sReplace)
+		public void Initialize(IHelpTopicProvider helpTopicProvider, string sMatch, string sReplace)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_tbMatch.Text = sMatch == null ? String.Empty : sMatch;

@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -61,13 +60,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
-
-			m_view.Init(mediator, propertyTable, obj, this, new RegRuleFormulaVc(mediator, propertyTable), RegRuleFormulaVc.kfragRHS);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_view.Init(obj, this, new RegRuleFormulaVc(PropertyTable, Publisher), RegRuleFormulaVc.kfragRHS);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -689,7 +688,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
 			featChooser.ShowFeatureConstraintValues = true;
-			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable, Rhs.OwningRule);
+			featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, Rhs.OwningRule);
 		}
 
 		/// <summary>
@@ -845,8 +844,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
-			: base(mediator, propertyTable)
+		public RegRuleFormulaVc(IPropertyTable propertyTable, IPublisher publisher)
+			: base(propertyTable, publisher)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);

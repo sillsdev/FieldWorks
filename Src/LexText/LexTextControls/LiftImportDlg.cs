@@ -25,7 +25,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
@@ -35,7 +34,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	public partial class LiftImportDlg : Form, IFwExtension
 	{
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
@@ -56,12 +54,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// From IFwExtension
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			string sPrevFile = m_propertyTable.GetValue<string>(FilePropertyName);
 			if (!String.IsNullOrEmpty(sPrevFile))

@@ -9,7 +9,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Interface for major FLEx components
 	/// </summary>
-	public interface IMajorFlexComponent
+	public interface IMajorFlexComponent : IFlexComponent
 	{
 		/// <summary>
 		/// Deactivate the component.
@@ -17,7 +17,7 @@ namespace SIL.CoreImpl
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		void Deactivate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
+		void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
 		/// Activate the component.
@@ -25,29 +25,22 @@ namespace SIL.CoreImpl
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		void Activate(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
+		void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar);
 
 		/// <summary>
 		/// Do whatever might be needed to get ready for a refresh.
 		/// </summary>
-		/// <remarks>
-		/// One might expect this method to pass this call into the area's current tool.
-		/// </remarks>
 		void PrepareToRefresh();
 
 		/// <summary>
 		/// Finish the refresh.
 		/// </summary>
-		/// <remarks>
-		/// One might expect this method to pass this call into the area's current tool.
-		/// </remarks>
 		void FinishRefresh();
 
 		/// <summary>
 		/// The properties are about to be saved, so make sure they are all current.
 		/// Add new ones, as needed.
 		/// </summary>
-		/// <param name="propertyTable">The table that is about to be persisted.</param>
-		void EnsurePropertiesAreCurrent(IPropertyTable propertyTable);
+		void EnsurePropertiesAreCurrent();
 	}
 }

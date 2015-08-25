@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
+using SIL.CoreImpl;
 #if __MonoCS__
 using Gecko;
 #endif
@@ -15,7 +16,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -1078,18 +1078,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// Mediator accessor in the LexImportWizard now checks to make sure that
 			// it's not disposed - if it is it creates a new one.
-			XCore.Mediator med = null;
+			IPublisher publisher = null;
 			LexImportWizard wiz = LexImportWizard.Wizard();
 			if (wiz != null)
-				med = wiz.Mediator;
-			if (med == null)
+			{
+				publisher = wiz.Publisher;
+			}
+			if (publisher == null)
 			{
 				// See LT-9100 and LT-9266.  Apparently this condition can happen.
 				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem,
 								MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			med.SendMessage("AddCustomField", null);
+			publisher.Publish("AddCustomField", null);
 
 			// The above call can cause the Mediator to 'go away', so check it and
 			// restore the member variable for everyone else who may be surprised

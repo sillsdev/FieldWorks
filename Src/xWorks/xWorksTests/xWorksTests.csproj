@@ -226,10 +226,6 @@
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.9.5.40562, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="XMLUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -255,7 +251,9 @@
     <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
     <Compile Include="CssGeneratorTests.cs" />
-    <Compile Include="CustomListDlgTests.cs" />
+    <Compile Include="CustomListDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
@@ -272,9 +270,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InterestingTextsTests.cs" />
-    <Compile Include="ItemClickedTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ItemClickedTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="PublishToWebonaryControllerTests.cs" />
     <Compile Include="PublishToWebonaryModelTests.cs" />

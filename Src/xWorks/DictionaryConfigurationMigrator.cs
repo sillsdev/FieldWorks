@@ -11,12 +11,12 @@ using System.Reflection;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,12 +25,10 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Cache is a reference")]
-	public class DictionaryConfigurationMigrator : ILayoutConverter
+	public class DictionaryConfigurationMigrator : ILayoutConverter, IFlexComponent
 	{
-		private readonly Inventory m_layoutInventory;
-		private readonly Inventory m_partInventory;
-		private IPublisher m_publisher;
-		private readonly IPropertyTable m_propertyTable;
+		private Inventory m_layoutInventory;
+		private Inventory m_partInventory;
 		private readonly SimpleLogger m_logger = new SimpleLogger();
 		/// <summary>
 		/// The innermost directory of the configurations presently being migrated.
@@ -49,16 +47,57 @@ namespace SIL.FieldWorks.XWorks
 		private Dictionary<string, Dictionary<string, string>> m_classToCustomFieldsLabelToName;
 
 
-		public DictionaryConfigurationMigrator(IPropertyTable propertyTable, IPublisher publisher)
+		public DictionaryConfigurationMigrator()
 		{
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
+		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
 			Cache = propertyTable.GetValue<FdoCache>("cache");
 			StringTable = StringTable.Table;
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Migrates old dictionary and reversal configurations if there are not already new dictionary and reversal configurations.
@@ -95,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(m_logger.HasContent)
 			{
-				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
+				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable,
 					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 				Directory.CreateDirectory(configurationDir);
 				File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
@@ -114,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
-			m_publisher.Publish("OnGetContentControlParameters", parameter);
+			Publisher.Publish("OnGetContentControlParameters", parameter);
 			var controlNode = collector[0];
 			var parameters = controlNode.SelectSingleNode("parameters");
 			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
@@ -168,13 +207,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_propertyTable.GetValue("DictionaryPublicationLayout", string.Empty)))
+			if (oldLayout.Equals(PropertyTable.GetValue("DictionaryPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true, true);
+				PropertyTable.SetProperty("DictionaryPublicationLayout", newPath, true, true);
 			}
-			else if (oldLayout.Equals(m_propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty)))
+			else if (oldLayout.Equals(PropertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true, true);
+				PropertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true, true);
 			}
 		}
 
@@ -603,7 +642,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GenerateNumberStyleFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
 		{
-			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			const string senseNumberStyleBase = "Dictionary-SenseNumber";
 			var senseNumberStyleName = senseNumberStyleBase;
 			var matchedOrCreated = false;

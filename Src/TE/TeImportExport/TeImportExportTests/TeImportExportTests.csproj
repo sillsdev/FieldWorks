@@ -208,10 +208,6 @@
     <Reference Include="Utilities, Version=7.4.100.36, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=5.5.0.19444, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
@@ -226,9 +222,7 @@
     <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
     <Compile Include="ImportTests\TeImportBtInterleaved.cs" />
     <Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
-    <Compile Include="ImportTests\TeImportManagerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ImportTests\TeImportManagerTests.cs" />
     <Compile Include="ImportTests\TeImportNoUi.cs" />
     <Compile Include="ImportTests\TeImportParatext6Tests.cs" />
     <Compile Include="ImportTests\TeImportTests.cs" />

@@ -21,7 +21,6 @@ namespace SIL.CoreImpl.Impls
 	{
 		private const string DefaultAreaMachineName = "lexicon";
 		private readonly Dictionary<string, IArea> m_areas = new Dictionary<string, IArea>();
-		private readonly IToolRepository m_toolRepository = new ToolRepository();
 
 		/// <summary>
 		/// Constructor.
@@ -30,28 +29,37 @@ namespace SIL.CoreImpl.Impls
 		{
 			// Use Reflection (for now) to get all implementations of IArea.
 			var baseDir = DirectoryUtils.DirectoryOfExecutingAssembly();
-			// We use 'installedAreaPluginAssemblies' for the var name, since theory has it the user can
-			// select to not install some optional areas.
-			var installedAreaPluginAssemblies = new List<Assembly>();
-			installedAreaPluginAssemblies.AddRange(Directory
-				.GetFiles(baseDir, "*AreaPlugin.dll", SearchOption.TopDirectoryOnly)
-				.Select(areaPluginDllPathname => Assembly.LoadFrom(Path.Combine(baseDir, areaPluginDllPathname))));
+
+			var langExAssembly = Assembly.LoadFrom(Path.Combine(baseDir, "LanguageExplorer.dll"));
+			var toolTypes = (langExAssembly.GetTypes().Where(typeof(ITool).IsAssignableFrom)).ToList();
+			var tools = new List<ITool>();
+			foreach (var toolType in toolTypes)
+			{
+				var constInfo = toolType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+				if (constInfo == null)
+				{
+					continue; // It does need at least one public or non-public default constructor.
+				}
+				var currentTool = (ITool)constInfo.Invoke(BindingFlags.NonPublic, null, null, null);
+				tools.Add(currentTool);
+			}
+			IToolRepository toolRepository = new ToolRepository(tools);
 
 			var parmTypes = new Type[1];
-			parmTypes[0] = typeof (IToolRepository);
+			parmTypes[0] = typeof(IToolRepository);
 			var parms = new object[1];
-			parms[0] = m_toolRepository;
-			foreach (var pluginAssembly in installedAreaPluginAssemblies)
+			parms[0] = toolRepository;
+
+			var areaTypes = (langExAssembly.GetTypes().Where(typeof(IArea).IsAssignableFrom)).ToList();
+			foreach (var areaType in areaTypes)
 			{
-				var areaTypes = (pluginAssembly.GetTypes().Where(typeof(IArea).IsAssignableFrom)).ToList();
-				foreach (var areaType in areaTypes)
+				var constInfo = areaType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, parmTypes, null);
+				if (constInfo == null)
 				{
-					var constInfo = areaType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parmTypes, null);
-					if (constInfo == null)
-						continue; // It does need at least one public or non-public constructor that takes the IToolRepository parameter.
-					var currentArea = (IArea)constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, parms, null);
-					m_areas.Add(currentArea.MachineName, currentArea);
+					continue; // It does need at least one public or non-public constructor that takes the IToolRepository parameter.
 				}
+				var currentArea = (IArea)constInfo.Invoke(BindingFlags.NonPublic, null, parms, null);
+				m_areas.Add(currentArea.MachineName, currentArea);
 			}
 		}
 

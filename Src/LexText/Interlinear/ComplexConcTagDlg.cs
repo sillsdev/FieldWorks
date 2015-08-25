@@ -4,7 +4,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ComplexConcTagNode node)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcTagNode node)
 		{
 			m_cache = cache;
 			m_node = node;
@@ -41,8 +40,8 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.TextMarkupTagsOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									mediator,
 									propertyTable,
+									publisher,
 									propertyTable.GetValue<Form>("window"));
 
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag != null ? m_node.Tag.Hvo : 0);

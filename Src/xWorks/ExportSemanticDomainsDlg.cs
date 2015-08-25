@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

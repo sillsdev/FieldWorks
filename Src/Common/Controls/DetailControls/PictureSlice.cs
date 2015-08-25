@@ -10,7 +10,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
-using XCore;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -166,12 +166,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			var pic = (ICmPicture)Object;
-			var app = m_propertyTable.GetValue<IApp>("App");
-			using (var dlg = new PicturePropertiesDialog(m_cache, pic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			var app = PropertyTable.GetValue<IApp>("App");
+			using (var dlg = new PicturePropertiesDialog(m_cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 					dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
 					dlg.SetMultilingualCaptionValues(pic.Caption);
 					if (dlg.ShowDialog() == DialogResult.OK)

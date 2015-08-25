@@ -15,7 +15,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)
 				return;
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_dlg.ProgressBar.Step = 1;
 
 			// stop parser if it's running.
-			m_dlg.Mediator.SendMessage("StopParser", null);
+			m_dlg.Publisher.Publish("StopParser", null);
 
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{

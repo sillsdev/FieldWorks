@@ -6,14 +6,14 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.LexEd;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
 	{
-		protected Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
+		protected IPublisher m_publisher;
+		protected ISubscriber m_subscriber;
 		protected List<ICmObject> m_createdObjectList;
 
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
@@ -39,39 +39,32 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (!IsDisposed)
+			if (IsDisposed)
+				return;
+
+			if (disposing)
 			{
-				if (disposing)
+				if (m_window != null)
 				{
-					if (m_mediator != null)
-						m_mediator.RemoveColleague(m_window);
-
-
-					if (m_window != null && !m_window.IsDisposed)
-					{
-						m_window.Dispose();
-						m_window = null;
-					}
-
-					if (m_mediator != null && !m_mediator.IsDisposed)
-					{
-						m_mediator.Dispose();
-						m_mediator = null;
-					}
-					if (m_propertyTable != null && !m_propertyTable.IsDisposed)
-					{
-						m_propertyTable.Dispose();
-						m_propertyTable = null;
-					}
-
-					if (m_allReversalEntriesRecordList != null && !m_allReversalEntriesRecordList.IsDisposed)
-					{
-						m_allReversalEntriesRecordList.Dispose();
-						m_allReversalEntriesRecordList = null;
-					}
+					m_window.Dispose();
 				}
-				IsDisposed = true;
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.Dispose();
+				}
+
+				if (m_allReversalEntriesRecordList != null)
+				{
+					m_allReversalEntriesRecordList.Dispose();
+				}
 			}
+			IsDisposed = true;
+
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
+			m_allReversalEntriesRecordList = null;
+			m_window = null;
 		}
 		/// <summary>
 		/// See if the object has been disposed.
@@ -127,6 +120,8 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void Initialize()
 		{
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			//Rick: So far the tests in this file are very basic.
 			//I would suggest looking in BulkEditBarTests.cs to expand the capabilities of these tests.
 			CreateAndInitializeNewWindow();
@@ -181,6 +176,10 @@ namespace SIL.FieldWorks.XWorks
 		public void CleanUp()
 		{
 			UndoAllActions();
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		private void UndoAllActions()
@@ -193,6 +192,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void CreateAndInitializeNewWindow()
 		{
+#if RANDYTODO
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
@@ -201,6 +201,7 @@ namespace SIL.FieldWorks.XWorks
 			ProcessPendingItems();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);
+#endif
 		}
 
 		/// <summary>
@@ -224,9 +225,11 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void ProcessPendingItems()
 		{
+#if RANDYTODO
 			// used in CreateAndInitializeWindow() and in MasterRefresh()
 			//m_mediator = m_window.Mediator;
 			((MockFwXWindow)m_window).ProcessPendingItems();
+#endif
 		}
 
 		#endregion Setup and Teardown
@@ -257,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 			XmlNode newNode = doc.DocumentElement;
 			using (var list = new AllReversalEntriesRecordList())
 			{
-				list.Init(Cache, m_mediator, m_propertyTable, newNode);
+				list.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 
 				Assert.IsNull(list.OwningObject,
 					"When AllReversalEntriesRecordList is called and the Clerk is null then the OwningObject should not be set, i.e. left as Null");

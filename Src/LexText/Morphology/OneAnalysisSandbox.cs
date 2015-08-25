@@ -2,7 +2,6 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using SIL.FieldWorks.IText;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -21,13 +20,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="propertyTable"></param>
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: base(cache, mediator, propertyTable, ss, choices, hvoAnalysis)
+		public OneAnalysisSandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: base(cache, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;
 			InitializeComponent();

@@ -13,9 +13,10 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using System;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -50,9 +51,9 @@ namespace SIL.FieldWorks.XWorks
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="treeBarControl is a reference")]
-		internal override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
+		internal override void Init(IPropertyTable propertyTable, XmlNode node)
 		{
-			base.Init(mediator, propertyTable, node);
+			base.Init(propertyTable, node);
 
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
@@ -199,8 +200,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private RecordBar GetTreeBarControl()
 		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			return window.TreeBarControl;
+#else
+			return null;
+#endif
 		}
 
 #if RANDYTODO
@@ -228,13 +233,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void UpdateHeaderVisibility()
 		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			if (window == null || window.IsDisposed)
 				return;
 
 			if (IsShowing)
 			{
+#if RANDYTODO
 				window.TreeBarControl.ShowHeaderControl();
+#endif
 				HandleChangeInSearchText(); // in case we already have a search active when we enter
 			}
 		}

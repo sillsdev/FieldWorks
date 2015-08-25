@@ -152,10 +152,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=8.1.0.24758, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

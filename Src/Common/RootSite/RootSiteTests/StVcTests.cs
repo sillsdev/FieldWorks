@@ -301,46 +301,53 @@ namespace SIL.FieldWorks.Common.RootSites
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
-			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
-				footnoteView.StyleSheet = styleSheet;
-				footnoteView.Visible = false;
+				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
+				{
+					footnoteView.StyleSheet = styleSheet;
+					footnoteView.Visible = false;
+					footnoteView.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
-				// We don't actually want to show it, but we need to force the view to create the root
-				// box and lay it out so that various test stuff can happen properly.
-				footnoteView.MakeRoot();
-				footnoteView.CallLayout();
+					// We don't actually want to show it, but we need to force the view to create the root
+					// box and lay it out so that various test stuff can happen properly.
+					footnoteView.MakeRoot();
+					footnoteView.CallLayout();
 
-				// Select the footnote marker and some characters of the footnote paragraph
-				footnoteView.RootBox.MakeSimpleSel(true, false, false, true);
-				SelectionHelper selHelper = SelectionHelper.GetSelectionInfo(null, footnoteView);
-				selHelper.IchAnchor = 0;
-				selHelper.IchEnd = 5;
-				SelLevInfo[] selLevInfo = new SelLevInfo[3];
-				Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
-				Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
-				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
-				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
-					StTxtParaTags.kflidContents);
-				selHelper.SetSelection(true);
+					// Select the footnote marker and some characters of the footnote paragraph
+					footnoteView.RootBox.MakeSimpleSel(true, false, false, true);
+					SelectionHelper selHelper = SelectionHelper.GetSelectionInfo(null, footnoteView);
+					selHelper.IchAnchor = 0;
+					selHelper.IchEnd = 5;
+					SelLevInfo[] selLevInfo = new SelLevInfo[3];
+					Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
+					Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
+					selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
+					selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
+						StTxtParaTags.kflidContents);
+					selHelper.SetSelection(true);
 
-				// Now the real test:
-				IVwSelection sel = footnoteView.RootBox.Selection;
-				ITsString tss;
-				sel.GetSelectionString(out tss, string.Empty);
-				Assert.AreEqual("a ", tss.Text.Substring(0, 2));
+					// Now the real test:
+					IVwSelection sel = footnoteView.RootBox.Selection;
+					ITsString tss;
+					sel.GetSelectionString(out tss, string.Empty);
+					Assert.AreEqual("a ", tss.Text.Substring(0, 2));
 
-				// make sure the marker and the space are read-only (maybe have to select each run
-				// separately to make this test truly correct)
-				ITsTextProps[] vttp;
-				IVwPropertyStore[] vvps;
-				int cttp;
-				SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
-				Assert.IsTrue(cttp >= 2);
-				Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
-					"Footnote marker is not read-only");
-				Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
-					"Space after marker is not read-only");
+					// make sure the marker and the space are read-only (maybe have to select each run
+					// separately to make this test truly correct)
+					ITsTextProps[] vttp;
+					IVwPropertyStore[] vvps;
+					int cttp;
+					SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
+					Assert.IsTrue(cttp >= 2);
+					Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
+						"Footnote marker is not read-only");
+					Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
+						"Space after marker is not read-only");
+				}
 			}
 		}
 
@@ -366,24 +373,31 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			// Prepare the test by creating a footnote view
-			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
-				footnoteView.StyleSheet = styleSheet;
-				footnoteView.Visible = false;
+				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
+				{
+					footnoteView.StyleSheet = styleSheet;
+					footnoteView.Visible = false;
+					footnoteView.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
-				// We don't actually want to show it, but we need to force the view to create the root
-				// box and lay it out so that various test stuff can happen properly.
-				footnoteView.MakeRoot();
-				footnoteView.CallLayout();
+					// We don't actually want to show it, but we need to force the view to create the root
+					// box and lay it out so that various test stuff can happen properly.
+					footnoteView.MakeRoot();
+					footnoteView.CallLayout();
 
-				// Select the footnote marker and some characters of the footnote paragraph
-				footnoteView.RootBox.MakeSimpleSel(true, true, false, true);
+					// Select the footnote marker and some characters of the footnote paragraph
+					footnoteView.RootBox.MakeSimpleSel(true, true, false, true);
 
-				// Now the real test:
-				IVwSelection sel = footnoteView.RootBox.Selection.GrowToWord();
-				ITsString tss;
-				sel.GetSelectionString(out tss, string.Empty);
-				Assert.AreEqual("abcde", tss.Text);
+					// Now the real test:
+					IVwSelection sel = footnoteView.RootBox.Selection.GrowToWord();
+					ITsString tss;
+					sel.GetSelectionString(out tss, string.Empty);
+					Assert.AreEqual("abcde", tss.Text);
+				}
 			}
 		}
 

@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using System.Xml;
@@ -27,11 +26,10 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public abstract class BulkPosEditorBase : IBulkEditSpecControl, IFWDisposable, ITextChangedNotification
+	public abstract class BulkPosEditorBase : IBulkEditSpecControl, IFlexComponent, ITextChangedNotification, IFWDisposable
 	{
 		#region Data members & event declarations
 
-		protected Mediator m_mediator;
 		protected TreeCombo m_tree;
 		protected FdoCache m_cache;
 		protected XMLViewsDataCache m_sda;
@@ -185,8 +183,10 @@ namespace SIL.FieldWorks.FdoUi
 			m_selectedLabel = null;
 			m_tree = null;
 			m_pOSPopupTreeManager = null;
-			m_mediator = null;
 			m_cache = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
@@ -194,28 +194,6 @@ namespace SIL.FieldWorks.FdoUi
 		#endregion IDisposable & Co. implementation
 
 		#region Properties
-
-		/// <summary>
-		/// Get or set the mediator.
-		/// </summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-			set
-			{
-				CheckDisposed();
-				m_mediator = value;
-			}
-		}
-
-		/// <summary>
-		/// Get/Set the property table'
-		/// </summary>
-		public IPropertyTable PropTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
@@ -285,9 +263,9 @@ namespace SIL.FieldWorks.FdoUi
 					List,
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 					false,
-					m_mediator,
-					PropTable,
-					PropTable.GetValue<Form>("window"));
+					PropertyTable,
+					Publisher,
+					PropertyTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(0);
@@ -413,6 +391,48 @@ namespace SIL.FieldWorks.FdoUi
 		protected abstract bool CanFakeIt(int hvo);
 
 		#endregion Other methods
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 	}
 	/// <summary>
 	/// BulkPosEditor is the spec/display component of the Bulk Edit bar used to

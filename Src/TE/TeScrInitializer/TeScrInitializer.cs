@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using System;
-using XCore;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE

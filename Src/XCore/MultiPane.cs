@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace XCore
@@ -35,17 +34,15 @@ namespace XCore
 	/// it will control the visibility of the first pane (visible if the property is true).
 	/// </summary>
 	/// <remarks>
-	/// IxCoreContentControl includes IxCoreColleague now,
-	/// so only IxCoreContentControl needs to be declared here.
+	/// IMainContentControl includes IxCoreColleague now,
+	/// so only IMainContentControl needs to be declared here.
 	/// </remarks>
-	public class MultiPane : CollapsingSplitContainer, IxCoreContentControl, IXCoreUserControl
+	public class MultiPane : CollapsingSplitContainer, IMainContentControl, IMainUserControl
 	{
 		public event EventHandler ShowFirstPaneChanged;
 
-		// When its superclass gets switched to the new SplitContainer class. it has to implement IXCoreUserControl itself.
+		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.
 		private Size m_parentSizeHint;
 		private bool m_showingFirstPane;
@@ -74,6 +71,34 @@ namespace XCore
 			InitializeComponent();
 		}
 
+		public string PropertyControllingVisibilityOfFirstPane
+		{
+			get { return m_propertyControllingVisibilityOfFirstPane; }
+			set
+			{
+				if (!string.IsNullOrEmpty(m_propertyControllingVisibilityOfFirstPane))
+				{
+					Subscriber.Unsubscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
+				}
+				m_propertyControllingVisibilityOfFirstPane = value;
+				m_showingFirstPane = string.IsNullOrEmpty(value);
+				Subscriber.Subscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
+			}
+		}
+
+		private void PropertyControllingVisibilityOfFirstPane_Changed(object newValue)
+		{
+			var showIt = (bool) newValue;
+			if (m_showingFirstPane == showIt)
+			{
+				return; // No change.
+			}
+			m_showingFirstPane = string.IsNullOrEmpty(m_propertyControllingVisibilityOfFirstPane) && showIt;
+			Panel1Collapsed = !m_showingFirstPane;
+			if (ShowFirstPaneChanged != null)
+				ShowFirstPaneChanged(this, new EventArgs());
+		}
+
 		public string PrintPane
 		{
 			get
@@ -94,12 +119,9 @@ namespace XCore
 				return;
 			if (disposing)
 			{
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 				if(components != null)
 					components.Dispose();
 			}
-			m_mediator = null;
 
 			base.Dispose(disposing);
 		}
@@ -121,7 +143,7 @@ namespace XCore
 		}
 		#endregion
 
-		#region IXCoreUserControl implementation
+		#region IMainUserControl implementation
 
 		/// <summary>
 		/// This is the property that return the name to be used by the accessibility object.
@@ -134,6 +156,8 @@ namespace XCore
 
 				string defaultName = "MultiPane";
 				string name;
+
+#if RANDYTO
 				if (this is IxCoreColleague)
 				{
 					name = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
@@ -145,15 +169,22 @@ namespace XCore
 						name = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "label", defaultName);
 				}
 				else
+#endif
 					name = defaultName;
 
 				return name;
 			}
 		}
 
-		#endregion IXCoreUserControl implementation
+		/// <summary>
+		/// Get/set string that will trigger a message box to show.
+		/// </summary>
+		/// <remarks>Set to null or string.Empty to not show the message box.</remarks>
+		public string MessageBoxTrigger { get; set; }
 
-		#region IxCoreContentControl implementation
+		#endregion IMainUserControl implementation
+
+		#region IMainContentControl implementation
 
 		public bool PrepareToGoAway()
 		{
@@ -162,10 +193,10 @@ namespace XCore
 			//we are ready to go away if our two controls are ready to go away
 			bool firstControlReady = true;
 			if (FirstControl != null)
-				firstControlReady = ((IxCoreContentControl)FirstControl).PrepareToGoAway();
+				firstControlReady = ((IMainContentControl)FirstControl).PrepareToGoAway();
 			bool secondControlReady = true;
 			if (SecondControl != null)
-				secondControlReady = ((IxCoreContentControl)SecondControl).PrepareToGoAway();
+				secondControlReady = ((IMainContentControl)SecondControl).PrepareToGoAway();
 
 			return firstControlReady && secondControlReady;
 		}
@@ -180,9 +211,9 @@ namespace XCore
 			}
 		}
 
-		#endregion // IxCoreContentControl implementation
+		#endregion // IMainContentControl implementation
 
-		#region IxCoreCtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "result is a reference")]
@@ -196,7 +227,7 @@ namespace XCore
 			if (sizeOfSharedDimensionPanel1 != CollapsingSplitContainer.kCollapsedSize && !Panel1Collapsed)
 			{
 				// Panel1 is visible and wide.
-				result = (FirstControl as IxCoreCtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+				result = (FirstControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
 				if (!FirstControl.ContainsFocus)
 					result = null;
 			}
@@ -204,7 +235,7 @@ namespace XCore
 			if (sizeOfSharedDimensionPanel2 != CollapsingSplitContainer.kCollapsedSize && !Panel2Collapsed)
 			{
 				// Panel2 is visible and wide.
-				Control otherResult = (SecondControl as IxCoreCtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+				Control otherResult = (SecondControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
 				if (SecondControl.ContainsFocus)
 				{
 					Debug.Assert(result == null, "result is unexpectedly not null.");
@@ -216,9 +247,10 @@ namespace XCore
 			return result;
 		}
 
-		#endregion  IxCoreCtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
 		#region IxCoreColleague implementation
+#if RANDYTODO
 		/// <summary>
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
@@ -321,6 +353,7 @@ namespace XCore
 				return null;
 			return property.Insert(0,"Show_");
 		}
+#endif
 
 		/// <summary>
 		/// Used to give us an idea of what our boundaries will be before we are initialized
@@ -356,6 +389,7 @@ namespace XCore
 			}
 		}
 
+#if RANDYTODO
 		private void MakeSubControl(XmlNode configuration, Size parentSizeHint, bool isFirst)
 		{
 			XmlNode dynLoaderNode = configuration.SelectSingleNode("dynamicloaderinfo");
@@ -375,10 +409,10 @@ namespace XCore
 						"XCore can only handle controls which implement IxCoreColleague. " +
 						contentClass + " does not.");
 				}
-				if (!(subControl is IXCoreUserControl))
+				if (!(subControl is IMainUserControl))
 				{
 					throw new ApplicationException(
-						"XCore can only handle controls which implement IXCoreUserControl. " +
+						"XCore can only handle controls which implement IMainUserControl. " +
 						contentClass + " does not.");
 				}
 
@@ -439,67 +473,12 @@ namespace XCore
 			catch (Exception error)
 			{
 				string s = "Something went wrong trying to create a " + contentClass + ".";
-				XWindow window = m_propertyTable.GetValue<XWindow>("window");
+				IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
 				ErrorReporter.ReportException(new ApplicationException(s, error),
 					window.ApplicationRegistryKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 			}
 		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			Control first = FirstControl;
-			if (first != null && first.FindForm() == null)
-				first = null;
-			Control second = SecondControl;
-			if (second != null && second.FindForm() == null)
-				second = null;
-
-			var targets = new List<IxCoreColleague> {this};
-
-			if (m_prioritySecond)
-			{
-				if (first != null)
-					targets.Insert(0, first as IxCoreColleague);
-				if (second != null)
-					targets.Insert(0, second as IxCoreColleague);
-			}
-			else
-			{
-				if (second != null)
-					targets.Insert(0, second as IxCoreColleague);
-				if (first != null)
-					targets.Insert(0, first as IxCoreColleague);
-			}
-
-			return targets.ToArray();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Message handling priority
-		/// </summary>
-		public int Priority
-		{
-			get
-			{
-				return (int)ColleaguePriority.Medium;
-			}
-		}
+#endif
 
 		#endregion // IxCoreColleague implementation
 
@@ -508,7 +487,7 @@ namespace XCore
 			base.OnSizeChanged(e);
 
 			Control parent = Parent;
-			if (parent != null && m_mediator != null)
+			if (parent != null && PropertyTable != null)
 			{
 				ResetSplitterEventHandler(true);
 				SetSplitterDistance();
@@ -521,7 +500,7 @@ namespace XCore
 			{
 				return String.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
 					m_configurationParameters.Attributes["area"].Value,
-					m_propertyTable.GetValue("currentContentControl", ""),
+					PropertyTable.GetValue("currentContentControl", ""),
 					m_configurationParameters.Attributes["id"].Value);
 			}
 		}
@@ -537,9 +516,9 @@ namespace XCore
 			base.OnSplitterMoved(sender, e);
 
 			// Persist new position.
-			if (m_mediator != null && m_fOkToPersistSplit)
+			if (PropertyTable != null && m_fOkToPersistSplit)
 			{
-				m_propertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true, false);
+				PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true, false);
 			}
 		}
 
@@ -578,13 +557,13 @@ namespace XCore
 				defaultLocation = Int32.Parse(defaultLoc);
 			}
 
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
 				// NB GetIntProperty RECORDS the default as if it had really been set by the user.
 				// This behavior is disastrous here, where if we haven't truly persisted something,
 				// we want to stick to computing the percent whenever the parent resizes.
 				// So, first see whether there is a value in the property table at all.
-				defaultLocation = m_propertyTable.GetValue(SplitterDistancePropertyName, defaultLocation);
+				defaultLocation = PropertyTable.GetValue(SplitterDistancePropertyName, defaultLocation);
 			}
 			if (defaultLocation < kCollapsedSize)
 				defaultLocation = kCollapsedSize;
@@ -617,6 +596,8 @@ namespace XCore
 			}
 		}
 
+
+#if RANDYTO
 		/// summary>
 		/// Receives the broadcast message "PropertyChanged." If it is the ShowFirstPane
 		/// property, adjust.
@@ -624,7 +605,7 @@ namespace XCore
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
-			if (m_propertyTable.GetValue("ToolForAreaNamed_lexicon", "") != toolName)
+			if (PropertyTable.GetValue("ToolForAreaNamed_lexicon", "") != toolName)
 			{
 				return;
 			}
@@ -634,7 +615,7 @@ namespace XCore
 			}
 			if (name == m_propertyControllingVisibilityOfFirstPane)
 			{
-				bool fShowFirstPane = m_propertyTable.GetValue(m_propertyControllingVisibilityOfFirstPane, true);
+				bool fShowFirstPane = PropertyTable.GetValue(m_propertyControllingVisibilityOfFirstPane, true);
 				if (fShowFirstPane == m_showingFirstPane)
 					return; // just in case it didn't really change
 
@@ -647,7 +628,6 @@ namespace XCore
 			}
 
 		}
-
 		/// <summary>
 		/// The focus will only be set in the default control if it implements IFocusablePanePortion.
 		/// Note that it may BE our First or SecondPane, or it may be a child of one of those.
@@ -656,8 +636,8 @@ namespace XCore
 		{
 			if (String.IsNullOrEmpty(m_defaultFocusControl))
 				return;
-			var defaultFocusControl = (XWindow.FindControl(FirstControl, m_defaultFocusControl) ??
-				XWindow.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
+			var defaultFocusControl = (IFwMainWnd.FindControl(FirstControl, m_defaultFocusControl) ??
+				IFwMainWnd.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
 			Debug.Assert(defaultFocusControl != null,
 				"Failed to find focusable subcontrol.",
 				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
@@ -670,5 +650,59 @@ namespace XCore
 				BeginInvoke((MethodInvoker) (() => defaultFocusControl.Focus()));
 			}
 		}
+#endif
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_showingFirstPane = false; // Default to not showing.
+		}
+
+		#endregion
+
+		#region Implementation of IMainUserControl
+
+		/// <summary>
+		/// Get or set the name to be used by the accessibility object.
+		/// </summary>
+		string IMainUserControl.AccName { get; set; }
+
+		#endregion
 	}
 }

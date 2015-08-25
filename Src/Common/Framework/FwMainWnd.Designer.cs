@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {

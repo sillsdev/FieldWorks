@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml;
 using SIL.CoreImpl;
-using XCore;
 using SIL.FieldWorks.XWorks;
 
 namespace SIL.FieldWorks.IText
@@ -14,11 +13,6 @@ namespace SIL.FieldWorks.IText
 	{
 		internal InterlinMasterBase()
 		{
-		}
-
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			throw new NotSupportedException();
 		}
 	}
 }

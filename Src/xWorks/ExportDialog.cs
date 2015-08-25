@@ -36,7 +36,6 @@ using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -49,11 +48,9 @@ namespace SIL.FieldWorks.XWorks
 	/// You will typically also need to override the actual Export process, unless it is
 	/// a standard FXT export.
 	/// </summary>
-	public class ExportDialog : Form, IFWDisposable
+	public class ExportDialog : Form, IFlexComponent, IFWDisposable
 	{
 		protected FdoCache m_cache;
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 		private Label label1;
 		protected ColumnHeader columnHeader1;
 		protected ColumnHeader columnHeader2;
@@ -132,67 +129,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ListViewItem> m_exportItems;
 
-		/// <summary>
-		/// For testing only!
-		/// </summary>
-		internal ExportDialog()
+		/// <summary />
+		public ExportDialog()
 		{
-		}
-
-		public ExportDialog(Mediator mediator, IPropertyTable propertyTable)
-		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
-
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-			AccessibleName = GetType().Name;
-
-			// Figure out where to locate the dlg.
-			object obj = SettingsKey.GetValue("InsertX");
-			if (obj != null)
-			{
-				var x = (int) obj;
-				var y = (int) SettingsKey.GetValue("InsertY");
-				var width = (int) SettingsKey.GetValue("InsertWidth", Width);
-				var height = (int) SettingsKey.GetValue("InsertHeight", Height);
-				var rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
-			}
-
-			m_helpTopic = "khtpExportLexicon";
-
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
-			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-
-			// Determine whether we can support "configured" type export by trying to obtain
-			// the XmlVc for an XmlDocView.  Also obtain the database id and class id of the
-			// root object.
-
-			InitFromMainControl(m_propertyTable.GetValue<object>("currentContentControlObject", null));
-			m_clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-
-			m_chkExportPictures.Checked = false;
-			m_chkExportPictures.Visible = false;
-			m_chkExportPictures.Enabled = false;
-			m_fExportPicturesAndMedia = false;
-
-			//Set  m_chkShowInFolder to it's last state.
-			var showInFolder = m_propertyTable.GetValue("ExportDlgShowInFolder", "true");
-			if (showInFolder.Equals("true"))
-				m_chkShowInFolder.Checked = true;
-			else
-				m_chkShowInFolder.Checked = false;
-
-			m_exportItems = new List<ListViewItem>();
 		}
 
 		private void InitFromMainControl(object objCurrentControl)
@@ -205,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 				m_xvc = m_seqView.Vc;
 				m_sda = m_seqView.RootBox.DataAccess;
 			}
-			var cmo = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject", null);
+			var cmo = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject", null);
 			if (cmo != null)
 			{
 				int clidRoot;
@@ -316,6 +255,11 @@ namespace SIL.FieldWorks.XWorks
 					components.Dispose();
 				}
 			}
+
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
 			base.Dispose( disposing );
 		}
 
@@ -443,7 +387,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string area = "lexicon";
 			string tool = "lexiconDictionary";
-			m_areaOrig = m_propertyTable.GetValue<string>("areaChoice");
+			m_areaOrig = PropertyTable.GetValue<string>("areaChoice");
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
@@ -480,7 +424,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
-			m_mediator.SendMessage("GetContentControlParameters", parameter);
+			Publisher.Publish("GetContentControlParameters", parameter);
 			var controlNode = collector[0];
 			Debug.Assert(controlNode != null);
 			XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
@@ -488,7 +432,7 @@ namespace SIL.FieldWorks.XWorks
 			var contentClass = XmlUtils.GetAttributeValue(dynLoaderNode, "class");
 			Control mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
 			var parameters = controlNode.SelectSingleNode("parameters");
-			((IxCoreColleague)mainControl).Init(m_mediator, m_propertyTable, parameters);
+			((IFlexComponent)mainControl).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			InitFromMainControl(mainControl);
 			return mainControl;
 		}
@@ -526,7 +470,7 @@ namespace SIL.FieldWorks.XWorks
 							m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
-						dlg.SelectedPath = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+						dlg.SelectedPath = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 						if (dlg.ShowDialog(this) != DialogResult.OK)
 							return;
 						sDirectory = dlg.SelectedPath;
@@ -579,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 						case FxtTypes.kftTranslatedLists:
 							using (var dlg = new ExportTranslatedListsDlg())
 							{
-								dlg.Initialize(m_propertyTable, m_cache,
+								dlg.Initialize(PropertyTable, m_cache,
 									m_exportItems[0].SubItems[1].Text,
 									m_exportItems[0].SubItems[2].Text,
 									m_exportItems[0].SubItems[3].Text);
@@ -615,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
 								dlg.Filter = m_exportItems[0].SubItems[3].Text;
 								dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
-								dlg.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+								dlg.InitialDirectory = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 								if (dlg.ShowDialog(this) != DialogResult.OK)
 									return;
 								sFileName = dlg.FileName;
@@ -626,7 +570,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (sDirectory != null)
 				{
-					m_propertyTable.SetProperty("ExportDir", sDirectory, true, true);
+					PropertyTable.SetProperty("ExportDir", sDirectory, true, true);
 				}
 				if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
 				{
@@ -639,11 +583,11 @@ namespace SIL.FieldWorks.XWorks
 				if (m_chkShowInFolder.Checked)
 				{
 					OpenExportFolder(sDirectory, sFileName);
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "true", true, true);
+					PropertyTable.SetProperty("ExportDlgShowInFolder", "true", true, true);
 				}
 				else
 				{
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "false", true, true);
+					PropertyTable.SetProperty("ExportDlgShowInFolder", "false", true, true);
 				}
 			}
 			finally
@@ -815,9 +759,9 @@ namespace SIL.FieldWorks.XWorks
 						{
 							// Show the pretty yellow semi-crash dialog box, with instructions for the
 							// user to report the bug.
-							var app = m_propertyTable.GetValue<IApp>("App");
+							var app = PropertyTable.GetValue<IApp>("App");
 							ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-								app.SettingsKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
+								app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
 						}
 						else
 						{
@@ -844,10 +788,10 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmlPath = (string)args[0];
 			var cssPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), Path.GetFileNameWithoutExtension(xhtmlPath) + ".css");
 			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave);
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(PropertyTable, out entriesToSave);
 			progress.Maximum = entriesToSave.Length;
-			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable), m_cache);
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath, progress);
+			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable), m_cache);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, PropertyTable, xhtmlPath, cssPath, progress);
 			return null;
 		}
 
@@ -858,7 +802,7 @@ namespace SIL.FieldWorks.XWorks
 			var sXslts = (string) args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			m_mediator.SendMessage("SaveAsWebpage", parameter);
+			Publisher.Publish("SaveAsWebpage", parameter);
 			m_progressDlg.Step(1000);
 			return null;
 		}
@@ -1002,7 +946,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 				m_ce = new ConfiguredExport(null, m_xvc.DataAccess, m_hvoRootObj);
 				string sBodyClass = (m_areaOrig == "notebook") ? "notebookBody" : "dicBody";
-				m_ce.Initialize(m_cache, m_propertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
+				m_ce.Initialize(m_cache, PropertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
 				m_ce.UpdateProgress += ce_UpdateProgress;
 				m_xvc.Display(m_ce, m_hvoRootObj, m_seqView.RootFrag);
 				m_ce.Finish(ft.m_sDataType);
@@ -1275,7 +1219,7 @@ namespace SIL.FieldWorks.XWorks
 					m_chkExportPictures.Enabled = true;
 					if (!m_fLiftExportPicturesSet)
 					{
-						m_chkExportPictures.Checked = m_propertyTable.GetValue(ksLiftExportPicturesPropertyName, true);
+						m_chkExportPictures.Checked = PropertyTable.GetValue(ksLiftExportPicturesPropertyName, true);
 						m_fLiftExportPicturesSet = true;
 					}
 					m_fExportPicturesAndMedia = m_chkExportPictures.Checked;
@@ -1342,7 +1286,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
 		private void ce_UpdateProgress(object sender)
@@ -1678,7 +1622,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_chkExportPictures_CheckedChanged(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, true, true);
+			PropertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, true, true);
 			m_fExportPicturesAndMedia = m_chkExportPictures.Checked;
 		}
 
@@ -1697,17 +1641,17 @@ namespace SIL.FieldWorks.XWorks
 			Justification = "applicationKey is a reference")]
 		private void ProcessPathwayExport()
 		{
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			bool fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
+				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					try
@@ -1819,7 +1763,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ProcessWebonaryExport()
 		{
+#if RANDYTODO
 			FwXWindow.ShowPublishToWebonaryDialog(m_mediator, m_propertyTable);
+#endif
 		}
 
 		private bool SelectOption(string exportFormat)
@@ -1875,7 +1821,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (FileNotFoundException)
 			{
-				IApp app = m_propertyTable.GetValue<IApp>("App");
+				IApp app = PropertyTable.GetValue<IApp>("App");
 				MessageBox.Show(@"The " + currInput + @" Section may be Empty (or) Not exported", app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 
@@ -1920,5 +1866,98 @@ namespace SIL.FieldWorks.XWorks
 			xDoc.XmlResolver = FileStreamXmlResolver.GetNullResolver();
 			xDoc.Load(xml);
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+
+			//
+			// Required for Windows Form Designer support
+			//
+			InitializeComponent();
+			AccessibleName = GetType().Name;
+
+			// Figure out where to locate the dlg.
+			object obj = SettingsKey.GetValue("InsertX");
+			if (obj != null)
+			{
+				var x = (int)obj;
+				var y = (int)SettingsKey.GetValue("InsertY");
+				var width = (int)SettingsKey.GetValue("InsertWidth", Width);
+				var height = (int)SettingsKey.GetValue("InsertHeight", Height);
+				var rect = new Rectangle(x, y, width, height);
+				ScreenUtils.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
+			}
+
+			m_helpTopic = "khtpExportLexicon";
+
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			helpProvider = new HelpProvider();
+			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+
+			// Determine whether we can support "configured" type export by trying to obtain
+			// the XmlVc for an XmlDocView.  Also obtain the database id and class id of the
+			// root object.
+
+			InitFromMainControl(PropertyTable.GetValue<object>("currentContentControlObject", null));
+			m_clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+
+			m_chkExportPictures.Checked = false;
+			m_chkExportPictures.Visible = false;
+			m_chkExportPictures.Enabled = false;
+			m_fExportPicturesAndMedia = false;
+
+			//Set  m_chkShowInFolder to it's last state.
+			var showInFolder = PropertyTable.GetValue("ExportDlgShowInFolder", "true");
+			if (showInFolder.Equals("true"))
+				m_chkShowInFolder.Checked = true;
+			else
+				m_chkShowInFolder.Checked = false;
+
+			m_exportItems = new List<ListViewItem>();
+		}
+
+		#endregion
 	}
 }

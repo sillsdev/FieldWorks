@@ -14,7 +14,7 @@ M: SIL.FieldWorks.IText.IAnalysisControlInternal SIL.FieldWorks.IText.FocusBoxCo
 
 # added to other object and disposed there
 M: System.Void SIL.FieldWorks.IText.InterlinTaggingChild::AddListToMenu(System.Windows.Forms.ToolStrip,SIL.FieldWorks.FDO.ICmPossibility)
-M: SIL.FieldWorks.IText.IComboHandler SIL.FieldWorks.IText.SandboxBase/InterlinComboHandler::MakeCombo(XCore.IHelpTopicProvider,System.Int32,SIL.FieldWorks.IText.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
+M: SIL.FieldWorks.IText.IComboHandler SIL.FieldWorks.IText.SandboxBase/InterlinComboHandler::MakeCombo(SIL.CoreImpl.IHelpTopicProvider,System.Int32,SIL.FieldWorks.IText.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
 
 # just a reference
 M: System.Boolean SIL.FieldWorks.IText.SandboxBase::IsInGlossMode()
@@ -27,6 +27,7 @@ M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewAllomor
 M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<Import>*::<>*()
 # Windows
 M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<>*::<Import>*()
+M: System.Void SIL.FieldWorks.IText.StatisticsView::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
 
 # Disposed in object's Close() method
 M: System.Boolean SIL.FieldWorks.IText.SandboxBase::HandleRightClickOnObject(System.Int32,XCore.IxCoreColleague)

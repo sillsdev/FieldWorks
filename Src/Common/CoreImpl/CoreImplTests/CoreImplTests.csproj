@@ -81,6 +81,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
     </Reference>
+    <Reference Include="FormsTester">
+      <HintPath>..\..\..\..\Bin\nunitforms\FormsTester.dll</HintPath>
+    </Reference>
     <Reference Include="nmock, Version=1.0.3551.16891, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
@@ -120,6 +123,7 @@
     <Compile Include="Impls\PropertyTableTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LangTagUtilsTests.cs" />
+    <Compile Include="MessageBoxEx\Tests.cs" />
     <Compile Include="PalasoWritingSystemManagerTests.cs" />
     <Compile Include="PalasoWritingSystemTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

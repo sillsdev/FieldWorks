@@ -225,6 +225,12 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
+		/// <summary />
+		protected IPropertyTable m_propertyTable;
+		/// <summary />
+		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -257,8 +263,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 
 			m_basicView = new DummyBasicView {Cache = Cache, Visible = false, StyleSheet = styleSheet};
+			m_basicView.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -270,6 +279,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			m_basicView.Dispose();
 			m_basicView = null;
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+			}
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 
 			base.TestTearDown();
 		}

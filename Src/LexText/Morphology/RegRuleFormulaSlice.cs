@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
+#if RANDYTODO
 		public bool OnDisplayContextSetOccurrence(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				RegRuleFormulaControl.GetContextOccurrence(out min, out max);
 				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, false))
 				{
-					if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(m_propertyTable.GetValue<IFwMainWnd>("window")) == DialogResult.OK)
 						RegRuleFormulaControl.SetContextOccurrence(dlg.Minimum, dlg.Maximum);
 				}
 			}
@@ -68,6 +69,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
-
+#endif
 	}
 }

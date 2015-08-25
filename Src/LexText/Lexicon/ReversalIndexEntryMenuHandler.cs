@@ -2,18 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Palaso.Linq;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using System.Diagnostics.CodeAnalysis;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -32,6 +29,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to enable this tree delete Menu Item
 		/// </summary>
@@ -110,6 +108,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			return true; //we've handled this
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
@@ -118,7 +117,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				Slice slice = m_dataEntryForm.CurrentSlice;
-				Debug.Assert(slice != null, "No slice was current");
 				var currentEntry = (IReversalIndexEntry) slice.Object;
 				dlg.ReversalIndex = currentEntry.ReversalIndex;
 				AddEntryAndChildrenRecursively(dlg.FilteredReversalEntryHvos, currentEntry);
@@ -127,8 +125,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams {m_btnText = LexEdStrings.ks_MoveEntry, m_title = LexEdStrings.ksMoveRevEntry};
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
-				dlg.SetDlgInfo(cache, wp, m_mediator, m_propertyTable);
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var newOwner = (IReversalIndexEntry) dlg.SelectedObject;
@@ -139,12 +137,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							newOwner.MoveIfNeeded(currentEntry);
 							newOwner.SubentriesOS.Add(currentEntry);
 						});
-					RecordClerk clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+					RecordClerk clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
 					if (clerk != null)
 						clerk.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainEntry.Hvo);
+					Publisher.Publish("JumpToRecord", newOwner.MainEntry.Hvo);
 				}
 			}
 			return true;
@@ -156,6 +154,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			entry.AllOwnedObjects.Where(obj => obj is IReversalIndexEntry).ForEach(subentry => hvos.Add(subentry.Hvo));
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -179,6 +178,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			return true; //we've handled this
 		}
+#endif
 
 		private bool CanMergeOrMove
 		{
@@ -220,8 +220,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_propertyTable.GetValue<string>("areaChoice") == "lexicon"
-					&& m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete");
+				return (PropertyTable.GetValue<string>("areaChoice") == "lexicon"
+					&& PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete");
 			}
 		}
 	}

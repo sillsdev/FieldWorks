@@ -3,7 +3,6 @@ using System;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -34,30 +33,31 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				if (m_sourceSentences != null)
 					m_sourceSentences.CheckBoxChanged -= new CheckBoxChangedEventHandler(sentences_CheckBoxChanged);
 
-				if (m_mediator != null)
+				if (m_srcClerk != null)
 				{
-					if (m_srcClerk != null)
+					if (PropertyTable != null)
 					{
-						m_propertyTable.RemoveProperty("RecordClerk-" + m_srcClerk.Id);
-						m_srcClerk.Dispose();
+						PropertyTable.RemoveProperty("RecordClerk-" + m_srcClerk.Id);
 					}
+					m_srcClerk.Dispose();
+				}
 
-					if (m_dstClerk != null)
+				if (m_dstClerk != null)
+				{
+					if (PropertyTable != null)
 					{
-						m_propertyTable.RemoveProperty("RecordClerk-" + m_dstClerk.Id);
-						m_dstClerk.Dispose();
+						PropertyTable.RemoveProperty("RecordClerk-" + m_dstClerk.Id);
 					}
-
-					if (m_fDisposeMediator)
-						m_mediator.Dispose();
+					m_dstClerk.Dispose();
 				}
 			}
-			m_mediator = null;
-			m_propertyTable = null;
 			m_cache = null;
 			m_srcwfiWordform = null;
 			m_srcClerk = null;
 			m_dstClerk = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose(disposing);
 		}

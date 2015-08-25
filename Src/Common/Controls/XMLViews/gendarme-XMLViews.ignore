@@ -35,6 +35,8 @@ M: System.Collections.Generic.List`1<SIL.FieldWorks.Common.Controls.ListClassTar
 # reference only
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitDeleteTab()
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitStringCombo(SIL.FieldWorks.Common.Controls.FwOverrideComboBox,System.Boolean)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeListChoiceFilterItem(SIL.FieldWorks.Common.Controls.FilterSortItem,SIL.FieldWorks.Common.Widgets.FwComboBox,System.String,SIL.CoreImpl.IPropertyTable)
 
 # Returns object
 M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>*::System.Collections.IEnumerable.GetEnumerator()

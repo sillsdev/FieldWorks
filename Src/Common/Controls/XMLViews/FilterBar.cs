@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
-using XCore;
 using System.Reflection;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -998,7 +997,7 @@ namespace SIL.FieldWorks.Common.Controls
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksGreaterThanOne),
 						new RangeIntMatcher(2, Int32.MaxValue), item));
 					combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						combo));
@@ -1006,7 +1005,7 @@ namespace SIL.FieldWorks.Common.Controls
 				case "genDate":
 				case "date":
 					combo.Items.Add(new RestrictDateComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						sortType == "genDate",
@@ -1050,7 +1049,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!String.IsNullOrEmpty(beSpec))
 			{
-				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.Mediator, m_bv.PropTable);
+				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.PropertyTable);
 			}
 			// Todo: lots more interesting items.
 			// - search the list for existing names
@@ -1133,16 +1132,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="item">The item.</param>
 		/// <param name="combo">The combo.</param>
 		/// <param name="beSpec">The be spec.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec,
-			Mediator mediator, IPropertyTable propertyTable)
+		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec, IPropertyTable propertyTable)
 		{
 			switch (beSpec)
 			{
 				case "complexListMultiple":
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo, false, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false, null));
 					break;
 				case "external":
 					Type beType = DynamicLoader.TypeForLoaderNode(item.Spec);
@@ -1166,7 +1163,7 @@ namespace SIL.FieldWorks.Common.Controls
 						bool fAtomic = false;
 						if (pi != null)
 							fAtomic = (bool)pi.GetValue(null, null);
-						ListChoiceComboItem comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo,
+						ListChoiceComboItem comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo,
 							fAtomic, filterType);
 						combo.Items.Add(comboItem);
 
@@ -1182,20 +1179,20 @@ namespace SIL.FieldWorks.Common.Controls
 					var specialItemName =
 						MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
 					var specialFilter = DynamicLoader.CreateObject(XmlUtils.FindNode(item.Spec, "dynamicloaderinfo"),
-						new object[] { specialItemName, m_cache, m_bv.Mediator }) as FilterComboItem;
+						new object[] { specialItemName, m_cache }) as FilterComboItem;
 					combo.Items.Add(specialFilter);
 					break;
 
 				case "atomicFlatListItem": // Fall through
 				case "morphTypeListItem":  // Fall through
 				case "variantConditionListItem":
-					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, mediator, propertyTable, combo, true, null));
+					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true, null));
 					break;
 				default:
 					// if we didn't find it, try "chooserFilter", if we haven't already.
 					string chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", "");
 					if (!String.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
-						MakeListChoiceFilterItem(item, combo, chooserFilter, mediator, propertyTable);
+						MakeListChoiceFilterItem(item, combo, chooserFilter, propertyTable);
 					return;
 			}
 		}
@@ -1215,7 +1212,7 @@ namespace SIL.FieldWorks.Common.Controls
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
 			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-				m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				item,
 				m_cache.ServiceLocator.WritingSystemManager.UserWs,
 				combo));
@@ -2058,7 +2055,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		int m_leafFlid;
 		FdoCache m_cache;
-		XCore.Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		FwComboBox m_combo;
 		bool m_fAtomic;
@@ -2095,14 +2091,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="tssName">Name of the TSS.</param>
 		/// <param name="fsi">The fsi.</param>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="combo">The combo.</param>
 		/// <param name="fAtomic">if set to <c>true</c> [f atomic].</param>
 		/// <param name="filterType">Type of the filter.</param>
 		/// ------------------------------------------------------------------------------------
 		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, FdoCache cache,
-			Mediator mediator, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
+			IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
 			: base(tssName, null, fsi)
 		{
 			m_colSpec = fsi.Spec;
@@ -2130,7 +2125,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_hvoList = (int)mi.Invoke(null, new object[] { cache });
 			}
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_combo = combo;
 			m_fAtomic = fAtomic;
@@ -2280,7 +2274,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ReallySimpleListChooser MakeChooser(IEnumerable<ObjectLabel> labels, int[] oldTargets)
 		{
 			var chosenObjs = from hvo in oldTargets select (hvo == 0 ? null : m_cache.ServiceLocator.GetObject(hvo));
-			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
+			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(m_propertyTable);
 			if (m_leafFlid == 0)
 			{
 				return new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache,
@@ -2663,9 +2657,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_bv.PropTable);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_bv.PropertyTable);
 			using (SimpleMatchDlg dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory,
-				m_bv.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ws, stylesheet, m_bv.Cache))
+				m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ws, stylesheet, m_bv.Cache))
 			{
 				dlg.SetDlgValues(m_matcher, stylesheet);
 				if (dlg.ShowDialog() != DialogResult.OK || dlg.Pattern.Length == 0)

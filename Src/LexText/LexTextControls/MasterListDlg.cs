@@ -17,7 +17,6 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -28,7 +27,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		protected IFdoOwningCollection<IFsFeatDefn> m_featureList;
 		protected bool m_launchedFromInsertMenu = false;
-		protected Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
@@ -141,7 +139,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = null;
 			m_selFeatDefn = null;
 			m_featureList = null;
-			m_mediator = null;
 			m_tvMasterList = null;
 
 			base.Dispose( disposing );
@@ -160,33 +157,30 @@ namespace SIL.FieldWorks.LexText.Controls
 		///
 		///  </summary>
 		///  <param name="featSys"></param>
-		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, IPropertyTable propertyTable, bool launchedFromInsertMenu)
+		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
-			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
-			SetDlginfo(featSys, mediator, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
+			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
+			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
 		///  <summary>
 		///
 		///  </summary>
 		///  <param name="featSys"></param>
-		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		///  <param name="sWindowKey">used to store location and size of dialog window</param>
 		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
+		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();
 
 			m_featureSystem = featSys;
 			m_featureList = featSys.FeaturesOC;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			if (m_propertyTable != null)
 			{

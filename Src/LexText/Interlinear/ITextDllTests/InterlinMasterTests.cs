@@ -6,15 +6,16 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
+#if RANDYTODO
 	[TestFixture]
 	public class InterlinMasterTests : MemoryOnlyBackendProviderTestBase, IDisposable
 	{
@@ -23,7 +24,7 @@ namespace SIL.FieldWorks.IText
 		private IStText m_stText;
 
 		private FwXApp m_application;
-		private FwXWindow m_window;
+		private IFwMainWnd m_window;
 		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 
@@ -180,4 +181,5 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion Test Classes
 	}
+#endif
 }

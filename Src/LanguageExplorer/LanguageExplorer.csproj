@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{97128036-3A1E-4A83-99A0-8F590F30FE48}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LanguageExplorer</RootNamespace>
+    <AssemblyName>LanguageExplorer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="BasicUtils">
+      <HintPath>..\..\Output\Release\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces">
+      <HintPath>..\..\Output\Release\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl">
+      <HintPath>..\..\Output\Release\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO">
+      <HintPath>..\..\Output\Release\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls">
+      <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources">
+      <HintPath>..\..\Output\Release\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\..\RBR_FW_Fork\FW\Output\Release\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Widgets">
+      <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="XMLUtils">
+      <HintPath>..\..\Output\Release\XMLUtils.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Areas\Grammar\GrammarArea.cs" />
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoprohibitionRuleEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\BulkEditPhonemesTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\CategoryBrowse\CategoryBrowseTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\CompoundRuleAdvancedEdit\CompoundRuleAdvancedEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\EnvironmentEdit\EnvironmentEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\FeaturesAdvancedEdit\FeaturesAdvancedEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GeneratedHtmlViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\LexiconProblems\LexiconProblemsTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\NaturalClassEdit\NaturalClassEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\PhonemeEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeaturesAdvancedEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\PhonologicalRuleEdit\PhonologicalRuleEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\PosEdit\PosEditTool.cs" />
+    <Compile Include="Areas\Grammar\Tools\ProdRestrictEdit\ProdRestrictEditTool.cs" />
+    <Compile Include="Areas\Lexicon\LexiconArea.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Browse\LexiconBrowseTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\BulkEditEntriesOrSensesTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\ReversalBulkEditReversalEntriesTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconClassifiedDictionaryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\CollectWords\RapidDataEntryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEditCompleteTool.cs" />
+    <Compile Include="Areas\Lists\ListsArea.cs" />
+    <Compile Include="Areas\Lists\Tools\AnthroEdit\AnthroEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ChartmarkEdit\ChartmarkEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ChartTempEdit\CharttempEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ComplexEntryTypeEdit\ComplexEntryTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ConfidenceEdit\ConfidenceEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\DomainTypeEdit\DomainTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\EducationEdit\EducationEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureTypesAdvancedEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\GenresEdit\GenresEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LexRefEdit\LexRefEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LocationsEdit\LocationsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\MorphTypeEdit\MorphTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PeopleEdit\PeopleEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PositionsEdit\PositionsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PublicationsEdit\PublicationsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RecTypeEdit\RecTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RestrictionsEdit\RestrictionsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPosTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RoleEdit\RoleEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\SemanticDomainEdit\SemanticDomainEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\SenseTypeEdit\SenseTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\StatusEdit\StatusEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TextMarkupTagsEdit\TextMarkupTagsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TimeOfDayEdit\TimeOfDayEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TranslationTypeEdit\TranslationTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\UsageTypeEdit\UsageTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\VariantEntryTypeEdit\VariantEntryTypeEditTool.cs" />
+    <Compile Include="Areas\Notebook\NotebookArea.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseTool.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentTool.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookEdit\NotebookEditTool.cs" />
+    <Compile Include="Areas\TextsAndWords\TextAndWordsArea.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\AnalysesTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\BulkEditWordforms\BulkEditWordformsTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\Concordance\ConcordanceTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\CorpusStatisticsTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\WordListConcordanceTool.cs" />
+    <Compile Include="LanguageExplorerResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GeneratedHtmlViewer.resx">
+      <DependentUpon>GeneratedHtmlViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LanguageExplorerResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\Lists.ico" />
+    <Content Include="images\Notebook.ico" />
+    <None Include="images\Text_And_Words.ico" />
+    <None Include="gendarme-LanguageExplorer.ignore" />
+    <None Include="images\Grammar.ico" />
+    <Content Include="images\Lexicon32.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

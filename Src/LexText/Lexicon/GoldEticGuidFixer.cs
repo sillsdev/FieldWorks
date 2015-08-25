@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public void Process()
 		{
-			var cache = Dialog.PropTable.GetValue<FdoCache>("cache");
+			var cache = Dialog.PropertyTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);

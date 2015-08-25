@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the search engine.
 		/// </summary>
-		public static SearchEngine Get(Mediator mediator, IPropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
+		public static SearchEngine Get(IPropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
 		{
 			var searchEngine = propertyTable.GetValue<SearchEngine>(propName);
 			if (searchEngine == null)

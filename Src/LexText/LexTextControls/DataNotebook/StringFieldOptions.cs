@@ -15,7 +15,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {

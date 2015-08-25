@@ -1,8 +1,6 @@
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.IText
@@ -36,15 +34,13 @@ namespace SIL.FieldWorks.IText
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
-		/// <param name="mediator"></param>
 		/// <param name="selected"></param>
 		/// <param name="focusBox"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss,
+		public Sandbox(FdoCache cache, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
-			: base(cache, mediator, propertyTable, ss, choices)
+			: base(cache,ss, choices)
 		{
 			FocusBox = focusBox;
 			m_interlinDoc = focusBox.InterlinDoc;
@@ -57,12 +53,10 @@ namespace SIL.FieldWorks.IText
 		///
 		///  </summary>
 		///  <param name="cache"></param>
-		///  <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		///  <param name="choices"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
-			: base(cache, mediator, propertyTable, ss, choices)
+		public Sandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+			: base(cache, ss, choices)
 		{
 		}
 
@@ -190,8 +184,10 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnHandleEnter()
 		{
+#if RANDYTODO
 			if (FocusBox is FocusBoxControllerForDisplay)
 				(FocusBox as FocusBoxControllerForDisplay).OnApproveAndMoveNext();
+#endif
 		}
 
 		#region IAnalysisControlInternal Members

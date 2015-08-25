@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -24,14 +23,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return "RecordGo"; }
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, form, cache.DefaultAnalWs);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -41,9 +40,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string title = m_tbForm.Text.Trim();
 				ITsString titleTrimmed = TsStringUtils.MakeTss(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
+				dlg.SetDlgInfo(m_cache, m_propertyTable, m_publisher, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					m_selObject = dlg.NewRecord;

@@ -17,7 +17,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.FDO;
 using System.Collections.Generic;
 using SIL.CoreImpl;
@@ -33,8 +32,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected string s_helpTopic = "khtpCustomLists";
 		private HelpProvider m_helpProvider;
-		protected readonly Mediator m_mediator;
 		protected readonly IPropertyTable m_propertyTable;
+		protected readonly IPublisher m_publisher;
 		private FdoCache m_cache;
 		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
@@ -47,13 +46,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public CustomListDlg(Mediator mediator, IPropertyTable propertyTable)
+		public CustomListDlg(IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_finSetup = true;
 			InitializeComponent();
 			StartPosition = FormStartPosition.CenterParent;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_btnOK.Enabled = false;
 
 			InitializeWSCombo();
@@ -295,7 +294,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			if (m_mediator == null)
+			if (m_publisher == null)
 				return; // to save any changes requires a mediator and cache
 			if (IsListNameEmpty)
 			{
@@ -319,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			m_mediator.SendMessage("ReloadAreaTools", "lists");
+			m_publisher.Publish("ReloadAreaTools", "lists");
 		}
 
 		/// <summary>
@@ -329,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (m_mediator == null && m_cache == null)
+				if (m_propertyTable == null)
 					return null;
 				if (m_cache == null)
 					m_cache = m_propertyTable.GetValue<FdoCache>("cache");
@@ -343,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			if (m_mediator == null)
+			if (m_publisher == null)
 				return;
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
@@ -546,8 +545,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:AddListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public AddListDlg(Mediator mediator, IPropertyTable propertyTable) :
-			base(mediator, propertyTable)
+		public AddListDlg(IPropertyTable propertyTable, IPublisher publisher)
+			: base(propertyTable, publisher)
 		{
 			s_helpTopic = "khtpNewCustomList";
 		}
@@ -580,8 +579,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if a list was created.</returns>
 		private bool CreateList()
 		{
-			if (m_mediator == null || Cache == null)
-				throw new ArgumentException("Don't call this without a mediator and a cache.");
+			if (m_publisher == null || Cache == null)
+				throw new ArgumentException("Don't call this without a publisher and a cache.");
 			if (IsListNameEmpty)
 				// shouldn't ever get here because OK btn isn't enabled until name has a non-empty value
 				throw new ArgumentException("Please provide a valid list name.");
@@ -655,8 +654,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ConfigureListDlg(Mediator mediator, IPropertyTable propertyTable, ICmPossibilityList possList) :
-			base(mediator, propertyTable)
+		public ConfigureListDlg(IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList possList) :
+			base(propertyTable, publisher)
 		{
 			m_curList = possList;
 			m_fchangesMade = false;

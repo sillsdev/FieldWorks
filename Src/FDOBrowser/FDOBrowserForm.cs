@@ -20,7 +20,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
 using WeifenLuo.WinFormsUI.Docking;
-using XCore;
 
 namespace FDOBrowser
 {

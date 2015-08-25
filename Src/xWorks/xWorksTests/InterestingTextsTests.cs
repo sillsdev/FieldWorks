@@ -11,6 +11,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
 	/// <summary>
 	/// Tests the InterestingTextsList class.
 	/// </summary>
@@ -1118,4 +1119,5 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 	}
+#endif
 }

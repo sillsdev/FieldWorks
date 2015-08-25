@@ -7,7 +7,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -152,6 +151,7 @@ namespace SIL.FieldWorks.IText
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
 			int count = (from text in texts from para in text.ParagraphsOS select para).Count();
 			int done = 0;
+#if RANDYTODO
 			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
 			{
 				progress.SetMilestone(ITextStrings.ksParsing);
@@ -172,6 +172,7 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
+#endif
 		}
 
 		private bool IsInterestingScripture(IStText text)

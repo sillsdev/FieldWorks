@@ -25,7 +25,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	public class TryAWordDlg : Form, IFWDisposable, IMediatorProvider
+	public class TryAWordDlg : Form, IFlexComponent, IFWDisposable
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";
@@ -42,7 +41,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		#region Data members
 		private FdoCache m_cache;
 		private ParserListener m_parserListener;
-		private PersistenceProvider m_persistProvider;
+		private IPersistenceProvider m_persistProvider;
 		private readonly HelpProvider m_helpProvider;
 
 		private Label m_wordToTryLabel;
@@ -90,14 +89,54 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new HelpProvider();
 		}
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
+
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "Code in question is only compiled on Windows")]
-		public void SetDlgInfo(Mediator mediator, IPropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
+		public void SetDlgInfo(IWfiWordform wordform, ParserListener parserListener)
 		{
-			Mediator = mediator;
-			PropTable = propertyTable;
-			m_persistProvider = new PersistenceProvider(Mediator, propertyTable, PersistProviderID);
-			m_cache = PropTable.GetValue<FdoCache>("cache");
+			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			m_parserListener = parserListener;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;
@@ -111,13 +150,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			else
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 
-			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Mediator, m_cache, m_wordformTextBox);
+			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
 #if !__MonoCS__
 			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
 #endif
 
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
-			var helpTopicProvider = PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null) // trying this
 			{
 				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -140,7 +179,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
-			m_rootsite = new TryAWordRootSite(m_cache, Mediator, PropTable) { Dock = DockStyle.Top };
+			m_rootsite = new TryAWordRootSite()
+			{
+				Dock = DockStyle.Top
+			};
+			m_rootsite.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_sandboxPanel.Controls.Add(m_rootsite);
 			m_rootsite.SizeChanged += m_rootsite_SizeChanged;
 			if (m_sandboxPanel.Height != m_rootsite.Height)
@@ -182,12 +225,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_wordformTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_wordformTextBox.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			m_wordformTextBox.Text = "";
-			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, PropTable);
+			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, PropertyTable);
 		}
 
 		private void GetLastWordUsed()
 		{
-			var word = PropTable.GetValue<string>("TryAWordDlg-lastWordToTry");
+			var word = PropertyTable.GetValue<string>("TryAWordDlg-lastWordToTry");
 			if (word != null)
 				SetWordToUse(word.Trim());
 		}
@@ -378,7 +421,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnClosed(ea);
 			// remember last word used, if possible
-			PropTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserListener.Connection != null)
 				m_parserListener.Connection.TryAWordDialogIsRunning = false;
@@ -451,7 +494,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					case "XAmple":
 						trace = new XAmpleTrace();
-						m_webPageInteractor.WordGrammarDebugger = new XAmpleWordGrammarDebugger(PropTable, result);
+						m_webPageInteractor.WordGrammarDebugger = new XAmpleWordGrammarDebugger(PropertyTable, result);
 						break;
 					case "HC":
 						trace = new HCTrace();
@@ -461,7 +504,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				Debug.Assert(trace != null);
 
-				sOutput = trace.CreateResultPage(PropTable, result, DoTrace);
+				sOutput = trace.CreateResultPage(PropertyTable, result, DoTrace);
 			}
 			m_htmlControl.URL = sOutput;
 		}
@@ -544,7 +587,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					var app = PropTable.GetValue<IApp>("App");
+					var app = PropertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				}
 				return;
@@ -600,7 +643,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), HelpTopicID);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), HelpTopicID);
 		}
 
 		private void m_closeButton_Click(object sender, EventArgs e)
@@ -657,20 +700,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (Size != szOld)
 				Size = szOld;
 		}
-
-
-		#region IMediatorProvider Members
-
-		public Mediator Mediator { get; private set; }
-
-		#endregion
-
-
-		#region IPropertyTableProvider Members
-
-		public IPropertyTable PropTable { get; private set; }
-
-		#endregion
 	}
 
 }

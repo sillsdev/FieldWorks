@@ -25,7 +25,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.IO;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

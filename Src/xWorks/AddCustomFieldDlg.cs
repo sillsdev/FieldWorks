@@ -11,7 +11,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -51,8 +50,8 @@ namespace SIL.FieldWorks.XWorks
 		private Label m_wsLabel;
 
 		// variables for managing the dlg
-		private readonly Mediator m_mediator;
 		private readonly IPropertyTable m_propertyTable;
+		private readonly IPublisher m_publisher;
 
 		private readonly Inventory m_layouts;
 		private readonly Dictionary<int, ModifiedLabel> m_dictModLabels = new Dictionary<int, ModifiedLabel>();
@@ -81,20 +80,20 @@ namespace SIL.FieldWorks.XWorks
 		/// Provide access (via reflection) to this dialog for use by the
 		/// Data Notebook standard format importer.
 		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(Mediator mediator, IPropertyTable propertyTable)
+		public static void ShowNotebookCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher)
 		{
-			using (var dlg = new AddCustomFieldDlg(mediator, propertyTable, LocationType.Notebook))
+			using (var dlg = new AddCustomFieldDlg(propertyTable, publisher, LocationType.Notebook))
 			{
 				if (dlg.ShowCustomFieldWarning(null))
 					dlg.ShowDialog();
 			}
 		}
 
-		public AddCustomFieldDlg(Mediator mediator, IPropertyTable propertyTable, LocationType locationType)
+		public AddCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher, LocationType locationType)
 		{
 			// create member variables
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
@@ -854,8 +853,10 @@ namespace SIL.FieldWorks.XWorks
 				changed |= UpdateCacheAndLayoutsForDeletions();
 				changed |= SaveCustomFieldsToDB();
 			}
-			if (changed)	// only fire the 'big gun' if something has actually changed
-				m_mediator.BroadcastMessage("MasterRefresh", null);
+			if (changed) // only fire the 'big gun' if something has actually changed
+			{
+				m_publisher.Publish("MasterRefresh", null);
+			}
 			DialogResult = DialogResult.OK;
 		}
 

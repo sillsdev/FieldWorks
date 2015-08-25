@@ -13,6 +13,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
 	/// <summary>
 	/// Test the functionality of the MacroListener class. A few minor methods are not tested, because testing would
 	/// require setting up major objects like XWindows or major architectural changes so these objects make more use of interfaces
@@ -510,4 +511,5 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 		}
 	}
+#endif
 }

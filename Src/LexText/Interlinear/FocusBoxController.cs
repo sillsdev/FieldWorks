@@ -6,21 +6,19 @@ using System.Globalization;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public partial class FocusBoxController : UserControl, ISelectOccurrence, SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus
+	public partial class FocusBoxController : UserControl, IFlexComponent, ISelectOccurrence, SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus
 	{
 		internal IAnalysisControlInternal m_sandbox;
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 		private IVwStylesheet m_stylesheet;
 		protected InterlinLineChoices m_lineChoices;
 
@@ -60,19 +58,58 @@ namespace SIL.FieldWorks.IText
 				m_sandbox.UpdateLineChoices(choices);
 		}
 
-		public FocusBoxController(Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
+		public FocusBoxController(IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
 			: this()
 		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_stylesheet = stylesheet;
 			m_lineChoices = lineChoices;
-			if (m_mediator != null)
-				SetToolTips();
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			SetToolTips();
+		}
+
+		#endregion
 
 		private void SetToolTips()
 		{
+#if RANDYTODO
 			toolTip.SetToolTip(btnBreakPhrase,
 							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdBreakPhrase"] as Command));
 			toolTip.SetToolTip(btnConfirmChanges,
@@ -83,6 +120,7 @@ namespace SIL.FieldWorks.IText
 							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdUndo"] as Command));
 			toolTip.SetToolTip(btnConfirmChangesForWholeText,
 							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveForWholeTextAndMoveNext"] as Command));
+#endif
 		}
 
 		internal InterlinDocForAnalysis InterlinDoc
@@ -151,12 +189,16 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			Sandbox sandbox = new Sandbox(selected.Analysis.Cache, m_mediator, m_propertyTable, m_stylesheet,
-				m_lineChoices, selected, this);
-			sandbox.SizeToContent = true; // Layout will ignore size.
+			var sandbox = new Sandbox(selected.Analysis.Cache, m_stylesheet,
+				m_lineChoices, selected, this)
+			{
+				SizeToContent = true,
+				ShowMorphBundles = true,
+				StyleSheet = m_stylesheet
+			};
+			sandbox.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			// Layout will ignore size.
 			//sandbox.Mediator = Mediator;
-			sandbox.ShowMorphBundles = true;
-			sandbox.StyleSheet = m_stylesheet;
 			panelSandbox.Controls.Add(sandbox); // Makes it real and may give it a root box.
 			// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
 			// only when the parent control is Visible.
@@ -360,9 +402,11 @@ namespace SIL.FieldWorks.IText
 				btnBreakPhrase.Enabled = false;
 			}
 			UpdateButtonState_Undo();
+#if RANDYTODO
 			// LT-11406: Somehow JoinWords (and BreakPhrase) leaves the selection elsewhere,
 			// this should make it select the default location.
 			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, MakeDefaultSelection);
+#endif
 
 		}
 
@@ -382,7 +426,9 @@ namespace SIL.FieldWorks.IText
 
 		private void btnLinkNextWord_Click(object sender, EventArgs e)
 		{
+#if RANDYTODO
 			OnJoinWords(m_mediator.CommandSet["CmdMakePhrase"] as Command);
+#endif
 		}
 
 		/// <summary>
@@ -390,6 +436,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public bool OnJoinWords(object arg)
 		{
+#if RANDYTODO
 			var cmd = (ICommandUndoRedoText)arg;
 			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 				() =>
@@ -401,7 +448,8 @@ namespace SIL.FieldWorks.IText
 						}
 					});
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
-			UpdateButtonState();
+			UpdateButtonState();RANDYTODO
+#endif
 			return true;
 		}
 
@@ -411,6 +459,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public void OnBreakPhrase(object arg)
 		{
+#if RANDYTODO
 			// (LT-8069) in some odd circumstances, the break phrase icon lingers on the tool bar menu when it should
 			// have disappeared. If we're in that state, just return.
 			if (!ShowBreakPhraseIcon)
@@ -420,11 +469,14 @@ namespace SIL.FieldWorks.IText
 				() => SelectedOccurrence.BreakPhrase());
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
+#endif
 		}
 
 		private void btnBreakPhrase_Click(object sender, EventArgs e)
 		{
+#if RANDYTODO
 			OnBreakPhrase(m_mediator.CommandSet["CmdBreakPhrase"] as Command);
+#endif
 		}
 
 		private void btnUndoChanges_Click(object sender, EventArgs e)
@@ -443,24 +495,30 @@ namespace SIL.FieldWorks.IText
 
 		private void btnConfirmChanges_Click(object sender, EventArgs e)
 		{
+#if RANDYTODO
 			if (this is FocusBoxControllerForDisplay)
-			(this as FocusBoxControllerForDisplay).OnApproveAndMoveNext();
+				(this as FocusBoxControllerForDisplay).OnApproveAndMoveNext();
+#endif
 		}
 
 
 		private void btnConfirmChangesForWholeText_Click(object sender, EventArgs e)
 		{
+#if RANDYTODO
 			ApproveGuessOrChangesForWholeTextAndMoveNext(m_mediator.CommandSet["CmdApproveForWholeTextAndMoveNext"] as Command);
+#endif
 		}
 
 		private void btnMenu_Click(object sender, EventArgs e)
 		{
-			XWindow window = m_propertyTable.GetValue<XWindow>("window");
+			IFwMainWnd window = PropertyTable.GetValue<IFwMainWnd>("window");
 
+#if RANDYTODO
 			window.ShowContextMenu("mnuFocusBox",
 				btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)),
 				null,
 				null);
+#endif
 		}
 
 		private string ShortcutText(Keys shortcut)
@@ -473,6 +531,7 @@ namespace SIL.FieldWorks.IText
 			return shortcutText;
 		}
 
+#if RANDYTODO
 		private string AppendShortcutToToolTip(Command command)
 		{
 			string shortcutText = ShortcutText(command.Shortcut);
@@ -485,6 +544,7 @@ namespace SIL.FieldWorks.IText
 			string tooltip = command.ToolTip;
 			return AppendShortcutToToolTip(tooltip, shortcutText);
 		}
+#endif
 
 		private string AppendShortcutToToolTip(string toolTip, string shortcut)
 		{
@@ -539,48 +599,13 @@ namespace SIL.FieldWorks.IText
 		bool IsDirty { get; }
 	}
 
-	/// <summary>
-	///  Implements IxCoreColleague for use in displaying and responding to user actions.
-	/// TODO: move mediator related code here. but what to do about Sandbox?
-	/// </summary>
-	public partial class FocusBoxControllerForDisplay : FocusBoxController, IxCoreColleague
+	/// <summary />
+	public partial class FocusBoxControllerForDisplay : FocusBoxController
 	{
-		public FocusBoxControllerForDisplay(Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
-			: base(mediator, propertyTable, stylesheet, lineChoices)
+		public FocusBoxControllerForDisplay(IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
+			: base(stylesheet, lineChoices)
 		{
 			m_fRightToLeft = rightToLeft;
 		}
-
-		#region IxCoreColleague Members
-
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			if (InterlinWordControl is IxCoreColleague)
-				return new[] {(IxCoreColleague)InterlinWordControl, this };
-			return new IxCoreColleague[] { this };
-		}
-
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			// Do nothing.
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Low; }
-		}
-
-		#endregion
 	}
 }

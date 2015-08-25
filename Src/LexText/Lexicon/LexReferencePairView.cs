@@ -1,13 +1,4 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 

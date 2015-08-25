@@ -138,13 +138,18 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
     <Reference Include="TestUtils, Version=6.1.1.28258, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.1.1.14994, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="XMLUtils, Version=9.0.0.16028, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Release\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="XMLUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\XMLUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -161,10 +166,21 @@
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
     <Compile Include="IcuWrapperTest.cs" />
+    <Compile Include="InventoryTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="MoreStringUtilsTests.cs" />
     <Compile Include="ParagraphCorrelationTests.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ShowHelpTests.cs" />
+    <None Include="BuildInclude.targets" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -182,6 +198,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="InventoryBaseTestFiles\Base1Layouts.xml" />
+    <Content Include="InventoryBaseTestFiles\Base2Layouts.xml" />
+    <Content Include="InventoryLaterTestFiles\Override1Layouts.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

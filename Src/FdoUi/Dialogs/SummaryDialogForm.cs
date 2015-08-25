@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -49,7 +48,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private ITsString m_tssWf;
 		private XmlView m_xv;
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
@@ -87,8 +85,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_rghvo = new List<int>(1);
 			m_rghvo.Add(leui.Object.Hvo);
 			m_cache = leui.Object.Cache;
-			m_mediator = leui.Mediator;
-			m_propertyTable = leui.PropTable;
+			m_propertyTable = leui.PropertyTable;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
@@ -105,7 +102,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mediator">The mediator.</param>
 		/// ------------------------------------------------------------------------------------
 		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache, Mediator mediator)
+			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -113,7 +110,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			Debug.Assert(rghvo != null && rghvo.Count > 0);
 			m_rghvo = rghvo;
 			m_cache = cache;
-			m_mediator = mediator;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
@@ -284,10 +280,11 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");
 
 			// Make an XmlView which displays that object using the specified layout.
-			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda);
-			xv.Cache = cache;
-			xv.Mediator = m_mediator;
-			xv.StyleSheet = styleSheet;
+			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda)
+			{
+				Cache = cache,
+				StyleSheet = styleSheet
+			};
 			return xv;
 		}
 
@@ -452,7 +449,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				return;
 			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "lexiconEdit", cmo.Guid);
-			Debug.Assert(m_mediator != null, "The program must pass in a mediator to follow a link in the same application!");
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			app.HandleOutgoingLink(link);
 		}

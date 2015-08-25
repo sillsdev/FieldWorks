@@ -1,13 +1,5 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
-using System.Diagnostics;
-
-using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -72,18 +64,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Install(parent);
 
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
-			this.Size = new System.Drawing.Size(208, 32);
-			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
+			if (ctrl.PropertyTable == null)
+			{
+				ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
+			Size = new Size(208, 32);
+			ctrl.Initialize(PropertyTable.GetValue<FdoCache>("cache"),
 				Object,
 				1, // Maybe need a real flid?
 				"InterlinearName",
 				ContainingDataTree.PersistenceProvder,
-				Mediator,
-				m_propertyTable,
 				"InterlinearName",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			MSADlglauncherView view = ctrl.MainControl as MSADlglauncherView;
-			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>

@@ -210,6 +210,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int xPos = m_firstButtonOffset;
 				foreach (MenuItem item in m_buttonMenuItems)
 				{
+#if RANDYTODO // TODO: Make it work without XCore.AdapterMenuItem
 					if (item is XCore.AdapterMenuItem)
 					{
 						XCore.AdapterMenuItem xcoreMenuItem = (item as XCore.AdapterMenuItem);
@@ -235,15 +236,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						else
 							xPos += width + kGapInBetweenButtons;
 					}
+#endif
 				}
 			}
 		}
 
+#if RANDYTODO // TODO: Make it work without XCore.AdapterMenuItem
 		private void ItemClicked(XCore.AdapterMenuItem item)
 		{
 			XCore.ChoiceBase c = (XCore.ChoiceBase) item.Tag;
 			c.OnClick(item, null);
 		}
+#endif
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{

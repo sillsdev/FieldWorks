@@ -1,19 +1,17 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	public class MsaInflectionFeatureListDlgLauncher : ButtonLauncher
 	{
-		protected SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherView m_msaInflectionFeatureListDlgLauncherView;
+		protected MsaInflectionFeatureListDlgLauncherView m_msaInflectionFeatureListDlgLauncherView;
 		private System.ComponentModel.IContainer components = null;
 
 		public MsaInflectionFeatureListDlgLauncher()
@@ -32,16 +30,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
 		/// <param name="persistProvider"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_msaInflectionFeatureListDlgLauncherView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_msaInflectionFeatureListDlgLauncherView.Init(cache, obj as IFsFeatStruc);
 		}
 
@@ -65,24 +62,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case MoAffixAllomorphTags.kClassId:
 							IMoAffixAllomorph allo = parentSlice.Object as IMoAffixAllomorph;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
-							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, allo, owningFlid);
+							dlg.SetDlgInfo(m_cache, PropertyTable, allo, owningFlid);
 							break;
-						/*case LexEntryInflTypeTags.kClassId:
-							ILexEntryInflType leit = parentSlice.Object as ILexEntryInflType;
-							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
-							dlg.SetDlgInfo(m_cache, m_mediator, leit, owningFlid);
-							break;*/
 						default:
 							IMoMorphSynAnalysis msa = parentSlice.Object as IMoMorphSynAnalysis;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
-							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, msa, owningFlid);
+							dlg.SetDlgInfo(m_cache, PropertyTable, msa, owningFlid);
 							break;
 					}
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs,
-						(parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid);
 				}
 
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
@@ -130,7 +121,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// I'm just guessing.
 						// Also, is there some way to know the application name and tool name without hard coding them?
 						var linkJump = new FwLinkArgs("posEdit", dlg.HighestPOS.Guid);
-						m_mediator.PostMessage("FollowLink", linkJump);
+						Publisher.Publish("AboutToFollowLink", null);
+						Publisher.Publish("FollowLink", linkJump);
 					}
 					else
 					{
@@ -143,14 +135,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected override void OnClick(Object sender, EventArgs arguments)
 		{
 			HandleChooser();
-		}
-
-		/// <summary>
-		/// Get the mediator.
-		/// </summary>
-		protected override XCore.Mediator Mediator
-		{
-			get { return m_mediator; }
 		}
 
 		/// <summary>
@@ -197,7 +181,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			this.m_msaInflectionFeatureListDlgLauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_msaInflectionFeatureListDlgLauncherView.Group = null;
 			this.m_msaInflectionFeatureListDlgLauncherView.Location = new System.Drawing.Point(0, 0);
-			this.m_msaInflectionFeatureListDlgLauncherView.Mediator = null;
 			this.m_msaInflectionFeatureListDlgLauncherView.Name = "m_msaInflectionFeatureListDlgLauncherView";
 			this.m_msaInflectionFeatureListDlgLauncherView.ReadOnlyView = false;
 			this.m_msaInflectionFeatureListDlgLauncherView.ScrollPosition = new System.Drawing.Point(0, 0);
@@ -248,12 +231,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					int owningFlid;
 					ILexEntryInflType leit = parentSlice.Object as ILexEntryInflType;
 					owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, leit, owningFlid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, leit, owningFlid);
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs,
-						(parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid);
 				}
 
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
@@ -269,45 +251,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				else if (result == DialogResult.Yes)
 				{
-					/*
-										// Get the VectorReferenceLauncher for the Inflection Features slice.
-										// Since we're not changing tools, we want to change the chooser dialog.
-										// See LT-5913 for motivation.
-										Control ctl = this.Parent;
-										while (ctl != null && !(ctl is Slice))
-											ctl = ctl.Parent;
-										Slice slice = ctl as Slice;
-										if (slice != null)
-										{
-											DataTree dt = slice.ContainingDataTree;
-											for (int i = 0; i < dt.Slices.Count; ++i)
-											{
-												Slice sliceT = dt.FieldOrDummyAt(i);
-												vrl = sliceT.Control as VectorReferenceLauncher;
-												if (vrl != null)
-												{
-													if (vrl.Flid == PartOfSpeechTags.kflidInflectableFeats)
-														break;
-													vrl = null;
-												}
-											}
-										}
-										if (vrl == null)
-										{
-											// We do, too, need to change tools! Sometimes this slice shows up in a different context,
-											// such as the main data entry view. See LT-7167.
-											// go to m_highestPOS in editor
-											// TODO: this should be reviewed by someone who knows how these links should be done
-											// I'm just guessing.
-											// Also, is there some way to know the application name and tool name without hard coding them?
-					*/
 					var linkJump = new FwLinkArgs("featuresAdvancedEdit", m_cache.LanguageProject.MsFeatureSystemOA.Guid);
-					m_mediator.PostMessage("FollowLink", linkJump);
-					/*}
-					else
-					{
-						vrl.HandleExternalChooser();
-					}*/
+					Publisher.Publish("AboutToFollowLink", null);
+					Publisher.Publish("FollowLink", linkJump);
 				}
 			}
 		}

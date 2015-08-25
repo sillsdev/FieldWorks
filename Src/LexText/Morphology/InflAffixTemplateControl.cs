@@ -23,8 +23,8 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -245,6 +245,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			HandleInsert(false);
 			return true;	//we handled this.
 		}
+
+#if RANDYTODO
 		public bool OnInflTemplateMoveSlotLeft(object cmd)
 		{
 			CheckDisposed();
@@ -275,6 +277,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			HandleMove((Command)cmd, false);
 			return true;	//we handled this.
 		}
+#endif
+
 		public bool OnInflTemplateToggleSlotOptionality(object cmd)
 		{
 			CheckDisposed();
@@ -312,6 +316,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		public bool OnJumpToTool(object commandObject)
 		{
 			CheckDisposed();
@@ -319,9 +324,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
 			return true; // handled this
 		}
+#endif
 
 		public bool OnInflTemplateRemoveInflAffixMsa(object cmd)
 		{
@@ -376,6 +383,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			using (var chooser = MakeChooserWithExtantMsas(m_slot, cmd as XCore.Command))
 			{
 				chooser.ShowDialog();
@@ -395,6 +403,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 				}
 			}
+#endif
 			return true;	//we handled this.
 		}
 
@@ -479,6 +488,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
+#if RANDYTODO
 		private SimpleListChooser MakeChooserWithExtantMsas(IMoInflAffixSlot slot, XCore.Command cmd)
 		{
 			// Want the list of all lex entries which have an infl affix Msa
@@ -526,6 +536,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			return chooser;
 		}
+#endif
 
 		/// <summary>
 		/// Determine if the lex entry can appear in the prefix/suffix slot
@@ -626,9 +637,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				slotFlid = MoInflAffixTemplateTags.kflidSuffixSlots;
 			var labels = ObjectLabel.CreateObjectLabels(Cache, m_template.ReferenceTargetCandidates(slotFlid), null);
-			PersistenceProvider persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
+			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			SimpleListChooser chooser = new SimpleListChooser(persistProvider, labels,
-				m_ChooseSlotHelpTopic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_ChooseSlotHelpTopic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.Cache = Cache;
 			chooser.TextParamHvo = m_template.Owner.Hvo;
@@ -639,11 +650,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
-				false, m_mediator, m_propertyTable));
+				false, PropertyTable, Publisher));
 			sLabel = String.Format(m_sOptionalSlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, true,
-				m_mediator, m_propertyTable));
+				PropertyTable, Publisher));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
 		}
@@ -893,97 +904,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
 			return true;
 		}
-
-		//private void DetermineMsaContextMenuItemContent(UIItemDisplayProperties display)
-		//{
-		//    IMoInflAffMsa msa = new MoInflAffMsa(Cache, m_hvo);
-		//    display.Text = DoYYYReplace(display.Text, msa.ShortName);
-		//    string sSlotName = GetSlotNameOfMsa(msa);
-		//    if (sSlotName != null)
-		//        display.Text = DoXXXReplace(display.Text, sSlotName);
-		//    display.Visible = true;
-		//    display.Enabled = true;
-		//}
-		//
-//        private string GetSlotNameOfMsa(IMoInflAffMsa msa)
-//        {
-//            string sResult = null;
-//            IMoInflAffixSlot slot = null;
-//#if !MaybeSomeDayToTryAndGetRemoveMsaCorrectForCircumfixes
-//            int[] hvos = msa.SlotsRC.HvoArray;
-//            if (hvos.Length > 0)
-//            {
-//                int hvo = hvos[0];
-//                slot = MoInflAffixSlot.CreateFromDBObject(this.Cache, hvo);
-//            }
-//            sResult = CheckSlotName(slot);
-//            m_hvoSlot = slot.Hvo;
-//#else
-//            slot = (FDO.Ling.MoInflAffixSlot)CmObject.CreateFromDBObject(this.Cache, m_hvoSlot);
-//            sResult = CheckSlotName(slot);
-//#endif
-//            return sResult;
-//        }
-
-#if WhenModelIsChangedSoInflMsaHasThePOSOrSlotRefAttr
-		private string FindMsaInSlots(List<int> listSlotHvos)
-		{
-			string sResult = null;
-			foreach (int hvoSlot in listSlotHvos)
-			{
-				sResult = FindSlotNameOfMsa(hvoSlot);
-				if (sResult != null)
-				{
-					m_hvoSlot = hvoSlot;
-					return sResult;
-				}
-			}
-			return null;
-		}
-
-		private string FindSlotNameOfMsa(int hvoSlot)
-		{
-#if WantWWStuff // TODO: AndyB(RandyR): Fix this, if it is still needed.
-			IMoInflAffixSlot slot = new SIL.FieldWorks.FDO.Ling.MoInflAffixSlot(Cache, hvoSlot);
-			List<int> listMsaHvos = new List<int>(slot.AffixesRS.HvoArray);
-			int index = listMsaHvos.IndexOf(m_hvo);
-			if (index >= 0)
-				return slot.Name.AnalysisDefaultWritingSystem;
-#endif
-			return null;
-		}
-#endif
-		//private void DetermineSlotContextMenuItemContent(UIItemDisplayProperties display)
-		//{
-		//    if (m_class == 0)
-		//        return; // should not happen
-		//    if (m_class == MoInflAffixSlot.kclsidMoInflAffixSlot)
-		//    {
-		//        IMoInflAffixSlot slot = new MoInflAffixSlot(Cache, m_hvo);
-		//        display.Text = DoXXXReplace(display.Text, CheckSlotName(slot));
-		//    }
-		//    else if (m_class == MoInflAffixTemplate.kclsidMoInflAffixTemplate)
-		//    {
-		//        display.Text = DoXXXReplace(display.Text, m_sStem);
-		//    }
-		//    else if (m_class == MoInflAffMsa.kclsidMoInflAffMsa)
-		//    {
-		//        display.Visible = false;
-		//        display.Enabled = false;
-		//    }
-		//}
-		//
-		//private string DoXXXReplace(string sSource, string sReplace)
-		//{
-		//    return sSource.Replace("XXX", sReplace);
-		//}
-		//private string DoYYYReplace(string sSource, string sReplace)
-		//{
-		//    return sSource.Replace("YYY", sReplace);
-		//}
 
 		/// <summary>
 		/// Fix the name of any slot that is still "Type slot name here".
@@ -1226,7 +1149,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
 				// Display help only if there's a topic linked to the generated ID in the resource file.
-				if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
+				if (PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
 					return Cache.TsStrFactory.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			return null;

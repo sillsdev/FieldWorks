@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -20,7 +21,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

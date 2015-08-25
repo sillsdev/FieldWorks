@@ -19,7 +19,6 @@ using System.Reflection;
 using System.IO;
 
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -33,7 +32,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Store the Command object that knows what to do.
 		/// </summary>
-		private Command m_command;
 		private XmlNode m_cmdNode;
 
 		/// <summary>
@@ -95,7 +93,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_cmdNode = null;
-			m_command = null;
 
 			base.Dispose(disposing);
 		}
@@ -121,17 +118,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)//grouping nodes do not have a control
 			{
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId},
-					false);
+				Publisher.Publish("RegisterHelpTargetWithId", new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId});
 			}
 		}
 
-		protected override string HelpId
-		{
-			get { return m_command.Id; }
-		}
-
+#if RANDYTODO
 		/// <summary>
 		/// Override, so we can get the command object.
 		/// </summary>
@@ -154,6 +145,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				b.Width = 130;
 			}
 		}
+#endif
 
 		/// <summary>
 		/// Handle click event on the button.
@@ -162,7 +154,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="e"></param>
 		private void btn_Click(object sender, EventArgs e)
 		{
+#if RANDYTODO
 			m_command.InvokeCommand();
+#endif
 		}
 	}
 }

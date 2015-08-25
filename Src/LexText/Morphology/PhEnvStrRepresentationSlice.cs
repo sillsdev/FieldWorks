@@ -5,10 +5,10 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Validation;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			StringRepSliceView ctrl = Control as StringRepSliceView; //new StringRepSliceView(m_hvoContext);
-			ctrl.Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			ctrl.Cache = PropertyTable.GetValue<FdoCache>("cache");
 			ctrl.ResetValidator();
 
 			if (ctrl.RootBox == null)
@@ -63,6 +63,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		#region Special menu item methods
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if a slash already exists in the environment string.
 		/// </summary>
@@ -79,6 +80,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanShowEnvironmentError();
 			return true;
 		}
+#endif
 
 		public bool OnShowEnvironmentError(object args)
 		{
@@ -88,6 +90,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if a slash already exists in the environment string.
 		/// </summary>
@@ -104,6 +107,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanInsertSlash();
 			return true;
 		}
+#endif
 
 		public bool OnInsertSlash(object args)
 		{
@@ -115,6 +119,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if an underscore already exists in the environment
 		/// string.
@@ -132,6 +137,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanInsertEnvBar();
 			return true;
 		}
+#endif
 
 		public bool OnInsertEnvironmentBar(object args)
 		{
@@ -143,6 +149,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -159,6 +166,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanInsertItem();
 			return true;
 		}
+#endif
 
 		public bool OnInsertNaturalClass(object args)
 		{
@@ -166,11 +174,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			StringRepSliceView view = Control as StringRepSliceView;
 			m_cache.DomainDataByFlid.BeginUndoTask(MEStrings.ksInsertNaturalClass, MEStrings.ksInsertNaturalClass);
 			bool fOk = SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator, m_propertyTable);
+				m_persistenceProvider, PropertyTable, Publisher);
 			m_cache.DomainDataByFlid.EndUndoTask();
 			return fOk;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -187,6 +196,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanInsertItem();
 			return true;
 		}
+#endif
 
 		public bool OnInsertOptionalItem(object args)
 		{
@@ -199,6 +209,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -215,6 +226,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = view.CanInsertHashMark();
 			return true;
 		}
+#endif
 
 		public bool OnInsertHashMark(object args)
 		{
@@ -311,8 +323,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					ConstraintFailure failure;
 					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
 					// This will make the record list update to the new value.
-					if(refresh)
-						Mediator.BroadcastMessage("Refresh", null);
+					if (refresh)
+					{
+						Publisher.Publish("Refresh", null);
+					}
 				}
 				finally
 				{
@@ -464,8 +478,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				if (m_env == null)
 					return false;
 				// We need a CmObjectUi in order to call HandleRightClick().
-				using (SIL.FieldWorks.FdoUi.CmObjectUi ui = new SIL.FieldWorks.FdoUi.CmObjectUi(m_env))
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvChoices");
+				using (var ui = new CmObjectUi(m_env))
+				{
+					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					return ui.HandleRightClick(this, true, "mnuEnvChoices");
+				}
 			}
 			#endregion
 		}

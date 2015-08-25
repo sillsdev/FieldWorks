@@ -10,6 +10,7 @@
 // </remarks>
 using System;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -64,21 +65,50 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		#region Overrides of XmlBrowseViewBase
+
+		#region Overrides of XmlBrowseViewBase
+
 		/// <summary>
-		/// This is invoked by the IPropertyTable (because XmlBrowseView is a mediator).
+		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="propName"></param>
-		public override void OnPropertyChanged(string propName)
+		protected override void Dispose(bool disposing)
 		{
-			CheckDisposed();
+			if (disposing)
+			{
+				Subscriber.Unsubscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
+			}
 
-			if (propName == GetCorrespondingPropertyName("readOnlyBrowse"))
-				SetSelectedRowHighlighting();
-
-			base.OnPropertyChanged(propName);
+			base.Dispose(disposing);
 		}
 
-		private ITsString StripTrailingNewLine(ITsString tss)
+		#endregion
+
+		/// <summary>
+		/// Cause the behavior to switch to the current setting of ReadOnlyBrowse.
+		/// Override if the behaivor should be different than this.
+		/// </summary>
+		private void SetSelectedRowHighlighting(object newValue)
+		{
+			SetSelectedRowHighlighting();
+		}
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			Subscriber.Subscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
+		}
+
+		#endregion
+
+		private static ITsString StripTrailingNewLine(ITsString tss)
 		{
 			string val = tss.Text;
 			if (val == null)
@@ -257,7 +287,9 @@ namespace SIL.FieldWorks.Common.Controls
 			// possible slice. We need to do it one more time for it to stick.
 			// Try five times to really get the focus!
 			m_idleFocusCount = 5;
+#if RANDYTODO
 			m_mediator.IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
+#endif
 		}
 
 		private int m_idleFocusCount;

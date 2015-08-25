@@ -4,7 +4,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -12,12 +11,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// This is a view slice that contains a <c>RuleFormulaControl</c>. It is extended by
 	/// phonological/morphological rule slices.
 	/// </summary>
-	public class RuleFormulaSlice : ViewSlice, XCore.IxCoreColleague
+	public class RuleFormulaSlice : ViewSlice
 	{
-		public RuleFormulaSlice()
-		{
-		}
-
 		public override RootSite RootSite
 		{
 			get
@@ -32,7 +27,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				CheckDisposed();
-				return Control as RuleFormulaControl;
+				var retval = (RuleFormulaControl)Control;
+				if (retval.PropertyTable == null)
+				{
+					retval.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				}
+				return retval;
 			}
 		}
 
@@ -128,13 +128,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			base.Install(parent);
 
-			RuleFormulaControl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"), Object, -1, MEStrings.ksRuleEnvChooserName,
-				ContainingDataTree.PersistenceProvder, Mediator, m_propertyTable, null, null);
+			RuleFormulaControl.Initialize(PropertyTable.GetValue<FdoCache>("cache"), Object, -1, MEStrings.ksRuleEnvChooserName,
+				ContainingDataTree.PersistenceProvder, null, null);
 
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayContextSetFeatures(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -143,6 +144,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnContextSetFeatures(object args)
 		{
@@ -151,6 +153,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayContextJumpToNaturalClass(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -159,16 +162,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnContextJumpToNaturalClass(object args)
 		{
 			CheckDisposed();
 			IPhSimpleContextNC ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassEdit",
-				ctxt.FeatureStructureRA.Guid));
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs("naturalClassEdit", ctxt.FeatureStructureRA.Guid));
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayContextJumpToPhoneme(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -177,12 +182,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public virtual bool OnContextJumpToPhoneme(object args)
 		{
 			CheckDisposed();
 			IPhSimpleContextSeg ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid));
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid));
 			return true;
 		}
 	}

@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

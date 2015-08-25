@@ -242,9 +242,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				base.HandleSelectionChange(prootb, vwselNew);
 				if (tssTyped.Length != 0)
 				{
+#if RANDYTODO
 					// user typed something in the dummy slice! Make a real object.
 					// Save information required for RestoreSelection. MakeRealObject may well dispose this.
 					m_mediator.IdleQueue.Add(IdleQueuePriority.High, SwitchToRealOnIdle);
+#endif
 				}
 			}
 

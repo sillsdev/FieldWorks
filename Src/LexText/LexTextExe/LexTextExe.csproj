@@ -128,10 +128,6 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="DnbXCoreAdapterLibrary">
-      <Name>FlexUIAdapter</Name>
-      <HintPath>..\..\..\Output\Debug\FlexUIAdapter.dll</HintPath>
-    </Reference>
     <Reference Include="Framework">
       <Name>Framework</Name>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
@@ -162,14 +158,6 @@
     <Reference Include="xCore">
       <Name>xCore</Name>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreOpenSourceAdapter">
-      <Name>xCoreOpenSourceAdapter</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreOpenSourceAdapter.dll</HintPath>
     </Reference>
     <Reference Include="xWorks">
       <Name>xWorks</Name>

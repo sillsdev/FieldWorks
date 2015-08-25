@@ -5,7 +5,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -13,15 +12,59 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Populate the writing systems combo box via the writing system list
 	/// </summary>
-	/// <remarks>TODO: make an xcore property for controlling the current WritingSystemSet.</remarks>
-	[MediatorDispose]
-	public class WritingSystemListHandler : IxCoreColleague, IFWDisposable
+	/// <remarks>TODO: make a property for controlling the current WritingSystemSet.</remarks>
+	public class WritingSystemListHandler : IFlexComponent, IFWDisposable
 	{
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
-
 		public enum WritingSystemSet {All, AllCurrent, AllAnalysis, AllVernacular, CurrentAnalysis, CurrentVernacular, CurrentPronounciation};
 		private WritingSystemSet m_currentSet = WritingSystemSet.AllCurrent;
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			//don't know just what good having this default is, but it's at least safer
+			PropertyTable.SetProperty("WritingSystemHvo",
+				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
+				false, true);
+		}
+
+		#endregion
 
 		public WritingSystemSet CurrentSet
 		{
@@ -118,59 +161,19 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
-				// Dispose managed resources here.
-				if (m_mediator !=  null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_mediator.AddColleague(this);
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
-			//don't know just what good having this default is, but it's at least safer
-			m_propertyTable.SetProperty("WritingSystemHvo",
-				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
-				false, true);
-		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
+#if RANDYTODO // TODO: Why even bother, since the expectation is that it will be handled elsewhere?
 		/// <summary>
 		/// Called (by xcore) to control display params of the writing system menu, e.g. whether it should be enabled
 		/// </summary>
@@ -185,6 +188,7 @@ namespace SIL.FieldWorks.XWorks
 
 			return false;//we get called before the rootsite, so let them have a say.
 		}
+#endif
 
 		/// <summary>
 		/// Decode an XML attribute value (presumably) into the proper enumeration value.
@@ -215,6 +219,8 @@ namespace SIL.FieldWorks.XWorks
 				return m_currentSet;
 			}
 		}
+
+#if RANDYTODO
 		/// <summary>
 		/// this is called when XCore wants to display something that relies on the list with the id "WritingSystemList"
 		/// </summary>
@@ -275,6 +281,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;//we handled this, no need to ask anyone else.
 		}
+
 		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<IWritingSystem> list)
 		{
 			foreach (IWritingSystem ws in list)
@@ -282,16 +289,56 @@ namespace SIL.FieldWorks.XWorks
 				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(), null, null);
 			}
 		}
+#endif
 	}
 	/// <summary>
 	/// Dummy handler to disable displaying the combined styles combobox by default.
 	/// </summary>
-	[MediatorDispose]
-	public class CombinedStylesListHandler : IxCoreColleague, IFWDisposable
+	public class CombinedStylesListHandler : IFlexComponent, IFWDisposable
 	{
 		public enum StylesSet { All, CharacterOnly };
 
-		protected Mediator m_mediator;
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		#region IFWDisposable Members
 
@@ -319,12 +366,10 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_isDisposed; }
 		}
 
-#if DEBUG
 		~CombinedStylesListHandler()
 		{
 			Dispose(false);
 		}
-#endif
 
 		#endregion
 
@@ -376,50 +421,19 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion
 
-		#region IxCoreColleague Members
-
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[] { this };
-		}
-
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_mediator = mediator;
-			mediator.AddColleague(this);
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion
-
+#if RANDYTODO
 		/// <summary>
 		/// Called (by xcore) to control display params of the Styles menu, e.g. whether it should be enabled
 		/// </summary>
@@ -443,5 +457,6 @@ namespace SIL.FieldWorks.XWorks
 
 			return false;
 		}
+#endif
 	}
 }

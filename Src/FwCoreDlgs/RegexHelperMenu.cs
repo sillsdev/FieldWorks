@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

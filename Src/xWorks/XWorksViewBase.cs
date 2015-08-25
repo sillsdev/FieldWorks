@@ -17,10 +17,10 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,10 +34,10 @@ namespace SIL.FieldWorks.XWorks
 	/// of the view node. This specifies how to display an individual list item.
 	/// </summary>
 	/// <remarks>
-	/// IxCoreContentControl includes IxCoreColleague now,
-	/// so only IxCoreContentControl needs to be declared here.
+	/// IMainContentControl includes IxCoreColleague now,
+	/// so only IMainContentControl needs to be declared here.
 	/// </remarks>
-	public abstract class XWorksViewBase : XCoreUserControl, IxCoreContentControl, IPaneBarUser
+	public abstract class XWorksViewBase : MainUserControl, IMainContentControl, IPaneBarUser
 	{
 		#region Enumerations
 
@@ -50,6 +50,12 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Event declaration
 
 		#region Data members
+#if !RANDYTODO
+		/// <summary>
+		/// Get rid of this member.
+		/// </summary>
+		protected XmlNode m_configurationParameters;
+#endif
 		/// <summary>
 		/// Optional information bar above the main control.
 		/// </summary>
@@ -60,12 +66,6 @@ namespace SIL.FieldWorks.XWorks
 		protected string m_vectorName;
 		/// <summary/>
 		protected int m_fakeFlid; // the list
-		/// <summary/>
-		protected Mediator m_mediator;
-		/// <summary>
-		///
-		/// </summary>
-		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.
@@ -106,6 +106,48 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion Data members
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
+
 		#region Consruction and disposal
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
@@ -142,12 +184,9 @@ namespace SIL.FieldWorks.XWorks
 					components.Dispose();
 				if (ExistingClerk != null && !m_haveActiveClerk)
 					ExistingClerk.BecomeInactive();
-				if (m_mediator != null && !m_mediator.IsDisposed)
-					m_mediator.RemoveColleague(this);
 				if (m_mpParent != null)
 					m_mpParent.ShowFirstPaneChanged -= mp_ShowFirstPaneChanged;
 			}
-			m_mediator = null;
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
 			m_mpParent = null;
 
@@ -165,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_propertyTable.GetValue<FdoCache>("cache");
+				return PropertyTable.GetValue<FdoCache>("cache");
 			}
 		}
 
@@ -180,12 +219,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_clerk != null)
 					return m_clerk;
-				if (m_mediator == null)
-					return null; // Avoids a null reference exception, if there is no mediator at all.
-				if (m_propertyTable == null)
+				if (PropertyTable == null)
 					return null; // Avoids a null reference exception, if there is no property table at all.
 				m_haveActiveClerk = false;
-				m_clerk = RecordClerk.FindClerk(m_propertyTable, m_vectorName);
+				m_clerk = RecordClerk.FindClerk(PropertyTable, m_vectorName);
 				if (m_clerk != null && m_clerk.IsActiveInGui)
 					m_haveActiveClerk = true;
 				return m_clerk;
@@ -194,8 +231,10 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList);
+			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, loadList);
+#if RANDYTODO
 			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
+#endif
 			return clerk;
 		}
 
@@ -242,64 +281,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion Properties
 
-		#region IxCoreColleague implementation
-
-		public abstract void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters);
+		#region IMainContentControl implementation
 
 		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			//note: we just let navigation commands go straight to the clerk, which will then send us a message.
-
-			/*
-			 * important note about messages and record clerk: see the top of the recordClerk.cs file.
-			*/
-			var targets = new List<IxCoreColleague>();
-			// HACK: This needs to be controlled better, since this method is being called,
-			// while the object is being disposed, which causes the call to the Clerk property to crash
-			// with a null reference exception on the mediator.
-			if (m_mediator != null)
-			{
-				// Additional targets are typically child windows that should have a chance to intercept
-				// messages before the Clerk sees them.
-				GetMessageAdditionalTargets(targets);
-				targets.Add(Clerk);
-				targets.Add(this);
-			}
-			return targets.ToArray();
-		}
-
-		/// <summary>
-		/// subclasses should override if they have more targets, and add to the list.
-		/// </summary>
-		/// <returns></returns>
-		protected virtual void GetMessageAdditionalTargets(List<IxCoreColleague> collector)
-		{
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public abstract int Priority { get; }
-
-		#endregion // IxCoreColleague implementation
-
-		#region IxCoreContentControl implementation
-
-		/// <summary>
-		/// From IxCoreContentControl
+		/// From IMainContentControl
 		/// </summary>
 		/// <returns>true if ok to go away</returns>
 		public virtual bool PrepareToGoAway()
@@ -315,13 +300,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
+#if RANDYTODO
+				// TODO: a lot will need to be supplied by area/tool that was in the xml.
 				return XmlUtils.GetOptionalAttributeValue( m_configurationParameters, "area", "unknown");
+#else
+				return PropertyTable.GetValue<string>("area");
+#endif
 			}
 		}
 
-		#endregion // IxCoreContentControl implementation
+		#endregion // IMainContentControl implementation
 
-		#region IxCoreCtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		public virtual Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
@@ -333,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 			return ContainsFocus ? this : null;
 		}
 
-		#endregion  IxCoreCtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
 		#region Component Designer generated code
 		/// -----------------------------------------------------------------------------------
@@ -552,7 +542,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			m_mediator.SendMessage("ReloadAreaTools", "lists");
+			Publisher.Publish("ReloadAreaTools", "lists");
 		}
 
 		private void DoDeleteCustomListCmd(ICmPossibilityList curList)
@@ -565,6 +555,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague Event handlers
 
+#if RANDYTODO
 		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -635,6 +626,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = display.Visible = inFriendlyTerritory;
 			return true;
 		}
+#endif
 
 		public bool OnAddCustomField(object argument)
 		{
@@ -648,7 +640,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
+			string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
 			switch (areaChoice)
 			{
 				case "lexicon":
@@ -658,7 +650,7 @@ namespace SIL.FieldWorks.XWorks
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
 					break;
 			}
-			using (var dlg = new AddCustomFieldDlg(m_mediator, m_propertyTable, locationType))
+			using (var dlg = new AddCustomFieldDlg(PropertyTable, Publisher, locationType))
 			{
 				if (dlg.ShowCustomFieldWarning(this))
 					dlg.ShowDialog(this);
@@ -667,6 +659,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	// handled
 		}
 
+#if RANDYTODO
 		public bool OnDisplayConfigureList(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -684,18 +677,20 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = display.Visible = inFriendlyTerritory;
 			return true;
 		}
+#endif
 
 		public bool OnConfigureList(object argument)
 		{
 			CheckDisposed();
 
 			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
-				using (var dlg = new ConfigureListDlg(m_mediator, m_propertyTable, (ICmPossibilityList) Clerk.OwningObject))
+				using (var dlg = new ConfigureListDlg(PropertyTable, Publisher, (ICmPossibilityList) Clerk.OwningObject))
 					dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
 
+#if RANDYTODO
 		public bool OnDisplayAddCustomList(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -713,17 +708,19 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = display.Visible = inFriendlyTerritory;
 			return true;
 		}
+#endif
 
 		public bool OnAddCustomList(object argument)
 		{
 			CheckDisposed();
 
-			using (var dlg = new AddListDlg(m_mediator, m_propertyTable))
+			using (var dlg = new AddListDlg(PropertyTable, Publisher))
 				dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
 
+#if RANDYTODO
 		public bool OnDisplayDeleteCustomList(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -746,6 +743,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = display.Visible = inFriendlyTerritory;
 			return true;
 		}
+#endif
 
 		public bool OnDeleteCustomList(object argument)
 		{

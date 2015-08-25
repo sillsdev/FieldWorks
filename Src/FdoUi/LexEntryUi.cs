@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
@@ -126,24 +125,22 @@ namespace SIL.FieldWorks.FdoUi
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
-		///  ------------------------------------------------------------------------------------
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="cache"></param>
-		///  <param name="hvoSrc"></param>
-		///  <param name="tagSrc"></param>
-		///  <param name="wsSrc"></param>
-		///  <param name="ichMin"></param>
-		///  <param name="ichLim"></param>
-		///  <param name="owner"></param>
-		///  <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
+		///   ------------------------------------------------------------------------------------
+		///   <summary />
+		///   <param name="cache"></param>
+		///   <param name="hvoSrc"></param>
+		///   <param name="tagSrc"></param>
+		///   <param name="wsSrc"></param>
+		///   <param name="ichMin"></param>
+		///   <param name="ichLim"></param>
+		///   <param name="owner"></param>
+		///  <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="helpProvider"></param>
-		///  <param name="helpFileKey">string key to get the help file name</param>
-		///  ------------------------------------------------------------------------------------
+		///   <param name="helpFileKey">string key to get the help file name</param>
+		///   ------------------------------------------------------------------------------------
 		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
+			int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -190,10 +187,10 @@ namespace SIL.FieldWorks.FdoUi
 						wfa = (anal as IWfiGloss).OwnerOfClass<IWfiAnalysis>();
 				}
 			}
-			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
+			DisplayEntries(cache, owner, propertyTable, publisher, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
+		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
@@ -222,15 +219,13 @@ namespace SIL.FieldWorks.FdoUi
 				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				if (leui == null)
 				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
+					ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
 					if (entry == null)
 					{
 						return;
 					}
 					leui = new LexEntryUi(entry);
 				}
-				if (mediator != null)
-					leui.Mediator = mediator;
 				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
 			}
 			finally
@@ -241,13 +236,13 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn, IPropertyTable propertyTable,
+		public static void DisplayEntry(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
-			DisplayEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tssWfIn, wfa);
+			DisplayEntries(cache, null, propertyTable, publisher, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediator, IPropertyTable propertyTable,
+		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
@@ -256,17 +251,17 @@ namespace SIL.FieldWorks.FdoUi
 			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 			if (entries == null || entries.Count == 0)
 			{
-				ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
+				ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
 				if (entry == null)
 					return;
 				entries = new List<ILexEntry>(1);
 				entries.Add(entry);
 			}
-			DisplayEntriesRecursive(cache, owner, mediator, propertyTable, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
-			Mediator mediator, IPropertyTable propertyTable, IVwStylesheet stylesheet,
+			IPropertyTable propertyTable, IPublisher publisher, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
@@ -277,7 +272,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
 														helpProvider, helpFileKey,
-														stylesheet, cache, mediator))
+														stylesheet, cache))
 				{
 					SetCurrentModalForm(sdform);
 					if (owner == null)
@@ -291,7 +286,7 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// Look for another entry to display.  (If the user doesn't select another
 					// entry, loop back and redisplay the current entry.)
-					var entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
 					if (entry != null)
 					{
 						// We need a list that contains the entry we found to display on the
@@ -363,6 +358,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		private static void EnsureWindowConfiguration(IPropertyTable propertyTable)
 		{
+#if RANDYTODO
 			XmlNode xnWindow = propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 			{
@@ -373,13 +369,14 @@ namespace SIL.FieldWorks.FdoUi
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
 				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, false, true);
 			}
+#endif
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn, IPropertyTable propertyTable,
+		public static void DisplayRelatedEntries(FdoCache cache, IPropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
-			DisplayRelatedEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tss, true);
+			DisplayRelatedEntries(cache, null, propertyTable, helpProvider, helpFileKey, tss, true);
 		}
 
 		/// ------------------------------------------------------------
@@ -389,7 +386,6 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="owner">The owning window.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
@@ -398,7 +394,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
-			Mediator mediator, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
 			if (tssWf == null || tssWf.Length == 0)
@@ -421,7 +417,7 @@ namespace SIL.FieldWorks.FdoUi
 					return;
 				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
-					mediator, hideInsertButton))
+					hideInsertButton))
 				{
 					rw.ShowDialog(owner);
 				}
@@ -436,13 +432,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache">The cache.</param>
 		/// <param name="sel">The sel.</param>
 		/// <param name="owner">The owner.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey"></param>
 		/// ------------------------------------------------------------------------------------
 		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
-			Mediator mediator, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
+			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			if (sel == null)
 				return;
@@ -477,7 +472,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
 					return;
 				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediator, false))
+				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, false))
 				{
 					rw.ShowDialog(owner);
 				}
@@ -486,27 +481,16 @@ namespace SIL.FieldWorks.FdoUi
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the flex config file.
-		/// </summary>
-		/// <value>The flex config file.</value>
-		/// ------------------------------------------------------------------------------------
-		public static string FlexConfigFile
-		{
-			get { return FwDirectoryFinder.GetCodeFile(@"Language Explorer/Configuration/Main.xml"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Launch the Find Entry dialog, and if one is created or selected return it.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, IPropertyTable propertyTable,
+		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher,
 			ITsString tssForm, IWin32Window owner)
 		{
 			using (EntryGoDlg entryGoDlg = new EntryGoDlg())
@@ -523,7 +507,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (owner == null)
 					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
 				entryGoDlg.Owner = owner as Form;
-				entryGoDlg.SetDlgInfo(cache, wp, mediator, propertyTable, tssForm);
+				entryGoDlg.SetDlgInfo(cache, wp, propertyTable, publisher, tssForm);
 				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
 				if (entryGoDlg.ShowDialog() == DialogResult.OK)
 				{
@@ -552,7 +536,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(Object.Cache, Mediator, m_propertyTable, tssWf, owner);
+				var entry = ShowFindEntryDialog(Object.Cache, PropertyTable, Publisher, tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))
@@ -568,12 +552,13 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
+#if RANDYTODO
 		protected override bool ShouldDisplayMenuForClass(int specifiedClsid,
 			UIItemDisplayProperties display)
 		{
 			return LexEntryTags.kClassId == specifiedClsid || base.ShouldDisplayMenuForClass(specifiedClsid, display);
 		}
-
+#endif
 	}
 
 	/// ----------------------------------------------------------------------------------------

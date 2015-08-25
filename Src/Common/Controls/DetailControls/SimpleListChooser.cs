@@ -13,14 +13,12 @@ using System;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
-// for FwLink (in FdoUiLowLevel assembly)
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -175,7 +173,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							"Linguistics/Morphology/TemplateTable");
 						AddLink(sLabel, LinkType.kSimpleLink,
 							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
-							fOptional, m_mediator, m_propertyTable));
+							fOptional, m_propertyTable, m_publisher));
 					}
 					break;
 				default:

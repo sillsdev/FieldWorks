@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -163,6 +162,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_spellCheckStatus; }
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the specified context menu for the specified rootsite at the specified
@@ -292,48 +292,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				tmAdapter.SetItemProperties(menuName, itemProps);
 			}
 		}
-
-		// This is part of an alternate strategy for spell checking that allows spell checking options to be added
-		// to an xCore-managed menu. It was developed to the point of a submenu, but not enhanced to allow the
-		// top seven suggestions to be at the top level. If we want to do that, I think we'll need to enhance the
-		// colleague with specific methods to enable and change the text of seven distinct menu items (which will
-		// need to be defined in the XML), like CmdFirstSpellSuggestion, CmdSecondSpellSuggestion, etc.
-		// For example, something like this in main.xml, at the start of mnuObjectChoices, works with the current code
-		// (see e.g., call to MakeSpellCheckColleague commented out in SandboxBase).
-		//		<menu label="Correct Spelling" id="CorrectSpelling" list="PossibleCorrections" behavior="command" message="CorrectSpelling" defaultVisible="false"/>
-		//		<item command="CmdAddToSpellDict" defaultVisible="false"/>
-		// The enhaned version might look more like this:
-		//		<item command="CmdFirstSuggestion" defaultVisible="false"/>
-		//		<item command="CmdSecondSuggestion" defaultVisible="false"/>
-		//		<menu label="Other Suggestions" id="OtherSuggestions" list="OtherPossibleCorrections" behavior="command" message="OtherSuggestions" defaultVisible="false"/>
-		//		<item command="CmdAddToSpellDict" defaultVisible="false"/>
-		// Also need to define the commands, e.g.,
-		//		<command id="CmdCorrectSpelling" label="Correct Spelling" message="CorrectSpelling"/>
-		//		<command id="CmdAddToSpellDict" label="Add to Spelling Dictionary" message="AddToSpellDict"/>
-		///// -----------------------------------------------------------------------------------
-		///// <summary>
-		///// If the mousePos is part of a word that is not properly spelled, make a colleague
-		///// which can handle the menu options for correcting it or adding it to the dictionary.
-		///// Otherwise, answer null.
-		///// </summary>
-		///// <param name="mousePos">The location of the mouse</param>
-		///// <param name="rootb">The rootbox</param>
-		///// <param name="rcSrcRoot"></param>
-		///// <param name="rcDstRoot"></param>
-		///// -----------------------------------------------------------------------------------
-		//public IxCoreColleague MakeSpellCheckColleague(Point mousePos, IVwRootBox rootb,
-		//    Rectangle rcSrcRoot, Rectangle rcDstRoot)
-		//{
-		//    CheckDisposed();
-		//    int ichMin, ichLim, hvoObj, tag, wsAlt, wsText;
-		//    string word;
-		//    Dictionary dict;
-		//    ICollection<string> suggestions = GetSuggestions(mousePos, rootb, rcSrcRoot, rcDstRoot,
-		//        out hvoObj, out tag, out wsAlt, out wsText, out ichMin, out ichLim, out word, out dict);
-		//    if (suggestions == null)
-		//        return null;
-		//    return new SpellCorrectColleague(rootb, suggestions, hvoObj, tag, wsAlt, wsText, ichMin, ichLim, word, dict, this);
-		//
+#endif
 
 		void itemAdd_Click(object sender, EventArgs e)
 		{

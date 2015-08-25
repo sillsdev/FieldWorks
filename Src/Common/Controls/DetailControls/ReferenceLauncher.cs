@@ -15,10 +15,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.CoreImpl.MessageBoxEx;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (referenceTargetOwner != null)
 						chooser.TextParamHvo = referenceTargetOwner.Hvo;
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
+					chooser.InitializeExtras(m_configurationNode, PropertyTable);
 				}
 
 				var res = chooser.ShowDialog(MainControl.FindForm());
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//if the configuration file says that we should put up a message dialog after a change has been made,
 			//do that now.
 			if (postDialogMessageTrigger != null)
-				XCore.XMessageBoxExManager.Trigger(postDialogMessageTrigger);
+				MessageBoxExManager.Trigger(postDialogMessageTrigger);
 			// If the configuration file says to refresh the slice list, do that now.
 			if (ChoicesMade != null)
 				ChoicesMade(this, new EventArgs());
@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			SimpleListChooser x = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}

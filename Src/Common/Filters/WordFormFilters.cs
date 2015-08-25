@@ -4,7 +4,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -175,15 +174,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Initialize the filter list. this is called because we are an IxCoreColleague
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configuration">The configuration.</param>
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configuration)
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(mediator, propertyTable, configuration);
-			m_mediator.AddColleague(this);
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			ReLoad();
 		}
 

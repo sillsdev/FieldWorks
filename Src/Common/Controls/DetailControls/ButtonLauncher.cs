@@ -17,13 +17,12 @@ using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
-	public class ButtonLauncher : UserControl, IFWDisposable, INotifyControlInCurrentSlice
+	public class ButtonLauncher : UserControl, IFWDisposable, IFlexComponent, INotifyControlInCurrentSlice
 	{
 		#region event handler declarations
 
@@ -41,8 +40,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected System.Windows.Forms.Panel m_panel;
 		protected System.Windows.Forms.Button m_btnLauncher;
 		protected IPersistenceProvider m_persistProvider;
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
 		// The following variables control features of the chooser dialog.
@@ -143,12 +140,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
 		/// <param name="persistProvider"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
 		public virtual void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(flid != 0);
@@ -157,14 +152,53 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
 			m_persistProvider = persistProvider;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-
 			m_cache = cache;
 			m_obj = obj;
 			m_flid = flid;
 			m_fieldName = fieldName;
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -194,13 +228,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_cache = null;
 			m_obj = null;
 			m_persistProvider = null;
-			m_mediator = null;
-			m_propertyTable = null;
 			m_configurationNode = null;
 			m_mainControl = null;
 			m_panel = null;
 			m_btnLauncher = null;
 			m_displayNameProperty = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose(disposing);
 		}
@@ -242,14 +277,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </remarks>
 		protected virtual void HandleChooser()
 		{
-		}
-
-		/// <summary>
-		/// Get the mediator. A subclass may override this property.
-		/// </summary>
-		protected virtual Mediator Mediator
-		{
-			get { return m_mediator; }
 		}
 
 		#region Component Designer generated code

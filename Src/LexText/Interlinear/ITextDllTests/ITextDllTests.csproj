@@ -222,10 +222,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=4.3.0.20835, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -257,9 +253,7 @@
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
     <Compile Include="BIRDFormatImportTests.cs" />
-    <Compile Include="InterlinDocForAnalysisTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="InterlinDocForAnalysisTests.cs" />
     <Compile Include="InterlinLineChoicesTests.cs">
       <SubType>Code</SubType>
     </Compile>

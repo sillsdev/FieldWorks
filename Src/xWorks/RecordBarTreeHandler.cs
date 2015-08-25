@@ -12,7 +12,6 @@
 // </remarks>
 using System;
 using SIL.FieldWorks.FdoUi;
-using XCore;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,6 +24,7 @@ using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public abstract class RecordBarHandler : IFWDisposable
 	{
-		protected Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
 		protected FdoCache m_cache; // initialized with mediator.
 		protected bool m_expand;
@@ -45,15 +44,19 @@ namespace SIL.FieldWorks.XWorks
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(Mediator mediator, IPropertyTable propertyTable, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(IPropertyTable propertyTable, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
 			if (node == null)
+			{
 				handler = new RecordBarListHandler();
+			}
 			else
+			{
 				handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			handler.Init(mediator, propertyTable, node);
+			}
+			handler.Init(propertyTable, node);
 			return handler;
 		}
 
@@ -146,7 +149,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
 			m_cache = null;
 
 			m_isDisposed = true;
@@ -154,11 +156,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
+		internal virtual void Init(IPropertyTable propertyTable, XmlNode node)
 		{
 			CheckDisposed();
 
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 
@@ -228,18 +229,20 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void UpdateHeaderVisibility()
 		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			if (window == null || window.IsDisposed)
 				return;
 
+#if RANDYTODO
 			if (IsShowing)
 				window.TreeBarControl.HideHeaderControl();
+#endif
 		}
 
 		/// <summary>
 		/// add any subitems to the tree. Note! This assumes that the list has been preloaded
 		/// (e.g., using PreLoadList), so it bypasses normal load operations for speed purposes.
-		/// Withoug preloading, it took almost 19,000 queries to start FW showing semantic domain
+		/// Without preloading, it took almost 19,000 queries to start FW showing semantic domain
 		/// list. With preloading it reduced the number to 200 queries.
 		/// </summary>
 		/// <param name="obj"></param>
@@ -352,9 +355,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		internal override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode node)
+		internal override void Init(IPropertyTable propertyTable, XmlNode node)
 		{
-			base.Init(mediator, propertyTable, node);
+			base.Init(propertyTable, node);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 		}
@@ -486,8 +489,9 @@ namespace SIL.FieldWorks.XWorks
 
 			m_list = list;
 
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			using (new WaitCursor(window))
+#if RANDYTODO
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			using (new WaitCursor((Form)window))
 			{
 				window.TreeBarControl.IsFlatList = false;
 				var tree = (TreeView)window.TreeStyleRecordList;
@@ -543,6 +547,7 @@ namespace SIL.FieldWorks.XWorks
 
 				EnsureSelectedNodeVisible(tree);
 			}
+#endif
 		}
 
 		/// <summary>
@@ -1071,7 +1076,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			var window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			var tree = (TreeView)window.TreeStyleRecordList;
 			if (currentObject == null)
 			{
@@ -1091,6 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 				tree.SelectedNode = node;
 				EnsureSelectedNodeVisible(tree);
 			}
+#endif
 		}
 	}
 

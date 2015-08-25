@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private FwXApp m_application;
-		private FwXWindow m_window;
+		private IFwMainWnd m_window;
 		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private FwStyleSheet m_styleSheet;
@@ -119,8 +119,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(true);
 		}
-		#endregion disposal
-		#endregion Environment
+	#endregion disposal
+	#endregion Environment
 
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.XWorks
 			var responseText = System.Text.Encoding.ASCII.GetString(response);
 			return responseText;
 		}
-		#endregion
+	#endregion
 
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
 			}
 		}
-		#endregion
+	#endregion
 	}
 #endif
 }

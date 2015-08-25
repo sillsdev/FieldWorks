@@ -56,7 +56,10 @@ namespace SIL.CoreImpl.Impls
 		[SetUp]
 		public void SetUp()
 		{
-			m_propertyTable = new PropertyTable(new MockPublisher())
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			m_propertyTable = new PropertyTable(publisher)
 			{
 				LocalSettingsId = "TestLocal",
 				UserSettingDirectory = m_originalSettingsPath

@@ -18,13 +18,13 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -97,24 +97,24 @@ namespace SIL.FieldWorks.XWorks
 			AccNameDefault = "RecordEditView";		// default accessibility name
 		}
 
-		/// ------------------------------------------------------------------------------------
+		#region Overrides of XWorksViewBase
+
 		/// <summary>
-		/// Initialize this as an IxCoreColleague
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
-			InitBase(mediator, propertyTable, configurationParameters);
+			InitBase(propertyTable, null);
 
-			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(configurationParameters, "showDescendantInRoot", false);
+			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(null, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
-			int idx = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
 			int lim = Clerk.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
@@ -131,9 +131,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_fullyInitialized = true;
 		}
+
+		#endregion
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -182,8 +184,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
-			var window = m_propertyTable.GetValue<XWindow>("window");
+			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 			try
 			{
@@ -206,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// From IxCoreContentControl
+		/// From IMainContentControl
 		/// </summary>
 		/// <returns>true if ok to go away</returns>
 		public override bool PrepareToGoAway()
@@ -274,7 +276,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!rni.SkipShowRecord)
 			{
+#if RANDYTODO
 				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
+#endif
 			}
 		}
 
@@ -332,8 +336,8 @@ namespace SIL.FieldWorks.XWorks
 			catch (Exception error)
 			{
 				//don't really need to make the program stop just because we could not show this record.
-				IApp app = m_propertyTable.GetValue<IApp>("App");
-				ErrorReporter.ReportException(error, app.SettingsKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress,
+				IApp app = PropertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(error, app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress,
 					null, false);
 			}
 			int msEnd = Environment.TickCount;
@@ -396,22 +400,24 @@ namespace SIL.FieldWorks.XWorks
 			else
 				persistContext=m_vectorName+".DataTree";
 
-			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
+			m_dataEntryForm.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
 			Clerk.UpdateRecordTreeBarIfNeeded();
 			SetupSliceFilter();
 			m_dataEntryForm.Dock = DockStyle.Fill;
-			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
+#if RANDYTODO
+			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
+#endif
 			string sDatabase = Cache.ProjectId.Name;
 			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
 				Inventory.GetInventory("parts", sDatabase));
-			m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
+			m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (m_dataEntryForm.AccessibilityObject != null)
 				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
 			//set up the context menu, overriding the automatic menu creator/handler
 
 			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
-			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
+			m_menuHandler.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 
 //			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
@@ -471,22 +477,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// subclasses should override if they have more targets
-		/// </summary>
-		/// <returns></returns>
-		protected override void GetMessageAdditionalTargets(List<IxCoreColleague> collector)
-		{
-			if(!m_fullyInitialized)
-				return;
-
-			if (m_dataEntryForm != null) // Unlikely it is null, but I have observed it..JohnT.
-				collector.Add(m_dataEntryForm);
-
-			collector.Add(m_menuHandler);
-		}
-
-		#region IxCoreCtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		public override Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
@@ -503,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
-		#endregion  IxCoreCtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
 		#region Component Designer generated code
 		/// -----------------------------------------------------------------------------------
@@ -550,7 +541,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_dataEntryForm.PersistenceProvder = null;
 			this.m_dataEntryForm.Size = new System.Drawing.Size(752, 150);
 			this.m_dataEntryForm.SliceFilter = null;
-			this.m_dataEntryForm.SmallImages = null;
 			this.m_dataEntryForm.StyleSheet = null;
 			this.m_dataEntryForm.TabIndex = 3;
 			//
@@ -591,7 +581,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
-			var area = m_propertyTable.GetValue<string>("areaChoice");
+			var area = PropertyTable.GetValue<string>("areaChoice");
 			string toolId;
 			switch (area)
 			{
@@ -667,7 +657,7 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 			// TODO: Not right yet!
-			docView.Init(m_mediator, m_propertyTable, parentConfigNode.SelectSingleNode("parameters"));
+			docView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			return docView;
 		}
 

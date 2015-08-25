@@ -66,6 +66,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility" />
     <Reference Include="BasicUtils, Version=6.1.0.30261, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -78,12 +79,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Ethnologue.dll</HintPath>
     </Reference>
+    <Reference Include="MsHtmHstInterop">
+      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=7.0.1.23997, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Geckofx-Core">
+      <Package>Geckofx-Core</Package>
+      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <Package>Geckofx-WinForms</Package>
+      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -102,6 +115,11 @@
     </Compile>
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
+    <Compile Include="FlexComponentCheckingService.cs" />
+    <Compile Include="FwAccessibleObject.cs" />
+    <Compile Include="HtmlControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="IArea.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -109,12 +127,38 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ICollapsingSplitContainer.cs" />
+    <Compile Include="ICtrlTabProvider.cs" />
+    <Compile Include="IFeedbackInfoProvider.cs" />
+    <Compile Include="IFlexComponent.cs" />
+    <Compile Include="IHelpTopicProvider.cs" />
+    <Compile Include="IMainContentControl.cs" />
+    <Compile Include="IMainUserControl.cs" />
     <Compile Include="IMajorFlexComponent.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IMajorFlexUiComponent.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="Impls\PersistenceProvider.cs" />
+    <Compile Include="IPaneBar.cs" />
+    <Compile Include="IPaneBarUser.cs" />
+    <Compile Include="IReceiveSequentialMessages.cs" />
+    <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="IToolRepository.cs" />
+    <Compile Include="MainUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageBoxEx\MessageBoxExIcon.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExManager.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExResult.cs" />
+    <Compile Include="MessageBoxEx\TimeoutResult.cs" />
+    <Compile Include="MessageSequencer.cs" />
+    <Compile Include="PersistenceProviderFactory.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="IPostLayoutInit.cs" />
@@ -129,6 +173,7 @@
     </Compile>
     <Compile Include="PropertyTableFactory.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
+    <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="SettingsGroup.cs" />
     <Compile Include="SilSidePane\Banner.cs">
       <SubType>Component</SubType>
@@ -173,6 +218,7 @@
     <Compile Include="SilSidePane\Tab.cs" />
     <Compile Include="StringSearcher.cs" />
     <Compile Include="Impls\ToolRepository.cs" />
+    <Compile Include="TimeoutResult.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />
@@ -226,6 +272,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CoreImplStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="HtmlControl.resx">
+      <DependentUpon>HtmlControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MessageBoxEx\MessageBoxExForm.resx">
+      <DependentUpon>MessageBoxExForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -241,6 +293,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="MessageBoxEx\Notes.txt" />
     <Content Include="Resources\lsr-region-utf8.txt" />
     <Content Include="Resources\lsr-variant-utf8.txt" />
   </ItemGroup>

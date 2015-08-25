@@ -15,7 +15,7 @@ using System;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Collections.Generic;
 using System.Linq;
-using XCore;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

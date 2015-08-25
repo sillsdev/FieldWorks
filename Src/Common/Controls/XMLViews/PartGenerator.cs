@@ -8,8 +8,8 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

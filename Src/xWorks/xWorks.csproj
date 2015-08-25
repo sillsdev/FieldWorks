@@ -169,10 +169,6 @@
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="MessageBoxExLib, Version=8.0.8.15166, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -216,10 +212,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UIAdapterInterfaces, Version=8.0.4.14059, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="xCore, Version=6.1.1.30414, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -251,10 +243,6 @@
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.1.1.20913, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=6.1.1.30296, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -372,12 +360,6 @@
     </Compile>
     <Compile Include="FwXApp.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FwXWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GeneratedHtmlViewer.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="IDictConfigPresenter.cs" />
     <Compile Include="IDictConfigViewer.cs" />
@@ -509,14 +491,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ExportTranslatedListsDlg.resx">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwXWindow.resx">
-      <DependentUpon>FwXWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GeneratedHtmlViewer.resx">
-      <DependentUpon>GeneratedHtmlViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ImageHolder.resx">

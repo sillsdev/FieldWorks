@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -81,13 +81,15 @@ namespace SIL.FieldWorks.Common.Controls
 			bool showWarning = false;
 			string message = FwControls.kOkbtnEmptySelection;
 			var checkedList = m_treeTexts.GetCheckedNodeList();
-			var own = Owner as XWindow;
+#if RANDYTODO
+			var own = Owner as IFwMainWnd;
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
 				message = FwControls.kOkbtnGenreSelection;
 				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true, true);
 				showWarning = true;
 			}
+#endif
 			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)
 				showWarning = true;
 			if (showWarning)

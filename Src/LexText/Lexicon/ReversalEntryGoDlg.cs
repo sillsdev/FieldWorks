@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -68,11 +67,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
-			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(m_propertyTable, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
 				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
 				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 
 			// start building index
@@ -102,14 +101,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_cbWritingSystems.Items.Add(m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, propertyTable, publisher, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, string form)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form)
 		{
-			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, propertyTable, publisher, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}
 
 		protected override void ResetMatches(string searchKey)

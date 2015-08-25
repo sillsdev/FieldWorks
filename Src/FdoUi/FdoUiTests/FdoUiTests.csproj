@@ -105,10 +105,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=4.9.0.28794, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

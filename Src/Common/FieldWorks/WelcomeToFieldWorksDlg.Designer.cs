@@ -10,7 +10,7 @@ using System.Drawing;
 using SIL.Utils;
 using System.ComponentModel;
 using System.Windows.Forms;
-using XCore;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks
 {

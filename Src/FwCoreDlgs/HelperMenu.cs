@@ -1,9 +1,8 @@
 using System;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -165,14 +165,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				return;
 
 			m_oneAnalSandbox = new OneAnalysisSandbox(m_fdoCache,
-													  Mediator,
-													  m_propertyTable,
 													  StyleSheet,
 													  m_vc.LineChoices,
 													  m_wfiAnalysis.Hvo)
 								{
 									Visible = false
 								};
+			m_oneAnalSandbox.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			Controls.Add(m_oneAnalSandbox);
 			if (m_oneAnalSandbox.RootBox == null)
 				m_oneAnalSandbox.MakeRoot();	// adding sandbox to Controls doesn't make rootbox.

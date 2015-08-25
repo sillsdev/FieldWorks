@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
 				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
-				m_view.Mediator = Mediator;
+				m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			}
 
 			var panel = new Panel { Dock = DockStyle.Fill };
@@ -279,6 +279,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#region Moving items
+#if RANDYTODO
 		/// <summary>
 		/// See if it makes sense to provide the "Move Up" command.
 		/// </summary>
@@ -301,6 +302,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = fIsValid;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Implement the "Move Up" command.
@@ -329,6 +331,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// See if it makes sense to provide the "Move Down" command.
 		/// </summary>
@@ -354,6 +357,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = fIsValid;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Implement the "Move Down" command.
@@ -383,6 +387,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// See if it makes sense to provide the "Promote" command.
 		/// </summary>
@@ -401,6 +406,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = fIsValid;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Implement the "Promote" command.
@@ -417,9 +423,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IRnGenericRec recOwner = rec.Owner as IRnGenericRec;
 			if (recOwner == null)
 				return false;		// shouldn't get here
-			// Grab the mediator now for later use, because this slice may get disposed before we
-			// use it.
-			Mediator mediator = m_mediator;
+
+			IPublisher publisher = Publisher;
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoPromote,
 				Resources.DetailControlsStrings.ksRedoPromote,
 				Cache.ActionHandlerAccessor, () =>
@@ -440,11 +445,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (recOwner.Owner is IRnResearchNbk)
 			{
 				// If possible, jump to the newly promoted record.
-				mediator.BroadcastMessageUntilHandled("JumpToRecord", rec.Hvo);
+				publisher.Publish("JumpToRecord", rec.Hvo);
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// See if it makes sense to provide the "Demote..." command.
 		/// </summary>
@@ -466,6 +472,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = fIsValid;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Implement the "Demote..." command.

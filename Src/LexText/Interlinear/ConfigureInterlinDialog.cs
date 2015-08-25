@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Diagnostics;
 using SIL.CoreImpl;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText

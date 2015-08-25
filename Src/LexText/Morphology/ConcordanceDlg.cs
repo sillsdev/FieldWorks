@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.FieldWorks.FDO;
@@ -14,7 +13,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
 
@@ -40,8 +38,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IWfiWordform m_wordform;
 		private FdoCache m_cache;
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		private XmlNode m_configurationNode;
 		private RecordBrowseView m_currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
@@ -88,7 +84,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Construction, Initialization, Disposal
 
-		public ConcordanceDlg()
+		public ConcordanceDlg(ICmObject sourceObject)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -99,7 +95,145 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			helpProvider = new HelpProvider();
 
 			CheckAssignBtnEnabling();
+
+			if (sourceObject is IWfiWordform)
+			{
+				m_wordform = (IWfiWordform)sourceObject;
+			}
+			else
+			{
+				var anal = sourceObject is IWfiAnalysis
+										? (IWfiAnalysis)sourceObject
+										: sourceObject.OwnerOfClass<IWfiAnalysis>();
+				m_wordform = anal.OwnerOfClass<IWfiWordform>();
+			}
+			m_cache = m_wordform.Cache;
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			helpProvider.HelpNamespace = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile;
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
+			helpProvider.SetShowHelp(this, true);
+
+			PropertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
+			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
+
+			// Gather up the nodes.
+			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
+			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
+			var configNode = m_configurationNode.SelectSingleNode(xpath);
+			// And create the RecordClerks.
+			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			clerk.ProgressReporter = m_progAdvInd;
+			m_recordClerks[WfiWordformTags.kClassId] = clerk;
+			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
+
+			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
+			configNode = m_configurationNode.SelectSingleNode(xpath);
+			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			clerk.ProgressReporter = m_progAdvInd;
+			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
+			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
+
+			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
+			configNode = m_configurationNode.SelectSingleNode(xpath);
+			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			clerk.ProgressReporter = m_progAdvInd;
+			m_recordClerks[WfiGlossTags.kClassId] = clerk;
+			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
+
+
+			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
+			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
+
+			var srcTnWf = new TreeNode();
+			var tarTnWf = new TreeNode();
+			tarTnWf.Text = srcTnWf.Text = TsStringUtils.NormalizeToNFC(MEStrings.ksNoAnalysis);
+			tarTnWf.Tag = srcTnWf.Tag = m_wordform;
+			tvSource.Nodes.Add(srcTnWf);
+			tvTarget.Nodes.Add(tarTnWf);
+			if (srcTnWf.Tag == m_wordform)
+				tvSource.SelectedNode = srcTnWf;
+			var cnt = 0;
+			// Note: the left side source tree only has human approved analyses,
+			// since only those can have instances from text-land pointing at them.
+			foreach (var anal in m_wordform.HumanApprovedAnalyses)
+			{
+				var srcTnAnal = new TreeNode();
+				var tarTnAnal = new TreeNode
+				{
+					Text = srcTnAnal.Text = TsStringUtils.NormalizeToNFC(
+												String.Format(MEStrings.ksAnalysisX, (++cnt))),
+					Tag = srcTnAnal.Tag = anal
+				};
+				srcTnWf.Nodes.Add(srcTnAnal);
+				tarTnWf.Nodes.Add(tarTnAnal);
+				if (srcTnAnal.Tag == m_wordform)
+					tvSource.SelectedNode = srcTnAnal;
+				foreach (var gloss in anal.MeaningsOC)
+				{
+					var srcTnGloss = new TreeNode();
+					var tarTnGloss = new TreeNode();
+					var tss = gloss.Form.BestAnalysisAlternative;
+					var props = tss.get_PropertiesAt(0);
+					int nVar;
+					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+					var fontname = m_wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
+					tarTnGloss.NodeFont = new Font(fontname, 9);
+					srcTnGloss.NodeFont = new Font(fontname, 9);
+					tarTnGloss.Text = srcTnGloss.Text = TsStringUtils.NormalizeToNFC(tss.Text);
+					tarTnGloss.Tag = srcTnGloss.Tag = gloss;
+					srcTnAnal.Nodes.Add(srcTnGloss);
+					tarTnAnal.Nodes.Add(tarTnGloss);
+					if (srcTnGloss.Tag == m_wordform)
+						tvSource.SelectedNode = srcTnGloss;
+				}
+			}
+			tvSource.ExpandAll();
+			tvSource.SelectedNode.EnsureVisible();
+			tvTarget.ExpandAll();
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -130,9 +264,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (RecordClerk clerk in m_recordClerks.Values)
 				{
 					// Take it out of the Mediator and Dispose it.
-					m_propertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
+					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
 					clerk.Dispose();
 				}
+				PropertyTable.RemoveProperty("IgnoreStatusPanel");
 				m_recordClerks.Clear();
 				m_configurationNodes.Clear();
 			}
@@ -140,12 +275,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_wordform = null;
 			m_cache = null;
-			m_propertyTable.RemoveProperty("IgnoreStatusPanel");
-			m_mediator = null;
-			m_propertyTable = null;
 			m_configurationNode = null;
 			m_currentBrowseView = null;
 			m_specialSda = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 		}
 
 		#endregion Construction, Initialization, Disposal
@@ -256,132 +391,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region IFwGuiControl implementation
 
 		/// <summary>
-		/// Initilize the gui control.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationNode">NB: In this case it is the main 'window' element node,
-		/// se we have to drill down to find the control definition node(s).</param>
-		/// <param name="sourceObject"></param>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
-		{
-			CheckDisposed();
-
-			Debug.Assert(mediator != null);
-			Debug.Assert(configurationNode != null);
-			Debug.Assert(sourceObject != null && (sourceObject is IWfiWordform || sourceObject is IWfiAnalysis || sourceObject is IWfiGloss));
-
-			m_cache = sourceObject.Cache;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_configurationNode = configurationNode;
-			if (sourceObject is IWfiWordform)
-			{
-				m_wordform = (IWfiWordform)sourceObject;
-			}
-			else
-			{
-				var anal = sourceObject is IWfiAnalysis
-										? (IWfiAnalysis)sourceObject
-										: sourceObject.OwnerOfClass<IWfiAnalysis>();
-				m_wordform = anal.OwnerOfClass<IWfiWordform>();
-			}
-
-			helpProvider.HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile;
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
-			helpProvider.SetShowHelp(this, true);
-
-
-			m_propertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
-			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
-
-			// Gather up the nodes.
-			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
-			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
-			var configNode = m_configurationNode.SelectSingleNode(xpath);
-			// And create the RecordClerks.
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiWordformTags.kClassId] = clerk;
-			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
-
-			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
-			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
-			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
-
-			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
-			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiGlossTags.kClassId] = clerk;
-			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
-
-			Debug.Assert(m_wordform != null);
-			Debug.Assert(sourceObject != null);
-
-			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
-			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
-
-			var srcTnWf = new TreeNode();
-			var tarTnWf = new TreeNode();
-			tarTnWf.Text = srcTnWf.Text = TsStringUtils.NormalizeToNFC(MEStrings.ksNoAnalysis);
-			tarTnWf.Tag = srcTnWf.Tag = m_wordform;
-			tvSource.Nodes.Add(srcTnWf);
-			tvTarget.Nodes.Add(tarTnWf);
-			if (srcTnWf.Tag == sourceObject)
-				tvSource.SelectedNode = srcTnWf;
-			var cnt = 0;
-			// Note: the left side source tree only has human approved analyses,
-			// since only those can have instances from text-land pointing at them.
-			foreach (var anal in m_wordform.HumanApprovedAnalyses)
-			{
-				var srcTnAnal = new TreeNode();
-				var tarTnAnal = new TreeNode
-									{
-										Text = srcTnAnal.Text = TsStringUtils.NormalizeToNFC(
-																	String.Format(MEStrings.ksAnalysisX, (++cnt))),
-										Tag = srcTnAnal.Tag = anal
-									};
-				srcTnWf.Nodes.Add(srcTnAnal);
-				tarTnWf.Nodes.Add(tarTnAnal);
-				if (srcTnAnal.Tag == sourceObject)
-					tvSource.SelectedNode = srcTnAnal;
-				foreach (var gloss in anal.MeaningsOC)
-				{
-					var srcTnGloss = new TreeNode();
-					var tarTnGloss = new TreeNode();
-					var tss = gloss.Form.BestAnalysisAlternative;
-					var props = tss.get_PropertiesAt(0);
-					int nVar;
-					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-					var fontname = m_wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
-					tarTnGloss.NodeFont = new Font(fontname, 9);
-					srcTnGloss.NodeFont = new Font(fontname, 9);
-					tarTnGloss.Text = srcTnGloss.Text = TsStringUtils.NormalizeToNFC(tss.Text);
-					tarTnGloss.Tag = srcTnGloss.Tag = gloss;
-					srcTnAnal.Nodes.Add(srcTnGloss);
-					tarTnAnal.Nodes.Add(tarTnGloss);
-					if (srcTnGloss.Tag == sourceObject)
-						tvSource.SelectedNode = srcTnGloss;
-				}
-			}
-			tvSource.ExpandAll();
-			tvSource.SelectedNode.EnsureVisible();
-			tvTarget.ExpandAll();
-		}
-
-		/// <summary>
 		/// launch the dlg.
 		/// </summary>
 		public void Launch()
 		{
 			CheckDisposed();
 
-			ShowDialog(m_propertyTable.GetValue<Form>("window"));
+			ShowDialog(PropertyTable.GetValue<Form>("window"));
 		}
 
 		#endregion IFwGuiControl implementation
@@ -557,9 +573,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (!IsDisposed && m_propertyTable != null)
+			if (!IsDisposed && PropertyTable != null)
 			{
-				m_propertyTable.SetProperty("IgnoreStatusPanel", false, false, true);
+				PropertyTable.SetProperty("IgnoreStatusPanel", false, false, true);
 			}
 		}
 
@@ -600,10 +616,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				clerk.OwningObject = selObj;
 
 				m_currentBrowseView = new RecordBrowseView();
-				m_currentBrowseView.Init(m_mediator, m_propertyTable, configurationNode);
+				m_currentBrowseView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
-				m_propertyTable.SetProperty(sPropName, true, false, false);
+				PropertyTable.SetProperty(sPropName, true, false, false);
 				m_currentBrowseView.Dock = DockStyle.Fill;
 				m_pnlConcBrowseHolder.Controls.Add(m_currentBrowseView);
 				m_currentBrowseView.CheckBoxChanged += m_currentBrowseView_CheckBoxChanged;
@@ -636,7 +652,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 
 				// Set the initial value for the filtering status.
-				var sFilterMsg = m_propertyTable.GetValue("DialogFilterStatus", string.Empty);
+				var sFilterMsg = PropertyTable.GetValue("DialogFilterStatus", string.Empty);
 				if (sFilterMsg != null)
 					sFilterMsg = sFilterMsg.Trim();
 				SetFilterStatus(!String.IsNullOrEmpty(sFilterMsg));
@@ -733,7 +749,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
 		#endregion Event Handlers

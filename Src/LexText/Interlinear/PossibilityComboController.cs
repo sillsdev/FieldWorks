@@ -3,7 +3,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -12,8 +11,8 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PossibilityComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent) :
-			base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
+		public PossibilityComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
+			base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
 		{
 			Sorted = true;
 		}

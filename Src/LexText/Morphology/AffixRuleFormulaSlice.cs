@@ -23,6 +23,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Control = new AffixRuleFormulaControl(m_configurationNode);
 		}
 
+#if RANDYTODO
 		public bool OnDisplayMappingSetFeatures(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -31,6 +32,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnMappingSetFeatures(object args)
 		{
@@ -39,6 +41,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayMappingSetNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -47,6 +50,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnMappingSetNaturalClass(object args)
 		{
@@ -55,6 +59,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayMappingJumpToNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -63,15 +68,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnMappingJumpToNaturalClass(object args)
 		{
 			CheckDisposed();
-			IMoModifyFromInput mapping = RuleFormulaControl.CurrentObject as IMoModifyFromInput;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid));
+			var mapping = (IMoModifyFromInput)RuleFormulaControl.CurrentObject;
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid));
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayMappingJumpToPhoneme(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -80,12 +88,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public virtual bool OnMappingJumpToPhoneme(object args)
 		{
 			CheckDisposed();
-			IMoInsertPhones mapping = RuleFormulaControl.CurrentObject as IMoInsertPhones;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid));
+			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid));
 			return true;
 		}
 	}

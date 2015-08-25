@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {

@@ -5,7 +5,6 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 
@@ -14,7 +13,7 @@ namespace SIL.FieldWorks.IText
 	/// <summary>
 	/// Summary description for InfoPane.
 	/// </summary>
-	public class InfoPane : UserControl, IFWDisposable, IInterlinearTabControl
+	public class InfoPane : UserControl, IFWDisposable, IFlexComponent, IInterlinearTabControl
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -23,8 +22,6 @@ namespace SIL.FieldWorks.IText
 
 		// Local variables.
 		private FdoCache m_cache;
-		Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		RecordEditView m_xrev;
 		int m_currentRoot = 0;		// Stores the root (IStText) Hvo.
 
@@ -37,40 +34,78 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 		}
 
-		public InfoPane(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, RecordClerk clerk)
+		public InfoPane(FdoCache cache, RecordClerk clerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			Initialize(cache, mediator, propertyTable, clerk);
+			Initialize(cache, clerk);
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Initialize the pane with a Mediator and a RecordClerk.
 		/// </summary>
-		internal void Initialize(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, RecordClerk clerk)
+		internal void Initialize(FdoCache cache, RecordClerk clerk)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			InitializeInfoView(clerk);
 		}
 
 		private void InitializeInfoView(RecordClerk clerk)
 		{
-			if (m_mediator == null)
+			if (PropertyTable == null)
 				return;
-			if (m_propertyTable == null)
-				return;
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 				return;
 			XmlNode xnControl = xnWindow.SelectSingleNode(
 				"controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
 			if (xnControl == null)
 				return;
-			var activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-			var toolChoice = m_propertyTable.GetValue<string>("currentContentControl");
+			var activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+			var toolChoice = PropertyTable.GetValue<string>("currentContentControl");
 			if(m_xrev != null)
 			{
 				//when re-using the infoview we want to remove and dispose of the old recordeditview and
@@ -78,7 +113,8 @@ namespace SIL.FieldWorks.IText
 				Controls.Remove(m_xrev);
 				m_xrev.Dispose();
 			}
-			m_xrev = new InterlinearTextsRecordEditView(this);
+			m_xrev = new InterlinearTextsRecordEditView(this, xnControl);
+			m_xrev.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (clerk.GetType().Name == "InterlinearTextsRecordClerk")
 			{
 				m_xrev.Clerk = clerk;
@@ -90,16 +126,15 @@ namespace SIL.FieldWorks.IText
 				//misbehaves in the Concordance view (it uses the filter from the InterlinearTexts view)
 				m_xrev.Clerk = null;
 			}
-			m_xrev.Init(m_mediator, m_propertyTable, xnControl); // <-- This call will change the ActiveClerk
 			DisplayCurrentRoot();
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
 			// There are times when moving to the InfoPane causes the wrong ActiveClerk to be set.
 			// See FWR-3390 (and InterlinearTextsRecordClerk.OnDisplayInsertInterlinText).
-			var activeClerkNew = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+			var activeClerkNew = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
 			{
-				m_propertyTable.SetProperty("ActiveClerk", activeClerk, true, true);
+				PropertyTable.SetProperty("ActiveClerk", activeClerk, true, true);
 				activeClerk.ActivateUI(true);
 			}
 		}
@@ -109,7 +144,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal bool IsInitialized
 		{
-			get { return m_mediator != null; }
+			get { return PropertyTable != null; }
 		}
 
 		/// <summary>
@@ -140,6 +175,9 @@ namespace SIL.FieldWorks.IText
 					components.Dispose();
 				}
 			}
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose( disposing );
 		}
@@ -175,10 +213,11 @@ namespace SIL.FieldWorks.IText
 		{
 			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 				Justification = "StTextDataTree gets disposed in base class")]
-			public InterlinearTextsRecordEditView(InfoPane info)
+			public InterlinearTextsRecordEditView(InfoPane info, XmlNode xnControl)
 				: base(new StTextDataTree())
 			{
 				(m_dataEntryForm as StTextDataTree).InfoPane = info;
+				m_configurationParameters = xnControl;
 			}
 
 			private class StTextDataTree : DataTree

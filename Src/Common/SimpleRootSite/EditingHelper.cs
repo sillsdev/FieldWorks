@@ -2865,18 +2865,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
 			SimpleRootSite rs = rootbox.Site as SimpleRootSite;
-			if(rs != null && rs.Mediator != null && rs.PropTable != null && selection != null)
+			if (rs != null && rs.PropertyTable != null && selection != null)
 			{
 				// int ws = SelectionHelper.GetFirstWsOfSelection(rootbox.Selection);
 				// Review: Or should it be this? But it returns 0 if there are multiple ws's...
 				// which may be good if the combo can handle it; i.e. there is no *one* ws so
 				// we shouldn't show one in the combo
 				int ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
-				string s = rs.PropTable.GetValue("WritingSystemHvo", "-1");
+				string s = rs.PropertyTable.GetValue("WritingSystemHvo", "-1");
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
+					rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
 					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
@@ -2904,7 +2904,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string s = rs.PropTable == null ? "-1" : rs.PropTable.GetValue("WritingSystemHvo", "-1");
+			string s = rs.PropertyTable == null ? "-1" : rs.PropertyTable.GetValue("WritingSystemHvo", "-1");
 			rs.Focus();
 			int writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
@@ -3042,7 +3042,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string styleName = rs.PropTable == null ? null : rs.PropTable.GetValue<string>("BestStyleName", null);
+			string styleName = rs.PropertyTable == null ? null : rs.PropertyTable.GetValue<string>("BestStyleName", null);
 			if (styleName == null)
 				return;
 			rs.Focus();

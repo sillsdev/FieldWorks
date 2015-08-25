@@ -213,16 +213,8 @@
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="UIAdapterInterfaces, Version=5.5.0.18183, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="Widgets, Version=5.5.0.18237, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCoreInterfaces, Version=5.5.0.18182, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=5.5.0.18139, Culture=neutral, processorArchitecture=MSIL">
@@ -271,11 +263,7 @@
     </Compile>
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFwMainWnd.cs" />
-    <Compile Include="MainWindowDelegate.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PalasoErrorReportingAdapter.cs" />
-    <Compile Include="PublicationInterfaces.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarProgressHandler.cs" />
     <Compile Include="StylesXmlAccessor.cs" />

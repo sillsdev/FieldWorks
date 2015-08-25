@@ -23,7 +23,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

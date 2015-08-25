@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -125,7 +124,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
+			arl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
@@ -218,10 +218,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 			var launcher = (AtomicReferenceLauncher)Control;
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.AtomicRefViewControl, caption, HelpId}, false);
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.PanelControl, caption, HelpId, "Button"}, false);
+			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.AtomicRefViewControl, caption, HelpId});
+			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.PanelControl, caption, HelpId, "Button"});
 		}
 
 		#region IVwNotifyChange Members

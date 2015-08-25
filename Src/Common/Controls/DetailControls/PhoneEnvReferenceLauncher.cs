@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -70,27 +69,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_phoneEnvRefView.Initialize((IMoForm)obj, flid, cache);
 		}
 
 		#endregion // Construction, Initialization, and Disposal
 
 		#region Overrides
-
-		/// <summary>
-		/// Get the mediator from the view.
-		/// </summary>
-		protected override XCore.Mediator Mediator
-		{
-			get { return m_phoneEnvRefView.Mediator; }
-		}
 
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
@@ -105,7 +96,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				contents,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		/// ------------------------------------------------------------------------------------

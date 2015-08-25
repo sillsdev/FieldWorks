@@ -10,7 +10,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -26,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	/// keyword), the object (typically StTxtPara) and segment they belong to, and several other derived properties which can
 	/// be displayed in optional columns of the concordance views.
 	/// </summary>
-	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator, IRefreshCache
+	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, IFlexComponent
 	{
 		/// <summary>
 		/// Maps from wf hvo to array of dummy HVOs generated to represent occurrences.
@@ -73,6 +72,51 @@ namespace SIL.FieldWorks.XWorks
 		// the paragraph containing the occurrence. Usually the owner of the segment and the same
 		// as the TextObject, but occurrences in picture captions are an exception.
 		public const int kflidParagraph = 899944;
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_services);
+			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
+		}
+
+		#endregion
 
 		public override void RemoveNotification(IVwNotifyChange nchng)
 		{
@@ -523,18 +567,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Debug.Assert(m_occurrences.ContainsKey(hvo), "Attempting to retrieve an item from m_occurrences which isn't there.");
 			return m_occurrences.ContainsKey(hvo) ? m_occurrences[hvo] : null;
-		}
-
-		public Mediator Mediator { get; private set; }
-
-		public IPropertyTable PropTable { get; private set; }
-
-		public void SetMediator(Mediator mediator, IPropertyTable propertyTable)
-		{
-			Mediator = mediator;
-			PropTable = propertyTable;
-			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, PropTable, m_services);
-			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
 		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)

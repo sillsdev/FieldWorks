@@ -20,28 +20,11 @@ namespace SIL.CoreImpl.Impls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal ToolRepository()
+		internal ToolRepository(IEnumerable<ITool> tools)
 		{
-			// Use Reflection (for now) to get all implementations of ITool.
-			var baseDir = DirectoryUtils.DirectoryOfExecutingAssembly();
-			// We use 'installedToolPluginAssemblies' for the var name, since theory has it the user can
-			// select to not install some optional tools.
-			var installedToolPluginAssemblies = new List<Assembly>();
-			installedToolPluginAssemblies.AddRange(Directory
-				.GetFiles(baseDir, "*ToolPlugin.dll", SearchOption.TopDirectoryOnly)
-				.Select(toolPluginDllPathname => Assembly.LoadFrom(Path.Combine(baseDir, toolPluginDllPathname))));
-
-			foreach (var pluginAssembly in installedToolPluginAssemblies)
+			foreach (var currentTool in tools)
 			{
-				var toolTypes = (pluginAssembly.GetTypes().Where(typeof(ITool).IsAssignableFrom)).ToList();
-				foreach (var toolType in toolTypes)
-				{
-					var constInfo = toolType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
-					if (constInfo == null)
-						continue; // It does need at least one public or non-public default constructor.
-					var currentTool = (ITool)constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
-					m_tools.Add(currentTool.MachineName, currentTool);
-				}
+				m_tools.Add(currentTool.MachineName, currentTool);
 			}
 		}
 

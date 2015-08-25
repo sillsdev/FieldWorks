@@ -10,11 +10,11 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -69,25 +69,21 @@ namespace SIL.FieldWorks.XWorks
 
 			// Susanna asked that refresh affect only the currently active project, which is
 			// what the string and List variables below attempt to handle.  See LT-6444.
-			FwXWindow activeWnd = ActiveForm as FwXWindow;
+			var activeWnd = ActiveForm as IFwMainWnd;
 
-			List<FwXWindow> rgxw = new List<FwXWindow>();
-			foreach (IFwMainWnd wnd in MainWindows)
+			var rgxw = new List<IFwMainWnd>();
+			foreach (var wnd in MainWindows)
 			{
-				FwXWindow xwnd = wnd as FwXWindow;
-				if (xwnd != null)
-				{
-					xwnd.PrepareToRefresh();
-					rgxw.Add(xwnd);
-				}
+				wnd.PrepareToRefresh();
+				rgxw.Add(wnd);
 			}
 			if (activeWnd != null)
 				rgxw.Remove(activeWnd);
 
-			foreach (FwXWindow xwnd in rgxw)
+			foreach (var xwnd in rgxw)
 			{
 				xwnd.FinishRefresh();
-				xwnd.Refresh();
+				((Form)xwnd).Refresh();
 			}
 
 			// LT-3963: active window changes as a result of a refresh.
@@ -100,8 +96,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Refresh it last, so its saved settings get restored.
 				activeWnd.FinishRefresh();
-				activeWnd.Refresh();
-				activeWnd.Activate();
+				var asForm = activeWnd as Form;
+				if (asForm != null)
+				{
+					asForm.Refresh();
+					asForm.Activate();
+				}
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (base.ActiveForm != null)
 					return base.ActiveForm;
-				foreach (FwXWindow wnd in m_rgMainWindows)
+				foreach (Form wnd in m_rgMainWindows)
 				{
 					if (wnd.ContainsFocus)
 						return wnd;
@@ -175,14 +175,16 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// Get window that uses the given DB.
-			FwXWindow fwxwnd = m_rgMainWindows.Count > 0 ? (FwXWindow)m_rgMainWindows[0] : null;
+			IFwMainWnd fwxwnd = m_rgMainWindows.Count > 0 ? m_rgMainWindows[0] : null;
 			if (fwxwnd != null)
 			{
-				fwxwnd.Mediator.SendMessage("FollowLink", link);
-				bool topmost = fwxwnd.TopMost;
-				fwxwnd.TopMost = true;
-				fwxwnd.TopMost = topmost;
-				fwxwnd.Activate();
+				fwxwnd.Publisher.Publish("AboutToFollowLink", null);
+				fwxwnd.Publisher.Publish("FollowLink", link);
+				var asForm = fwxwnd as Form;
+				bool topmost = asForm.TopMost;
+				asForm.TopMost = true;
+				asForm.TopMost = topmost;
+				asForm.Activate();
 			}
 		}
 

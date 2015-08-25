@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
@@ -15,12 +16,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private readonly List<string> m_filesToArchive = new List<string>();
 		private readonly FdoCache m_cache;
-		private readonly XCore.IHelpTopicProvider m_helpTopicProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_lastBackupFile;
 
 		/// ------------------------------------------------------------------------------------
 		public ArchiveWithRamp(FdoCache cache,
-			XCore.IHelpTopicProvider helpTopicProvider)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;

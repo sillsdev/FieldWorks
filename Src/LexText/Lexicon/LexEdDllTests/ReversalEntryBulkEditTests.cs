@@ -4,11 +4,8 @@
 
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.LexEd;
-using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace LexEdDllTests
 {
@@ -21,10 +18,16 @@ namespace LexEdDllTests
 		public void PropertyTableIdContainsWsId()
 		{
 			const string wsId = "en";
-			using(var mediator = new Mediator())
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
-			using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			using(var cache = CreateCache())
+			using(var recordList = new TestReversalRecordList())
 			{
+				propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);
+				recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
+				recordList.Init(null);
 				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
 
 				var propTableId = recordList.GetPropertyTableId(FieldName);
@@ -36,21 +39,21 @@ namespace LexEdDllTests
 		[Test]
 		public void PropertyTableIdReturnsNullIfNoActiveReversalIndex()
 		{
-			using(var mediator = new Mediator())
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			using (var recordList = new TestReversalRecordList())
 			{
-				using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
-				{
-					Assert.Null(recordList.GetPropertyTableId(FieldName));
-				}
+				recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
+				Assert.Null(recordList.GetPropertyTableId(FieldName));
 			}
 		}
 
 		class TestReversalRecordList : AllReversalEntriesRecordList
 		{
-			public TestReversalRecordList(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+			public TestReversalRecordList()
 			{
-				Init(cache, mediator, propertyTable, null);
 			}
 
 			public string GetPropertyTableId(string fieldName)

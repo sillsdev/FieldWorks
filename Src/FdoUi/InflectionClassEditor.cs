@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 using SIL.Utils;
 using System.Xml;
 using SIL.CoreImpl;
@@ -28,9 +27,9 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class InflectionClassEditor : IBulkEditSpecControl, IFWDisposable
 	{
-		Mediator m_mediator;
 		TreeCombo m_tree;
 		FdoCache m_cache;
+		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
 		InflectionClassPopupTreeManager m_InflectionClassTreeManager;
 		int m_selectedHvo = 0;
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.FdoUi
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public InflectionClassEditor()
+		private InflectionClassEditor()
 		{
 			m_InflectionClassTreeManager = null;
 			m_tree = new TreeCombo();
@@ -47,9 +46,10 @@ namespace SIL.FieldWorks.FdoUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionClassEditor(XmlNode configurationNode)
+		public InflectionClassEditor(IPublisher publisher, XmlNode configurationNode)
 			: this()
 		{
+			m_publisher = publisher;
 			string displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
 		}
@@ -156,7 +156,6 @@ namespace SIL.FieldWorks.FdoUi
 			m_selectedLabel = null;
 			m_tree = null;
 			m_InflectionClassTreeManager = null;
-			m_mediator = null;
 			m_cache = null;
 
 			m_isDisposed = true;
@@ -165,26 +164,9 @@ namespace SIL.FieldWorks.FdoUi
 		#endregion IDisposable & Co. implementation
 
 		/// <summary>
-		/// Get or set the mediator.
-		/// </summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-			set
-			{
-				CheckDisposed();
-				m_mediator = value;
-			}
-		}
-
-		/// <summary>
 		/// Get/Set the property table'
 		/// </summary>
-		public IPropertyTable PropTable { get; set; }
+		public IPropertyTable PropertyTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
@@ -234,7 +216,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			if (m_InflectionClassTreeManager == null)
 			{
-				m_InflectionClassTreeManager = new InflectionClassPopupTreeManager(m_tree, m_cache, m_mediator, PropTable, false, PropTable.GetValue<Form>("window"), m_displayWs);
+				m_InflectionClassTreeManager = new InflectionClassPopupTreeManager(m_tree, m_cache, PropertyTable, m_publisher, false, PropertyTable.GetValue<Form>("window"), m_displayWs);
 				m_InflectionClassTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_InflectionClassTreeManager.LoadPopupTree(0);
@@ -433,7 +415,9 @@ namespace SIL.FieldWorks.FdoUi
 		/// for each item in the list. Disable items that can't be set.
 		/// </summary>
 		/// <param name="itemsToChange"></param>
-		/// <param name="ktagFakeFlid"></param>
+		/// <param name="tagFakeFlid"></param>
+		/// <param name="tagEnable"></param>
+		/// <param name="state"></param>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
@@ -487,7 +471,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public List<int> FieldPath
@@ -574,7 +558,7 @@ namespace SIL.FieldWorks.FdoUi
 			get { return "external"; }
 		}
 
-		public override bool CompatibleFilter(System.Xml.XmlNode colSpec)
+		public override bool CompatibleFilter(XmlNode colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;

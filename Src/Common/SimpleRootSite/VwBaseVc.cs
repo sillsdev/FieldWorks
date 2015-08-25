@@ -14,14 +14,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.Utils.ComTypes;
-using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -215,9 +213,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Mediator is typically supplied during first real layout by root site.
+		/// Publisher is typically supplied during first real layout by root site.
 		/// </summary>
-		internal Mediator Mediator { get; set; }
+		internal IPublisher Publisher { get; set; }
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -245,9 +243,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// See if we can handle it (via our own LinkListener) without starting a process.
 				var args = new LocalLinkArgs() {Link = url};
-				if (Mediator != null)
+				if (Publisher != null)
 				{
-					Mediator.SendMessage("HandleLocalHotlink", args);
+					Publisher.Publish("HandleLocalHotlink", args);
 					if (args.LinkHandledLocally)
 						return;
 				}

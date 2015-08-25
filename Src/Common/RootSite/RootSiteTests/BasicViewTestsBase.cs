@@ -34,6 +34,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected int m_flidContainingTexts;
 		/// <summary>Fragment for view constructor</summary>
 		protected int m_frag = 1;
+		/// <summary />
+		protected IPropertyTable m_propertyTable;
+		/// <summary />
+		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -60,12 +66,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+
 			//if (m_basicView != null)
 			//	m_basicView.Dispose();
 			m_basicView = CreateDummyBasicView();
 			m_basicView.Cache = Cache;
 			m_basicView.Visible = false;
 			m_basicView.StyleSheet = styleSheet;
+			m_basicView.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -83,8 +93,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.TestTearDown();
 
 			if (m_basicView != null)
+			{
 				m_basicView.Dispose();
+			}
 			m_basicView = null;
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+			}
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

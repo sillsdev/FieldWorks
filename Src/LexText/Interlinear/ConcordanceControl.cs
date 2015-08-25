@@ -21,7 +21,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -44,22 +43,27 @@ namespace SIL.FieldWorks.IText
 			m_tbSearchText.SuppressEnter = true;
 		}
 
-		#region IxCoreColleague Members
+		#region Overrides of ConcordanceControlBase
 
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
-			base.Init(mediator, propertyTable, configurationParameters);
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
+			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 			m_tbSearchText.Text = String.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;
 			FillLineComboList();
 
 			m_fwtbItem.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
 			m_fwtbItem.Text = String.Empty;
 			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
@@ -94,6 +98,10 @@ namespace SIL.FieldWorks.IText
 			LoadSettings();
 		}
 
+		#endregion
+
+		#region IxCoreColleague Members
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -114,8 +122,6 @@ namespace SIL.FieldWorks.IText
 				// that affect the NeedToReloadVirtualProperty.
 			}
 			m_clerk = null;
-			m_mediator = null;
-			m_propertyTable = null;
 			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
@@ -123,7 +129,7 @@ namespace SIL.FieldWorks.IText
 
 		private void LoadSettings()
 		{
-			string sLine = m_propertyTable.GetValue("ConcordanceLine", SettingsGroup.LocalSettings, "kBaseline");
+			string sLine = PropertyTable.GetValue("ConcordanceLine", SettingsGroup.LocalSettings, "kBaseline");
 			ConcordanceLines line;
 			try
 			{
@@ -135,7 +141,7 @@ namespace SIL.FieldWorks.IText
 			}
 			SetConcordanceLine(line);
 
-			string sWs = m_propertyTable.GetValue<string>("ConcordanceWs", SettingsGroup.LocalSettings);
+			string sWs = PropertyTable.GetValue<string>("ConcordanceWs", SettingsGroup.LocalSettings);
 			int ws = 0;
 			if (sWs != null)
 			{
@@ -146,17 +152,17 @@ namespace SIL.FieldWorks.IText
 			ws = CurrentSelectedWs();
 			m_tbSearchText.WritingSystemCode = ws;
 
-			string sText = m_propertyTable.GetValue<string>("ConcordanceText", SettingsGroup.LocalSettings);
+			string sText = PropertyTable.GetValue<string>("ConcordanceText", SettingsGroup.LocalSettings);
 			if (sText != null)
 				m_tbSearchText.Text = sText;
 
-			bool fMatchCase = m_propertyTable.GetValue("ConcordanceMatchCase", SettingsGroup.LocalSettings, m_chkMatchCase.Checked);
+			bool fMatchCase = PropertyTable.GetValue("ConcordanceMatchCase", SettingsGroup.LocalSettings, m_chkMatchCase.Checked);
 			m_chkMatchCase.Checked = fMatchCase;
 
-			bool fMatchDiacritics = m_propertyTable.GetValue("ConcordanceMatchDiacritics", SettingsGroup.LocalSettings, m_chkMatchDiacritics.Checked);
+			bool fMatchDiacritics = PropertyTable.GetValue("ConcordanceMatchDiacritics", SettingsGroup.LocalSettings, m_chkMatchDiacritics.Checked);
 			m_chkMatchDiacritics.Checked = fMatchDiacritics;
 
-			string sConcordanceOption = m_propertyTable.GetValue<string>("ConcordanceOption", SettingsGroup.LocalSettings);
+			string sConcordanceOption = PropertyTable.GetValue<string>("ConcordanceOption", SettingsGroup.LocalSettings);
 			SetConcordanceOption(sConcordanceOption);
 		}
 
@@ -234,7 +240,7 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region IXCoreUserControl Members
+		#region IMainUserControl Members
 
 		public override string AccName
 		{
@@ -248,7 +254,7 @@ namespace SIL.FieldWorks.IText
 		#endregion
 
 
-		#region IxCoreContentControl Members
+		#region IMainContentControl Members
 
 		/// <summary>
 		/// This is called when the main window is closing.
@@ -277,26 +283,25 @@ namespace SIL.FieldWorks.IText
 		private void SaveSettings()
 		{
 			// Save our settings for later.
-			m_propertyTable.SetProperty("ConcordanceLine",
+			PropertyTable.SetProperty("ConcordanceLine",
 				((ConcordLine) m_cbLine.SelectedItem).Line.ToString(),
 				SettingsGroup.LocalSettings, true, false);
 
-			m_propertyTable.SetProperty("ConcordanceWs",
+			PropertyTable.SetProperty("ConcordanceWs",
 				((IWritingSystem) m_cbWritingSystem.SelectedItem).Id,
 				SettingsGroup.LocalSettings, true, false);
 
-			m_propertyTable.SetProperty("ConcordanceText",
+			PropertyTable.SetProperty("ConcordanceText",
 				m_tbSearchText.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 
-			m_propertyTable.SetProperty("ConcordanceMatchCase",
+			PropertyTable.SetProperty("ConcordanceMatchCase",
 				m_chkMatchCase.Checked, SettingsGroup.LocalSettings, true, false);
 
-			m_propertyTable.SetProperty("ConcordanceMatchDiacritics",
+			PropertyTable.SetProperty("ConcordanceMatchDiacritics",
 				m_chkMatchDiacritics.Checked, SettingsGroup.LocalSettings, true, false);
 
-			string sConcordanceOption = GetConcordanceOption();
-			m_propertyTable.SetProperty("ConcordanceOption",
-				sConcordanceOption, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("ConcordanceOption",
+				GetConcordanceOption(), SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
@@ -329,8 +334,8 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent) :
-				base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
+			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
+				base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
 			{
 				Sorted = true;
 			}
@@ -508,9 +513,9 @@ namespace SIL.FieldWorks.IText
 											InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
 											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 											false,
-											m_mediator,
-											m_propertyTable,
-											m_propertyTable.GetValue<Form>("window")) { Sorted = false };
+											PropertyTable,
+											Publisher,
+											PropertyTable.GetValue<Form>("window")) { Sorted = false };
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
@@ -518,9 +523,9 @@ namespace SIL.FieldWorks.IText
 											m_cache.LanguageProject.PartsOfSpeechOA,
 											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 											false,
-											m_mediator,
-											m_propertyTable,
-											m_propertyTable.GetValue<Form>("window"));
+											PropertyTable,
+											Publisher,
+											PropertyTable.GetValue<Form>("window"));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;
@@ -1562,10 +1567,10 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
-			string areaName = m_propertyTable.GetValue<string>("areaChoice");
-			string concordOn = m_propertyTable.GetValue<string>("ConcordOn");
-			m_propertyTable.RemoveProperty("ConcordOn");
+			string toolName = PropertyTable.GetValue<string>("currentContentControl");
+			string areaName = PropertyTable.GetValue<string>("areaChoice");
+			string concordOn = PropertyTable.GetValue<string>("ConcordOn");
+			PropertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
 			if (areaName != "textsWords" || toolName != "concordance")
 				return false;
@@ -1679,11 +1684,22 @@ namespace SIL.FieldWorks.IText
 	{
 		internal ConcordanceControlBase OwningControl { get; set; }
 
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		#region Overrides of RecordList
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(cache, mediator, propertyTable, recordListNode);
-			m_owningObject = cache.LangProject;
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			m_owningObject = m_cache.LangProject;
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Override to force recomputing the list. This is tricky because LoadMatches calls a Clerk routine which

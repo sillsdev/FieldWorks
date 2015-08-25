@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml;
@@ -28,7 +27,7 @@ namespace SIL.FieldWorks.Discourse
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IxCoreColleague, IStyleSheet
+	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IFlexComponent, IStyleSheet
 	{
 
 		#region Member Variables
@@ -83,6 +82,54 @@ namespace SIL.FieldWorks.Discourse
 
 			BuildUIComponents();
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			var lineChoices = GetLineChoices();
+			m_body.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_body.LineChoices = lineChoices;
+			m_ribbon.LineChoices = lineChoices;
+		}
+
+		#endregion
 
 		private void BuildUIComponents()
 		{
@@ -182,6 +229,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool m_fInColWidthChanged = false;
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable the command and make visible when relevant
 		/// </summary>
@@ -227,6 +275,7 @@ namespace SIL.FieldWorks.Discourse
 			return true;
 			//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		/// <summary>
 		/// Implements repeat move left.
@@ -398,7 +447,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
+			if (m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
 			{
 				SetDefaultColumnWidths();
 				SetHeaderColAndButtonWidths();
@@ -667,7 +716,7 @@ namespace SIL.FieldWorks.Discourse
 			if (m_chart.RowsOS.Count <= 0)
 			{
 				// Reset bookmark to prevent LT-12666
-				if (m_bookmark != null && m_mediator != null)
+				if (m_bookmark != null)
 					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner);
 				return;
 			}
@@ -894,7 +943,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool HasPersistantColWidths
 		{
-			get { return m_propertyTable.GetValue<string>(ColWidthId()) != null; }
+			get { return PropertyTable.GetValue<string>(ColWidthId()) != null; }
 		}
 
 		/// <summary>
@@ -903,9 +952,9 @@ namespace SIL.FieldWorks.Discourse
 		/// <returns>true if it found a valid set of widths.</returns>
 		bool RestoreColumnWidths()
 		{
-			if (m_mediator == null)
+			if (PropertyTable == null)
 				return false;
-			string savedCols = m_propertyTable.GetValue<string>(ColWidthId());
+			string savedCols = PropertyTable.GetValue<string>(ColWidthId());
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
@@ -951,7 +1000,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 			colList.Append("</root>");
 			var cwId = ColWidthId();
-			m_propertyTable.SetProperty(cwId, colList.ToString(), true, true);
+			PropertyTable.SetProperty(cwId, colList.ToString(), true, true);
 		}
 
 		private string ColWidthId()
@@ -1099,6 +1148,7 @@ namespace SIL.FieldWorks.Discourse
 			// Enhance: decide which one should have focus.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		///  If this control is a colleague, export Discourse should be available.
 		/// </summary>
@@ -1112,6 +1162,7 @@ namespace SIL.FieldWorks.Discourse
 			display.Visible = true;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Implement export of discourse material.
@@ -1123,53 +1174,13 @@ namespace SIL.FieldWorks.Discourse
 			// guards against LT-8309, though I could not reproduce all cases.
 			if (m_chart == null || m_body == null || m_logic == null)
 				return false;
-			using (var dlg = new DiscourseExportDialog(m_mediator, m_propertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
+				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				dlg.ShowDialog(this);
 			}
 
-			return true;
-			// we handled this
-		}
-
-		#region IxCoreColleague Members
-
-		/// <summary>
-		/// Get things that would like to receive commands. The main chart would like to receive
-		/// Print and Edit commands.
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			return new IxCoreColleague[] { m_body, this };
-		}
-
-		/// <summary>
-		/// Basic initialization.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			if (m_propertyTable != null)
-				m_logic.Init(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-
-			m_configurationParameters = configurationParameters;
-			InterlinLineChoices lineChoices = GetLineChoices();
-			m_body.Init(mediator, propertyTable, m_configurationParameters);
-			m_body.LineChoices = lineChoices;
-			m_ribbon.LineChoices = lineChoices;
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
+			return true; // we handled this
 		}
 
 
@@ -1207,16 +1218,13 @@ namespace SIL.FieldWorks.Discourse
 			get { return "InterlinConfig_Doc"; }
 		}
 
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
-
 		private InterlinLineChoices GetLineChoices()
 		{
 			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
 			string persist = null;
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
-				persist = m_propertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
+				persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
@@ -1249,9 +1257,6 @@ namespace SIL.FieldWorks.Discourse
 			// Last resort.
 			dest.Add(flid);
 		}
-
-		#endregion
-
 	} // End Constituent Chart class
 
 	/// <summary>

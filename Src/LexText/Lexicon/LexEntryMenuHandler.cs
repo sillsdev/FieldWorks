@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 using System.Windows.Forms;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to display this tree insert Menu Item
 		/// </summary>
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null || slice.IsDisposed
-				|| (m_propertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
+				|| (PropertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				// (If the slice is disposed, we're in a weird state, possibly trying to update the toolbar during OnIdle though we haven't
@@ -110,7 +111,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null
-				|| (m_propertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
+				|| (PropertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				display.Visible = false;
@@ -123,13 +124,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			if (!(slice.Object is ILexEntry) && !(slice.ContainingDataTree.Root is ILexEntry))
 				return false;
-			FDO.ILexEntry entry = slice.Object as ILexEntry;
+			ILexEntry entry = slice.Object as ILexEntry;
 			if (entry == null)
 				entry = slice.ContainingDataTree.Root as ILexEntry;
 			display.Visible = entry != null;
 			display.Enabled = entry != null;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// determine if this is the correct place [it's the only one that handles the message, and
@@ -142,23 +144,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				string desiredArea = "lexicon";
 
 				// see if it's the right area
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				if (areaChoice != null && areaChoice == desiredArea)
 				{
 					// now see if it's one of the right tools
 					string[] allowedTools = {"simpleLexiconEdit", "lexiconTestEdit",
 							"lexiconEdit", "lexiconEdit", "lexiconFullEdit"};
-					string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
-					foreach (string tool in allowedTools)
-					{
-						if (toolChoice != null && toolChoice == tool)
-							return true;
-					}
+					var toolChoice = PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
+					return allowedTools.Any(tool => toolChoice != null && toolChoice == tool);
 				}
 				return false; //we are not in a valid area
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -233,6 +232,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			return OnDisplayDataTreeDelete(commandObject, ref display); //we handled this, no need to ask anyone else.
 		}
+#endif
 
 
 		/// <summary>
@@ -257,6 +257,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			parent = slice.Parent;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -340,6 +341,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			return true; //we've handled this
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
@@ -379,6 +381,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // we've handled this
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayPictureProperties(object commandObject, ref UIItemDisplayProperties display)
 		{
 			// It is always possible to access the properties of a picture if we're on a picture slice, which is
@@ -417,6 +420,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			display.Enabled = true;
 			return true;
 		}
+#endif
 
 		public virtual bool OnSwapLexemeWithAllomorph(object cmd)
 		{
@@ -424,15 +428,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FdoCache cache = m_dataEntryForm.Cache;
 			if (entry != null)
 			{
-				Form mainWindow = m_propertyTable.GetValue<Form>("window");
+				Form mainWindow = PropertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
 					using (SwapLexemeWithAllomorphDlg dlg = new SwapLexemeWithAllomorphDlg())
 					{
-						dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, entry);
+						dlg.SetDlgInfo(cache, PropertyTable, entry);
 						if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 						{
+#if RANDYTODO
 							SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);
+#endif
 						}
 					}
 				}
@@ -440,6 +446,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplaySwapLexemeWithAllomorph(object commandObject, ref UIItemDisplayProperties display)
 		{
 			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
@@ -469,7 +476,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (CheckForFormDataLoss(entry.LexemeFormOA, toClsid))
 				{
-					var mainWindow = m_propertyTable.GetValue<Form>("window");
+					var mainWindow = PropertyTable.GetValue<Form>("window");
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{
@@ -513,7 +520,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (CheckForFormDataLoss(allomorph, toClsid))
 				{
-					var mainWindow = m_propertyTable.GetValue<Form>("window");
+					var mainWindow = PropertyTable.GetValue<Form>("window");
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{
@@ -529,6 +536,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			return true;
 		}
+#endif
 
 		IMoForm CreateNewForm(ILexEntry parent, int clsid)
 		{

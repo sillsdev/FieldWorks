@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -59,17 +58,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo.SelectedIndexChanged += SelectionChanged;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Inits the specified mediator.
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters">The configuration parameters.</param>
-		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(mediator, propertyTable, configurationParameters);
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			// Load the special strings from the string table if possible.  If not, use the
 			// default (English) values.
@@ -123,7 +120,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_combo = null;
-			m_mediator = null;
 			m_persistProvider = null;
 
 			base.Dispose(disposing);
@@ -208,8 +204,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (Control != null)
 			{
 				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{m_combo.Controls[0], caption, HelpId}, false);
+				Publisher.Publish("RegisterHelpTargetWithId", new object[]{m_combo.Controls[0], caption, HelpId});
 				//balloon was making it hard to actually click this
 				//Mediator.SendMessage("RegisterHelpTargetWithId",
 				//	new object[]{launcher.Controls[1], caption, HelpId, "Button"}, false);

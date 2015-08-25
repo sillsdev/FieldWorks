@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -61,12 +60,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
-			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, displayWs);
 		}
 		#endregion // Construction, Initialization, and Disposition
 
@@ -83,17 +82,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					nullLabel = null;
 			}
 			var c = new SimpleListChooser(m_cache, m_persistProvider,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, Target,
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, Target,
 				m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
 			return c;
-		}
-
-		/// <summary>
-		/// Get the mediator from the view.
-		/// </summary>
-		protected override Mediator Mediator
-		{
-			get { return m_atomicRefView.Mediator; }
 		}
 
 		public override void AddItem(ICmObject obj)

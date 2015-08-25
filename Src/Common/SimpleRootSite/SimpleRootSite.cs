@@ -13,10 +13,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation.Provider;
-using System.Xml;
 using Accessibility;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
@@ -24,7 +24,6 @@ using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -161,7 +160,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for hosting a view in an application.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
+	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent,
 		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter, IFWDisposable
 	{
 		#region Events
@@ -373,16 +372,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>The style sheet</summary>
 		protected IVwStylesheet m_styleSheet;
-
-		/// <summary>
-		/// The mediator provided by XCoreColleague.Init. Not (currently) used by the root site,
-		/// but saved and made accessible for clients.
-		/// </summary>
-		protected Mediator m_mediator;
-		/// <summary>
-		/// The proerty Table provided by XCoreColleague.Init.
-		/// </summary>
-		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Supports the LayoutSizeChanged event by maintaining a list of who wants it.
 		/// </summary>
@@ -434,6 +423,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private bool m_fDisposed;
 
 		private OrientationManager m_orientationManager;
+		private ISubscriber m_subscriber;
 
 		/// <summary/>
 		protected bool IsVertical
@@ -517,6 +507,15 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				if (Subscriber != null)
+				{
+					Subscriber.Unsubscribe("AboutToFollowLink", AboutToFollowLink);
+					Subscriber.Unsubscribe("DisplayWritingSystemHvo", DisplayWritingSystemHvo);
+					Subscriber.Unsubscribe("WritingSystemHvo", WritingSystemHvo_Changed);
+					Subscriber.Unsubscribe("BestStyleName", BestStyleName_Changed);
+					Subscriber.Unsubscribe("DisplayBestStyleName", DisplayBestStyleName);
+				}
+
 				// Do this here, before disposing m_messageSequencer,
 				// as we still get messages during dispose.
 				// Once the the base class has shut down the window handle,
@@ -580,9 +579,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_graphicsManager = null;
 			m_editingHelper = null;
 			m_Timer = null;
-			m_mediator = null;
 			m_wsf = null;
 			m_messageSequencer = null;
+
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			// Don't do it here.
 			//base.Dispose( disposing );
@@ -722,32 +724,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				CheckDisposed();
 				m_nHorizMargin = value;
 			}
-		}
-
-		/// <summary>
-		/// Retrieve the mediator, typically obtained from xCoreColleague.Init, though sometimes
-		/// it may be set directly.
-		/// </summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-			set
-			{
-				CheckDisposed();
-				m_mediator = value;
-			}
-		}
-
-		/// <summary>
-		/// Get the IPropertyTable.
-		/// </summary>
-		internal IPropertyTable PropTable
-		{
-			get { return m_propertyTable; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1025,14 +1001,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// message, in which case we are about to switch tools.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool IsFollowLinkMsgPending
-		{
-			get
-			{
-				return (m_mediator != null) && m_mediator.IsMessageInPendingQueue("FollowLink");
-				// NOTE: if m_mediator == null, the message could still have been posted.
-			}
-		}
+		private bool IsFollowLinkMsgPending { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2111,127 +2080,49 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
-		#region Implementation of IxCoreColleague
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Allows xCore-specific initialization. We don't need any.
-		/// </summary>
-		/// <param name="mediator">The mediator</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters">Not used</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-			// Save the mediator in case a client or subclass wants it.
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets objects known to this site that can handle xCore command messages.
-		/// For rootsite, the only such object it knows about is itself.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-			return new IxCoreColleague[] { this };
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Receives the xcore broadcast message "PropertyChanged"
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-			switch (name)
-			{
-				case "WritingSystemHvo":
-					EditingHelper.WritingSystemHvoChanged();
-					break;
-
-				case "BestStyleName":
-					EditingHelper.BestStyleNameChanged();
-					break;
-
-				default:
-					break;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called (by xcore) to control display params of the writing system menu, e.g. whether
-		/// it should be enabled
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayWritingSystemHvo(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-			if (!Focused)
-				return false;
-			display.Enabled = IsSelectionFormattable;
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called (by xcore) to control display params of the Styles menu, e.g. whether
+		/// Controls display of the Styles menu, e.g. whether
 		/// it should be enabled
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayBestStyleName(object commandObject,
-			ref UIItemDisplayProperties display)
+		protected virtual void DisplayWritingSystemHvo(object newValue)
 		{
-			CheckDisposed();
 			if (!Focused)
-				return false;
-			display.Enabled = CanApplyStyle;
-			display.Text = BestSelectionStyle;
-			return true;		// we handled this, no need to ask anyone else.
+				return;
+			var ctrl = (Control)newValue;
+			ctrl.Enabled = IsSelectionFormattable;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when XCore wants to display something that relies on the list with the id "CombinedStylesList"
+		/// Controls display of the Styles menu, e.g. whether
+		/// it should be enabled
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool OnDisplayCombinedStylesList(object parameter, ref UIListDisplayProperties display)
+		protected virtual void DisplayBestStyleName(object newValue)
 		{
-			CheckDisposed();
+			if (!Focused)
+				return;
+			var ctrl = (Control)newValue;
+			ctrl.Enabled = CanApplyStyle;
+			ctrl.Text = BestSelectionStyle;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Display something that relies on the list with the id "CombinedStylesList"
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void DisplayCombinedStylesList(object newValue)
+		{
 			if (!Focused || m_rootb == null)
-				return false;
+				return;
 			IVwStylesheet stylesheet = m_rootb.Stylesheet;
 			if (stylesheet == null)
-				return false;
-			FillInStylesComboList(display, stylesheet);
-			return true;
+				return;
+			FillInStylesComboList((ComboBox)newValue, stylesheet);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2239,27 +2130,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Fill in the list of style names.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected virtual void FillInStylesComboList(UIListDisplayProperties display, IVwStylesheet stylesheet)
+		protected virtual void FillInStylesComboList(ComboBox comboBox, IVwStylesheet stylesheet)
 		{
 		}
-		#endregion
 
 		#region Print-related methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle Print command
-		/// </summary>
-		/// <param name="args">ignored</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnFilePrint(object args)
-		{
-			CheckDisposed();
-			return OnPrint(args);
-		}
 
 		/// <summary>
-		/// This is equivalent. These two names accommodate two conventions for naming
-		/// commands...xCore labels commands just with what they do, TE includes the menu name.
+		/// Print stuff.
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
@@ -3990,7 +3868,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Override to provide default handling of Context manu key.
+		/// Override to provide default handling of Context menu key.
 		/// </summary>
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
@@ -5489,7 +5367,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private void SetupVc()
 		{
-			if (m_mediator == null)
+			if (Publisher == null)
 				return;
 			int hvo, frag;
 			IVwViewConstructor vc;
@@ -5498,7 +5376,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (vc is VwBaseVc)
 			{
 				// This really only needs to be done once but I can't find another reliable way to do it.
-				((VwBaseVc) vc).Mediator = m_mediator;
+				((VwBaseVc) vc).Publisher = Publisher;
 			}
 		}
 
@@ -6206,12 +6084,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "parent is a reference")]
-		private XCore.IxWindow ContainingXWindow()
+		private Form ContainingWindow()
 		{
-			for (Control parent = this.Parent; parent != null; parent = parent.Parent)
+			for (var parent = Parent; parent != null; parent = parent.Parent)
 			{
-				if (parent is IxWindow)
-					return parent as IxWindow;
+#if RANDYTODO
+			// TODO: parent is really IFwMainWnd, but as of this writing, that interface
+			// TODO: isn't available in this assembly, so use Form until
+			// TODO: a better solution for IFwMainWnd is found and caller can use the inerface directly.
+#endif
+				if (parent is Form)
+				{
+					return parent as Form;
+				}
 			}
 			return null;
 		}
@@ -6227,9 +6112,26 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void BeginSequentialBlock()
 		{
 			CheckDisposed();
-			IxWindow mainWindow = ContainingXWindow();
+#if RANDYTODO
+			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
+			// TODO: isn't available in this assembly, so use Reflection until
+			// TODO: a better solution for IFwMainWnd is found.
+#endif
+			var mainWindow = ContainingWindow();
 			if (mainWindow != null)
+			{
+#if RANDYTODO
+				// TODO: Use this when the IFwMainWnd can be used here.
 				mainWindow.SuspendIdleProcessing();
+#else
+				// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
+				// TODO: isn't available in this assembly, so use Reflection until
+				// TODO: a better solution for IFwMainWnd is found.
+				var wndType = mainWindow.GetType();
+				var mi = wndType.GetMethod("SuspendIdleProcessing");
+				mi.Invoke(mainWindow, BindingFlags.InvokeMethod, null, null, null);
+#endif
+			}
 			Sequencer.BeginSequentialBlock();
 		}
 
@@ -6240,9 +6142,26 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 			Sequencer.EndSequentialBlock();
-			IxWindow mainWindow = ContainingXWindow();
+#if RANDYTODO
+			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
+			// TODO: isn't available in this assembly, so use Reflection until
+			// TODO: a better solution for IFwMainWnd is found.
+#endif
+			var mainWindow = ContainingWindow();
 			if (mainWindow != null)
+			{
+#if RANDYTODO
+				// TODO: Use this when the IFwMainWnd can be used here.
 				mainWindow.ResumeIdleProcessing();
+#else
+				// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
+				// TODO: isn't available in this assembly, so use Reflection until
+				// TODO: a better solution for IFwMainWnd is found.
+				var wndType = mainWindow.GetType();
+				var mi = wndType.GetMethod("ResumeIdleProcessing");
+				mi.Invoke(mainWindow, BindingFlags.InvokeMethod, null, null, null);
+#endif
+			}
 		}
 		#endregion
 
@@ -6288,6 +6207,73 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			Subscriber.Subscribe("AboutToFollowLink", AboutToFollowLink);
+
+			Subscriber.Subscribe("DisplayWritingSystemHvo", DisplayWritingSystemHvo);
+			Subscriber.Subscribe("WritingSystemHvo", WritingSystemHvo_Changed);
+
+			Subscriber.Subscribe("DisplayBestStyleName", DisplayBestStyleName);
+			Subscriber.Subscribe("BestStyleName", BestStyleName_Changed);
+
+			Subscriber.Subscribe("DisplayCombinedStylesList", DisplayCombinedStylesList);
+		}
+
+		#endregion
+
+
+		private void AboutToFollowLink(object newValue)
+		{
+			IsFollowLinkMsgPending = true;
+		}
+
+		private void WritingSystemHvo_Changed(object newValue)
+		{
+			EditingHelper.WritingSystemHvoChanged();
+		}
+
+		private void BestStyleName_Changed(object newValue)
+		{
+			EditingHelper.BestStyleNameChanged();
+		}
 	}
 	#endregion
 }

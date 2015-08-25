@@ -87,9 +87,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
 				searchEngine);
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
@@ -228,7 +228,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string form = m_tbForm.Text.Trim();
 				ITsString tssFormTrimmed = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_propertyTable, m_publisher);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					ILexEntry entry;

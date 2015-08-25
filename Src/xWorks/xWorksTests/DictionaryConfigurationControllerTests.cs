@@ -17,6 +17,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
 	[TestFixture]
 	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -1045,4 +1046,5 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion // Context
 	}
+#endif
 }

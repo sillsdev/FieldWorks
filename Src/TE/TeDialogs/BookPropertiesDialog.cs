@@ -17,7 +17,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

@@ -5,7 +5,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using PhonologicalFeatureChooserDlg = SIL.FieldWorks.LexText.Controls.PhonologicalFeatureChooserDlg;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -25,12 +24,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Initialize the launcher.
 		/// </summary>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
-			m_PhonologicalFeatureListDlgLauncherView.Init(m_propertyTable.GetValue<FdoCache>("cache"), obj as IFsFeatStruc);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<FdoCache>("cache"), obj as IFsFeatStruc);
 			if (Slice.Object.ClassID == PhPhonemeTags.kClassId)
 				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.Object as IPhPhoneme;
 		}
@@ -64,9 +63,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 
 				if (originalFs == null)
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, parentSlice.Object, owningFlid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, parentSlice.Object, owningFlid);
 				else
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs);
+					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, originalFs);
 
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
@@ -84,17 +83,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		protected override void OnClick(Object sender, EventArgs arguments)
+		protected override void OnClick(object sender, EventArgs arguments)
 		{
 			HandleChooser();
-		}
-
-		/// <summary>
-		/// Get the mediator.
-		/// </summary>
-		protected override XCore.Mediator Mediator
-		{
-			get { return m_mediator; }
 		}
 
 		/// <summary>
@@ -136,7 +127,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			this.m_PhonologicalFeatureListDlgLauncherView.Group = null;
 			this.m_PhonologicalFeatureListDlgLauncherView.IsTextBox = false;
 			this.m_PhonologicalFeatureListDlgLauncherView.Location = new System.Drawing.Point(0, 0);
-			this.m_PhonologicalFeatureListDlgLauncherView.Mediator = null;
 			this.m_PhonologicalFeatureListDlgLauncherView.Name = "m_PhonologicalFeatureListDlgLauncherView";
 			this.m_PhonologicalFeatureListDlgLauncherView.Phoneme = null;
 			this.m_PhonologicalFeatureListDlgLauncherView.ReadOnlyView = false;

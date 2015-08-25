@@ -49,7 +49,6 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
@@ -1694,9 +1693,9 @@ namespace SIL.FieldWorks
 							{
 								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 								var mainWindow = Form.ActiveForm;
-									if (mainWindow is IxWindow)
+								if (mainWindow is IFwMainWnd)
 								{
-										((IxWindow) mainWindow).Mediator.SendMessage("SFMImport", null);
+									((IFwMainWnd)mainWindow).Publisher.Publish("SFMImport", null);
 								}
 								else
 								{
@@ -2747,7 +2746,8 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
 				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
-					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher);
+					var configMigrator = new DictionaryConfigurationMigrator();
+					configMigrator.InitializeFlexComponent(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher, s_activeMainWnd.Subscriber);
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
 			}

@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -58,7 +57,7 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ComplexConcMorphNode node)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcMorphNode node)
 		{
 			m_cache = cache;
 			m_node = node;
@@ -96,8 +95,8 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.PartsOfSpeechOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									mediator,
 									propertyTable,
+									publisher,
 									propertyTable.GetValue<Form>("window"));
 
 			if (m_node.Category != null)

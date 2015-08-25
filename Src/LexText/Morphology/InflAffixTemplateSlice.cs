@@ -12,7 +12,6 @@
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -125,10 +124,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
 				// both vern and anal are LTR (unmarked case)
 			}
-			var ctrl = new InflAffixTemplateControl(m_propertyTable.GetValue<FdoCache>("cache"),
+			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<FdoCache>("cache"),
 				Object.Hvo, ConfigurationNode);
 			Control = ctrl;
 			m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode);
+#if RANDYTODO
 #if !Want
 			m_menuHandler.Init(Mediator, m_propertyTable, null);
 #else
@@ -136,6 +136,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 #endif
 			ctrl.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 			ctrl.Mediator = Mediator;
+#endif
 			ctrl.SetStringTableValues();
 			if (ctrl.RootBox == null)
 				ctrl.MakeRoot();

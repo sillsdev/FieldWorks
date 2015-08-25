@@ -1,8 +1,8 @@
-﻿using SIL.FieldWorks.Common.FwUtils;
+﻿using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
-using XCore;
 #if __MonoCS__
 using System;
 using System.Windows.Forms;
@@ -11,19 +11,18 @@ using Gecko;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-
 	[System.Runtime.InteropServices.ComVisible(true)]
 	public class WebPageInteractor
 	{
 		private readonly HtmlControl m_htmlControl;
-		private readonly Mediator m_mediator;
+		private readonly IPublisher m_publisher;
 		private readonly FdoCache m_cache;
 		private readonly FwTextBox m_tbWordForm;
 
-		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, FdoCache cache, FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, IPublisher publisher, FdoCache cache, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
-			m_mediator = mediator;
+			m_publisher = publisher;
 			m_cache = cache;
 			m_tbWordForm = tbWordForm;
 #if __MonoCS__
@@ -159,7 +158,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
 			if (cmo == null)
 				return; // do nothing
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs(sTool, cmo.Guid));
+			m_publisher.Publish("AboutToFollowLink", null);
+			m_publisher.Publish("FollowLink", new FwLinkArgs(sTool, cmo.Guid));
 		}
 
 		/// <summary>

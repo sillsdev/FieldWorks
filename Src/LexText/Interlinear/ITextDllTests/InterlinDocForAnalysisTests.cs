@@ -12,11 +12,11 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
 {
+#if RANDYTODO
 	/// <summary>
 	/// todo: Probably should move these into FocusBoxControllerTests.cs
 	/// </summary>
@@ -343,25 +343,23 @@ namespace SIL.FieldWorks.IText
 	{
 		internal TestableFocusBox()
 		{
-			m_mediator = new Mediator();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				if (m_mediator != null)
-					m_mediator.Dispose();
 			}
-			m_mediator = null;
 			base.Dispose(disposing);
 		}
 
 		internal override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			var sandbox = new MockSandbox();
-			sandbox.CurrentAnalysisTree.Analysis = selected.Analysis;
-			sandbox.NewAnalysisTree.Analysis = selected.Analysis;
+			var sandbox = new MockSandbox
+			{
+				CurrentAnalysisTree = {Analysis = selected.Analysis},
+				NewAnalysisTree = {Analysis = selected.Analysis}
+			};
 			return sandbox;
 		}
 
@@ -401,6 +399,7 @@ namespace SIL.FieldWorks.IText
 		}
 	}
 
+#if RANDYTODO
 	internal class MockUndoRedoText : ICommandUndoRedoText
 	{
 		internal MockUndoRedoText(string undo, string redo)
@@ -425,6 +424,7 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 	}
+#endif
 
 	class MockSandbox : UserControl, IAnalysisControlInternal
 	{
@@ -501,4 +501,5 @@ namespace SIL.FieldWorks.IText
 			get { throw new NotImplementedException(); }
 		}
 	}
+#endif
 }

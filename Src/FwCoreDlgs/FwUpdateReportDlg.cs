@@ -17,8 +17,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

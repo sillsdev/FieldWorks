@@ -12,7 +12,6 @@ using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
@@ -77,8 +76,8 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.ListView listViewMapping;
 		private System.Windows.Forms.Button btnModifyMapping;
 		private System.Windows.Forms.Button btnImport;
-		protected Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
+		protected IPublisher m_publisher;
 		private System.Windows.Forms.Button btn_Cancel;
 		private string m_sTempDir;
 		private string m_sRootDir;
@@ -179,15 +178,15 @@ namespace SIL.FieldWorks.IText
 		/// From IFwExtension
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!m_sRootDir.EndsWith("\\"))
 				m_sRootDir += "\\";
@@ -201,8 +200,10 @@ namespace SIL.FieldWorks.IText
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null) // FwApp.App could be null during tests
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				helpProvider = new HelpProvider
+				{
+					HelpNamespace = helpTopicProvider.HelpFile
+				};
 				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}

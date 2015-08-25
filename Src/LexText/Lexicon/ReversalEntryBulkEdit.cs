@@ -9,7 +9,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
 
@@ -20,22 +19,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class AllReversalEntriesRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(cache, mediator, propertyTable, recordListNode);
+			BaseInit(recordListNode);
 			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
 			//LT-14722 Crash when clicking Reversal Indexes
 			//Clerk is null when going to Reversal Indexes for the first time.
 			if (Clerk != null)
 			{
-				Guid riGuid = GetReversalIndexGuid(mediator, propertyTable);
+				Guid riGuid = GetReversalIndexGuid(PropertyTable, Publisher);
 				if (riGuid != Guid.Empty)
 				{
-					IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+					var cache = PropertyTable.GetValue<FdoCache>("cache");
+					var ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 					m_owningObject = ri;
 					m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
 				}
@@ -74,10 +74,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Get the current reversal index guid.  If there is none, create a new reversal index
 		/// since there must not be any.  This fixes LT-6653.
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <returns></returns>
-		internal static Guid GetReversalIndexGuid(Mediator mediator, IPropertyTable propertyTable)
+		internal static Guid GetReversalIndexGuid(IPropertyTable propertyTable, IPublisher publisher)
 		{
 			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				try
 				{
-					mediator.SendMessage("InsertReversalIndex_FORCE", null);
+					publisher.Publish("InsertReversalIndex_FORCE", null);
 					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 				}
 				catch
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override string PropertyTableId(string sorterOrFilter)
 		{
-			var reversalPub = m_propertyTable.GetValue<string>("ReversalIndexPublicationLayout");
+			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)
 				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get
 			{
 				ICmPossibilityList list = null;
-				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropTable, "ReversalIndexGuid");
+				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					try
@@ -170,8 +170,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return new List<int>(new int[] { ReversalIndexEntryTags.kflidPartOfSpeech,
-					CmPossibilityTags.kflidName});
+				return new List<int>(new[] { ReversalIndexEntryTags.kflidPartOfSpeech, CmPossibilityTags.kflidName});
 			}
 		}
 

@@ -56,8 +56,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
-				XCore.Mediator mediator)
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty)
 		{
 			CheckDisposed();
 			// We can reinitialize in some cases but should not reuse with a different cache.
@@ -67,7 +66,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_rootObj = rootObj;
 			m_rootFlid = rootFlid;
 			m_rootFieldName = rootFieldName;
-			Mediator = mediator;
 			if (m_rootb == null)
 				MakeRoot();
 			else
@@ -142,7 +140,7 @@ Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.
 #if TESTMS
 Debug.WriteLine("ui.HandleRightClick: and returning true.");
 #endif
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, CmObjectUi.MarkCtrlClickItem);
+					return ui.HandleRightClick(this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 #if TESTMS
 Debug.WriteLine("No ui: returning false");

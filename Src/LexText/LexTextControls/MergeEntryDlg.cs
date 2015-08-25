@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 
@@ -79,17 +78,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
-		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator, propertyTable);
+			SetDlgInfo(cache, propertyTable, null);
 
 			// Relocate remaining three buttons.
 			Point pt = m_btnHelp.Location;
@@ -189,10 +187,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index

@@ -9,11 +9,10 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-
+#if RANDYTODO
 	/// <summary>
 	/// </summary>
 	[TestFixture]
@@ -775,4 +774,5 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(morphBundle1.Hvo, wfiMorphBundle.Hvo);
 		}
 	}
+#endif
 }

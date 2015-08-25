@@ -16,7 +16,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -29,8 +28,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
 	{
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		private FdoCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
@@ -199,7 +198,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = null;
 			m_fs = null;
 			m_ctxt = null;
-			m_mediator = null;
 			m_cache = null;
 			m_bvList = null;
 			m_valuesCombo = null;
@@ -211,67 +209,68 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Init the dialog with an existing context.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="rule"></param>
 		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
 			IFsFeatStruc fs = ((IPhNCFeatures) ctxt.FeatureStructureRA).FeaturesOA;
-			SetDlgInfo(cache, mediator, propertyTable, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
+			SetDlgInfo(cache, propertyTable, publisher, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IPhRegularRule rule)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, rule, null);
+			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, rule, null);
 		}
 
 		/// <summary>
 		/// Init the dialog with an existing FS.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IFsFeatStruc fs)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IFsFeatStruc fs)
 		{
-			SetDlgInfo(cache, mediator, propertyTable, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
+			SetDlgInfo(cache, propertyTable, publisher, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
 
 		/// <summary>
 		/// Init the dialog with a PhPhoneme (or PhNCFeatures) and flid that does not yet contain a feature structure.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, propertyTable, cobj.Hvo, owningFlid, null, null, null);
+			SetDlgInfo(cache, propertyTable, publisher, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, null, null);
+			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			m_fs = fs;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = hvoOwner;
 			m_rule = rule;
 			m_ctxt = ctxt;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			if (m_propertyTable != null)
 			{
 				// Reset window location.
@@ -327,7 +326,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void HandleJump()
 		{
 			if (m_link != null)
-				m_mediator.PostMessage("FollowLink", m_link);
+			{
+				m_publisher.Publish("AboutToFollowLink", null);
+				m_publisher.Publish("FollowLink", m_link);
+			}
 		}
 
 		void m_bvList_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
@@ -479,7 +481,10 @@ namespace SIL.FieldWorks.LexText.Controls
 								 select s.Hvo;
 			int[] featureHvos = sortedFeatureHvos.ToArray();
 			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
-			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, m_mediator, m_propertyTable, null, m_sda);
+#if RANDYTODO
+			// TODO: call Init Flex Comp after creating BrowseViewer,
+#endif
+			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, null, m_sda);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			m_bvList.ScrollBar.ValueChanged += ScrollBar_ValueChanged;
 			m_bvList.Scroller.Scroll += ScrollBar_Scroll;

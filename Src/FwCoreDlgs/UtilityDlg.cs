@@ -11,7 +11,6 @@ using System.IO;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -20,10 +19,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// These utilities must implement the IUtility class and can set several labels in the dialog to explain the conditions where they
 	/// are needed and their behavior.
 	/// </summary>
-	public class UtilityDlg : Form, IFWDisposable
+	public class UtilityDlg : Form, IFlexComponent, IFWDisposable
 	{
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		private string m_whenDescription;
 		private string m_whatDescription;
 		private string m_redoDescription;
@@ -60,8 +57,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_helpTopicProvider = helpTopicProvider;
 
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
@@ -73,29 +72,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_btnRunUtils.Text = FwCoreDlgs.ksRunUtilities;
 		}
 
-		/// <summary>
-		/// Get the Mediator.
-		/// </summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-		}
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
-		/// Get the property table.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		public IPropertyTable PropTable
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			get
-			{
-				CheckDisposed();
-				return m_propertyTable;
-			}
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Get the Utilites list box.
@@ -188,26 +205,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					components.Dispose();
 				}
 			}
+
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
 			base.Dispose( disposing );
 		}
 
 		/// <summary>
 		/// Setup the dlg with needed information.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void SetDlgInfo(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		public void SetDlgInfo(XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			Debug.Assert(mediator != null);
 			Debug.Assert(configurationParameters != null);
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
 			this.Text = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities");
 			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,

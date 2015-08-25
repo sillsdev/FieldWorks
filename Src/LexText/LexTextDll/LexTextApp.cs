@@ -16,13 +16,13 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.MessageBoxEx;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -46,7 +46,6 @@ Old Mediator methods/commands
 		 * Services this global(?) command CmdConfigHomographs
 	OnRefresh (not used by Mediator now)
 		 */
-		protected XMessageBoxExManager m_messageBoxExManager;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
@@ -98,24 +97,23 @@ Old Mediator methods/commands
 		{
 			if (progressDlg != null)
 				progressDlg.Message = LexTextStrings.ksInitializingMessageDialogs_;
-			m_messageBoxExManager = XMessageBoxExManager.CreateXMessageBoxExManager(ApplicationName);
-			m_messageBoxExManager.DefineMessageBox("TextChartNewFeature",
+			MessageBoxExManager.DefineMessageBox("TextChartNewFeature",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksChartTemplateWarning, true, "info");
-			m_messageBoxExManager.DefineMessageBox("CategorizedEntry-Intro",
+			MessageBoxExManager.DefineMessageBox("CategorizedEntry-Intro",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksUsedForSemanticBasedEntry, true, "info");
-			m_messageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog",
+			MessageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksCreatingCustomGramCategory, true, "info");
-			m_messageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType",
+			MessageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksCreatingCustomLexRefType, true, "info");
-			m_messageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro",
+			MessageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksShowingSemanticClassification, true, "info");
 
-			m_messageBoxExManager.ReadSettingsFile();
+			MessageBoxExManager.ReadSettingsFile();
 			if (progressDlg != null)
 				progressDlg.Message = string.Empty;
 		}
@@ -173,12 +171,9 @@ Old Mediator methods/commands
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_messageBoxExManager != null)
-					m_messageBoxExManager.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_messageBoxExManager = null;
 			base.Dispose(disposing);
 		}
 
@@ -274,23 +269,26 @@ Old Mediator methods/commands
 			get { return FwSubKey.LexText; }
 		}
 
+#if RANDYTODO
 		public bool OnDisplaySFMImport(object parameters, ref UIItemDisplayProperties display)
 		{
 			return true;
 		}
+#endif
 
 		public bool OnSFMImport(object parameters)
 		{
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = (FwXWindow)formActive;
+			IFwMainWnd wndActive = (IFwMainWnd)formActive;
 			using (var importWizard = new LexImportWizard())
 			{
-				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator, wndActive.PropTable);
+				((IFwExtension)importWizard).Init(Cache, wndActive.PropertyTable, wndActive.Publisher);
 				importWizard.ShowDialog(formActive);
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
@@ -304,7 +302,7 @@ Old Mediator methods/commands
 			if (command == null)
 				return true;
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
+			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive == null)
 				return true;
 			Mediator mediator = wndActive.Mediator;
@@ -340,6 +338,7 @@ Old Mediator methods/commands
 			display.Visible = fEnabled;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Used to launch various import dialogs, but could do other things
@@ -350,29 +349,35 @@ Old Mediator methods/commands
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			XCore.Command command = (XCore.Command)commandObject;
 			System.Xml.XmlNode first = command.Parameters[0];
 			System.Xml.XmlNode classInfo = first.SelectSingleNode("dynamicloaderinfo");
+#endif
 
 			Form formActive = ActiveForm;
 
-			FwXWindow wndActive = formActive as FwXWindow;
+			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			IFwExtension dlg = null;
 			try
 			{
 				try
 				{
-					dlg = (IFwExtension) DynamicLoader.CreateObject(classInfo);
+#if RANDYTODO // TODO: Create it another way.
+					dlg = (IFwExtension)DynamicLoader.CreateObject(classInfo);
+#endif
 				}
 				catch (Exception error)
 				{
+#if RANDYTODO
 					string message = XmlUtils.GetOptionalAttributeValue(classInfo, "notFoundMessage", null);
 						// Make this localizable!
 					if (message != null)
 						throw new ApplicationException(message, error);
+#endif
 				}
 				var oldWsUser = Cache.WritingSystemFactory.UserWs;
-				dlg.Init(Cache, wndActive.Mediator, wndActive.PropTable);
+				dlg.Init(Cache, wndActive.PropertyTable, wndActive.Publisher);
 				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
 				if (dr == DialogResult.OK)
 				{
@@ -386,7 +391,7 @@ Old Mediator methods/commands
 							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)
 					{
 						// Make everything we've imported visible.
-						wndActive.Mediator.SendMessage("MasterRefresh", wndActive);
+						wndActive.Publisher.Publish("MasterRefresh", wndActive);
 					}
 				}
 			}
@@ -401,7 +406,7 @@ Old Mediator methods/commands
 		/// <summary>
 		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.
 		/// </summary>
-		internal void ReplaceMainWindow(FwXWindow wndActive)
+		internal void ReplaceMainWindow(IFwMainWnd wndActive)
 		{
 			wndActive.SaveSettings();
 			FwManager.OpenNewWindowForApp();
@@ -409,7 +414,7 @@ Old Mediator methods/commands
 			Application.Idle += CloseOldWindow;
 		}
 
-		private FwXWindow m_windowToCloseOnIdle;
+		private IFwMainWnd m_windowToCloseOnIdle;
 
 		void CloseOldWindow(object sender, EventArgs e)
 		{
@@ -425,17 +430,19 @@ Old Mediator methods/commands
 			var configDlg = commandObject as XmlDocConfigureDlg;
 
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
+			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive == null && configDlg != null)
-				wndActive = configDlg.Owner as FwXWindow;
+				wndActive = configDlg.Owner as IFwMainWnd;
 			if (wndActive != null)
 			{
 				var hc = wndActive.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 				using (var dlg = new ConfigureHomographDlg())
 				{
+#if RANDYTODO
 					dlg.SetupDialog(hc, wndActive.Cache, wndActive.ActiveStyleSheet, this, this);
+#endif
 					dlg.StartPosition = FormStartPosition.CenterScreen;
-					if (dlg.ShowDialog(wndActive) != DialogResult.OK)
+					if (dlg.ShowDialog((Form)wndActive) != DialogResult.OK)
 						return true;
 					dlg.GetResults(hc);
 					// If called from config dlg, it will do its own refresh when it closes.
@@ -453,7 +460,7 @@ Old Mediator methods/commands
 			CheckDisposed();
 
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
+			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive != null)
 			{
 				bool fRestore;
@@ -479,7 +486,7 @@ Old Mediator methods/commands
 		{
 			CheckDisposed();
 			Set<string> setDatabases = new Set<string>();
-			foreach (FwXWindow wnd in m_rgMainWindows)
+			foreach (IFwMainWnd wnd in m_rgMainWindows)
 			{
 				string sDatabase = wnd.Cache.ProjectId.Name;
 				if (setDatabases.Contains(sDatabase))
@@ -545,6 +552,7 @@ Old Mediator methods/commands
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -555,6 +563,7 @@ Old Mediator methods/commands
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
+#endif
 			return true;
 		}
 
@@ -567,6 +576,7 @@ Old Mediator methods/commands
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -577,6 +587,7 @@ Old Mediator methods/commands
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
+#endif
 			return true;
 		}
 
@@ -611,7 +622,7 @@ Old Mediator methods/commands
 				progressDlg.Message = String.Format(LexTextStrings.ksCreatingWindowForX, Cache.ProjectId.Name);
 			Form form = base.NewMainAppWnd(progressDlg, isNewCache, wndCopyFrom, fOpeningNewProject);
 
-			if (form is FwXWindow)
+			if (form is IFwMainWnd)
 				m_activeMainWindow = form;
 
 			if (isNewCache && form != null)

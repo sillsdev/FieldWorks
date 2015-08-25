@@ -12,16 +12,12 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
-using Microsoft.Win32;
 using NUnit.Framework;
-using NMock;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.PublishingSolution;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace FlexDePluginTests
 {
@@ -32,8 +28,7 @@ namespace FlexDePluginTests
 	[TestFixture]
 	public class FlexDePluginTest : FlexDePlugin
 	{
-		/// <summary>Mock help provider</summary>
-		private IMock helpProvider;
+		private IHelpTopicProvider m_realFakeHelpProvider;
 
 		/// <summary>Location of test files</summary>
 		protected string _TestPath;
@@ -72,8 +67,8 @@ namespace FlexDePluginTests
 		public void DialogTest()
 		{
 			FlexDePlugin target = new FlexDePlugin();
-			helpProvider = new DynamicMock(typeof (IHelpTopicProvider));
-			using (UtilityDlg expected = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			m_realFakeHelpProvider = new DummyHelpProvider();
+			using (UtilityDlg expected = new UtilityDlg(m_realFakeHelpProvider))
 				target.Dialog = expected;
 		}
 
@@ -129,8 +124,8 @@ namespace FlexDePluginTests
 		public void OnSelectionTest()
 		{
 			FlexDePlugin target = new FlexDePlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			m_realFakeHelpProvider = new DummyHelpProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(m_realFakeHelpProvider))
 			{
 				target.Dialog = exportDialog;
 				target.OnSelection();
@@ -145,8 +140,8 @@ namespace FlexDePluginTests
 		public void LoadUtilitiesTest()
 		{
 			FlexDePlugin target = new FlexDePlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			m_realFakeHelpProvider = new DummyHelpProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(m_realFakeHelpProvider))
 			{
 				target.Dialog = exportDialog;
 				target.LoadUtilities();
@@ -162,8 +157,8 @@ namespace FlexDePluginTests
 		public void ExportToolTest()
 		{
 			FlexDePlugin target = new FlexDePlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			m_realFakeHelpProvider = new DummyHelpProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(m_realFakeHelpProvider))
 			{
 				target.Dialog = exportDialog;
 				string areaChoice = "lexicon";
@@ -241,6 +236,29 @@ namespace FlexDePluginTests
 		{
 			FlexDePlugin target = new FlexDePlugin();
 			// TODO: TODO: Implement code to verify target");
+		}
+
+		private class DummyHelpProvider : IHelpTopicProvider
+		{
+			#region Implementation of IHelpTopicProvider
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>Gets a URL identifying a Help topic.</summary>
+			/// <param name='ksPropName'>A constant identifier for the desired Help topic</param>
+			/// ------------------------------------------------------------------------------------
+			public string GetHelpString(string ksPropName)
+			{
+				return "Some help string";
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// The HTML Help file (.chm) for the app.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			public string HelpFile { get; private set; }
+
+			#endregion
 		}
 	}
 }

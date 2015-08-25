@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -19,7 +18,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private readonly Control m_control;
 		private readonly string m_displayNameProperty;
 		private readonly string m_displayWs;
-		private readonly Mediator m_mediator;
 
 		private readonly ComboListBox m_listBox;
 		private readonly StringSearcher<ICmPossibility> m_searcher;
@@ -31,11 +29,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public event EventHandler PossibilitySelected;
 
-		public PossibilityAutoComplete(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
+		public PossibilityAutoComplete(FdoCache cache, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
 			string displayNameProperty, string displayWs)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_control = control;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
@@ -155,7 +152,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public void Update(ITsString tss)
 		{
+#if RANDYTODO
 			m_mediator.IdleQueue.Add(IdleQueuePriority.Low, PerformUpdate, tss);
+#endif
 		}
 
 		private bool PerformUpdate(object param)

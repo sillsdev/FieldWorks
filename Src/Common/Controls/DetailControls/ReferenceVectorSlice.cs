@@ -17,7 +17,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -127,7 +126,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
+			vrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
@@ -147,6 +147,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			GetView().MoveItem(false);
 			return true;
 		}
+
+#if RANDYTODO
 		public virtual bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
 			bool visible;
@@ -154,6 +156,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Visible = visible;
 			return true;
 		}
+#endif
 
 		public bool OnMoveTargetUpInSequence(object args)
 		{
@@ -161,6 +164,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
 			bool visible;
@@ -168,6 +172,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Visible = visible;
 			return true;
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="GetView() returns a reference")]
@@ -177,6 +182,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="GetView() returns a reference")]
 		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
@@ -184,6 +190,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();
 			return true;
 		}
+#endif
 
 		private VectorReferenceView GetView()
 		{
@@ -273,14 +280,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)
 			{
-				if (Mediator != null) // paranoia and unit testing
+				if (Publisher != null)
 				{
 					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 					var vrl = (VectorReferenceLauncher)Control;
-					Mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[]{vrl.Controls[1], caption, HelpId}, false);
-					Mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[]{vrl.Controls[0], caption, HelpId, "Button"}, false);
+					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[1], caption, HelpId});
+					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[0], caption, HelpId, "Button"});
 				}
 			}
 		}

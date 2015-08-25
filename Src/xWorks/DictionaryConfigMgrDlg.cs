@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -32,7 +31,6 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IDictConfigPresenter m_presenter;
 		private string m_helpTopicId = "khtpDictConfigManager"; // use as default?
 		private readonly HelpProvider m_helpProvider;
-		private readonly Mediator m_mediator;
 		private readonly IPropertyTable m_propertyTable;
 		private readonly string m_objType;
 
@@ -41,11 +39,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:DictionaryConfigMgrDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DictionaryConfigMgrDlg(Mediator mediator, IPropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
+		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
 		{
 			InitializeComponent();
 
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_presenter = new DictionaryConfigManager(this, configViews, current);
 			m_objType = objType;

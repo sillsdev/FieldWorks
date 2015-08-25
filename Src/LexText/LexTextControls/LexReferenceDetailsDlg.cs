@@ -4,11 +4,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

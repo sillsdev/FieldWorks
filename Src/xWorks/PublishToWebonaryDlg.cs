@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -22,11 +21,6 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		private readonly PublishToWebonaryController m_controller;
-
-		/// <summary>
-		/// Needed to get the HelpTopicProvider and to save project specific settings
-		/// </summary>
-		protected Mediator Mediator { get; set; }
 
 		public PublishToWebonaryDlg()
 		{

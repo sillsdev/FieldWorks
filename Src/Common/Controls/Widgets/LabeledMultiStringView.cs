@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// <remarks>It must implement IxCoreColleague so that the inner view will be a message target when
 	/// the containing slice is. This allows things like appropriately enabling the writing system combo.</remarks>
-	public class LabeledMultiStringView : UserControl, IxCoreColleague
+	public class LabeledMultiStringView : UserControl, IFlexComponent
 	{
 		private InnerLabeledMultiStringView m_innerView;
 		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
@@ -156,8 +155,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				// Dispose managed resources here.
 				DisposeSoundControls();
 				m_innerView.Dispose();
-				m_innerView = null;
 			}
+
+			m_soundControls = null;
+			m_innerView = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 		}
 
 		/// <summary>
@@ -415,34 +419,47 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		#region Implementation of IPropertyTableProvider
+
 		/// <summary>
-		/// Required method for IXCoreColleague. As a colleague, it behaves exactly like its inner view.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			m_innerView.Init(mediator, propertyTable, configurationParameters);
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+			m_innerView.InitializeFlexComponent(propertyTable, publisher, subscriber);
 		}
 
-		/// <summary>
-		/// Required method for IXCoreColleague. Return the message targets for the inner view.
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			return m_innerView == null ? new IxCoreColleague[0] : m_innerView.GetMessageTargets();
-		}
-
-		/// <summary>
-		/// Required method for IXCoreColleague. Behaves exactly like its inner view.
-		/// </summary>
-		public bool ShouldNotCall { get { return m_innerView.ShouldNotCall; } }
-
-		/// <summary>
-		/// Required method for IXCoreColleague. Behaves exactly like its inner view.
-		/// </summary>
-		public int Priority { get { return m_innerView.Priority; } }
+		#endregion
 	}
 }

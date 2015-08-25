@@ -31,7 +31,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SILUBS.SharedScrUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

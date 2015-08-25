@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -124,6 +124,6 @@
 	<value>BrowseViewer</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>XCore.XCoreUserControl, xCore, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>XCore.MainUserControl, xCore, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

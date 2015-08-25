@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -126,29 +125,25 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			SetDlgInfo(obj, cache, mediator, propertyTable, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
+			SetDlgInfo(obj, cache, propertyTable, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, IPropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();
 
-			if (obj.Mediator == null)
+			if (obj.PropertyTable == null)
 			{
-				obj.Mediator = mediator;
-			}
-			if (obj.PropTable == null)
-			{
-				obj.PropTable = propertyTable;
+				obj.PropertyTable = propertyTable;
 			}
 			m_cache = cache;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);

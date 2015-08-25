@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
@@ -17,7 +18,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -67,6 +67,12 @@ namespace SIL.FieldWorks.Common.Controls
 			if (IsDisposed)
 				return;
 
+			if (disposing)
+			{
+				Subscriber.Unsubscribe("areaChoiceParameters", CleanupPendingEdits);
+				Subscriber.Unsubscribe("currentContentControlParameters", CleanupPendingEdits);
+			}
+
 			base.Dispose( disposing );
 
 			if( disposing )
@@ -86,16 +92,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvoRoot">The hvo root.</param>
 		/// <param name="fakeFlid">The fake flid.</param>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="bv">The bv.</param>
 		/// ------------------------------------------------------------------------------------
 		public override void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, BrowseViewer bv)
+			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
 			// Use the ones in fakeFlid, and any we create.
-			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
+			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, bv);
 		}
 
 		#endregion Construction, initialization, and disposal.
@@ -172,58 +177,23 @@ namespace SIL.FieldWorks.Common.Controls
 			return arg.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
+		#region Overrides of XmlBrowseViewBase
+
 		/// <summary>
-		/// This is invoked by the IPropertyTable (because XmlBrowseView is a mediator).
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propName"></param>
-		public override void OnPropertyChanged(string propName)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
-			/*
-			 * Starting up with Domains being startup tool.
-			 *	currentContentControlObject
-			 *	StatusPanelProgress
-			 *
-			 * Switching away from Domains to another tool in same area.
-			 *	currentContentControlParameters
-			 *
-			 * Switching to Domains, when another tool in same area was first to start
-			 *	ToolForAreaNamed_lexicon
-			 *	currentContentControlObject
-			 *
-			 * Switch to another area from domains
-			 *	areaChoiceParameters
-			 *	InitialArea
-			 *	currentContentControlParameters
-			 *
-			 * Switch to Domains from another area (other area was first to start)
-			 *	currentContentControlObject
-			 *
-			 * Switch to another domain
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
-			 *	-selected
-			 *	SemanticDomainList-selected
-			 *	ActiveClerkSelectedObject
-			 *	SelectedTreeBarNode
-			 */
-
-			// "currentContentControlObject" occurs in two incoming contexts,
-			// and one switching away context.
-			// We only need to handle the switching away context, but how to tell them apart?
-			// JohnT: don't handle switching to another domain by catching StatusPanelRecordNumber;
-			// too unreliable. Catch that by override of RootObjectHvo below.
-			if (propName == "areaChoiceParameters" // Switching to another area
-				|| propName == "currentContentControlParameters") // Switching to another tool in same area
-			{
-				CleanupPendingEdits();
-			}
-
-			base.OnPropertyChanged(propName);
+			Subscriber.Subscribe("areaChoiceParameters", CleanupPendingEdits);
+			Subscriber.Subscribe("currentContentControlParameters", CleanupPendingEdits);
 		}
+
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -276,6 +246,11 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion XCore message handlers
 
 		#region Other methods
+
+		private void CleanupPendingEdits(object newValue)
+		{
+			CleanupPendingEdits();
+		}
 
 		/// <summary>
 		/// Cleanup any pending edits.
@@ -641,6 +616,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.ScrollSelectionIntoView(m_rootb.Selection, VwScrollSelOpts.kssoDefault);
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Disables/enables the Edit/Undo menu item
@@ -659,6 +635,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return false; // we don't want to handle the command.
 		}
+#endif
 
 		/// <summary>
 		/// Return true if we have setup a new row that has data which has not yet been
@@ -923,7 +900,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void JumpToToolFor(ICmObject target)
 		{
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -991,6 +969,7 @@ namespace SIL.FieldWorks.Common.Controls
 		//		}
 
 
+#if RANDYTODO
 		/// <summary>
 		///	see if it makes sense to provide the "delete record" command now
 		/// </summary>
@@ -1053,6 +1032,7 @@ namespace SIL.FieldWorks.Common.Controls
 			realHolder.ToolTip = String.Format(realHolder.ToolTip, XMLViewsStrings.ksRow);
 			return true;
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

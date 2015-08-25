@@ -20,9 +20,9 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Data;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

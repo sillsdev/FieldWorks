@@ -7,10 +7,10 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
+#if RANDYTODO
 	/// <summary>
 	/// Very incomplete test of combo handlers...so far just for bugs we fixed.
 	/// </summary>
@@ -142,4 +142,5 @@ namespace SIL.FieldWorks.IText
 		public object SelectedItem { get; set; }
 		public IVwStylesheet StyleSheet { get; set; }
 	}
+#endif
 }

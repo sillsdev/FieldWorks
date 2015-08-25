@@ -8,8 +8,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -19,8 +17,9 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
@@ -33,8 +32,8 @@ namespace SIL.FieldWorks.IText
 		{
 			base.TestSetup();
 
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -45,16 +44,13 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			if (m_mediator != null)
-			{
-				m_mediator.Dispose();
-				m_mediator = null;
-			}
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.Dispose();
-				m_propertyTable = null;
 			}
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 			base.TestTearDown();
 		}
 
@@ -699,7 +695,8 @@ namespace SIL.FieldWorks.IText
 		{
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
-			var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, occurrence.Analysis.Hvo);
+			var sandbox = new SandboxBase(Cache, null, lineChoices, occurrence.Analysis.Hvo);
+			sandbox.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			sandbox.MakeRoot();
 			return sandbox;
 		}

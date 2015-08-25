@@ -8,7 +8,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -59,7 +58,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				{
 					DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);
@@ -69,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
 		{
 			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, null, cache.ServiceLocator);
-			cd.SetMediator(m_dlg.Mediator, m_dlg.PropTable); // This lets the ConcDecorator use the interesting list of texts.
+			cd.InitializeFlexComponent(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber);
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = entries.Length;

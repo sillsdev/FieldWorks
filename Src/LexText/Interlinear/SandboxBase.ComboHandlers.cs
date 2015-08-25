@@ -17,7 +17,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using Color=System.Drawing.Color;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -2175,7 +2174,7 @@ namespace SIL.FieldWorks.IText
 				{
 					using (InsertEntryDlg dlg = InsertEntryNow.CreateInsertEntryDlg(fCreateNow))
 					{
-						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.Mediator, m_sandbox.m_propertyTable);
+						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.PropertyTable, m_sandbox.Publisher);
 						dlg.TssGloss = entryComponents.GlossAlternatives.FirstOrDefault();
 						foreach (ITsString tss in entryComponents.GlossAlternatives.Skip(1))
 							dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
@@ -2324,7 +2323,7 @@ namespace SIL.FieldWorks.IText
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
 					FdoCache cache = m_caches.MainCache;
-					dlg.SetDlgInfo(cache, null, m_sandbox.Mediator, m_sandbox.m_propertyTable, tssForm, morphType.Hvo);
+					dlg.SetDlgInfo(cache, null, m_sandbox.PropertyTable, m_sandbox.Publisher, tssForm, morphType.Hvo);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2522,7 +2521,7 @@ namespace SIL.FieldWorks.IText
 				// which causes bad problems.
 				using (AddNewSenseDlg dlg = new AddNewSenseDlg(m_helpTopicProvider))
 				{
-					dlg.SetDlgInfo(tssForm, le, m_sandbox.Mediator, m_sandbox.m_propertyTable);
+					dlg.SetDlgInfo(tssForm, le, m_sandbox.PropertyTable, m_sandbox.Publisher);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes problems like LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2773,13 +2772,13 @@ namespace SIL.FieldWorks.IText
 						if (morphReal != null && morphReal.IsValidObject)
 						{
 							variantEntry = morphReal.Owner as ILexEntry;
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, m_sandbox.m_propertyTable, variantEntry);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, variantEntry);
 						}
 						else
 						{
 							// since we didn't start with an entry,
 							// set up the dialog using the form of the variant
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, m_sandbox.m_propertyTable, tssForm);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, tssForm);
 						}
 						dlg.SetHelpTopic("khtpAddVariantFromInterlinear");
 						Form mainWnd = m_sandbox.FindForm();
@@ -3392,7 +3391,7 @@ namespace SIL.FieldWorks.IText
 				if (m_pOSPopupTreeManager == null)
 				{
 					FdoCache cache = m_caches.MainCache;
-					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.Mediator, m_sandbox.m_propertyTable, m_sandbox.FindForm());
+					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.FindForm());
 					m_pOSPopupTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 				}
 				m_pOSPopupTreeManager.LoadPopupTree(m_caches.RealHvo(m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, ktagSbWordPos)));

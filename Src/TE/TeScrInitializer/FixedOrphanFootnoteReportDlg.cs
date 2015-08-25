@@ -6,9 +6,9 @@
 // Responsibility: TE Team
 
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

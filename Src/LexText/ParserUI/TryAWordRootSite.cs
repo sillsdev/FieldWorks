@@ -9,10 +9,9 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.IText;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -27,19 +26,36 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fRootMade;
 		private int m_labelWidth;
 
-		public TryAWordRootSite(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public TryAWordRootSite()
 		{
-			m_fdoCache = cache;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
+		}
+
+		#region Overrides of SimpleRootSite
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			m_fdoCache = PropertyTable.GetValue<FdoCache>("cache");
 			VisibleChanged += OnVisibleChanged;
-			var window = m_propertyTable.GetValue<FwXWindow>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+#if RANDYTODO
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
+#endif
 			IWritingSystem wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;
 		}
+
+		#endregion
+
 		#region Dispose
 
 		/// -----------------------------------------------------------------------------------
@@ -266,12 +282,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			//Debug.Assert(m_tryAWordSandbox == null);
 			m_tryAWordSandbox = new TryAWordSandbox(m_fdoCache,
-													Mediator,
-													m_propertyTable,
-													StyleSheet,
-													m_vc.LineChoices,
-													analysis);
-			m_tryAWordSandbox.Visible = false;
+				StyleSheet,
+				m_vc.LineChoices,
+				analysis)
+			{
+				Visible = false
+			};
+			m_tryAWordSandbox.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			Controls.Add(m_tryAWordSandbox);
 			SetSandboxSize();
 			SetSandboxLocation();

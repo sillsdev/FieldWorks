@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -18,6 +19,9 @@ namespace SIL.FieldWorks.Discourse
 		private ConstChartBody m_chartBody;
 		private ConstituentChart m_constChart;
 		private List<ICmPossibility> m_allColumns;
+		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 
 		protected override void CreateTestData()
 		{
@@ -30,7 +34,9 @@ namespace SIL.FieldWorks.Discourse
 			m_chart = m_helper.SetupAChart();
 
 			m_constChart = new ConstituentChart(Cache, m_logic);
-			m_constChart.Init(null, null, null);
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_constChart.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
 
@@ -41,6 +47,11 @@ namespace SIL.FieldWorks.Discourse
 		{
 			m_chartBody.Dispose();
 			m_constChart.Dispose();
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
+
 			base.TestTearDown();
 		}
 

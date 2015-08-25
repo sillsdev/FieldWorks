@@ -10,7 +10,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using XCore;	// for FwApp
+
+// for FwApp
 
 namespace SIL.FieldWorks.LexText.Controls
 {

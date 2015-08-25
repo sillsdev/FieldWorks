@@ -38,7 +38,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

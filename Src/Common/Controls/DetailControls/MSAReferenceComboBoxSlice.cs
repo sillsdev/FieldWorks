@@ -21,7 +21,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -78,40 +77,42 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Control.Height = m_tree.PreferredHeight;
 		}
 
-		/// ------------------------------------------------------------------------------------
+		#region Overrides of Slice
+
 		/// <summary>
-		/// Gets or sets the mediator.
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override Mediator Mediator
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			set
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			//Set the stylesheet so that the font size for the...
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_tree.StyleSheet = stylesheet;
+			var list = m_cache.LanguageProject.PartsOfSpeechOA;
+
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
+				m_tree.WritingSystemCode, true, PropertyTable, Publisher,
+				PropertyTable.GetValue<Form>("window"));
+			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
+			m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
+			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
+
+			try
 			{
-				base.Mediator = value;
-
-				//Set the stylesheet so that the font size for the...
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-				m_tree.StyleSheet = stylesheet;
-				var list = m_cache.LanguageProject.PartsOfSpeechOA;
-
-				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
-					m_tree.WritingSystemCode, true, m_mediator, m_propertyTable,
-					m_propertyTable.GetValue<Form>("window"));
-				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
-				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
-				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
-
-				try
-				{
-					m_handlingMessage = true;
-					m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
-				}
-				finally
-				{
-					m_handlingMessage = false;
-				}
+				m_handlingMessage = true;
+				m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
+			}
+			finally
+			{
+				m_handlingMessage = false;
 			}
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Make the slice tall enough to hold the tree combo's internal textbox at a
@@ -174,7 +175,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (m_MSAPopupTreeManager != null)
 				{
-					m_MSAPopupTreeManager.AfterSelect -= new TreeViewEventHandler(m_MSAPopupTreeManager_AfterSelect);
+					m_MSAPopupTreeManager.AfterSelect -= m_MSAPopupTreeManager_AfterSelect;
 					m_MSAPopupTreeManager.Dispose();
 				}
 			}
@@ -285,7 +286,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We still can't refresh the data at this point without causing a crash due to
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
-					Mediator.BroadcastMessage("DelayedRefreshList", fOldDoNotRefresh);
+				{
+					Publisher.Publish("DelayedRefreshList", fOldDoNotRefresh);
+				}
 			}
 		}
 

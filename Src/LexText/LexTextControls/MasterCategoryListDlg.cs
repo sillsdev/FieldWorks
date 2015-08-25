@@ -11,8 +11,8 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.CoreImpl;
+using SIL.CoreImpl.MessageBoxEx;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -23,7 +23,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FdoCache m_cache;
@@ -95,7 +94,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_nodes.Clear();
 			}
 			m_posList = null;
-			m_mediator = null;
 			m_cache = null;
 			m_selPOS = null;
 			m_nodes = null;
@@ -116,18 +114,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		///
 		///  </summary>
 		///  <param name="posList"></param>
-		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		///  <param name="subItemOwner"></param>
-		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
+		public void SetDlginfo(ICmPossibilityList posList, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
 
 			m_subItemOwner = subItemOwner; // May be null, which is fine.
 			m_posList = posList;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			if (m_propertyTable != null)
 			{
@@ -501,7 +497,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
 				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true, true);
 				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true, true);
@@ -511,7 +507,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
 		{
 			if (!m_launchedFromInsertMenu)
-				XCore.XMessageBoxExManager.Trigger("CreateNewFromGrammaticalCategoryCatalog");
+				MessageBoxExManager.Trigger("CreateNewFromGrammaticalCategoryCatalog");
 			m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertCategory,
 				LexTextControls.ksRedoInsertCategory);
 			var posFactory = m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();

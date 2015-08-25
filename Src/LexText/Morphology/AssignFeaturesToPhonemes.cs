@@ -8,9 +8,8 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FdoUi;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -31,20 +30,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			InitializeComponent();
 		}
-		#region IxCoreColleague implementation
+
+		#region Overrides of RecordBrowseView
 
 		/// <summary>
-		/// Initialize this as an IxCoreColleague
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "bulkEditBar is a reference")]
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(mediator, propertyTable, configurationParameters);
-			CheckDisposed();
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
 			var bulkEditBar = m_browseViewer.BulkEditBar;
 			// We want a custom name for the tab, the operation label, and the target item
 			// Now we use good old List Choice.  bulkEditBar.ListChoiceTab.Text = MEStrings.ksAssignFeaturesToPhonemes;
@@ -53,14 +51,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			bulkEditBar.ChangeToLabel.Text = MEStrings.ksChangeTo;
 		}
 
-	#endregion
+		#endregion
+
 		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			var viewer = new FdoUi.BrowseViewerPhonologicalFeatures(nodeSpec,
+			var viewer = new BrowseViewerPhonologicalFeatures(nodeSpec,
 						 hvoRoot, fakeFlid,
-						 cache, mediator, propertyTable, sortItemProvider, sda);
+						 cache, sortItemProvider, sda);
+			viewer.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			return viewer;
 		}
 	}

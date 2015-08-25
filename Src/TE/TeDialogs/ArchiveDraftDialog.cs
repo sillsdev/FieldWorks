@@ -12,7 +12,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.TE;
 using SIL.FieldWorks.Common.Controls;
@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

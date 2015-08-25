@@ -24,7 +24,6 @@ using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.Common.RootSites;
 using Paratext;
 

@@ -2,10 +2,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

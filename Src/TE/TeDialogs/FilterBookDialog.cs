@@ -5,9 +5,9 @@
 // File: FilterBookDialog.cs
 // --------------------------------------------------------------------------------------------
 
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

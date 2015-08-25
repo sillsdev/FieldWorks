@@ -117,10 +117,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.9.0.25603, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLViews, Version=1.0.3918.25652, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
@@ -132,9 +128,7 @@
     </Compile>
     <Compile Include="BrowserProjectId.cs" />
     <Compile Include="CustomFields.cs" />
-    <Compile Include="FDOBrowserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FDOBrowserForm.cs" />
     <Compile Include="FDOBrowserForm.Designer.cs">
       <DependentUpon>FDOBrowserForm.cs</DependentUpon>
     </Compile>

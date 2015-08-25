@@ -161,4 +161,31 @@
   <data name="Grip2007" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Grip2007.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Abort" xml:space="preserve">
+    <value>Abort</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CannotRestoreSavedResponses" xml:space="preserve">
+    <value>Information dialogs you previously dismissed with "do not show me this again" will be shown again due to an error. Sorry!</value>
+  </data>
+  <data name="DonTShowThisAgain" xml:space="preserve">
+    <value>Do not show this again.</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

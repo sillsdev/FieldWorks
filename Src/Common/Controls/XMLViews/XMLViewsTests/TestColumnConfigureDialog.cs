@@ -14,7 +14,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace XMLViewsTests
 {
@@ -22,15 +21,16 @@ namespace XMLViewsTests
 	[TestFixture]
 	public class TestColumnConfigureDialog : BaseTest
 	{
-		private Mediator m_mediator;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
 		private FdoCache m_cache;
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
@@ -42,8 +42,8 @@ namespace XMLViewsTests
 		{
 			m_propertyTable.Dispose();
 			m_propertyTable = null;
-			m_mediator.Dispose();
-			m_mediator = null;
+			m_publisher = null;
+			m_subscriber = null;
 			m_cache.Dispose();
 			m_cache = null;
 		}

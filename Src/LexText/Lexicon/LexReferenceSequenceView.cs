@@ -1,17 +1,8 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -66,13 +57,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
 			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
 			ReferenceBaseUi ui = new ReferenceSequenceUi(Cache, m_rootObj, m_rootFlid, hvo);
-			if (ui != null)
-			{
-				//Debug.WriteLine("hvo=" + hvo.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-				return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
-			}
-
-			return false;
+			ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			return ui.HandleRightClick(this, true);
 		}
 
 		/// <summary>
@@ -89,10 +75,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
 			{
 				if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
+				{
 					// We need to handle this the same way as the delete command in the slice menu.
-					m_mediator.SendMessage("DataTreeDelete", null);
+					Publisher.Publish("DataTreeDelete", null);
+				}
 				else
+				{
 					DeleteObjectFromVector(sel, cvsli, hvoObj, LexEdStrings.ksUndoDeleteRef, LexEdStrings.ksRedoDeleteRef);
+				}
 			}
 		}
 

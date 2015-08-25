@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using NUnit.Framework;
 using NMock;
+using SIL.CoreImpl;
 using SIL.Utils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -108,6 +109,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		internal DummyRootSite m_site;
 		internal DynamicMock m_mockSelection;
 		internal IVwSelection m_selection;
+		/// <summary />
+		internal IPropertyTable m_propertyTable;
+		/// <summary />
+		internal IPublisher m_publisher;
+		/// <summary />
+		internal ISubscriber m_subscriber;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -117,7 +124,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[SetUp]
 		public void Setup()
 		{
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+
 			m_site = new DummyRootSite();
+			m_site.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 
 			DynamicMock rootb = new DynamicMock(typeof(IVwRootBox));
 			rootb.SetupResult("Height", 10000);
@@ -142,6 +153,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void TearDown()
 		{
 			m_site.Dispose();
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

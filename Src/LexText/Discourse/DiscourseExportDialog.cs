@@ -5,7 +5,6 @@ using System.Xml;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -25,18 +24,32 @@ namespace SIL.FieldWorks.Discourse
 		IVwViewConstructor m_vc;
 		int m_wsLineNumber;
 
-		public DiscourseExportDialog(Mediator mediator, IPropertyTable propertyTable, int hvoRoot, IVwViewConstructor vc,
-			int wsLineNumber) : base(mediator, propertyTable)
+		public DiscourseExportDialog(int hvoRoot, IVwViewConstructor vc, int wsLineNumber)
 		{
 			m_hvoRoot = hvoRoot;
 			m_vc = vc;
+			m_wsLineNumber = wsLineNumber;
+		}
+
+		#region Overrides of ExportDialog
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			m_helpTopic = "khtpExportDiscourse";
 			columnHeader1.Text = DiscourseStrings.ksFormat;
 			columnHeader2.Text = DiscourseStrings.ksExtension;
 			Text = DiscourseStrings.ksExportDiscourse;
-			m_wsLineNumber = wsLineNumber;
 		}
+
+		#endregion
 
 		protected override string ConfigurationFilePath
 		{

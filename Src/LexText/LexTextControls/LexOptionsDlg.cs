@@ -23,7 +23,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -32,8 +31,8 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class LexOptionsDlg : Form, IFwExtension
 	{
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		private FdoCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
@@ -200,7 +199,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					XmlNode managerNode = managerDoc.SelectSingleNode("/manager");
 					string shutdownMsg = XmlUtils.GetOptionalAttributeValue(managerNode, "shutdown");
 					if (!String.IsNullOrEmpty(shutdownMsg))
-						m_mediator.SendMessage(shutdownMsg, null);
+					{
+						m_publisher.Publish(shutdownMsg, null);
+					}
 					XmlNode configfilesNode = managerNode.SelectSingleNode("configfiles");
 					string extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
 					Directory.Delete(extensionPath, true);
@@ -243,11 +244,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			updateGlobalWS.Checked = !Settings.Default.UpdateGlobalWSStore;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_cache = cache;
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;

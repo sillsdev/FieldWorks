@@ -24,7 +24,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -285,74 +284,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_fdoCache = cache;
 		}
-
-		#region UndoRedo
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Disables/enables the Edit/Undo menu item
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayUndo(object commandObject, ref UIItemDisplayProperties display)
-		{
-			//if (m_sda.GetActionHandler().CanUndo())
-			//{
-			//    display.Enabled = true;
-			//    return true;
-			//}
-			return false; // we don't want to handle the command.
-		}
-
-		/// <summary>
-		/// We need to override Undo so that we can undo changes within the slice (in its own cache).
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		internal bool OnUndo(object args)
-		{
-			//if (m_silCache.GetActionHandler().CanUndo())
-			//{
-			//    m_silCache.GetActionHandler().Undo();
-			//    return true;
-			//}
-			return false;
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Disables/enables the Edit/Redo menu item
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayRedo(object commandObject, ref UIItemDisplayProperties display)
-		{
-			//if (m_silCache.GetActionHandler().CanRedo())
-			//{
-			//    display.Enabled = true;
-			//    return true;
-			//}
-			return false; // we don't want to handle the command.
-		}
-
-		/// <summary>
-		/// We need to override Redo so that we can undo changes within the slice.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		internal bool OnRedo(object args)
-		{
-			//if (m_silCache.GetActionHandler().CanRedo())
-			//{
-			//    m_silCache.GetActionHandler().Redo();
-			//    return true;
-			//}
-			return false;
-		}
-
-		#endregion UndoRedo
 
 		#region Other methods
 
@@ -1130,14 +1061,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// addition to all the Insert X" items.
 				int hvo = m_realEnvs[hvoDummy].Hvo;
 				using (ReferenceCollectionUi ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
+					return ui.HandleRightClick(this, true);
 			}
 			else
 			{
 				// We need a CmObjectUi in order to call HandleRightClick().  This won't
 				// display the "Show in Environments list" item in the popup menu.
 				using (CmObjectUi ui = new CmObjectUi(m_rootObj))
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvReferenceChoices");
+					return ui.HandleRightClick(this, true, "mnuEnvReferenceChoices");
 			}
 		}
 		#endregion

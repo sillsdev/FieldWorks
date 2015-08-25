@@ -15,6 +15,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -246,11 +247,16 @@ namespace SIL.FieldWorks.Common.Controls
 			if (IsDisposed)
 				return;
 
-			base.Dispose(disposing);
-
 			if (disposing)
 			{
+				if (!string.IsNullOrEmpty(m_currentSubscriptionString))
+				{
+					Subscriber.Unsubscribe(m_currentSubscriptionString, ShowFailingItemsForTool_Changed);
+				}
 			}
+
+			base.Dispose(disposing);
+
 			m_xmlVc = null;
 			m_mdc = null;
 			m_sXmlSpec = null;
@@ -315,8 +321,8 @@ namespace SIL.FieldWorks.Common.Controls
 			rootb.SetSite(this);
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
-			m_fShowFailingItems = m_propertyTable.GetValue("ShowFailingItems-" + toolName, false);
+			string toolName = PropertyTable.GetValue<string>("currentContentControl");
+			m_fShowFailingItems = PropertyTable.GetValue("ShowFailingItems-" + toolName, false);
 			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
@@ -324,7 +330,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
-				sLayout = m_propertyTable.GetValue<string>(sProp);
+				sLayout = PropertyTable.GetValue<string>(sProp);
 			if (String.IsNullOrEmpty(sLayout))
 				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
 			ISilDataAccess sda = GetSda();
@@ -367,40 +373,45 @@ namespace SIL.FieldWorks.Common.Controls
 		public bool OnJumpToRecord(object argument)
 		{
 			CheckDisposed();
-			Mediator.BroadcastMessage("CheckJump", argument);
+			Publisher.Publish("CheckJump", argument);
 			return false; // I don't want to be seen as handling this!
 		}
 
 		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		public override void OnPropertyChanged(string name)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
-			base.OnPropertyChanged(name);
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
-			if(name == "ShowFailingItems-" + toolName)
+			m_currentSubscriptionString = "ShowFailingItems-" + PropertyTable.GetValue<string>("currentContentControl");
+			Subscriber.Subscribe(m_currentSubscriptionString, ShowFailingItemsForTool_Changed);
+		}
+
+		private string m_currentSubscriptionString = string.Empty;
+		private void ShowFailingItemsForTool_Changed(object newValue)
+		{
+			bool fShowFailingItems = PropertyTable.GetValue(m_currentSubscriptionString, false);
+			if (fShowFailingItems != m_fShowFailingItems)
 			{
-				bool fShowFailingItems = m_propertyTable.GetValue(name, false);
-				if (fShowFailingItems != m_fShowFailingItems)
+				m_fShowFailingItems = fShowFailingItems;
+				m_xmlVc.MakeRootCommand(this, m_fShowFailingItems ? null : ItemDisplayCondition);
+				try
 				{
-					m_fShowFailingItems = fShowFailingItems;
-					m_xmlVc.MakeRootCommand(this, m_fShowFailingItems ? null : ItemDisplayCondition);
-					try
+					EditingHelper.DefaultCursor = Cursors.WaitCursor;
+					using (new WaitCursor(TopLevelControl))
 					{
-						EditingHelper.DefaultCursor = Cursors.WaitCursor;
-						using (new WaitCursor(TopLevelControl))
-						{
-							m_rootb.Reconstruct();
-							Invalidate();
-							Update(); // most of the time is the painting, we want the watch cursor till it's done.
-						}
+						m_rootb.Reconstruct();
+						Invalidate();
+						Update(); // most of the time is the painting, we want the watch cursor till it's done.
 					}
-					finally
-					{
-						EditingHelper.DefaultCursor = null;
-					}
+				}
+				finally
+				{
+					EditingHelper.DefaultCursor = null;
 				}
 			}
 		}

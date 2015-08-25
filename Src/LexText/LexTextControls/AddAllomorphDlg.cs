@@ -1,7 +1,6 @@
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -104,15 +103,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, ITsString tssform, int hvoType)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, wp, mediator, propertyTable, tssform);
+			SetDlgInfo(cache, wp, propertyTable, publisher, tssform);
 
 			m_formOrig = m_tbForm.Text;
 			m_hvoType = hvoType;

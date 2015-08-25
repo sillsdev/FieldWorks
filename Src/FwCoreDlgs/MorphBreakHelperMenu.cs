@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

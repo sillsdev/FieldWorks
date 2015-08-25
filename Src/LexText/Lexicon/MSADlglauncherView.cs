@@ -1,16 +1,8 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
-using XCore;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

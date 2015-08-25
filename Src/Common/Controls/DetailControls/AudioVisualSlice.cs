@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -130,14 +129,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Install(parent);
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
+			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			ctrl.Initialize(
-				m_propertyTable.GetValue<FdoCache>("cache"),
+				PropertyTable.GetValue<FdoCache>("cache"),
 				Media.MediaFileRA,
 				CmFileTags.kflidInternalPath,
 				"InternalPath",
 				ContainingDataTree.PersistenceProvder,
-				Mediator,
-				m_propertyTable,
 				"InternalPath",
 				"user");
 		}
@@ -247,7 +245,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.m_view.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_view.Group = null;
 			this.m_view.Location = new System.Drawing.Point(0, 0);
-			this.m_view.Mediator = null;
 			this.m_view.Name = "m_view";
 			this.m_view.ReadOnlyView = false;
 			this.m_view.ScrollPosition = new System.Drawing.Point(0, 0);
@@ -305,17 +302,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		///  <param name="flid"></param>
 		///  <param name="fieldName"></param>
 		///  <param name="persistProvider"></param>
-		///  <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		///  <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable,
+			string fieldName, IPersistenceProvider persistProvider,
 			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable,
+			base.Initialize(cache, obj, flid, fieldName, persistProvider,
 				displayNameProperty, displayWs);
 			m_view.Init(obj as ICmFile, flid);
 		}
@@ -438,7 +433,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void Init(ICmFile obj, int flid)
 		{
 			CheckDisposed();
-			m_fdoCache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_fdoCache = PropertyTable.GetValue<FdoCache>("cache");
 			m_file = obj;
 			m_flid = flid;
 			if (m_rootb == null)

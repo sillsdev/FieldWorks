@@ -26,7 +26,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -64,11 +63,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
-			Mediator mediator, string displayWs)
+			string displayWs)
 		{
 			CheckDisposed();
 			m_displayWs = displayWs;
-			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty, mediator);
+			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty);
 		}
 
 		/// <summary>

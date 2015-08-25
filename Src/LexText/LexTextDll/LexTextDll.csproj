@@ -148,10 +148,6 @@
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
     </Reference>
-    <Reference Include="MessageBoxExLib">
-      <Name>MessageBoxExLib</Name>
-      <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
@@ -172,10 +168,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils, Version=6.1.1.21569, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

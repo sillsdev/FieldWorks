@@ -191,10 +191,6 @@
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=5.5.0.19444, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="XMLUtils, Version=5.5.0.24833, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>

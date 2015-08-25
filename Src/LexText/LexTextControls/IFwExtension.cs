@@ -1,6 +1,5 @@
 ﻿using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -13,8 +12,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Called instead of a constructor with parameters
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable);
+		/// <param name="publisher"></param>
+		void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher);
 	}
 }

@@ -19,7 +19,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -27,8 +26,8 @@ namespace SIL.FieldWorks.IText
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
 		protected FdoCache m_cache;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
@@ -51,11 +50,11 @@ namespace SIL.FieldWorks.IText
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable)
+		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			if (m_propertyTable != null)
 			{
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
@@ -585,7 +584,7 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
-			m_mediator.SendMessage("MasterRefresh", ActiveForm);
+			m_publisher.Publish("MasterRefresh", ActiveForm);
 			if (m_firstNewText != null)
 			{
 				// try to select it.

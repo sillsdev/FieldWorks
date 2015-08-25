@@ -18,6 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
 	// (FLEx) JohnT: I did a first rough cut at updating these tests, but it will take really understanding them
 	// to figure out what needs to be mocked or set up so they can work.
 	public class BulkEditBarTestsBase : XWorksAppTestBase
@@ -25,13 +26,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// m_window is needed for processing xcore messages when simulating user events.
 		/// </summary>
-		protected Mediator m_mediator;
 		protected IPropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
 		protected List<ICmObject> m_createdObjectList;
 
-		#region Setup and Teardown
+	#region Setup and Teardown
 
 		/// <summary>
 		/// Run by FixtureInit() in XWorksAppTestBase
@@ -50,7 +50,9 @@ namespace SIL.FieldWorks.XWorks
 		public void Initialize()
 		{
 			CreateAndInitializeNewWindow();
+#if RANDYTODO
 			((MockFwXWindow)m_window).ActivateTool("bulkEditEntriesOrSenses");
+#endif
 			GetBulkEditBarAndBrowseViewerFromWindow();
 		}
 
@@ -62,8 +64,6 @@ namespace SIL.FieldWorks.XWorks
 			//if (m_bulkEditBar != null)
 			//    m_bulkEditBar.Dispose();
 
-			if (m_mediator != null)
-				m_mediator.RemoveColleague(m_window);
 			if (m_window != null && !m_window.IsDisposed)
 				m_window.Dispose(); // disposes m_bulkEditBar and m_bv!
 
@@ -82,6 +82,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void CreateAndInitializeNewWindow()
 		{
+#if RANDYTODO
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
@@ -92,6 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);
 			//m_window.Show(); // doesn't seem to make any difference!
+#endif
 		}
 
 		/// <summary>
@@ -154,38 +156,49 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void ProcessPendingItems()
 		{
+#if RANDYTODO
 			// used in CreateAndInitializeWindow() and in MasterRefresh()
 			//m_mediator = m_window.Mediator;
 			((MockFwXWindow)m_window).ProcessPendingItems();
+#endif
 		}
 
 		private void GetBulkEditBarAndBrowseViewerFromWindow()
 		{
+#if RANDYTODO
 			m_bulkEditBar = ((MockFwXWindow)m_window).FindControl("BulkEditBar") as BulkEditBarForTests;
 			m_bv = m_bulkEditBar.Parent as BrowseViewerForTests;
+#endif
 		}
 
 		private void ControlAssemblyReplacements()
 		{
-			ControlAssemblyReplacement replacement = new ControlAssemblyReplacement();
-			replacement.m_toolName = "bulkEditEntriesOrSenses";
-			replacement.m_controlName = "EntryOrSenseBulkEdit";
-			replacement.m_targetAssembly = "xWorks.dll";
-			replacement.m_targetControlClass = "SIL.FieldWorks.XWorks.RecordBrowseView";
-			replacement.m_newAssembly = "xWorksTests.dll";
-			replacement.m_newControlClass = "SIL.FieldWorks.XWorks.BulkEditBarTestsBase+RecordBrowseViewForTests";
+			ControlAssemblyReplacement replacement = new ControlAssemblyReplacement
+			{
+				m_toolName = "bulkEditEntriesOrSenses",
+				m_controlName = "EntryOrSenseBulkEdit",
+				m_targetAssembly = "xWorks.dll",
+				m_targetControlClass = "SIL.FieldWorks.XWorks.RecordBrowseView",
+				m_newAssembly = "xWorksTests.dll",
+				m_newControlClass = "SIL.FieldWorks.XWorks.BulkEditBarTestsBase+RecordBrowseViewForTests"
+			};
+#if RANDYTODO
 			((MockFwXWindow)m_window).AddReplacement(replacement);
+#endif
 		}
 
 		#endregion Setup and Teardown
 
 		protected void MasterRefresh()
 		{
+#if RANDYTODO
 			m_window.OnMasterRefresh(null);
+#endif
 			ProcessPendingItems();
 			GetBulkEditBarAndBrowseViewerFromWindow();
 		}
 
+#if RANDYTODO
 		protected internal class BulkEditBarForTests : BulkEditBar
 		{
 			/// <summary>
@@ -469,14 +482,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 		}
-
+#endif
 	}
 
 #if RANDYTODO // Restore once Mediator/pubsub all work again
 	[TestFixture]
 	public class BulkEditBarTests : BulkEditBarTestsBase
 	{
-		#region BulkEditEntries tests
+	#region BulkEditEntries tests
 		[Test]
 		public void ChoiceFilters()
 		{
@@ -1459,14 +1472,14 @@ namespace SIL.FieldWorks.XWorks
 					return new NoFilter(testFixture);
 			}
 
-			#region Disposable stuff
-			#if DEBUG
+	#region Disposable stuff
+#if DEBUG
 			/// <summary/>
 			~FilterBehavior()
 			{
 				Dispose(false);
 			}
-			#endif
+#endif
 
 			/// <summary/>
 			public bool IsDisposed { get; private set; }
@@ -1932,5 +1945,6 @@ namespace SIL.FieldWorks.XWorks
 			// no need to test again, when subclass has already done so.
 		}
 	}
+#endif
 #endif
 }

@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
-using XCore;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.TE
 {

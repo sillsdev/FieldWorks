@@ -1,5 +1,5 @@
 using System.Windows.Forms;
-using XCore;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Discourse
 {

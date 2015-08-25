@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
-using XCore;
 
 
 namespace XMLViewsTests

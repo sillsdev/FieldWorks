@@ -8,6 +8,7 @@ using System.IO;
 using System.Xml;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -27,192 +28,6 @@ namespace SIL.FieldWorks.XWorks
 		public string m_targetControlClass;
 		public string m_newAssembly;
 		public string m_newControlClass;
-	}
-
-	/// <summary>
-	/// This class does the bare minimum of emulating FwXWindow, so that tests can load controls for tools
-	/// and process PropertyChanges posted to the mediator.
-	/// </summary>
-	public class MockFwXWindow : FwXWindow
-	{
-		private List<ControlAssemblyReplacement> m_replacements = new List<ControlAssemblyReplacement>();
-
-		public MockFwXWindow(FwXApp application, string configFile)
-			:base(application)
-		{
-		}
-
-		public void Init(FdoCache cache)
-		{
-			InitMediatorValues(cache);
-		}
-
-		/// <summary>
-		/// Do the bare minimum for use in tests
-		/// </summary>
-		/// <param name="configuration"></param>
-		/// <param name="configurationPath"></param>
-		protected override void LoadUIFromXmlDocument(XmlDocument configuration, string configurationPath)
-		{
-			m_windowConfigurationNode = configuration.SelectSingleNode("window");
-			ReplaceControlAssemblies();
-
-			PropTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, false, true);
-
-			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
-
-			PropTable.SetProperty("window", this, false, true);
-
-			CommandSet commandset = new CommandSet(m_mediator);
-			commandset.Init(m_windowConfigurationNode);
-			m_mediator.Initialize(commandset);
-
-			var st = StringTable.Table; // Force loading it.
-
-			RestoreWindowSettings(false);
-			m_mediator.AddColleague(this);
-
-			m_menusChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
-			m_sidebarChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
-			m_toolbarsChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
-
-			var handle = Handle; // create's a window handle for this form to allow processing broadcasted items.
-		}
-
-		protected override void XWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if (!m_mediator.IsDisposed)
-			{
-				m_mediator.ProcessMessages = false;
-				PropTable.SetProperty("windowState", WindowState, true, false);
-			}
-		}
-
-		protected override void OnClosed(EventArgs e)
-		{
-			//((Form)this).Close();
-		}
-
-		/// <summary>
-		/// Tests can load a subset of virtual handlers from Main.xml, so set those here.
-		/// </summary>
-		public List<IVwVirtualHandler> InstalledVirtualHandlers
-		{
-			set { m_installedVirtualHandlers = value; }
-		}
-
-		/// <summary>
-		/// Activates the controls for the given toolName.
-		/// Assumes tool exists only in one area.
-		/// </summary>
-		/// <param name="toolName"></param>
-		/// <returns></returns>
-		public XmlNode ActivateTool(string toolName)
-		{
-			XmlNode configurationNode = GetToolNode(toolName);
-			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), false, true);
-			PropTable.SetProperty("currentContentControl", toolName, false, true);
-			ProcessPendingItems();
-			return configurationNode;
-		}
-
-		private XmlNode GetToolNode(string toolName)
-		{
-			XmlNode configurationNode = m_windowConfigurationNode.SelectSingleNode(String.Format("//item/parameters/tools/tool[@value = '{0}']", toolName));
-			return configurationNode;
-		}
-
-		/// <summary>
-		/// Add a replacement control for whatever is in the big configuration xml document.
-		/// The actual replacement will take place in the LoadUIFromXmlDocument method.
-		/// </summary>
-		/// <param name="replacement"></param>
-		public void AddReplacement(ControlAssemblyReplacement replacement)
-		{
-			m_replacements.Add(replacement);
-		}
-
-		public void ClearReplacements()
-		{
-			m_replacements.Clear();
-		}
-
-		/// <summary>
-		/// use to override a standard configuration control, with one defined in tests.
-		/// </summary>
-		private void ReplaceControlAssemblies()
-		{
-			foreach (ControlAssemblyReplacement replacement in m_replacements)
-			{
-				XmlNode toolNode = GetToolNode(replacement.m_toolName);
-				XmlNode controlNode = toolNode.SelectSingleNode(String.Format(".//control/parameters[@id='{0}']", replacement.m_controlName));
-				// <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceControl"/>
-				XmlNode controlAssemblyNode = controlNode.SelectSingleNode(String.Format(".//dynamicloaderinfo[@assemblyPath='{0}' and @class='{1}']",
-					replacement.m_targetAssembly, replacement.m_targetControlClass));
-
-				controlAssemblyNode.Attributes["assemblyPath"].Value = replacement.m_newAssembly;
-				controlAssemblyNode.Attributes["class"].Value = replacement.m_newControlClass;
-			}
-		}
-
-		/// <summary>
-		/// return the control specified by the given (unique) id.
-		/// </summary>
-		/// <param name="idControl"></param>
-		/// <returns>null, if it couldn't find the control.</returns>
-		public Control FindControl(string idControl)
-		{
-			return XWindow.FindControl(this, idControl);
-		}
-
-		/// <summary>
-		/// The active record clerk for the currentControlContent context.
-		/// </summary>
-		public RecordClerk ActiveClerk
-		{
-			get { return PropTable.GetValue<RecordClerk>("ActiveClerk"); }
-		}
-
-		/// <summary>
-		/// invoke the given XCore command.
-		/// </summary>
-		/// <param name="idCommand"></param>
-		public void InvokeCommand(string idCommand)
-		{
-			var cmd = m_mediator.CommandSet[idCommand] as Command;
-			cmd.InvokeCommand();
-			ProcessPendingItems();
-		}
-
-		/// <summary>
-		/// simulate master refresh, by doing refresh on the mock window and its cache.
-		/// </summary>
-		/// <param name="sender"></param>
-		public override void OnMasterRefresh(object sender)
-		{
-			CheckDisposed();
-			ProcessPendingItems();
-			this.PrepareToRefresh();
-			ProcessPendingItems();
-			ProcessPendingItems();
-			// Refresh it last, so its saved settings get restored.
-			//this.FinishRefresh();
-			Refresh();
-			this.Activate();
-		}
-
-		/// <summary>
-		/// We need to manually process the mediator jobs when we don't have a window visible to process WndProc messages.
-		/// </summary>
-		public void ProcessPendingItems()
-		{
-			m_mediator.BroadcastPendingItems();	// load the jobs.
-
-			while (m_mediator.JobItems > 0)
-			{
-				m_mediator.ProcessItem();
-			}
-		}
 	}
 
 	public class MockFwManager : IFieldWorksManager
@@ -413,9 +228,9 @@ namespace SIL.FieldWorks.XWorks
 				progressDlg.Message = String.Format("Creating window for MockFwXApp {0}", Cache.ProjectId.Name);
 			Form form = base.NewMainAppWnd(progressDlg, isNewCache, wndCopyFrom, fOpeningNewProject);
 
-			if (form is FwXWindow)
+			if (form is IFwMainWnd)
 			{
-				FwXWindow wnd = (FwXWindow)form;
+				IFwMainWnd wnd = (IFwMainWnd)form;
 
 				m_activeMainWindow = form;
 			}
@@ -470,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public abstract class XWorksAppTestBase : MemoryOnlyBackendProviderTestBase
 	{
-		protected FwXWindow m_window; // defined here but created and torn down in subclass?
+		protected IFwMainWnd m_window; // defined here but created and torn down in subclass?
 		protected FwXApp m_application;
 		protected string m_configFilePath;
 
@@ -560,21 +375,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Release();
 		}
 
-		protected ITestableUIAdapter Menu
-		{
-			get
-			{
-				try
-				{
-					return (ITestableUIAdapter)this.m_window.MenuAdapter;
-				}
-				catch (InvalidCastException)
-				{
-					throw new ApplicationException ("The installed Adapter does not yet ITestableUIAdapter support ");
-				}
-			}
-		}
-
+#if RANDYTODO
 		protected Command GetCommand (string commandName)
 		{
 			Command command = (Command)this.m_window.Mediator.CommandSet[commandName];
@@ -607,6 +408,7 @@ namespace SIL.FieldWorks.XWorks
 				Application.DoEvents();
 			}
 		}
+#endif
 
 		#region Data Setup methods
 

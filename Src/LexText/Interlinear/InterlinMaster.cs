@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.CoreImpl.MessageBoxEx;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -16,9 +17,9 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -185,7 +186,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
 			{
-				return m_propertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+				return PropertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
 					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 			}
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
@@ -263,7 +264,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupStyleSheet()
 		{
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>
@@ -338,7 +339,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					mark = new InterAreaBookmark(this, Cache, m_propertyTable);
+					mark = new InterAreaBookmark(this, Cache, PropertyTable);
 					mark.Restore(IndexOfTextRecord);
 					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
 				}
@@ -487,6 +488,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable if there's anything to select.  This is needed so that the toolbar button is
 		/// disabled when there's nothing to look up.  Otherwise, crashes can result when it's
@@ -516,6 +518,7 @@ namespace SIL.FieldWorks.IText
 			}
 			return true;
 		}
+#endif
 
 		private int RootStTextHvo
 		{
@@ -580,7 +583,7 @@ namespace SIL.FieldWorks.IText
 						else
 						{
 							// LT-7733 Warning dialog for Text Chart
-							XCore.XMessageBoxExManager.Trigger("TextChartNewFeature");
+							MessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
@@ -590,7 +593,7 @@ namespace SIL.FieldWorks.IText
 					case ktpsInfo:
 						//We may already be initialized, but this is not very expensive and sometimes
 						//the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(Cache, m_mediator, m_propertyTable, Clerk);
+						m_infoPane.Initialize(Cache, Clerk);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
@@ -630,8 +633,8 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupChartPane()
 		{
-			(m_constChartPane as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
-			m_constChartPane.BackColor = System.Drawing.SystemColors.Window;
+			(m_constChartPane as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
 		}
@@ -706,16 +709,19 @@ namespace SIL.FieldWorks.IText
 			services.GenerateEntryGuesses(stText);
 		}
 
-		/// <summary>
-		/// Required override for RecordView subclass.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+		#region Overrides of XWorksViewBase
 
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+#if RANDYTODO
 			// Do this BEFORE calling InitBase, which calls ShowRecord, whose correct behavior
 			// depends on the suppressAutoCreate flag.
 			bool fHideTitlePane = XmlUtils.GetBooleanAttributeValue(configurationParameters, "hideTitleContents");
@@ -727,11 +733,6 @@ namespace SIL.FieldWorks.IText
 			}
 			m_fSuppressAutoCreate = XmlUtils.GetBooleanAttributeValue(configurationParameters,
 				"suppressAutoCreate");
-
-			// InitBase will do this, but we need it in place for testing IsPersistedForAnInterlinearTabPage.
-			m_mediator = mediator;
-			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
-			m_propertyTable = propertyTable;
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -745,10 +746,13 @@ namespace SIL.FieldWorks.IText
 			// Do NOT do this, it raises an exception.
 			//base.Init (mediator, configurationParameters);
 			// Instead do this.
-			InitBase(mediator, propertyTable, configurationParameters);
+			InitBase(propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			RefreshPaneBar();
+#endif
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Set the appropriate tab index BEFORE calling InitBase, since that calls
@@ -771,7 +775,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// From IxCoreContentControl
+		/// From IMainContentControl
 		/// </summary>
 		/// <returns>true if ok to go away</returns>
 		public override bool PrepareToGoAway()
@@ -811,12 +815,14 @@ namespace SIL.FieldWorks.IText
 
 		private void InitializeInterlinearTabControl(IInterlinearTabControl site)
 		{
-			if (site != null)
+			if (site == null)
+				return;
+
+			SetStyleSheetFor(site as IStyleSheet);
+			site.Cache = Cache;
+			if (site is IFlexComponent)
 			{
-				SetStyleSheetFor(site as IStyleSheet);
-				site.Cache = Cache;
-				if (site is IxCoreColleague)
-					(site as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
+				(site as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			}
 		}
 
@@ -1020,7 +1026,7 @@ namespace SIL.FieldWorks.IText
 					InterAreaBookmark mark;
 					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
 					{
-						mark = new InterAreaBookmark(this, Cache, m_propertyTable);
+						mark = new InterAreaBookmark(this, Cache, PropertyTable);
 						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
 					}
 
@@ -1045,7 +1051,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, m_propertyTable));
+					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
 				}
 			}
 		}
@@ -1098,20 +1104,9 @@ namespace SIL.FieldWorks.IText
 					m_tabCtrl.SelectedIndex == ktpsGloss;
 		}
 
-		/// <summary>
-		/// Make the subpanes message targets, especially so the interlin doc child can enable
-		/// the Insert Free Translation menu items.
-		/// </summary>
-		/// <returns></returns>
-		protected override void GetMessageAdditionalTargets(List<IxCoreColleague> collector)
-		{
-			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is IxCoreColleague)
-				collector.Add(CurrentInterlinearTabControl as IxCoreColleague);
-			collector.Add(this);
-		}
-
 		#region free translation stuff
 
+#if RANDYTODO
 		public bool OnDisplayFindAndReplaceText(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -1141,16 +1136,18 @@ namespace SIL.FieldWorks.IText
 				app.RemoveFindReplaceDialog();
 			return true;
 		}
+#endif
 
 		public void OnFindAndReplaceText(object argument)
 		{
 			CheckDisposed();
 
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			if (app != null)
 				app.ShowFindReplaceDialog(false, m_rtPane);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Replace is enabled exactly when Find and Replace is.
 		/// </summary>
@@ -1158,16 +1155,18 @@ namespace SIL.FieldWorks.IText
 		{
 			return OnDisplayFindAndReplaceText(commandObject, ref display);
 		}
+#endif
 
 		public void OnReplaceText(object argument)
 		{
 			CheckDisposed();
 
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			if (app != null)
 				app.ShowFindReplaceDialog(true, m_rtPane);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable the "Add Note" command if the idcPane is visible and wants to do it.
 		/// </summary>
@@ -1181,7 +1180,7 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = display.Visible = InterlinearTabPageIsSelected();
 			return true;
 		}
-
+#endif
 
 		/// <summary>
 		/// Delegate this command to the idcPane. (It isn't enabled unless one exists.)
@@ -1190,11 +1189,13 @@ namespace SIL.FieldWorks.IText
 		public void OnAddNote(object argument)
 		{
 			CheckDisposed();
+#if RANDYTODO
 			var command = argument as Command;
 			if (m_idcAnalyze != null && m_idcAnalyze.Visible)
 				m_idcAnalyze.AddNote(command);
 			else if (m_idcGloss != null && m_idcGloss.Visible)
 				m_idcGloss.AddNote(command);
+#endif
 		}
 
 		#endregion
@@ -1206,9 +1207,9 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator == null)
+				if (PropertyTable == null)
 					return TabPageSelection.RawText;
-				string val = m_propertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
+				string val = PropertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
 				TabPageSelection tabSelection;
 				if (string.IsNullOrEmpty(val))
 				{
@@ -1231,10 +1232,11 @@ namespace SIL.FieldWorks.IText
 
 			set
 			{
-				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), true, true);
+				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true, true);
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable the "Configure Interlinear" command. Can be done any time this view is a target.
 		/// </summary>
@@ -1251,6 +1253,7 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = fShouldDisplay;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results
@@ -1273,7 +1276,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator == null)
+				if (PropertyTable == null)
 					return false; // apparently not quite setup to determine true or false.
 				return InterlinearTab == TabPageSelection.Interlinearizer ||
 					InterlinearTab == TabPageSelection.Gloss;
@@ -1292,7 +1295,7 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
-				string toolName = m_propertyTable.GetValue("currentContentControl", "");
+				string toolName = PropertyTable.GetValue("currentContentControl", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
@@ -1302,7 +1305,7 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				var linkListener = m_propertyTable.GetValue<LinkListener>("LinkListener");
+				var linkListener = PropertyTable.GetValue<LinkListener>("LinkListener");
 				linkListener.OnAddContextToHistory(link);
 			}
 		}
@@ -1318,7 +1321,7 @@ namespace SIL.FieldWorks.IText
 				string desiredArea = "textsWords";
 
 				// see if it's the right area
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				return areaChoice != null && areaChoice == desiredArea;
 			}
 		}
@@ -1330,10 +1333,11 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		protected bool InFriendlyTool(string desiredTool)
 		{
-			var toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_textsWords");
+			var toolChoice = PropertyTable.GetValue<string>("ToolForAreaNamed_textsWords");
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Mode for populating the Lexicon with monomorphemic glosses
 		/// </summary>
@@ -1348,7 +1352,6 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
 			return true;
 		}
-
 
 		/// <summary>
 		/// ShowHiddenFields for Info tab. We use the suffix interlinearEdit here because it is
@@ -1385,6 +1388,7 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = display.Visible = InFriendlyArea && InFriendlyTool("interlinearEdit");
 			return true; //we've handled this
 		}
+#endif
 
 		private void m_tabCtrl_Selected(object sender, TabControlEventArgs e)
 		{

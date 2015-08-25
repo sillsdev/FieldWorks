@@ -15,7 +15,6 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -28,24 +27,57 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// When the user (or test code) issues commands, this class also invokes the corresponding methods on the
 	/// Inflectional Affix Template control.
 	/// </summary>
-	public class InflAffixTemplateMenuHandler : IxCoreColleague, IFWDisposable
+	public class InflAffixTemplateMenuHandler : IFlexComponent, IFWDisposable
 	{
 		/// <summary>
 		/// Inflectiona Affix Template Control.
 		/// </summary>
 		protected InflAffixTemplateControl m_inflAffixTemplateCtrl;
 
-		/// <summary>
-		/// Mediator that passes off messages.
-		/// </summary>
-		protected Mediator m_mediator;
-
-		protected IPropertyTable m_propertyTable;
-
 		// These variables are used for the popup menus.
 		private ComboListBox m_clb;
 		private bool m_fConstructingMenu;
 		private System.Collections.Generic.List<FwMenuItem> m_rgfmi;
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -143,7 +175,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_inflAffixTemplateCtrl = null;
-			m_mediator = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
@@ -187,51 +221,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 		}
 
-		#region IxCoreColleague implementation
-
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			if (m_inflAffixTemplateCtrl != null)
-				return new[]{(IxCoreColleague)m_inflAffixTemplateCtrl, this};
-
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion
-
 		public bool OnInflTemplateInsertSlot(object cmd)
 		{
 			CheckDisposed();
 
+#if RANDYTODO
+			// TODO: "Later" was present at the time of the switch to git, so this method didn't do much, besides claiming to handle the command.
 #if Later
 			Command command = (Command) cmd;
 			string field = command.GetParameter("field");
@@ -239,9 +234,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			HandleInsertCommand(field, className);
 #endif
+#endif
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to display this Menu Item
 		/// </summary>
@@ -255,6 +252,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = true;
 			return true;//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		protected FdoCache Cache
 		{
@@ -304,7 +302,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Since we may initialize with TsStrings, need to set WSF.
 				m_clb.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 				m_clb.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
-				m_clb.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+				m_clb.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			}
 			m_clb.Items.Clear();
 			for (int i = 0; i < m_rgfmi.Count; ++i)
@@ -368,8 +366,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			FwMenuItem fmi = FindEnabledItem(iSel);
 			if (fmi == null)
 				return;
+#if RANDYTODO
 			var command = new Command(m_mediator, fmi.ConfigurationNode);
 			m_mediator.SendMessage(fmi.Message, command);
+#endif
 		}
 
 		private FwMenuItem FindEnabledItem(int iSel)
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private System.Collections.Generic.List<FwMenuItem> BuildMenu(string menuId)
 		{
 			System.Collections.Generic.List<FwMenuItem> rgfmi = new System.Collections.Generic.List<FwMenuItem>();
-			XmlNode xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			XmlNode xnWindow = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			Debug.Assert(xnWindow != null);
 			XmlNode xnMenu = xnWindow.SelectSingleNode("contextMenus/menu[@id=\"" + menuId + "\"]");
 			Debug.Assert(xnMenu != null && xnMenu.ChildNodes != null && xnMenu.ChildNodes.Count > 0);

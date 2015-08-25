@@ -4,7 +4,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -20,8 +19,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent, int wsDisplay)
-			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay)
+			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
 
@@ -83,7 +82,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						HvoTreeNode parentNode = selectedNode.Parent as HvoTreeNode;
 						int hvoPos = parentNode.Hvo;
 						var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
-						dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, pos);
+						dlg.SetDlgInfo(Cache, m_propertyTable, pos);
 						switch (dlg.ShowDialog(ParentForm))
 						{
 							case DialogResult.OK:
@@ -106,7 +105,8 @@ namespace SIL.FieldWorks.LexText.Controls
 							case DialogResult.Yes:
 							{
 								// go to m_highestPOS in editor
-								m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.HighestPOS.Guid));
+								m_publisher.Publish("AboutToFollowLink", null);
+								m_publisher.Publish("FollowLink", new FwLinkArgs("posEdit", dlg.HighestPOS.Guid));
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the popup tree,

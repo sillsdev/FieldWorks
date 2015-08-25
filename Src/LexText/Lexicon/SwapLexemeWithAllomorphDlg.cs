@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -23,7 +22,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private ILexEntry m_entry;
 		private IMoForm m_allomorph;
 		private ITsStrFactory m_tsf;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private Label label2;
 		private PictureBox pictureBox1;
@@ -94,16 +92,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="entry">LexEntry</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ILexEntry entry)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ILexEntry entry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(cache != null);
 
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_entry = entry;
@@ -186,7 +182,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 			}
 			m_fwTextBoxBottomMsg = null;
-			m_mediator = null;
 			if (m_tsf != null)
 				System.Runtime.InteropServices.Marshal.ReleaseComObject(m_tsf);
 			m_tsf = null;

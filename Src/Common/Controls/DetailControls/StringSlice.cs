@@ -6,8 +6,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -110,8 +108,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public class StringSliceVc: FwBaseVc
 		{
+			private IPublisher m_publisher;
 			int m_flid;
-			Mediator m_mediator;
 			private bool m_fMultilingual;
 			bool m_fShowWsLabel;
 			int m_wsEn;
@@ -127,21 +125,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// </summary>
 			/// <param name="flid"></param>
 			/// <param name="cache"></param>
-			/// <param name="mediator"></param>
-			public StringSliceVc(int flid, FdoCache cache, Mediator mediator)
+			/// <param name="publisher"></param>
+			public StringSliceVc(int flid, FdoCache cache, IPublisher publisher)
 			{
 				m_flid = flid;
 // ReSharper disable DoNotCallOverridableMethodsInConstructor
 				Cache = cache;
 // ReSharper restore DoNotCallOverridableMethodsInConstructor
-				m_mediator = mediator;
+				m_publisher = publisher;
 				m_wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 				if (m_wsEn == 0)
 					m_wsEn = cache.DefaultUserWs;
 			}
 
-			public StringSliceVc(int flid, int ws, FdoCache cache, Mediator mediator)
-				:this(flid, cache, mediator)
+			public StringSliceVc(int flid, int ws, FdoCache cache, IPublisher publisher)
+				:this(flid, cache, publisher)
 			{
 				m_wsDefault = ws;
 				m_fMultilingual = true;
@@ -325,7 +323,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 						{
-							m_mediator.SendMessage("FollowLink", new FwLinkArgs(url));
+							m_publisher.Publish("AboutToFollowLink", null);
+							m_publisher.Publish("FollowLink", new FwLinkArgs(url));
 							return;
 						}
 					}
@@ -555,12 +554,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// Even if we were given a writing system, we must not use it if not a multistring,
 					// otherwise the VC crashes when it tries to read the property as multilingual.
-					m_vc = new StringSliceVc(m_flid, m_fdoCache, m_mediator);
+					m_vc = new StringSliceVc(m_flid, m_fdoCache, Publisher);
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 				else
 				{
-					m_vc = new StringSliceVc(m_flid, m_ws, m_fdoCache, m_mediator);
+					m_vc = new StringSliceVc(m_flid, m_ws, m_fdoCache, Publisher);
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 

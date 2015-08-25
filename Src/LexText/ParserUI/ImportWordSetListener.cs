@@ -12,11 +12,10 @@
 // </remarks>
 using System;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -24,22 +23,49 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for ImportWordSetListener.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public class ImportWordSetListener : IxCoreColleague, IFWDisposable
+	public class ImportWordSetListener : IFlexComponent, IFWDisposable
 	{
-		#region Data members
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
-		/// xCore Mediator.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
+		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion Data members
+		#endregion
 
-		public ImportWordSetListener()
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 		}
+
+		#endregion
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -127,79 +153,36 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		#region IxCoreColleague implementation
-
-		/// <summary>
-		/// Initialize the IxCoreColleague object.
-		/// </summary>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_mediator.AddColleague(this);
-		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion IxCoreColleague implementation
-
 		#region XCORE Message Handlers
 
-		///
+		/// <summary>
 		/// </summary>
 		/// <remarks> this is something of a hack until we come up with a generic solution to the problem
 		/// on how to control we are CommandSet are handled by listeners are visible. It is difficult
 		/// because some commands, like this one, may be appropriate from more than 1 area.</remarks>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
 		/// <returns></returns>
 		protected  bool InFriendlyArea
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				return (areaChoice == "textsWords");
 			}
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayImportWordSet(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -207,6 +190,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
+
 		/// <summary>
 		/// Handles the xWorks message for Edit Parser Parameters
 		/// </summary>
@@ -216,9 +201,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			using (ImportWordSetDlg dlg = new ImportWordSetDlg(m_mediator, m_propertyTable))
+			using (ImportWordSetDlg dlg = new ImportWordSetDlg(PropertyTable, Publisher))
 			{
-				dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window"));
+				dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window"));
 			}
 			return true;
 		}
@@ -228,18 +213,49 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for ImportWordSetListener.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public class ParserParametersListener : IxCoreColleague, IFWDisposable
+	public class ParserParametersListener : IFlexComponent, IFWDisposable
 	{
-		#region Data members
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
-		/// xCore Mediator.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
+		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion Data members
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -327,55 +343,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
-
-		#region IxCoreColleague implementation
-
-		/// <summary>
-		/// Initialize the IxCoreColleague object.
-		/// </summary>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_mediator.AddColleague(this);
-		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium;  }
-		}
-
-		#endregion IxCoreColleague implementation
 
 		#region XCORE Message Handlers
 
@@ -388,15 +366,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			if (cache == null)
 				throw new ArgumentException("no cache!");
 
-			using (var dlg = new ParserParametersDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new ParserParametersDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IMoMorphData md = cache.LangProject.MorphologicalDataOA;
 				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
-				if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+				if (dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window")) == DialogResult.OK)
 				{
 					using (var helper = new UndoableUnitOfWorkHelper(
 						cache.ActionHandlerAccessor,

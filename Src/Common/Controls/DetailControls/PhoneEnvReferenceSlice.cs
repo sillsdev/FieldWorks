@@ -14,7 +14,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -106,7 +105,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var rl = (PhoneEnvReferenceLauncher)Control;
-			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable, null, null);
+			rl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, null, null);
 			rl.ConfigurationNode = ConfigurationNode;
 			rl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (PhoneEnvReferenceView)rl.MainControl;
@@ -148,10 +148,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 
 			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.Controls[1], caption, HelpId}, false);
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.Controls[0], caption, HelpId, "Button"}, false);
+			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[1], caption, HelpId});
+			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[0], caption, HelpId, "Button"});
 		}
 
 		/// <summary>
@@ -178,25 +176,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public override XCore.IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-			// Normally a slice should only handle messages if both it and its data tree
-			// are visible. Override this method if there is some reason to handle messages
-			// while not visible. Note however that currently (31 Aug 2005) RecordEditView
-			// hides the data tree but does not remove slices when no record is current.
-			// Thus, a slice that is not visible might belong to a display of a deleted
-			// or unavailable object, so be very careful what you enable!
-			if (this.Visible && ContainingDataTree.Visible)
-			{
-				PhoneEnvReferenceLauncher rl = Control as PhoneEnvReferenceLauncher;
-				//PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-				return new XCore.IxCoreColleague[] {rl.MainControl as IxCoreColleague, this};
-			}
-			else
-				return new XCore.IxCoreColleague[0];
-		}
-
 		/// <summary>
 		/// This action is needed whenever we leave the slice, not just when we move to another
 		/// slice but also when we move directly to another tool.
@@ -213,6 +192,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#region Special menu item methods
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if an underscore already exists in the environment
 		/// string.
@@ -229,6 +209,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanShowEnvironmentError();
 			return true;
 		}
+#endif
 
 		public bool OnShowEnvironmentError(object args)
 		{
@@ -239,6 +220,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if a slash already exists in the environment string.
 		/// </summary>
@@ -254,6 +236,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanInsertSlash();
 			return true;
 		}
+#endif
 
 		public bool OnInsertSlash(object args)
 		{
@@ -264,6 +247,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if an underscore already exists in the environment
 		/// string.
@@ -280,6 +264,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanInsertEnvBar();
 			return true;
 		}
+#endif
 
 		public bool OnInsertEnvironmentBar(object args)
 		{
@@ -290,6 +275,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -305,6 +291,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanInsertItem();
 			return true;
 		}
+#endif
 
 		public bool OnInsertNaturalClass(object args)
 		{
@@ -312,9 +299,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			return SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator, m_propertyTable);
+				m_persistenceProvider, PropertyTable, Publisher);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -330,6 +318,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanInsertItem();
 			return true;
 		}
+#endif
 
 		public bool OnInsertOptionalItem(object args)
 		{
@@ -375,6 +364,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 									ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttp, true);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
@@ -390,6 +380,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = view.CanInsertHashMark();
 			return true;
 		}
+#endif
 
 		public bool OnInsertHashMark(object args)
 		{

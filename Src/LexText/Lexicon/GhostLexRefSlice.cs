@@ -42,7 +42,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// It doesn't need most of the usual info, but the Mediator is important if the user
 			// asks to Create a new lex entry from inside the first dialog (LT-9679).
 			// We'd pass 0 and null for flid and fieldname, but there are Asserts to prevent this.
-			(Control as ButtonLauncher).Initialize(m_cache, m_obj, 1, "nonsence", null, Mediator, m_propertyTable, null, null);
+			var btnLauncher = (ButtonLauncher) Control;
+			if (btnLauncher.PropertyTable == null)
+			{
+				btnLauncher.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
+			btnLauncher.Initialize(m_cache, m_obj, 1, "nonsence", null, null, null);
 			base.Install(parent);
 		}
 	}
@@ -61,12 +66,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
-			Debug.Assert(m_obj.ClassID == LexEntryTags.kClassId);
 			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 			{
-				ILexEntry le = m_obj as ILexEntry;
-				dlg.SetDlgInfo(m_obj.Cache, m_mediator, m_propertyTable, le);
-				String str = ShowHelp.RemoveSpaces(this.Slice.Label);
+				var le = m_obj as ILexEntry;
+				dlg.SetDlgInfo(m_obj.Cache, PropertyTable, Publisher, le);
+				var str = ShowHelp.RemoveSpaces(Slice.Label);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
@@ -77,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// The user selected an item; now we actually need a LexEntryRef.
 		/// </summary>
-		/// <param name="hvoNew"></param>
+		/// <param name="newObj"></param>
 		private void AddItem(ICmObject newObj)
 		{
 			CheckDisposed();

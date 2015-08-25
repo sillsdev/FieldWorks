@@ -19,7 +19,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

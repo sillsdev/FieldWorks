@@ -8,18 +8,13 @@
 // <remarks>
 // </remarks>
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {
@@ -30,7 +25,7 @@ namespace SIL.FieldWorks.TE
 	/// in it yet.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class EmptyScripture : Form, IFWDisposable, IxCoreColleague
+	public class EmptyScripture : Form, IFWDisposable, IFlexComponent
 	{
 		#region Option enumeration
 		/// ------------------------------------------------------------------------------------
@@ -57,8 +52,6 @@ namespace SIL.FieldWorks.TE
 		private int m_bookChosen = -1;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private Option m_Option = Option.Other;
-		private ITMAdapter m_tmAdapter;
-		private Mediator m_savMsgMediator;
 		private Form m_savAdaptersParentForm;
 		private Label lblTopLabel;
 		private Button btnBook;
@@ -75,12 +68,13 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="EmptyScripture"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public EmptyScripture(ITMAdapter adapter, FdoCache fdoCache, IHelpTopicProvider helpTopicProvider)
+		public EmptyScripture(FdoCache fdoCache, IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
 
 			m_helpTopicProvider = helpTopicProvider;
 
+#if RANDYTODO
 			if (adapter == null || adapter.MessageMediator == null)
 				btnBook.Enabled = false;
 			else
@@ -97,10 +91,53 @@ namespace SIL.FieldWorks.TE
 				mediator.AddColleague(this);
 				m_tmAdapter.MessageMediator = mediator;
 			}
+#endif
 
 			string projectName = fdoCache.ProjectId.Name;
 			lblTopLabel.Text = string.Format(lblTopLabel.Text,projectName);
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -141,7 +178,6 @@ namespace SIL.FieldWorks.TE
 					m_menuAdapter.MessageMediator.RemoveColleague(this);
 				*/
 			}
-			m_savMsgMediator = null;
 
 			base.Dispose( disposing );
 		}
@@ -266,54 +302,6 @@ namespace SIL.FieldWorks.TE
 		}
 		#endregion
 
-		#region IxCoreColleague Members
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Not used
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the possible message targets, i.e. the view(s) we are showing
-		/// </summary>
-		/// <returns>Message targets</returns>
-		/// ------------------------------------------------------------------------------------
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			// return list of view windows with focused window being the first one
-			List<IxCoreColleague> targets = new List<IxCoreColleague>();
-			targets.Add(this);
-			return targets.ToArray();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-		#endregion
-
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -356,6 +344,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected bool OnInsertBook(object args)
 		{
+#if RANDYTODO
 			TMItemProperties itemProps = args as TMItemProperties;
 			if (itemProps != null && itemProps.Tag.GetType() == typeof(int))
 			{
@@ -363,6 +352,7 @@ namespace SIL.FieldWorks.TE
 				m_Option = Option.Book;
 				Close();
 			}
+#endif
 
 			return true;
 		}
@@ -395,6 +385,7 @@ namespace SIL.FieldWorks.TE
 		{
 			base.OnClosing(e);
 
+#if RANDYTODO
 			if (m_tmAdapter.MessageMediator != null)
 			{
 				// We created this mediator, so we have to get rid of it.
@@ -408,6 +399,7 @@ namespace SIL.FieldWorks.TE
 				m_tmAdapter.MessageMediator = m_savMsgMediator;
 
 			m_tmAdapter.SetParentForm(m_savAdaptersParentForm);
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -423,7 +415,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void OnShown(EventArgs e)
 		{
+#if RANDYTODO
 			m_savAdaptersParentForm = m_tmAdapter.SetParentForm(this);
+#endif
 			base.OnShown(e);
 		}
 
@@ -492,8 +486,10 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void btnBook_Click(object sender, System.EventArgs e)
 		{
+#if RANDYTODO
 			Point pt = PointToScreen(new Point(btnBook.Left, btnBook.Bottom));
 			m_tmAdapter.PopupMenu("cmnuInsertBooks", pt.X, pt.Y);
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------

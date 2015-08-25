@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		private int m_wsEn, m_wsFr;
 
 		private FwXApp m_application;
-		private FwXWindow m_window;
+		private IFwMainWnd m_window;
 		private IPropertyTable m_propertyTable;
 
 		StringBuilder XHTMLStringBuilder { get; set; }
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(true);
 		}
-		#endregion disposal
+	#endregion disposal
 
 		[SetUp]
 		public void SetupExportVariables()
@@ -3397,7 +3397,7 @@ namespace SIL.FieldWorks.XWorks
 			var matches = regex.Matches(haystack);
 			Assert.That(matches.Count, Is.EqualTo(requiredNumberOfMatches), "Unexpected number of matches");
 		}
-		#endregion Helpers
+	#endregion Helpers
 	}
 
 	#region Test classes and interfaces for testing the reflection code in GetPropertyTypeForConfigurationNode

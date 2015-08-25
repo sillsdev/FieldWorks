@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
 
@@ -86,7 +85,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
-			IPersistenceProvider persistenceProvider, Mediator mediator, IPropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
+			IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
 			switch(editor)
@@ -274,7 +273,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "atomicreferencepos":
 				{
-					slice = new AtomicReferencePOSSlice(cache, obj, flid, mediator, propertyTable);
+					slice = new AtomicReferencePOSSlice(cache, obj, flid, propertyTable, publisher);
 					break;
 				}
 				case "possatomicreference":
@@ -284,7 +283,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "atomicreferenceposdisabled":
 				{
-					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, mediator, propertyTable);
+					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, propertyTable, publisher);
 					break;
 				}
 
@@ -385,6 +384,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
+			slice.InitializeFlexComponent(propertyTable, publisher, subscriber);
 			slice.AccessibleName = editor;
 
 			return slice;

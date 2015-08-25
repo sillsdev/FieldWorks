@@ -17,11 +17,10 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {

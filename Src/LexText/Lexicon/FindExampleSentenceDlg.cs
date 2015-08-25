@@ -11,16 +11,14 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	public partial class FindExampleSentenceDlg : Form, IFwGuiControl
 	{
 		FdoCache m_cache;
-		Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
 		XmlNode m_configurationNode;
 		ILexExampleSentence m_les;
 		ILexSense m_owningSense;
@@ -34,6 +32,48 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
+
 		#region IFWDisposable Members
 
 		public void CheckDisposed()
@@ -46,7 +86,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region IFwGuiControl Members
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
+		public void Init(XmlNode configurationNode, ICmObject sourceObject)
 		{
 			CheckDisposed();
 
@@ -67,13 +107,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				throw new ArgumentException("Invalid object type for sourceObject.");
 			}
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_configurationNode = configurationNode;
 
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
-			var helpToicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpToicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpToicProvider != null)
 			{
 				helpProvider.HelpNamespace = helpToicProvider.HelpFile;
@@ -87,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Launch()
 		{
 			CheckDisposed();
-			ShowDialog(m_propertyTable.GetValue<Form>("window"));
+			ShowDialog(PropertyTable.GetValue<Form>("window"));
 		}
 
 		#endregion
@@ -106,12 +144,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Load the controls.
 
 			// 1. Initialize the preview pane (lower pane)
-			m_previewPane = new XmlView(0, "publicationNew", false);
-			m_previewPane.Cache = m_cache;
-			m_previewPane.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_previewPane = new XmlView(0, "publicationNew", false)
+			{
+				Cache = m_cache,
+				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
+			};
 
 			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
-			pbc.Init(m_mediator, m_propertyTable, m_previewPane);
+#if RANDYTODO
+			// TODO: replace following null with IPaneBar impl.
+#endif
+			pbc.Init(PropertyTable, m_previewPane, null);
 			pbc.Dock = DockStyle.Fill;
 			pbc.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
@@ -122,15 +165,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			XmlNode xnBrowseViewControlParameters = this.BrowseViewControlParameters;
 
 			// First create our Clerk, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
-			m_clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, xnBrowseViewControlParameters, true);
+			m_clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			m_clerk.OwningObject = m_owningSense;
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
-			m_rbv.Init(m_mediator, m_propertyTable, xnBrowseViewControlParameters, m_previewPane, m_clerk.VirtualListPublisher);
+			m_rbv.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_rbv.Init(m_previewPane, m_clerk.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
-			pbc1.Init(m_mediator, m_propertyTable, m_rbv);
+#if RANDYTODO
+			// TODO: replace following null with IPaneBar impl.
+#endif
+			pbc1.Init(PropertyTable, m_rbv, null);
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;
 			pbc1.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgBrowseViewPaneTitle;
@@ -229,7 +276,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 	}
 
@@ -239,11 +286,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		XmlView m_previewPane;
 		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
 
-		internal void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode xnBrowseViewControlParameters, XmlView pubView, ISilDataAccess sda)
+		internal void Init(XmlView pubView, ISilDataAccess sda)
 		{
 			m_previewPane = pubView;
 			m_decoratedSda = sda;
-			base.Init(mediator, propertyTable, xnBrowseViewControlParameters);
 		}
 
 		public override void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)

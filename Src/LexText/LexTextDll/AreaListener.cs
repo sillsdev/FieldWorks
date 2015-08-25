@@ -6,9 +6,9 @@ using System.Linq;
 using System.Xml;
 using Palaso.Reporting;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using Logger = SIL.Utils.Logger;
 
@@ -17,13 +17,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 	/// <summary>
 	/// Summary description for AreaListener.
 	/// </summary>
-	[MediatorDispose]
-	public class AreaListener : IxCoreColleague, IFWDisposable
+	public class AreaListener : IFlexComponent, IFWDisposable
 	{
 		#region Member variables
-
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// Keeps track of how many lists are loaded into List area
@@ -125,27 +121,62 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+		#region Implementation of IPropertyTableProvider
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			mediator.AddColleague(this);
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
 		}
+
+		#endregion
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
 		HashSet<string> m_toolsReportedToday = new HashSet<string>();
@@ -164,10 +195,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 					* next time we come back to this area, we can remember to use this same tool.
 					*/
 				case "currentContentControlObject":
-					string toolName = m_propertyTable.GetValue("currentContentControl", "");
-					var c = m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
+					string toolName = PropertyTable.GetValue("currentContentControl", "");
+					var c = PropertyTable.GetValue<IMainContentControl>("currentContentControlObject");
 					var propName = "ToolForAreaNamed_" + c.AreaName;
-					m_propertyTable.SetProperty(propName, toolName, true, true);
+					PropertyTable.SetProperty(propName, toolName, true, true);
 					Logger.WriteEvent("Switched to " + toolName);
 					// Should we report a tool change?
 					if (m_lastToolChange.Date != DateTime.Now.Date)
@@ -176,7 +207,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 						m_toolsReportedToday.Clear();
 						m_lastToolChange = DateTime.Now;
 					}
-					string areaNameForReport = m_propertyTable.GetValue<string>("areaChoice");
+					string areaNameForReport = PropertyTable.GetValue<string>("areaChoice");
 					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
 					{
 						m_toolsReportedToday.Add(toolName);
@@ -185,45 +216,20 @@ namespace SIL.FieldWorks.XWorks.LexText
 					break;
 
 				case "areaChoice":
-					string areaName = m_propertyTable.GetValue<string>("areaChoice");
+					string areaName = PropertyTable.GetValue<string>("areaChoice");
 
 					if(string.IsNullOrEmpty(areaName))
 						break;//this can happen when we use this property very early in the initialization
 
 					//for next startup
-					m_propertyTable.SetProperty("InitialArea", areaName, true, true);
+					PropertyTable.SetProperty("InitialArea", areaName, true, true);
 
 					ActivateToolForArea(areaName);
 					break;
 			}
 		}
 
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.High; }
-		}
-
+#if RANDYTODO
 		public bool OnDisplayLexicalToolsList(object parameters, ref UIListDisplayProperties display)
 		{
 			CheckDisposed();
@@ -361,6 +367,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
@@ -372,7 +379,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			var realParams = (object[]) parameters;
 			var list = (ICmPossibilityList)realParams[0];
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			foreach (XmlNode tool in windowConfiguration.SelectSingleNode(GetListToolsXPath()).ChildNodes)
 			{
 				var toolName = XmlUtils.GetManditoryAttributeValue(tool, "value");
@@ -403,6 +410,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		#region Custom List Methods
 
+#if RANDYTODO
 		private static void AddToolNodeToDisplay(ICmPossibilityListRepository possRepo, FdoCache cache,
 												 UIListDisplayProperties display, XmlNode node)
 		{
@@ -416,6 +424,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var controlElement = node.SelectSingleNode("control");
 			display.List.Add(localizedLabel, value, imageName, controlElement);
 		}
+#endif
 
 		private static string FindMatchingPossibilityListUIName(XmlNode toolNode,
 																ICmPossibilityListRepository possRepo, FdoCache cache)
@@ -562,7 +571,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private void UpdateMediatorConfig(XmlNode windowConfig)
 		{
 			// We have to update this because other things besides 'tools' need to get set.
-			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, false, true);
+			PropertyTable.SetProperty("WindowConfiguration", windowConfig, false, true);
 		}
 
 		/// <summary>
@@ -572,7 +581,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private List<ICmPossibilityList> GetListOfOwnerlessLists()
 		{
 			// Get the cache and ICmPossibilityListRepository via the mediator
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var repo = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 
 			//// Find all custom lists (lists that own CmCustomItems)
@@ -652,7 +661,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (x == null)
 				x = FindToolParamNode(windowConfig, curList);
 			// REVIEW: I'm not sure where the created RecordClerk gets disposed
-			RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, x, true);
+			RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 		}
 
 		private void AddCommandToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
@@ -664,11 +673,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 			// Put the command node in the window configuration
 			windowConfig.SelectSingleNode(GetCommandsXPath()).AppendChild(cmdNodeImported);
 
+#if RANDYTODO
 			// Add the command to the mediator
 			var command = new Command(m_mediator, cmdNodeImported);
 			Debug.Assert(m_mediator.CommandSet != null,
 						 "Empty mediator CommandSet. Should only occur in tests. Make sure it doesn't there either!");
 			m_mediator.CommandSet.Add(command.Id, command);
+#endif
 		}
 
 		private static XmlNode CreateCustomToolNode(ICmPossibilityList curList, XmlNode controlNode)
@@ -863,7 +874,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string areaName = m_propertyTable.GetValue("InitialArea", "");
+			string areaName = PropertyTable.GetValue("InitialArea", "");
 			Debug.Assert( areaName !="", "The configuration files should set a default for 'InitialArea' under <defaultProperties>");
 
 			// if an old configuration is preserving an obsolete InitialArea, reset it now, so we don't crash (cf. LT-7977)
@@ -875,7 +886,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 
 			//this will cause our "onPropertyChanged" method to fire, and it will then set the tool appropriately.
-			m_propertyTable.SetProperty("areaChoice", areaName, false, true);
+			PropertyTable.SetProperty("areaChoice", areaName, false, true);
 
 			ActivateToolForArea(areaName);
 
@@ -906,12 +917,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 					// Enhance: if we could only refresh the sidebar of all the active windows,
 					// that would be better.
-					if (m_mediator == null)
-						throw new ApplicationException("Mediator is null.");
+					if (PropertyTable == null)
+						throw new ApplicationException("PropertyTable is null.");
 
 					// don't try to use ReplaceMainWindow on all the windows, only the active one!
-					var app = m_propertyTable.GetValue<LexTextApp>("App");
-					var win = (FwXWindow)app.ActiveMainWindow;
+					var app = PropertyTable.GetValue<LexTextApp>("App");
+					var win = (IFwMainWnd)app.ActiveMainWindow;
 					app.ReplaceMainWindow(win);
 					break;
 			}
@@ -938,27 +949,27 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <returns>true if we could find an area item with parameters </returns>
 		private bool TryGetAreaParametersNode(string areaName, out XmlNode areaParams)
 		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			areaParams = windowConfiguration.SelectSingleNode("//lists/list[@id='AreasList']/item[@value='" + areaName + "']/parameters");
 			return areaParams != null;
 		}
 
 		private void ActivateToolForArea(string areaName)
 		{
-			var currentContentControl = m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
+			var currentContentControl = PropertyTable.GetValue<IMainContentControl>("currentContentControlObject");
 			if (currentContentControl != null && currentContentControl.AreaName == areaName)
 				return;//we are already in a control of this area, don't change anything.
 
 			string toolName;
 			XmlNode node = GetToolNodeForArea(areaName, out toolName);
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
-			m_propertyTable.SetProperty("currentContentControl", toolName, false, true);
+			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
+			PropertyTable.SetProperty("currentContentControl", toolName, false, true);
 		}
 
 		private XmlNode GetToolNodeForArea(string areaName, out string toolName)
 		{
 			string property = "ToolForAreaNamed_" + areaName;
-			toolName = m_propertyTable.GetValue(property, "");
+			toolName = PropertyTable.GetValue(property, "");
 			if (toolName == "")
 				throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
 
@@ -966,7 +977,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (!TryGetToolNode(areaName, toolName, out node))
 			{
 				// the tool must be obsolete, so just get the default tool for this area
-				var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+				var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 				toolName = windowConfiguration.SelectSingleNode("//defaultProperties/property[@name='" + property + "']/@value").InnerText;
 				if (!TryGetToolNode(areaName, toolName, out node))
 					throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
@@ -998,7 +1009,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private bool TryGetToolNode(string areaName, string toolName, out XmlNode node)
 		{
 			string xpath = GetToolXPath(areaName) + "[@value = '" + XmlUtils.MakeSafeXmlAttribute(toolName) + "']";
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			node = windowConfiguration.SelectSingleNode(xpath);
 			if (node == null)
 				node = FindToolNode(windowConfiguration, areaName, toolName);
@@ -1007,7 +1018,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		protected string GetCurrentAreaName()
 		{
-			return m_propertyTable.GetValue<string>("areaChoice");
+			return PropertyTable.GetValue<string>("areaChoice");
 		}
 
 		/// <summary>
@@ -1022,7 +1033,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (!TryGetToolNode(null, (string)toolName, out node))
 				throw new ApplicationException (String.Format(LexTextStrings.CannotFindToolNamed0, toolName));
 
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			// We might not be in the right area, so adjust that if needed (LT-4511).
 			string area = GetCurrentAreaName();
 			if (!IsToolInArea(toolName as string, area, windowConfiguration))
@@ -1033,8 +1044,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 					// Before switching areas, we need to fix the tool recorded for that area,
 					// otherwise ActivateToolForArea will override our tool choice with the last
 					// tool active in the area (LT-4696).
-					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
-					m_propertyTable.SetProperty("areaChoice", area, true, true);
+					PropertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
+					PropertyTable.SetProperty("areaChoice", area, true, true);
 				}
 			}
 			else
@@ -1043,11 +1054,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// the currentContentControl (is that partly obsolete?).
 				if (area != null)
 				{
-					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
+					PropertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
 				}
 			}
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
-			m_propertyTable.SetProperty("currentContentControl", toolName, true, true);
+			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
+			PropertyTable.SetProperty("currentContentControl", toolName, true, true);
 			return true;
 		}
 

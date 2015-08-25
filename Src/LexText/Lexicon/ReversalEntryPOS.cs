@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -23,10 +22,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			return ri.PartsOfSpeechOA;
 		}
-
-		#region XCORE Message Handlers
-
-		#endregion XCORE Message Handlers
 	}
 	/// <summary>
 	/// ReversalPOSMenuHandler inherits from DTMenuHandler and adds some special smarts.
@@ -38,6 +33,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class ReversalPOSMenuHandler : DTMenuHandler
 	{
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -63,6 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Text += StringTable.Table.GetString("(cannot move this)");
 			return true; //we've handled this
 		}
+#endif
 
 		public bool OnMoveReversalPOS(object cmd)
 		{
@@ -75,7 +72,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
 				}
 			}
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMoveTo, null))
 			{
 				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
@@ -95,13 +92,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							});
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
+					Publisher.Publish("JumpToRecord", newOwner.MainPossibility.Hvo);
 				}
 			}
 
 			return true;
 		}
 
+#if RANDYTODO
 		protected override bool CanInsert(Command command, Slice currentSlice, out int index)
 		{
 			if (base.CanInsert(command, currentSlice, out index))
@@ -144,6 +142,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Text += StringTable.Table.GetString("(cannot merge this)");
 			return true; //we've handled this
 		}
+#endif
 
 		public bool OnMergeReversalPOS(object cmd)
 		{
@@ -151,11 +150,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMergeInto, null))
 			{
 				dlg.SetHelpTopic("khtpMergeCategories");
-				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					var currentPOS = POS;
 					var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
@@ -165,13 +164,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						()=> survivor.MergeObject(currentPOS, false));
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
+					Publisher.Publish("JumpToRecord", survivor.MainPossibility.Hvo);
 				}
 			}
 
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -191,6 +191,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			return true; //we've handled this
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice and cache are references")]
@@ -267,8 +268,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_propertyTable.GetValue<string>("areaChoice") == "lists"
-					&& m_propertyTable.GetValue<string>("ToolForAreaNamed_lists") == "reversalToolReversalIndexPOS");
+				return (PropertyTable.GetValue<string>("areaChoice") == "lists"
+					&& PropertyTable.GetValue<string>("ToolForAreaNamed_lists") == "reversalToolReversalIndexPOS");
 			}
 		}
 	}
@@ -278,19 +279,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class ReversalIndexPOSRecordList : RecordList
 	{
-
-
-		public override void Init(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(cache, mediator, propertyTable, recordListNode);
+			BaseInit(recordListNode);
 			m_flid = CmPossibilityListTags.kflidPossibilities;
-			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator, propertyTable);
+			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(PropertyTable, Publisher);
 			if (riGuid != Guid.Empty)
 			{
-				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+				var cache = PropertyTable.GetValue<FdoCache>("cacke");
+				var ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 				m_owningObject = ri.PartsOfSpeechOA;
 				m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
 			}

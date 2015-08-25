@@ -110,11 +110,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="MessageBoxExLib">
-      <Name>MessageBoxExLib</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="MsHtmHstInterop">
       <Name>MsHtmHstInterop</Name>
       <HintPath>..\..\Bin\MsHtmHstInterop.dll</HintPath>
@@ -141,11 +136,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -164,34 +154,13 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AdapterMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="AreaManager.cs" />
+    <Compile Include="DlgListenerBase.cs" />
     <Compile Include="CollapsingSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CollapsingSplitContainer.Designer.cs">
       <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="HtmlControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="HtmlViewer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="IconHolder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ImageCollection.cs" />
-    <Compile Include="ImageContent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ImageDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IncludeXml.cs" />
-    <Compile Include="Inventory.cs" />
     <Compile Include="PaneBarContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -201,48 +170,11 @@
     <Compile Include="MultiPane.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="NotifyWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="RecordBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="xCoreStrings.Designer.cs">
-      <DependentUpon>xCoreStrings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="xCoreUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XMessageBoxExManager.cs" />
-    <Compile Include="xWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <EmbeddedResource Include="AdapterMenuItem.resx">
-      <DependentUpon>AdapterMenuItem.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="CollapsingSplitContainer.resx">
       <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HtmlControl.resx">
-      <DependentUpon>HtmlControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HtmlViewer.resx">
-      <DependentUpon>HtmlViewer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="IconHolder.resx">
-      <DependentUpon>IconHolder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImageContent.resx">
-      <DependentUpon>ImageContent.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImageDialog.resx">
-      <DependentUpon>ImageDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PaneBarContainer.resx">
@@ -253,19 +185,8 @@
       <DependentUpon>MultiPane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="NotifyWindow.resx">
-      <DependentUpon>NotifyWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="RecordBar.resx">
       <DependentUpon>RecordBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="xCoreStrings.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="xWindow.resx">
-      <DependentUpon>xWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs" />

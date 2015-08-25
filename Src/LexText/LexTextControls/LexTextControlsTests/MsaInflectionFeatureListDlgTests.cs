@@ -5,21 +5,14 @@
 // File: MsaInflectionFeatureListDlgTests.cs
 // Responsibility:
 
-using System;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using System.Xml.Xsl;
-
 using NUnit.Framework;
-
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -129,12 +122,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNode itemCont = doc.SelectSingleNode("//item[@id='vCont']");
 			msfs.AddFeatureFromXml(itemCont);
 
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
 			{
 				ILexEntryInflType cobj =
 					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
 				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-				dlg.SetDlgInfo(Cache, null, null, cobj, 0);
+				dlg.SetDlgInfo(Cache, propertyTable, cobj, 0);
 
 				// load some feature system values into treeview
 				FeatureStructureTreeView tv = dlg.TreeView;
@@ -176,11 +173,15 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MakeFeatureStructure(FeatureStructureTreeView tv, IFsFeatStruc featStruct)
 		{
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
 				foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)
 					featStruct.FeatureSpecsOC.Remove(spec);
-				dlg.SetDlgInfo(Cache, null, null, featStruct, MoStemMsaTags.kflidMsFeatures);
+				dlg.SetDlgInfo(Cache, propertyTable, featStruct, MoStemMsaTags.kflidMsFeatures);
 				dlg.UpdateFeatureStructure(tv.Nodes);
 			}
 		}

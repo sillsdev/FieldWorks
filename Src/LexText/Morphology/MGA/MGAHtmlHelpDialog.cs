@@ -17,12 +17,12 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
+using SIL.CoreImpl;
 #if __MonoCS__
 using Gecko;
 #endif
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {

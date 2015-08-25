@@ -11,7 +11,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using XCore;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -58,13 +57,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Sets the DLG info.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
-			base.SetDlgInfo(cache, mediator, propertyTable, null);
+			base.SetDlgInfo(cache, propertyTable, publisher, null);
 		}
 
 
@@ -74,10 +73,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// rather than the variant
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -89,7 +88,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				startingEntry = componentLexeme.Owner as ILexEntry;
 			}
-			SetDlgInfo(cache, mediator, propertyTable, startingEntry);
+			SetDlgInfo(cache, propertyTable, publisher, startingEntry);
 			// we are looking for an existing variant form
 			// so hide the Entry/Sense radio group box.
 			grplbl.Visible = false;
@@ -108,11 +107,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable, int ws)
+		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, int ws)
 		{
 			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
 				cache, cache.DefaultUserWs);
-			base.SetDlgInfo(cache, wp, mediator, propertyTable, ws);
+			base.SetDlgInfo(cache, wp, propertyTable, publisher, ws);
 			// load the variant type possibilities.
 			LoadVariantTypes();
 		}
@@ -142,7 +141,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_tcManager == null)
 			{
 				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache,
-					m_mediator, m_propertyTable, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
+					m_propertyTable, m_publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
 					false, this);
 			}
 			m_tcManager.LoadPopupTree(hvoTarget);
@@ -506,12 +505,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IVariantComponentLexeme componentLexeme)
 		{
-			SetDlgInfoForComponentLexeme(cache, mediator, propertyTable, componentLexeme);
+			SetDlgInfoForComponentLexeme(cache, propertyTable, publisher, componentLexeme);
 		}
 	}
 }

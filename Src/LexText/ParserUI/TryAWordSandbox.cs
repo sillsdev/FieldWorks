@@ -1,8 +1,6 @@
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.IText;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -21,14 +19,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
 		/// <param name="analysis"></param>
-		/// <param name="mediator"></param>
-		public TryAWordSandbox(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices,
+		public TryAWordSandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices,
 			IAnalysis analysis)
-			: base(cache, mediator, propertyTable, ss, choices)
+			: base(cache, ss, choices)
 		{
 			SizeToContent = true;
 			LoadForWordBundleAnalysis(analysis.Hvo);

@@ -181,4 +181,7 @@
 because a project with the same name is already open.
 If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart FLEx.</value>
   </data>
+  <data name="ErrorReadingXMLFile0" xml:space="preserve">
+    <value>There was an error while reading in the XML file: {0}.</value>
+  </data>
 </root>

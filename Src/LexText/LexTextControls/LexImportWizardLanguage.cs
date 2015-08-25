@@ -13,7 +13,6 @@ using SilEncConverters40;	// for the encoding converters
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 
 
 namespace SIL.FieldWorks.LexText.Controls

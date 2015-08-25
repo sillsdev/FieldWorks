@@ -15,7 +15,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,28 +27,34 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator m_pubDecorator;
 		internal string m_configObjectName;
 
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		#region Overrides of XWorksViewBase
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			m_mediator = mediator;
-			m_configurationParameters = configurationParameters;
-			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx);
-			m_mainView.Dock = DockStyle.Fill;
-			m_mainView.Location = new Point(0, 0);
-			m_mainView.IsWebBrowserContextMenuEnabled = false;
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)
+			{
+				Dock = DockStyle.Fill,
+				Location = new Point(0, 0),
+				IsWebBrowserContextMenuEnabled = false
+			};
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
-			using(var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
+			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
 			{
-				m_mediator.AddColleague(this);
 				Clerk.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
 		}
 
-		public override int Priority
-		{
-			get { return (int)ColleaguePriority.High; }
-		}
+		#endregion
 
 		/// <summary>
 		/// We wait until containing controls are laid out to try to set the content
@@ -71,11 +76,12 @@ namespace SIL.FieldWorks.XWorks
 			var validConfiguration = GetValidConfigurationForPublication(pubName);
 			if(validConfiguration != currentConfig)
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
+				PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
 			}
 			UpdateContent(PublicationDecorator, validConfiguration);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Populate the list of publications for the first dictionary titlebar menu.
 		/// </summary>
@@ -130,6 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Read in the parameters to determine which sequence/collection we are editing.
@@ -207,6 +214,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
+#if RANDYTODO
 			var coreCommand = commandObject as Command;
 			if(coreCommand != null)
 			{
@@ -214,10 +222,12 @@ namespace SIL.FieldWorks.XWorks
 				if(tool != "publicationsEdit")
 					return false;
 
+				//Publisher.Publish("AboutToFollowLink", null);
 				var fwLink = new FwLinkArgs(tool, Guid.Empty);
 				m_mediator.PostMessage("FollowLink", fwLink);
 				return true;
 			}
+#endif
 			return false;
 		}
 
@@ -318,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 					var validConfiguration = GetValidConfigurationForPublication(pubName);
 					if(validConfiguration != currentConfiguration)
 					{
-						m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
+						PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true, true);
 					}
 					UpdateContent(pubDecorator, validConfiguration);
 					break;
@@ -328,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if(validPublication != currentPublication)
 					{
-						m_propertyTable.SetProperty("SelectedPublication", validPublication, true, true);
+						PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
@@ -345,11 +355,12 @@ namespace SIL.FieldWorks.XWorks
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 			if (validPublication != currentPublication)
 			{
-				m_propertyTable.SetProperty("SelectedPublication", validPublication, true, true);
+				PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 			}
 			UpdateContent(PublicationDecorator, currentConfig);
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var pubName = GetCurrentPublication();
@@ -357,10 +368,11 @@ namespace SIL.FieldWorks.XWorks
 			display.Checked = (xWorksStrings.AllEntriesPublication == pubName);
 			return true;
 		}
+#endif
 
 		public bool OnShowAllEntries(object args)
 		{
-			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, true);
+			PropertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, true);
 			return true;
 		}
 
@@ -374,12 +386,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk);
+			var entriesToPublish = publicationDecorator.GetEntriesToPublish(PropertyTable, Clerk);
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", Path.GetFileNameWithoutExtension(configurationFile));
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
 			var cssPath = basePath + ".css";
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, xhtmlPath, cssPath);
 			m_mainView.Url = new Uri(xhtmlPath);
 			m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 		}
@@ -387,12 +399,12 @@ namespace SIL.FieldWorks.XWorks
 		private string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return m_propertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
+			return PropertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
 		}
 
 		private string GetCurrentConfiguration()
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable);
+			return DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator

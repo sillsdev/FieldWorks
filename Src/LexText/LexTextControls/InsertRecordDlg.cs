@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject owner)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject owner)
 		{
 			CheckDisposed();
 
@@ -99,16 +98,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			AdjustControlAndDialogHeight(m_typeCombo, m_typeCombo.PreferredHeight);
 
 			ICmPossibilityList recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
-			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, mediator, propertyTable,
+			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, propertyTable, publisher,
 				recTypes, cache.DefaultAnalWs, false, this);
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ICmObject owner, ITsString tssTitle)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject owner, ITsString tssTitle)
 		{
-			SetDlgInfo(cache, mediator, propertyTable, owner);
+			SetDlgInfo(cache, propertyTable, publisher, owner);
 			m_titleTextBox.Tss = tssTitle;
 		}
 

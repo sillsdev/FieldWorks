@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -10,27 +7,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// This class implements the DotNet Acessibility interface by wrapping the COM IAccessible interface
 	/// implemented by the root box.
-	/// It is uncomfortably similar to COMInterfaces.AccessibleObjectFromIAccessible, but was developed
-	/// independently since we (JohnT and Dan) didn't find AccessibleObjectFromIAccessible until later.
-	/// The most important difference is that this version stores the root site as well as its
-	/// AccessibleRootObject. This handles the problem that DotNet apparently only asks any one object
-	/// to CreateAccessibilityInstance() once; then it caches the result. So if we return null,
-	/// or make an AccessibleObjectFromIAccessible that has a null IAccessible, it will never work later
-	/// when the root box has been made and the IAccessible is available. (In fact, it crashes, because
-	/// AccessibleObjectFromIAccessible is not coded to handle a null IAccessible.)
-	/// This class, whenever it needs the IAccessble, checks whether it is null. If so, it checks the
-	/// root site to see whether it is now possible to get a proper AccessibleRootObject, and if so starts
-	/// using it. If not, it answers something safe and neutral.
-	///
-	/// It's possible that we could refactor to share some code between the two classes, for example,
-	/// give AccessibleObjectFromIAccessible a virtual method to get the IAccessible (and always use it),
-	/// then this class might only need to override that method to try getting the IAcessible from the
-	/// rootsite if it doesn't already have one. However, we'd have to merge into AccessibleObjectFromIAccessible
-	/// all the code from here that handles IAccessible being null.
-	///
-	/// Another possible way to remove the duplication is just to delete AccessibleObjectFromIAccessible,
-	/// since it doesn't seem to be used and was possibly just an unsuccessful attempt at what this class
-	/// seems to do successfully.
 	/// </summary>
 	class AccessibilityWrapper : Control.ControlAccessibleObject
 	{

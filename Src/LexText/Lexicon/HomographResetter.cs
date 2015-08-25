@@ -5,7 +5,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -73,7 +72,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;

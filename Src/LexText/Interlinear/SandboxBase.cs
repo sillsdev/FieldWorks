@@ -14,10 +14,10 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.IText
 {
@@ -668,6 +668,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Disables/enables the Edit/Undo menu item
@@ -689,6 +690,7 @@ namespace SIL.FieldWorks.IText
 				return false; // we don't want to handle the command.
 			}
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -763,6 +765,7 @@ namespace SIL.FieldWorks.IText
 			OnUpdateEdited();	// tell client we've updated the state of the sandbox.
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Disables/enables the Edit/Undo menu item
@@ -788,6 +791,7 @@ namespace SIL.FieldWorks.IText
 			else
 				return false; // we don't want to handle the command.
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -989,7 +993,7 @@ namespace SIL.FieldWorks.IText
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -998,8 +1002,6 @@ namespace SIL.FieldWorks.IText
 			// Setup member variables.
 			m_caches.MainCache = cache;
 			Cache = cache;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			// We need to set this for various inherited things to work,
 			// for example, automatically setting the correct keyboard.
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
@@ -1008,18 +1010,34 @@ namespace SIL.FieldWorks.IText
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
-			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
+		}
+
+		public SandboxBase(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: this(cache, ss, choices)
+		{
+			// finish setup with the WordBundleAnalysis
+			LoadForWordBundleAnalysis(hvoAnalysis);
+		}
+
+		#region Overrides of SimpleRootSite
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			PropertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
 
 			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
 				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: this(cache, mediator, propertyTable, ss, choices)
-		{
-			// finish setup with the WordBundleAnalysis
-			LoadForWordBundleAnalysis(hvoAnalysis);
-		}
+		#endregion
 
 		void OpenComboBox(IVwSelection selection)
 		{
@@ -1033,9 +1051,11 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (MiscUtils.IsMono && (Form.ActiveForm as IFwMainWnd) != null)
 			{
-				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = this;
+#if RANDYTODO
+				(Form.ActiveForm as IFwMainWnd).DesiredControl = this;
+#endif
 			}
 		}
 
@@ -1046,9 +1066,11 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (MiscUtils.IsMono && (Form.ActiveForm as IFwMainWnd) != null)
 			{
-				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = null;
+#if RANDYTODO
+				(Form.ActiveForm as IFwMainWnd).DesiredControl = null;
+#endif
 			}
 		}
 
@@ -1380,7 +1402,7 @@ namespace SIL.FieldWorks.IText
 					if (bldrError.Length > 0)
 					{
 						var msg = bldrError.ToString().Trim();
-						var wnd = FindForm() ?? m_propertyTable.GetValue<IWin32Window>("window");
+						var wnd = FindForm() ?? PropertyTable.GetValue<IWin32Window>("window");
 						MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 				}
@@ -2269,7 +2291,7 @@ namespace SIL.FieldWorks.IText
 			DisposeComboHandler();
 			if (!m_fInMouseDrag)
 			{
-				m_ComboHandler = InterlinComboHandler.MakeCombo(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ComboHandler = InterlinComboHandler.MakeCombo(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					vwselNew, this, fMouseDown);
 			}
 			else
@@ -2859,18 +2881,16 @@ namespace SIL.FieldWorks.IText
 		}
 
 		bool m_fHandlingRightClickMenu = false;
-		private bool HandleRightClickOnObject(int hvoReal, IxCoreColleague additionalTarget)
+		private bool HandleRightClickOnObject(int hvoReal)
 		{
-			Debug.Assert(Mediator != null);
 			CmObjectUi rightClickUiObj = CmObjectUi.MakeUi(Cache, hvoReal);
 			if (rightClickUiObj != null)
 			{
-				rightClickUiObj.AdditionalColleague = additionalTarget;
 				m_fHandlingRightClickMenu = true;
 				try
 				{
 					//Debug.WriteLine("hvoReal=" + hvoReal.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-					return rightClickUiObj.HandleRightClick(Mediator, m_propertyTable, this, true, CmObjectUi.MarkCtrlClickItem);
+					return rightClickUiObj.HandleRightClick(this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{
@@ -3803,7 +3823,7 @@ namespace SIL.FieldWorks.IText
 			if (m_hvoWordGloss != 0)
 				existingGloss = m_caches.MainCache.ServiceLocator.GetInstance<IWfiGlossRepository>().GetObject(m_hvoWordGloss);
 			return new GetRealAnalysisMethod(
-				m_propertyTable != null ? m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, this, m_caches,
+				PropertyTable != null ? PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, this, m_caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
 				m_choices, m_tssWordform, fWantOnlyWfiAnalysis);
 		}
@@ -4234,7 +4254,7 @@ namespace SIL.FieldWorks.IText
 							// menu items to be added to a menu that has further options.
 							//spellingColleague = EditingHelper.MakeSpellCheckColleague(pt, m_rootb, rcSrcRoot, rcDstRoot);
 						}
-						if (HandleRightClickOnObject(hvoReal, null))
+						if (HandleRightClickOnObject(hvoReal))
 							return true;
 					}
 					else
@@ -4316,6 +4336,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (!m_fHandlingRightClickMenu)
@@ -4345,6 +4366,7 @@ namespace SIL.FieldWorks.IText
 			}
 			return false;
 		}
+#endif
 
 		// This is common code for OnJumpToTool and OnDisplayJumpToTool, both called while displaying
 		// a context menu and dealing with a menu item. ClassName is taken from the item XML
@@ -4472,6 +4494,7 @@ namespace SIL.FieldWorks.IText
 			Justification = "cache is a reference")]
 		public virtual bool OnJumpToTool(object commandObject)
 		{
+#if RANDYTODO
 			XCore.Command cmd = (XCore.Command)commandObject;
 			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
@@ -4495,11 +4518,15 @@ namespace SIL.FieldWorks.IText
 					var fwLink = new FwLinkArgs(tool, co.Guid);
 					List<Property> additionalProps = fwLink.PropertyTableEntries;
 					if (!String.IsNullOrEmpty(concordOn))
+					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));
+					}
+					//Publisher.Publish("AboutToFollowLink", null);
 					m_mediator.PostMessage("FollowLink", fwLink);
 					return true;
 				}
 			}
+#endif
 			return false;
 		}
 
@@ -4678,6 +4705,7 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
+#if RANDYTODO
 		// We never want to change writing systems within the Sandbox.
 		public override bool OnDisplayWritingSystemHvo(object commandObject, ref UIItemDisplayProperties display)
 		{
@@ -4700,6 +4728,7 @@ namespace SIL.FieldWorks.IText
 			display.Text = StyleUtils.DefaultParaCharsStyleName;
 			return true;//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		#endregion Overrides of RootSite
 	}

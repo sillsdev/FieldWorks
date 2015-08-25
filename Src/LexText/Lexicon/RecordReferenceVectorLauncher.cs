@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new RecordGoDlg())
 			{
 				var wp = new WindowParams { m_title = LexEdStrings.ksIdentifyRecord, m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

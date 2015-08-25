@@ -21,7 +21,6 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -287,6 +286,7 @@ namespace SIL.FieldWorks.IText
 			return analysisLevels[0].tag == rgvsliEnd[iend].tag;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -299,6 +299,8 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true; //we've handled this
 		}
+#endif
+
 		/// <summary>
 		/// Move to the last bundle
 		/// </summary>
@@ -325,6 +327,7 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -337,6 +340,8 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true; //we've handled this
 		}
+#endif
+
 		/// <summary>
 		/// Move to the first bundle
 		/// </summary>

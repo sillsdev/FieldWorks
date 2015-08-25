@@ -26,6 +26,42 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class CustomListDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to start an undoable UOW.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to end the undoable UOW, Undo everything, and 'commit',
+		/// which will essentially clear out the Redo stack.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestTearDown()
+		{
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+			}
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
+
+			base.TestTearDown();
+		}
 
 		#region Helper Methods
 
@@ -54,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetGetListName()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -79,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetGetListDescription()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -111,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 		public void IsListNameDuplicated_French_Yes()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
@@ -142,7 +178,7 @@ namespace SIL.FieldWorks.XWorks
 		public void IsListNameDuplicated_French_No()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
@@ -171,7 +207,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetDialogTitle_Add()
 		{
 			// AddList subclass of CustomListDlg
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				// Dialog Title should default to "New List"
 				Assert.AreEqual("New List", dlg.Text,
@@ -204,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
-			using (var dlg = new AddListDlg(null, null))
+			using (var dlg = new AddListDlg(m_propertyTable, m_publisher))
 			{
 				// SUT; Get default checkbox values
 				var hier = dlg.SupportsHierarchy;
@@ -226,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
-			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache.LangProject.LocationsOA))
 			{
 				// SUT; Set non-default checkbox values
 				dlg.SupportsHierarchy = true;
@@ -249,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetDefaultWsComboEntries()
 		{
 			// SUT
-			using (var dlg = new AddListDlg(null, null))
+			using (var dlg = new AddListDlg(m_propertyTable, m_publisher))
 			{
 				// Verify
 				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
@@ -266,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetWsComboSelectedItem()
 		{
 			// SUT
-			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache.LangProject.LocationsOA))
 			{
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
@@ -285,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TestGetUiWssAndInstall()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
@@ -315,7 +351,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TestGetUiWssAndInstall_dialect()
 		{
 			var testStrings = new List<string> { "en", "es-MX", "fr" };
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
@@ -346,7 +382,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TestGetUiWssAndInstall_OnlyEnglish()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg())
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
 			{
 				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
@@ -369,12 +405,12 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// CustomListDlg for testing with no Mediator
+	/// CustomListDlg for testing
 	/// </summary>
 	public class TestCustomListDlg : CustomListDlg
 	{
-		public TestCustomListDlg()
-			: base(null, null)
+		public TestCustomListDlg(IPropertyTable propertyTable, IPublisher publisher)
+			: base(propertyTable, publisher)
 		{
 		}
 

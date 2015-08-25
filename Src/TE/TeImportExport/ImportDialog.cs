@@ -8,11 +8,11 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.TE

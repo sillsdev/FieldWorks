@@ -1,14 +1,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -33,17 +31,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
 		/// <param name="persistProvider"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
-			m_msaDlglauncherView.Init(m_propertyTable.GetValue<FdoCache>("cache"), obj as IMoMorphSynAnalysis);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_msaDlglauncherView.Init(PropertyTable.GetValue<FdoCache>("cache"), obj as IMoMorphSynAnalysis);
 		}
 
 		/// <summary>
@@ -59,8 +55,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ILexEntry entry = originalMsa.Owner as ILexEntry;
 				dlg.SetDlgInfo(m_cache,
 					m_persistProvider,
-					m_mediator,
-					m_propertyTable,
+					PropertyTable,
+					Publisher,
 					entry,
 					SandboxGenericMSA.Create(originalMsa),
 					originalMsa.Hvo,
@@ -78,14 +74,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 			}
-		}
-
-		/// <summary>
-		/// Get the mediator.
-		/// </summary>
-		protected override XCore.Mediator Mediator
-		{
-			get { return m_mediator; }
 		}
 
 		/// <summary>
@@ -133,7 +121,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			this.m_msaDlglauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_msaDlglauncherView.Group = null;
 			this.m_msaDlglauncherView.Location = new System.Drawing.Point(0, 0);
-			this.m_msaDlglauncherView.Mediator = null;
 			this.m_msaDlglauncherView.Name = "m_msaDlglauncherView";
 			this.m_msaDlglauncherView.ReadOnlyView = false;
 			this.m_msaDlglauncherView.ScrollPosition = new System.Drawing.Point(0, 0);

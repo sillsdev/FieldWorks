@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
 {

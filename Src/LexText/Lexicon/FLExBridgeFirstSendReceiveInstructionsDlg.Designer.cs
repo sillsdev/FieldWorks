@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.CoreImpl;
+
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	partial class FLExBridgeFirstSendReceiveInstructionsDlg
@@ -37,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			this.button_Help = new System.Windows.Forms.Button();
 			this.button_Cancel = new System.Windows.Forms.Button();
 			this.button_OK = new System.Windows.Forms.Button();
-			this.htmlControl_Instructions = new XCore.HtmlControl();
+			this.htmlControl_Instructions = new HtmlControl();
 			this.SuspendLayout();
 			// 
 			// button_Help
@@ -90,6 +92,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private System.Windows.Forms.Button button_Help;
 		private System.Windows.Forms.Button button_Cancel;
 		private System.Windows.Forms.Button button_OK;
-		private XCore.HtmlControl htmlControl_Instructions;
+		private HtmlControl htmlControl_Instructions;
 	}
 }

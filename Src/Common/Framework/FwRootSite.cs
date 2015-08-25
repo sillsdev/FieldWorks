@@ -5,14 +5,9 @@
 // File: FwRootSite.cs
 // Responsibility: Eberhard Beilharz
 
-using System;
-using System.Collections.Generic; // KeyNotFoundException
 using System.ComponentModel;
-
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -155,19 +150,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected override EditingHelper CreateEditingHelper()
 		{
 			return new FwEditingHelper(m_fdoCache, this);
-		}
-		#endregion
-
-		#region Overriden methods (of UserControl)
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Overridden to set the mediator
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			Mediator = null;
 		}
 		#endregion
 	}

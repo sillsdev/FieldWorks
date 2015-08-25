@@ -19,7 +19,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook

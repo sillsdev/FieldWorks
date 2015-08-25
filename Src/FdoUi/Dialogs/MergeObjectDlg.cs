@@ -14,14 +14,13 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// Summary description for MergeObjectDlg.
 	/// </summary>
-	public class MergeObjectDlg : Form, IFWDisposable
+	public class MergeObjectDlg : Form, IFlexComponent, IFWDisposable
 	{
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwTextBoxBottomMsg;
 		private FdoCache m_cache;
@@ -29,9 +28,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private DummyCmObject m_mainObj = null;
 		private DummyCmObject m_obj;
 		private ITsStrFactory m_tsf;
-		private Mediator m_mediator;
-		private IPropertyTable m_propertyTable;
-
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Button btnOK;
@@ -87,22 +83,18 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
-		/// <param name="propertyTable"></param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="mediator"></param>
 		/// <param name="mainObj"></param>
 		/// <param name="mergeCandidates"></param>
 		/// <param name="guiControl"></param>
 		/// <param name="helpTopic"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();
 
 			Debug.Assert(cache != null);
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_mainObj = mainObj;
 			m_tsf = cache.TsStrFactory;
@@ -131,7 +123,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private void MoveWindowToPreviousPosition()
 		{
 			// Get location to the stored values, if any.
-			object locWnd = m_propertyTable.GetValue<object>("mergeDlgLocation");
+			object locWnd = PropertyTable.GetValue<object>("mergeDlgLocation");
 			// JohnT: this dialog can't be resized. So it doesn't make sense to
 			// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 			// to prevent the dialog growing every time at 120 dpi. But such an override
@@ -150,7 +142,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
 		{
-			XmlNode configurationParameters = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			XmlNode configurationParameters = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode toolNode = configurationParameters.SelectSingleNode("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kfakeFlid = 8999958;
@@ -161,9 +153,11 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				m_candidates[mergeCandidates[i].Hvo] = mergeCandidates[i];
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
-
-			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, m_mediator, m_propertyTable, null, sda);
-			m_bvMergeOptions.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, null, sda)
+			{
+				StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
+			};
+			m_bvMergeOptions.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);
@@ -199,8 +193,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			}
 			m_cache = null;
 			m_fwTextBoxBottomMsg = null;
-			m_mediator = null;
 			m_tsf = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose( disposing );
 		}
@@ -402,10 +398,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void MergeObjectDlg_Closed(object sender, System.EventArgs e)
 		{
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
-				m_propertyTable.SetProperty("mergeDlgLocation", Location, true, true);
-				m_propertyTable.SetProperty("mergeDlgSize", Size, true, true);
+				PropertyTable.SetProperty("mergeDlgLocation", Location, true, true);
+				PropertyTable.SetProperty("mergeDlgSize", Size, true, true);
 			}
 		}
 
@@ -413,5 +409,47 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 	}
 }

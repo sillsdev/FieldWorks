@@ -3,7 +3,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -45,12 +44,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region ILexReferenceSlice Members
 
+#if RANDYTODO
 		public override bool HandleDeleteCommand(Command cmd)
 		{
 			CheckDisposed();
 			((LexReferenceMultiSlice)m_parentSlice).DeleteReference(GetObjectForMenusToOperateOn() as ILexReference);
 			return true; // delete was done
 		}
+#endif
 
 		/// <summary>
 		/// This method is called when the user selects "Add Reference" or "Replace Reference" under the

@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Linq;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
@@ -72,7 +67,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					dlg = new LinkMSADlg();
 				}
 				Debug.Assert(dlg != null);
-				dlg.SetDlgInfo(m_cache, null, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 			}

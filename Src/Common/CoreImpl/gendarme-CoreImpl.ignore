@@ -9,6 +9,9 @@ M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<Runs>*::System.
 M: System.Collections.IEnumerator SIL.CoreImpl.TsRunPart/<Words>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/SortKeyIndex/<GetItems>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/<GetWsStrings>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Void SIL.CoreImpl.MessageBoxEx.MessageBoxExManager::DefineMessageBox(System.String,System.String,System.String,System.Boolean,System.String)
+M: System.Void SIL.CoreImpl.MessageBoxEx.MessageBoxExManager::DefineMessageBox(System.String,System.String,System.String,System.Boolean,System.Drawing.Icon)
+M: System.String SIL.CoreImpl.MessageBoxEx.MessageBoxExManager::Trigger(System.String)
 
 # Reference only
 M: System.Void SIL.CoreImpl.SilSidePane.OutlookBar::OnMouseClick(System.Windows.Forms.MouseEventArgs)

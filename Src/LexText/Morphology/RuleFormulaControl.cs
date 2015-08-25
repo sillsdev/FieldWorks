@@ -15,7 +15,6 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -138,14 +137,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		protected override Mediator Mediator
-		{
-			get
-			{
-				return m_mediator;
-			}
-		}
-
 		/// <summary>
 		/// Indicates that a PhSimpleContextNC with a PhNCFeatures is currently selected.
 		/// </summary>
@@ -253,11 +244,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
 			m_mainControl = m_view;
 
@@ -528,12 +519,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID(Slice.HelpTopicID));
-				chooser.InitializeExtras(m_configurationNode, m_mediator, m_propertyTable);
+				chooser.InitializeExtras(m_configurationNode, PropertyTable);
 
 				DialogResult res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)
@@ -678,7 +669,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected virtual void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
-			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable);
+			featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
 		}
 
 		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
@@ -687,14 +678,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
 
-			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				Guid guidTextParam = m_cache.LangProject.PhonologicalDataOA.Guid;
 				chooser.AddLink(linkText, ReallySimpleListChooser.LinkType.kGotoLink,
 					new FwLinkArgs(toolName, guidTextParam));
-				chooser.ReplaceTreeView(m_mediator, m_propertyTable, guiControl);
+				chooser.ReplaceTreeView(PropertyTable, guiControl);
 				chooser.SetHelpTopic(FeatureChooserHelpTopic);
 
 				DialogResult res = chooser.ShowDialog();
@@ -974,17 +965,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					if (natClass.FeaturesOA != null)
 					{
 						var rule = m_obj as IPhSegRuleRHS;
-						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, rule.OwningRule, ctxt);
+						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, rule.OwningRule, ctxt);
 					}
 					else
-						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, natClass, PhNCFeaturesTags.kflidFeatures);
+						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, natClass, PhNCFeaturesTags.kflidFeatures);
 				}
 				else
 				{
 					if (natClass.FeaturesOA != null)
-						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, natClass.FeaturesOA);
+						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, natClass.FeaturesOA);
 					else
-						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable);
+						featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
 				}
 				// FWR-2405: Setting the Help topic requires that the Mediator be already set!
 				featChooser.SetHelpTopic("khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures");
@@ -1011,7 +1002,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// we only bother to display the context menu if an item is selected
 				using (var ui = new CmObjectUi(obj))
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, ContextMenuID);
+				{
+					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					return ui.HandleRightClick(this, true, ContextMenuID);
+				}
 			}
 			return false;
 		}
@@ -1386,7 +1380,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.m_view.Group = null;
 			this.m_view.IsTextBox = false;
 			this.m_view.Location = new System.Drawing.Point(0, 0);
-			this.m_view.Mediator = null;
 			this.m_view.Name = "m_view";
 			this.m_view.ReadOnlyView = false;
 			this.m_view.ScrollMinSize = new System.Drawing.Size(0, 0);

@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using XCore;
 using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -44,8 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public NotebookExportDialog(Mediator mediator, IPropertyTable propertyTable)
-			: base(mediator, propertyTable)
+		public NotebookExportDialog()
 		{
 			m_helpTopic = "khtpExportNotebook";
 		}

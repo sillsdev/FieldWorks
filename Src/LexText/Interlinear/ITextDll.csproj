@@ -238,10 +238,6 @@
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="XMLUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

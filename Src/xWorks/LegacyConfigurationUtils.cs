@@ -9,10 +9,10 @@ using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

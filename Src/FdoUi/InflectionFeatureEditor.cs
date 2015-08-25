@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 using SIL.CoreImpl;
 using System.Linq;
 
@@ -28,9 +27,9 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class InflectionFeatureEditor : IBulkEditSpecControl, IFWDisposable
 	{
-		Mediator m_mediator;
 		TreeCombo m_tree;
 		FdoCache m_cache;
+		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
 		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		int m_selectedHvo = 0;
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.FdoUi
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public InflectionFeatureEditor()
+		private InflectionFeatureEditor()
 		{
 			m_InflectionFeatureTreeManager = null;
 			m_tree = new TreeCombo();
@@ -47,7 +46,7 @@ namespace SIL.FieldWorks.FdoUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionFeatureEditor(XmlNode configurationNode)
+		public InflectionFeatureEditor(IPublisher publisher, XmlNode configurationNode)
 			: this()
 		{
 			string displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
@@ -156,7 +155,6 @@ namespace SIL.FieldWorks.FdoUi
 			m_selectedLabel = null;
 			m_tree = null;
 			m_InflectionFeatureTreeManager = null;
-			m_mediator = null;
 			m_cache = null;
 
 			m_isDisposed = true;
@@ -165,26 +163,9 @@ namespace SIL.FieldWorks.FdoUi
 		#endregion IDisposable & Co. implementation
 
 		/// <summary>
-		/// Get or set the mediator.
+		/// Get/Set the property table.
 		/// </summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-			set
-			{
-				CheckDisposed();
-				m_mediator = value;
-			}
-		}
-
-		/// <summary>
-		/// Get/Set the property table'
-		/// </summary>
-		public IPropertyTable PropTable { get; set; }
+		public IPropertyTable PropertyTable { get; set; }
 
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
@@ -236,8 +217,9 @@ namespace SIL.FieldWorks.FdoUi
 			if (m_InflectionFeatureTreeManager == null)
 			{
 				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree,
-																					   m_cache, false, m_mediator, PropTable,
-																					   PropTable.GetValue<Form>("window"),
+																					   m_cache, false,
+																					   PropertyTable, m_publisher,
+																					   PropertyTable.GetValue<Form>("window"),
 																					   m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 			}

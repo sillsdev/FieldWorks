@@ -34,7 +34,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -58,9 +57,9 @@ namespace SIL.FieldWorks.XWorks
 		FdoCache m_cache;
 		IFwMetaDataCache m_mdc;
 		FwStyleSheet m_styleSheet;
-		IMainWindowDelegateCallbacks m_callbacks;
-		Mediator m_mediator;
+		IFwMainWnd m_mainWindow;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 		string m_sLayoutPropertyName;
 		Inventory m_layouts;
 		Inventory m_parts;
@@ -242,8 +241,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog after creating it.
 		/// </summary>
 		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
-			FwStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
-			Mediator mediator, IPropertyTable propertyTable, string sLayoutPropertyName)
+			FwStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
@@ -257,9 +255,9 @@ namespace SIL.FieldWorks.XWorks
 			m_cache = cache;
 			m_mdc = m_cache.DomainDataByFlid.MetaDataCache;
 			m_styleSheet = styleSheet;
-			m_callbacks = mainWindowDelegateCallbacks;
-			m_mediator = mediator;
+			m_mainWindow = mainWindow;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 			m_sLayoutPropertyName = sLayoutPropertyName;
 			m_layouts = Inventory.GetInventory("layouts", cache.ProjectId.Name);
 			m_parts = Inventory.GetInventory("parts", cache.ProjectId.Name);
@@ -682,7 +680,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
 				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, true, false);
 				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, true, false);
@@ -1250,8 +1248,12 @@ namespace SIL.FieldWorks.XWorks
 						fixCombo();
 				},
 				defaultStyle, m_styleSheet,
-				m_callbacks != null ? m_callbacks.MaxStyleLevelToShow : 0,
-				m_callbacks != null ? m_callbacks.HvoAppRootObject : 0,
+#if RANDYTODO
+				m_mainWindow != null ? m_mainWindow.MaxStyleLevelToShow : 0,
+				m_mainWindow != null ? m_mainWindow.HvoAppRootObject : 0,
+#else
+				0, 0,
+#endif
 				m_cache, this, m_propertyTable.GetValue<IApp>("App"),
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
@@ -4372,7 +4374,7 @@ namespace SIL.FieldWorks.XWorks
 			var current = currentItem.LayoutTypeNode;
 			var configViews = (m_cbDictType.Items.OfType<LayoutTypeComboItem>().Select(
 				item => item.LayoutTypeNode)).ToList();
-			using (var dlg = new DictionaryConfigMgrDlg(m_mediator, m_propertyTable, m_configObjectName, configViews, current))
+			using (var dlg = new DictionaryConfigMgrDlg(m_propertyTable, m_configObjectName, configViews, current))
 			{
 				dlg.Text = String.Format(dlg.Text, m_configObjectName);
 				var presenter = dlg.Presenter;
@@ -4679,7 +4681,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_mediator.SendMessage("ConfigureHomographs", this);
+			m_publisher.Publish("ConfigureHomographs", this);
 		}
 
 		#region ILayoutConverter methods

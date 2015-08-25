@@ -170,18 +170,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="UIAdapterInterfaces">
-      <Name>UIAdapterInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

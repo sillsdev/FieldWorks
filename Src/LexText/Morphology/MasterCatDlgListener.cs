@@ -14,14 +14,12 @@ using System.Windows.Forms;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
-	[XCore.MediatorDispose]
 	public class MasterCatDlgListener : MasterDlgListener
 	{
 		#region Properties
@@ -75,25 +73,26 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			Debug.Assert(argument != null && argument is XCore.Command);
+#if RANDYTODO
 			string className = XmlUtils.GetOptionalAttributeValue(
 				(argument as XCore.Command).Parameters[0], "className");
 			if (className == null || className != "PartOfSpeech")
 				return false;
+#endif
 
 			using (var dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
-				var owningObj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
-				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, m_mediator, m_propertyTable, true, null);
-				switch (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")))
+				var owningObj = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, PropertyTable, true, null);
+				switch (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						// This is the equivalent functionality, but is deferred processing.
 						// This is done so that the JumpToRecord can be processed last.
-						m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedPOS.Hvo);
+						Publisher.Publish("JumpToRecord", dlg.SelectedPOS.Hvo);
 						break;
 				}
 			}

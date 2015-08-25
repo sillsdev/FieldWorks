@@ -8,12 +8,12 @@ using System;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore

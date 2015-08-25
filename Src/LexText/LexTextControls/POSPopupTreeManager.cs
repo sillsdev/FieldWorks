@@ -3,7 +3,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -43,16 +42,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
-			:base (treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+			:base (treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, IPropertyTable propertyTable, Form parent)
-			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
+		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+			: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 		}
 
@@ -100,7 +99,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// It is saved as m_kEmptyNode. Also returns the new node.
 		/// </summary>
 		/// <param name="popupTree"></param>
-		/// <param name="hvoTarget"></param>
 		/// <returns></returns>
 		protected TreeNode AddAnyItem(PopupTree popupTree)
 		{
@@ -137,7 +135,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 				{
-					dlg.SetDlginfo(List, m_mediator, m_propertyTable, false, null);
+					dlg.SetDlginfo(List, m_propertyTable, false, null);
 					switch (dlg.ShowDialog(ParentForm))
 					{
 						case DialogResult.OK:
@@ -154,8 +152,8 @@ namespace SIL.FieldWorks.LexText.Controls
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							m_mediator.PostMessage("FollowLink",
-								new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+							m_publisher.Publish("AboutToFollowLink", null);
+							m_publisher.Publish("FollowLink", new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
 							if (ParentForm != null && ParentForm.Modal)
 							{
 								// Close the dlg that opened the master POS dlg,

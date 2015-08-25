@@ -106,17 +106,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.0.1.24120, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils, Version=6.0.1.24102, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xWorks, Version=6.0.1.24849, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="xWorks, Version=9.0.0.24496, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+      <HintPath>..\..\..\Output\Release\xWorks.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

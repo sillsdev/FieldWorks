@@ -115,8 +115,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			string className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(m_obj.ClassID);
 			m_fieldName = XmlUtils.GetManditoryAttributeValue(m_configurationNode, "field");
-			m_flid = AutoDataTreeMenuHandler.ContextMenuHelper.GetFlid(m_cache.DomainDataByFlid.MetaDataCache,
-				className, m_fieldName);
+			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
+			m_flid = mdc.GetFieldId2(mdc.GetClassId(className), m_fieldName, true);
 		}
 	}
 }

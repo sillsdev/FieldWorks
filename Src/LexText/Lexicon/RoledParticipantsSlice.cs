@@ -12,8 +12,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -39,8 +39,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (disposing)
 			{
-				if (Mediator != null)
-					Mediator.RemoveColleague(this);
 			}
 
 			base.Dispose(disposing);
@@ -59,7 +57,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			base.FinishInit();
-			Mediator.AddColleague(this);
 		}
 
 		protected override void InitLauncher()
@@ -85,8 +82,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// this slice displays the default roled participants
 			var vrl = (VectorReferenceLauncher) Control;
-			vrl.Initialize(m_cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, m_persistenceProvider, Mediator,
-				m_propertyTable,
+			if (vrl.PropertyTable == null)
+			{
+				vrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
+			vrl.Initialize(m_cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ObjectCreator = defaultRoleCreator;
@@ -219,8 +219,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 			contextMenuStrip.Items.Add(fieldVis);
+#if RANDYTODO
 			Image imgHelp = ContainingDataTree.SmallImages.GetImage("Help");
 			contextMenuStrip.Items.Add(new ToolStripMenuItem(LexEdStrings.ksHelp, imgHelp, ShowHelpTopic));
+#endif
 
 			return contextMenuStrip;
 		}
@@ -241,12 +243,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				DisplayNameProperty, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistenceProvider, labels, m_fieldName,
-				m_cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				m_cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.TextParamHvo = m_cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
 				if (m_configurationNode != null)
-					chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
+					chooser.InitializeExtras(m_configurationNode, PropertyTable);
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
@@ -293,18 +295,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string areaName = m_propertyTable.GetValue<string>("areaChoice");
+			string areaName = PropertyTable.GetValue<string>("areaChoice");
 			if (areaName == "textsWords")
 			{
-				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					"khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
 			}
 			else
 			{
-				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
+				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
 			}
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayDeleteParticipants(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -313,6 +316,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			display.Visible = true;
 			return true;
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]

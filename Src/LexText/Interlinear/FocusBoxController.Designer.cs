@@ -24,6 +24,9 @@ namespace SIL.FieldWorks.IText
 			}
 			components = null;
 			m_sandbox = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 			base.Dispose(disposing);
 		}
 

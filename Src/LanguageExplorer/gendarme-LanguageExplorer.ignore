@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlViewer::InitHtmlControl()

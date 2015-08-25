@@ -5,12 +5,13 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework;	// various help routines
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;	// ShowHelp
+
+// ShowHelp
 
 namespace SIL.FieldWorks.Common.Controls
 {

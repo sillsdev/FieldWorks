@@ -64,13 +64,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis)Object, ConfigurationNode)
-					{
-						Mediator = Mediator
-					};
+			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis) Object, ConfigurationNode);
+			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			Control = ctrl;
-			//if (ctrl.RootBox == null)
-			//    ctrl.MakeRoot();
 		}
 
 		/// <summary>

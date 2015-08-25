@@ -6,8 +6,8 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {

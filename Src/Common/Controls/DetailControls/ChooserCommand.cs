@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -34,8 +33,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected IMoInflAffixSlot m_slot;
 
 		public MakeInflAffixEntryChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, bool fPrefix, IMoInflAffixSlot slot, Mediator mediator, IPropertyTable propertyTable)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
+			string sLabel, bool fPrefix, IMoInflAffixSlot slot, IPropertyTable propertyTable, IPublisher publisher)
+			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher)
 		{
 			m_fPrefix = fPrefix;
 			m_slot = slot;
@@ -50,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
 				var morphType = GetMorphType();
-				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_mediator, m_propertyTable,
+				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_propertyTable, m_publisher,
 					m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -113,8 +112,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_posHvo;
 		protected bool m_fOptional;
 
-		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, Mediator mediator, IPropertyTable propertyTable)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
+		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, IPropertyTable propertyTable, IPublisher publisher)
+			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher)
 		{
 			m_posHvo = posHvo;
 			m_fOptional = fOptional;

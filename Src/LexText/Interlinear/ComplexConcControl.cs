@@ -6,6 +6,7 @@ using System.Xml;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -13,7 +14,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -87,20 +87,28 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-			base.Init(mediator, propertyTable, configurationParameters);
+		#region Overrides of ConcordanceControlBase
 
-			var pattern = m_propertyTable.GetValue<ComplexConcGroupNode>("ComplexConcPattern");
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			var pattern = PropertyTable.GetValue<ComplexConcGroupNode>("ComplexConcPattern");
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
-				m_propertyTable.SetProperty("ComplexConcPattern", pattern, false, true);
+				PropertyTable.SetProperty("ComplexConcPattern", pattern, false, true);
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
 
-			m_view.Init(m_mediator, m_propertyTable, this);
+			m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_view.Init(this);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Morph), CanAddMorph);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Word), CanAddConstraint);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.TextTag), CanAddConstraint);
@@ -109,6 +117,8 @@ namespace SIL.FieldWorks.IText
 			UpdateViewHeight();
 			m_view.RootBox.MakeSimpleSel(false, true, false, true);
 		}
+
+		#endregion
 
 		public ComplexConcPatternModel PatternModel
 		{
@@ -695,12 +705,13 @@ namespace SIL.FieldWorks.IText
 			if (nodes.Count > 0)
 			{
 				// we only bother to display the context menu if an item is selected
-				var window = m_propertyTable.GetValue<XWindow>("window");
+				var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
+#if RANDYTODO
 				window.ShowContextMenu("mnuComplexConcordance",
 					new Point(Cursor.Position.X, Cursor.Position.Y),
-					new TemporaryColleagueParameter(m_mediator, this, true),
 					null, null);
+#endif
 			}
 
 			return false;
@@ -728,8 +739,8 @@ namespace SIL.FieldWorks.IText
 					using (var dlg = new ComplexConcMorphDlg())
 					{
 						var morphNode = new ComplexConcMorphNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, morphNode);
-						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 							node = morphNode;
 					}
 					break;
@@ -738,8 +749,8 @@ namespace SIL.FieldWorks.IText
 					using (var dlg = new ComplexConcWordDlg())
 					{
 						var wordNode = new ComplexConcWordNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wordNode);
-						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 							node = wordNode;
 					}
 					break;
@@ -748,8 +759,8 @@ namespace SIL.FieldWorks.IText
 					using (var dlg = new ComplexConcTagDlg())
 					{
 						var tagNode = new ComplexConcTagNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, tagNode);
-						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 							node = tagNode;
 					}
 					break;
@@ -817,6 +828,7 @@ namespace SIL.FieldWorks.IText
 			m_view.Height = height;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayPatternNodeGroup(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -826,6 +838,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnPatternNodeGroup(object args)
 		{
@@ -836,6 +849,7 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayPatternNodeSetOccurrence(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -846,6 +860,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnPatternNodeSetOccurrence(object args)
 		{
@@ -854,13 +869,19 @@ namespace SIL.FieldWorks.IText
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 
 			int min, max;
+#if RANDYTODO
 			var cmd = (Command) args;
 			if (cmd.Parameters.Count > 0)
+#else
+			if (false)
+#endif
 			{
+#if RANDYTODO
 				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
 				string maxStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "max");
 				min = Int32.Parse(minStr);
 				max = Int32.Parse(maxStr);
+#endif
 			}
 			else
 			{
@@ -877,10 +898,10 @@ namespace SIL.FieldWorks.IText
 					max = nodes[0].Maximum;
 					paren = !nodes[0].IsLeaf;
 				}
-				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, paren))
+				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
-					if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;
@@ -913,6 +934,7 @@ namespace SIL.FieldWorks.IText
 			return group;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayPatternNodeSetCriteria(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -923,6 +945,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = enable;
 			return true;
 		}
+#endif
 
 		public bool OnPatternNodeSetCriteria(object args)
 		{
@@ -930,13 +953,13 @@ namespace SIL.FieldWorks.IText
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 
 			var wordNode = nodes[0] as ComplexConcWordNode;
-			var xwindow = m_propertyTable.GetValue<XWindow>("window");
+			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
 			if (wordNode != null)
 			{
 				using (var dlg = new ComplexConcWordDlg())
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wordNode);
-					if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
+					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
+					if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
 						return true;
 				}
 			}
@@ -947,8 +970,8 @@ namespace SIL.FieldWorks.IText
 				{
 					using (var dlg = new ComplexConcMorphDlg())
 					{
-						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, morphNode);
-						if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
+						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
+						if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
 							return true;
 					}
 				}
@@ -959,8 +982,8 @@ namespace SIL.FieldWorks.IText
 					{
 						using (var dlg = new ComplexConcTagDlg())
 						{
-							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, tagNode);
-							if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
+							dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
+							if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
 								return true;
 						}
 					}

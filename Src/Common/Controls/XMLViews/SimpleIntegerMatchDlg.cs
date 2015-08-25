@@ -4,12 +4,13 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework;	// various help routines
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;	// ShowHelp
+
+// ShowHelp
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -6,7 +6,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -188,9 +187,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="tssCitationForm"></param>
 		/// <param name="le"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 
@@ -219,7 +218,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbGloss.Text = String.Empty;
 			m_fwtbCitationForm.HasBorder = false;
 
-			m_msaGroupBox.Initialize(m_cache, mediator, propertyTable, this, new SandboxGenericMSA());
+			m_msaGroupBox.Initialize(m_cache, propertyTable, publisher, this, new SandboxGenericMSA());
 
 			// get the current morph type from the lexical entry.
 			IMoMorphType mmt;

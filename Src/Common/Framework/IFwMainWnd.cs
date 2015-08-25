@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -7,6 +7,7 @@
 // Last reviewed:
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
+using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -19,6 +20,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Interface for FW main windows to avoid all kinds of exciting circular dependencies
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
+	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
 	/// ------------------------------------------------------------------------------------
 	public interface IFwMainWnd : IFWDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
 	{
@@ -28,6 +30,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IRootSite ActiveView { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the focused control of the window
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		Control FocusedControl { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -122,5 +131,23 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		void Close();
+
+		/// <summary>
+		/// Save settings.
+		/// </summary>
+		void SaveSettings();
+
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		void SuspendIdleProcessing();
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		void ResumeIdleProcessing();
 	}
 }

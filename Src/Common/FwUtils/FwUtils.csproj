@@ -160,9 +160,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.1.1.30101, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="XMLUtils, Version=9.0.0.13562, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Release\XMLUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +185,7 @@
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="InstallationException.cs" />
+    <Compile Include="Inventory.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />

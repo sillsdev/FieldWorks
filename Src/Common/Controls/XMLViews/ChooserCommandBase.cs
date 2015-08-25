@@ -11,7 +11,6 @@
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -27,9 +26,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected FdoCache m_cache;
 		/// <summary></summary>
-		protected Mediator m_mediator;
-		/// <summary></summary>
 		protected IPropertyTable m_propertyTable;
+		/// <summary></summary>
+		protected IPublisher m_publisher;
 
 #if WhenFigureOutWhatThisShouldBe
 		protected string m_sHelp;
@@ -42,17 +41,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="fCloseBeforeExecuting">if set to <c>true</c> [f close before executing].</param>
 		/// <param name="sLabel">The s label.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// ------------------------------------------------------------------------------------
-		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel,
-			Mediator mediator, IPropertyTable propertyTable)
+		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_fShouldCloseBeforeExecuting = fCloseBeforeExecuting;
 			m_sLabel = sLabel + "  ";  // Extra spaces are just a hack to keep the label from being truncated - I have no idea why it is being truncated
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 		}
 
 		//properties
@@ -69,15 +67,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_cache = value;
 			}
-		}
-
-		/// <summary>
-		/// Access the XCore.Mediator.
-		/// </summary>
-		public XCore.Mediator Mediator
-		{
-			get { return m_mediator; }
-			set { m_mediator = value; }
 		}
 
 		/// <summary>

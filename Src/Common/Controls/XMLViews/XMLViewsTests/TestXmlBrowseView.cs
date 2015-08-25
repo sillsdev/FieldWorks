@@ -3,9 +3,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace XMLViewsTests
 {
@@ -15,22 +13,14 @@ namespace XMLViewsTests
 		[Test]
 		public void DoubleClickEmptyItem()
 		{
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			using (var bv = new XmlBrowseView())
 			{
-				var xdoc = new XmlDocument();
-				// Largely copied from a live one. We probably don't really need all these for this test.
-				xdoc.LoadXml(@"<parameters id='textsChooser' clerk='interlinearTexts' filterBar='true' treeBarAvailability='NotAllowed'
-						defaultCursor='Arrow' altTitleId='Text-Plural' editable='false'>
-						<columns>
-							<column label='Title' width='144000'><string field='Title' ws='$ws=best vernoranal' /></column>
-						</columns>
-					</parameters>");
-				using (var mediator = new Mediator())
-				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
-				{
-					bv.Init(mediator, propertyTable, xdoc.DocumentElement);
-					bv.SimulateDoubleClick(new EventArgs());
-				}
+				bv.InitializeFlexComponent(propertyTable, publisher, subscriber);
+				bv.SimulateDoubleClick(new EventArgs());
 			}
 		}
 
@@ -60,10 +50,12 @@ namespace XMLViewsTests
 				"<column layout=\"CustomGenDateForAllomorph_MorphDate\" label=\"$label\" visibility=\"menu\"/>" +
 				"<column layout=\"CustomPossAtomForExample_ExAtom\" label=\"$label\" visibility=\"menu\"/>" +
 				"</root>";
-			using (var mediator = new Mediator())
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher()))
+			IPublisher publisher;
+			ISubscriber subscriber;
+			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
-				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
@@ -121,7 +113,7 @@ namespace XMLViewsTests
 				"<column layout=\"Unknown Test\"/>" +
 				"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 				"</root>";
-				output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				isAHeadwordNode = output.SelectSingleNode("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);

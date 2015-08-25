@@ -6,7 +6,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -74,21 +73,19 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion IDisposable override
 
-		public void Init(Mediator mediator, IPropertyTable propertyTable, ComplexConcControl concordanceControl)
+		public void Init(ComplexConcControl concordanceControl)
 		{
 			CheckDisposed();
 			m_concordanceControl = concordanceControl;
-			Mediator = mediator;
-			m_propertyTable = propertyTable;
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
-			m_vc = new ComplexConcPatternVc(m_fdoCache, m_propertyTable);
+			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_vc = new ComplexConcPatternVc(m_fdoCache, PropertyTable);
 			if (m_rootb == null)
 			{
 				MakeRoot();
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_concordanceControl.PatternModel.Root.Hvo, m_vc, ComplexConcPatternVc.kfragPattern, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
+				m_rootb.SetRootObject(m_concordanceControl.PatternModel.Root.Hvo, m_vc, ComplexConcPatternVc.kfragPattern, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 				m_rootb.Reconstruct();
 			}
 		}
@@ -104,7 +101,7 @@ namespace SIL.FieldWorks.IText
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.SetSite(this);
 			m_rootb.DataAccess = m_concordanceControl.PatternModel.DataAccess;
-			m_rootb.SetRootObject(m_concordanceControl.PatternModel.Root.Hvo, m_vc, ComplexConcPatternVc.kfragPattern, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
+			m_rootb.SetRootObject(m_concordanceControl.PatternModel.Root.Hvo, m_vc, ComplexConcPatternVc.kfragPattern, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 		}
 
 		/// <summary>

@@ -20,7 +20,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

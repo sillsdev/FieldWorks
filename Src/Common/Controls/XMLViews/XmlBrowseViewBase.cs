@@ -19,10 +19,10 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -317,8 +317,10 @@ namespace SIL.FieldWorks.Common.Controls
 						throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Cannot set the index to anything except -1, when there are no items in the list.");
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
+#if RANDYTODO
 					// Clearing out the list changes the selection, so let everyone know.
 					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+#endif
 					return;
 				}
 				int hvoObjNewSel = GetNewSelectionObject(value);
@@ -406,9 +408,11 @@ namespace SIL.FieldWorks.Common.Controls
 						Focus(); // Note: used to be part of DoSelectAndScroll, but I'm not sure why...
 				}
 				Update();
+#if RANDYTODO
 				// actual selection changed event only on idle; this makes the browse view more responsive,
 				// especially to arrow keys on auto-repeat.
 				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+#endif
 			}
 		}
 
@@ -457,7 +461,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (ReadOnlySelect)
 			{
 				// We should NOT have focus! See if someone can take it back.
-				m_bv.Mediator.BroadcastMessage("BrowseViewStoleFocus", this);
+				m_bv.Publisher.Publish("BrowseViewStoleFocus", this);
 			}
 		}
 
@@ -946,9 +950,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				if (m_mediator == null)
+				if (PropertyTable == null)
 					return false;
 				// if we have an editable attribute defined use its value
+				if (m_nodeSpec == null)
+				{
+					return false;
+				}
 				if (m_nodeSpec.Attributes["editable"] != null)
 				{
 					bool fEditable = XmlUtils.GetBooleanAttributeValue(m_nodeSpec, "editable");
@@ -1003,7 +1011,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						IRecordListUpdater x = m_propertyTable.GetValue<IRecordListUpdater>("ActiveClerk");
+						IRecordListUpdater x = PropertyTable.GetValue<IRecordListUpdater>("ActiveClerk");
 						if (x != null)
 						{
 							using (new WaitCursor(this))
@@ -1065,11 +1073,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvoRoot">The hvo root.</param>
 		/// <param name="fakeFlid">The fake flid.</param>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, BrowseViewer bv)
+			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -1081,7 +1088,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_nodeSpec == null)
 				m_nodeSpec = nodeSpec;
 			m_bv = bv;
-			m_mediator = mediator;
 			m_fdoCache = cache;
 			m_sda = m_bv.SpecialCache;
 			// This is usually done in MakeRoot, but we need it to exist right from the start
@@ -1577,7 +1583,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			return m_id + "_" +property;
+			return m_id + "_" + property;
 		}
 
 		/// <summary>
@@ -1976,7 +1982,9 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
 			base.HandleSelectionChange(prootb, vwselNew);
+#if RANDYTODO
 			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
+#endif
 		}
 
 		bool RemoveRootBoxSelectionOnIdle(object parameter)
@@ -2017,7 +2025,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			var tool = m_propertyTable.GetValue<MultiPane>("currentContentControlObject", null);
+			var tool = PropertyTable.GetValue<MultiPane>("currentContentControlObject", null);
 			if (tool != null)
 			{
 				// We want to print only if this tool is selected for printing, or if nothing has been selected.
@@ -2058,8 +2066,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
-		#region XCore Colleague overrides
-
+#if RANDYTODO
 		/// <summary>
 		///	see if it makes sense to provide the "delete record" command now
 		/// </summary>
@@ -2073,6 +2080,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			return false;
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2088,31 +2096,31 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
+		#region Overrides of SimpleRootSite
 
 		/// <summary>
-		/// Allows xCore-specific initialization. We don't need any.
+		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			CheckDisposed();
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
+#if RANDYTODO
 			// Do this early...we need the ID to restore the columns when the VC is created.
 			m_id = XmlUtils.GetOptionalAttributeValue(configurationParameters, "id", "NeedsId");
-
-			base.Init(mediator, propertyTable, configurationParameters);
 			// The call to the superclass method ignores "configurationParameters",
 			// so set it here if it hasn't already been done.
 			if (m_nodeSpec == null)
 				m_nodeSpec = configurationParameters;
-			Debug.Assert(m_nodeSpec == configurationParameters, "XmlBrowseViewBase.Init (XCore version): Mis-matched configuration parameters.");
+#endif
 
 			SetSelectedRowHighlighting();//read the property table
 		}
 
-		#endregion XCore Colleague overrides
+		#endregion
 
 		#region Designer generated code
 		/// <summary>
@@ -2170,11 +2178,13 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (SelectedObject != m_hvoOldSel)
 				{
+#if RANDYTODO
 					// The selected object has changed even though the index didn't, e.g., because we
 					// changed the sorting of the list while leaving the selected index fixed.
 					// We need to fire the notification saying it changed, anyway.
 					// (But don't update m_hvoOldSelection; FireSelectionChanged must find the old one to register a change.)
 					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+#endif
 				}
 			}
 			else if (RootBox != null && hvo > 0 && SelectedObject > 0)
@@ -2197,10 +2207,12 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 				if (obj == objSel || obj.OwnerOfClass(objSel.ClassID) == objSel)
 				{
+#if RANDYTODO
 					// Reconstruct the current row (by pretending to replace the object),
 					// preserving the selection if any (otherwise, the selection disappears
 					// after each letter typed in a browse view...FWR-690).
 					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, UpdateSelectedRow);
+#endif
 				}
 			}
 		}

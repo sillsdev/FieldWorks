@@ -18,7 +18,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -52,6 +51,88 @@ namespace SIL.FieldWorks.XWorks
 			AccNameDefault = "RecordBrowseView";	// default accessibility name
 			Name = "RecordBrowseView";
 		}
+
+		#region Overrides of XWorksViewBase
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			InitBase(propertyTable, null);
+			m_browseViewer.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			m_fullyInitialized = true;
+			// These have to be done here, rather than in SetupDataContext(),
+			// or the record clerk resets its current object,
+			// when the root object gets set in the borwse view's MakeRoot,
+			// which, in  turn, resets its current index to zero,
+			// which fires events. By connecting them here,
+			// they won't be ready to hand off to clients.
+			m_browseViewer.SelectionChanged += OnSelectionChanged;
+			m_browseViewer.SelectedIndexChanged += m_browseViewer_SelectedIndexChanged;
+			m_browseViewer.FilterChanged += FilterChangedHandler;
+			m_browseViewer.SorterChanged += SortChangedHandler;
+			m_browseViewer.ListModificationInProgressChanged += m_browseViewer_ListModificationInProgressChanged;
+			m_browseViewer.BrowseView.RightMouseClickedEvent += OnFwRightMouseClick;
+			m_browseViewer.SelectionDrawingFailure += OnBrowseSelectionDrawingFailed;
+			m_browseViewer.CheckBoxChanged += OnCheckBoxChanged;
+			Clerk.FilterChangedByClerk += Clerk_FilterChangedByClerk;
+			Clerk.SorterChangedByClerk += Clerk_SorterChangedByClerk;
+			if (m_browseViewer.BulkEditBar != null)
+			{
+				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordClerk
+				// is properly setup/sync'd with its saved settings.
+				m_browseViewer.BulkEditBar.TargetComboSelectedIndexChanged += TargetColumnChanged;
+				if (m_browseViewer.BulkEditBar.ExpectedListItemsClassId != 0)
+				{
+					m_browseViewer.BulkEditBar.OnTargetComboSelectedIndexChanged();
+					CheckExpectedListItemsClassInSync();
+				}
+				else
+				{
+					// now that we're finished setting up the bulk edit bar, we need to make
+					// sure our clerk loads its defaults, since bulk edit didn't provide information
+					// for which list items class to load objects for.
+					if (Clerk.ListSize == 0)
+						Clerk.OnChangeListItemsClass(Clerk.SortItemProvider.ListItemsClass, 0, false);
+				}
+			}
+
+			// We're seeing an odd crash occurring during Init.ShowRecord() (see LT-9498)
+			// where the Display is getting updated in RestoreSelectionAndScrollPos
+			// after ShowRecord() below sets m_browseViewer.CurrentIndex.
+			// As far as I (EricP) can tell "RestoreSelectionAndScrollPos" should only occur
+			// after Init() (ie. Application.Idle()) and the user has created a new selection based upon
+			// clicking or keyboard input. In otherwords, there is no reason to try to
+			// restore a BrowseView Selection that has occurred before the user has
+			// done anything to create a selection with the cursor.
+			// In effort to avoid this crashing path, we clear any RootBox.Selection that
+			// has been set by the program up to this point. If a Selection exists,
+			// we will display a Debug message alerting programmers to investigate
+			// how they got into this state.
+			// The only reliable ways to trigger the assertion below seemed to involve active filters
+			// and switching between areas (not tools). Since clicking Ignore seems to not cause
+			// any problems, I am commenting out the assertion for now.
+			if (m_browseViewer.BrowseView != null &&
+				m_browseViewer.BrowseView.RootBox != null &&
+				m_browseViewer.BrowseView.RootBox.Selection != null)
+			{
+				//Debug.Fail("Not sure how/why we have a RootBox.Selection at this point in initialization. " +
+				//	"Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
+
+				m_browseViewer.BrowseView.RootBox.DestroySelection();
+			}
+
+			// ShowRecord() was called in InitBase, but quit without doing anything,
+			// so call it again, since we are ready now.
+			ShowRecord();
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -232,7 +313,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					CmObjectUi ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
 					if (ui != null)
-						e.EventHandled = ui.HandleRightClick(m_mediator, m_propertyTable, sender, true, "mnuBrowseView");
+					{
+						ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+						e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
+					}
 				}
 			}
 		}
@@ -269,16 +353,14 @@ namespace SIL.FieldWorks.XWorks
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "forceReloadListOnInitOrChangeRoot", false))
 			{
-				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
+				PropertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
 				// the list does not get reloaded until ListUpdateHelper is disposed, but the views property
 				// will get cleared to prevent these views from accessing invalid objects.
 				Clerk.UpdateList(false, true);
 			}
 
-			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache,
-				m_mediator, m_propertyTable,
-				Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
@@ -318,10 +400,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void SetupLinkScripture()
 		{
-			string booksWanted = m_propertyTable.GetValue<string>("LinkScriptureBooksWanted");
+			string booksWanted = PropertyTable.GetValue<string>("LinkScriptureBooksWanted");
 			if (booksWanted == null)
 				return;
-			m_propertyTable.RemoveProperty("LinkScriptureBooksWanted");
+			PropertyTable.RemoveProperty("LinkScriptureBooksWanted");
 			if (booksWanted != "all")
 				return; // Enhance JohnT: accept a list of books in some form or other.
 			var books = Cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS;
@@ -335,7 +417,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
+			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
 			interestingTexts.SetInterestingTexts(texts);
 		}
 
@@ -364,12 +446,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
 						 hvoRoot, fakeFlid,
-						 cache, mediator, propertyTable, sortItemProvider, sda);
+						 cache, sortItemProvider, sda);
 		}
 
 		private void SetStyleSheet()
@@ -377,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_browseViewer == null || m_browseViewer.StyleSheet != null)
 				return;
 
-			m_browseViewer.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_browseViewer.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>
@@ -488,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			int currentIndex = clerk.CurrentIndex;
 
-			int storedIndex = m_propertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
+			int storedIndex = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
 			if (storedIndex != currentIndex && storedIndex >= 0 && !clerk.HasEmptyList)
 			{
 				try
@@ -590,105 +671,12 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // Other methods
 
-		#region IxCoreColleague implementation
-
-		/// <summary>
-		/// Initialize this as an IxCoreColleague
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-			InitBase(mediator, propertyTable, configurationParameters);
-			m_browseViewer.Init(mediator, propertyTable, configurationParameters);
-			m_fullyInitialized = true;
-			// These have to be done here, rather than in SetupDataContext(),
-			// or the record clerk resets its current object,
-			// when the root object gets set in the borwse view's MakeRoot,
-			// which, in  turn, resets its current index to zero,
-			// which fires events. By connecting them here,
-			// they won't be ready to hand off to clients.
-			m_browseViewer.SelectionChanged += OnSelectionChanged;
-			m_browseViewer.SelectedIndexChanged += m_browseViewer_SelectedIndexChanged;
-			m_browseViewer.FilterChanged += FilterChangedHandler;
-			m_browseViewer.SorterChanged += SortChangedHandler;
-			m_browseViewer.ListModificationInProgressChanged += m_browseViewer_ListModificationInProgressChanged;
-			m_browseViewer.BrowseView.RightMouseClickedEvent += OnFwRightMouseClick;
-			m_browseViewer.SelectionDrawingFailure += OnBrowseSelectionDrawingFailed;
-			m_browseViewer.CheckBoxChanged += OnCheckBoxChanged;
-			Clerk.FilterChangedByClerk += Clerk_FilterChangedByClerk;
-			Clerk.SorterChangedByClerk += Clerk_SorterChangedByClerk;
-			if (m_browseViewer.BulkEditBar != null)
-			{
-				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordClerk
-				// is properly setup/sync'd with its saved settings.
-				m_browseViewer.BulkEditBar.TargetComboSelectedIndexChanged += TargetColumnChanged;
-				if (m_browseViewer.BulkEditBar.ExpectedListItemsClassId != 0)
-				{
-					m_browseViewer.BulkEditBar.OnTargetComboSelectedIndexChanged();
-					CheckExpectedListItemsClassInSync();
-				}
-				else
-				{
-					// now that we're finished setting up the bulk edit bar, we need to make
-					// sure our clerk loads its defaults, since bulk edit didn't provide information
-					// for which list items class to load objects for.
-					if (Clerk.ListSize == 0)
-						Clerk.OnChangeListItemsClass(Clerk.SortItemProvider.ListItemsClass, 0, false);
-				}
-			}
-
-			// We're seeing an odd crash occurring during Init.ShowRecord() (see LT-9498)
-			// where the Display is getting updated in RestoreSelectionAndScrollPos
-			// after ShowRecord() below sets m_browseViewer.CurrentIndex.
-			// As far as I (EricP) can tell "RestoreSelectionAndScrollPos" should only occur
-			// after Init() (ie. Application.Idle()) and the user has created a new selection based upon
-			// clicking or keyboard input. In otherwords, there is no reason to try to
-			// restore a BrowseView Selection that has occurred before the user has
-			// done anything to create a selection with the cursor.
-			// In effort to avoid this crashing path, we clear any RootBox.Selection that
-			// has been set by the program up to this point. If a Selection exists,
-			// we will display a Debug message alerting programmers to investigate
-			// how they got into this state.
-			// The only reliable ways to trigger the assertion below seemed to involve active filters
-			// and switching between areas (not tools). Since clicking Ignore seems to not cause
-			// any problems, I am commenting out the assertion for now.
-			if (m_browseViewer.BrowseView != null &&
-				m_browseViewer.BrowseView.RootBox != null &&
-				m_browseViewer.BrowseView.RootBox.Selection != null)
-			{
-				//Debug.Fail("Not sure how/why we have a RootBox.Selection at this point in initialization. " +
-				//	"Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
-
-				m_browseViewer.BrowseView.RootBox.DestroySelection();
-			}
-
-			// ShowRecord() was called in InitBase, but quit without doing anything,
-			// so call it again, since we are ready now.
-			ShowRecord();
-		}
-
 		private void CheckExpectedListItemsClassInSync()
 		{
 			int beExpectedListItemsClass = m_browseViewer.BulkEditBar.ExpectedListItemsClassId;
 			int clerkExpectedListItemsClass = Clerk.SortItemProvider.ListItemsClass;
 			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, clerkExpectedListItemsClass);
 		}
-
-		/// <summary>
-		/// Get additional message targets...the browse view's targets are the only ones we have.
-		/// </summary>
-		/// <returns></returns>
-		protected override void GetMessageAdditionalTargets(List<IxCoreColleague> collector)
-		{
-			if (m_browseViewer != null)
-				collector.AddRange(m_browseViewer.GetMessageTargets());
-			base.GetMessageAdditionalTargets(collector);
-		}
-
-		#endregion // IxCoreColleague implementation
 
 		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
 		{
@@ -698,15 +686,7 @@ namespace SIL.FieldWorks.XWorks
 			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
-		#region IxCoreContentControl implementation
-
-		public override int Priority
-		{
-			get
-			{
-				return (int)ColleaguePriority.Medium;
-			}
-		}
+		#region IMainContentControl implementation
 
 		public override bool PrepareToGoAway()
 		{
@@ -715,9 +695,9 @@ namespace SIL.FieldWorks.XWorks
 			return base.PrepareToGoAway();
 		}
 
-		#endregion // IxCoreContentControl implementation
+		#endregion // IMainContentControl implementation
 
-		#region IxCoreCtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		public override Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
@@ -735,7 +715,7 @@ namespace SIL.FieldWorks.XWorks
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
-		#endregion  IxCoreCtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
 		#region Component Designer generated code
 		/// <summary>
@@ -782,7 +762,7 @@ namespace SIL.FieldWorks.XWorks
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string propName = Clerk.PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
 		}
 
 		/// <summary>
@@ -844,12 +824,11 @@ namespace SIL.FieldWorks.XWorks
 	{
 
 		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-			Mediator mediator, IPropertyTable propertyTable,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,
 						 hvoRoot, fakeFlid,
-						 cache, mediator, propertyTable, sortItemProvider, sda);
+						 cache, sortItemProvider, sda);
 			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
 			return viewer;
 		}

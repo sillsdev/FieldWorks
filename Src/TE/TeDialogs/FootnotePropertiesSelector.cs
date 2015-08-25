@@ -12,13 +12,12 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Windows.Forms.VisualStyles;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

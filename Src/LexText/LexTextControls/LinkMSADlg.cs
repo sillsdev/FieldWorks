@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -85,17 +84,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
-		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator, propertyTable);
+			SetDlgInfo(cache, null, propertyTable, publisher);
 			SetComboWritingSystemFactory(cache);
 		}
 
@@ -114,11 +113,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="wp"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			base.SetDlgInfo(cache, wp, mediator, propertyTable);
+			base.SetDlgInfo(cache, wp, propertyTable, publisher);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 			// LT-6325 fix...

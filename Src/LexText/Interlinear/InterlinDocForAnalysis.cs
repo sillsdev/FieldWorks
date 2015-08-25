@@ -9,7 +9,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Application;
 using System.Linq;
@@ -31,6 +30,47 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 			DoSpellCheck = true;
+		}
+
+		#region Overrides of SimpleRootSite
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			Subscriber.Subscribe("ksPropertyAddWordsToLexicon", PropertyAddWordsToLexicon_Changed);
+		}
+
+		#endregion
+
+		private void PropertyAddWordsToLexicon_Changed(object newValue)
+		{
+			if (LineChoices == null)
+				return;
+
+			// whenever we change this mode, we may also
+			// need to show the proper line choice labels, so put the lineChoices in the right mode.
+			var newMode = GetSelectedLineChoiceMode();
+			if (LineChoices.Mode == newMode)
+				return;
+
+			var saved = SelectedOccurrence;
+			TryHideFocusBoxAndUninstall();
+			LineChoices.Mode = newMode;
+			// the following reconstruct will destroy any valid selection (e.g. in Free line).
+			// is there anyway to do a less drastic refresh (e.g. via PropChanged?)
+			// that properly adjusts things?
+			RefreshDisplay();
+			if (saved != null)
+			{
+				TriggerAnnotationSelected(saved, false);
+			}
 		}
 
 		void InterlinDocForAnalysis_RightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
@@ -281,8 +321,10 @@ namespace SIL.FieldWorks.IText
 			{
 				return;
 			}
+#if RANDYTODO
 			if (IsFocusBoxInstalled)
 				FocusBox.UpdateRealFromSandbox(null, fSaveGuess, target);
+#endif
 			TryHideFocusBoxAndUninstall();
 			RecordGuessIfNotKnown(target);
 			InstallFocusBox();
@@ -304,8 +346,10 @@ namespace SIL.FieldWorks.IText
 					FocusBox.FocusSandbox();
 			}
 
+#if RANDYTODO
 			if (fMakeDefaultSelection)
 				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
+#endif
 		}
 
 		// Set the VC size to match the FocusBox. Return true if it changed.
@@ -778,7 +822,7 @@ namespace SIL.FieldWorks.IText
 			set
 			{
 				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
-				m_propertyTable.SetProperty("TextSelectedWord",
+				PropertyTable.SetProperty("TextSelectedWord",
 					value != null && value.HasWordform ? value.Analysis.Wordform : null,
 					false,
 					true);
@@ -800,41 +844,9 @@ namespace SIL.FieldWorks.IText
 
 		#region AddWordsToLexicon
 
-		public override void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			switch (name)
-			{
-				case ksPropertyAddWordsToLexicon:
-					if (this.LineChoices != null)
-					{
-						// whenever we change this mode, we may also
-						// need to show the proper line choice labels, so put the lineChoices in the right mode.
-						InterlinLineChoices.InterlinMode newMode = GetSelectedLineChoiceMode();
-						if (LineChoices.Mode != newMode)
-						{
-							var saved = SelectedOccurrence;
-							this.TryHideFocusBoxAndUninstall();
-							this.LineChoices.Mode = newMode;
-							// the following reconstruct will destroy any valid selection (e.g. in Free line).
-							// is there anyway to do a less drastic refresh (e.g. via PropChanged?)
-							// that properly adjusts things?
-							this.RefreshDisplay();
-							if (saved != null)
-								TriggerAnnotationSelected(saved, false);
-						}
-					}
-					break;
-				default:
-					base.OnPropertyChanged(name);
-					break;
-			}
-		}
-
 		internal InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode()
 		{
-			return m_propertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ?
+			return PropertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ?
 				InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 		}
 
@@ -1384,6 +1396,7 @@ namespace SIL.FieldWorks.IText
 			return WhichEnd.Neither;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Enable the 'insert word glosses' command
 		/// </summary>
@@ -1397,6 +1410,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled = CanAddWordGlosses(out dummy1, out dummy2);
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Answer whether the AddWordGlossesToFreeTranslation menu option should be enabled.
@@ -1831,7 +1845,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxControllerForDisplay(m_mediator, m_propertyTable, m_styleSheet, LineChoices, m_vc.RightToLeft);
+			return new FocusBoxControllerForDisplay(m_styleSheet, LineChoices, m_vc.RightToLeft);
 		}
 
 		/// <summary>
@@ -2042,8 +2056,10 @@ namespace SIL.FieldWorks.IText
 				Rect oldSelLoc = GetPrimarySelRect(vwselNew);
 				if (!fBundleOnly)
 				{
+#if RANDYTODO
 					if (IsFocusBoxInstalled)
 						FocusBox.UpdateRealFromSandbox(null, fSaveGuess, null);
+#endif
 					TryHideFocusBoxAndUninstall();
 				}
 
@@ -2086,8 +2102,10 @@ namespace SIL.FieldWorks.IText
 			{
 				if (!fBundleOnly)
 				{
+#if RANDYTODO
 					if (IsFocusBoxInstalled)
 						FocusBox.UpdateRealFromSandbox(null, fSaveGuess, null);
+#endif
 					TryHideFocusBoxAndUninstall();
 				}
 
@@ -2114,17 +2132,7 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region IxCoreColleague
-
-		public override IxCoreColleague[] GetMessageTargets()
-		{
-			if (IsFocusBoxInstalled && FocusBox is FocusBoxControllerForDisplay)
-				return new IxCoreColleague[] { (FocusBox as FocusBoxControllerForDisplay), this };
-			return base.GetMessageTargets();
-		}
-
-		#endregion
-
+#if RANDYTODO
 		public void AddNote(Command command)
 		{
 			IVwSelection sel = MakeSandboxSel();
@@ -2204,6 +2212,7 @@ namespace SIL.FieldWorks.IText
 			if (ParentForm == Form.ActiveForm)
 				Focus(); // So we can actually see the selection we just made.
 		}
+#endif
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
@@ -2220,17 +2229,22 @@ namespace SIL.FieldWorks.IText
 
 		internal bool PrepareToGoAway()
 		{
+#if RANDYTODO
 			if (IsFocusBoxInstalled)
 				FocusBox.UpdateRealFromSandbox(null, false, null);
+#endif
 			return true;
 		}
 
 		public bool OnApproveAll(object cmd)
 		{
+#if RANDYTODO
 			ApproveAllSuggestedAnalyses(cmd as Command);
+#endif
 			return false;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Approve all the suggested analyses in this text. See LT-4312.
 		/// </summary>
@@ -2328,6 +2342,7 @@ namespace SIL.FieldWorks.IText
 				helper.SetSelection(true, true);
 			Update();
 		}
+#endif
 	}
 
 	public class InterlinDocForAnalysisVc : InterlinVc

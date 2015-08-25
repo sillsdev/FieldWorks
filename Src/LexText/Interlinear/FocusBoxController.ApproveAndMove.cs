@@ -16,7 +16,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
@@ -28,6 +27,7 @@ namespace SIL.FieldWorks.IText
 	/// ----------------------------------------------------------------------------------------
 	public partial class FocusBoxController
 	{
+#if RANDYTODO
 		internal void ApproveAndStayPut(ICommandUndoRedoText undoRedoText)
 		{
 			// don't navigate, just save.
@@ -154,6 +154,7 @@ namespace SIL.FieldWorks.IText
 			var wordforms = new HashSet<IWfiWordform> { origWag.Wordform, newWag.Wordform };
 			InterlinDoc.UpdateGuesses(wordforms);
 		}
+#endif
 
 		protected virtual bool ShouldCreateAnalysisFromSandbox(bool fSaveGuess)
 		{
@@ -369,6 +370,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position,
 		/// using Undo  text from the command. If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
@@ -385,6 +387,7 @@ namespace SIL.FieldWorks.IText
 			if (!fMakeDefaultSelection && currentLineIndex >= 0 && InterlinWordControl != null)
 				InterlinWordControl.SelectOnOrBeyondLine(currentLineIndex, 1);
 		}
+#endif
 
 		// It would be nice to have more of this logic in the StTextAnnotationNavigator, but the definition of FullyAnalyzed
 		// is dependent on what lines we are displaying.
@@ -473,6 +476,7 @@ namespace SIL.FieldWorks.IText
 			return wa.MorphBundlesOS.All(bundle => wa.Cache.DomainDataByFlid.get_ObjectProp(bundle.Hvo, flid) != 0);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Using the current focus box content, approve it and apply it to all unanalyzed matching
 		/// wordforms in the text.  See LT-8833.
@@ -529,6 +533,7 @@ namespace SIL.FieldWorks.IText
 			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
 			OnNextBundle(cmd, false, false, false, true);
 		}
+#endif
 
 		// Caller must create UOW
 		private void ApplyAnalysisToInstancesOfWordform(IAnalysis newAnalysis, IWfiWordform oldWordform, IWfiWordform newWordform)
@@ -555,6 +560,7 @@ namespace SIL.FieldWorks.IText
 		// Set by the constructor, this determines whether 'move right' means 'move next' or 'move previous' and similar things.
 		private bool m_fRightToLeft;
 
+#if RANDYTODO
 		public bool OnDisplayApproveAndStayPut(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = CanNavigateBundles;
@@ -844,6 +850,8 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true; //we've handled this
 		}
+#endif
+
 		/// <summary>
 		/// Move to the last bundle
 		/// </summary>
@@ -857,6 +865,7 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -869,6 +878,8 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true; //we've handled this
 		}
+#endif
+
 		/// <summary>
 		/// Move to the first bundle
 		/// </summary>

@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -46,7 +45,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
+	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IFlexComponent, IRefreshableRoot
 	{
 		/// <summary>
 		/// Occurs when the current slice changes
@@ -89,8 +88,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private string m_sObjGuidProperty = null;
 		/// <summary></summary>
-		protected ImageCollection m_smallImages = null;
-		/// <summary></summary>
 		protected string m_rootLayoutName = "default";
 		/// <summary></summary>
 		protected string m_layoutChoiceField;
@@ -124,9 +121,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected ToolTip m_tooltip; // used for slice tree nodes. All tooltips are cleared when we switch records!
 		protected LayoutStates m_layoutState = LayoutStates.klsNormal;
 		protected int m_dxpLastRightPaneWidth = -1;  // width of right pane (if any) the last time we did a layout.
-		// to allow slices to handle events (e.g. InflAffixTemplateSlice)
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 		protected IRecordChangeHandler m_rch = null;
 		protected IRecordListUpdater m_rlu = null;
 		protected string m_listName;
@@ -580,16 +574,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		/// <summary></summary>
-		public Mediator Mediator
-		{
-			get
-			{
-				CheckDisposed();
-				return m_mediator;
-			}
-		}
-
 		/// <summary>
 		/// Tells whether we are showing all fields, or just the ones requested.
 		/// </summary>
@@ -793,7 +777,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Find the first parent IRecordListOwner object (if any) that
 				// owns an IRecordListUpdater.
-				var rlo = m_propertyTable.GetValue<IRecordListOwner>("window");
+				var rlo = PropertyTable.GetValue<IRecordListOwner>("window");
 				if (rlo != null)
 					m_rlu = rlo.FindRecordListUpdater(m_listName);
 			}
@@ -838,20 +822,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// This can affect the lines between the slices. We need to redraw them but not the
 				// slices themselves.
 				Invalidate(false);
-			}
-		}
-
-		public ImageCollection SmallImages
-		{
-			get
-			{
-				CheckDisposed();
-				return m_smallImages;
-			}
-			set
-			{
-				CheckDisposed();
-				m_smallImages = value;
 			}
 		}
 
@@ -921,15 +891,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+			string toolName = PropertyTable.GetValue<string>("currentContentControl");
 			// Initialize our internal state with the state of the PropertyTable
-			m_fShowAllFields = m_propertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
+			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
+			PropertyTable.SetProperty("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
-			m_currentSlicePartName = m_propertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
-			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
-			m_propertyTable.SetProperty(m_sPartNameProperty, null, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, SettingsGroup.LocalSettings, true, false);
+			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
+			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
+			PropertyTable.SetProperty(m_sPartNameProperty, null, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, SettingsGroup.LocalSettings, true, false);
 			m_currentSliceNew = null;
 			m_fSetCurrentSliceNew = false;
 
@@ -972,7 +942,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 
 				m_descendant = descendant;
-				AutoScrollPosition = new Point(0,0); // start new object at top (unless first focusable slice changes it).
+				AutoScrollPosition = new Point(0, 0); // start new object at top (unless first focusable slice changes it).
+#if RANDYTODO
 				// We can't focus yet because the data tree slices haven't finished displaying.
 				// (Remember, Windows won't let us focus something that isn't visible.)
 				// (See LT-3915.)  So postpone focusing by scheduling it to execute on idle...
@@ -984,6 +955,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// prevent setting focus in slice until we're all setup (cf.
 					m_fSuspendSettingCurrentSlice = true;
 				}
+#endif
 			}
 			finally
 			{
@@ -1028,8 +1000,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (String.IsNullOrEmpty(m_sPartNameProperty) || String.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				string sTool = m_propertyTable.GetValue("currentContentControl", String.Empty);
-				string sArea = m_propertyTable.GetValue("areaChoice", String.Empty);
+				string sTool = PropertyTable.GetValue("currentContentControl", String.Empty);
+				string sArea = PropertyTable.GetValue("areaChoice", String.Empty);
 				m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
 				m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
 			}
@@ -1037,14 +1009,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region Sequential message processing enforcement
 
-		public IxWindow ContainingXWindow()
+		public IFwMainWnd ContainingWindow()
 		{
 			CheckDisposed();
 
 			Form form = FindForm();
 
-			if (form is IxWindow)
-				return form as IxWindow;
+			if (form is IFwMainWnd)
+				return form as IFwMainWnd;
 
 			return null;
 		}
@@ -1061,7 +1033,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			IxWindow mainWindow = ContainingXWindow();
+			IFwMainWnd mainWindow = ContainingWindow();
 			if (mainWindow != null)
 				mainWindow.SuspendIdleProcessing();
 		}
@@ -1073,7 +1045,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			IxWindow mainWindow = ContainingXWindow();
+			IFwMainWnd mainWindow = ContainingWindow();
 			if (mainWindow != null)
 				mainWindow.ResumeIdleProcessing();
 		}
@@ -1238,7 +1210,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_autoCustomFieldNodesDocRoot = null;
 			m_rch = null;
 			m_rootLayoutName = null;
-			m_smallImages = null; // Client has to deal with it, since it gave it to us.
 			// protected AutoDataTreeMenuHandler m_autoHandler; // No tusing this data member.
 			m_layoutInventory = null;
 			m_partInventory = null;
@@ -1247,8 +1218,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_persistenceProvider = null;
 			m_styleSheet = null; // We may have made it, or been given it.
 			m_tooltip = null;
-			m_mediator = null;
 			m_rlu = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose(disposing); // This will call Dispose on each Slice.
 		}
@@ -1277,7 +1250,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void PersistPreferences()
 		{
 			if (PersistenceProvder != null)
+			{
 				PersistenceProvder.SetInfoObject("SliceSplitterBaseDistance", SliceSplitPositionBase);
+			}
 		}
 
 		private void RestorePreferences()
@@ -1465,9 +1440,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fSetCurrentSliceNew = false;
 				if (m_currentSliceNew != null)
 				{
+#if RANDYTODO
 					m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
 					// prevent setting focus in slice until we're all setup (cf.
 					m_fSuspendSettingCurrentSlice = true;
+#endif
 				}
 			}
 		}
@@ -1555,7 +1532,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// This method is the implementation of IRefreshableRoot, which FwXWindow calls on all children to implement
+		/// This method is the implementation of IRefreshableRoot, which IFwMainWnd calls on all children to implement
 		/// Refresh. The DataTree needs to reconstruct the list of controls, and returns true to indicate that
 		/// children need not be refreshed.
 		/// </summary>
@@ -2377,6 +2354,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (slice == null)
 			{
 				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
+				slice.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
 				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
 				// means it gets searched twice if not found, but that's fairly harmless.
@@ -2387,7 +2365,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Indent = indent;
 				slice.Object = obj;
 				slice.Cache = m_cache;
-				slice.Mediator = m_mediator;
 
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
@@ -2401,7 +2378,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// dubious...should the string slice really get the context menu for the object?
 				slice.ShowContextMenu += OnShowContextMenu;
 
-				slice.SmallImages = SmallImages;
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
@@ -2817,7 +2793,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, m_mediator, m_propertyTable, caller, reuseMap);
+				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, PropertyTable, Publisher, Subscriber, caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -2838,13 +2814,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
-				// old code just set mediator, nothing ever set m_configurationParams. Maybe the two are redundant and should merge?
-				slice.Init(m_mediator, m_propertyTable, null);
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 				slice.ShowContextMenu += OnShowContextMenu;
-				slice.SmallImages = SmallImages;
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
@@ -2895,16 +2868,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="attr"></param>
 		private string GetLabel(XmlNode caller, XmlNode node, ICmObject obj, string attr)
 		{
-			string label;
-			if (Mediator != null)
-			{
-				label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null) ??
-						XmlUtils.GetLocalizedAttributeValue(node, attr, null);
-			}
-			else
-			{
-				label = XmlUtils.GetOptionalAttributeValue(caller, attr) ?? XmlUtils.GetOptionalAttributeValue(node, attr);
-			}
+			var label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null)
+				?? XmlUtils.GetLocalizedAttributeValue(node, attr, null)
+				?? XmlUtils.GetOptionalAttributeValue(caller, attr)
+				?? XmlUtils.GetOptionalAttributeValue(node, attr);
 			return InterpretLabelAttribute(label, obj);
 		}
 
@@ -3137,8 +3104,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					guidCurrentObj = m_currentSlice.Object.Guid;
 			}
 			SetCurrentSlicePropertyNames();
-			m_propertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, SettingsGroup.LocalSettings, true, false);
 			return true;
 		}
 
@@ -3616,57 +3583,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion automated tree navigation
 
-		#region IxCoreColleague implementation
-
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_sliceSplitPositionBase = XmlUtils.GetOptionalIntegerValue(configurationParameters,
-				"defaultLabelWidth", m_sliceSplitPositionBase);
-			// This needs to happen AFTER we set the configuration sliceSplitPositionBase, otherwise,
-			// it will override the persisted value.
-			if (PersistenceProvder != null)
-				RestorePreferences();
-		}
-
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			if (Visible)
-			{
-				if (m_currentSlice != null)
-					return new IxCoreColleague[] { m_currentSlice, this };
-				return new IxCoreColleague[] {this};
-			}
-
-			// If we're not visible, we don't want to be a message target.
-			// It is remotely possible that the current slice still does, though.
-			return m_currentSlice != null ? new IxCoreColleague[] {m_currentSlice} : new IxCoreColleague[0];
-		}
-
-		/// <summary>
-		/// Should not be called if disposed (or in the process of disposing).
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed || m_fDisposing; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion IxCoreColleague implementation
-
 		#region IxCoreColleague message handlers
 
+#if RANDYTODO
 		/// <summary>
 		/// This property may be turned on and off any time a DataTree is an active colleague.
 		/// </summary>
@@ -3676,15 +3595,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool fAllow = m_propertyTable.GetValue("AllowShowNormalFields", true);
+			bool fAllow = PropertyTable.GetValue("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
 
 			if (display.Enabled)
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = m_propertyTable.GetValue<string>("currentContentControl");
-				display.Checked = m_propertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
+				string toolName = PropertyTable.GetValue<string>("currentContentControl");
+				display.Checked = PropertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
 			}
 
 			return true; //we've handled this
@@ -3774,6 +3693,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
+#if RANDYTODO
+				// TODO: Publish doublet:
+				// TODO:	1. "AboutToFollowLink" with null new value
+				// TODO:	2. "FollowLink" with new FwLinkArgs instance.
+				//Publisher.Publish("AboutToFollowLink", null);
+#endif
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
 				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
@@ -3781,6 +3706,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			return false;
 		}
+#endif
 
 		/// <summary>
 		/// Handle jumping to the lexiconEdit tool and filtering on the Anthropology Category the user has
@@ -3814,7 +3740,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
-			m_mediator.PostMessage("FollowLink", link);
+			Publisher.Publish("AboutToFollowLink", null);
+			Publisher.Publish("FollowLink", link);
 		}
 
 		/// <summary>
@@ -3827,6 +3754,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return hvoList.ToString(",");
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
 		/// forEnableOnly is true when called from OnDisplayJumpToTool.
@@ -3928,6 +3856,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			return cmd.TargetId;
 		}
+#endif
 
 		private IRnGenericRec CreateAndAssociateNotebookRecord()
 		{
@@ -3965,17 +3894,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = m_propertyTable.GetValue<string>("currentContentControl");
+				string toolName = PropertyTable.GetValue<string>("currentContentControl");
 				name = "ShowHiddenFields-" + toolName;
 
 				// Invert the status of the real property
-				bool oldShowValue = m_propertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
-				m_propertyTable.SetProperty(name, !oldShowValue, SettingsGroup.LocalSettings, true, true); // update the pane bar check box.
+				bool oldShowValue = PropertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
+				PropertyTable.SetProperty(name, !oldShowValue, SettingsGroup.LocalSettings, true, true); // update the pane bar check box.
 				HandleShowHiddenFields(!oldShowValue);
 			}
 			else if (name.StartsWith("ShowHiddenFields-"))
 			{
-				bool fShowAllFields = m_propertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
+				bool fShowAllFields = PropertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
 				HandleShowHiddenFields(fShowAllFields);
 			}
 			else if (name == "currentContentControlObject")
@@ -3993,7 +3922,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="arg"></param>
 		public void OnFocusFirstPossibleSlice(object arg)
 		{
+#if RANDYTODO
 			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, DoPostponedFocusSlice);
+#endif
 		}
 
 		bool DoPostponedFocusSlice(object parameter)
@@ -4158,25 +4089,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// try to see if any of our current slices have focus. if so, use that one.
 			if (sliceToSetAsCurrent == null)
 			{
-			Control focusedControl = XWindow.FocusedControl();
-			if (ContainsFocus)
-			{
-				// see if we can find the parent slice for focusedControl
-				Control currentControl = focusedControl;
-				while (currentControl != null && currentControl != this)
+				if (ContainsFocus)
 				{
-					if (currentControl is Slice)
+					// see if we can find the parent slice for focusedControl
+					var currentControl = PropertyTable.GetValue<IFwMainWnd>("window").FocusedControl;
+					while (currentControl != null && currentControl != this)
 					{
-						// found the slice to
-						sliceToSetAsCurrent = currentControl as Slice;
+						if (currentControl is Slice)
+						{
+							// found the slice to
+							sliceToSetAsCurrent = currentControl as Slice;
 							if (sliceToSetAsCurrent.IsDisposed)
 								sliceToSetAsCurrent = null;		// shouldn't happen, but...
 							else
-						break;
+								break;
+						}
+						currentControl = currentControl.Parent;
 					}
-					currentControl = currentControl.Parent;
 				}
-			}
 			}
 			// set current slice.
 			if (sliceToSetAsCurrent != null)
@@ -4250,6 +4180,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion IxCoreColleague message handlers
 
+#if RANDYTODO
 		/// <summary>
 		/// Influence the display of a particular command by giving an opinion on whether we
 		/// are prepared to handle the corresponding "InsertItemViaBackrefVector" message.
@@ -4316,6 +4247,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			display.Enabled = fIsValid;
 			return true;
 		}
+#endif
+
 		/// <summary>
 		/// Implement the "Demote..." command.
 		/// </summary>
@@ -4369,11 +4302,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 
 			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
+			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
 					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				string.Empty, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = sTitle;
 				dlg.SetHelpTopic(helpTopic);
@@ -4450,6 +4383,52 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			return true;
 		}
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+			if (PersistenceProvder != null)
+			{
+				RestorePreferences();
+			}
+		}
+
+		#endregion
 	}
 
 	class DummyObjectSlice : Slice

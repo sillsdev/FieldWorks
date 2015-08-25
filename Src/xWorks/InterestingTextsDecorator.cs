@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -15,7 +14,7 @@ namespace SIL.FieldWorks.XWorks
 	/// This class exists to decorate the main SDA for concordance views.
 	/// It implements the Occurrences and OccurrencesCount properties for WfiWordform.
 	/// </summary>
-	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetMediator, ISetRootHvo
+	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
 		private IFdoServiceLocator m_services;
@@ -55,19 +54,13 @@ namespace SIL.FieldWorks.XWorks
 			m_notifieeCount++;
 		}
 
-		public void SetMediator(Mediator mediator, IPropertyTable propertyTable)
-		{
-			m_interestingTexts = GetInterestingTextList(mediator, propertyTable, m_services);
-			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
-		}
-
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(Mediator mediator, IPropertyTable propertyTable, IFdoServiceLocator services)
+		static public InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, IFdoServiceLocator services)
 		{
 			var interestingTextList = propertyTable.GetValue<InterestingTextList>(InterestingTextKey, null);
 			if (interestingTextList == null)
 			{
-				interestingTextList = new InterestingTextList(mediator, propertyTable, services.GetInstance<ITextRepository>(),
+				interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
 					services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
 				// Make this list available for other tools in this window, but don't try to persist it.
 				propertyTable.SetProperty(InterestingTextKey, interestingTextList, false, false);
@@ -95,11 +88,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_interestingHvos == null)
 			{
-				//if (m_interestingTexts == null || m_interestingTexts.InterestingTexts.Count() == 0)
-				//{
-				//    m_interestingHvos = new int[0];
-				//    return m_interestingHvos;
-				//}
 				m_interestingHvos = (from text in m_interestingTexts.InterestingTexts select text.Hvo).ToArray();
 			}
 			return m_interestingHvos;

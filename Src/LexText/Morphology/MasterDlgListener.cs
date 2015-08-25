@@ -11,7 +11,6 @@
 using System;
 using System.Xml;
 using SIL.CoreImpl;
-using XCore;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -19,19 +18,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// <summary>
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public class MasterDlgListener : IxCoreColleague, IFWDisposable
+	public class MasterDlgListener : IFlexComponent, IFWDisposable
 	{
 		#region Data members
-
-		/// <summary>
-		/// xCore Mediator.
-		/// </summary>
-		protected Mediator m_mediator;
-		/// <summary>
-		///
-		/// </summary>
-		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -145,62 +134,60 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_mediator != null)
-					m_mediator.RemoveColleague(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_mediator = null;
 			m_configurationParameters = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		#region IxCoreColleague implementation
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
-		/// Initialize the IxCoreColleague object.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+		public IPropertyTable PropertyTable { get; private set; }
 
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			mediator.AddColleague(this);
-			m_configurationParameters = configurationParameters;
-			//m_persistProvider = new XCore.PersistenceProvider(PersistentLabel, m_mediator.PropertyTable);
-		}
+		#endregion
+
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
+		/// Get the IPublisher.
 		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
+		public IPublisher Publisher { get; private set; }
 
-			return new IxCoreColleague[]{this};
-		}
+		#endregion
+
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
-		/// Should not be called if disposed.
+		/// Get the ISubscriber.
 		/// </summary>
-		public bool ShouldNotCall
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			get { return IsDisposed; }
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
 		}
 
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion IxCoreColleague implementation
+		#endregion
 
 		#region XCORE Message Handlers
 

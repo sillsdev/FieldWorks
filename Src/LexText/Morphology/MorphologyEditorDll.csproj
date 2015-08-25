@@ -161,10 +161,6 @@
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
     </Reference>
-    <Reference Include="MessageBoxExLib, Version=1.0.2958.18799, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="MGA">
       <Name>MGA</Name>
       <HintPath>..\..\..\Output\Debug\MGA.dll</HintPath>
@@ -228,11 +224,6 @@
     <Reference Include="xCore">
       <Name>xCore</Name>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="XMLUtils">

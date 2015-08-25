@@ -20,7 +20,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Collections.Generic;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

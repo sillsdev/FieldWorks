@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -36,7 +35,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		int m_hvoEntry;
 		IVwCacheDa m_cdaTemp;
 		XmlView m_detailView;
-		private Mediator m_mediator;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -184,24 +182,22 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="cache"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet, Mediator mediator)
+		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet)
 		{
 			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
 			xv.Cache = cache;
 			xv.StyleSheet = styleSheet;
-			xv.Mediator = mediator;
 			return xv;
 		}
 
 
 		public RelatedWords(FdoCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
-			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, Mediator mediator, bool hideInsertButton)
+			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, bool hideInsertButton)
 		{
 			m_cache = cache;
 			m_sel = sel;
 			m_hvoEntry = hvoEntry;
 			m_styleSheet = styleSheet;
-			m_mediator = mediator;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -515,7 +511,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 					this.SuspendLayout();
 					int totalHeight = m_view.Height;
 					m_view.Height = totalHeight * 2 / 3;
-					m_detailView = MakeSummaryView(leui.Object.Hvo, m_cache, m_styleSheet, m_mediator);
+					m_detailView = MakeSummaryView(leui.Object.Hvo, m_cache, m_styleSheet);
 					m_detailView.Left = m_view.Left;
 					m_detailView.Width = m_view.Width;
 					m_detailView.Top = m_view.Bottom + 5;

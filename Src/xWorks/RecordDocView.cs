@@ -20,7 +20,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -50,24 +49,24 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Construction and Removal
 
-		/// <summary>
-		/// Initialize this as an IxCoreColleague
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
+		#region Overrides of XWorksViewBase
 
-			InitBase(mediator, propertyTable, configurationParameters);
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+
+			InitBase(propertyTable, null);
+
 			m_fullyInitialized = true;
 		}
 
-		protected override void GetMessageAdditionalTargets(System.Collections.Generic.List<IxCoreColleague> collector)
-		{
-			collector.Add(m_rootSite);
-		}
+		#endregion
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -125,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void SetupStylesheet()
 		{
 			// If possible make it use the style sheet appropriate for its main window.
-			m_rootSite.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_rootSite.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 		protected virtual RootSite ConstructRoot()
 		{
@@ -137,9 +136,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			//todo: add the document view name to the task label
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
-			//are taking a longtime are not getting Breath().
+			//are taking a long time are not getting Breath().
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
-			using (ProgressState progress = FwXWindow.CreatePredictiveProgressState(m_propertyTable, m_vectorName))
+#if RANDYTODO
+			using (ProgressState progress = FwXWindow.CreatePredictiveProgressState(PropertyTable, m_vectorName))
 			{
 				progress.Breath();
 
@@ -173,11 +173,12 @@ namespace SIL.FieldWorks.XWorks
 				catch (Exception error)
 				{
 					//don't really need to make the program stop just because we could not show this record.
-					IApp app = m_propertyTable.GetValue<IApp>("App");
+					IApp app = PropertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(error, app.SettingsKey,
-						m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
+						PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
 				}
 			}
+#endif
 		}
 
 		protected override void SetupDataContext()
@@ -186,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 			m_rootSite = ConstructRoot();
-			m_rootSite.Init(m_mediator, m_propertyTable, m_configurationParameters); // Init it as xCoreColleague.
+			m_rootSite.InitializeFlexComponent(PropertyTable, Publisher, Subscriber); // Init it as Flex component.
 			//m_rootSite.PersistenceProvder = new XCore.PersistenceProvider(m_mediator.PropertyTable);
 
 			m_rootSite.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -234,10 +235,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion
 
-		public XmlDocItemView(int hvoRoot, XmlNode xnSpec, string sLayout, Mediator mediator) :
+		public XmlDocItemView(int hvoRoot, XmlNode xnSpec, string sLayout) :
 			base(hvoRoot, sLayout, XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
 		{
-			Mediator = mediator;
 			if (m_xnSpec == null)
 				m_xnSpec = xnSpec;
 		}
@@ -317,17 +317,19 @@ namespace SIL.FieldWorks.XWorks
 				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
-					FindForm() as IMainWindowDelegateCallbacks, Mediator, m_propertyTable, sProp);
+					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
 				if (nodePath != null)
 					dlg.SetActiveNode(nodePath);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// Configuration may well have changed. Reset XML tables and redraw.
-					var sNewLayout = m_propertyTable.GetValue<string>(sProp);
+					var sNewLayout = PropertyTable.GetValue<string>(sProp);
 					ResetTables(sNewLayout);
 				}
 				if (dlg.MasterRefreshRequired)
-					m_mediator.SendMessage("MasterRefresh", null);
+				{
+					Publisher.Publish("MasterRefresh", null);
+				}
 			}
 		}
 
@@ -359,7 +361,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetupStylesheet()
 		{
-			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 	}
 
@@ -417,8 +419,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override RootSite ConstructRoot()
 		{
-			string sLayout = GetLayoutName(m_jtSpecs, m_mediator, m_propertyTable);
-			return new XmlDocItemView(0, m_jtSpecs, sLayout, m_mediator);
+			string sLayout = GetLayoutName(m_jtSpecs, PropertyTable);
+			return new XmlDocItemView(0, m_jtSpecs, sLayout);
 		}
 
 		/// <summary>
@@ -438,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 		/// is (e.g.) publishStemPreview. (This view wraps publishStem with some conditional logic to ensure
 		/// that we display things like "Not published" if the entry is excluded from all publications.)
 		/// </summary>
-		public static string GetLayoutName(XmlNode xnSpec, Mediator mediator, IPropertyTable propertyTable)
+		public static string GetLayoutName(XmlNode xnSpec, IPropertyTable propertyTable)
 		{
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
@@ -463,6 +465,7 @@ namespace SIL.FieldWorks.XWorks
 			base.ReadParameters();
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// The configure dialog may be launched any time this tool is active.
 		/// Its name is derived from the name of the tool.
@@ -488,6 +491,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Text = String.Format(display.Text, m_configObjectName + "...");
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Launch the configure dialog.
@@ -502,19 +506,21 @@ namespace SIL.FieldWorks.XWorks
 				sProp = "DictionaryPublicationLayout";
 			using(var dlg = new XmlDocConfigureDlg())
 			{
-				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable),
-					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
+				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
+					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// LT-8767 When this dialog is launched from the Configure Dictionary View dialog
 					// m_mediator != null && m_rootSite == null so we need to handle this to prevent a crash.
-					if (m_mediator != null && m_rootSite != null)
+					if (PropertyTable != null && m_rootSite != null)
 					{
-						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, m_mediator, m_propertyTable));
+						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, PropertyTable));
 					}
 				}
 				if (dlg.MasterRefreshRequired)
-					m_mediator.SendMessage("MasterRefresh", null);
+				{
+					Publisher.Publish("MasterRefresh", null);
+				}
 				return true; // we handled it
 			}
 		}

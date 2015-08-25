@@ -1,5 +1,4 @@
 using System;
-using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -27,6 +26,10 @@ namespace SIL.FieldWorks.Discourse
 
 			components = null;
 			m_toolTip = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -47,15 +50,6 @@ namespace SIL.FieldWorks.Discourse
 			this.Name = "ConstituentChart";
 			this.ResumeLayout(false);
 
-		}
-
-		#endregion
-
-		#region Implementation of IxCoreColleague
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
 		}
 
 		#endregion

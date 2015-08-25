@@ -17,17 +17,14 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
-	[XCore.MediatorDispose]
 	public class MasterPhonFeatDlgListener : MasterDlgListener
 	{
-
 		#region Properties
 
 		protected override string PersistentLabel
@@ -66,8 +63,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#endregion IDisposable & Co. implementation
 
-		#region XCORE Message Handlers
-
+#if RANDYTODO
 		/// <summary>
 		/// Handles the xWorks message to insert a new FsFeatDefn.
 		/// Invoked by the RecordClerk via a main menu.
@@ -88,7 +84,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (MasterPhonologicalFeatureListDlg dlg = new MasterPhonologicalFeatureListDlg(className))
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
 				string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
 				if (cache.LanguageProject.PhFeatureSystemOA == null)
@@ -101,8 +97,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							   cache.ServiceLocator.GetInstance<IFsFeatureSystemFactory>().Create();
 					   });
 				}
-				dlg.SetDlginfo(cache.LangProject.PhFeatureSystemOA, m_mediator, m_propertyTable, true, "masterPhonFeatListDlg", sXmlFile);
-				switch (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")))
+				dlg.SetDlginfo(cache.LangProject.PhFeatureSystemOA, PropertyTable, true, "masterPhonFeatListDlg", sXmlFile);
+				switch (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
@@ -110,18 +106,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						// This is the equivalent functionality, but is deferred processing.
 						// This is done so that the JumpToRecord can be processed last.
 						if (dlg.SelectedFeatDefn != null)
-							m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
+						{
+							Publisher.Publish("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
+						}
 						// LT-6412: this call will now cause the Mediator to be disposed while it is busy processing
 						// this call, so there is code in the Mediator to handle in the middle of a msg the case
 						// where the object is nolonger valid.  This has happend before and was being handled, this
 						// call "SendMessageToAllNow" has not had the code to handle the exception, so it was added.
-						m_mediator.SendMessageToAllNow("MasterRefresh", cache.LangProject.PhFeatureSystemOA);
+						Publisher.Publish("MasterRefresh", cache.LangProject.PhFeatureSystemOA);
 						break;
 				}
 			}
 			return true; // We "handled" the message, regardless of what happened.
 		}
-
-		#endregion XCORE Message Handlers
+#endif
 	}
 }

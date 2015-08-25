@@ -17,7 +17,6 @@ using System.IO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
-using XCore;
 using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics.CodeAnalysis;
 

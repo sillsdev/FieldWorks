@@ -22,7 +22,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
-using XCore;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -133,7 +132,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool m_fDisableReplacePatternMatching;
 
-		private Mediator m_mediator; // optional, used for persistence.
 		private IPropertyTable m_propertyTable;
 
 		private string s_helpTopic;
@@ -582,17 +580,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Call this after SetDialogValues on startup to restore settings and have them
 		/// saved on close.
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void RestoreAndPersistSettingsIn(Mediator mediator, IPropertyTable propertyTable)
+		public void RestoreAndPersistSettingsIn(IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			if (mediator == null)
-				return; // for robustness against client lacking one.
 			if (propertyTable == null)
 				return;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 		}
 
@@ -636,7 +630,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_heightTabControlLess = tabControls.Height - panelSearchOptions.Height;
 				Height = m_heightDlgLess;
 				tabControls.Height = m_heightTabControlLess;
-				if (m_mediator != null && m_propertyTable != null)
+				if (m_propertyTable != null)
 				{
 					// Now we have our natural size, we can properly adjust our location etc.
 					object locWnd = m_propertyTable.GetValue<object>(kPersistenceLabel + "DlgLocation");
@@ -1443,7 +1437,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			// Save location.
-			if (m_mediator != null && m_propertyTable != null)
+			if (m_propertyTable != null)
 			{
 				string propertyName = kPersistenceLabel + "DlgLocation";
 				m_propertyTable.SetProperty(propertyName, Location, true, true);

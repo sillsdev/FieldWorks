@@ -1,11 +1,14 @@
+// Copyright (c) 2002-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Reflection;
 using SIL.CoreImpl;
-using SIL.Utils; // For IFWDisposable
+using SIL.Utils;
 
 namespace XCore
 {
@@ -17,15 +20,15 @@ namespace XCore
 	/// The splitter between them will not be movable. in fact, it should not be noticable
 	/// </summary>
 	/// <remarks>
-	/// PaneBarContainer implements the IxCoreContentControl interface, which inludes its own methods,
-	/// as well as 'extending the IXCoreUserControl, and IxCoreColleague interfaces.
+	/// PaneBarContainer implements the IMainContentControl interface, which inludes its own methods,
+	/// as well as 'extending the IMainUserControl, and IxCoreColleague interfaces.
 	/// This 'extension' is really to ensure all of those interfaces are implemented,
 	/// particularly for m_mainControl.
 	///
 	/// Most of the mehtods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IFWDisposable, IPostLayoutInit
+	public partial class PaneBarContainer : BasicPaneBarContainer, IMainContentControl, IFWDisposable, IPostLayoutInit
 	{
 		#region Data Members
 
@@ -115,6 +118,7 @@ namespace XCore
 
 		#endregion IFWDisposable implementation, in part
 
+#if RANDYTODO
 		#region IxCoreColleague implementation
 		/// <summary></summary>
 		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
@@ -133,8 +137,8 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = m_propertyTable.GetValue<XWindow>("window");
-				ImageCollection small = m_propertyTable.GetValue<ImageCollection>("smallImages");
+				IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
+				ImageList.ImageCollection small = m_propertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 				paneBar.Init(small, (IUIMenuAdapter)window.MenuAdapter, m_mediator);
 			}
 			ReloadPaneBar(paneBar);
@@ -145,10 +149,10 @@ namespace XCore
 			XmlNode mainControlNode = m_configurationParameters.SelectSingleNode("control");
 			Control mainControl = DynamicLoader.CreateObjectUsingLoaderNode(mainControlNode) as Control;
 			if (mainControl == null)
-				throw new ApplicationException("Soemthing went wrong trying to create the main control.");
+				throw new ApplicationException("Something went wrong trying to create the main control.");
 
-			if (!(mainControl is IxCoreContentControl))
-				throw new ApplicationException("A PaneBarContainer can only handle controls which implement IxCoreContentControl.");
+			if (!(mainControl is IMainContentControl))
+				throw new ApplicationException("A PaneBarContainer can only handle controls which implement IMainContentControl.");
 
 			mainControl.SuspendLayout();
 			m_mainControl = mainControl;
@@ -188,6 +192,9 @@ namespace XCore
 			ResumeLayout(false);
 		}
 
+		#endregion IxCoreColleague implementation
+#endif
+
 		/// <summary>
 		/// refresh (reload) the menu items on the PaneBar.
 		/// </summary>
@@ -202,42 +209,16 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+				IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
 				ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
 				group.PopulateNow();
 				paneBar.AddGroup(group);
+#endif
 			}
 		}
 
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			return (m_mainControl as IxCoreColleague).GetMessageTargets();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get
-			{
-				return (int)ColleaguePriority.Medium;
-			}
-		}
-
-		#endregion IxCoreColleague implementation
-
-		#region IXCoreUserControl implementation
+		#region IMainUserControl implementation
 
 		public string AccName
 		{
@@ -248,15 +229,21 @@ namespace XCore
 			}
 		}
 
-		#endregion IXCoreUserControl implementation
+		/// <summary>
+		/// Get/set string that will trigger a message box to show.
+		/// </summary>
+		/// <remarks>Set to null or string.Empty to not show the message box.</remarks>
+		public string MessageBoxTrigger { get; set; }
 
-		#region IxCoreContentControl implementation
+		#endregion IMainUserControl implementation
+
+		#region IMainContentControl implementation
 
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
 
-			return (m_mainControl as IxCoreContentControl).PrepareToGoAway();
+			return (m_mainControl as IMainContentControl).PrepareToGoAway();
 		}
 
 		public string AreaName
@@ -264,13 +251,13 @@ namespace XCore
 			get
 			{
 				CheckDisposed();
-				return (m_mainControl as IxCoreContentControl).AreaName;
+				return (m_mainControl as IMainContentControl).AreaName;
 			}
 		}
 
-		#endregion IxCoreContentControl implementation
+		#endregion IMainContentControl implementation
 
-		#region IxCoreCtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
@@ -279,10 +266,10 @@ namespace XCore
 
 			// Don't bother with the IPaneBar.
 			// Just check out the main control.
-			return (m_mainControl as IxCoreCtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+			return (m_mainControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
-		#endregion  IxCoreCtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
 		#region Other messages
 
@@ -294,58 +281,104 @@ namespace XCore
 			if (initReceiver != null)
 				initReceiver.PostLayoutInit();
 		}
+
+		#region Implementation of IPropertyTableProvider
+		// Added to base class, not on thnis class.
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
+
+		#region Implementation of IMainUserControl
+
+		/// <summary>
+		/// Get or set the name to be used by the accessibility object.
+		/// </summary>
+		string IMainUserControl.AccName { get; set; }
+
+		#endregion
 	}
 
-	public partial class BasicPaneBarContainer : UserControl
+	public class BasicPaneBarContainer : UserControl
 	{
 		#region Data Members
 
-		protected Mediator m_mediator;
-		protected IPropertyTable m_propertyTable;
 		protected IPaneBar m_paneBar;
 
 		#endregion Data Members
 
 		/// <summary>
-		/// Init for basic panebar.
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		/// <param name="mediator"></param>
+		public IPropertyTable PropertyTable { get; set; }
+
+		/// <summary>
+		/// Init for basic PaneBar.
+		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <param name="mainControl"></param>
-		public void Init(Mediator mediator, IPropertyTable propertyTable, Control mainControl)
+		/// <param name="paneBar"></param>
+		public void Init(IPropertyTable propertyTable, Control mainControl, IPaneBar paneBar)
 		{
-			if (m_mediator != null && m_mediator != mediator)
-				throw new ArgumentException("Mis-matched mediators being set for this object.");
-			if (m_propertyTable != null && m_propertyTable != propertyTable)
+			if (PropertyTable != null && PropertyTable != propertyTable)
 				throw new ArgumentException("Mis-matched property tables being set for this object.");
 
-			if (m_mediator == null)
-				m_mediator = mediator;
-			if (m_propertyTable == null)
-				m_propertyTable = propertyTable;
-			m_paneBar = CreatePaneBar();
-			Controls.Add(m_paneBar as Control);
+			if (PropertyTable == null)
+				PropertyTable = propertyTable;
+			PaneBar = paneBar;
+			Controls.Add(PaneBar as Control);
 
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(mainControl);
 			mainControl.BringToFront();
 		}
 
-		protected IPaneBar CreatePaneBar()
-		{
-			string preferredLibrary = m_propertyTable.GetValue("PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
-			Assembly adaptorAssembly = AdapterAssemblyFactory.GetAdapterAssembly(preferredLibrary);
-			IPaneBar paneBar = adaptorAssembly.CreateInstance("XCore.PaneBar") as IPaneBar;
-			Control pb = paneBar as Control;
-			if (pb.AccessibleName == null)
-				pb.AccessibleName = "XCore.PaneBar";
-			pb.Dock = DockStyle.Top;
-			return paneBar;
-		}
-
 		public IPaneBar PaneBar
 		{
 			get { return m_paneBar; }
+			private set
+			{
+				if (m_paneBar != null)
+				{
+					throw new InvalidOperationException(@"Pane bar container already has a pane bar.");
+				}
+				m_paneBar = value;
+				var pbAsControl = m_paneBar as Control;
+				if (pbAsControl != null && pbAsControl.AccessibleName == null)
+				{
+					pbAsControl.AccessibleName = "XCore.PaneBar";
+				}
+			}
 		}
 	}
 }

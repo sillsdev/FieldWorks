@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {

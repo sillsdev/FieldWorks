@@ -162,14 +162,6 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="UIAdapterInterfaces">
-      <Name>UIAdapterInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
@@ -201,7 +193,6 @@
     <Compile Include="SelInfoTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindowDelegateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

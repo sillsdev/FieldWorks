@@ -190,14 +190,6 @@
       <Name>TeResources</Name>
       <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
     </Reference>
-    <Reference Include="UIAdapterInterfaces">
-      <Name>UIAdapterInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

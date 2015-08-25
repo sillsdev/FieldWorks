@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -46,9 +45,9 @@ namespace SIL.FieldWorks.IText
 				// remove it when the view changes.  This will have to be expanded
 				// when the dlg can search and operate on more than one view in Flex
 				// as it does in TE.
-				if (m_propertyTable != null)
+				if (PropertyTable != null)
 				{
-					IApp app = m_propertyTable.GetValue<IApp>("App");
+					IApp app = PropertyTable.GetValue<IApp>("App");
 					if (app != null)
 						app.RemoveFindReplaceDialog();
 				}
@@ -113,7 +112,6 @@ namespace SIL.FieldWorks.IText
 			this.m_tcPane.DoSpellCheck = false;
 			this.m_tcPane.Group = null;
 			this.m_tcPane.IsTextBox = false;
-			this.m_tcPane.Mediator = null;
 			this.m_tcPane.MinimumSize = new System.Drawing.Size(0, 0); // LT-12233
 			this.m_tcPane.Name = "m_tcPane";
 			this.m_tcPane.ReadOnlyView = false;
@@ -168,7 +166,6 @@ namespace SIL.FieldWorks.IText
 			this.m_rtPane.DoSpellCheck = true;
 			this.m_rtPane.Group = null;
 			this.m_rtPane.IsTextBox = false;
-			this.m_rtPane.Mediator = null;
 			this.m_rtPane.Name = "m_rtPane";
 			this.m_rtPane.ReadOnlyView = false;
 			this.m_rtPane.ScrollMinSize = new System.Drawing.Size(0, 0);
@@ -200,7 +197,6 @@ namespace SIL.FieldWorks.IText
 			this.m_idcGloss.ForEditing = true;
 			this.m_idcGloss.Group = null;
 			this.m_idcGloss.IsTextBox = false;
-			this.m_idcGloss.Mediator = null;
 			this.m_idcGloss.Name = "m_idcGloss";
 			this.m_idcGloss.ReadOnlyView = false;
 			this.m_idcGloss.ScrollMinSize = new System.Drawing.Size(0, 0);
@@ -232,7 +228,6 @@ namespace SIL.FieldWorks.IText
 			this.m_idcAnalyze.ForEditing = true;
 			this.m_idcAnalyze.Group = null;
 			this.m_idcAnalyze.IsTextBox = false;
-			this.m_idcAnalyze.Mediator = null;
 			this.m_idcAnalyze.Name = "m_idcAnalyze";
 			this.m_idcAnalyze.ReadOnlyView = false;
 			this.m_idcAnalyze.ScrollMinSize = new System.Drawing.Size(0, 0);
@@ -264,7 +259,6 @@ namespace SIL.FieldWorks.IText
 			this.m_taggingPane.ForEditing = false;
 			this.m_taggingPane.Group = null;
 			this.m_taggingPane.IsTextBox = false;
-			this.m_taggingPane.Mediator = null;
 			this.m_taggingPane.Name = "m_taggingPane";
 			this.m_taggingPane.ReadOnlyView = true;
 			this.m_taggingPane.ScrollMinSize = new System.Drawing.Size(0, 0);
@@ -296,7 +290,6 @@ namespace SIL.FieldWorks.IText
 			this.m_printViewPane.ForEditing = false;
 			this.m_printViewPane.Group = null;
 			this.m_printViewPane.IsTextBox = false;
-			this.m_printViewPane.Mediator = null;
 			this.m_printViewPane.Name = "m_printViewPane";
 			this.m_printViewPane.ReadOnlyView = true;
 			this.m_printViewPane.ScrollMinSize = new System.Drawing.Size(0, 0);

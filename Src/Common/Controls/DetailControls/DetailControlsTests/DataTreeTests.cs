@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -9,8 +8,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.Test.TestUtils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -22,8 +19,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private Inventory m_layouts;
 
 		private ILexEntry m_entry; // test object.
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private DataTree m_dtree;
 		private Form m_parent;
 
@@ -92,9 +90,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.TestSetup();
 			m_dtree = new DataTree();
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
-			m_dtree.Init(m_mediator, m_propertyTable, null);
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
 		}
@@ -118,11 +116,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_propertyTable.Dispose();
 				m_propertyTable = null;
 			}
-			if (m_mediator != null)
-			{
-				m_mediator.Dispose();
-				m_mediator = null;
-			}
+			m_publisher = null;
+			m_subscriber = null;
 
 			base.TestTearDown();
 		}
@@ -223,25 +218,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
 		}
 
-		[Test]
-		public void GetGuidForJumpToTool_UsesRootObject_WhenNoCurrentSlice()
-		{
-			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
-			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
-			Assert.That(m_dtree.CurrentSlice == null, "may be OK to automatically select a slice...but this test will need rewriting");
-			var doc = new XmlDocument();
-			doc.LoadXml(
-			@"<command id='CmdRootEntryJumpToConcordance' label='Show Entry in Concordance' message='JumpToTool'>
-				<parameters tool='concordance' className='LexEntry'/>
-			</command>");
-			using (var cmd = new Command(null, doc.DocumentElement))
-			{
-				string tool;
-				var guid = m_dtree.GetGuidForJumpToTool(cmd, true, out tool);
-				Assert.That(guid, Is.EqualTo(m_dtree.Root.Guid));
-			}
-		}
-
 		/// <summary></summary>
 		[Test]
 		public void OwnedObjects()
@@ -262,13 +238,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				LexSenseTags.kflidScientificName,
 				TsStringUtils.MakeTss("blah blah", Cache.DefaultAnalWs));
 
-			m_mediator.Dispose();
-			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.Init(m_mediator, m_propertyTable, null);
+			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -287,13 +262,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			ILexEtymology lm = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOA = lm;
 
-			m_mediator.Dispose();
-			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.Init(m_mediator, m_propertyTable, null);
+			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -311,13 +285,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			lm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
 			lm.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultAnalWs);
 
-			m_mediator.Dispose();
-			m_mediator = new Mediator();
 			m_propertyTable.Dispose();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.Init(m_mediator, m_propertyTable, null);
+			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);

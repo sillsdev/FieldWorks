@@ -10,7 +10,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -99,12 +98,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, IPropertyTable propertyTable, string displayNameProperty, string displayWs)
+			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, propertyTable, obj, this, new AffixRuleFormulaVc(mediator, propertyTable), AffixRuleFormulaVc.kfragRule);
+			m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_view.Init(obj, this, new AffixRuleFormulaVc(PropertyTable, Publisher), AffixRuleFormulaVc.kfragRule);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -763,7 +763,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					switch (obj.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable);
+							featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								// create a new natural class behind the scenes
@@ -789,7 +789,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput) obj;
-							featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable, modify.ModificationRA.FeaturesOA);
+							featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, modify.ModificationRA.FeaturesOA);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								if (modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count == 0)
@@ -900,8 +900,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		ITsString m_doubleArrow;
 		ITsString m_space;
 
-		public AffixRuleFormulaVc(Mediator mediator, IPropertyTable propertyTable)
-			: base(mediator, propertyTable)
+		public AffixRuleFormulaVc(IPropertyTable propertyTable, IPublisher publisher)
+			: base(propertyTable, publisher)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);

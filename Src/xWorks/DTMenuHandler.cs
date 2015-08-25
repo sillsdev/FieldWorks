@@ -28,9 +28,9 @@ using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Although XWorks doesn't sound Flex-specific, most of the menu commands handled in this
 	/// file are specific to Flex.
 	/// </remarks>
-	public class DTMenuHandler: IxCoreColleague
+	public class DTMenuHandler: IFlexComponent
 	{
 		/// <summary>
 		/// Tree form.
@@ -51,19 +51,51 @@ namespace SIL.FieldWorks.XWorks
 		protected DataTree m_dataEntryForm;
 
 		/// <summary>
-		/// Mediator that passes off messages.
-		/// </summary>
-		protected XCore.Mediator m_mediator;
-		/// <summary>
-		///
-		/// </summary>
-		protected IPropertyTable m_propertyTable;
-
-		/// <summary>
 		/// COnfiguration information.
 		/// </summary>
 		protected XmlNode m_configuration;
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// factory method which creates the correct subclass based on the XML parameters
@@ -100,49 +132,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		#region IxCoreColleague implementation
-
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_configuration = configurationParameters;
-		}
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// </summary>
-		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			//if the slice implements IxCoreColleague, than it is one of our sub colleagues
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice != null)
-					return new IxCoreColleague[] { (IxCoreColleague)slice, this };
-			else
-				return new IxCoreColleague[] { this };
-		}
-
-
-		/// <summary>
-		/// No known case where this is not valid to call.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return false; }
-		}
-
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.High; }
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Called by reflection based on menu item InsertPicture.
 		/// </summary>
@@ -155,13 +144,13 @@ namespace SIL.FieldWorks.XWorks
 				return false; // should not happen, but play safe
 			var obj = m_dataEntryForm.CurrentSlice.Object;
 			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			IApp app = PropertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 					dlg.UseMultiStringCaption(obj.Cache, WritingSystemServices.kwsVernAnals, stylesheet);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
@@ -183,6 +172,7 @@ namespace SIL.FieldWorks.XWorks
 			Justification = "current is a reference")]
 		private bool CanInsertPictureOrMediaFile(object cmd, out int flid)
 		{
+#if RANDYTODO
 			Command command = (Command) cmd;
 			string field = command.GetParameter("field");
 			string className = command.GetParameter("className");
@@ -207,8 +197,13 @@ namespace SIL.FieldWorks.XWorks
 			catch { throw new ConfigurationException("Unknown field: " + className + "." + field); }
 			int clidObj = obj.ClassID;
 			return (clidObj == clid); // enhance JohnT: we could allow clidObj to be a subclass of clid.
+#else // TODO: Fix this.
+			flid = 0;
+			return false;
+#endif
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Determine whether we can insert a picture here.
 		/// </summary>
@@ -222,6 +217,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = CanInsertPictureOrMediaFile(commandObject, out flid);
 			return true;//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		/// <summary>
 		/// Called by reflection based on menu item InsertSoundFile.
@@ -287,7 +283,7 @@ namespace SIL.FieldWorks.XWorks
 					if (dialogResult == DialogResult.OK)
 					{
 						string file = MoveOrCopyFilesDlg.MoveCopyOrLeaveMediaFile(dlg.FileName,
-							Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+							Cache.LangProject.LinkedFilesRootDir, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 						if (String.IsNullOrEmpty(file))
 							return true;
 						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
@@ -313,6 +309,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Check whether or not to display the "Insert Sound or Movie" command.
 		/// </summary>
@@ -325,6 +322,7 @@ namespace SIL.FieldWorks.XWorks
 			// exact same logic as for inserting a picture
 			return OnDisplayInsertPicture(commandObject, ref display);
 		}
+#endif
 
 		public bool OnDeleteMediaFile(object cmd)
 		{
@@ -338,13 +336,14 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ActionHandlerAccessor,
 					() =>
 					{
-						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator, m_propertyTable);
+						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, PropertyTable);
 						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
 					});
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Check whether or not to display the "Delete This Media Link" command.
 		/// </summary>
@@ -357,17 +356,19 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = true;
 			return true;
 		}
+#endif
 
 		public bool OnDataTreeHelp(object cmd)
 		{
 			string helpTopicID = null;
 			if (m_dataEntryForm.CurrentSlice != null)
 				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopicID);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopicID);
 
 			return true;
 		}
 
+#if RANDYTODO
 		public bool OnDisplayDataTreeHelp(object cmd, UIItemDisplayProperties display)
 		{
 			// Only display help if there's a topic linked to the generated ID in the resource file
@@ -520,6 +521,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;	//we handled this.
 		}
+#endif
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
 		{
@@ -529,6 +531,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Get the class name and field for the given insertion command.
 		/// </summary>
@@ -613,6 +616,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return fCanInsert;
 		}
+#endif
 
 		/// <summary>
 		/// Check if the field can be inserted into the given object.
@@ -668,6 +672,7 @@ namespace SIL.FieldWorks.XWorks
 			return mdc.GetFieldId2(clid, fieldName, true);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to display this tree insert Menu Item
 		/// </summary>
@@ -726,6 +731,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = false;
 			return false;
 		}
+
 		/// <summary>
 		/// This method is called when a user selects a Delete operation for a slice.
 		/// The menu item is defined in DataTreeInclude.xml with message="DataTreeDelete"
@@ -794,6 +800,7 @@ namespace SIL.FieldWorks.XWorks
 
 			return true;//we handled this, no need to ask anyone else.
 		}
+
 		/// <summary>
 		/// This method is called when a user selects a Delete Reference operation for a slice.
 		/// The menu item is defined in DataTreeInclude.xml with message="DataTreeDeleteReference"
@@ -836,6 +843,7 @@ namespace SIL.FieldWorks.XWorks
 				display.Text += StringTable.Table.GetString("(cannot delete this)");
 			return true;//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "current is a reference")]
@@ -848,6 +856,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to enable this tree delete Menu Item
 		/// </summary>
@@ -865,6 +874,7 @@ namespace SIL.FieldWorks.XWorks
 
 			return true;//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "current is a reference")]
@@ -877,6 +887,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		///
 		/// </summary>
@@ -892,6 +903,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = current != null && current.GetCanSplitNow();
 			return true;	//we handled this, no need to ask anyone else.
 		}
+#endif
 
 		/// <summary>
 		/// This method is called when a user selects "Edit Reference Set Details" for a Lexical Relation slice.
@@ -928,6 +940,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// decide whether to enable this Edit Menu Item
 		/// </summary>
@@ -960,6 +973,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// Handle the message to move an object to the previous location in a sequence.
@@ -996,6 +1010,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -1051,6 +1066,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Visible = true;
 			return true; //we've handled this
 		}
+#endif
 
 		/// <summary>
 		/// Handle the message to move an object to the next location in a sequence.
@@ -1091,6 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -1282,6 +1299,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Checked = fChecked;
 			return true;
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "current is a reference")]
@@ -1333,6 +1351,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// When a data tree slice is right-clicked, this determines if the VisibleComplexFormEntries
 		/// part should be put on its popup menu, like mnuReferenceChoices in Main.xml.
@@ -1373,6 +1392,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Checked = ComponentShowsComplexForm(lexOrSenseComponent, cplxForm, out cfRef);
 			return true;
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "current is a reference")]
@@ -1553,7 +1573,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(menuId))
 				menuId = ShowContextMenu2Id(configuration, fHotLinkOnly);
 
-			XWindow window = m_propertyTable.GetValue<XWindow>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 			//an empty menu attribute means no menu
 			if (menuId != null && menuId.Length== 0)
@@ -1582,6 +1602,7 @@ namespace SIL.FieldWorks.XWorks
 							return null;	//explicitly stated that there should not be a menu
 
 			*/
+#if RANDYTODO
 			//ChoiceGroup group;
 			if(fHotLinkOnly)
 			{
@@ -1602,15 +1623,9 @@ namespace SIL.FieldWorks.XWorks
 					null); // or MessageSequencer
 				return null;
 			}
-
-			//			group.ConfigurationNode.AppendChild(group.ConfigurationNode.OwnerDocument.ImportNode(addon,true));
-			// This causes the menu to be actually populated with the items. It's a rather
-			// ugly way to do it...happens all over again when the menu pops up...but we
-			// need to know the actual items for various purposes, such as populating a
-			// summary slice's command list. Refactoring is complicated because part of
-			// the code is in a DotNetBar UiAdapter class that I can't easily modify.
-			//			group.OnDisplay(null, new EventArgs());
-			//			return menu;
+#else
+			return null; // TODO: Fix this.
+#endif
 		}
 
 		private string ShowContextMenu2Id(XmlNode caller, bool fHotLinkOnly)

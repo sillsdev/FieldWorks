@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -20,7 +19,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion Properties
 
-
 		#region XCORE Message Handlers
 
 		/// <summary>
@@ -33,6 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			var command = (Command) argument;
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
 			if (className == null || className != "RnGenericRec")
@@ -43,10 +42,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new InsertRecordDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
 				ICmObject obj = null;
-				ICmObject objSelected = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
-				ICmObject objOwning = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+				ICmObject objSelected = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
+				ICmObject objOwning = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 				if (subsubrecord)
 				{
 					obj = objSelected;
@@ -61,13 +60,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					obj = objOwning;
 				}
-				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, obj);
+				dlg.SetDlgInfo(cache, PropertyTable, obj);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
-					IRnGenericRec newRec = dlg.NewRecord;
-					m_mediator.SendMessage("JumpToRecord", newRec.Hvo);
+					Publisher.Publish("JumpToRecord", dlg.NewRecord.Hvo);
 				}
 			}
+#endif
 			return true; // We "handled" the message, regardless of what happened.
 		}
 
@@ -96,15 +95,18 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new RecordGoDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
-				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+				{
+					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+				}
 			}
 			return true;
 		}
 
+#if RANDYTODO
 		public virtual bool OnDisplayGotoRecord(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -112,12 +114,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
+#endif
 
 		protected bool InFriendlyArea
 		{
 			get
 			{
-				string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				var areas = new[] { "notebook" };
 				foreach (string area in areas)
 				{
@@ -126,7 +129,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						// We want to show goto dialog for dictionary views, but not lists, etc.
 						// that may be in the Lexicon area.
 						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+						var obj = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 						return (obj != null) && (obj.ClassID == RnResearchNbkTags.kClassId);
 					}
 				}

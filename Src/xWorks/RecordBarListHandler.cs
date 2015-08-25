@@ -1,5 +1,4 @@
 using System;
-using XCore;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -7,6 +6,7 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.XWorks
@@ -60,9 +60,10 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			XWindow window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+			IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			window.TreeBarControl.IsFlatList = true;
-			using (new WaitCursor(window))
+			using (new WaitCursor((Form)window))
 			{
 				ListView list = (ListView)window.ListStyleRecordList;
 				list.BeginUpdate();
@@ -88,6 +89,7 @@ namespace SIL.FieldWorks.XWorks
 				if (list.SelectedItems.Count >0)
 				{}//list.s .EnsureVisible();
 			}
+#endif
 		}
 
 		/// <summary>
@@ -127,9 +129,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				XWindow window = m_propertyTable.GetValue<XWindow>("window");
+#if RANDYTODO
+				var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 				if (window != null)
 					return (ListView)window.ListStyleRecordList;
+#endif
 				return null;
 			}
 		}

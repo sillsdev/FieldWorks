@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -119,6 +118,7 @@ namespace SIL.FieldWorks.IText
 			return interestingTexts.AddChapterToInterestingTexts(stText);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// This toolbar option no longer applies only to Scripture.
 		/// Any scripture related control function is handled in the IFilterTextsDialog implementation.
@@ -134,6 +134,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// This method should cause all paragraphs in interesting texts which do not have the ParseIsCurrent flag set
@@ -162,13 +163,13 @@ namespace SIL.FieldWorks.IText
 			{
 				if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
 				{
-					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this);
+					dlg = new FilterTextsDialogTE(Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this);
 				}
 				else
 				{
-					dlg = new FilterTextsDialog(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+					dlg = new FilterTextsDialog(Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				}
-				if (dlg.ShowDialog(m_propertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
@@ -185,9 +186,10 @@ namespace SIL.FieldWorks.IText
 
 		private InterestingTextList GetInterestingTextList()
 		{
-			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
+			return InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
 		}
 
+#if RANDYTODO
 		/// <summary>
 		/// Always enable the 'InsertInterlinText' command by default for this class, but allow
 		/// subclasses to override this behavior.
@@ -213,6 +215,7 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = false;
 			return true;
 		}
+#endif
 
 		/// <summary>
 		/// We use a unique method name for inserting a text, which could otherwise be handled simply
@@ -226,7 +229,11 @@ namespace SIL.FieldWorks.IText
 		{
 			if (!IsActiveClerk || !InDesiredArea("textsWords"))
 				return false;
+#if RANDYTODO
 			return AddNewText(argument as Command);
+#else
+			return false;
+#endif
 		}
 
 		/// <summary>
@@ -235,9 +242,14 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		internal bool AddNewTextNonUndoable()
 		{
+#if RANDYTODO
 			return AddNewText(null);
+#else
+			return false;
+#endif
 		}
 
+#if RANDYTODO
 		private bool AddNewText(Command command)
 		{
 			// Get the default writing system for the new text.  See LT-6692.
@@ -279,7 +291,10 @@ namespace SIL.FieldWorks.IText
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
+			{
+				//Publisher.Publish("AboutToFollowLink", null);
 				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
+			}
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);
 			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app
@@ -288,6 +303,7 @@ namespace SIL.FieldWorks.IText
 			//link.Activate();
 			return true;
 		}
+#endif
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>
 		{
@@ -324,20 +340,26 @@ namespace SIL.FieldWorks.IText
 
 		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal UndoableCreateAndInsertStText(FdoCache cache, Command command, InterlinearTextsRecordClerk clerk)
+			internal UndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
+#if RANDYTODO
 				CommandArgs = command;
+#endif
 			}
+#if RANDYTODO
 			private Command CommandArgs;
+#endif
 
 			public override IStText Create()
 			{
+#if RANDYTODO
 				// don't inline this, it launches a dialog and should be done BEFORE starting the UOW.
 				int wsText = Clerk.GetWsForNewText();
 
 				UndoableUnitOfWorkHelper.Do(CommandArgs.UndoText, CommandArgs.RedoText, Cache.ActionHandlerAccessor,
 											()=> CreateNewTextWithEmptyParagraph(wsText));
+#endif
 				return NewStText;
 			}
 		}
@@ -383,7 +405,7 @@ namespace SIL.FieldWorks.IText
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
-						dlg.Initialize(Cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
+						dlg.Initialize(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
 						dlg.ShowDialog(Form.ActiveForm);
 						wsText = dlg.TextWs;
 					}
@@ -467,7 +489,7 @@ namespace SIL.FieldWorks.IText
 
 			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
 				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				m_propertyTable.GetValue<FwApp>("App")))
+				PropertyTable.GetValue<FwApp>("App")))
 			{
 				return scr.FindBook(bookNum);
 			}

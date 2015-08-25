@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 
@@ -25,6 +24,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private SearchTimer m_SearchTimer;
 		private ICmSemanticDomainRepository m_semdomRepo;
 		private String m_helpTopic = "khtpSemanticDomainsChooser";
+		private IPublisher m_publisher;
 
 		public IEnumerable<ICmObject> SemanticDomains
 		{
@@ -33,8 +33,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public IHelpTopicProvider HelpTopicProvider { private get; set; }
 
 		public ILexSense Sense { private get; set; }
-
-		public Mediator Mediator { private get; set; }
 
 		public FdoCache Cache { private get; set; }
 
@@ -47,8 +45,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			editDomainsLinkPic.Image = DetailControlsStrings.gotoLinkPic;
 		}
 
-		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems, IPropertyTable propertyTable)
+		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems, IPropertyTable propertyTable, IPublisher publisher)
 		{
+			m_publisher = publisher;
 			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			selectedDomainsList.Font = FontHeightAdjuster.GetFontForNormalStyle(
@@ -214,7 +213,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
-			Mediator.PostMessage("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
+			m_publisher.Publish("AboutToFollowLink", null);
+			m_publisher.Publish("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
 			btnCancel.PerformClick();
 		}
 

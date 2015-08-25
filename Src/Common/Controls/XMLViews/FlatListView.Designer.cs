@@ -26,8 +26,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (m_cache != null)
 				m_cache = null;
-			if (m_mediator != null)
-				m_mediator = null;
 			base.Dispose(disposing);
 		}
 

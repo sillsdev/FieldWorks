@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					dlg = new LinkMSADlg();
 				}
 				Debug.Assert(dlg != null);
-				dlg.SetDlgInfo(m_cache, null, m_mediator, m_propertyTable);
+				dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 			}

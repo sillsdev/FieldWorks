@@ -10,7 +10,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using SilEncConverters40;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

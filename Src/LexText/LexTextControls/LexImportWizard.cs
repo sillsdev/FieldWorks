@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Sfm2Xml;
@@ -28,7 +27,6 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using SilEncConverters40;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -37,7 +35,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
@@ -113,6 +110,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_wizard;
 		}
 
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		internal IPublisher Publisher { get; private set; }
+
 		#region Dialog controls
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
@@ -173,7 +175,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Create the Wizard and require an FdoCache object.
 		/// </summary>
-		/// <param name="cache"></param>
 		public LexImportWizard()
 		{
 			// This call is required by the Windows Form Designer.
@@ -214,21 +215,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// From IFwExtension
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator, IPropertyTable propertyTable)
+		/// <param name="publisher"></param>
+		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 
 			m_wizard = this;
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			if (propertyTable != null)
 			{
 				m_app = propertyTable.GetValue<IApp>("App");
 				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			}
+			Publisher = publisher;
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
 //			m_hasShownIFMs = false;
@@ -327,32 +328,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 			base.Dispose( disposing );
-		}
-
-		///// <summary>
-		///// (IFwImportDialog)Shows the dialog as a modal dialog
-		///// </summary>
-		///// <returns>A DialogResult value</returns>
-		//public System.Windows.Forms.DialogResult ShowDialog(IWin32Window owner)
-		//{
-		//    return base.ShowDialog(owner);
-		//}
-
-
-		// added so it could invoke the Styles dialog
-		// so many dlgs are passing a cache and mediator - seems to be crying
-		//   out for a better solution.
-		public Mediator Mediator
-		{
-			get
-			{
-				// After a MasterRefresh the mediator is disposed of, so make sure it's
-				// valid before returning it.
-				if (m_mediator.IsDisposed)
-					GetNewMediator();
-
-				return m_mediator;
-			}
 		}
 
 		public IPropertyTable PropTable
@@ -4157,25 +4132,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				btnModifyCharMapping.Enabled = enableBtns;
 				btnDeleteCharMapping.Enabled = enableBtns;
-			}
-		}
-
-		internal void GetNewMediator()
-		{
-			m_mediator = null;
-			if (m_app == null)
-				return;
-			Form wndActive = m_app.ActiveMainWindow;
-			if (wndActive == null)
-				return;
-			PropertyInfo pi = wndActive.GetType().GetProperty("Mediator");
-			if (pi == null)
-				return;
-			m_mediator = pi.GetValue(wndActive, null) as Mediator;
-			if (m_mediator != null)
-			{
-				m_app = m_propertyTable.GetValue<IApp>("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 		}
 

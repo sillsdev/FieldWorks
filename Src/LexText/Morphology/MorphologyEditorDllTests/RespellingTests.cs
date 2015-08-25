@@ -19,9 +19,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -29,8 +27,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public class RespellingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const int kObjectListFlid = 89999956;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 
 		public override void FixtureSetup()
 		{
@@ -52,8 +51,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_mediator = new Mediator();
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(new MockPublisher());
+
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -67,16 +67,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 			Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
 
-			if (m_mediator != null)
-			{
-				m_mediator.Dispose();
-				m_mediator = null;
-			}
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.Dispose();
-				m_propertyTable = null;
 			}
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 
 			base.TestTearDown();
 		}
@@ -106,8 +103,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -129,8 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -157,8 +152,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
 				"Unexpected morph bundle contents for 'be'");
@@ -193,8 +187,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -222,8 +215,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
@@ -262,8 +254,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.IsTrue(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss);
@@ -316,8 +307,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			respellUndoaction.DoIt(m_publisher);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
@@ -382,7 +372,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
@@ -466,7 +456,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);

@@ -6,7 +6,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -21,8 +20,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		#region Data Members
 
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
 
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnOk;
@@ -75,8 +74,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize the dialog before showing it.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
 		/// <param name="entry"></param>
 		/// <param name="useForEdit"></param>
 		/// <param name="titleForEdit">Edit title appropriate to the button's context.</param>
@@ -84,7 +83,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sandboxMsa"></param>
 		/// <param name="hvoOriginalMsa"></param>
 		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
-			Mediator mediator, IPropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+			IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			CheckDisposed();
@@ -93,8 +92,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			MsaType msaType = sandboxMsa.MsaType;
 
 			m_cache = cache;
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
 
 			if (useForEdit)
 			{
@@ -146,7 +145,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbSenses.Tss = tisb.GetString();
 			m_fwtbSenses.HasBorder = false;
 
-			m_msaGroupBox.Initialize(m_cache, m_mediator, m_propertyTable, this, sandboxMsa);
+			m_msaGroupBox.Initialize(m_cache, m_propertyTable, m_publisher, this, sandboxMsa);
 			int oldHeight = m_msaGroupBox.Height;
 			int newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
 			int delta = newHeight - oldHeight;
@@ -204,7 +203,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 			m_cache = null;
-			m_mediator = null;
 
 			base.Dispose( disposing );
 		}

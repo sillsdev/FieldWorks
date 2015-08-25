@@ -33,7 +33,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using XCore;
 
 // How to debug COM reference counts:
 // a) create a global variable that contains a file handle:
@@ -360,6 +359,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+#if RANDYTODO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called (by xcore) to control display params of the Styles menu, e.g. whether
@@ -380,6 +380,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			display.Text = style;
 			return true;		// we handled this, no need to ask anyone else.
 		}
+#endif
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -463,11 +464,11 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-				string oldBest = m_propertyTable.GetValue<string>("BestStyleName");
+				string oldBest = PropertyTable.GetValue<string>("BestStyleName");
 				if (oldBest != bestStyle)
 				{
 					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					m_propertyTable.SetProperty("BestStyleName", bestStyle, false, true);
+					PropertyTable.SetProperty("BestStyleName", bestStyle, false, true);
 				}
 				return bestStyle;
 			}
@@ -512,27 +513,24 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Fill in the list of style names.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override void FillInStylesComboList(UIListDisplayProperties display, IVwStylesheet stylesheet)
+		protected override void FillInStylesComboList(ComboBox comboBox, IVwStylesheet stylesheet)
 		{
-			display.List.Clear();
-			string charImage = "CharStyle";
-			string paraImage = "ParaStyle";
-			int cStyles = stylesheet.CStyles;
-			for (int i = 0; i < cStyles; ++i)
+			comboBox.Items.Clear();
+			var charImage = "CharStyle";
+			var paraImage = "ParaStyle";
+			var sortedItems = new SortedSet<object>();
+			for (var i = 0; i < stylesheet.CStyles; ++i)
 			{
-				string name = stylesheet.get_NthStyleName(i);
-				int hvo = stylesheet.get_NthStyle(i);
-				int type = stylesheet.GetType(name);
+				var name = stylesheet.get_NthStyleName(i);
+				var type = stylesheet.GetType(name);
 				if (type == (int)StyleType.kstCharacter || IsSelectionInParagraph)
 				{
-					display.List.Add(name, name,
-						type == (int)StyleType.kstCharacter ? charImage : paraImage,
-						null);
+					sortedItems.Add(name);
 				}
 			}
-			string nameDefault = StyleUtils.DefaultParaCharsStyleName;
-			display.List.Add(nameDefault, nameDefault, charImage, null);
-			display.List.Sort();
+			var nameDefault = StyleUtils.DefaultParaCharsStyleName;
+			sortedItems.Add(nameDefault);
+			comboBox.Items.AddRange(sortedItems.ToArray());
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -799,8 +797,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_fDoSpellCheck && m_rootb != null)
 			{
 				m_rootb.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
+#if RANDYTODO
 				if (!m_rootb.IsSpellCheckComplete() && m_mediator != null)
 					m_mediator.IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
+#endif
 			}
 		}
 
@@ -1308,7 +1308,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// that are a result of scroll position changes need to affect all slaves.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public class RootSiteGroup : Control, IRootSite, IxCoreColleague, IHeightEstimator,
+	public class RootSiteGroup : Control, IRootSite, IHeightEstimator,
 		IFWDisposable, IRootSiteGroup
 	{
 		#region Member variables
@@ -1857,65 +1857,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		#endregion
-
-		#region IxCoreColleague Members
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Not used
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, IPropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
-		{
-			CheckDisposed();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the message target, i.e. 'this'
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual IxCoreColleague[] GetMessageTargets()
-		{
-			CheckDisposed();
-
-			// return list of view windows with focused window being the first one
-			List<IxCoreColleague> targets = new List<IxCoreColleague>();
-			foreach (Control ctrl in Controls)
-			{
-				if (ctrl is IxCoreColleague && ctrl.ContainsFocus)
-				{
-					targets.Add((IxCoreColleague)ctrl);
-					break;
-				}
-			}
-
-			targets.Add(this);
-			return targets.ToArray();
-		}
-
-		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion
-
 	}
 
 	#endregion

@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

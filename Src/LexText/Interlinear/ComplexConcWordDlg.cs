@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -44,7 +43,6 @@ namespace SIL.FieldWorks.IText
 		private System.ComponentModel.IContainer components;
 
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcWordNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
@@ -56,10 +54,9 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ComplexConcWordNode node)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcWordNode node)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_node = node;
 
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
@@ -88,8 +85,8 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.PartsOfSpeechOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									m_mediator,
 									propertyTable,
+									publisher,
 									propertyTable.GetValue<Form>("window"));
 
 			if (m_node.Category != null)

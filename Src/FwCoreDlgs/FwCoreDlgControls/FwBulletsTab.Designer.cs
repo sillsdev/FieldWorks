@@ -228,7 +228,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			this.m_preview.IsRightToLeft = false;
 			this.m_preview.IsTextBox = false;
 			resources.ApplyResources(this.m_preview, "m_preview");
-			this.m_preview.Mediator = null;
 			this.m_preview.Name = "m_preview";
 			this.m_preview.ReadOnlyView = false;
 			this.m_preview.ScrollMinSize = new System.Drawing.Size(0, 0);

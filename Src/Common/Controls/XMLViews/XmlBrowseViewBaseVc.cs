@@ -29,7 +29,6 @@ using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl;
 using SIL.Utils.ComTypes;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -117,7 +116,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				string Id1 = m_xbv.m_bv.PropTable.GetValue("currentContentControl", "");
+				string Id1 = m_xbv.m_bv.PropertyTable.GetValue("currentContentControl", "");
 				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
 				return String.Format("{0}_{1}", Id1, Id2);
 			}
@@ -168,7 +167,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-			MApp = xbv.m_bv.PropTable.GetValue<IApp>("FeedbackInfoProvider");
+			MApp = xbv.m_bv.PropertyTable.GetValue<IApp>("FeedbackInfoProvider");
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}
@@ -213,14 +212,14 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xnSpec = xnSpec;
 
 			// This column list is saved in BrowseViewer.UpdateColumnList
-			string savedCols = m_xbv.m_bv.PropTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
+			string savedCols = m_xbv.m_bv.PropertyTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;
 			string target = null;
 			if (!string.IsNullOrEmpty(savedCols))
 			{
-				doc = GetSavedColumns(savedCols, m_xbv.Mediator, m_xbv.m_bv.PropTable, ColListId);
+				doc = GetSavedColumns(savedCols, m_xbv.m_bv.PropertyTable, ColListId);
 			}
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
@@ -243,7 +242,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SetupSelectColumn();
 		}
 
-		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, IPropertyTable propertyTable, string colListId)
+		internal static XmlDocument GetSavedColumns(string savedCols, IPropertyTable propertyTable, string colListId)
 		{
 			XmlDocument doc;
 			string target;
@@ -1677,7 +1676,8 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						m_xbv.Mediator.SendMessage("FollowLink", new FwLinkArgs(url));
+						m_xbv.Publisher.Publish("AboutToFollowLink", null);
+						m_xbv.Publisher.Publish("FollowLink", new FwLinkArgs(url));
 						return;
 					}
 				}

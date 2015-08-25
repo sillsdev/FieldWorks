@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.XWorks;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -17,26 +11,22 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class TextsFilterItem : NoChangeFilterComboItem
 	{
-		private Mediator m_mediator;
+		private readonly IPublisher m_publisher;
 
-		public TextsFilterItem(ITsString tssName, FdoCache cache, Mediator mediator) : base(tssName)
+		public TextsFilterItem(ITsString tssName, IPublisher publisher) : base(tssName)
 		{
-			m_mediator = mediator;
+			m_publisher = publisher;
 		}
 
 		public override bool Invoke()
 		{
-			m_mediator.SendMessage("ProgressReset", this);
-			m_mediator.SendMessage("AddTexts", this);
 			// Not sure this can happen but play safe.
-			if (m_mediator != null && !m_mediator.IsDisposed)
+			if (m_publisher != null)
 			{
-				m_mediator.SendMessage("ProgressReset", this);
+				m_publisher.Publish("ProgressReset", this);
+				m_publisher.Publish("AddTexts", this);
+				m_publisher.Publish("ProgressReset", this);
 			}
-			//var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts") as InterlinearTextsRecordClerk;
-			//if (clerk == null)
-			//    return false;
-			//clerk.OnAddTexts(null);
 
 			return false; // Whatever the user did, we don't currently count it as changing the filter.
 		}

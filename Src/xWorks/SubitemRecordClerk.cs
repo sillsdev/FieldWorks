@@ -17,13 +17,27 @@ namespace SIL.FieldWorks.XWorks
 	public class SubitemRecordClerk : RecordClerk
 	{
 		internal int SubitemFlid { get; private set; }
-		public override void Init(XCore.Mediator mediator, IPropertyTable propertyTable, XmlNode viewConfiguration)
+
+		#region Overrides of RecordClerk
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.Init(mediator, propertyTable, viewConfiguration);
+			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+#if RANDYTODO
+			// TODO: Figure out how to set these parameters when the xml is gone.
 			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
 			var subitemNames = XmlUtils.GetManditoryAttributeValue(clerkConfiguration, "field").Split('.');
 			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(subitemNames[0].Trim(), subitemNames[1].Trim(), true);
+#endif
 		}
+
+		#endregion
 
 		public ICmObject Subitem { get; set; }
 		public bool UsedToSyncRelatedClerk { get; set; }

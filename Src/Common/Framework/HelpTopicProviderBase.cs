@@ -5,9 +5,10 @@
 // File: HelpTopicProviderBase.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
+
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {
