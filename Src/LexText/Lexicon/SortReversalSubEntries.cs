@@ -20,6 +20,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public string Label { get { return LexEdStrings.SortReversalSubentries_Label; } }
 
+		/// <summary>
+		/// This is what is actually shown in the dialog as the ID of the task.
+		/// </summary>
+		public override string ToString()
+		{
+			return Label;
+		}
+
 		public void LoadUtilities()
 		{
 			Dialog.Utilities.Items.Add(this);
@@ -29,7 +37,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			Dialog.WhenDescription = LexEdStrings.ksWhenToSortReversalSubentries;
 			Dialog.WhatDescription = LexEdStrings.ksWhatIsSortReversalSubentries;
-			Dialog.RedoDescription = LexEdStrings.ksGenericUtilityCannotUndo;
+			Dialog.RedoDescription = LexEdStrings.ksWarningSortReversalSubentries;
 		}
 
 		public void Process()

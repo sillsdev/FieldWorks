@@ -1427,7 +1427,17 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.
+        /// </summary>
+        internal static string ksWarningSortReversalSubentries
+        {
+            get
+            {
+                return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
