@@ -97,9 +97,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void ChooseSimulatedKeyboard(ITestableIbusCommunicator ibusCommunicator)
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
-			var ibusKeyboardAdapter = new IbusKeyboardAdaptorDouble(ibusCommunicator);
+			var ibusKeyboardAdapter = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
-			var xkbKeyboardAdapter = new XkbKeyboardAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
+			var xkbKeyboardAdapter = new XkbKeyboardRetrievingAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
 			KeyboardController.Manager.SetKeyboardAdaptors(new IKeyboardAdaptor[] { xkbKeyboardAdapter, ibusKeyboardAdapter});
 			KeyboardController.Register(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
@@ -1843,9 +1843,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class XkbKeyboardAdaptorDouble: XkbKeyboardAdaptor
+	class XkbKeyboardRetrievingAdaptorDouble: XkbKeyboardRetrievingAdaptor
 	{
-		public XkbKeyboardAdaptorDouble(IXklEngine engine): base(engine)
+		public XkbKeyboardRetrievingAdaptorDouble(IXklEngine engine): base(engine)
 		{
 		}
 
@@ -1854,9 +1854,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class IbusKeyboardAdaptorDouble: IbusKeyboardAdaptor
+	class IbusKeyboardRetrievingAdaptorDouble: IbusKeyboardRetrievingAdaptor
 	{
-		public IbusKeyboardAdaptorDouble(IIbusCommunicator ibusCommunicator): base(ibusCommunicator)
+		public IbusKeyboardRetrievingAdaptorDouble(IIbusCommunicator ibusCommunicator): base(ibusCommunicator)
 		{
 		}
 
