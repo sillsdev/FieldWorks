@@ -151,15 +151,13 @@ namespace SIL.FieldWorks
 			try
 			{
 				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
+				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
 				if (String.IsNullOrEmpty(xulRunnerLocation))
 					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 #if __MonoCS__
 				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
-#else
-				xulRunnerLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "xulrunner");
 #endif
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
