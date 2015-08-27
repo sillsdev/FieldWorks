@@ -97,10 +97,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void ChooseSimulatedKeyboard(ITestableIbusCommunicator ibusCommunicator)
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
-			var ibusKeyboardAdapter = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
+			var ibusKeyboardRetrievingAdaptor = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
-			var xkbKeyboardAdapter = new XkbKeyboardRetrievingAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
-			KeyboardController.Manager.SetKeyboardAdaptors(new IKeyboardAdaptor[] { xkbKeyboardAdapter, ibusKeyboardAdapter});
+			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
+			KeyboardController.Manager.SetKeyboardRetrievers(new IKeyboardRetrievingAdaptor[] { xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor});
 			KeyboardController.Register(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
 
@@ -1863,6 +1863,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		protected override void InitKeyboards()
 		{
 		}
+
+		public override bool IsApplicable { get { return true; } }
 	}
 
 	/// <summary>
