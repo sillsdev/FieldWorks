@@ -150,17 +150,24 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
-				if (String.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
+
 #if __MonoCS__
-				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
+				var xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
+				if (string.IsNullOrEmpty(xulRunnerLocation))
+					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+#else
+				// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
+				var xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
+				if (string.IsNullOrEmpty(xulRunnerLocation))
+					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 #endif
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+#endregion Initialize XULRunner
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
