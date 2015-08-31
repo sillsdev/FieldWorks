@@ -1944,7 +1944,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (closedValue != null)
 					{
 						var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
-						hcFS.AddValue(hcFeature, hcFeature.PossibleSymbols[closedValue.ValueRA.Guid.ToString()]);
+						// TODO: should we display something to the user if a FS has an invalid value?
+						FeatureSymbol symbol;
+						if (hcFeature.PossibleSymbols.TryGetValue(closedValue.ValueRA.Guid.ToString(), out symbol))
+							hcFS.AddValue(hcFeature, symbol);
 					}
 					else
 					{
