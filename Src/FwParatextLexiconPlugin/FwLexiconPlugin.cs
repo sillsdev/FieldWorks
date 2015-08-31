@@ -217,9 +217,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				var settings = new FdoSettings {DisableDataMigration = true};
 				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 				{
-					var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
-					if (sharedXMLBackendCommitLogSize > 0)
-						settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+					if (fwKey != null)
+					{
+						var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+						if (sharedXMLBackendCommitLogSize > 0)
+							settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+					}
 				}
 
 				try
