@@ -308,6 +308,7 @@ OutputMorphs
 		<xsl:param name="sLang"/>
 		<xsl:param name="bAddHyphen"/>
 		<xsl:param name="bIsGloss" select="'N'"/>
+		<xsl:variable name="iCountOfMorphs" select="count(morph)"/>
 		<xsl:for-each select="morph">
 			<xsl:if test="position()!=1">
 				<xsl:choose>
@@ -344,6 +345,15 @@ OutputMorphs
 						</xsl:otherwise>
 					</xsl:choose>
 					<!--					</object>-->
+					<xsl:if test="@guid=$sProclitic">
+						<xsl:text>=</xsl:text>
+					</xsl:if>
+				</xsl:when>
+				<xsl:when test="$iCountOfMorphs &gt; 1 and $sType='msa' and @guid!=$sEnclitic or $iCountOfMorphs &gt; 1 and $sType='msa' and @guid!=$sProclitic">
+					<xsl:if test="@guid=$sEnclitic">
+						<xsl:text>=</xsl:text>
+					</xsl:if>
+					<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
 					<xsl:if test="@guid=$sProclitic">
 						<xsl:text>=</xsl:text>
 					</xsl:if>
