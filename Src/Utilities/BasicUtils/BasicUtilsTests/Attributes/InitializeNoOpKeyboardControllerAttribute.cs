@@ -27,6 +27,11 @@ namespace SIL.Utils.Attributes
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
+
+			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
+			if (Keyboard.Controller != null)
+				Keyboard.Controller.Dispose();
+
 			Keyboard.Controller = new NoOpKeyboardController();
 		}
 
@@ -35,7 +40,9 @@ namespace SIL.Utils.Attributes
 		/// </summary>
 		public override void AfterTest(TestDetails testDetails)
 		{
+			// Shut down (and implicitly dispose) the keyboard controller we created.
 			KeyboardController.Shutdown();
+
 			base.AfterTest(testDetails);
 		}
 	}
