@@ -2136,6 +2136,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 #if RANDYTODO
 // TODO: Do we need an option in Pub/Sub that waits for a return value?
 // TODO: If it did the jump, then this Slice would no longer be displaying, no?
+/* Jason observed:
+"My analysis of the old code shows that this method in the mediator didn't do what it seems to claim,
+it always returned false and put the message on the queue. The UntilHandled just meant that it would
+only be sent to the subscribers one at a time and considered done as soon as someone handled it."
+*/
 						// If possible, jump to the newly inserted sub item.
 						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
 							return insertionPosition;

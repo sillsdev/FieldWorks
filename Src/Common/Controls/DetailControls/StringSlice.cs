@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -323,8 +324,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 						{
-							m_publisher.Publish("AboutToFollowLink", null);
-							m_publisher.Publish("FollowLink", new FwLinkArgs(url));
+							var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+							var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs(url)
+										};
+							m_publisher.Publish(commands, parms);
 							return;
 						}
 					}

@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(PropertyTable, this);
+			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>

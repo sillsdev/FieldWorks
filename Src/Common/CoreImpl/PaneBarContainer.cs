@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.Utils;
 
-namespace XCore
+namespace SIL.CoreImpl
 {
-
+#if RANDYTODO
+	// TODO: I think this can (ought?) be moved into LanguageExplorer, but the main window isn't in it yet either,
+	// TODO: and FieldWorks and/or Framework, including FwApp and its two subclasses all need to be moved to do that.
+#endif
 	/// <summary>
 	/// This class is used to provide a distinct place an IPaneBar control
 	/// and a main control below it. The IPaneBar instance will be in the Pane11
@@ -42,6 +44,9 @@ namespace XCore
 
 		#region Construction
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public PaneBarContainer()
 		{
 			InitializeComponent();
@@ -96,6 +101,7 @@ namespace XCore
 			set { m_defaultPrintPaneId = value; }
 		}
 
+		/// <summary />
 		internal Control MainControl
 		{
 			get { return m_mainControl; }
@@ -118,8 +124,7 @@ namespace XCore
 
 		#endregion IFWDisposable implementation, in part
 
-#if RANDYTODO
-		#region IxCoreColleague implementation
+#if RANDYTODO // TODO: Needs an IPaneBar. Those impls seem to have been done in an old adapter assembly.
 		/// <summary></summary>
 		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -161,13 +166,6 @@ namespace XCore
 			{
 				(mainControl as IPaneBarUser).MainPaneBar = paneBar;
 			}
-			/*
-			if (mainControl is MultiPane)
-			{
-				MultiPane mp = mainControl as MultiPane;
-				mp.DefaultPrintPaneId = DefaultPrintPaneId;
-				mp.ParentSizeHint = ParentSizeHint;
-			}*/
 			(mainControl as IxCoreColleague).Init(m_mediator, m_propertyTable, mainControlNode.SelectSingleNode("parameters"));
 #if __MonoCS__
 			// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
@@ -191,8 +189,6 @@ namespace XCore
 			mainControl.ResumeLayout(false);
 			ResumeLayout(false);
 		}
-
-		#endregion IxCoreColleague implementation
 #endif
 
 		/// <summary>
@@ -206,20 +202,21 @@ namespace XCore
 
 		private void ReloadPaneBar(IPaneBar paneBar)
 		{
+#if RANDYTODO
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-#if RANDYTODO
 				IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
 				ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
 				group.PopulateNow();
 				paneBar.AddGroup(group);
-#endif
 			}
+#endif
 		}
 
 		#region IMainUserControl implementation
 
+		/// <summary />
 		public string AccName
 		{
 			get
@@ -239,6 +236,7 @@ namespace XCore
 
 		#region IMainContentControl implementation
 
+		/// <summary />
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
@@ -246,6 +244,7 @@ namespace XCore
 			return (m_mainControl as IMainContentControl).PrepareToGoAway();
 		}
 
+		/// <summary />
 		public string AreaName
 		{
 			get
@@ -259,6 +258,7 @@ namespace XCore
 
 		#region ICtrlTabProvider implementation
 
+		/// <summary />
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
@@ -275,16 +275,13 @@ namespace XCore
 
 		#endregion Other messages
 
+		/// <summary />
 		public void PostLayoutInit()
 		{
 			var initReceiver = MainControl as IPostLayoutInit;
 			if (initReceiver != null)
 				initReceiver.PostLayoutInit();
 		}
-
-		#region Implementation of IPropertyTableProvider
-		// Added to base class, not on thnis class.
-		#endregion
 
 		#region Implementation of IPublisherProvider
 
@@ -329,10 +326,16 @@ namespace XCore
 		#endregion
 	}
 
+#if RANDYTODO
+	// TODO: I think this can (ought?) be moved into LanguageExplorer, but the main window isn't in it yet either,
+	// TODO: and FieldWorks and/or Framework, including FwApp and its two subclasses all need to be moved to do that.
+#endif
+	/// <summary />
 	public class BasicPaneBarContainer : UserControl
 	{
 		#region Data Members
 
+		/// <summary />
 		protected IPaneBar m_paneBar;
 
 		#endregion Data Members
@@ -363,6 +366,7 @@ namespace XCore
 			mainControl.BringToFront();
 		}
 
+		/// <summary />
 		public IPaneBar PaneBar
 		{
 			get { return m_paneBar; }

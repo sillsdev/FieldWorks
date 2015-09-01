@@ -67,6 +67,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -78,6 +79,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
 		}
 
 		/// <summary>

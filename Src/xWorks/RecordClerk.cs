@@ -1162,7 +1162,7 @@ namespace SIL.FieldWorks.XWorks
 					dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 					dlg.ShowDialog();
 				}
-				this.ActivateUI(true);
+				ActivateUI(true);
 			}
 			return true;	// handled
 		}

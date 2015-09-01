@@ -1648,8 +1648,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_publisher != null && m_linkJump != null)
 			{
-				m_publisher.Publish("AboutToFollowLink", null);
-				m_publisher.Publish("FollowLink", m_linkJump);
+				var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+				var parms = new List<object>
+											{
+												null,
+												m_linkJump
+											};
+				m_publisher.Publish(commands, parms);
 				return true;
 			}
 			else
@@ -1669,8 +1678,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (publisher != null && m_linkJump != null)
 			{
-				m_publisher.Publish("AboutToFollowLink", null);
-				m_publisher.Publish("FollowLink", m_linkJump);
+				var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+				var parms = new List<object>
+											{
+												null,
+												m_linkJump
+											};
+				m_publisher.Publish(commands, parms);
 				return true;
 			}
 			else

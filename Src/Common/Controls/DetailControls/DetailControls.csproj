@@ -156,11 +156,9 @@
     <Reference Include="SimpleRootSite">
       <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets">
       <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
-    </Reference>
-    <Reference Include="xCore">
-      <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils">
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>

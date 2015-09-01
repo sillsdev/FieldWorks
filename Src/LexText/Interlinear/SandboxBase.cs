@@ -4521,8 +4521,17 @@ namespace SIL.FieldWorks.IText
 					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));
 					}
-					//Publisher.Publish("AboutToFollowLink", null);
-					m_mediator.PostMessage("FollowLink", fwLink);
+					var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+					var parms = new List<object>
+						{
+							null,
+							fwLink
+						};
+					Publisher.Publish(commands, parms);
 					return true;
 				}
 			}

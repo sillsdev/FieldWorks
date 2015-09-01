@@ -13,6 +13,9 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Summary description for RecordBarListHandler.
+	///
+	/// RecordBarHandler's static Create method create's one of these, if the older xml config system didn't specify some other one.
+	/// Most list-type stuff does specify another one.
 	/// </summary>
 	public class RecordBarListHandler : RecordBarHandler
 	{

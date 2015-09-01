@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

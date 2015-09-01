@@ -13,10 +13,10 @@ namespace SIL.CoreImpl
 	public interface ICtrlTabProvider
 	{
 		/// <summary>
-		/// Gather up suitable targets to Cntrl-(Shift-)Tab into.
+		/// Gather up suitable targets to Ctrl(+Shift)+Tab into.
 		/// </summary>
 		/// <param name="targetCandidates">List of places to move to.</param>
-		/// <returns>A suitable target for moving to in Ctrl(+Shit)+Tab.
+		/// <returns>A suitable target for moving to in Ctrl(+Shift)+Tab.
 		/// This returned value should also have been added to the main list.</returns>
 		Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates);
 	}

@@ -1,4 +1,5 @@
-﻿using SIL.FieldWorks.Common.FwUtils;
+﻿using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -74,8 +75,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			var mapping = (IMoModifyFromInput)RuleFormulaControl.CurrentObject;
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid));
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid)
+										};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 
@@ -94,8 +104,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid));
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid)
+										};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 	}

@@ -16,10 +16,13 @@ using SIL.Utils;
 using System;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
+	// TODO: Block class, while the RecordBar class it uses gets moved into LanguageExplorer.
+	// TODO: When the semantic tools get to working, then this code will also move into LanguageExplorer.
+
 	/// <summary>
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
 	/// SemanticDomainList clerk in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
@@ -28,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 #if RANDYTODO
 		// Whatever PaneBar did, figure out some other control,
-		// since PaneBar went away, when the Flex UI adapter wevt away.
+		// since PaneBar went away, when the Flex UI adapter went away.
 		private PaneBar m_titleBar;
 #else
 		private Control m_titleBar;
@@ -265,4 +268,5 @@ namespace SIL.FieldWorks.XWorks
 			return baseName + " (" + senseCount + ")";
 		}
 	}
+#endif
 }

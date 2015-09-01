@@ -178,8 +178,17 @@ namespace SIL.FieldWorks.XWorks
 			IFwMainWnd fwxwnd = m_rgMainWindows.Count > 0 ? m_rgMainWindows[0] : null;
 			if (fwxwnd != null)
 			{
-				fwxwnd.Publisher.Publish("AboutToFollowLink", null);
-				fwxwnd.Publisher.Publish("FollowLink", link);
+				var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+				var parms = new List<object>
+									{
+										null,
+										link
+									};
+				fwxwnd.Publisher.Publish(commands, parms);
 				var asForm = fwxwnd as Form;
 				bool topmost = asForm.TopMost;
 				asForm.TopMost = true;

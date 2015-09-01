@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using XCore;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -376,6 +375,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 #if RANDYTODO
+		protected ITestableUIAdapter Menu
+		{
+			get
+			{
+				try
+				{
+					return (ITestableUIAdapter)this.m_window.MenuAdapter;
+				}
+				catch (InvalidCastException)
+				{
+					throw new ApplicationException ("The installed Adapter does not yet ITestableUIAdapter support ");
+				}
+		}
+
 		protected Command GetCommand (string commandName)
 		{
 			Command command = (Command)this.m_window.Mediator.CommandSet[commandName];

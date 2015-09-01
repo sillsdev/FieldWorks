@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -168,8 +169,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IPhSimpleContextNC ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("naturalClassEdit", ctxt.FeatureStructureRA.Guid));
+			var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+			var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs("naturalClassEdit", ctxt.FeatureStructureRA.Guid)
+											};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 
@@ -188,8 +198,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IPhSimpleContextSeg ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid));
+			var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+			var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid)
+											};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 	}

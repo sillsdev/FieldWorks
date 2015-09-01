@@ -3693,13 +3693,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
-#if RANDYTODO
-				// TODO: Publish doublet:
-				// TODO:	1. "AboutToFollowLink" with null new value
-				// TODO:	2. "FollowLink" with new FwLinkArgs instance.
-				//Publisher.Publish("AboutToFollowLink", null);
-#endif
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+				var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+				var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs(tool, guid)
+										};
+				Publisher.Publish(commands, parms);
 				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -3740,8 +3744,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", link);
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											link
+										};
+			Publisher.Publish(commands, parms);
 		}
 
 		/// <summary>

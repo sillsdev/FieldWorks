@@ -31,7 +31,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using XCore;
 using File = System.IO.File;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -69,9 +68,10 @@ namespace SIL.FieldWorks.Common.Framework
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
-		private readonly IAreaRepository _areaRepository;
-		private readonly ActiveViewHelper _viewHelper;
+		private IAreaRepository _areaRepository;
+		private ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
+		private ITool _currentTool;
 		private FwStyleSheet _stylesheet;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
@@ -105,11 +105,14 @@ namespace SIL.FieldWorks.Common.Framework
 
 			SetupPropertyTable();
 
+			_stylesheet = new FwStyleSheet();
+			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, true);
+
 			_areaRepository = AreaRepositoryFactory.CreateAreaRepository();
+			_areaRepository.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 
 			SetupOutlookBar();
-
-			_currentArea = _areaRepository.GetPersistedOrDefaultArea(PropertyTable);
 
 			SetWindowTitle();
 #if !RANDYTODO
@@ -129,7 +132,7 @@ namespace SIL.FieldWorks.Common.Framework
 				SkipMissingFiles = false
 			};
 			includer.ProcessDom(configFilePath, mergedConfigDoc);
-			mergedConfigDoc.Save(@"C:\xWindowFullConfig.xml");
+			mergedConfigDoc.Save(@"C:\Users\Randy\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\xWindowFullConfig.xml");
 #endif
 		}
 #if !RANDYTODO
@@ -161,8 +164,10 @@ namespace SIL.FieldWorks.Common.Framework
 			/// </summary>
 			internal void ProcessDom(string parentPath, XmlDocument dom)
 			{
-				Dictionary<string, XmlDocument> cachedDoms = new Dictionary<string, XmlDocument>();
-				cachedDoms.Add(parentPath, dom);
+				var cachedDoms = new Dictionary<string, XmlDocument>
+				{
+					{parentPath, dom}
+				};
 				ProcessDom(cachedDoms, null, dom);
 				cachedDoms.Clear();
 			}
@@ -511,8 +516,6 @@ namespace SIL.FieldWorks.Common.Framework
 					_sidePane.AddItem(tab, item);
 				}
 			}
-			_sidePane.TabClicked += Area_Clicked;
-			_sidePane.ItemClicked += Tool_Clicked;
 
 			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
 			mainContainer.ResumeLayout(false);
@@ -520,9 +523,18 @@ namespace SIL.FieldWorks.Common.Framework
 
 		void Tool_Clicked(Item itemClicked)
 		{
-#if RANDYTODO
-			// Deactivate old tool & activate newly selected one.
-#endif
+			var clickedTool = (ITool) itemClicked.Tag;
+			if (_currentTool == clickedTool)
+			{
+				return;  // Nothing to do.
+			}
+			if (_currentTool != null)
+			{
+				_currentTool.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
+			}
+			_currentTool = clickedTool;
+			PropertyTable.SetProperty("ToolForAreaNamed_" + _currentArea.MachineName, _currentTool.MachineName, SettingsGroup.LocalSettings, false, false);
+			_currentTool.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 
 		void Area_Clicked(Tab tabClicked)
@@ -537,11 +549,8 @@ namespace SIL.FieldWorks.Common.Framework
 				_currentArea.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentArea = clickedArea;
-			_currentArea.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			PropertyTable.SetProperty("currentArea", _currentArea, SettingsGroup.LocalSettings, false, false);
-#if RANDYTODO
-			// Activate persisted tool and if not found then the default for the area.
-#endif
+			_currentArea.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -713,8 +722,17 @@ namespace SIL.FieldWorks.Common.Framework
 #if RANDYTODO
 			if (m_startupLink != null)
 			{
-				//Publisher.Publish("AboutToFollowLink", null);
-				m_mediator.SendMessage("FollowLink", m_startupLink);
+				var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+				var parms = new List<object>
+						{
+							null,
+							m_startupLink
+						};
+				Publisher.Publish(commands, parms);
 			}
 			UpdateControls();
 #endif
@@ -884,7 +902,7 @@ namespace SIL.FieldWorks.Common.Framework
 					components.Dispose();
 				}
 
-				// TODO: Is this comment still relvant?
+				// TODO: Is this comment still relevant?
 				// TODO: Seems like FLEx worked well with it in this place (in the original window) for a long time.
 				// The removing of the window needs to happen later; after this main window is
 				// already disposed of. This is needed for side-effects that require a running
@@ -894,15 +912,27 @@ namespace SIL.FieldWorks.Common.Framework
 				if (PropertyTable != null)
 				{
 					PropertyTable.Dispose();
-					PropertyTable = null;
 				}
 
 				if (_sidePane != null)
 				{
 					_sidePane.Dispose();
-					_sidePane = null;
+				}
+				if (_viewHelper != null)
+				{
+					_viewHelper.Dispose();
 				}
 			}
+
+			PropertyTable = null;
+			_sidePane = null;
+			_viewHelper = null;
+			_currentArea = null;
+			_stylesheet = null;
+			_publisher = null;
+			_subscriber = null;
+			_areaRepository = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -1141,7 +1171,7 @@ namespace SIL.FieldWorks.Common.Framework
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, FwApp.App, FwApp.App, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)))
 			{
-				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
+				dlg.ProjectPropertiesChanged += ProjectProperties_Changed;
 				if (startOnWSPage)
 				{
 					dlg.StartWithWSPage();
@@ -1181,7 +1211,7 @@ namespace SIL.FieldWorks.Common.Framework
 				FwUtils.FwUtils.ksSuiteName);
 		}
 
-		private void OnProjectPropertiesChanged(object sender, EventArgs eventArgs)
+		private void ProjectProperties_Changed(object sender, EventArgs eventArgs)
 		{
 			// this event is fired before the Project Properties dialog is closed, so that we have a chance
 			// to refresh everything before Paint events start getting fired, which can cause problems if
@@ -1199,6 +1229,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
+		/// <remarks>
+		/// Areas/Tools can decide to disable the F5  menu and toolbar refresh, if they wish. One (GrammarSketchTool) is known to do that.
+		/// </remarks>
 		private void View_Refresh(object sender, EventArgs e)
 		{
 			RefreshAllViews();
@@ -1428,7 +1461,7 @@ namespace SIL.FieldWorks.Common.Framework
 				&& _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper
 				&& ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
 #if RANDYTODO
-			// TODO: Handle enabling/disabling other Edit menu/toolbar itmes, such as Undo & Redo.
+			// TODO: Handle enabling/disabling other Edit menu/toolbar items, such as Undo & Redo.
 #else
 			// TODO: In the meantime, just go with disabled.
 			undoToolStripMenuItem.Enabled = false;
@@ -1440,14 +1473,33 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void File_Export_Global(object sender, EventArgs e)
 		{
+			// This handles the general case if nobody else is handling it.
+			// Other handlers:
+			//		A. The notebook area does its version for all of its tools.
+			//		B. The "grammarSketch" tool in the 'grammar" area does its own thing. (Same as below, but without AreCustomFieldsAProblem and ActivateUI.)
+			// Not visible and thus, not enabled:
+			//		A. Tools in "textsWords": complexConcordance, concordance, corpusStatistics, and interlinearEdit
+			// Stuff that uses this code:
+			//		A. lexicon area: all 8 tools
+			//		B. textsWords area: Analyses, bulkEditWordforms, wordListConcordance (all use "concordanceWords" clerk, so can do export)
+			//		C. grammar area: all tools, except grammarSketch,, which goes its own way
+			//		D. lists area: all 27 tools
 #if RANDYTODO
-			// TODO: This is the event handler for the File->Export menu.
-			// TODO: The original code had two possible implementors:
-			// TODO:	GeneratedHtmlViewer (Grammar area)
-			// TODO:	RecordClerk (Notebook and global, unless some lexical custom fields might be an export problem.)
-			// TODO: Options:
-			// TODO:	1) Let area/tool add an event handler, when activated and remove it when deactivated.
-			// TODO:	2) ???
+			// TODO: RecordClerk's "AreCustomFieldsAProblem" method will also need a new home: maybe FDO is a better place for it.
+			// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
+			// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
+			// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
+			if (AreCustomFieldsAProblem(new int[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
+				return true;
+			using (var dlg = new ExportDialog())
+			{
+				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				dlg.ShowDialog();
+			}
+#if RANDYTODO
+			// TODO: This method is on RecordClerk, so figure out how to call it from here, if it is still needed at all.
+			ActivateUI(true);
+#endif
 #else
 			MessageBox.Show(this, @"Export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
 #endif
@@ -1514,9 +1566,12 @@ very simple minor adjustments. ;)"
 		{
 			base.OnLoad(e);
 
-			var tab = _sidePane.GetTabByName(_currentArea.MachineName);
-			_sidePane.SelectTab(tab);
-			_sidePane.SelectItem(tab, _currentArea.GetPersistedOrDefaultToolForArea().MachineName);
+			var currentArea = _areaRepository.GetPersistedOrDefaultArea();
+			var currentTool = currentArea.GetPersistedOrDefaultToolForArea();
+			_sidePane.TabClicked += Area_Clicked;
+			_sidePane.ItemClicked += Tool_Clicked;
+			// This call fires Area_Clicked and then Tool_Clicked to make sure the provided tab and item are both selected in the end.
+			_sidePane.SelectItem(_sidePane.GetTabByName(currentArea.MachineName), currentTool.MachineName);
 		}
 
 		#endregion

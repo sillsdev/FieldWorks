@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Filters
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialize the filter list. this is called because we are an IxCoreColleague
+		/// Initialize the filter list. this is called because we are an IFlexComponent
 		/// </summary>
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

@@ -35,7 +35,7 @@ namespace SIL.CoreImpl.Impls
 			var tools = new List<ITool>();
 			foreach (var toolType in toolTypes)
 			{
-				var constInfo = toolType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+				var constInfo = toolType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
 				if (constInfo == null)
 				{
 					continue; // It does need at least one public or non-public default constructor.
@@ -70,12 +70,12 @@ namespace SIL.CoreImpl.Impls
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		public IArea GetPersistedOrDefaultArea(IPropertyTable propertyTable)
+		public IArea GetPersistedOrDefaultArea()
 		{
 			// The persisted area could be obsolete or simply not present,
 			// so we'll use "lexicon", if the stored one cannot be found.
 			// The "lexicon" area must be available, even if there are no other areas.
-			return GetArea(propertyTable.GetValue("InitialArea", SettingsGroup.LocalSettings, DefaultAreaMachineName));
+			return GetArea(PropertyTable.GetValue("InitialArea", SettingsGroup.LocalSettings, DefaultAreaMachineName));
 		}
 
 		/// <summary>
@@ -127,6 +127,57 @@ namespace SIL.CoreImpl.Impls
 
 
 			return retval;
+		}
+
+		#endregion
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			foreach (var area in m_areas.Values)
+			{
+				area.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
 		}
 
 		#endregion

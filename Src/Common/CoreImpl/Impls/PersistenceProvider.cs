@@ -1,3 +1,7 @@
+// Copyright (c) 2003-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -10,7 +14,7 @@ namespace SIL.CoreImpl.Impls
 	///  A PersistenceProvider which uses the PropertyTable
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "variable is a reference; it is owned by parent")]
+		Justification = "m_propertyTable variable is a reference; it is owned by someone else")]
 	internal class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;
@@ -32,7 +36,7 @@ namespace SIL.CoreImpl.Impls
 
 		public void RestoreWindowSettings(string id, Form form)
 		{
-			object state = Get(id,"windowState");
+			var state = Get(id,"windowState");
 			//don't bother restoring the program to the minimized state.
 			if (state != null && ((FormWindowState)state) !=
 				FormWindowState.Minimized)
@@ -40,8 +44,8 @@ namespace SIL.CoreImpl.Impls
 				form.WindowState = (FormWindowState)state;
 			}
 
-			object location = Get(id,"windowLocation");
-			object size = Get(id,"windowSize");
+			var location = Get(id, "windowLocation");
+			var size = Get(id, "windowSize");
 
 			if (location != null)
 			{
@@ -57,8 +61,7 @@ namespace SIL.CoreImpl.Impls
 			// Fix the stored position in case it is off the screen.  This can happen if the
 			// user has removed a second monitor, or changed the screen resolution downward,
 			// since the last time he ran the program.  (See LT-1078.)
-			Rectangle rcNewWnd = form.DesktopBounds;
-//			Rectangle rcScrn = System.Windows.Forms.Screen.FromRectangle(rcNewWnd).WorkingArea;
+			var rcNewWnd = form.DesktopBounds;
 			ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
 			form.DesktopBounds = rcNewWnd;
 		}

@@ -12,7 +12,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -150,6 +149,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
 			};
 
+#if RANDYTODO
+			// TODO: Block while BasicPaneBarContainer is moving out of xcore and into LanguageExplorer.
+			// TODO: Re-enable when this gets moved into LanguageExplorer.
+			// TODO: That will keep this project from needing to depend on LanguageExplorer.
 			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
 #if RANDYTODO
 			// TODO: replace following null with IPaneBar impl.
@@ -158,6 +161,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			pbc.Dock = DockStyle.Fill;
 			pbc.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
+#endif
 			if (m_previewPane.RootBox == null)
 				m_previewPane.MakeRoot();
 
@@ -173,6 +177,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_rbv.Init(m_previewPane, m_clerk.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
+#if RANDYTODO
+			// TODO: Block while BasicPaneBarContainer is moving out of xcore and into LanguageExplorer.
+			// TODO: Re-enable when this gets moved into LanguageExplorer.
+			// TODO: That will keep this project from needing to depend on LanguageExplorer.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
 #if RANDYTODO
 			// TODO: replace following null with IPaneBar impl.
@@ -182,6 +190,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			pbc1.Dock = DockStyle.Fill;
 			pbc1.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgBrowseViewPaneTitle;
 			panel1.Controls.Add(pbc1);
+#endif
 
 			CheckAddBtnEnabling();
 		}

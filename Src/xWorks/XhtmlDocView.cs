@@ -222,9 +222,17 @@ namespace SIL.FieldWorks.XWorks
 				if(tool != "publicationsEdit")
 					return false;
 
-				//Publisher.Publish("AboutToFollowLink", null);
-				var fwLink = new FwLinkArgs(tool, Guid.Empty);
-				m_mediator.PostMessage("FollowLink", fwLink);
+				var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+				var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs(tool, Guid.Empty)
+										};
+				Publisher.Publish(commands, parms);
 				return true;
 			}
 #endif

@@ -151,9 +151,6 @@
     <Reference Include="SharedScrUtils">
       <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>

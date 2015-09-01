@@ -100,8 +100,6 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region IxCoreColleague Members
-
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -125,7 +123,6 @@ namespace SIL.FieldWorks.IText
 			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
-
 
 		private void LoadSettings()
 		{
@@ -237,8 +234,6 @@ namespace SIL.FieldWorks.IText
 			if (e.KeyCode == Keys.Enter && m_tbSearchText.Text.Length > 0)
 				m_btnSearch_Click(sender, e);
 		}
-
-		#endregion
 
 		#region IMainUserControl Members
 

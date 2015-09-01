@@ -9,7 +9,7 @@
 // </remarks>
 
 using System.Diagnostics.CodeAnalysis;
-namespace XCore
+namespace SIL.CoreImpl
 {
 	partial class CollapsingSplitContainer
 	{

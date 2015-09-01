@@ -13,10 +13,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils;
 using System.Xml;
-using SIL.CoreImpl;
 
-namespace XCore
+namespace SIL.CoreImpl
 {
+#if RANDYTODO
+	// TODO: I think this can (ought?) be moved into LanguageExplorer, but the main window isn't in it yet either,
+	// TODO: and FieldWorks and/or Framework, including FwApp and its two subclasses all need to be moved to do that.
+#endif
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This class extends SplitContainer by adding buttons which replace a nearly collpased
@@ -34,10 +37,14 @@ namespace XCore
 	/// ----------------------------------------------------------------------------------------
 	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
 	{
+		/// <summary />
 		public const int kCollapsedSize = 16;
+		/// <summary />
 		public const int kCollapseZone = 35;
 
+		/// <summary />
 		protected int m_firstCollapseZone = kCollapseZone;
+		/// <summary />
 		protected int m_secondCollapseZone = kCollapseZone;
 
 		private const int kIconOffset = 10;
@@ -270,6 +277,9 @@ namespace XCore
 			}
 		}
 
+		/// <summary>
+		/// Get/Set the label on the first pane.
+		/// </summary>
 		public string FirstLabel
 		{
 			get { return m_firstLabel; }
@@ -282,6 +292,9 @@ namespace XCore
 			}
 		}
 
+		/// <summary>
+		/// Get/Set the label on the second pane.
+		/// </summary>
 		public string SecondLabel
 		{
 			get { return m_secondLabel; }
@@ -311,12 +324,9 @@ namespace XCore
 
 		#endregion IFwDisposable implementation
 
-		#region Private general methods
-
-		#endregion Private general methods
-
 		#region Protected general methods
 
+		/// <summary />
 		protected void ResetSplitterEventHandler(bool reactivate)
 		{
 			this.SplitterMoved -= new System.Windows.Forms.SplitterEventHandler(this.OnSplitterMoved);
@@ -418,6 +428,7 @@ namespace XCore
 		private bool m_inSplitterMovedMethod = false;
 		private int m_previousSplitterPosition = 40;
 		private int m_restoreSplitterPosition = 40;
+		/// <summary />
 		protected bool InSplitterMovedMethod
 		{
 			get { return m_inSplitterMovedMethod; }
@@ -485,6 +496,7 @@ namespace XCore
 			}
 		}
 
+		/// <summary />
 		protected void ResetControls()
 		{
 			// TODO: Need to deal with minimum usable sizes of each main control.
@@ -599,6 +611,7 @@ namespace XCore
 		}
 
 		private bool m_wantResetControls = true;
+		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			try
@@ -617,21 +630,13 @@ namespace XCore
 			}
 		}
 
-//		/// <summary>
-//		/// Handles Dock style for any control added to a panel.
-//		/// </summary>
-//		/// <param name="sender"></param>
-//		/// <param name="e"></param>
-//		private void CollapsingSplitContainer_Panel_ControlAdded(object sender, ControlEventArgs e)
-//		{
-//			e.Control.Dock = DockStyle.Fill;
-//		}
-
+		/// <summary />
 		internal void SetFirstCollapseZone(XmlNode node)
 		{
 			m_firstCollapseZone = GetCollapseZone(node);
 		}
 
+		/// <summary />
 		internal void SetSecondCollapseZone(XmlNode node)
 		{
 			m_secondCollapseZone = GetCollapseZone(node);
@@ -641,12 +646,14 @@ namespace XCore
 		{
 			if (xmlNode == null)
 				return kCollapseZone;
-			string sCollapse = SIL.Utils.XmlUtils.GetOptionalAttributeValue(xmlNode, "collapse", null);
+#if RANDYTODO
+			// TODO: The whole xmlNode business isn't available now. Figure out how to live without it.
+			string sCollapse = XmlUtils.GetOptionalAttributeValue(xmlNode, "collapse", null);
 			if (sCollapse == null)
 			{
 				XmlNode parameters = xmlNode.SelectSingleNode("parameters");
 				if (parameters != null)
-					sCollapse = SIL.Utils.XmlUtils.GetOptionalAttributeValue(parameters, "collapse", null);
+					sCollapse = XmlUtils.GetOptionalAttributeValue(parameters, "collapse", null);
 			}
 			if (String.IsNullOrEmpty(sCollapse))
 				return kCollapseZone;
@@ -659,11 +666,13 @@ namespace XCore
 						kCollapseZone);
 				}
 			}
+#endif
 			return kCollapseZone;
 		}
 
 		#endregion Event handler methods
 
+		/// <summary />
 		public void PostLayoutInit()
 		{
 			if (FirstControl is IPostLayoutInit)

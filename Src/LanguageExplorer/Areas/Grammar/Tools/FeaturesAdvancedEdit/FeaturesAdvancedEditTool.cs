@@ -67,6 +67,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -78,6 +79,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
 		}
 
 		/// <summary>
@@ -98,7 +100,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		/// The properties are about to be saved, so make sure they are all current.
 		/// Add new ones, as needed.
 		/// </summary>
-		/// <param name="propertyTable">The table that is about to be persisted.</param>
 		public void EnsurePropertiesAreCurrent()
 		{
 		}

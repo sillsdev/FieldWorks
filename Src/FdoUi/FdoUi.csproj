@@ -163,12 +163,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets, Version=6.1.1.30419, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Widgets.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCore, Version=6.1.1.30414, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=6.1.1.30296, Culture=neutral, PublicKeyToken=null">

@@ -9,19 +9,11 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.Utils;
 
-namespace XCore
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// A MultiPane (actually currently more a DualPane) displays two child controls,
 	/// either side by side or one above the other, with a splitter between them.
-	///
-	/// It is normally created using XML like this:
-	///			<control assemblyPath="xCore.dll" class="XCore.MultiPane">
-	///				<parameters area="lexicon" id="LexEntryAndEditor" vertical="true">
-	///					<control .../>
-	///					<control .../>
-	///				</parameters>
-	///			</control>
 	///
 	/// The vertical parameter causes the two controls to be one above the other, if true,
 	/// or side by side, if false. (Default, if omitted, is true.)
@@ -33,13 +25,10 @@ namespace XCore
 	/// If the mediator has a property called id_ShowFirstPane (e.g., LexEntryAndEditor_ShowFirstPane),
 	/// it will control the visibility of the first pane (visible if the property is true).
 	/// </summary>
-	/// <remarks>
-	/// IMainContentControl includes IxCoreColleague now,
-	/// so only IMainContentControl needs to be declared here.
-	/// </remarks>
-	public class MultiPane : CollapsingSplitContainer, IMainContentControl, IMainUserControl
+	internal sealed class MultiPane : CollapsingSplitContainer, IMainContentControl
 	{
-		public event EventHandler ShowFirstPaneChanged;
+		/// <summary />
+		internal event EventHandler ShowFirstPaneChanged;
 
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
@@ -61,7 +50,10 @@ namespace XCore
 		//the name of the tool which this MultiPane is a part of.
 		private string toolName = "";
 
-		public MultiPane()
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		internal MultiPane()
 		{
 			ResetSplitterEventHandler(false); // Get rid of the handler until we have a parent.
 
@@ -71,7 +63,8 @@ namespace XCore
 			InitializeComponent();
 		}
 
-		public string PropertyControllingVisibilityOfFirstPane
+		/// <summary />
+		internal string PropertyControllingVisibilityOfFirstPane
 		{
 			get { return m_propertyControllingVisibilityOfFirstPane; }
 			set
@@ -99,7 +92,8 @@ namespace XCore
 				ShowFirstPaneChanged(this, new EventArgs());
 		}
 
-		public string PrintPane
+		/// <summary />
+		internal string PrintPane
 		{
 			get
 			{
@@ -186,6 +180,7 @@ namespace XCore
 
 		#region IMainContentControl implementation
 
+		/// <summary />
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
@@ -201,6 +196,7 @@ namespace XCore
 			return firstControlReady && secondControlReady;
 		}
 
+		/// <summary />
 		public string AreaName
 		{
 			get
@@ -482,6 +478,7 @@ namespace XCore
 
 		#endregion // IxCoreColleague implementation
 
+		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -508,6 +505,7 @@ namespace XCore
 		// Set to true when sufficiently initialized that it makes sense to persist changes to split position.
 		private bool m_fOkToPersistSplit = false;
 
+		/// <summary />
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)
 		{
 			if (InSplitterMovedMethod)
@@ -704,5 +702,46 @@ namespace XCore
 		string IMainUserControl.AccName { get; set; }
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Temporarily set up and take down a tool.
+	/// </summary>
+	internal static class TemporaryToolProviderHack
+	{
+		/// <summary />
+		internal static void SetupToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer, ITool tool)
+		{
+			mainCollapsingSplitContainer.SecondControl.SuspendLayout();
+			var newTempControl = new Label
+			{
+				Text = @"Selected Tool: " + tool.UiName,
+				Dock = DockStyle.Fill,
+				ForeColor = Color.Ivory,
+				BackColor = Color.Coral
+			};
+			mainCollapsingSplitContainer.SecondControl.Controls.Add(newTempControl);
+			mainCollapsingSplitContainer.SecondControl.ResumeLayout();
+		}
+
+		/// <summary />
+		internal static void RemoveToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer)
+		{
+			mainCollapsingSplitContainer.SecondControl.SuspendLayout();
+			if (mainCollapsingSplitContainer.SecondControl.Controls.Count == 0)
+			{
+				return;
+			}
+			var tempControl = mainCollapsingSplitContainer.SecondControl.Controls[0];
+			try
+			{
+				mainCollapsingSplitContainer.SecondControl.Controls.RemoveAt(0);
+			}
+			finally
+			{
+				tempControl.Dispose();
+			}
+			mainCollapsingSplitContainer.SecondControl.ResumeLayout();
+		}
 	}
 }

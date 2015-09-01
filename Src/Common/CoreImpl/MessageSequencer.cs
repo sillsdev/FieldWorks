@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,7 +43,7 @@ namespace SIL.CoreImpl
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
+		Justification = "m_master variable is a reference; it is owned by someone else")]
 	public sealed class MessageSequencer : IFWDisposable
 	{
 		private Control m_master;
@@ -92,6 +92,7 @@ namespace SIL.CoreImpl
 										  (int) Win32.WinMsgs.WM_RBUTTONDOWN,
 										  (int) Win32.WinMsgs.WM_RBUTTONUP,
 										  (int) Win32.WinMsgs.WM_LBUTTONDBLCLK,
+										  (int) Win32.WinMsgs.WM_RBUTTONDBLCLK,
 										  (int) Win32.WinMsgs.WM_MOUSEMOVE,
 										  (int) Win32.WinMsgs.WM_SETFOCUS,
 										  (int) Win32.WinMsgs.WM_KILLFOCUS,
@@ -454,11 +455,10 @@ namespace SIL.CoreImpl
 			}
 
 			/// <summary>
-			/// This is virtual so in testing we can deliberately make it do reentrant calls.
+			/// Create a new object array of the given size.
 			/// </summary>
 			/// <param name="length"></param>
 			/// <returns></returns>
-
 			private object[] GetNewArray(int length)
 			{
 				return new object[length];

@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// <summary>
 	/// ITool implementation for the "categoryBrowse" tool in the "grammar" area.
 	/// </summary>
-	internal sealed class BulkEditEntriesOrSensesTool : ITool
+	internal sealed class CategoryBrowseTool : ITool
 	{
 		#region Implementation of IPropertyTableProvider
 
@@ -65,6 +65,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -76,6 +77,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
 		}
 
 		/// <summary>

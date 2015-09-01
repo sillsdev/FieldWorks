@@ -281,9 +281,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						return;
 					}
 				}
-				Publisher.Publish("AboutToFollowLink", null);
 				var rie = cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-				Publisher.Publish("FollowLink", new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid));
+				var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+				var parms = new List<object>
+						{
+							null,
+							new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid)
+						};
+				Publisher.Publish(commands, parms);
 			}
 
 			/// <summary>

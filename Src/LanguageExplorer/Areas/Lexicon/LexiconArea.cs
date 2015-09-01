@@ -63,6 +63,11 @@ namespace LanguageExplorer.Areas.Lexicon
 			PropertyTable = propertyTable;
 			Publisher = publisher;
 			Subscriber = subscriber;
+
+			if (m_toolRepository.Publisher == null)
+			{
+				m_toolRepository.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
 		}
 
 		#endregion
@@ -158,7 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(PropertyTable, this);
+			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>

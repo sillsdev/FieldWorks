@@ -217,11 +217,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="xCore">
-      <Name>xCore</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <SpecificVersion>False</SpecificVersion>

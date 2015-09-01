@@ -35,12 +35,12 @@ namespace SIL.CoreImpl.Impls
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the given area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable, IArea area)
+		public ITool GetPersistedOrDefaultToolForArea(IArea area)
 		{
 			// The persisted tool could be obsolete or simply not present,
-			// so we'll use the defauld tool of the given area, if the stored one cannot be found.
+			// so we'll use the default tool of the given area, if the stored one cannot be found.
 			// That default tool must be available, even if there are no other tools.
-			var storedOrDefaultToolName = propertyTable.GetValue(BasePersistedToolName + area.MachineName,
+			var storedOrDefaultToolName = PropertyTable.GetValue(BasePersistedToolName + area.MachineName,
 				SettingsGroup.LocalSettings, area.DefaultToolMachineName);
 			return GetTool(storedOrDefaultToolName);
 		}
@@ -76,6 +76,57 @@ namespace SIL.CoreImpl.Impls
 			retval.AddRange(m_tools.Values.Where(userDefinedTool => userDefinedTool.AreaMachineName == areaMachineName && !retval.Contains(userDefinedTool)));
 
 			return retval;
+		}
+
+		#endregion
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="propertyTable">Interface to a property table.</param>
+		/// <param name="publisher">Interface to the publisher.</param>
+		/// <param name="subscriber">Interface to the subscriber.</param>
+		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+
+			PropertyTable = propertyTable;
+			Publisher = publisher;
+			Subscriber = subscriber;
+
+			foreach (var tool in m_tools.Values)
+			{
+				tool.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
 		}
 
 		#endregion

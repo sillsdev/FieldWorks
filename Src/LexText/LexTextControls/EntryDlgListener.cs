@@ -9,34 +9,49 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: InsertEntryDlgListener will get moved to fw\Src\LanguageExplorer\Areas\Lexicon\
+	// TODO: when the time comes to re-enable the Lexicon area tools that use it.
+	// TODO: NB: Are Lexicon tools the only ones that allow entry inserts?
+	//
+	// TODO: Likely disposition: Dump InsertEntryDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the insertion.
+	//
 	/// <summary>
 	/// Listener class for the InsertEntryDlg class.
 	/// </summary>
 	public class InsertEntryDlgListener : DlgListenerBase
 	{
-		#region Properties
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
 
-		protected override string PersistentLabel
+	#endregion Data members
+
+	#region Properties
+
+		protected string PersistentLabel
 		{
-			get { return "InsertLexEntry"; }
+			get { return "InsertLexEntry"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region Construction and Initialization
+	#region Construction and Initialization
 
 		public InsertEntryDlgListener()
 		{
 		}
 
-		#endregion Construction and Initialization
+	#endregion Construction and Initialization
 
 #if RANDYTODO
-		#region XCORE Message Handlers
+	#region XCORE Message Handlers
 
 		/// <summary>
 		/// Handles the xWorks message to insert a new lexical entry.
@@ -72,30 +87,46 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true; // We "handled" the message, regardless of what happened.
 		}
 
-		#endregion XCORE Message Handlers
+	#endregion XCORE Message Handlers
 #endif
 	}
+#endif
 
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: MergeEntryDlgListener will get moved to fw\Src\LanguageExplorer\Areas\Lexicon\Tools\Edit\
+	// TODO: when the time comes to re-enable the Lexicon area "lexiconEdit" tool (Only one that uses it.).
+	//
+	// TODO: Likely disposition: Dump MergeEntryDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the merge.
+	//
 	public class MergeEntryDlgListener : DlgListenerBase
 	{
-		#region Properties
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
 
-		protected override string PersistentLabel
+	#endregion Data members
+
+	#region Properties
+
+		protected string PersistentLabel
 		{
-			get { return "MergeEntry"; }
+			get { return "MergeEntry"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region Construction and Initialization
+	#region Construction and Initialization
 
 		public MergeEntryDlgListener()
 		{
 		}
 
-		#endregion Construction and Initialization
+	#endregion Construction and Initialization
 
-		#region XCORE Message Handlers
+	#region XCORE Message Handlers
 
 		/// <summary>
 		/// Handles the xCore message to merge two lexical entries.
@@ -187,32 +218,49 @@ namespace SIL.FieldWorks.LexText.Controls
 				return false; //we are not in an area that wants to see the merge command
 			}
 		}
-		#endregion XCORE Message Handlers
+	#endregion XCORE Message Handlers
 	}
+#endif
 
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: GoLinkEntryDlgListener will get moved to fw\Src\LanguageExplorer\Areas\Lexicon\
+	// TODO: when the time comes to re-enable the Lexicon area tools that use it.
+	// TODO: Check "InFriendlyArea" property, as not all tools use this listener.
+	//
+	// TODO: Likely disposition: Dump GoLinkEntryDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers do the jump.
+	//
 	/// <summary>
 	/// Listener class for the GoLinkEntryDlgListener class.
 	/// </summary>
 	public class GoLinkEntryDlgListener : DlgListenerBase
 	{
-		#region Properties
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
 
-		protected override string PersistentLabel
+	#endregion Data members
+
+	#region Properties
+
+		protected string PersistentLabel
 		{
-			get { return "GoLinkLexEntry"; }
+			get { return "GoLinkLexEntry"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region Construction and Initialization
+	#region Construction and Initialization
 
 		public GoLinkEntryDlgListener()
 		{
 		}
 
-		#endregion Construction and Initialization
+	#endregion Construction and Initialization
 
-		#region XCORE Message Handlers
+	#region XCORE Message Handlers
 
 		/// <summary>
 		/// Handles the xCore message to go to or link to a lexical entry.
@@ -279,6 +327,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		#endregion XCORE Message Handlers
+	#endregion XCORE Message Handlers
 	}
+#endif
 }

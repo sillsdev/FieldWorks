@@ -155,10 +155,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCore">
-      <Name>xCore</Name>
-      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-    </Reference>
     <Reference Include="xWorks">
       <Name>xWorks</Name>
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>

@@ -348,8 +348,7 @@ namespace SIL.FieldWorks.FdoUi
 			IVwStylesheet vss = StyleSheetFromPropertyTable(propertyTable);
 			if (vss != null)
 				return vss;
-			// Get a style sheet for the Language Explorer, and store it in the
-			// (new) mediator.
+			// Get a style sheet for the Language Explorer, and store it in the property table.
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			propertyTable.SetProperty("FwStyleSheet", styleSheet, false, true);

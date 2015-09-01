@@ -1,25 +1,40 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
+
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: InsertRecordDlgListener will get moved to fw\Src\LanguageExplorer\Areas\Notebook\
+	// TODO: when the time comes to re-enable the Notebook area tools that use it.
+	//
+	// TODO: Likely disposition: Dump InsertRecordDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the insertion.
+	//
 	/// <summary>
 	/// Listener class for the InsertEntryDlg class.
 	/// </summary>
 	public class InsertRecordDlgListener : DlgListenerBase
 	{
-		#region Properties
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
 
-		protected override string PersistentLabel
+	#endregion Data members
+
+	#region Properties
+
+		protected string PersistentLabel
 		{
-			get { return "InsertRecord"; }
+			get { return "InsertRecord"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region XCORE Message Handlers
+	#region XCORE Message Handlers
 
 		/// <summary>
 		/// Handles the xWorks message to insert a new Data Notebook record.
@@ -70,19 +85,36 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true; // We "handled" the message, regardless of what happened.
 		}
 
-		#endregion XCORE Message Handlers
+	#endregion XCORE Message Handlers
 	}
+#endif
 
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: GoLinkRecordDlgListener will get moved to fw\Src\LanguageExplorer\Areas\Notebook\
+	// TODO: when the time comes to re-enable the Notebook area tools that use it.
+	// TODO: Check "InFriendlyArea" property, as not all tools use this listener.
+	//
+	// TODO: Likely disposition: Dump GoLinkRecordDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the insertion.
+	//
 	public class GoLinkRecordDlgListener : DlgListenerBase
 	{
-		#region Overrides of DlgListenerBase
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
 
-		protected override string PersistentLabel
+	#endregion Data members
+
+	#region Overrides of DlgListenerBase
+
+		protected string PersistentLabel
 		{
-			get { return "GoLinkRecord"; }
+			get { return "GoLinkRecord"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion
+	#endregion
 
 		/// <summary>
 		/// Handles the xCore message to go to or link to a lexical entry.
@@ -137,4 +169,5 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 	}
+#endif
 }

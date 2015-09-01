@@ -543,8 +543,17 @@ namespace SIL.FieldWorks.FdoUi
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
-			//Publisher.Publish("AboutToFollowLink", null);
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+			var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+			var parms = new List<object>
+									{
+										null,
+										new FwLinkArgs(tool, guid)
+									};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 

@@ -20,7 +20,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,10 +32,6 @@ namespace SIL.FieldWorks.XWorks
 	/// The actual view of each object is specified by a child <jtview></jtview> node
 	/// of the view node. This specifies how to display an individual list item.
 	/// </summary>
-	/// <remarks>
-	/// IMainContentControl includes IxCoreColleague now,
-	/// so only IMainContentControl needs to be declared here.
-	/// </remarks>
 	public abstract class XWorksViewBase : MainUserControl, IMainContentControl, IPaneBarUser
 	{
 		#region Enumerations
@@ -75,10 +70,17 @@ namespace SIL.FieldWorks.XWorks
 		/// tell whether the tree bar is required, optional, or not allowed for this view
 		/// </summary>
 		protected TreebarAvailability m_treebarAvailability;
+#if RANDYTODO
+			// TODO: Block for now, to not have xWorks take a new dependency on LanguageExplorer
+			// TODO: Expected disposition:
+			//	TODO: 1. Move this file into LanguageExplorer, and/or
+			//	TODO: 2. Use interface instead of actual MultiPane class.
+
 		/// <summary>
 		/// Last known parent that is a MultiPane.
 		/// </summary>
 		private MultiPane m_mpParent;
+#endif
 		///// <summary>
 		///// Right-click menu for deleting Custom lists.
 		///// </summary>
@@ -184,11 +186,25 @@ namespace SIL.FieldWorks.XWorks
 					components.Dispose();
 				if (ExistingClerk != null && !m_haveActiveClerk)
 					ExistingClerk.BecomeInactive();
+#if RANDYTODO
+			// TODO: Block for now, to not have xWorks take a new dependency on LanguageExplorer
+			// TODO: Expected disposition:
+			//	TODO: 1. Move this file into LanguageExplorer, and/or
+			//	TODO: 2. Use interface instead of actual MultiPane class.
+
 				if (m_mpParent != null)
 					m_mpParent.ShowFirstPaneChanged -= mp_ShowFirstPaneChanged;
+#endif
 			}
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
+#if RANDYTODO
+			// TODO: Block for now, to not have xWorks take a new dependency on LanguageExplorer
+			// TODO: Expected disposition:
+			//	TODO: 1. Move this file into LanguageExplorer, and/or
+			//	TODO: 2. Use interface instead of actual MultiPane class.
+
 			m_mpParent = null;
+#endif
 
 			base.Dispose( disposing );
 		}
@@ -265,8 +281,12 @@ namespace SIL.FieldWorks.XWorks
 
 				if (m_informationBar != null)
 					return m_informationBar as IPaneBar;
+#if RANDYTODO
+			// TODO: Block while PaneBarContainer is being moved to LanguageExplorer.
+			// TODO: Re-enable when this code gets moved, so this project has no dependency on LanguageExplorer.
 				if (Parent is PaneBarContainer)
 					return (Parent as PaneBarContainer).PaneBar;
+#endif
 
 				return null;
 			}
@@ -435,6 +455,12 @@ namespace SIL.FieldWorks.XWorks
 			if (Parent == null)
 				return;
 
+#if RANDYTODO
+			// TODO: Block for now, to not have xWorks take a new dependency on LanguageExplorer
+			// TODO: Expected disposition:
+			//	TODO: 1. Move this file into LanguageExplorer, and/or
+			//	TODO: 2. Use interface instead of actual MultiPane class.
+
 			var mp = Parent as MultiPane ?? Parent.Parent as MultiPane;
 
 			if (mp == null)
@@ -447,6 +473,7 @@ namespace SIL.FieldWorks.XWorks
 				m_mpParent = mp;
 				mp_ShowFirstPaneChanged(mp, new EventArgs());
 			}
+#endif
 		}
 
 		/// <summary>
@@ -523,6 +550,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void mp_ShowFirstPaneChanged(object sender, EventArgs e)
 		{
+#if RANDYTODO
+			// TODO: Reinstate MultiPane use once this code is relocated in LanguageExplorer.
+			// TODO: Or perhaps better, use an interface.
 			var mpSender = (MultiPane) sender;
 
 			bool fWantInfoBar = (this == mpSender.FirstVisibleControl);
@@ -538,6 +568,7 @@ namespace SIL.FieldWorks.XWorks
 				m_informationBar.Dispose();
 				m_informationBar = null;
 			}
+#endif
 		}
 
 		private void ReloadListsArea()
@@ -552,8 +583,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion Event handlers
-
-		#region IxCoreColleague Event handlers
 
 #if RANDYTODO
 		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
@@ -580,8 +609,21 @@ namespace SIL.FieldWorks.XWorks
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
 			bool inFriendlyTerritory = (areaChoice == "lexicon"
+#if RANDYTODO
+			// TODO: The "notebook" area uses its own dlg. See: RecordClerk's method: OnExport
+#endif
 				|| areaChoice == "notebook"
-				|| clerk.Id == "concordanceWords"
+#if RANDYTODO
+			// TODO: These "textsWords" tools use the "concordanceWords" Clerk, so can handle the File_Export menu:
+			// TODO: Analyses, bulkEditWordforms, and wordListConcordance.
+			// TODO: These tools in the "textsWords" do not support the File_Export menu, so it is not visible for them:
+			// TODO: complexConcordance, concordance, corpusStatistics, interlinearEdit
+#endif
+				|| (areaChoice == "textsWords" && clerk.Id == "concordanceWords")
+#if RANDYTODO
+			// TODO: The "grammarSketch" tool in the "grammar" area uses its own dlg. See: GrammarSketchHtmlViewer's method: OnExport
+			// TODO: All other "grammar" area tools use the basic dlg and worry about some custom lexicon properties.
+#endif
 				|| areaChoice == "grammar"
 				|| areaChoice == "lists");
 			if (inFriendlyTerritory)
@@ -758,7 +800,5 @@ namespace SIL.FieldWorks.XWorks
 
 			return true;	// handled
 		}
-
-		#endregion IxCoreColleague Event handlers
 	}
 }

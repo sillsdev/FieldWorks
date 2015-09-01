@@ -105,8 +105,17 @@ namespace SIL.FieldWorks.LexText.Controls
 							case DialogResult.Yes:
 							{
 								// go to m_highestPOS in editor
-								m_publisher.Publish("AboutToFollowLink", null);
-								m_publisher.Publish("FollowLink", new FwLinkArgs("posEdit", dlg.HighestPOS.Guid));
+								var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+											var parms = new List<object>
+									{
+										null,
+										new FwLinkArgs("posEdit", dlg.HighestPOS.Guid)
+									};
+								m_publisher.Publish(commands, parms);
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the popup tree,

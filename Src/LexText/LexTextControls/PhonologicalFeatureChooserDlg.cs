@@ -327,8 +327,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_link != null)
 			{
-				m_publisher.Publish("AboutToFollowLink", null);
-				m_publisher.Publish("FollowLink", m_link);
+				var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+				var parms = new List<object>
+									{
+										null,
+										m_link
+									};
+				m_publisher.Publish(commands, parms);
 			}
 		}
 

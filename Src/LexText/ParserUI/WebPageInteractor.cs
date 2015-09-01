@@ -1,4 +1,5 @@
-﻿using SIL.CoreImpl;
+﻿using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -158,8 +159,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
 			if (cmo == null)
 				return; // do nothing
-			m_publisher.Publish("AboutToFollowLink", null);
-			m_publisher.Publish("FollowLink", new FwLinkArgs(sTool, cmo.Guid));
+			var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+			var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs(sTool, cmo.Guid)
+											};
+			m_publisher.Publish(commands, parms);
 		}
 
 		/// <summary>

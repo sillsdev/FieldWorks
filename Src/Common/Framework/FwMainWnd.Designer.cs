@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.toolStripButton_Refresh = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-			this.mainContainer = new XCore.CollapsingSplitContainer();
+			this.mainContainer = new SIL.CoreImpl.CollapsingSplitContainer();
 			this._leftPanel = new System.Windows.Forms.Panel();
 			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.newFieldWorksProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newFieldWorksProjectToolStripMenuItem.Image")));
 			this.newFieldWorksProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.newFieldWorksProjectToolStripMenuItem.Name = "newFieldWorksProjectToolStripMenuItem";
-			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.newFieldWorksProjectToolStripMenuItem.Text = "&New FieldWorks Project...";
 			this.newFieldWorksProjectToolStripMenuItem.ToolTipText = "Create a new FieldWorks project.";
 			this.newFieldWorksProjectToolStripMenuItem.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.Framework
 			this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(212, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Common.Framework
             this.deleteProjectToolStripMenuItem,
             this.createShortcutOnDesktopToolStripMenuItem});
 			this.projectManagementToolStripMenuItem.Name = "projectManagementToolStripMenuItem";
-			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.projectManagementToolStripMenuItem.Text = "Project &Management";
 			this.projectManagementToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
@@ -255,13 +255,13 @@ namespace SIL.FieldWorks.Common.Framework
 			// toolStripMenuItem8
 			// 
 			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem8.Size = new System.Drawing.Size(212, 6);
 			// 
 			// archiveWithRAMPSILToolStripMenuItem
 			// 
 			this.archiveWithRAMPSILToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("archiveWithRAMPSILToolStripMenuItem.Image")));
 			this.archiveWithRAMPSILToolStripMenuItem.Name = "archiveWithRAMPSILToolStripMenuItem";
-			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.archiveWithRAMPSILToolStripMenuItem.Text = "&Archive with RAMP (SIL)...";
 			this.archiveWithRAMPSILToolStripMenuItem.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
 			this.archiveWithRAMPSILToolStripMenuItem.Click += new System.EventHandler(this.File_Archive_With_RAMP);
@@ -269,13 +269,13 @@ namespace SIL.FieldWorks.Common.Framework
 			// toolStripMenuItem9
 			// 
 			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem9.Size = new System.Drawing.Size(212, 6);
 			// 
 			// pageSetupToolStripMenuItem
 			// 
 			this.pageSetupToolStripMenuItem.Enabled = false;
 			this.pageSetupToolStripMenuItem.Name = "pageSetupToolStripMenuItem";
-			this.pageSetupToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.pageSetupToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.pageSetupToolStripMenuItem.Text = "Page Setup...";
 			this.pageSetupToolStripMenuItem.ToolTipText = "Determine page layout options for printing.";
 			this.pageSetupToolStripMenuItem.Click += new System.EventHandler(this.File_Page_Setup);
@@ -285,21 +285,21 @@ namespace SIL.FieldWorks.Common.Framework
 			this.printToolStripMenuItem.Enabled = false;
 			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
 			this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.printToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.printToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.printToolStripMenuItem.Text = "&Print...";
 			this.printToolStripMenuItem.ToolTipText = "Print";
 			// 
 			// toolStripMenuItem10
 			// 
 			this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-			this.toolStripMenuItem10.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem10.Size = new System.Drawing.Size(212, 6);
 			// 
 			// importToolStripMenuItem
 			// 
 			this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.translatedListContentToolStripMenuItem1});
 			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-			this.importToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.importToolStripMenuItem.Text = "&Import";
 			// 
 			// translatedListContentToolStripMenuItem1
@@ -311,21 +311,22 @@ namespace SIL.FieldWorks.Common.Framework
 			// 
 			// exportToolStripMenuItem
 			// 
+			this.exportToolStripMenuItem.Enabled = false;
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
-			this.exportToolStripMenuItem.Click += new System.EventHandler(this.File_Export_Global);
+			this.exportToolStripMenuItem.Visible = false;
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(212, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.closeToolStripMenuItem.Text = "&Close";
 			this.closeToolStripMenuItem.ToolTipText = "Close this project.";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.File_CloseWindow);
@@ -930,7 +931,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private ToolStripSeparator toolStripMenuItem14;
 		private ToolStripMenuItem selectAllToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator2;
-		private XCore.CollapsingSplitContainer mainContainer;
+		private SIL.CoreImpl.CollapsingSplitContainer mainContainer;
 		private Panel _leftPanel;
 		private Panel _rightPanel;
 	}

@@ -69,7 +69,7 @@ namespace SIL.CoreImpl
 			{
 				if (messages == null) throw new ArgumentNullException("messages");
 				if (newValues == null) throw new ArgumentNullException("newValues");
-				if (messages.Count != newValues.Count) throw new InvalidOperationException("'messages' and 'newValues' counts are not the same.");
+				if (messages.Count != newValues.Count) throw new ArgumentException("'messages' and 'newValues' counts are not the same.");
 
 				int idx;
 				for (idx = 0; idx < messages.Count; ++idx)

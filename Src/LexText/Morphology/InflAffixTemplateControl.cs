@@ -324,8 +324,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs(tool, inflMsa.Owner.Guid)
+										};
+			Publisher.Publish(commands, parms);
 			return true; // handled this
 		}
 #endif

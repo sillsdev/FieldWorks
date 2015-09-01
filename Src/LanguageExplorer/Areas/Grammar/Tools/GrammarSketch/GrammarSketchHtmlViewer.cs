@@ -1,87 +1,59 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// File: GeneratedHtmlViewer.cs
+// File: GrammarSketchHtmlViewer.cs
 // Responsibility: AndyBlack
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 {
 	/// <summary>
-	/// Summary description for GeneratedHtmlViewer.
+	/// Summary description for GrammarSketchHtmlViewer.
 	/// </summary>
-	public class GeneratedHtmlViewer : UserControl, IMainContentControl, IFWDisposable
+	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl, IFWDisposable
 	{
 		#region Data Members
+
+		private FdoCache m_cache;
 		/// <summary>
 		/// The control that shows the HTML data.
 		/// </summary>
-		protected HtmlControl m_htmlControl;
-
-		protected string m_outputDirectory;
-
-		/// <summary>
-		/// special nodes in config file
-		/// </summary>
-		XmlNode m_transformsNode;
-		XmlNode m_AlsoSaveTransformNode;
-		/// <summary>
-		/// counts for progress bar
-		/// </summary>
-		int m_cPrompts;
-		int m_cTransforms;
-		ResourceManager m_stringResMan;
-
+		private readonly HtmlControl m_htmlControl;
+		private readonly string m_outputDirectory;
+		private readonly XElement m_step1MainTransformElement;
+		private readonly XElement m_step2XLingPaperTransformElement;
+		private readonly int m_promptsCount;
+		private readonly int m_transformsCount;
 		private string m_sHtmlFileName;
-		private string m_sAlsoSaveFileName;
-		private string m_sReplaceDoctype;
-		private XmlNode m_configurationParameters;
-
-		// These data members are set from the parameters.
+		private string m_step1MainOutputFileName;
+		private readonly string m_sReplaceDoctype;
 		/// <summary>
-		/// title for dialog box
+		/// Registry key name
 		/// </summary>
-		private string m_sProgressDialogTitle;
-		private string m_sSaveAsWebpageDialogTitle;
-		private string m_sAlsoSaveDialogTitle;
-		/// <summary>
-		/// Registry key name (from config file)
-		/// </summary>
-		private string m_sRegKeyName;
+		private readonly string m_sRegKeyName;
 		/// Initial file name key in strings file to use when doing a save as webpage
-		private string m_sFileNameKey;
+		private readonly string m_sFileNameKey;
 		/// strings path where one can find the file name key above
-		private string m_sStringsPath;
-
+		private readonly string m_sStringsPath;
 		private Button m_GenerateBtn;
 		private Panel m_panelTop;
 		private Panel m_panelBottom;
@@ -101,9 +73,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Back/Forward counter to keep track of state and control enable/disable of back adn forward buttons
 		/// </summary>
-		protected int m_iURLCounter;
+		private int m_iURLCounter;
 		private ImageList imageList1;
-		protected int m_iMaxURLCount;
+		private int m_iMaxURLCount;
 
 		/// <summary>
 		/// Registry constants
@@ -163,8 +135,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			get
 			{
-				Debug.Assert(Cache != null);
-				Debug.Assert(m_sRegKeyName != null);
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
 					return regKey.CreateSubKey("GeneratedHtmlViewer\\" +
@@ -176,11 +146,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected FdoCache Cache
+		private FdoCache Cache
 		{
 			get
 			{
-				return PropertyTable.GetValue<FdoCache>("cache");
+				return m_cache ?? (m_cache = PropertyTable.GetValue<FdoCache>("cache"));
 			}
 		}
 
@@ -225,18 +195,28 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			Publisher = publisher;
 			Subscriber = subscriber;
 
+			Subscriber.Subscribe("SaveAsWebpage", SaveAsWebpage);
 			m_previousShowTreeBarValue = PropertyTable.GetValue("ShowRecordList", true);
 
 			PropertyTable.SetProperty("ShowRecordList", false, true, true);
 
 			PropertyTable.SetProperty("StatusPanelRecordNumber", "", false, true);
 
-			SetStrings();
-			ReadParameters();
-			DetermineNumberOfPrompts();
-			DetermineNumberOfTransforms();
-			SetAlsoSaveInfo();
-			ReadRegistry();
+			m_sHtmlFileName = null;
+			m_step1MainOutputFileName = string.Empty;
+			var regkey = RegistryKey;
+			if (regkey != null)
+			{
+				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument));
+				m_step1MainOutputFileName = (string)regkey.GetValue(m_ksAlsoSaveFilePath, "");
+				regkey.Close();
+			}
+			if (!File.Exists(m_sHtmlFileName))
+			{
+				m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument);
+				//DisableButtons();
+			}
+
 			ShowSketch();
 
 			//add our current state to the history system
@@ -248,66 +228,42 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		#region Construction, Initialization, and disposal
 
-		public GeneratedHtmlViewer()
+		internal GrammarSketchHtmlViewer()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			InitHtmlControl();
-			m_panelBottom.Controls.Add(m_htmlControl);
-			m_stringResMan = new ResourceManager("SIL.FieldWorks.XWorks.xWorksStrings", Assembly.GetExecutingAssembly());
-			m_outputDirectory = Path.GetTempPath();
-		}
-
-		private void InitHtmlControl()
-		{
-			m_htmlControl = new HtmlControl {Dock = DockStyle.Fill};
+			m_htmlControl = new HtmlControl
+			{
+				Dock = DockStyle.Fill
+			};
 			m_htmlControl.HCBeforeNavigate += OnBeforeNavigate;
 
 			ResetURLCount();
-		}
 
-		private void ReadParameters()
-		{
-			m_sRegKeyName = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "regKeyName");
-			m_sProgressDialogTitle = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "dialogTitle");
-			m_sFileNameKey = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "fileNameKey");
-			m_sStringsPath = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "stringsPath");
+			m_panelBottom.Controls.Add(m_htmlControl);
+			m_outputDirectory = Path.GetTempPath();
 
-			foreach (XmlNode rNode in m_configurationParameters.ChildNodes)
-			{
-				if (rNode.Name == "transforms")
-				{
-					m_transformsNode = rNode;
-				}
-			}
-		}
-		private void DetermineNumberOfPrompts()
-		{
-			m_cPrompts = 1;
-		}
+			m_sRegKeyName = "MorphSketchGen";
+			m_sFileNameKey = "MorphSketchFileName";
+			m_sStringsPath = "Linguistics/Morphology/MorphSketch";
 
-		private void DetermineNumberOfTransforms()
-		{
-			m_cTransforms = 2;
-		}
+			// The param "sWordWorksTransformPath" value 'TransformDirectory' is a special key the FxtViewer.dll knows about
+			// The param "prmIMaxMorphsInAppendices" value of '10' is the maximum number of morphemes to show in each subsection of the appendices.
+			//		NB: The "prmSMaxMorphsInAppendices" parameter below should be kept in sync with the "prmIMaxMorphsInAppendices" parameter.
+			//		If you want all the morphemes to appear, remove the Line: <param name='prmIMaxMorphsInAppendices' value='10'/>
+			// The value of "prmSMaxMorphsInAppendices" is the analysis language's word(s) for the maximum number of morphemes to show in each subsection of the appendices.
+			// The name of "prmSDateTime" is a special key the FxtViewer.dll knows about; it gets the current date and time and then passes it to the transform as a parameter.
+			// The name of "prmVernacularFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the vernacular font.
+			// The name of "prmGlossFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the analysis (gloss) font.
+			m_step1MainTransformElement = XElement.Parse(@"<transform progressPrompt='Processing data, step 1 of 2' stylesheetName='FxtM3MorphologySketch' stylesheetAssembly='ApplicationTransforms' ext='xml' ><xsltParameters><param name='sWordWorksTransformPath' value='TransformDirectory'/><param name='prmIMaxMorphsInAppendices' value='10'/><param name='prmSMaxMorphsInAppendices' value='ten'/><param name='prmSDateTime' value='fake'/><param name='prmVernacularFontSize' value='fake'/><param name='prmGlossFontSize' value='fake'/></xsltParameters></transform>");
+			m_step2XLingPaperTransformElement = XElement.Parse(@"<transform progressPrompt='Processing data, step 2 of 2' stylesheetName='XLingPap1' stylesheetAssembly='PresentationTransforms' ext='htm' />");
+			m_transformsCount = 2;
+			m_promptsCount = 1;
 
-		private void ReadRegistry()
-		{
-			m_sHtmlFileName = null;
-			m_sAlsoSaveFileName = "";
-			RegistryKey regkey = RegistryKey;
-			if (regkey != null)
-			{
-				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument));
-				m_sAlsoSaveFileName = (string)regkey.GetValue(m_ksAlsoSaveFilePath, "");
-				regkey.Close();
-			}
-			if (!File.Exists(m_sHtmlFileName))
-			{
-				m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument);
-				//DisableButtons();
-			}
+			const string ksPath = "Linguistics/Morphology/MorphSketch";
+			toolTip1.SetToolTip(m_BackBtn, StringTable.Table.GetString("BackButtonToolTip", ksPath));
+			toolTip1.SetToolTip(m_ForwardBtn, StringTable.Table.GetString("ForwardButtonToolTip", ksPath));
 		}
 
 		private void ShowSketch()
@@ -319,6 +275,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "The class derives from UserControl. Therefore Dispose(bool) can't be private")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -328,23 +286,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			if (disposing)
 			{
+				if (Subscriber != null)
+				{
+					Subscriber.Unsubscribe("SaveAsWebpage", SaveAsWebpage);
+				}
 				if (components != null)
+				{
 					components.Dispose();
-				if (m_stringResMan != null)
-					m_stringResMan.ReleaseAllResources();
+				}
 			}
-			m_transformsNode = null;
 			m_sHtmlFileName = null;
-			m_configurationParameters = null;
-			m_sProgressDialogTitle = null;
-			m_sRegKeyName = null;
-			m_sFileNameKey = null;
-			m_stringResMan = null;
-			m_AlsoSaveTransformNode = null;
-			m_sAlsoSaveDialogTitle = null;
-			m_sAlsoSaveFileName = null;
-			m_sReplaceDoctype = null;
-			m_sSaveAsWebpageDialogTitle = null;
+			m_step1MainOutputFileName = null;
+			m_cache = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
 
 			base.Dispose(disposing);
 		}
@@ -364,15 +320,23 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		#region Message Handlers
 
-		void OnGenerateButtonClick(object obj, EventArgs ea)
+		private void GenerateButton_Clicked(object obj, EventArgs ea)
 		{
-			ProduceSketch();
+			using (var dlg = InitProgressDialog())
+			{
+				ShowGeneratingPage();
+				string sFxtOutputPath;
+				PerformRetrieval(out sFxtOutputPath, dlg);
+				PerformTransformations(sFxtOutputPath, dlg);
+				UpdateProgress(StringTable.Table.GetString("Complete", "DocumentGeneration"), dlg);
+				dlg.Close();
+			}
 			ShowSketch();
 			ResetURLCount();
 			WriteRegistry();
 		}
 
-		private void OnBackButtonClick(object sender, EventArgs e)
+		private void BackButton_Clicked(object sender, EventArgs e)
 		{
 			m_iURLCounter -= 2; // need to decrement two because OnBeforeNavigate will increment it one
 			m_htmlControl.Back();
@@ -383,68 +347,78 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			m_iURLCounter = 0;
 			m_iMaxURLCount = 0;
 		}
-		private void OnForwardButtonClick(object sender, EventArgs e)
+		private void ForwardButton_clickeded(object sender, EventArgs e)
 		{
 			m_htmlControl.Forward();
 			// N.B. no need to increment m_iURLCounter because OnBeforeNavigate does it
 		}
-		public bool OnSaveAsWebpage(object parameterObj)
+
+		/// <summary>
+		/// Handles the message "SaveAsWebpage", which is currently sent by the "ExportDialog"
+		/// </summary>
+		/// <param name="parameterObj"></param>
+		private void SaveAsWebpage(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, string>;
 			if (param == null)
-				return false; // we sure can't handle it; should we throw?
-			string whatToSave = param.Item1;
-			string outPath = param.Item2;
-			string xsltFiles = param.Item3;
-			string directory = Path.GetDirectoryName(outPath);
+			{
+				throw new ArgumentException("Unexpected data type for 'parameterObj'.");
+			}
+
+			var whatToSave = param.Item1;
+			var outPath = param.Item2;
+			var xsltFiles = param.Item3;
+			var directory = Path.GetDirectoryName(outPath);
+			if (string.IsNullOrWhiteSpace(directory))
+			{
+				throw new ArgumentException("'outPath' parameter cannot be null, an empoty string, or only whitespace.");
+			}
 			if (!Directory.Exists(directory))
 			{
-				// can't copy to a directory that doesn't exist
-				return false;
+				Directory.CreateDirectory(directory);
 			}
-				switch (whatToSave)
-				{
-					case "GrammarSketchXLingPaper":
-							if (File.Exists(m_sAlsoSaveFileName))
-							{
-								string inputFile = m_sAlsoSaveFileName;
-								if (!string.IsNullOrEmpty(xsltFiles))
-								{
-									string newFileName = Path.GetFileNameWithoutExtension(outPath);
-									string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
-									string outputFile = tempFileName;
-									string[] rgsXslts = xsltFiles.Split(new[] { ';' });
-									int cXslts = rgsXslts.GetLength(0);
-									for (int i = 0; i < cXslts; ++i)
-									{
-										outputFile = outputFile + (i + 1);
-										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
-										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-										using (var writer = new StreamWriter(outputFile + ".xml"))
-										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
-											transform.Transform(reader, null, writer);
-										inputFile = outputFile + ".xml";
-									}
-								}
-								CopyFile(inputFile, outPath);
-								return true;
-							}
-						break;
-					default:
-						if (File.Exists(m_sHtmlFileName))
+			switch (whatToSave)
+			{
+				case "GrammarSketchXLingPaper":
+					if (File.Exists(m_step1MainOutputFileName))
+					{
+						var inputFile = m_step1MainOutputFileName;
+						if (!string.IsNullOrEmpty(xsltFiles))
 						{
-							CopyFile(m_sHtmlFileName, outPath);
-							// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
-							// (I would like a more principled fix, but have spent too much time on this issue already.)
-							System.Threading.Thread.Sleep(500);
-							return true;
+							var newFileName = Path.GetFileNameWithoutExtension(outPath);
+							var tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
+							var outputFile = tempFileName;
+							var rgsXslts = xsltFiles.Split(';');
+							var cXslts = rgsXslts.GetLength(0);
+							for (var i = 0; i < cXslts; ++i)
+							{
+								outputFile = outputFile + (i + 1);
+								var transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+								var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+								using (var writer = new StreamWriter(outputFile + ".xml"))
+								using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+								{
+									transform.Transform(reader, null, writer);
+								}
+								inputFile = outputFile + ".xml";
+							}
 						}
-						break;
+						CopyFile(inputFile, outPath);
+					}
+					break;
+				default:
+					if (File.Exists(m_sHtmlFileName))
+					{
+						CopyFile(m_sHtmlFileName, outPath);
+						// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
+						// (I would like a more principled fix, but have spent too much time on this issue already.)
+						System.Threading.Thread.Sleep(500);
+					}
+					break;
 			}
-			return false;
 		}
 
-		private void CopyFile(string sFileName, string outPath)
+		private static void CopyFile(string sFileName, string outPath)
 		{
 			// For those poor souls who have run into LT-6264,
 			// we need to be nice and remove the read-only attr.
@@ -459,99 +433,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			RemoveWriteProtection(outPath);
 		}
 
-		private void OnSaveAsHtmlButtonClick(object sender, EventArgs e)
-		{
-			if (File.Exists(m_sHtmlFileName))
-			{
-				using (var dlg = new SaveFileDialogAdapter())
-				{
-					InitSaveAsWebpageDialog(dlg);
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						string dlgFileName = dlg.FileName;
-						// For those poor souls who have run into LT-6264,
-						// we need to be nice and remove the read-only attr.
-						// Besides, the reporter may not believe the bug is dead,
-						// as it still won't be in a copy state. :-)
-						RemoveWriteProtection(dlgFileName);
-						File.Copy(m_sHtmlFileName, dlg.FileName, true);
-						// If m_sHtmlFileName is the initial doc, then it will be read-only.
-						// Setting the attr to normal fixes LT-6264.
-						// I (RandyR) don't know why the save button is enabled,
-						// when the sketch has not been generated, but this ought to be the 'fix/hack'.
-						RemoveWriteProtection(dlgFileName);
-						if (File.Exists(m_sAlsoSaveFileName))
-						{
-							InitAlsoSaveDialog(dlg);
-							if (dlg.ShowDialog() == DialogResult.OK)
-							{
-								DoAlsoSaveAs(dlg);
-							}
-						}
-					}
-				}
-			}
-		}
-
 		private static void RemoveWriteProtection(string dlgFileName)
 		{
 			if (File.Exists(dlgFileName) && (File.GetAttributes(dlgFileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
 				File.SetAttributes(dlgFileName, FileAttributes.Normal);
 		}
 
-		private void DoAlsoSaveAs(ISaveFileDialog dlg)
-		{
-			string sAlsoSaveFile = Path.ChangeExtension(dlg.FileName, "xml");
-			RemoveWriteProtection(sAlsoSaveFile);
-			if (m_sReplaceDoctype == "")
-			{
-				File.Copy(m_sAlsoSaveFileName, sAlsoSaveFile, true);
-			}
-			else
-			{
-				string sContents;
-				using (var sr = new StreamReader(m_sAlsoSaveFileName, System.Text.Encoding.UTF8))
-				{
-					sContents = sr.ReadToEnd();
-					sr.Close();
-				}
-				int i = sContents.IndexOf("<!DOCTYPE ");
-				if (i > -1)
-				{
-					var sb = new StringBuilder();
-					sb.Append(sContents.Substring(0, i + 10));
-					sb.Append(m_sReplaceDoctype);
-					i = sContents.IndexOf(">", i);
-					sb.Append(sContents.Substring(i));
-					using (var sw = new StreamWriter(sAlsoSaveFile, false))
-					{
-						sw.Write(sb.ToString());
-						sw.Close();
-					}
-				}
-				else
-				{ // could not find DOCTYPE; nothing to replace
-					File.Copy(m_sAlsoSaveFileName, sAlsoSaveFile, true);
-				}
-			}
-		}
-
-		private void InitAlsoSaveDialog(ISaveFileDialog dlg)
-		{
-			dlg.InitialDirectory = Path.GetDirectoryName(dlg.FileName);
-			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
-			dlg.Title = m_sAlsoSaveDialogTitle;
-			dlg.FileName = Path.GetFileNameWithoutExtension(dlg.FileName);
-		}
-
-		private void InitSaveAsWebpageDialog(ISaveFileDialog dlg)
-		{
-			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			dlg.FileName = StringTable.Table.GetString(m_sFileNameKey, m_sStringsPath);
-			dlg.AddExtension = true;
-			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.HTM);
-			dlg.Title = m_sSaveAsWebpageDialogTitle;
-		}
 		public void OnBeforeNavigate(object sender, HtmlControlEventArgs e)
 		{
 			CheckDisposed();
@@ -580,27 +467,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			using (RegistryKey regkey = RegistryKey)
 			{
 				regkey.SetValue(m_ksHtmlFilePath, m_sHtmlFileName);
-				regkey.SetValue(m_ksAlsoSaveFilePath, m_sAlsoSaveFileName);
+				regkey.SetValue(m_ksAlsoSaveFilePath, m_step1MainOutputFileName);
 				regkey.Close();
-			}
-		}
-
-		private void ProduceSketch()
-		{
-			string sFxtOutputPath;
-			using (ProgressDialogWorkingOn dlg = InitProgressDialog())
-			{
-				ShowGeneratingPage();
-				PerformRetrieval(out sFxtOutputPath, dlg);
-				PerformTransformations(sFxtOutputPath, dlg);
-				UpdateProgress(StringTable.Table.GetString("Complete", "DocumentGeneration"), dlg);
-				dlg.Close();
 			}
 		}
 
 		private ProgressDialogWorkingOn InitProgressDialog()
 		{
-			Form owner = FindForm();
+			var owner = FindForm();
 			Icon icon = null;
 			if (owner != null)
 				icon = owner.Icon;
@@ -609,8 +483,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 							Owner = owner,
 							Icon = icon,
 							Minimum = 0,
-							Maximum = m_cPrompts + m_cTransforms,
-							Text = m_sProgressDialogTitle
+							Maximum = m_promptsCount + m_transformsCount,
+							Text = @"Generate Morphological Sketch"
 						};
 			dlg.Show();
 			return dlg;
@@ -632,43 +506,40 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			M3ModelExportServices.ExportGrammarSketch(outputPath, Cache.LanguageProject);
 		}
 
-		private void PerformTransformations(string sLastFile, ProgressDialogWorkingOn dlg)
+		private void PerformTransformations(string fxtOutputPath, ProgressDialogWorkingOn dlg)
 		{
-			foreach (XmlNode rNode in m_transformsNode.ChildNodes)
-			{
-				sLastFile = ApplyTransform(sLastFile, rNode, dlg);
-				if (m_AlsoSaveTransformNode == rNode)
-					m_sAlsoSaveFileName = sLastFile;
-			}
-			m_sHtmlFileName = sLastFile;
+			m_step1MainOutputFileName = ApplyTransform(fxtOutputPath, m_step1MainTransformElement, dlg);
+			m_sHtmlFileName = ApplyTransform(m_step1MainOutputFileName, m_step2XLingPaperTransformElement, dlg);
 		}
 
-		private string ApplyTransform(string inputFile, XmlNode node, ProgressDialogWorkingOn dlg)
+		private string ApplyTransform(string inputFile, XElement transformElement, ProgressDialogWorkingOn dlg)
 		{
-			string progressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
+			var progressPrompt = XmlUtils.GetManditoryAttributeValue(transformElement, "progressPrompt");
 			UpdateProgress(progressPrompt, dlg);
-			string stylesheetName = XmlUtils.GetManditoryAttributeValue(node, "stylesheetName");
-			string stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(node, "stylesheetAssembly");
-			string outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(node));
+			var stylesheetName = XmlUtils.GetManditoryAttributeValue(transformElement, "stylesheetName");
+			var stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(transformElement, "stylesheetAssembly");
+			var outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(transformElement));
 
-			XsltArgumentList argumentList = CreateParameterList(node);
-			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
+			var argumentList = CreateParameterList(transformElement);
+			var wsContainer = Cache.ServiceLocator.WritingSystems;
 
-			if (argumentList.GetParam("prmVernacularFontSize", "") != null)
+			if (argumentList.GetParam("prmVernacularFontSize", string.Empty) != null)
 			{
-				argumentList.RemoveParam("prmVernacularFontSize", "");
-				argumentList.AddParam("prmVernacularFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle));
+				argumentList.RemoveParam("prmVernacularFontSize", string.Empty);
+				argumentList.AddParam("prmVernacularFontSize", string.Empty, GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle));
 			}
-			if (argumentList.GetParam("prmGlossFontSize", "") != null)
+			if (argumentList.GetParam("prmGlossFontSize", string.Empty) != null)
 			{
-				argumentList.RemoveParam("prmGlossFontSize", "");
-				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
+				argumentList.RemoveParam("prmGlossFontSize", string.Empty);
+				argumentList.AddParam("prmGlossFontSize", string.Empty, GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
 
 			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 			using (var writer = new StreamWriter(outputFile))
 			using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+			{
 				GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
+			}
 			return outputFile;
 		}
 
@@ -702,56 +573,52 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		private string GetNormalStyleFontSize(int ws)
 		{
-			ILgWritingSystemFactory wsf = Cache.WritingSystemFactory;
-			using (Font myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, wsf, PropertyTable))
-				return myFont.Size + "pt";
-		}
-
-		private static XsltArgumentList CreateParameterList(XmlNode node)
-		{
-			XsltArgumentList parameterList = new XsltArgumentList();
-			foreach (XmlNode rNode in node.ChildNodes)
+			var wsf = Cache.WritingSystemFactory;
+			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, wsf, PropertyTable))
 			{
-				if (rNode.Name == "xsltParameters")
-				{
-					int cParams = CountParams(rNode);
-					if (cParams > 0)
-					{
-						parameterList = GetParameters(rNode);
-						break;
-					}
-				}
+				return myFont.Size + "pt";
 			}
-			return parameterList;
 		}
 
-		private static XsltArgumentList GetParameters(XmlNode rNode)
+		private static XsltArgumentList CreateParameterList(XElement element)
 		{
 			var parameterList = new XsltArgumentList();
-			foreach (XmlNode rParamNode in rNode.ChildNodes)
+			foreach (var xsltParameterElement in element.Elements("xsltParameters"))
 			{
-				if (rParamNode.Name == "param")
+				int cParams = CountParams(xsltParameterElement);
+				if (cParams > 0)
 				{
-					string name = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
-					string value = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
-					if (value == "TransformDirectory")
-					{
-						value = TransformPath.Replace("\\", "/");
-					}
-					parameterList.AddParam(name, "", value);
+					parameterList = GetParameters(xsltParameterElement);
+					break;
 				}
 			}
 			return parameterList;
 		}
 
-		private static int CountParams(XmlNode node)
+		private static XsltArgumentList GetParameters(XElement element)
 		{
-			return node.ChildNodes.Cast<XmlNode>().Count(rNode => rNode.Name == "param");
+			var parameterList = new XsltArgumentList();
+			foreach (var paramElement in element.Elements("param"))
+			{
+				var name = XmlUtils.GetManditoryAttributeValue(paramElement, "name");
+				var value = XmlUtils.GetManditoryAttributeValue(paramElement, "value");
+				if (value == "TransformDirectory")
+				{
+					value = TransformPath.Replace("\\", "/");
+				}
+				parameterList.AddParam(name, "", value);
+			}
+			return parameterList;
 		}
 
-		private static string GetExtensionFromNode(XmlNode node)
+		private static int CountParams(XContainer element)
 		{
-			return XmlUtils.GetManditoryAttributeValue(node, "ext");
+			return element.Elements("param").Count();
+		}
+
+		private static string GetExtensionFromNode(XElement element)
+		{
+			return XmlUtils.GetManditoryAttributeValue(element, "ext");
 		}
 
 		private static void UpdateProgress(string sMessage, ProgressDialogWorkingOn dlg)
@@ -761,34 +628,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			dlg.Refresh();
 		}
 		#endregion // Other Methods
-
-		private void SetStrings()
-		{
-			const string ksPath = "Linguistics/Morphology/MorphSketch";
-			m_sSaveAsWebpageDialogTitle = StringTable.Table.GetString("SaveAsWebpageDialogTitle", ksPath);
-			toolTip1.SetToolTip(m_BackBtn, StringTable.Table.GetString("BackButtonToolTip", ksPath));
-			toolTip1.SetToolTip(m_ForwardBtn, StringTable.Table.GetString("ForwardButtonToolTip", ksPath));
-		}
-
-		private void SetAlsoSaveInfo()
-		{
-			if (m_cTransforms > 0)
-			{
-				foreach (XmlNode rNode in m_transformsNode.ChildNodes)
-				{ // note that if more than one transform is set to save, only the last one will be effective
-					bool fDoSave = XmlUtils.GetOptionalBooleanAttributeValue(rNode, "saveResult", false);
-					if (!fDoSave)
-						continue;
-					string sSavePrompt = XmlUtils.GetOptionalAttributeValue(rNode, "saveResultPrompt", "");
-					if (sSavePrompt!= "")
-					{
-						m_sAlsoSaveDialogTitle = sSavePrompt;
-						m_AlsoSaveTransformNode = rNode;
-						m_sReplaceDoctype = XmlUtils.GetOptionalAttributeValue(rNode, "replaceDOCTYPE", "");
-					}
-				}
-			}
-		}
 
 		#region IMainContentControl implementation
 
@@ -810,7 +649,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetOptionalAttributeValue( m_configurationParameters, "area", "unknown");
+				return "grammar";
 			}
 		}
 
@@ -818,7 +657,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
-			var ao = new Control.ControlAccessibleObject(this)
+			var ao = new ControlAccessibleObject(this)
 			{
 				Name = AccName
 			};
@@ -875,7 +714,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GeneratedHtmlViewer));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GrammarSketchHtmlViewer));
 			this.m_GenerateBtn = new System.Windows.Forms.Button();
 			this.m_panelTop = new System.Windows.Forms.Panel();
 			this.m_ForwardBtn = new System.Windows.Forms.Button();
@@ -891,7 +730,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			resources.ApplyResources(this.m_GenerateBtn, "m_GenerateBtn");
 			this.m_GenerateBtn.Name = "m_GenerateBtn";
 			this.toolTip1.SetToolTip(this.m_GenerateBtn, resources.GetString("m_GenerateBtn.ToolTip"));
-			this.m_GenerateBtn.Click += new System.EventHandler(this.OnGenerateButtonClick);
+			this.m_GenerateBtn.Click += new System.EventHandler(this.GenerateButton_Clicked);
 			//
 			// m_panelTop
 			//
@@ -907,7 +746,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			this.m_ForwardBtn.ImageList = this.imageList1;
 			this.m_ForwardBtn.Name = "m_ForwardBtn";
 			this.toolTip1.SetToolTip(this.m_ForwardBtn, resources.GetString("m_ForwardBtn.ToolTip"));
-			this.m_ForwardBtn.Click += new System.EventHandler(this.OnForwardButtonClick);
+			this.m_ForwardBtn.Click += new System.EventHandler(this.ForwardButton_clickeded);
 			//
 			// imageList1
 			//
@@ -922,7 +761,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			this.m_BackBtn.ImageList = this.imageList1;
 			this.m_BackBtn.Name = "m_BackBtn";
 			this.toolTip1.SetToolTip(this.m_BackBtn, resources.GetString("m_BackBtn.ToolTip"));
-			this.m_BackBtn.Click += new System.EventHandler(this.OnBackButtonClick);
+			this.m_BackBtn.Click += new System.EventHandler(this.BackButton_Clicked);
 			//
 			// m_panelBottom
 			//
@@ -940,56 +779,5 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		}
 		#endregion
-
-#if RANDYTODO
-		/// <summary>
-		/// see if it makes sense to display a menu controlling the "ShowRecordList" property
-		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = false;
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		/// Refresh doesn't make any sense for us -- regenerating the HTML sketch via
-		/// m_GenerateBtn makes more sense.  See LT-3961.
-		/// Note that OnMasterRefresh is enabled by default if there is no OnDisplayMasterRefresh
-		/// target method available.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayMasterRefresh(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = false;
-			return true;	// we handled this, no need to ask anyone else.
-		}
-
-		public bool OnDisplayExport(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = true;
-			return true;
-		}
-
-		public bool OnExport(object argument)
-		{
-			CheckDisposed();
-
-				using (var dlg = new ExportDialog(m_mediator, m_propertyTable))
-				{
-					dlg.ShowDialog();
-				}
-			return true;	// handled
-		}
-#endif
 	}
 }

@@ -2,14 +2,16 @@ using System;
 using System.Windows.Forms;
 using SIL.Utils;
 
-namespace XCore
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// Summary description for RecordBar.
 	/// </summary>
 	public class RecordBar : UserControl, IFWDisposable
 	{
+		/// <summary />
 		protected TreeView m_treeView;
+		/// <summary />
 		protected ListView m_listView;
 		private ColumnHeader m_columnHeader1;
 		private Control m_optionalHeaderControl;
@@ -19,6 +21,9 @@ namespace XCore
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public RecordBar()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -44,6 +49,7 @@ namespace XCore
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		/// <summary />
 		public TreeView TreeView
 		{
 			get
@@ -54,6 +60,7 @@ namespace XCore
 			}
 		}
 
+		/// <summary />
 		public ListView ListView
 		{
 			get
@@ -64,6 +71,7 @@ namespace XCore
 			}
 		}
 
+		/// <summary />
 		public bool IsFlatList
 		{
 			set
@@ -83,8 +91,10 @@ namespace XCore
 			}
 		}
 
+		/// <summary />
 		public bool HasHeaderControl { get { return m_optionalHeaderControl != null; } }
 
+		/// <summary />
 		public void AddHeaderControl(Control c)
 		{
 			CheckDisposed();
@@ -97,6 +107,7 @@ namespace XCore
 			c.Dock = DockStyle.Top;
 		}
 
+		/// <summary />
 		public object SelectedNode
 		{
 			set
@@ -107,6 +118,7 @@ namespace XCore
 			}
 		}
 
+		/// <summary />
 		public void Clear()
 		{
 			CheckDisposed();
@@ -184,12 +196,14 @@ namespace XCore
 		}
 		#endregion
 
+		/// <summary />
 		public void ShowHeaderControl()
 		{
 			if (HasHeaderControl)
 				m_optionalHeaderControl.Visible = true;
 		}
 
+		/// <summary />
 		public void HideHeaderControl()
 		{
 			if (HasHeaderControl)

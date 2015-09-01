@@ -14,14 +14,14 @@ namespace SIL.CoreImpl
 	///
 	/// NB: This interface is not intended to be used outside of FwMainWnd, except for tests.
 	/// </remarks>
-	public interface IAreaRepository
+	public interface IAreaRepository : IFlexComponent
 	{
 		/// <summary>
 		/// Get the most recently persisted area, or the default area if
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		IArea GetPersistedOrDefaultArea(IPropertyTable propertyTable);
+		IArea GetPersistedOrDefaultArea();
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.

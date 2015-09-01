@@ -9,14 +9,14 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Interface for the tool repository.
 	/// </summary>
-	public interface IToolRepository
+	public interface IToolRepository : IFlexComponent
 	{
 		/// <summary>
 		/// Get the most recently persisted tool, or the default tool if
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the given area.</returns>
-		ITool GetPersistedOrDefaultToolForArea(IPropertyTable propertyTable, IArea area);
+		ITool GetPersistedOrDefaultToolForArea(IArea area);
 
 		/// <summary>
 		/// Get the ITool that has the machine friendly "Name" for <paramref name="machineName"/>.

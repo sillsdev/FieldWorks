@@ -409,8 +409,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", link);
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											link
+										};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 
@@ -430,8 +439,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", link);
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											link
+										};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 
@@ -484,8 +502,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (command.TargetId != Guid.Empty)
 			{
 				var tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-				Publisher.Publish("AboutToFollowLink", null);
-				Publisher.Publish("FollowLink", new FwLinkArgs(tool, command.TargetId));
+				var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+				var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs(tool, command.TargetId)
+											};
+				Publisher.Publish(commands, parms);
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -500,7 +527,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// this class would normally be constructed by the factory method on DTMenuHandler,
 	/// when the XML configuration of the RecordEditView specifies this class.
 	///
-	/// This is an IxCoreColleague, so it gets a chance to modify
+	/// This is an IFlexComponent, so it gets a chance to modify
 	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
 	public class WordsEditToolMenuHandler : DTMenuHandler
@@ -800,8 +827,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (guid != Guid.Empty)
 			{
 				var tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-				Publisher.Publish("AboutToFollowLink", null);
-				Publisher.Publish("FollowLink", new FwLinkArgs(tool, guid));
+				var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+				var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs(tool, guid)
+											};
+				Publisher.Publish(commands, parms);
 				return true;
 			}
 			return false;

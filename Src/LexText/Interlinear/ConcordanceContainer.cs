@@ -6,6 +6,10 @@ using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.IText
 {
+#if RANDYTODO
+	// TODO: Blocked for now, so MultiPane can be moved into LanguageExplorer, without ITextDll needing to add a dependency to LanguageExplorer.
+	// TODO: Expected disposition: Everything in ITextDll will eventually move into LanguageExplorer, so this block will be removed.
+
 	/// <summary>
 	/// This class is a specialized MultiPane. It handles the RefreshDisplay differently to avoid crashes, and possibly to do a more efficient job
 	/// then the base MultiPane would do.
@@ -72,4 +76,5 @@ namespace SIL.FieldWorks.IText
 			return concordanceControl;
 		}
 	}
+#endif
 }

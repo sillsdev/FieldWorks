@@ -195,10 +195,6 @@
       <Name>Widgets</Name>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="xCore">
-      <Name>xCore</Name>
-      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>

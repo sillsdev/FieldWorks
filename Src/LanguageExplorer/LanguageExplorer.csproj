@@ -21,6 +21,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +32,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -87,7 +91,7 @@
     <Compile Include="Areas\Grammar\Tools\CompoundRuleAdvancedEdit\CompoundRuleAdvancedEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\EnvironmentEdit\EnvironmentEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\FeaturesAdvancedEdit\FeaturesAdvancedEditTool.cs" />
-    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GeneratedHtmlViewer.cs">
+    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchTool.cs" />
@@ -153,11 +157,25 @@
       <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Areas\RecordBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <EmbeddedResource Include="Areas\RecordBar.resx">
+      <DependentUpon>RecordBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Areas\MultiPane.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <EmbeddedResource Include="Areas\MultiPane.resx">
+      <DependentUpon>MultiPane.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GeneratedHtmlViewer.resx">
-      <DependentUpon>GeneratedHtmlViewer.cs</DependentUpon>
+    <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.resx">
+      <DependentUpon>GrammarSketchHtmlViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LanguageExplorerResources.resx">

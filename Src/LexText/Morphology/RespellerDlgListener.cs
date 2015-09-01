@@ -12,32 +12,47 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
+#if RANDYTODO
+	// TODO: Blocked out, while DlgListenerBase base class is moved, so this project takes no new dependency on LanguageExplorer.
+	// TODO: This file will get moved to fw\Src\LanguageExplorer\Areas\TextsAndWords\
+	// TODO: when the time comes to re-enable the TextsAndWords area tools that use it.
+	//
+	// TODO: Likely disposition: Dump RespellerDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the respelling.
+	// TODO: Other classes in this file may need to live on.
+	//
 	/// <summary>
 	/// XCore listener for the Respeller dlg.
 	/// </summary>
 	public class RespellerDlgListener : DlgListenerBase
 	{
-		#region Properties
+	#region Data members
+		/// <summary>
+		/// used to store the size and location of dialogs
+		/// </summary>
+		protected IPersistenceProvider m_persistProvider; // Was on DlgListenerBase base class
+
+	#endregion Data members
+
+	#region Properties
 
 		/// <summary>
 		/// Override to get a suitable label.
 		/// </summary>
-		protected override string PersistentLabel
+		protected string PersistentLabel
 		{
-			get { return "RespellerDlg"; }
+			get { return "RespellerDlg"; } // Was on DlgListenerBase base class
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region Construction and Initialization
+	#region Construction and Initialization
 
-		#endregion Construction and Initialization
+	#endregion Construction and Initialization
 
-		#region XCORE Message Handlers
+	#region XCORE Message Handlers
 
 		/// <summary>
 		/// Try to find a WfiWordform object corresponding the the focus selection.
@@ -193,7 +208,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		#endregion XCORE Message Handlers
+	#endregion XCORE Message Handlers
 
 		/// <summary>
 		/// The entire "Texts & Words" area is our friend.  See LT-8641.
@@ -244,7 +259,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cache = cache;
 			m_sda = sda;
 		}
-		#region IComparer Members
+	#region IComparer Members
 
 		public int Compare(object x1, object y1)
 		{
@@ -318,7 +333,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 
 	public class OccurrenceSorter : RecordSorter
@@ -402,7 +417,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return objs;
 		}
 
-		#region IVwNotifyChange implementation
+	#region IVwNotifyChange implementation
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -414,7 +429,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		#endregion IVwNotifyChange implementation
+	#endregion IVwNotifyChange implementation
 	}
 
 	/// <summary>
@@ -443,4 +458,5 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return retval;
 		}
 	}
+#endif
 }

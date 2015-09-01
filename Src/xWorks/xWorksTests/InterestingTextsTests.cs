@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

@@ -900,8 +900,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void JumpToToolFor(ICmObject target)
 		{
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
+			var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+			var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs("lexiconEdit", target.Guid)
+											};
+			Publisher.Publish(commands, parms);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

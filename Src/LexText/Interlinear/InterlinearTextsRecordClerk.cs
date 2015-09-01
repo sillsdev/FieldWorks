@@ -292,8 +292,17 @@ namespace SIL.FieldWorks.IText
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
 			{
-				//Publisher.Publish("AboutToFollowLink", null);
-				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
+				var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+				var parms = new List<object>
+						{
+							null,
+							new FwLinkArgs("interlinearEdit", CurrentObject.Guid)
+						};
+				Publisher.Publish(commands, parms);
 			}
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);

@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl.MessageBoxEx;
 
 namespace SIL.FieldWorks.XWorks.LexText
@@ -31,6 +30,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 	/// </summary>
 	public class LexTextApp : FwXApp
 	{
+#if RANDYTODO
 		/* TODO: Make sure these old style Mediator commands/methods are handled in the best IArea/ITool manner.
 		 * TODO: This will likely mean some/all of these get moved elsewhere, since they are not global.
 Old Mediator methods/commands
@@ -46,6 +46,7 @@ Old Mediator methods/commands
 		 * Services this global(?) command CmdConfigHomographs
 	OnRefresh (not used by Mediator now)
 		 */
+#endif
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>

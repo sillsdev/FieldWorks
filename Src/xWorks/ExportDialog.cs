@@ -132,6 +132,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary />
 		public ExportDialog()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
+			InitializeComponent();
 		}
 
 		private void InitFromMainControl(object objCurrentControl)
@@ -1908,10 +1912,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
 			AccessibleName = GetType().Name;
 
 			// Figure out where to locate the dlg.

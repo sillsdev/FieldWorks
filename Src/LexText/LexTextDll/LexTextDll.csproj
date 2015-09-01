@@ -122,10 +122,6 @@
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="xCore">
-      <Name>xCore</Name>
-      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
@@ -169,6 +165,7 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="XMLUtils, Version=6.1.1.21569, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>

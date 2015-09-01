@@ -20,6 +20,8 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Globalization;
+using System.Linq;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
 
@@ -173,6 +175,18 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Get an optional attribute value from an XElement.
+		/// </summary>
+		/// <param name="element">The XElement to look in.</param>
+		/// <param name="attrName">The attribute to find.</param>
+		/// <param name="defaultValue"></param>
+		/// <returns>The value of the attribute, or the default value, if the attribute dismissing</returns>
+		public static bool GetOptionalBooleanAttributeValue(XElement element, string attrName, bool defaultValue)
+		{
+			return GetBooleanAttributeValue(GetOptionalAttributeValue(element, attrName, defaultValue ? "true" : "false"));
+		}
+
+		/// <summary>
 		/// Deprecated: use GetOptionalAttributeValue instead.
 		/// </summary>
 		/// <param name="node"></param>
@@ -222,6 +236,23 @@ namespace SIL.Utils
 					return xa.Value;
 			}
 			return defaultString;
+		}
+
+		/// <summary>
+		/// Get an optional attribute value from an XElement.
+		/// </summary>
+		/// <param name="element">The XElement to look in.</param>
+		/// <param name="attrName">The attribute to find.</param>
+		/// <param name="defaultString"></param>
+		/// <returns>The value of the attribute, or null, if not found.</returns>
+		public static string GetOptionalAttributeValue(XElement element, string attrName, string defaultString)
+		{
+			if (element == null || !element.Attributes().Any())
+			{
+				return defaultString;
+			}
+			var attribute = element.Attribute(attrName);
+			return attribute != null ? attribute.Value : defaultString;
 		}
 
 		/// <summary>
@@ -278,6 +309,28 @@ namespace SIL.Utils
 					+ attrName
 					+ "' is mandatory, but was missing. "
 					+ node.OuterXml);
+			}
+			return retval;
+		}
+
+		/// <summary>
+		/// Get an obligatory attribute value.
+		/// </summary>
+		/// <param name="element">The XElement to look in.</param>
+		/// <param name="attrName">The required attribute to find.</param>
+		/// <returns>The value of the attribute.</returns>
+		/// <exception cref="ApplicationException">
+		/// Thrown when the value is not found in the node.
+		/// </exception>
+		public static string GetManditoryAttributeValue(XElement element, string attrName)
+		{
+			var retval = GetOptionalAttributeValue(element, attrName, null);
+			if (retval == null)
+			{
+				throw new ApplicationException("The attribute'"
+					+ attrName
+					+ "' is mandatory, but was missing. "
+					+ element);
 			}
 			return retval;
 		}

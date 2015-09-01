@@ -373,8 +373,17 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
-			Publisher.Publish("AboutToFollowLink", null);
-			Publisher.Publish("FollowLink", new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]));
+			var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+			var parms = new List<object>
+									{
+										null,
+										new FwLinkArgs("lexiconEdit", guids[guids.Length - 1])
+									};
+			Publisher.Publish(commands, parms);
 			return true;
 		}
 

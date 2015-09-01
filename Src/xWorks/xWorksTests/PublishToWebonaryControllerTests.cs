@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

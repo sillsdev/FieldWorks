@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -120,9 +121,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// TODO: this should be reviewed by someone who knows how these links should be done
 						// I'm just guessing.
 						// Also, is there some way to know the application name and tool name without hard coding them?
-						var linkJump = new FwLinkArgs("posEdit", dlg.HighestPOS.Guid);
-						Publisher.Publish("AboutToFollowLink", null);
-						Publisher.Publish("FollowLink", linkJump);
+						var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+						var parms = new List<object>
+						{
+							null,
+							new FwLinkArgs("posEdit", dlg.HighestPOS.Guid)
+						};
+						Publisher.Publish(commands, parms);
 					}
 					else
 					{
@@ -251,9 +260,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				else if (result == DialogResult.Yes)
 				{
-					var linkJump = new FwLinkArgs("featuresAdvancedEdit", m_cache.LanguageProject.MsFeatureSystemOA.Guid);
-					Publisher.Publish("AboutToFollowLink", null);
-					Publisher.Publish("FollowLink", linkJump);
+					var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+					var parms = new List<object>
+						{
+							null,
+							new FwLinkArgs("featuresAdvancedEdit", m_cache.LanguageProject.MsFeatureSystemOA.Guid)
+						};
+					Publisher.Publish(commands, parms);
 				}
 			}
 		}

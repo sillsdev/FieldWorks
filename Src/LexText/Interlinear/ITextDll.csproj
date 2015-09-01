@@ -225,6 +225,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
@@ -232,10 +233,6 @@
     </Reference>
     <Reference Include="Widgets, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCore, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
@@ -310,9 +307,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ComplexFeatureNode.cs" />
-    <Compile Include="ConcordanceContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ConcordanceContainer.cs" />
     <Compile Include="ConcordanceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

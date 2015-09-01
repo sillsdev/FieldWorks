@@ -213,8 +213,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
-			m_publisher.Publish("AboutToFollowLink", null);
-			m_publisher.Publish("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
+			var commands = new List<string>
+										{
+											"AboutToFollowLink",
+											"FollowLink"
+										};
+			var parms = new List<object>
+										{
+											null,
+											new FwLinkArgs(toolName, new Guid())
+										};
+			m_publisher.Publish(commands, parms);
 			btnCancel.PerformClick();
 		}
 

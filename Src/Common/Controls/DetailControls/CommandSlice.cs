@@ -123,6 +123,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 #if RANDYTODO
+		protected override string HelpId
+		{
+			get { return m_command.Id; }
+		}
+
 		/// <summary>
 		/// Override, so we can get the command object.
 		/// </summary>

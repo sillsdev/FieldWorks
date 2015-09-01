@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 
 			InitBase(propertyTable, null);
 
-			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(null, "showDescendantInRoot", false);
+			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue((XmlNode)null, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
 			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);

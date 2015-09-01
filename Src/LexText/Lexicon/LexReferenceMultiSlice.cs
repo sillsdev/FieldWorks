@@ -725,8 +725,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ILexRefType newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			m_cache.DomainDataByFlid.EndUndoTask();
-			//Publisher.Publish("AboutToFollowLink", null);
-			ContainingDataTree.Publisher.Publish("FollowLink", new FwLinkArgs("lexRefEdit", newKid.Guid));
+			var commands = new List<string>
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
+			var parms = new List<object>
+			{
+				null,
+				new FwLinkArgs("lexRefEdit", newKid.Guid)
+			};
+			ContainingDataTree.Publisher.Publish(commands, parms);
 		}
 
 		protected void ExpandNewNode()

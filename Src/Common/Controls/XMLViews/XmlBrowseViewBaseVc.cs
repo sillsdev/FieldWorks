@@ -1676,8 +1676,17 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						m_xbv.Publisher.Publish("AboutToFollowLink", null);
-						m_xbv.Publisher.Publish("FollowLink", new FwLinkArgs(url));
+						var commands = new List<string>
+											{
+												"AboutToFollowLink",
+												"FollowLink"
+											};
+						var parms = new List<object>
+											{
+												null,
+												new FwLinkArgs(url)
+											};
+						m_xbv.Publisher.Publish(commands, parms);
 						return;
 					}
 				}

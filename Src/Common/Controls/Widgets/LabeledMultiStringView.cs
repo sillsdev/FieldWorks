@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// LabeledMultiStringView displays one or more writing system alternatives of a string property.
 	/// It simply edits that property.
 	/// </summary>
-	/// <remarks>It must implement IxCoreColleague so that the inner view will be a message target when
+	/// <remarks>It must implement IFlexComponent so that the inner view will be a message target when
 	/// the containing slice is. This allows things like appropriately enabling the writing system combo.</remarks>
 	public class LabeledMultiStringView : UserControl, IFlexComponent
 	{

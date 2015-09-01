@@ -9,7 +9,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -101,6 +100,7 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+
 			var paneBarContainer = Parent as PaneBarContainer;
 			if (paneBarContainer != null)
 				paneBarContainer.PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;

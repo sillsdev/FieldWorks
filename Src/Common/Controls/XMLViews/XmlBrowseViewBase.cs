@@ -22,7 +22,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -2025,6 +2024,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
+#if RANDYTODO
+			// TODO: Use new interface instead of 'MultiPane', so this code has no dependency on the LangaugeExporer project.
+			// TODO: The interface will need at least the one 'PrintPane' property.
+
 			var tool = PropertyTable.GetValue<MultiPane>("currentContentControlObject", null);
 			if (tool != null)
 			{
@@ -2039,6 +2042,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			}
 			else
+#endif
 			{
 				// It's not a MultiPane, so we should just have one RootSite to Print.
 				return base.OnPrint(args);

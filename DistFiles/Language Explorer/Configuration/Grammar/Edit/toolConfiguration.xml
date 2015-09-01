@@ -390,40 +390,6 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Grammar Sketch" value="grammarSketch" icon="DocumentView">
-			<control>
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GeneratedHtmlViewer"/>
-				<parameters area="grammar" regKeyName="MorphSketchGen" dialogTitle="Generate Morphological Sketch" fileNameKey="MorphSketchFileName"
-					stringsPath="Linguistics/Morphology/MorphSketch" saveButtonToolTip="Save Sketch as Webpage and also as XLingPaper file">
-					<retriever progressPrompt="Preparing data">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GrammarSketchDataRetriever"/>
-					</retriever>
-					<transforms>
-						<transform progressPrompt="Processing data, step 1 of 2" stylesheetName="FxtM3MorphologySketch" stylesheetAssembly="ApplicationTransforms"
-							ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file"
-							replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
-							<xsltParameters>
-								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
-								<param name="sWordWorksTransformPath" value="TransformDirectory"/>
-								<!-- the value of "prmIMaxMorphsInAppendices" is the maximum number of morphemes to show in each subsection of the appendices -->
-								<!-- NB that the prmSMaxMorphsInAppendices parameter below should be kept in sync with the prmIMaxMorphsInAppendices parameter. -->
-								<!-- if you want all the morphemes to appear, comment off the following line. -->
-								<param name="prmIMaxMorphsInAppendices" value="10"/>
-								<!-- the value of "prmSMaxMorphsInAppendices" is the analysis language's word(s) for the maximum number of morphemes to show in each subsection of the appendices -->
-								<param name="prmSMaxMorphsInAppendices" value="ten"/>
-								<!-- The name of "prmSDateTime" is a special key the FxtViewer.dll knows about; it gets the current date and time and then passes it to the transform as a parameter -->
-								<param name="prmSDateTime" value="fake"/>
-								<!-- The name of "prmVernacularFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the vernacular font -->
-								<param name="prmVernacularFontSize" value="fake"/>
-								<!-- The name of "prmGlossFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the analysis (gloss) font -->
-								<param name="prmGlossFontSize" value="fake"/>
-							</xsltParameters>
-						</transform>
-						<transform progressPrompt="Processing data, step 2 of 2" stylesheetName="XLingPap1" stylesheetAssembly="PresentationTransforms" ext="htm"/>
-					</transforms>
-				</parameters>
-			</control>
-		</tool>
 		<tool label="Problems" value="lexiconProblems" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>

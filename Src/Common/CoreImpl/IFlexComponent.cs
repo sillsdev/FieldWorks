@@ -9,8 +9,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// <remarks>
 	/// Initializes a FLEx component with the major interfaces, and can then provide them for others
-	/// via the various 'provider' interfaces. There should be a 'provider' interface
-	/// for each elements that is passed in the "InitializeFlexComponent" method.
+	/// via the various 'provider' interface properties. There should be a 'provider' interface
+	/// for each element that is passed in the "InitializeFlexComponent" method.
 	/// </remarks>
 	public interface IFlexComponent : IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
 	{

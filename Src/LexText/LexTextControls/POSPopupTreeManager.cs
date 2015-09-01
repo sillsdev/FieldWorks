@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -152,8 +153,17 @@ namespace SIL.FieldWorks.LexText.Controls
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							m_publisher.Publish("AboutToFollowLink", null);
-							m_publisher.Publish("FollowLink", new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+							var commands = new List<string>
+									{
+										"AboutToFollowLink",
+										"FollowLink"
+									};
+							var parms = new List<object>
+									{
+										null,
+										new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid)
+									};
+							m_publisher.Publish(commands, parms);
 							if (ParentForm != null && ParentForm.Modal)
 							{
 								// Close the dlg that opened the master POS dlg,

@@ -213,16 +213,13 @@
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets, Version=5.5.0.18237, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=5.5.0.18139, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCore">
-      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
