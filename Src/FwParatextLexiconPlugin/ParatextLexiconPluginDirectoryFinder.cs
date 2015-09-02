@@ -55,7 +55,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase))); }
+			get
+			{
+				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
+					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
+			}
 		}
 
 		private static string GetDirectory(string registryValue, string defaultDir)

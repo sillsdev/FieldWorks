@@ -46,10 +46,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
-			// initialize ICU
 			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
 			RegistryHelper.ProductName = "FieldWorks";
-			Icu.InitIcuDataDir();
 
 			// setup necessary environment variables on Linux
 			if (MiscUtils.IsUnix)
@@ -57,12 +55,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				// update ICU_DATA to location of ICU data files
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 				{
+					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
 #if DEBUG
-					string icuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
-					if (Directory.Exists(icuDataPath))
-						icuDataPath = Icu.DefaultDataDirectory;
+					string icuDataPath = codeIcuDataPath;
 #else
-					string icuDataPath = Icu.DefaultDataDirectory;
+					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + Icu.Version);
+					if (!Directory.Exists(icuDataPath))
+						icuDataPath = codeIcuDataPath;
 #endif
 					Environment.SetEnvironmentVariable("ICU_DATA", icuDataPath);
 				}
@@ -76,6 +75,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
 					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
 			}
+			Icu.InitIcuDataDir();
 
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
