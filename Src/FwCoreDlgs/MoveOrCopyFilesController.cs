@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -16,18 +17,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		#region Static methods
 		/// <summary>
-		/// Checks to see whether the given file is located in the given root directory (or any subfolder of it), and if not, prompts the user to
-		/// allow FW to move, copy, or leave the file. If anything unexpected happens, the default is to leave the file where it is.
+		/// Checks to see whether the given files are located in the given root directory (or any subfolder of it), and if not, prompts the user to
+		/// allow FW to move, copy, or leave the files. If anything unexpected happens, the default is to leave the files where they are.
 		/// </summary>
-		/// <param name="sFile">The fully-specified path name of the file.</param>
+		/// <param name="files">The fully-specified path names of the files.</param>
 		/// <param name="sRootDirLinkedFiles">The fully-specified path name of the LinkedFiles root directory.</param>
 		/// <param name="isLocal">True if running on the local server: allows file not to be moved or copied</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <returns>The fully specified path name of the file to use, which might be the same as the given path or it could be
+		/// <returns>The fully specified path names of the files to use, which might be the same as the given path or it could be
 		/// in its new location under the LinkedFiles folder if the user elected to move or copy it.</returns>
-		public static string MoveCopyOrLeaveMediaFile(string sFile, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider, bool isLocal)
+		public static string[] MoveCopyOrLeaveMediaFiles(string[] files, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
-			return MoveCopyOrLeaveFile(sFile,
+			return MoveCopyOrLeaveFiles(files,
 				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider, isLocal);
@@ -46,35 +47,41 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static string MoveCopyOrLeaveExternalFile(string sFile, string sRootDirLinkedFiles,
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
-			return MoveCopyOrLeaveFile(sFile,
+			return MoveCopyOrLeaveFiles(new[] {sFile},
 				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider, isLocal);
+				helpTopicProvider, isLocal).FirstOrDefault();
 		}
 
-		private static string MoveCopyOrLeaveFile(string sFile, string subFolder, string sRootDirExternalLinks,
+		private static string[] MoveCopyOrLeaveFiles(string[] files, string subFolder, string sRootDirExternalLinks,
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			try
 			{
-				if(!Directory.Exists(subFolder))
+				if (!Directory.Exists(subFolder))
 					Directory.CreateDirectory(subFolder);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Logger.WriteEvent(string.Format("Error creating the directory: '{0}'", subFolder));
 				Logger.WriteError(e);
-				return sFile;
+				return files;
 			}
 
 			// Check whether the file is found within the directory.
-			if(FileIsInExternalLinksFolder(sFile, sRootDirExternalLinks))
-				return sFile;
+			if (files.All(f => FileIsInExternalLinksFolder(f, sRootDirExternalLinks)))
+				return files;
 
-			using(var dlg = new MoveOrCopyFilesDlg())
+			using (var dlg = new MoveOrCopyFilesDlg())
 			{
-				dlg.Initialize2(sFile, subFolder, helpTopicProvider, isLocal);
-				return dlg.ShowDialog() == DialogResult.OK ? PerformMoveCopyOrLeaveFile(sFile, subFolder, dlg.Choice) : sFile;
+				dlg.Initialize2(subFolder, helpTopicProvider, isLocal);
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					FileLocationChoice choice = dlg.Choice;
+					return files.Select(f => PerformMoveCopyOrLeaveFile(f, subFolder, choice)).ToArray();
+				}
+
+				return files;
 			}
 		}
 
@@ -87,13 +94,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>The fully-specified path name of the (possibly newly moved or copied) file</returns>
 		internal static string PerformMoveCopyOrLeaveFile(string sFile, string sRootDir, FileLocationChoice action)
 		{
-			if(action == FileLocationChoice.Leave)
+			if (action == FileLocationChoice.Leave)
 				return sFile; // use original location.
 
-			var sNewFile = Path.Combine(sRootDir, Path.GetFileName(sFile));
-			if(File.Exists(sNewFile))
+			string sNewFile = Path.Combine(sRootDir, Path.GetFileName(sFile));
+			if (FileUtils.PathsAreEqual(sFile, sNewFile))
+				return sFile;
+
+			if (File.Exists(sNewFile))
 			{
-				if(MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile),
+				if (MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile),
 						FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 					== DialogResult.No)
 				{
@@ -112,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			try
 			{
-				switch(action)
+				switch (action)
 				{
 					case FileLocationChoice.Move:
 						File.Move(sFile, sNewFile);
@@ -123,7 +133,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				return sNewFile;
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				var sAction = (action == FileLocationChoice.Copy ? "copy" : "mov");
 				Logger.WriteEvent(string.Format("Error {0}ing file '{1}' to '{2}'", sAction, sFile, sNewFile));

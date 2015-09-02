@@ -670,23 +670,11 @@ Do you want to remove English now?</value>
   <data name="ksChangedLinkedFilesRootDir" xml:space="preserve">
     <value>Changed Linked Files root directory</value>
   </data>
-  <data name="ksMoveOrCopyFile" xml:space="preserve">
-    <value>Move or Copy File?</value>
-  </data>
-  <data name="ksMoveOrCopyFileToLinkedFilesDir" xml:space="preserve">
-    <value>The file you have selected is not in the Linked Files folder for this project. Would you like to move or copy the file to that folder to make it easier to share and back up, along with your other project data?</value>
+  <data name="ksMoveOrCopyFilesToLinkedFilesDir" xml:space="preserve">
+    <value>The file(s) you have selected are not in the Linked Files folder for this project. Would you like to move or copy the file(s) to that folder to make it easier to share and back up, along with your other project data?</value>
   </data>
   <data name="ksAlreadyExists" xml:space="preserve">
     <value>{0} already exists.  Do you want to overwrite it?</value>
-  </data>
-  <data name="ksCopyFile" xml:space="preserve">
-    <value>&amp;Copy File</value>
-  </data>
-  <data name="ksMoveFile" xml:space="preserve">
-    <value>&amp;Move File</value>
-  </data>
-  <data name="ksLeaveFile" xml:space="preserve">
-    <value>&amp;Leave File</value>
   </data>
   <data name="ksPreviousFolder" xml:space="preserve">
     <value>(Previous folder: {0})</value>

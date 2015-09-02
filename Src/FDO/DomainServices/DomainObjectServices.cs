@@ -2304,11 +2304,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (idx >= 0)
 				throw new ArgumentException("File path (" + srcFile + ") contains at least one invalid character.", "srcFile");
 
-			string newName = Path.GetFileName(srcFile);
 			foreach (ICmFile file in folder.FilesOC)
 			{
-				if (Path.GetFileName(file.AbsoluteInternalPath) == newName &&
-					FileUtils.AreFilesIdentical(srcFile, file.AbsoluteInternalPath))
+				if (FileUtils.PathsAreEqual(file.AbsoluteInternalPath, srcFile)
+					&& FileUtils.AreFilesIdentical(srcFile, file.AbsoluteInternalPath))
 				{
 					return file;
 				}

@@ -135,10 +135,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// to find out whether the user wants to move or copy into LangProject.LinkedFilesRootDir or to leave the file where it is.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize2(string sFilename, string sRootDir, IHelpTopicProvider helpTopicProvider, bool isLocal)
+		public void Initialize2(string sRootDir, IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			CheckDisposed();
-			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyFileToLinkedFilesDir);
+			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyFilesToLinkedFilesDir);
 			m_msgOldDir.Text = string.Format(FwCoreDlgs.ksLinkedFilesFolder, ShortenMyDocsPath(sRootDir));
 
 			// Adjust dialog size to conceal empty space left by invisible m_msgNewDir.
@@ -149,12 +149,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			MaximumSize = szNew;
 			MinimumSize = szNew;
 			Size = szNew;
-
-			// These become singular in wording instead of plural.
-			Text = FwCoreDlgs.ksMoveOrCopyFile;
-			m_btnCopy.Text = FwCoreDlgs.ksCopyFile;
-			m_btnMove.Text = FwCoreDlgs.ksMoveFile;
-			m_btnLeave.Text = FwCoreDlgs.ksLeaveFile;
 			m_btnLeave.Enabled = isLocal;
 
 			SetupHelp(helpTopicProvider, "khtpMoveOrCopyFile");

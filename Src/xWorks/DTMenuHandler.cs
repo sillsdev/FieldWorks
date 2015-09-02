@@ -32,6 +32,7 @@ using SIL.Utils.FileDialog;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -277,7 +278,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				dlg.InitialDirectory = Cache.LangProject.LinkedFilesRootDir;
+				string defaultDirectory = Cache.LangProject.LinkedFilesRootDir;
+				dlg.InitialDirectory = m_mediator != null ? m_mediator.PropertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory)
+					: defaultDirectory;
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
 				if (m_mediator != null && m_mediator.HasStringTable)
@@ -287,6 +290,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
+				dlg.Multiselect = true;
 
 				DialogResult dialogResult = DialogResult.None;
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
@@ -294,27 +298,40 @@ namespace SIL.FieldWorks.XWorks
 					dialogResult = dlg.ShowDialog();
 					if (dialogResult == DialogResult.OK)
 					{
-						string file = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFile(dlg.FileName,
+						string[] fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames,
 							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider, Cache.ProjectId.IsLocal);
-						if (String.IsNullOrEmpty(file))
-							return true;
 						string sFolderName = null;
 						if (m_mediator != null && m_mediator.HasStringTable)
 							sFolderName = m_mediator.StringTbl.GetString("kstidMediaFolder");
-						if (sFolderName == null || sFolderName.Length == 0 || sFolderName == "*kstidMediaFolder*")
+						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
 							sFolderName = CmFolderTags.LocalMedia;
 						if (!obj.IsValidObject)
 							return true; // Probably some other client deleted it while we were choosing the file.
+
 						int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 							xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia,
 							Cache.ActionHandlerAccessor, () =>
 							{
-								int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
-								var media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
-								var folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
-								media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, file);
+								foreach (string fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
+								{
+									int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
+									ICmMedia media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
+									ICmFolder folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
+									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, fileName);
+								}
 							});
+
+						if (m_mediator != null)
+						{
+							string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
+							if (fileName != null)
+							{
+								string directory = Path.GetDirectoryName(fileName);
+								m_mediator.PropertyTable.SetProperty("InsertMediaFile-LastDirectory", directory);
+								m_mediator.PropertyTable.SetPropertyPersistence("InsertMediaFile-LastDirectory", false);
+							}
+						}
 					}
 				}
 			}
