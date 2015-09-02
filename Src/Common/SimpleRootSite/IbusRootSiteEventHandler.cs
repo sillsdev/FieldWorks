@@ -194,10 +194,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		private SelectionHelper SetupForTypingEventHandler(bool checkIfFocused,
 			bool rollBackPreviousTask)
 		{
-			if ((!AssociatedSimpleRootSite.Focused && checkIfFocused) ||
-				AssociatedSimpleRootSite.ReadOnlyView ||
+			if (AssociatedSimpleRootSite.ReadOnlyView ||
 				AssociatedSimpleRootSite.RootBox == null ||
-				AssociatedSimpleRootSite.RootBox.Selection == null)
+				AssociatedSimpleRootSite.RootBox.Selection == null ||
+				(checkIfFocused && (!AssociatedSimpleRootSite.Focused ||
+					(AssociatedSimpleRootSite.TopLevelControl != null && !AssociatedSimpleRootSite.TopLevelControl.Enabled))))
 			{
 				return null;
 			}
