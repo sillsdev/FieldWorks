@@ -1752,18 +1752,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void ProcessAnthroItem(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev)
 		{
-			int hvo = FindAbbevOrLabelInDict(abbrev, label, m_dictAnthroCode);
-			if (hvo <= 0)
+			ICmPossibility poss = FindExistingPossibility(id, guidAttr, label, abbrev, m_dictAnthroCode,
+				m_cache.LangProject.AnthroListOA);
+			if (poss == null)
 			{
-				ICmObject caiParent = null;
-				if (!String.IsNullOrEmpty(parent) && m_dictAnthroCode.ContainsKey(parent))
-					caiParent = m_dictAnthroCode[parent];
-				else
-					caiParent = m_cache.LangProject.AnthroListOA;
-				ICmAnthroItem cai = CreateNewCmAnthroItem(guidAttr, caiParent);
-				SetNewPossibilityAttributes(id, description, label, abbrev, cai);
-				m_dictAnthroCode[id] = cai;
-				m_rgnewAnthroCode.Add(cai);
+				int hvo = FindAbbevOrLabelInDict (abbrev, label, m_dictAnthroCode);
+				if (hvo <= 0) {
+					ICmObject caiParent = null;
+					if (!String.IsNullOrEmpty (parent) && m_dictAnthroCode.ContainsKey (parent))
+						caiParent = m_dictAnthroCode [parent];
+					else
+						caiParent = m_cache.LangProject.AnthroListOA;
+					ICmAnthroItem cai = CreateNewCmAnthroItem (guidAttr, caiParent);
+					SetNewPossibilityAttributes (id, description, label, abbrev, cai);
+					m_dictAnthroCode [id] = cai;
+					m_rgnewAnthroCode.Add (cai);
+				}
 			}
 		}
 
