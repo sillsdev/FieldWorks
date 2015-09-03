@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 			Model = model;
 			LoadFromModel();
 
-			m_helpTopicProvider = propertyTable.GetValue<FwXApp>("App");
+			m_helpTopicProvider = propertyTable.GetValue<IFlexApp>("App");
 
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>

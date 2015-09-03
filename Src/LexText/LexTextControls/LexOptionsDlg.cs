@@ -220,12 +220,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// open that project automatically instead of displaying the usual Welcome dialog.
 			get
 			{
-				var app = m_propertyTable.GetValue<FwApp>("App");
+				var app = m_propertyTable.GetValue<IFlexApp>("App");
 				return app.RegistrySettings.AutoOpenLastEditedProject;
 			}
 			set
 			{
-				var app = m_propertyTable.GetValue<FwApp>("App");
+				var app = m_propertyTable.GetValue<IFlexApp>("App");
 				if (app != null)
 					app.RegistrySettings.AutoOpenLastEditedProject = value;
 			}

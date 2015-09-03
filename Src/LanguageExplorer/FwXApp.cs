@@ -1,22 +1,19 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FxApp.cs
-// Responsibility:
-// --------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Diagnostics;
 using Microsoft.Win32;
-using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
-namespace SIL.FieldWorks.XWorks
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Summary description for XApp.
@@ -131,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="helpTopicProvider">An application-specific help topic provider.</param>
 		/// <param name="appArgs">The application arguments.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwXApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider,
+		protected FwXApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider,
 			FwAppArgs appArgs) : base(fwManager, helpTopicProvider)
 		{
 			m_appArgs = appArgs;
@@ -239,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
-			var result = new FwMainWnd((FwMainWnd)wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
+			var result = new FwMainWnd(this, (FwMainWnd)wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
 
 			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 			return result;

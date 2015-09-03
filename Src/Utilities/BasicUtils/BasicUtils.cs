@@ -196,6 +196,12 @@ namespace SIL.Utils
 #endif
 		#endregion
 
+		/// <summary>
+		/// Return true if the application is in the process of shutting down after a crash.
+		/// Some settings should not be saved in this case.
+		/// </summary>
+		static public bool InCrashedState { get; set; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the user for the given process.
@@ -241,7 +247,7 @@ namespace SIL.Utils
 		public static string GetTestLangProjDataBaseName()
 		{
 			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (string.IsNullOrEmpty(dbName))
+			if (String.IsNullOrEmpty(dbName))
 				return "TestLangProj";
 			return dbName;
 		}

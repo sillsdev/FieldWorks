@@ -998,7 +998,7 @@ namespace SIL.FieldWorks.FdoUi
 				return;
 			}
 
-			FwApp app;
+			IFlexApp app;
 			if (propertyTable != null && propertyTable.TryGetValue("App", out app))
 			{
 				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);

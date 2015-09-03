@@ -25,6 +25,7 @@ using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.PublishingSolution
 {
@@ -137,7 +138,7 @@ namespace SIL.PublishingSolution
 			const string RevXhtml = "FlexRev.xhtml";
 			const string SketchXml = "sketch.xml";
 
-			IApp app = exportDialog.PropertyTable.GetValue<IApp>("App");
+			var app = exportDialog.PropertyTable.GetValue<IFlexApp>("App");
 			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);

@@ -94,6 +94,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the full path of the FW Language Explorer dynamic load library.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string LanguageExplorerDll
+		{
+			get { return ExeOrDllPath("LanguageExplorer.dll"); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the full path of the Migrate SQL databases executable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

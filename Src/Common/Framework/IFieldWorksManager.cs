@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
 		/// ------------------------------------------------------------------------------------
-		void ShutdownApp(FwApp app);
+		void ShutdownApp(IFlexApp app);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -85,7 +86,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		void DeleteProject(FwApp app, Form dialogOwner);
+		void DeleteProject(IFlexApp app, Form dialogOwner);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -104,7 +105,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		void RestoreProject(FwApp fwApp, Form dialogOwner);
+		void RestoreProject(IFlexApp fwApp, Form dialogOwner);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -115,7 +116,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
 		/// archive dialog</returns>
 		/// ------------------------------------------------------------------------------------
-		List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner);
+		List<string> ArchiveProjectWithRamp(IFlexApp fwApp, Form dialogOwner);
 
 		/// <summary>
 		/// Reopens the given FLEx project. This may be necessary if some external process modified the project data.
@@ -123,7 +124,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="project">The project name to re-open</param>
 		/// <param name="app"></param>
-		FwApp ReopenProject(string project, FwAppArgs app);
+		IFlexApp ReopenProject(string project, FwAppArgs app);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		void FileProjectLocation(FwApp fwApp, Form dialogOwner);
+		void FileProjectLocation(IFlexApp fwApp, Form dialogOwner);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

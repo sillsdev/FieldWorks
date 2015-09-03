@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.IText
 
 			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
 				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				PropertyTable.GetValue<FwApp>("App")))
+				PropertyTable.GetValue<IFlexApp>("App")))
 			{
 				return scr.FindBook(bookNum);
 			}

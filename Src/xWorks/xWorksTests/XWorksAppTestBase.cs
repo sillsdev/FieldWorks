@@ -5,7 +5,6 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
@@ -46,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ShutdownApp(FwApp app)
+		public void ShutdownApp(IFlexApp app)
 		{
 			throw new NotImplementedException();
 		}
@@ -116,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public void DeleteProject(FwApp app, Form dialogOwner)
+		public void DeleteProject(IFlexApp app, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -125,7 +124,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Lets the user backup any FW databases that are not currently open
 		/// </summary>
-		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
 		public string BackupProject(Form dialogOwner)
@@ -140,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(FwApp fwApp, Form dialogOwner)
+		public void RestoreProject(IFlexApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -151,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="project">The project name to re-open</param>
 		/// <param name="app"></param>
-		public FwApp ReopenProject(string project, FwAppArgs app)
+		public IFlexApp ReopenProject(string project, FwAppArgs app)
 		{
 			throw new NotImplementedException();
 		}
@@ -159,7 +157,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(IFlexApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -198,12 +196,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
 		/// archive dialog</returns>
 		/// ------------------------------------------------------------------------------------
-		public List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner)
+		public List<string> ArchiveProjectWithRamp(IFlexApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
 	}
 
+#if RANDYTODO
 	public class MockFwXApp : FwXApp
 	{
 		public MockFwXApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
@@ -285,7 +284,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class XWorksAppTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		protected IFwMainWnd m_window; // defined here but created and torn down in subclass?
-		protected FwXApp m_application;
+		protected MockFwXApp m_application;
 		protected string m_configFilePath;
 
 		private ITsStrFactory m_tssFact;
@@ -631,4 +630,5 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 	}
+#endif
 }

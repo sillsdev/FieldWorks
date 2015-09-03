@@ -7,6 +7,7 @@
 
 using System;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -72,7 +73,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwRegistrySettings(FwApp app)
+		public FwRegistrySettings(IApp app)
 		{
 			if (app == null)
 				throw new ArgumentNullException("app");

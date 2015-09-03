@@ -155,7 +155,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
 #endif
 
-			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null) // trying this
 			{

@@ -1,7 +1,16 @@
 # Gendarme filter file to suppress reporting of defects
 
 #-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: System.Windows.Forms.Form
+
+#-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # added to control and disposed there
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlViewer::InitHtmlControl()
+
+# reference only
+M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)

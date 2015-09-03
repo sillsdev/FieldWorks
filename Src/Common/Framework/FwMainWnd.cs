@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private FwStyleSheet _stylesheet;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
+		private IFlexApp _flexApp;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -89,11 +90,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "IPropertyTable is disposed when closed.")]
-		public FwMainWnd(FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
+		public FwMainWnd(IFlexApp flexApp, FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
 			: this()
 		{
 			Guard.AssertThat(wndCopyFrom == null, "Support for the 'wndCopyFrom' is not yet implemented.");
 			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
+
+			_flexApp = flexApp;
 
 			AddCustomStatusBarPanels();
 
@@ -560,7 +563,7 @@ namespace SIL.FieldWorks.Common.Framework
 			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
 
 			PropertyTable = PropertyTableFactory.CreatePropertyTable(_publisher);
-			PropertyTable.UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(FwApp.App.Cache.ProjectId.ProjectFolder);
+			PropertyTable.UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			PropertyTable.LocalSettingsId = "local";
 
 			if (!Directory.Exists(PropertyTable.UserSettingDirectory))
@@ -570,7 +573,9 @@ namespace SIL.FieldWorks.Common.Framework
 			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
 
+			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
+
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -659,7 +664,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public FdoCache Cache
 		{
-			get { return FwApp.App.Cache; }
+			get { return _flexApp.Cache; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -797,7 +802,7 @@ namespace SIL.FieldWorks.Common.Framework
 			var activeWnd = ActiveForm as IFwMainWnd;
 
 			var allMainWindowsExceptActiveWindow = new List<IFwMainWnd>();
-			foreach (var otherMainWindow in FwApp.App.MainWindows.Where(mw => mw != activeWnd))
+			foreach (var otherMainWindow in _flexApp.MainWindows.Where(mw => mw != activeWnd))
 			{
 				otherMainWindow.PrepareToRefresh();
 				allMainWindowsExceptActiveWindow.Add(otherMainWindow);
@@ -907,7 +912,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// The removing of the window needs to happen later; after this main window is
 				// already disposed of. This is needed for side-effects that require a running
 				// message loop.
-				FwApp.App.FwManager.ExecuteAsync(FwApp.App.RemoveWindow, this);
+				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
 
 				if (PropertyTable != null)
 				{
@@ -974,7 +979,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void Help_LanguageExplorer(object sender, EventArgs e)
 		{
-			var helpFile = FwApp.App.HelpFile;
+			var helpFile = _flexApp.HelpFile;
 			try
 			{
 				// When the help window is closed it will return focus to the window that opened it (see MSDN
@@ -1116,7 +1121,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void Help_ReportProblem(object sender, EventArgs e)
 		{
-			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, FwApp.App.SupportEmailAddress, this);
+			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, _flexApp.SupportEmailAddress, this);
 		}
 
 		private void Help_Make_a_Suggestion(object sender, EventArgs e)
@@ -1128,21 +1133,21 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			using (var helpAboutWnd = new FwHelpAbout())
 			{
-				helpAboutWnd.ProductExecutableAssembly = Assembly.LoadFile(FwApp.App.ProductExecutableFile);
+				helpAboutWnd.ProductExecutableAssembly = Assembly.LoadFile(_flexApp.ProductExecutableFile);
 				helpAboutWnd.ShowDialog();
 			}
 		}
 
 		private void File_New_FieldWorks_Project(object sender, EventArgs e)
 		{
-			if (FwApp.App.ActiveMainWindow != this)
+			if (_flexApp.ActiveMainWindow != this)
 				throw new InvalidOperationException("Unexpected active window for app.");
-			FwApp.App.FwManager.CreateNewProject();
+			_flexApp.FwManager.CreateNewProject();
 		}
 
 		private void File_Open(object sender, EventArgs e)
 		{
-			FwApp.App.FwManager.ChooseLangProject();
+			_flexApp.FwManager.ChooseLangProject();
 		}
 
 		private void File_FieldWorks_Project_Properties(object sender, EventArgs e)
@@ -1162,14 +1167,14 @@ namespace SIL.FieldWorks.Common.Framework
 			Justification = "cache is disposed elsewhere.")]
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
-			var cache = FwApp.App.Cache;
+			var cache = _flexApp.Cache;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 				return;
 
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, FwApp.App, FwApp.App, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)))
+			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp, _flexApp, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)))
 			{
 				dlg.ProjectPropertiesChanged += ProjectProperties_Changed;
 				if (startOnWSPage)
@@ -1187,7 +1192,7 @@ namespace SIL.FieldWorks.Common.Framework
 					var fFilesMoved = false;
 					if (dlg.LinkedFilesChanged())
 					{
-						fFilesMoved = FwApp.App.UpdateExternalLinks(sLinkedFilesRootDir);
+						fFilesMoved = _flexApp.UpdateExternalLinks(sLinkedFilesRootDir);
 					}
 					// no need for any of these refreshes if entire window has been/will be
 					// destroyed and recreated.
@@ -1199,14 +1204,14 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			if (fDbRenamed)
 			{
-				FwApp.App.FwManager.RenameProject(sProject);
+				_flexApp.FwManager.RenameProject(sProject);
 			}
 		}
 
 		private void SetWindowTitle()
 		{
 			Text = string.Format("{0} - {1} {2}",
-				FwApp.App.Cache.ProjectId.UiName,
+				_flexApp.Cache.ProjectId.UiName,
 				FwUtils.FwUtils.ksSuiteName,
 				FwUtils.FwUtils.ksSuiteName);
 		}
@@ -1241,22 +1246,22 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			SaveSettings();
 
-			FwApp.App.FwManager.BackupProject(this);
+			_flexApp.FwManager.BackupProject(this);
 		}
 
 		private void File_Restore_a_Project(object sender, EventArgs e)
 		{
-			FwApp.App.FwManager.RestoreProject(FwApp.App, this);
+			_flexApp.FwManager.RestoreProject(_flexApp, this);
 		}
 
 		private void File_Project_Location(object sender, EventArgs e)
 		{
-			FwApp.App.FwManager.FileProjectLocation(FwApp.App, this);
+			_flexApp.FwManager.FileProjectLocation(_flexApp, this);
 		}
 
 		private void File_Delete_Project(object sender, EventArgs e)
 		{
-			FwApp.App.FwManager.DeleteProject(FwApp.App, this);
+			_flexApp.FwManager.DeleteProject(_flexApp, this);
 		}
 
 		private void File_Create_Shortcut_on_Desktop(object sender, EventArgs e)
@@ -1270,14 +1275,14 @@ namespace SIL.FieldWorks.Common.Framework
 				return;
 			}
 
-			var applicationArguments = "-" + FwAppArgs.kProject + " \"" + FwApp.App.Cache.ProjectId.Handle + "\"";
+			var applicationArguments = "-" + FwAppArgs.kProject + " \"" + _flexApp.Cache.ProjectId.Handle + "\"";
 			var description = ResourceHelper.FormatResourceString(
-				"kstidCreateShortcutLinkDescription", FwApp.App.Cache.ProjectId.UiName,
-				FwApp.App.ApplicationName);
+				"kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName,
+				_flexApp.ApplicationName);
 
 			if (MiscUtils.IsUnix)
 			{
-				var projectName = FwApp.App.Cache.ProjectId.UiName;
+				var projectName = _flexApp.Cache.ProjectId.UiName;
 				const string pathExtension = ".desktop";
 				var launcherPath = Path.Combine(directory, projectName + pathExtension);
 
@@ -1315,7 +1320,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				WshShell shell = new WshShellClass();
 
-				var filename = FwApp.App.Cache.ProjectId.UiName;
+				var filename = _flexApp.Cache.ProjectId.UiName;
 				filename = Path.ChangeExtension(filename, "lnk");
 				var linkPath = Path.Combine(directory, filename);
 
@@ -1323,13 +1328,13 @@ namespace SIL.FieldWorks.Common.Framework
 				if (link.FullName != linkPath)
 				{
 					var msg = string.Format(FrameworkStrings.ksCannotCreateShortcut,
-						FwApp.App.ProductExecutableFile + " " + applicationArguments);
+						_flexApp.ProductExecutableFile + " " + applicationArguments);
 					MessageBox.Show(ActiveForm, msg,
 						FrameworkStrings.ksCannotCreateShortcutCaption, MessageBoxButtons.OK,
 						MessageBoxIcon.Asterisk);
 					return;
 				}
-				link.TargetPath = FwApp.App.ProductExecutableFile;
+				link.TargetPath = _flexApp.ProductExecutableFile;
 				link.Arguments = applicationArguments;
 				link.Description = description;
 				link.IconLocation = link.TargetPath + ",0";
@@ -1340,7 +1345,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void File_Archive_With_RAMP(object sender, EventArgs e)
 		{
 			// prompt the user to select or create a FieldWorks backup
-			var filesToArchive = FwApp.App.FwManager.ArchiveProjectWithRamp(FwApp.App, this);
+			var filesToArchive = _flexApp.FwManager.ArchiveProjectWithRamp(_flexApp, this);
 
 			// if there are no files to archive, return now.
 			if((filesToArchive == null) || (filesToArchive.Count == 0))
@@ -1348,7 +1353,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			// show the RAMP dialog
 			var ramp = new ReapRamp();
-			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, FwApp.App, FwApp.App.Cache);
+			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
 		}
 
 		private void File_Page_Setup(object sender, EventArgs e)
@@ -1378,7 +1383,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			using (new WaitCursor(form, true))
 			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FwApp.App.Cache.ActionHandlerAccessor,
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
 					() =>
 					{
 						using (var dlg = new ProgressDialogWithTask(this))
@@ -1386,7 +1391,7 @@ namespace SIL.FieldWorks.Common.Framework
 							dlg.AllowCancel = true;
 							dlg.Maximum = 200;
 							dlg.Message = filename;
-							dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, FwApp.App.Cache);
+							dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
 						}
 					});
 			}
@@ -1395,7 +1400,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void NewWindow_Clicked(object sender, EventArgs e)
 		{
 			SaveSettings();
-			FwApp.App.FwManager.OpenNewWindowForApp();
+			_flexApp.FwManager.OpenNewWindowForApp();
 		}
 
 		private void Help_Training_Writing_Systems(object sender, EventArgs e)

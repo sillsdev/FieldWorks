@@ -27,7 +27,7 @@ using SIL.Utils;
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="_mediator is a reference")]
+		Justification = "_parentForm is a reference")]
 	public sealed class FLExBridgeListener : IFlexComponent, IFWDisposable
 	{
 		private Form _parentForm;
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
 			{
-				MessageBox.Show(PropertyTable.GetValue<FwApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				MessageBox.Show(PropertyTable.GetValue<IFlexApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 				return true;
 			}
 
@@ -316,13 +316,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
 					{
-						var sLinkedFilesRootDir = FwApp.App.Cache.LangProject.LinkedFilesRootDir;
-						NonUndoableUnitOfWorkHelper.Do(FwApp.App.Cache.ActionHandlerAccessor, () =>
+						var flexApp = PropertyTable.GetValue<IFlexApp>("App");
+						var sLinkedFilesRootDir = flexApp.Cache.LangProject.LinkedFilesRootDir;
+						NonUndoableUnitOfWorkHelper.Do(flexApp.Cache.ActionHandlerAccessor, () =>
 						{
-							FwApp.App.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
-								FwApp.App.Cache.ProjectId.ProjectFolder);
+							flexApp.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+								flexApp.Cache.ProjectId.ProjectFolder);
 						});
-						FwApp.App.UpdateExternalLinks(sLinkedFilesRootDir);
+						flexApp.UpdateExternalLinks(sLinkedFilesRootDir);
 					}
 				}
 			}
@@ -1459,7 +1460,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification = "FwApp is a reference I guess")]
 		private static IFwMainWnd RefreshCacheWindowAndAll(IPropertyTable propertyTable, string fullProjectFileName)
 		{
-			var manager = FwApp.App.FwManager;
+			var flexApp = propertyTable.GetValue<IFlexApp>("app");
+			var manager = flexApp.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
 				(IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;

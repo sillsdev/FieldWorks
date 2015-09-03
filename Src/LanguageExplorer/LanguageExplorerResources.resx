@@ -121,6 +121,64 @@
   <data name="Grammar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Grammar.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ksCannotLaunchX" xml:space="preserve">
+    <value>Sorry, could not launch {0}.</value>
+  </data>
+  <data name="ksChartTemplateWarning" xml:space="preserve">
+    <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
+  </data>
+  <data name="ksCreatingCustomGramCategory" xml:space="preserve">
+    <value>You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the "Back" button on the toolbar to return to where you were working. The new category will then be available for you to choose.</value>
+  </data>
+  <data name="ksCreatingCustomLexRefType" xml:space="preserve">
+    <value>You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the "Back" button on the toolbar to return to where you were working. The new type will then be available for you to choose.</value>
+  </data>
+  <data name="ksCreatingWindowForX" xml:space="preserve">
+    <value>Creating window for {0} Project...</value>
+  </data>
+  <data name="ksError" xml:space="preserve">
+    <value>Error</value>
+    <comment>caption for message box</comment>
+  </data>
+  <data name="ksErrorLoadingResourceStrings" xml:space="preserve">
+    <value>Error loading resource strings: {0}</value>
+  </data>
+  <data name="ksInformation" xml:space="preserve">
+    <value>Information</value>
+    <comment>caption for message box</comment>
+  </data>
+  <data name="ksInitializingLayouts_" xml:space="preserve">
+    <value>Initializing Layouts...</value>
+  </data>
+  <data name="ksInitializingMessageDialogs_" xml:space="preserve">
+    <value>Initializing Message Dialogs...</value>
+    <comment>message for splash screen</comment>
+  </data>
+  <data name="ksLoading_" xml:space="preserve">
+    <value>Loading...</value>
+    <comment>message for splash screen</comment>
+  </data>
+  <data name="ksShowingSemanticClassification" xml:space="preserve">
+    <value>This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses.</value>
+  </data>
+  <data name="kstidOpenSampleDbMsg" xml:space="preserve">
+    <value>Do you want to study the training materials for Language Explorer?
+
+If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
+Alternatively, point to Demo Movies and choose an option.
+	- Play All gives a half-hour overview of Language Explorer.
+	- You may also choose specific demo movie topics.
+
+If you click No, you will see various options for starting work in Language Explorer.</value>
+    <comment>note the embedded newlines in this message.</comment>
+  </data>
+  <data name="kstidSupportEmail" xml:space="preserve">
+    <value>FlexErrors@sil.org</value>
+    <comment>Email address for sending bug reports to</comment>
+  </data>
+  <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
+    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/.</value>
+  </data>
   <data name="Lexicon32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Lexicon32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

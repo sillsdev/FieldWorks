@@ -12,16 +12,20 @@
 using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Interface for application.
 	/// </summary>
-	public interface IApp
+	public interface IApp : IFWDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter, IProjectSpecificSettingsKeyProvider
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -31,13 +35,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>String</returns>
 		/// -----------------------------------------------------------------------------------
 		string ResourceString(string stid);
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Registry key for settings for this application.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		RegistryKey SettingsKey { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -128,6 +125,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		bool ShowFindReplaceDialog(bool fReplace, RootSite rootsite);
 
+		/// <summary>
+		/// Handle incoming links.
+		/// </summary>
+		/// <param name="link">The link to handle.</param>
+		/// <remarks>
+		/// This method is  called from FieldWorks when a link is requested. It is guaranteed to be on the
+		/// correct thread (the thread this application is on) so invoking should not be needed.
+		///
+		/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
+		/// </remarks>
+		void HandleIncomingLink(FwLinkArgs link);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles an outgoing link request from this application.
@@ -137,9 +146,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		void HandleOutgoingLink(FwAppArgs link);
 
 		/// <summary>
-		/// Gets the support email address.
+		/// Handle changes to the LinkedFiles root directory for a language project.
 		/// </summary>
-		/// <value>The support email address.</value>
-		string SupportEmailAddress { get; }
+		/// <param name="oldLinkedFilesRootDir">The old LinkedFiles root directory.</param>
+		/// <returns></returns>
+		bool UpdateExternalLinks(string oldLinkedFilesRootDir);
 	}
 }

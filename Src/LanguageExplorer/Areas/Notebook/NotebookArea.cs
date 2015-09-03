@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Notebook
 					dlg.ShowDialog();
 				}
 #else
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), @"Grammar Sketch export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
+			MessageBox.Show(PropertyTable.GetValue<Form>("window"), @"Notebook export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
 #endif
 		}
 

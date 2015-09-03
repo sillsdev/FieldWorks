@@ -13,6 +13,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using Palaso.Linq;
+using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -377,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 			if (configurationToDelete == null)
 				return;
 
-			using (var dlg = new ConfirmDeleteObjectDlg(_propertyTable.GetValue<FwXApp>("App")))
+			using (var dlg = new ConfirmDeleteObjectDlg(_propertyTable.GetValue<IFlexApp>("App")))
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm;
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_propertyTable);

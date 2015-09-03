@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -130,7 +131,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected IFwMetaDataCache m_mdc;
 		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
-		private IApp m_app;
+		private IFlexApp m_app;
 
 		/// <summary>
 		/// This event notifies you that the selected object changed, passing an argument from
@@ -188,7 +189,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IApp app, ICmPossibility publication)
+		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
 			: base(null)
 		{
 			m_app = app;

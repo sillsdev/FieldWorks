@@ -14,14 +14,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 	public partial class RestoreDefaultsDlg : Form
 	{
 		private const string s_helpTopic = "khtpRestoreDefaults";
-		private FwApp m_app;
+		private IFlexApp m_app;
 
 		public RestoreDefaultsDlg()
 		{
 			InitializeComponent();
 		}
 
-		public RestoreDefaultsDlg(FwApp app) : this()
+		public RestoreDefaultsDlg(IFlexApp app)
+			: this()
 		{
 			m_app = app;
 		}

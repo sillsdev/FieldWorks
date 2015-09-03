@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -694,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-			var app = m_propertyTable.GetValue<FwXApp>("App");
+			var app = m_propertyTable.GetValue<IFlexApp>("App");
 			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
 				app, app);
 			RefreshPreview();

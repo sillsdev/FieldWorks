@@ -16,6 +16,7 @@ using System.Globalization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -187,7 +188,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
 		public XmlVc(string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app, ISilDataAccess sda)
+			SimpleRootSite rootSite, IFlexApp app, ISilDataAccess sda)
 			: this(rootLayoutName, fEditable, rootSite, app, null, sda)
 		{
 		}
@@ -205,7 +206,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
 		public XmlVc(string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this()
+			SimpleRootSite rootSite, IFlexApp app, XmlNode condition, ISilDataAccess sda)
+			: this()
 		{
 			m_rootLayoutName = rootLayoutName;
 			m_fEditable = fEditable;

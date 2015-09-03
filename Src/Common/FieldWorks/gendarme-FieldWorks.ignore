@@ -10,15 +10,16 @@ T: SIL.FieldWorks.IgnoreAppMessageProccessing
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # will be closed when other app appears
-M: System.Void SIL.FieldWorks.ApplicationBusyDialog::ShowOnSeparateThread(SIL.FieldWorks.Common.FwUtils.FwAppArgs,SIL.FieldWorks.ApplicationBusyDialog/WaitFor,SIL.FieldWorks.Common.Framework.FwApp,SIL.FieldWorks.Common.Framework.FwApp)
+M: System.Void SIL.FieldWorks.ApplicationBusyDialog::ShowOnSeparateThread(SIL.FieldWorks.Common.FwUtils.FwAppArgs,SIL.FieldWorks.ApplicationBusyDialog/WaitFor,SIL.FieldWorks.Common.Framework.IFlexApp,SIL.FieldWorks.Common.Framework.IFlexApp)
 
 # Will eventually be disposed
 M: System.Boolean SIL.FieldWorks.FieldWorks::LaunchApplicationFromCommandLine(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 
 # Reference only
+M: System.Void SIL.FieldWorks.FieldWorks::ShowSplashScreen(SIL.FieldWorks.Common.Framework.IFlexApp)
 M: System.Collections.Generic.List`1<System.Diagnostics.Process> SIL.FieldWorks.FieldWorks::get_ExistingProcesses()
 M: System.Void SIL.FieldWorks.FieldWorks::FollowLink(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
-M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.FwApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)
+M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.IFlexApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)
 # Linux:
 M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>*::<>*()
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<ShowEntry>*::<>*()
@@ -29,4 +30,4 @@ M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>*::<ShowEntr
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>*::<ShowRelatedWords>*()
 
 M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.Func`1<SIL.FieldWorks.ProjectId>)
-M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.FwApp)
+M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.IFlexApp)

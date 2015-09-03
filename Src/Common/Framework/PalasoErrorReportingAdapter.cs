@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.Framework
 		internal PalasoErrorReportingAdapter(Form parentForm, IPropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
-			m_registryKey = propertyTable.GetValue<IApp>("App").SettingsKey;
+			m_registryKey = propertyTable.GetValue<IFlexApp>("App").SettingsKey;
 			m_supportEmailAddress = propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress;
 		}
 

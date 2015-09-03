@@ -1094,7 +1094,7 @@ namespace SIL.FieldWorks.XWorks
 				// Create the main view
 
 				// Review JohnT: should it be m_configurationParameters or .FirstChild?
-				IApp app = PropertyTable.GetValue<IApp>("App");
+				var app = PropertyTable.GetValue<IFlexApp>("App");
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
 					Publication);
 				m_mainView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);

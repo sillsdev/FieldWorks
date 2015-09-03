@@ -1,29 +1,24 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexTextApp.cs
-// Responsibility: RandyR
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
 using SIL.CoreImpl;
+using SIL.CoreImpl.MessageBoxEx;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.IText;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using SIL.CoreImpl.MessageBoxEx;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Summary description for LexTextApp.
@@ -85,7 +80,7 @@ Old Mediator methods/commands
 			base.DoApplicationInitialization(progressDlg);
 			InitializeMessageDialogs(progressDlg);
 			if (progressDlg != null)
-				progressDlg.Message = LexTextStrings.ksLoading_;
+				progressDlg.Message = LanguageExplorerResources.ksLoading_;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -97,22 +92,22 @@ Old Mediator methods/commands
 		private void InitializeMessageDialogs(IProgress progressDlg)
 		{
 			if (progressDlg != null)
-				progressDlg.Message = LexTextStrings.ksInitializingMessageDialogs_;
+				progressDlg.Message = LanguageExplorerResources.ksInitializingMessageDialogs_;
 			MessageBoxExManager.DefineMessageBox("TextChartNewFeature",
-				LexTextStrings.ksInformation,
-				LexTextStrings.ksChartTemplateWarning, true, "info");
+				LanguageExplorerResources.ksInformation,
+				LanguageExplorerResources.ksChartTemplateWarning, true, "info");
 			MessageBoxExManager.DefineMessageBox("CategorizedEntry-Intro",
-				LexTextStrings.ksInformation,
-				LexTextStrings.ksUsedForSemanticBasedEntry, true, "info");
+				LanguageExplorerResources.ksInformation,
+				LanguageExplorerResources.ksUsedForSemanticBasedEntry, true, "info");
 			MessageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog",
-				LexTextStrings.ksInformation,
-				LexTextStrings.ksCreatingCustomGramCategory, true, "info");
+				LanguageExplorerResources.ksInformation,
+				LanguageExplorerResources.ksCreatingCustomGramCategory, true, "info");
 			MessageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType",
-				LexTextStrings.ksInformation,
-				LexTextStrings.ksCreatingCustomLexRefType, true, "info");
+				LanguageExplorerResources.ksInformation,
+				LanguageExplorerResources.ksCreatingCustomLexRefType, true, "info");
 			MessageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro",
-				LexTextStrings.ksInformation,
-				LexTextStrings.ksShowingSemanticClassification, true, "info");
+				LanguageExplorerResources.ksInformation,
+				LanguageExplorerResources.ksShowingSemanticClassification, true, "info");
 
 			MessageBoxExManager.ReadSettingsFile();
 			if (progressDlg != null)
@@ -125,7 +120,7 @@ Old Mediator methods/commands
 		private void InitializePartInventories(IProgress progressDlg, bool fLoadUserOverrides)
 		{
 			if (progressDlg != null)
-				progressDlg.Message = LexTextStrings.ksInitializingLayouts_;
+				progressDlg.Message = LanguageExplorerResources.ksInitializingLayouts_;
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, this, fLoadUserOverrides,
 				Cache.ProjectId.ProjectFolder);
 
@@ -233,15 +228,15 @@ Old Mediator methods/commands
 				// produces, and it should be more reliable (I hope).
 				//s_stringResources = new System.Resources.ResourceManager(
 				//    "SIL.FieldWorks.XWorks.LexText.LexTextStrings", Assembly.GetExecutingAssembly());
-				return (stid == null ? "NullStringID" : LexTextStrings.ResourceManager.GetString(stid));
+				return (stid == null ? "NullStringID" : LanguageExplorerResources.ResourceManager.GetString(stid));
 			}
 			catch (Exception e)
 			{
 				if (!m_fResourceFailed)
 				{
 					MessageBox.Show(null,
-						String.Format(LexTextStrings.ksErrorLoadingResourceStrings, e.Message),
-						LexTextStrings.ksError);
+						String.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message),
+						LanguageExplorerResources.ksError);
 					m_fResourceFailed = true;
 				}
 				if (stid == null)
@@ -279,6 +274,7 @@ Old Mediator methods/commands
 
 		public bool OnSFMImport(object parameters)
 		{
+#if RANDYTODO
 			Form formActive = ActiveForm;
 			IFwMainWnd wndActive = (IFwMainWnd)formActive;
 			using (var importWizard = new LexImportWizard())
@@ -286,6 +282,7 @@ Old Mediator methods/commands
 				((IFwExtension)importWizard).Init(Cache, wndActive.PropertyTable, wndActive.Publisher);
 				importWizard.ShowDialog(formActive);
 			}
+#endif
 			return true;
 		}
 
@@ -358,6 +355,7 @@ Old Mediator methods/commands
 
 			Form formActive = ActiveForm;
 
+#if RANDYTODO
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			IFwExtension dlg = null;
 			try
@@ -401,13 +399,14 @@ Old Mediator methods/commands
 				if (dlg != null && dlg is IDisposable)
 					(dlg as IDisposable).Dispose();
 			}
+#endif
 			return true;
 		}
 
 		/// <summary>
 		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.
 		/// </summary>
-		internal void ReplaceMainWindow(IFwMainWnd wndActive)
+		public override void ReplaceMainWindow(IFwMainWnd wndActive)
 		{
 			wndActive.SaveSettings();
 			FwManager.OpenNewWindowForApp();
@@ -428,6 +427,7 @@ Old Mediator methods/commands
 		public bool OnConfigureHomographs(object commandObject)
 		{
 			CheckDisposed();
+#if RANDYTODO
 			var configDlg = commandObject as XmlDocConfigureDlg;
 
 			Form formActive = ActiveForm;
@@ -453,6 +453,7 @@ Old Mediator methods/commands
 						configDlg.MasterRefreshRequired = true;
 				}
 			}
+#endif
 			return true;
 		}
 
@@ -460,6 +461,7 @@ Old Mediator methods/commands
 		{
 			CheckDisposed();
 
+#if RANDYTODO
 			Form formActive = ActiveForm;
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive != null)
@@ -473,6 +475,7 @@ Old Mediator methods/commands
 					ReplaceMainWindow(wndActive);
 				}
 			}
+#endif
 			return true;
 		}
 
@@ -508,8 +511,8 @@ Old Mediator methods/commands
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
+				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
+					LanguageExplorerResources.ksError);
 			});
 			return true;
 		}
@@ -523,8 +526,8 @@ Old Mediator methods/commands
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
+				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
+					LanguageExplorerResources.ksError);
 			});
 			return true;
 		}
@@ -538,8 +541,8 @@ Old Mediator methods/commands
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
+				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
+					LanguageExplorerResources.ksError);
 			});
 			return true;
 		}
@@ -601,8 +604,8 @@ Old Mediator methods/commands
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
+				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
+					LanguageExplorerResources.ksError);
 			});
 			return true;
 		}
@@ -620,7 +623,7 @@ Old Mediator methods/commands
 			Form wndCopyFrom, bool fOpeningNewProject)
 		{
 			if (progressDlg != null)
-				progressDlg.Message = String.Format(LexTextStrings.ksCreatingWindowForX, Cache.ProjectId.Name);
+				progressDlg.Message = String.Format(LanguageExplorerResources.ksCreatingWindowForX, Cache.ProjectId.Name);
 			Form form = base.NewMainAppWnd(progressDlg, isNewCache, wndCopyFrom, fOpeningNewProject);
 
 			if (form is IFwMainWnd)
@@ -645,8 +648,10 @@ Old Mediator methods/commands
 			// as the suggestion for fixing LT-8797.
 			try
 			{
+#if RANDYTODO
 				// Make sure this DB uses the current stylesheet version.
 				FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
+#endif
 			}
 			catch (WorkerThreadException e)
 			{
@@ -686,7 +691,9 @@ Old Mediator methods/commands
 		/// ------------------------------------------------------------------------------------
 		void LoadException(ArgumentException e)
 		{
+#if RANDYTODO
 			ErrorReporter.ReportException(e, SettingsKey, SupportEmailAddress);
+#endif
 		}
 
 		/// <summary>

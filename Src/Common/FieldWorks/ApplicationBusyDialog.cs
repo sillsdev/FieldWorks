@@ -39,7 +39,7 @@ namespace SIL.FieldWorks
 
 		private WaitFor m_whatToWaitFor;
 		private FwAppArgs m_args;
-		private FwApp m_appToStart, m_appToWaitFor;
+		private IFlexApp m_appToStart, m_appToWaitFor;
 		private bool m_fCancelPressed = false;
 
 		/// ------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks
 		/// WindowToActivate).</param>
 		/// ------------------------------------------------------------------------------------
 		internal static void ShowOnSeparateThread(FwAppArgs args, WaitFor whatToWaitFor,
-			FwApp appToStart, FwApp appToWaitFor)
+			IFlexApp appToStart, IFlexApp appToWaitFor)
 		{
 			if (whatToWaitFor != WaitFor.WindowToActivate && appToWaitFor == null)
 				throw new ArgumentNullException("appToWaitFor");

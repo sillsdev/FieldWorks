@@ -1,9 +1,7 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwApp.cs
-// Responsibility: TE Team
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,140 +9,34 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Security;
 using System.Threading;
 using System.Windows.Forms;
-using System.Security;
 using Microsoft.Win32;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace LanguageExplorer
 {
-	// The following three interfaces are used in DetailControls and XWorks.  This seems like a
-	// suitably general namespace for them.  Whether they belong in this particular file or
-	// not, they need to go somewhere.
-	#region IRecordListUpdater interface
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// This interface is implemented to help handle side-effects of changing the contents of an
-	/// object that may be stored in a list by providing access to that list.
-	/// </summary>
-	/// <remarks>Hungarian: rlu</remarks>
-	/// ----------------------------------------------------------------------------------------
-	public interface IRecordListUpdater
-	{
-		/// <summary>Set the IRecordChangeHandler object for this list.</summary>
-		IRecordChangeHandler RecordChangeHandler { set; }
-		/// <summary>Update the list, possibly calling IRecordChangeHandler.Fixup() first.
-		/// </summary>
-		void UpdateList(bool fRefreshRecord);
-
-		/// <summary>
-		/// just update the current record
-		/// </summary>
-		void RefreshCurrentRecord();
-	}
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// This interface is implemented to help handle side-effects of changing the contents of an
-	/// object that may be stored in a list.  Its single method returns either null or the
-	/// list object stored under the given name.
-	/// </summary>
-	/// <remarks>Hungarian: rlo</remarks>
-	/// ----------------------------------------------------------------------------------------
-	public interface IRecordListOwner
-	{
-		/// <summary>Find the IRecordListUpdater object with the given name.</summary>
-		IRecordListUpdater FindRecordListUpdater(string name);
-	}
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// This interface is implemented to handle side-effects of changing the contents of an
-	/// object that may be stored in a list.  If it is stored in a list, then the Fixup() method
-	/// must be called before refreshing the list in order to ensure that those side-effects
-	/// have occurred properly before redisplaying.
-	/// </summary>
-	/// <remarks>Hungarian: rch</remarks>
-	/// ----------------------------------------------------------------------------------------
-	public interface IRecordChangeHandler : IFWDisposable
-	{
-		/// <summary>Initialize the object with the record and the list to which it belongs.
-		/// </summary>
-		void Setup(object /*"record"*/ o, IRecordListUpdater rlu);
-		/// <summary>Fix the record for any changes, possibly refreshing the list to which it
-		/// belongs.</summary>
-		void Fixup(bool fRefreshList);
-
-		/// <summary>
-		/// True, if the updater was not null in the Setup call, otherwise false.
-		/// </summary>
-		bool HasRecordListUpdater
-		{
-			get;
-		}
-
-		/// <summary>
-		/// Let users know it is beiong dispsoed
-		/// </summary>
-		event EventHandler Disposed;
-	}
-	#endregion
-
-	#region Enumerations
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// The different window tiling options
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public enum WindowTiling
-	{
-		/// <summary>Top to bottom (horizontal)</summary>
-		Stacked,
-		/// <summary>Side by side (vertical)</summary>
-		SideBySide,
-	};
-
-	/// ---------------------------------------------------------------------------------------
-	/// <summary>
-	/// This is used for menu items and toolbar buttons. Multiple strings for each command
-	/// are stored together in the same string resource. See AfApp::GetResourceStr for more
-	/// information.
-	/// </summary>
-	/// ---------------------------------------------------------------------------------------
-	public enum ResourceStringType
-	{
-		/// <summary></summary>
-		krstHoverEnabled,
-		/// <summary></summary>
-		krstHoverDisabled,
-		/// <summary></summary>
-		krstStatusEnabled,
-		/// <summary></summary>
-		krstStatusDisabled,
-		/// <summary></summary>
-		krstItem,
-	};
-	#endregion
-
 	#region FwApp class
 	/// ---------------------------------------------------------------------------------------
 	/// <remarks>
 	/// Base application for .net FieldWorks apps (i.e., replacement for AfApp)
 	/// </remarks>
 	/// ---------------------------------------------------------------------------------------
-	public abstract class FwApp : IApp, ISettings, IFWDisposable, IHelpTopicProvider,
-		IMessageFilter, IFeedbackInfoProvider, IProjectSpecificSettingsKeyProvider
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "m_activeMainWindow variable is a reference")]
+	public abstract class FwApp : IFlexApp
 	{
 		#region SuppressedCacheInfo class
 		/// ------------------------------------------------------------------------------------
@@ -165,11 +57,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#region Member variables
 
 		/// <summary>
-		/// Get the singleton instance of the app.
-		/// </summary>
-		public static FwApp App { get; private set; }
-
-		/// <summary>
 		/// A picture holder that may be used to retrieve various useful pictures.
 		/// </summary>
 		public PictureHolder PictureHolder { get; private set; }
@@ -178,12 +65,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private bool m_fInitialized = false;
 		private bool m_fInModalState = false;
-
-		/// <summary>
-		/// Return true if the application is in the process of shutting down after a crash.
-		/// Some settings should not be saved in this case.
-		/// </summary>
-		static public bool InCrashedState { get; set; }
 
 		/// <summary></summary>
 		protected List<IFwMainWnd> m_rgMainWindows = new List<IFwMainWnd>(1);
@@ -231,10 +112,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected FwApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider)
 		{
-			if (App != null)
-			{
-				throw new InvalidOperationException(@"Already has App.");
-			}
 			PictureHolder = new PictureHolder();
 			m_fwManager = fwManager;
 			m_helpTopicProvider = helpTopicProvider;
@@ -249,8 +126,13 @@ namespace SIL.FieldWorks.Common.Framework
 			Application.LeaveThreadModal += Application_LeaveThreadModal;
 
 			Application.AddMessageFilter(this);
+		}
 
-			App = this;
+		/// <summary>
+		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.
+		/// </summary>
+		public virtual void ReplaceMainWindow(IFwMainWnd wndActive)
+		{
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -317,12 +199,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Triggered by shutting down the app, this is a possible override point for
-		/// saving any settings to be loaded by LoadSettings.
+		/// Save any settings.
+		/// </summary>
+		/// <remarks>
 		/// This is the real place to save settings, as opposed to SaveSettingsNow, which is
 		/// a dummy implementation required because (for the sake of the SettingsKey method)
 		/// we implement ISettings.
-		/// </summary>
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public virtual void SaveSettings()
 		{
@@ -516,7 +399,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			if (disposing)
 			{
-			UpdateAppRuntimeCounter();
+				UpdateAppRuntimeCounter();
 
 				Logger.WriteEvent("Disposing app: " + GetType().Name);
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
@@ -566,10 +449,6 @@ namespace SIL.FieldWorks.Common.Framework
 			m_suppressedCacheInfo = null;
 			m_refreshView = null;
 			PictureHolder = null;
-			App = null;
-#if DEBUG
-			m_debugProcs = null;
-#endif
 			IsDisposed = true;
 			BeingDisposed = false;
 		}
@@ -1698,6 +1577,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns>
 		/// true to filter the message and stop it from being dispatched; false to allow the message to continue to the next filter or control.
 		/// </returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "c is a reference")]
 		public virtual bool PreFilterMessage(ref Message m)
 		{
 			if (m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYUP)
@@ -1752,31 +1633,31 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Handle changes to the LinkedFiles root directory for a language project.
 		/// </summary>
-		/// <param name="sOldLinkedFilesRootDir">The old LinkedFiles root directory.</param>
+		/// <param name="oldLinkedFilesRootDir">The old LinkedFiles root directory.</param>
 		/// <returns></returns>
 		/// <remarks>This may not be the best place for this method, but I'm not sure there is a
 		/// "best place".</remarks>
 		/// ------------------------------------------------------------------------------------
-		public bool UpdateExternalLinks(string sOldLinkedFilesRootDir)
+		public bool UpdateExternalLinks(string oldLinkedFilesRootDir)
 		{
 			ILangProject lp = Cache.LanguageProject;
 			string sNewLinkedFilesRootDir = lp.LinkedFilesRootDir;
-			if (!FileUtils.PathsAreEqual(sNewLinkedFilesRootDir, sOldLinkedFilesRootDir))
+			if (!FileUtils.PathsAreEqual(sNewLinkedFilesRootDir, oldLinkedFilesRootDir))
 			{
 				List<string> rgFilesToMove = new List<string>();
 				// TODO: offer to move or copy existing files.
 				foreach (ICmFolder cf in lp.MediaOC)
-					CollectMovableFilesFromFolder(cf, rgFilesToMove, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+					CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 				foreach (ICmFolder cf in lp.PicturesOC)
-					CollectMovableFilesFromFolder(cf, rgFilesToMove, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+					CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 				//Get the files which are pointed to by links in TsStrings
-				CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+				CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 
-				var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, sOldLinkedFilesRootDir);
+				var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, oldLinkedFilesRootDir);
 				foreach (var linkInfo in hyperlinks)
 				{
 					if (!rgFilesToMove.Contains(linkInfo.RelativePath) &&
-						FileUtils.SimilarFileExists(Path.Combine(sOldLinkedFilesRootDir, linkInfo.RelativePath)) &&
+						FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath)) &&
 						!FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
 					{
 						rgFilesToMove.Add(linkInfo.RelativePath);
@@ -1787,7 +1668,7 @@ namespace SIL.FieldWorks.Common.Framework
 					FileLocationChoice action;
 					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg())
 					{
-						dlg.Initialize(rgFilesToMove.Count, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
+						dlg.Initialize(rgFilesToMove.Count, oldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
 						DialogResult res = dlg.ShowDialog();
 						Debug.Assert(res == DialogResult.OK);
 						if (res != DialogResult.OK)
@@ -1800,9 +1681,9 @@ namespace SIL.FieldWorks.Common.Framework
 							() =>
 								{
 									foreach (ICmFolder cf in lp.MediaOC)
-										ExpandToFullPath(cf, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+										ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 									foreach (ICmFolder cf in lp.PicturesOC)
-										ExpandToFullPath(cf, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+										ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 								});
 						// Hyperlinks are always already full paths.
 						return false;
@@ -1810,7 +1691,7 @@ namespace SIL.FieldWorks.Common.Framework
 					List<string> rgLockedFiles = new List<string>();
 					foreach (string sFile in rgFilesToMove)
 					{
-						string sOldPathname = Path.Combine(sOldLinkedFilesRootDir, sFile);
+						string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
 						string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
 						string sNewDir = Path.GetDirectoryName(sNewPathname);
 						if (!Directory.Exists(sNewDir))
@@ -1838,7 +1719,7 @@ namespace SIL.FieldWorks.Common.Framework
 						}
 					}
 					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-						() => StringServices.FixHyperlinkFolder(hyperlinks, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir));
+						() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
 
 					// If any files failed to be moved or copied above, try again now that we've
 					// opened a new window and had more time elapse (and more demand to reuse
@@ -1849,7 +1730,7 @@ namespace SIL.FieldWorks.Common.Framework
 						Thread.Sleep(1000);
 						foreach (string sFile in rgLockedFiles)
 						{
-							string sOldPathname = Path.Combine(sOldLinkedFilesRootDir, sFile);
+							string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
 							string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
 							try
 							{
@@ -1962,6 +1843,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get { return GetResourceString("kstidSupportEmail"); }
 		}
+
 		#endregion
 	}
 	#endregion

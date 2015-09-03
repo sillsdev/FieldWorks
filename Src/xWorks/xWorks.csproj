@@ -354,9 +354,6 @@
     <Compile Include="ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="FwXApp.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IDictConfigPresenter.cs" />
     <Compile Include="IDictConfigViewer.cs" />
     <Compile Include="IFlexMacro.cs" />

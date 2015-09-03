@@ -73,6 +73,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="Framework, Version=9.0.0.18766, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Release\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls, Version=9.0.0.10678, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Release\FwControls.dll</HintPath>
+    </Reference>
     <Reference Include="FwCoreDlgs, Version=6.0.1.24212, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>

@@ -195,9 +195,6 @@
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LexTextApp.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="LexTextStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

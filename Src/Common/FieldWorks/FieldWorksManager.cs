@@ -41,7 +41,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ShutdownApp(FwApp app)
+		public void ShutdownApp(IFlexApp app)
 		{
 			FieldWorks.ShutdownApp(app, true);
 		}
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public void DeleteProject(FwApp app, Form dialogOwner)
+		public void DeleteProject(IFlexApp app, Form dialogOwner)
 		{
 			FieldWorks.DeleteProject(dialogOwner, app);
 		}
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(FwApp fwApp, Form dialogOwner)
+		public void RestoreProject(IFlexApp fwApp, Form dialogOwner)
 		{
 			FieldWorks.RestoreProject(dialogOwner, fwApp);
 		}
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks
 		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
 		/// archive dialog</returns>
 		/// ------------------------------------------------------------------------------------
-		public List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner)
+		public List<string> ArchiveProjectWithRamp(IFlexApp fwApp, Form dialogOwner)
 		{
 			return FieldWorks.ArchiveProjectWithRamp(dialogOwner, fwApp);
 		}
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(IFlexApp fwApp, Form dialogOwner)
 		{
 			FieldWorks.FileProjectLocation(dialogOwner, fwApp);
 		}
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="project">The project name to re-open</param>
 		/// <param name="app"></param>
-		public FwApp ReopenProject(string project, FwAppArgs app)
+		public IFlexApp ReopenProject(string project, FwAppArgs app)
 		{
 			return FieldWorks.ReopenProject(project, app);
 		}

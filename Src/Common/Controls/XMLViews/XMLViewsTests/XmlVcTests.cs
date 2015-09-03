@@ -150,8 +150,10 @@ namespace XMLViewsTests
 		{
 			using (var view = new XmlView(m_hvoLexDb, "root", true, m_sda))
 			{
-				var vc = new XmlVc("root", true, view, null, m_sda);
-				vc.IdentifySource = true;
+				var vc = new XmlVc("root", true, view, null, m_sda)
+				{
+					IdentifySource = true
+				};
 				vc.SetCache(Cache);
 				vc.m_layouts = m_layouts;
 				vc.DataAccess = m_sda;

@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.TE
 		protected readonly FdoCache m_cache;
 		/// <summary>Scripture of the language project we are working on</summary>
 		protected IScripture m_scr;
-		private FwApp m_app;
 		#endregion
 
 		#region Constructor
@@ -50,25 +49,6 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Public static methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Perform one-time initialization of a new Scripture project
-		/// </summary>
-		/// <param name="cache">The database cache</param>
-		/// <param name="app">The TE application.</param>
-		/// <param name="progressDlg">The progress dialog (can be null).</param>
-		/// <returns>
-		/// true if data loaded successfully; false, otherwise
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static bool Initialize(FdoCache cache, FwApp app,
-			IThreadedProgress progressDlg)
-		{
-			TeScrInitializer scrInitializer = new TeScrInitializer(cache);
-			scrInitializer.m_app = app;
-			return scrInitializer.Initialize(progressDlg);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Performs any needed tasks to ensure that the project is valid and has any objects
@@ -122,15 +102,15 @@ namespace SIL.FieldWorks.TE
 		/// Ensures all of the project components are valid.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public static void EnsureProjectComponentsValid(FdoCache cache, FwApp app,
+		public static void EnsureProjectComponentsValid(FdoCache cache, IHelpTopicProvider helpTopicProvider,
 			IThreadedProgress existingProgressDlg)
 		{
-			EnsureProjectValid(cache, app, existingProgressDlg);
+			EnsureProjectValid(cache, helpTopicProvider, existingProgressDlg);
 
 			ILangProject lp = cache.LangProject;
 
 			TeScrBookRefsInit.EnsureFactoryScrBookRefs(cache, existingProgressDlg);
-			TeStylesXmlAccessor.EnsureCurrentStylesheet(cache, existingProgressDlg, app);
+			TeStylesXmlAccessor.EnsureCurrentStylesheet(cache, existingProgressDlg, helpTopicProvider);
 			TeScrNoteCategoriesInit.EnsureCurrentScrNoteCategories(lp, existingProgressDlg);
 		}
 		#endregion

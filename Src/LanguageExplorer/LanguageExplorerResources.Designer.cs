@@ -71,6 +71,148 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry, could not launch {0}..
+        /// </summary>
+        internal static string ksCannotLaunchX {
+            get {
+                return ResourceManager.GetString("ksCannotLaunchX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called &quot;Text Constituent Chart Templates&quot;. The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart..
+        /// </summary>
+        internal static string ksChartTemplateWarning {
+            get {
+                return ResourceManager.GetString("ksChartTemplateWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new category will then be available for you to choose..
+        /// </summary>
+        internal static string ksCreatingCustomGramCategory {
+            get {
+                return ResourceManager.GetString("ksCreatingCustomGramCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new type will then be available for you to choose..
+        /// </summary>
+        internal static string ksCreatingCustomLexRefType {
+            get {
+                return ResourceManager.GetString("ksCreatingCustomLexRefType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating window for {0} Project....
+        /// </summary>
+        internal static string ksCreatingWindowForX {
+            get {
+                return ResourceManager.GetString("ksCreatingWindowForX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ksError {
+            get {
+                return ResourceManager.GetString("ksError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading resource strings: {0}.
+        /// </summary>
+        internal static string ksErrorLoadingResourceStrings {
+            get {
+                return ResourceManager.GetString("ksErrorLoadingResourceStrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string ksInformation {
+            get {
+                return ResourceManager.GetString("ksInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing Layouts....
+        /// </summary>
+        internal static string ksInitializingLayouts_ {
+            get {
+                return ResourceManager.GetString("ksInitializingLayouts_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing Message Dialogs....
+        /// </summary>
+        internal static string ksInitializingMessageDialogs_ {
+            get {
+                return ResourceManager.GetString("ksInitializingMessageDialogs_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string ksLoading_ {
+            get {
+                return ResourceManager.GetString("ksLoading_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses..
+        /// </summary>
+        internal static string ksShowingSemanticClassification {
+            get {
+                return ResourceManager.GetString("ksShowingSemanticClassification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to study the training materials for Language Explorer?
+        ///
+        ///If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
+        ///Alternatively, point to Demo Movies and choose an option.
+        ///	- Play All gives a half-hour overview of Language Explorer.
+        ///	- You may also choose specific demo movie topics.
+        ///
+        ///If you click No, you will see various options for starting work in Language Explorer..
+        /// </summary>
+        internal static string kstidOpenSampleDbMsg {
+            get {
+                return ResourceManager.GetString("kstidOpenSampleDbMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FlexErrors@sil.org.
+        /// </summary>
+        internal static string kstidSupportEmail {
+            get {
+                return ResourceManager.GetString("kstidSupportEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/..
+        /// </summary>
+        internal static string ksUsedForSemanticBasedEntry {
+            get {
+                return ResourceManager.GetString("ksUsedForSemanticBasedEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Lexicon32 {

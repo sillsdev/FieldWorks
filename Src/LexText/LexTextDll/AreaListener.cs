@@ -921,7 +921,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 						throw new ApplicationException("PropertyTable is null.");
 
 					// don't try to use ReplaceMainWindow on all the windows, only the active one!
-					var app = PropertyTable.GetValue<LexTextApp>("App");
+					var app = PropertyTable.GetValue<IFlexApp>("App");
 					var win = (IFwMainWnd)app.ActiveMainWindow;
 					app.ReplaceMainWindow(win);
 					break;

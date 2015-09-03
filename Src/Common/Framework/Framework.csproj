@@ -246,9 +246,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FrameworkStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="FwApp.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="FwEditingHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -259,6 +256,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="IFieldWorksManager.cs" />
+    <Compile Include="IFlexApp.cs" />
     <Compile Include="IFwMainWnd.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />

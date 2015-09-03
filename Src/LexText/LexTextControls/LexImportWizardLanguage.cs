@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
-			if (m_helpTopic != null && m_helpTopicProvider != null) // FwApp.App could be null during tests
+			if (m_helpTopic != null && m_helpTopicProvider != null)
 			{
 				helpProvider = new HelpProvider();
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;

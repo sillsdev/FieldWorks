@@ -13,7 +13,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -41,7 +40,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary>The FDO Cache</summary>
 		protected readonly FdoCache m_cache;
 
-		private readonly IApp m_app;
+		private readonly IFlexApp m_app;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		/// <summary>The Scripture object</summary>
 		private readonly FwStyleSheet m_styleSheet;
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="app">The app.</param>
 		/// --------------------------------------------------------------------------------
 		protected ImportedBooks(FdoCache cache, IScrDraft importVersion, IScrDraft backupVersion,
-			IHelpTopicProvider helpTopicProvider, IApp app)
+			IHelpTopicProvider helpTopicProvider, IFlexApp app)
 		{
 			InitializeComponent();
 
@@ -121,7 +120,7 @@ namespace SIL.FieldWorks.TE
 		public ImportedBooks(FdoCache cache, FwStyleSheet styleSheet,
 			IScrDraft importVersion, float zoomPercentageDraft, float zoomPercentageFootnote,
 			IScrDraft backupVersion, FilteredScrBooks bookFilter, IEnumerable<int> booksImported,
-			IHelpTopicProvider helpTopicProvider, IApp app) :
+			IHelpTopicProvider helpTopicProvider, IFlexApp app) :
 			this(cache, importVersion, backupVersion, helpTopicProvider, app)
 		{
 			m_styleSheet = styleSheet;
@@ -528,7 +527,7 @@ namespace SIL.FieldWorks.TE
 					// When Undoing, we need to first resurrect the deleted book, then
 					// put it back in the book filter...so we need a RIFF in the sequence
 					// BEFORE the delete.
-					ReplaceInFilterFixer fixer1 = new ReplaceInFilterFixer(bookCurr, null, m_app as FwApp);
+					ReplaceInFilterFixer fixer1 = new ReplaceInFilterFixer();
 					m_cache.ActionHandlerAccessor.AddAction(fixer1);
 				}
 
@@ -550,7 +549,7 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 			IScrBook newCopy = m_scr.CopyBookToCurrent(bookImported);
-			ReplaceInFilterFixer fixer = new ReplaceInFilterFixer(null, newCopy, m_app as FwApp);
+			ReplaceInFilterFixer fixer = new ReplaceInFilterFixer();
 
 			fixer.Redo();
 			if (m_cache.ActionHandlerAccessor != null)

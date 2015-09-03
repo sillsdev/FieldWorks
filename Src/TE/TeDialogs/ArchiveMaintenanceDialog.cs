@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected readonly FdoCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly FwApp m_app;
+		private readonly IFlexApp m_app;
 		private readonly IVwStylesheet m_styleSheet;
 		private readonly float m_zoomDraft;
 		private readonly float m_zoomFootnote;
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public SavedVersionsDialog(FdoCache cache, IVwStylesheet styleSheet,
 			float zoomFactorDraft, float zoomFactorFootnote, IHelpTopicProvider helpTopicProvider,
-			FwApp app)
+			IFlexApp app)
 		{
 			InitializeComponent();
 
@@ -610,13 +610,13 @@ namespace SIL.FieldWorks.TE
 							// When Undoing, we need to first resurrect the deleted book, then
 							// put it back in the book filter...so we need a RIFF in the sequence
 							// BEFORE the delete.
-							ReplaceInFilterFixer fixer1 = new ReplaceInFilterFixer(originalBook, null, m_app);
+							ReplaceInFilterFixer fixer1 = new ReplaceInFilterFixer();
 							m_cache.ActionHandlerAccessor.AddAction(fixer1);
 						}
 						m_scr.ScriptureBooksOS.Remove(originalBook);
 					}
 					IScrBook newBook = m_scr.CopyBookToCurrent(savedBook);
-					ReplaceInFilterFixer fixer = new ReplaceInFilterFixer(null, newBook, m_app);
+					ReplaceInFilterFixer fixer = new ReplaceInFilterFixer();
 
 					fixer.Redo();
 					if (m_cache.ActionHandlerAccessor != null)

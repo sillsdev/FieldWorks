@@ -9,8 +9,6 @@
 // </remarks>
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.TE
 {
@@ -26,23 +24,13 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	public class ReplaceInFilterFixer : IUndoAction
 	{
-		private readonly IScrBook m_bookOld;
-		private readonly IScrBook m_bookNew;
-		private readonly FwApp m_app;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make one
 		/// </summary>
-		/// <param name="bookOld">The book old.</param>
-		/// <param name="bookNew">The book new.</param>
-		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public ReplaceInFilterFixer(IScrBook bookOld, IScrBook bookNew, FwApp app)
+		public ReplaceInFilterFixer()
 		{
-			m_bookOld = bookOld;
-			m_bookNew = bookNew;
-			m_app = app;
 		}
 
 		#region IUndoAction Members

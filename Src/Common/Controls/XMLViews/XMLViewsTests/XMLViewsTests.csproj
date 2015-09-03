@@ -131,6 +131,14 @@
       <Name>Filters</Name>
       <HintPath>..\..\..\..\..\Output\Debug\Filters.dll</HintPath>
     </Reference>
+    <Reference Include="Framework, Version=9.0.0.18516, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Release\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls, Version=9.0.0.10678, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Release\FwControls.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils, Version=6.1.0.20042, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>

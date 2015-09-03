@@ -142,6 +142,7 @@
     <Compile Include="IPaneBar.cs" />
     <Compile Include="IPaneBarUser.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
+    <Compile Include="IRecordListUpdater.cs" />
     <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="IToolRepository.cs" />
     <Compile Include="MainUserControl.cs">

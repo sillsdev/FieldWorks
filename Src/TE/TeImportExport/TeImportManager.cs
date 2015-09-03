@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.TE
 		private readonly ITeImportCallbacks m_importCallbacks;
 		private readonly FwStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly IApp m_app;
+		private readonly IFlexApp m_app;
 		private readonly bool m_fParatextStreamlinedImport;
 		private string m_sOXESFile;
 
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
 		/// streamlined import (minimal UI).</param>
 		/// ------------------------------------------------------------------------------------
-		internal TeImportManager(Form mainWnd, FwStyleSheet styleSheet, FwApp app,
+		internal TeImportManager(Form mainWnd, FwStyleSheet styleSheet, IFlexApp app,
 			bool fParatextStreamlinedImport)
 			: this(app.Cache, styleSheet, app, fParatextStreamlinedImport)
 		{
@@ -115,11 +115,11 @@ namespace SIL.FieldWorks.TE
 		/// streamlined import (minimal UI).</param>
 		/// <remarks>This version is for testing only</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected TeImportManager(FdoCache cache, FwStyleSheet styleSheet, IApp app,
+		protected TeImportManager(FdoCache cache, FwStyleSheet styleSheet, IFlexApp app,
 			bool fParatextStreamlinedImport)
 		{
 			m_cache = cache;
-			m_helpTopicProvider = app as IHelpTopicProvider;
+			m_helpTopicProvider = app;
 			m_app = app;
 			m_styleSheet = styleSheet;
 			m_fParatextStreamlinedImport = fParatextStreamlinedImport;
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="app">The app.</param>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool ImportParatext(Form mainWnd, FwStyleSheet stylesheet, FwApp app)
+		public static bool ImportParatext(Form mainWnd, FwStyleSheet stylesheet, IFlexApp app)
 		{
 			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, app, true);
 			return mgr.ImportSf();

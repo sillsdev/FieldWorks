@@ -9,6 +9,7 @@ using SIL.FieldWorks.XWorks.LexEd;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
 	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
 	{
 		protected IPropertyTable m_propertyTable;
@@ -269,4 +270,5 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion AllReversalEntriesRecordListTests tests
 	}
+#endif
 }

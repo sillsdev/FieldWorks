@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -287,7 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_sda = m_fdoCache.DomainDataByFlid;
 
 			Debug.Assert(m_layoutName != null, "No layout name.");
-			IApp app = PropertyTable == null ? null : PropertyTable.GetValue<IApp>("App");
+			var app = PropertyTable == null ? null : PropertyTable.GetValue<IFlexApp>("App");
 			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, m_sda)
 			{
 				Cache = m_fdoCache,

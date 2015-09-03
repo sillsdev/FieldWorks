@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.IText
 			m_sLastXmlFileName = "";
 
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			if (helpTopicProvider != null) // FwApp.App could be null during tests
+			if (helpTopicProvider != null)
 			{
 				helpProvider = new HelpProvider
 				{

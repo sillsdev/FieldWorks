@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.Framework.Archiving
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
-			IEnumerable<string> filesToArchive, IPropertyTable propertyTable, FwApp thisapp, FdoCache cache)
+			IEnumerable<string> filesToArchive, IPropertyTable propertyTable, IFlexApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
