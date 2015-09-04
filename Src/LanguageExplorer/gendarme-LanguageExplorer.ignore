@@ -14,3 +14,6 @@ M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlV
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
+
+# FwRegistrySettings disposed in Dispose method.
+M: System.Void LanguageExplorer.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)

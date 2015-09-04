@@ -69,6 +69,10 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Reporting, Version=9.0.0.19060, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Reporting.dll</HintPath>
+    </Reference>
     <Reference Include="RootSite, Version=9.0.0.26304, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\RootSite.dll</HintPath>
@@ -171,8 +175,7 @@
     <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\CorpusStatisticsTool.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditTool.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\WordListConcordanceTool.cs" />
-    <Compile Include="FwApp.cs" />
-    <Compile Include="FwXApp.cs" />
+    <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="LanguageExplorerResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

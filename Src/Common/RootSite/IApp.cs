@@ -11,7 +11,6 @@
 
 using System;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;

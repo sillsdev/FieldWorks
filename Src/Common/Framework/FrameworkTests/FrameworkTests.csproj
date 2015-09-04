@@ -186,9 +186,6 @@
     </Compile>
     <Compile Include="DummyFwApp.cs">
     </Compile>
-    <Compile Include="FwAppTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="FwEditingHelperTests.cs" />
     <Compile Include="SelInfoTests.cs">
       <SubType>Code</SubType>

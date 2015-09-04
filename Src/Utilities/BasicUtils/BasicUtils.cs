@@ -246,10 +246,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static string GetTestLangProjDataBaseName()
 		{
-			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (String.IsNullOrEmpty(dbName))
-				return "TestLangProj";
-			return dbName;
+			return "TestLangProj";
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -4,18 +4,18 @@
 
 using System;
 using System.IO;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Specialization of StylesXmlAccessor for loading the Flex factory styles.
 	/// </summary>
 	public class FlexStylesXmlAccessor : StylesXmlAccessor
 	{
-		readonly ILexDb m_lexicon;
+		private readonly ILexDb m_lexicon;
 
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
