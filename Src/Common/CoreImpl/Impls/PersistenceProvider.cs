@@ -14,7 +14,7 @@ namespace SIL.CoreImpl.Impls
 	///  A PersistenceProvider which uses the PropertyTable
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_propertyTable variable is a reference; it is owned by someone else")]
+		Justification = "m_propertyTable variable is a reference")]
 	internal class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;

@@ -125,6 +125,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			mainCollapsingSplitContainer.SecondControl.Controls.Add(_grammarSketchHtmlViewer);
 
 			// F5 refresh is disabled in this tool.
+			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
 			_refreshMenu = menuStrip.Items.Find("refreshToolStripMenuItem", true)[0];
 			_refreshOriginalValue = _refreshMenu.Enabled;
 			_refreshMenu.Enabled = false;

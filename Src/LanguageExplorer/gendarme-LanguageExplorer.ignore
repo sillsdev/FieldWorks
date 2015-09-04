@@ -14,6 +14,25 @@ M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlV
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
+M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::OnMouseClick(System.Windows.Forms.MouseEventArgs)
+
+# added to collection and disposed there
+M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()
+M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookButtonPanelItemArea::Add(LanguageExplorer.Controls.SilSidePane.Item)
+M: System.Void LanguageExplorer.Controls.SilSidePane.SidePane::Init(System.Windows.Forms.Control)
+M: System.Void LanguageExplorer.Controls.SilSidePane.SidePane::AddTab(LanguageExplorer.Controls.SilSidePane.Tab)
+M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookButtonPanel::OverflowButton_DropDownOpening(System.Object,System.EventArgs)
+
+# Disposed in finally block
+M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBarPanelRenderer::OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)
 
 # FwRegistrySettings disposed in Dispose method.
-M: System.Void LanguageExplorer.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)
+M: System.Void LanguageExplorer.Impls.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: LanguageExplorer.Controls.SilSidePane.Item
+T: LanguageExplorer.Controls.SilSidePane.OutlookBarButtonCollection
+T: LanguageExplorer.Controls.SilSidePane.Tab

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// The fully-qualified (with namespace) C# object name for LexTextApp
 		/// </summary>
-		public const string ksFullFlexAppObjectName = "LanguageExplorer.LexTextApp";
+		public const string ksFullFlexAppObjectName = "LanguageExplorer.Impls.LexTextApp";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

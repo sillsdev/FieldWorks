@@ -43,7 +43,7 @@ namespace SIL.CoreImpl
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "m_master variable is a reference; it is owned by someone else")]
+		Justification = "m_master variable is a reference")]
 	public sealed class MessageSequencer : IFWDisposable
 	{
 		private Control m_master;

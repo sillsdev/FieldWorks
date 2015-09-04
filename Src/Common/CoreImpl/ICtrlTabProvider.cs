@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace SIL.CoreImpl
 {
 	/// <summary>
-	/// Implement this interface on controls that can provide targets to Cntrl-(Shift-)Tab.
+	/// Implement this interface on controls that can provide targets to Ctrl(+Shift)+Tab.
 	/// </summary>
 	public interface ICtrlTabProvider
 	{

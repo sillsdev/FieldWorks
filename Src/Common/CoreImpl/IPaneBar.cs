@@ -7,7 +7,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Interface for a Pane bar.
 	/// </summary>
-	public interface IPaneBar
+	public interface IPaneBar : IFlexComponent
 	{
 		/// <summary>
 		/// Set the text of the pane bar.

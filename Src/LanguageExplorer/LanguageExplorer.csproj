@@ -66,8 +66,25 @@
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="L10NSharp, Version=2.0.40.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\L10NSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=9.0.0.19060, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -76,6 +93,10 @@
     <Reference Include="RootSite, Version=9.0.0.26304, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Archiving, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\RBR_FW_Fork\FW\Output\Release\SilUtils.dll</HintPath>
@@ -89,9 +110,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Widgets">
       <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
@@ -108,6 +127,37 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Controls\BasicPaneBarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBar\PanelButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBar\PanelExtension.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBar\PanelMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBar\Spacer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IArea.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMajorFlexComponent.cs" />
+    <Compile Include="IMajorFlexUiComponent.cs" />
+    <Compile Include="ITool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IAreaRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IToolRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Archiving\ArchivingExtensions.cs" />
+    <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="Areas\Grammar\GrammarArea.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoprohibitionRuleEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\BulkEditPhonemesTool.cs" />
@@ -176,12 +226,39 @@
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditTool.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\WordListConcordanceTool.cs" />
     <Compile Include="FlexStylesXmlAccessor.cs" />
+    <Compile Include="Impls\AreaRepository.cs" />
+    <Compile Include="Impls\ToolRepository.cs" />
+    <Compile Include="Impls\FwMainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Impls\FwMainWnd.Designer.cs">
+      <DependentUpon>FwMainWnd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CollapsingSplitContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\CollapsingSplitContainer.Designer.cs">
+      <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PaneBarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBarContainer.Designer.cs">
+      <DependentUpon>PaneBarContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PaneBar\PaneBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PaneBar\PaneBar.Designer.cs">
+      <DependentUpon>PaneBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="LanguageExplorerResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="LexTextApp.cs" />
+    <Compile Include="Impls\LexTextApp.cs" />
+    <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Areas\RecordBar.cs">
       <SubType>UserControl</SubType>
@@ -198,7 +275,57 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Controls\SilSidePane\Banner.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\IItemArea.cs" />
+    <Compile Include="Controls\SilSidePane\Item.cs" />
+    <Compile Include="Controls\SilSidePane\ListViewItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlg.Designer.cs">
+      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\OutlookBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\OutlookBarButton.cs" />
+    <Compile Include="Controls\SilSidePane\OutlookBarButtonCollection.cs" />
+    <Compile Include="Controls\SilSidePane\OutlookBarSubButtonPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\OutlookButtonPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\OutlookButtonPanelItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\SidePane.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\SidePaneItemAreaStyle.cs" />
+    <Compile Include="Controls\SilSidePane\SilSidePane.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SilSidePane.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\StripListItemArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SilSidePane\Tab.cs" />
+    <EmbeddedResource Include="Controls\SilSidePane\NavPaneOptionsDlg.resx">
+      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SilSidePane\SilSidePane.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.resx">
       <DependentUpon>GrammarSketchHtmlViewer.cs</DependentUpon>
@@ -207,6 +334,17 @@
     <EmbeddedResource Include="LanguageExplorerResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Impls\FwMainWnd.resx">
+      <DependentUpon>FwMainWnd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CollapsingSplitContainer.resx">
+      <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PaneBarContainer.resx">
+      <DependentUpon>PaneBarContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

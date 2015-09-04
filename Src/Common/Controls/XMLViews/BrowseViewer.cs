@@ -3607,7 +3607,12 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
+#if RANDYTODO
+				// TODO: Reinstate this, when BrowseViewer can use IArea.
 				return PropertyTable.GetValue<IArea>("currentArea").MachineName;
+#else
+				return "SOMEAREA";
+#endif
 			}
 		}
 

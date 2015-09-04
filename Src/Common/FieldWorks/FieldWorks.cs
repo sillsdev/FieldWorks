@@ -2852,7 +2852,7 @@ namespace SIL.FieldWorks
 		{
 			if (s_flexApp == null)
 			{
-				s_flexApp = (IFlexApp)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
+				s_flexApp = (IFlexApp)DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
 					FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(), args);
 				s_flexAppKey = s_flexApp.SettingsKey;
 			}

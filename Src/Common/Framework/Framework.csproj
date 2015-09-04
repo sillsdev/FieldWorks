@@ -227,16 +227,8 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Archiving\ArchivingExtensions.cs" />
-    <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FwMainWnd.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwMainWnd.Designer.cs">
-      <DependentUpon>FwMainWnd.cs</DependentUpon>
     </Compile>
     <Compile Include="ExportStyleInfo.cs" />
     <Compile Include="HelpTopicProviderBase.cs" />
@@ -258,7 +250,6 @@
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFlexApp.cs" />
     <Compile Include="IFwMainWnd.cs" />
-    <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarProgressHandler.cs" />
     <Compile Include="StylesXmlAccessor.cs" />
@@ -270,9 +261,6 @@
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FrameworkStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwMainWnd.resx">
-      <DependentUpon>FwMainWnd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwRootSite.resx">
       <DependentUpon>FwRootSite.cs</DependentUpon>

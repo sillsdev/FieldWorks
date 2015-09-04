@@ -135,14 +135,7 @@ namespace SIL.Utils
 				+ ". If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the name space (e.g. XCore.Ticker).";
 		}
 
-		/// <summary>
-		/// Dynamically find an assembly and create an object of the name to class.
-		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="rootAssemblyPath"></param>
-		/// <param name="args">args to the constructor</param>
-		/// <returns></returns>
-		static public Object CreateObject(string assemblyPath1, string className1, params object[] args)
+		public static object CreateObject(string assemblyPath1, string className1, BindingFlags flags, params object[] args)
 		{
 			Assembly assembly;
 			string assemblyPath = GetAssembly(assemblyPath1, out assembly);
@@ -153,8 +146,8 @@ namespace SIL.Utils
 			{
 				//make the object
 				//Object thing = assembly.CreateInstance(className);
-				thing = assembly.CreateInstance(className, false, BindingFlags.Instance|BindingFlags.Public,
-					null, args, null, null );
+				thing = assembly.CreateInstance(className, false, flags,
+					null, args, null, null);
 			}
 			catch (Exception err)
 			{
@@ -163,7 +156,7 @@ namespace SIL.Utils
 
 				Exception inner = err;
 
-				while(inner != null)
+				while (inner != null)
 				{
 					bldr.AppendLine();
 					bldr.Append("Inner exception message = " + inner.Message);
@@ -178,6 +171,24 @@ namespace SIL.Utils
 				throw new ConfigurationException(CouldNotCreateObjectMsg(assemblyPath, className));
 			}
 			return thing;
+
+		}
+
+		public static object CreateNonPublicObject(string assemblyPath1, string className1, params object[] args)
+		{
+			return CreateObject(assemblyPath1, className1, BindingFlags.Instance | BindingFlags.NonPublic, args);
+		}
+
+		/// <summary>
+		/// Dynamically find an assembly and create an object of the name to class.
+		/// </summary>
+		/// <param name="assemblyPath1"></param>
+		/// <param name="className1"></param>
+		/// <param name="args">args to the constructor</param>
+		/// <returns></returns>
+		static public object CreateObject(string assemblyPath1, string className1, params object[] args)
+		{
+			return CreateObject(assemblyPath1, className1, BindingFlags.Instance | BindingFlags.Public, args);
 		}
 
 		public static List<T> GetPlugins<T>(string pattern) where T: class

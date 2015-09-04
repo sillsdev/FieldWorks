@@ -239,8 +239,6 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the name of the TestLangProj database.
-		/// This is to allow multiple users to test with same database server and different
-		/// named TestLangProj files.
 		/// </summary>
 		/// <returns>TestLangProj name</returns>
 		/// ------------------------------------------------------------------------------------

@@ -108,7 +108,6 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AreaRepositoryFactory.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
@@ -120,12 +119,6 @@
     <Compile Include="HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IArea.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IAreaRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ICollapsingSplitContainer.cs" />
     <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IFeedbackInfoProvider.cs" />
@@ -133,18 +126,12 @@
     <Compile Include="IHelpTopicProvider.cs" />
     <Compile Include="IMainContentControl.cs" />
     <Compile Include="IMainUserControl.cs" />
-    <Compile Include="IMajorFlexComponent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IMajorFlexUiComponent.cs" />
-    <Compile Include="Impls\AreaRepository.cs" />
     <Compile Include="Impls\PersistenceProvider.cs" />
     <Compile Include="IPaneBar.cs" />
     <Compile Include="IPaneBarUser.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
     <Compile Include="IRecordListUpdater.cs" />
     <Compile Include="ISnapSplitPosition.cs" />
-    <Compile Include="IToolRepository.cs" />
     <Compile Include="MainUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -169,56 +156,11 @@
     <Compile Include="IPublisherProvider.cs" />
     <Compile Include="ISubscriber.cs" />
     <Compile Include="ISubscriberProvider.cs" />
-    <Compile Include="ITool.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PropertyTableFactory.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="SettingsGroup.cs" />
-    <Compile Include="SilSidePane\Banner.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\IItemArea.cs" />
-    <Compile Include="SilSidePane\Item.cs" />
-    <Compile Include="SilSidePane\ListViewItemArea.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\NavPaneOptionsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\NavPaneOptionsDlg.Designer.cs">
-      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SilSidePane\OutlookBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\OutlookBarButton.cs" />
-    <Compile Include="SilSidePane\OutlookBarButtonCollection.cs" />
-    <Compile Include="SilSidePane\OutlookBarSubButtonPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\OutlookButtonPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\OutlookButtonPanelItemArea.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\SidePane.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\SidePaneItemAreaStyle.cs" />
-    <Compile Include="SilSidePane\SilSidePane.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SilSidePane.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SilSidePane\StripListItemArea.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SilSidePane\Tab.cs" />
     <Compile Include="StringSearcher.cs" />
-    <Compile Include="Impls\ToolRepository.cs" />
     <Compile Include="TimeoutResult.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
@@ -267,26 +209,6 @@
     <Compile Include="TsStringSerializer.cs" />
     <Compile Include="TsStringUtils.cs" />
     <Compile Include="WritingSystemUtils.cs" />
-    <Compile Include="CollapsingSplitContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CollapsingSplitContainer.Designer.cs">
-      <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PaneBarContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PaneBarContainer.Designer.cs">
-      <DependentUpon>PaneBarContainer.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="CollapsingSplitContainer.resx">
-      <DependentUpon>CollapsingSplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PaneBarContainer.resx">
-      <DependentUpon>PaneBarContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CoreImplStrings.resx">
@@ -303,14 +225,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SilSidePane\NavPaneOptionsDlg.resx">
-      <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SilSidePane\SilSidePane.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

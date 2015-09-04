@@ -101,9 +101,12 @@ namespace SIL.FieldWorks.IText
 		{
 			base.OnHandleCreated(e);
 
+#if RANDYTODO
+			// TODO: Restore when this gets moved into LanguageExplorer and can use PaneBarContainer again.
 			var paneBarContainer = Parent as PaneBarContainer;
 			if (paneBarContainer != null)
 				paneBarContainer.PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;
+#endif
 		}
 
 		public bool PrepareToGoAway()

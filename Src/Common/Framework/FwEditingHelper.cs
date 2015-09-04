@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		#endregion
 
-		#region Overrides of SimpleRootSite
+		#region Overrides of SimpleRootSite's EditingHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the given TsString can be pasted in the context of the target

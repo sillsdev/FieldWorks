@@ -102,10 +102,6 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
@@ -117,14 +113,6 @@
     <Reference Include="Framework">
       <Name>Framework</Name>
       <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls">
-      <Name>FwControls</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=6.1.1.27229, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="nunit.framework">
@@ -138,10 +126,6 @@
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Archiving, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.Archiving.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -166,25 +150,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgControls, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwResources, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchivingTests.cs" />
     <Compile Include="StylesXmlAccessorTests.cs" />
     <Compile Include="XhtmlHelperTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="DummyFwApp.cs">
     </Compile>
     <Compile Include="FwEditingHelperTests.cs" />
     <Compile Include="SelInfoTests.cs">

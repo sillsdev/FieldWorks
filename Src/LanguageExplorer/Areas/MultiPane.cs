@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.Utils;
 

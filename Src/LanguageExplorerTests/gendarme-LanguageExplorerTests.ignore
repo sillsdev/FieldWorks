@@ -1,0 +1,16 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Disposed as part of parent
+M: System.Void LanguageExplorerTests.SilSidePaneTests::MakeSidePaneWithManyItems()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object disposed in tear down method
+T: LanguageExplorerTests.SilSidePaneTests.NavPaneOptionsDlgTests
+T: LanguageExplorerTests.SilSidePaneTests.OutlookBarButtonTests
+T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests_UnspecifiedItemAreaStyle
+T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests
