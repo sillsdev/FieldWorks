@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			string ext = Path.GetExtension(projectPath);
 			return ext != null && ext.Equals(FdoFileHelper.ksFwDataXmlFileExtension, StringComparison.InvariantCultureIgnoreCase)
-				&& XMLBackendProvider.IsFileLocked(projectPath);
+				&& XMLBackendProvider.IsProjectLocked(projectPath);
 		}
 	}
 }

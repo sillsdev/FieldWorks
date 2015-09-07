@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					var suppressPath = Path.Combine(projectFolder, ksDoNotShareProjectTxt);
 					if (!File.Exists(projectPath) || File.Exists(suppressPath))
 						continue; // not going to convert, it isn't a problem.
-					if (XMLBackendProvider.IsFileLocked(projectPath))
+					if (XMLBackendProvider.IsProjectLocked(projectPath))
 						projects = projects + projectName + ", ";
 				}
 				if (projects.Length == 0)
