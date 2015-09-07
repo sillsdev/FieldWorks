@@ -709,12 +709,18 @@ namespace SIL.FieldWorks
 				{
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					string thisSid = BasicUtils.GetUserForProcess(thisProcess);
-					foreach (Process procCurr in Process.GetProcessesByName(thisProcessName))
+					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
+					if (MiscUtils.IsUnix)
+					{
+						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
+							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
+					}
+					foreach (Process procCurr in processes)
 					{
 						if (procCurr.Id != thisProcess.Id && thisSid == BasicUtils.GetUserForProcess(procCurr))
 							existingProcesses.Add(procCurr);
-						}
 					}
+				}
 				catch (Exception ex)
 				{
 					Debug.Fail("Got exception in FieldWorks.ExisitingProcess", ex.Message);

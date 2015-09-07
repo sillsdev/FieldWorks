@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
@@ -321,7 +322,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				string url = string.Format("silfw://localhost/link?app=flex&database={0}&tool={1}&guid={2}",
 					HttpUtility.UrlEncode(m_cache.ProjectId.Name), HttpUtility.UrlEncode(toolName), HttpUtility.UrlEncode(guid));
-				using (Process.Start(url)) {}
+				// TODO: this would probably be faster if we directly called the RPC socket if FW is already open
+				if (MiscUtils.IsUnix)
+				{
+					string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					using (Process.Start(Path.Combine(libPath, "run-app"), string.Format("FieldWorks.exe {0}", url))) {}
+				}
+				else
+				{
+					using (Process.Start(url)) {}
+				}
 			}
 		}
 
