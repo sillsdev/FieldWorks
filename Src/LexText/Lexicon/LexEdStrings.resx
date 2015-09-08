@@ -614,7 +614,7 @@
     <value>Failed LIFT S/R Detected</value>
   </data>
   <data name="ksWhatIsSortReversalSubentries" xml:space="preserve">
-    <value>This utility will sort the reversal subentries in your data according to the ICU sort rules for your reversal language.</value>
+    <value>This utility will sort the reversal subentries in your data alphabetically.</value>
   </data>
   <data name="ksWhenToSortReversalSubentries" xml:space="preserve">
     <value>Run this utility when you want your reversal subentries to be sorted alphabetically (in contrast to a manually chosen order, such as by frequency of use).</value>
