@@ -9,6 +9,9 @@
 			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
 	</Target>
 
+	<Target Name="cleanWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="clean-graphite2Windows">
+	</Target>
+
 	<ItemGroup>
 		<OtherDllsToCopy Include="../DistFiles/irrKlang.NET4.dll"/>
 	</ItemGroup>
@@ -129,6 +132,14 @@
 		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
+		<Message Text="Finished building graphite2."/>
+	</Target>
+	<Target Name="clean-graphite2Windows">
+		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				Target="clean"
 				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
 		<Message Text="Finished building graphite2."/>
 	</Target>

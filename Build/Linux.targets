@@ -16,6 +16,9 @@
 			  Condition="'$(action)'!='clean'"/>
 	</Target>
 
+	<Target Name="cleanLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="clean-graphite2Linux">
+	</Target>
+
 	<Target Name="LinuxRegistry" Condition="'$(OS)'=='Unix'" DependsOnTargets="setupLinuxRegistry;setRegistryValues"/>
 
 	<Target Name="unitpp" Condition="'$(OS)'=='Unix'">
@@ -254,6 +257,14 @@
 		<Make ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
 				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
+		<Message Text="Finished building graphite2."/>
+	</Target>
+	<Target Name="clean-graphite2Linux">
+		<Make ToolPath="/usr/bin"
+				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
+				Configuration="$(config-capital)" Target="clean"
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
 		<Message Text="Finished building graphite2."/>
