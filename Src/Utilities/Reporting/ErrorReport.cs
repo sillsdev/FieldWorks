@@ -56,12 +56,6 @@ namespace SIL.Utils
 		private bool m_userChoseToExit;
 		private bool m_showChips;
 
-		/// <summary>
-		/// a list of name, string value pairs that will be included in the details of the error report.
-		/// For example, xWorks would could the name of the database in here.
-		/// </summary>
-		protected static Dictionary<string, string> s_properties = new Dictionary<string, string>();
-
 		/// <summary></summary>
 		protected static bool s_isOkToInteractWithUser = true;
 		private LinkLabel viewDetailsLink;
@@ -78,6 +72,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		protected ErrorReporter(bool isLethal, string emailAddress, bool fReportDuplicateGuidsASAP = false, string errorText = "")
 		{
+			Palaso.Reporting.ErrorReport.AddStandardProperties();
 			m_isLethal = isLethal;
 			m_emailAddress = emailAddress;
 			AccessibleName = GetType().Name;
@@ -449,7 +444,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static void AddProperty(string label, string contents)
 		{
-			s_properties[label] = contents;
+			Palaso.Reporting.ErrorReport.AddProperty(label, contents);
 		}
 
 		private string m_viewDetailsOriginalText;
@@ -588,8 +583,8 @@ namespace SIL.Utils
 			}
 
 			detailsText.AppendLine("Additional information about the computer and project:");
-			foreach (string label in s_properties.Keys)
-				detailsText.AppendLine(label + ": " + s_properties[label]);
+			foreach (string label in Palaso.Reporting.ErrorReport.Properties.Keys)
+				detailsText.AppendLine(label + ": " + Palaso.Reporting.ErrorReport.Properties[label]);
 
 			if (innerMostException != null)
 				error = innerMostException;
@@ -636,7 +631,7 @@ namespace SIL.Utils
 
 			int count = (int)applicationKey.GetValue(sPropName, 0) + 1;
 			applicationKey.SetValue(sPropName, count);
-			s_properties[sPropName] = count.ToString();
+			Palaso.Reporting.ErrorReport.AddProperty(sPropName, count.ToString());
 		}
 
 		private static void UpdateAppRuntime(RegistryKey applicationKey)
@@ -658,13 +653,13 @@ namespace SIL.Utils
 				applicationKey.SetValue("TotalAppRuntime", csec);
 			}
 			int cmin = csec / 60;
-			s_properties["TotalRuntime"] = String.Format("{0}:{1:d2}:{2:d2}",
-				cmin / 60, cmin % 60, csec % 60);
+			Palaso.Reporting.ErrorReport.AddProperty("TotalRuntime",
+				String.Format("{0}:{1:d2}:{2:d2}", cmin / 60, cmin % 60, csec % 60));
 			if (secBeforeCrash > 0)
 			{
 				int minBeforeCrash = secBeforeCrash / 60;
-				s_properties["RuntimeBeforeCrash"] = String.Format("{0}:{1:d2}:{2:d2}",
-					minBeforeCrash / 60, minBeforeCrash % 60, secBeforeCrash % 60);
+				Palaso.Reporting.ErrorReport.AddProperty("RuntimeBeforeCrash",
+					String.Format("{0}:{1:d2}:{2:d2}", minBeforeCrash / 60, minBeforeCrash % 60, secBeforeCrash % 60));
 			}
 		}
 		#endregion
