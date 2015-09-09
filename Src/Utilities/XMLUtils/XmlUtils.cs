@@ -820,7 +820,8 @@ namespace SIL.Utils
 			Debug.Assert(type != null);
 			transform.Load(type);
 #else
-			Assembly transformAssembly = Assembly.Load(assemblyName);
+			string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
 			using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
 			{
 				Debug.Assert(stream != null);
