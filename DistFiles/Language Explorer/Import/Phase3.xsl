@@ -842,10 +842,11 @@ DoScientificName
 -->
   <xsl:template name="DoScientificName">
 	<xsl:if test="sci">
-	  <ScientificName ws="{sci/@ws}"><xsl:value-of select="sci"/></ScientificName>
+	  <ScientificName ws="{sci/@ws}"><xsl:copy-of select="sci/* | sci/text()"/></ScientificName>
 	</xsl:if>
   </xsl:template>
 <!--
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 DoSource
 	process Source
@@ -854,7 +855,7 @@ DoSource
 -->
   <xsl:template name="DoSource">
 	<xsl:if test="src">
-	  <Source ws="{src/@ws}"><xsl:value-of select="src"/></Source>
+	  <Source ws="{src/@ws}"><xsl:copy-of select="src/* | src/text()"/></Source>
 	</xsl:if>
   </xsl:template>
 <!--
