@@ -1075,7 +1075,11 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	int dpiY;
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
 
-	gr_font* font = gr_make_font((float) MulDiv(chrp.dympHeight, dpiY, kdzmpInch), m_qgre->Face());
+	gr_font_ops fontOps;
+	fontOps.size = sizeof(gr_font_ops);
+	fontOps.glyph_advance_x = &GraphiteEngine::GetAdvanceX;
+	fontOps.glyph_advance_y = &GraphiteEngine::GetAdvanceY;
+	gr_font* font = gr_make_font_with_ops((float) MulDiv(chrp.dympHeight, dpiY, kdzmpInch), pvg, &fontOps, m_qgre->Face());
 
 	int segmentLen = m_ichLim - m_ichMin;
 	StrUni segStr;

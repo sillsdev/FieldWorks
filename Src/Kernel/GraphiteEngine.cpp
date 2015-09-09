@@ -424,6 +424,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	if (est == kestNoMore && segmentLen < interestLen)
 		extraSlot = true;
 
+	CheckHr(pvg->SetupGraphics(&chrp));
 	int dpiY;
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
 
@@ -432,7 +433,11 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		dirDepth = 2;
 	bool isRtl = (dirDepth % 2) == 1;
 
-	gr_font* font = gr_make_font(float(MulDiv(chrp.dympHeight, dpiY, kdzmpInch)), m_face);
+	gr_font_ops fontOps;
+	fontOps.size = sizeof(gr_font_ops);
+	fontOps.glyph_advance_x = &GetAdvanceX;
+	fontOps.glyph_advance_y = &GetAdvanceY;
+	gr_font* font = gr_make_font_with_ops(float(MulDiv(chrp.dympHeight, dpiY, kdzmpInch)), pvg, &fontOps, m_face);
 	gr_segment* segment = NULL;
 	if (font != NULL)
 		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, segmentLen + (extraSlot ? 1 : 0), isRtl ? gr_rtl : 0);
@@ -755,4 +760,20 @@ int GraphiteEngine::BreakWeightBefore(const gr_slot* s, const gr_segment* seg)
 	if (bafter > 0)
 		bafter = 0;
 	return abs((bbefore > bafter) ? bbefore : bafter);
+}
+
+float GraphiteEngine::GetAdvanceX(const void* appFontHandle, gr_uint16 glyphid)
+{
+	IVwGraphics* pvg = (IVwGraphics*) appFontHandle;
+	int boundingWidth, boundingHeight, boundingX, boundingY, advanceX, advanceY;
+	CheckHr(pvg->GetGlyphMetrics(glyphid, &boundingWidth, &boundingHeight, &boundingX, &boundingY, &advanceX, &advanceY));
+	return (float) advanceX;
+}
+
+float GraphiteEngine::GetAdvanceY(const void* appFontHandle, gr_uint16 glyphid)
+{
+	IVwGraphics* pvg = (IVwGraphics*) appFontHandle;
+	int boundingWidth, boundingHeight, boundingX, boundingY, advanceX, advanceY;
+	CheckHr(pvg->GetGlyphMetrics(glyphid, &boundingWidth, &boundingHeight, &boundingX, &boundingY, &advanceX, &advanceY));
+	return (float) advanceY;
 }
