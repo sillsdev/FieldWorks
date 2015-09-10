@@ -107,7 +107,7 @@ float gr_slot_advance_Y(const gr_slot *p/*not NULL*/, GR_MAYBE_UNUSED const gr_f
 {
     assert(p);
     float res = p->advancePos().y;
-	if (font)
+    if (font)
         return res * font->scale();
     else
         return res;

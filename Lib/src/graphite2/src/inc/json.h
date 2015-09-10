@@ -51,7 +51,7 @@ class json
                   * _context,       // current context (top of stack)
                   * _flatten;       // if !0 points to context above which
                                     //  pretty printed output should occur.
-	Vector<void *>  _env;
+    Vector<void *>  _env;
 
     void context(const char current) throw();
     void indent(const int d=0) throw();
@@ -67,9 +67,9 @@ public:
     typedef bool            boolean;
     static const _null_t    null;
 
-	void setenv(unsigned int index, void *val) { _env.reserve(index + 1); if (index >= _env.size()) _env.insert(_env.end(), _env.size() - index + 1, 0); _env[index] = val; }
-	void *getenv(unsigned int index) const { return _env[index]; }
-	const Vector<void *> &getenvs() const { return _env; }
+    void setenv(unsigned int index, void *val) { _env.reserve(index + 1); if (index >= _env.size()) _env.insert(_env.end(), _env.size() - index + 1, 0); _env[index] = val; }
+    void *getenv(unsigned int index) const { return _env[index]; }
+    const Vector<void *> &getenvs() const { return _env; }
 
     static void flat(json &) throw();
     static void close(json &) throw();

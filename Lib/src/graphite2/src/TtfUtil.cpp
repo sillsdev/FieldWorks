@@ -229,7 +229,7 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
 {
     using namespace Sfnt;
     
-	if (pTable == 0 || lTableSize < 4) return false;
+    if (pTable == 0 || lTableSize < 4) return false;
 
     switch(TableId)
     {
@@ -237,8 +237,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::CharacterCodeMap * const pCmap 
             = reinterpret_cast<const Sfnt::CharacterCodeMap *>(pTable);
-		if (lTableSize < sizeof(Sfnt::CharacterCodeMap))
-			return false;
+        if (lTableSize < sizeof(Sfnt::CharacterCodeMap))
+            return false;
         return be::swap(pCmap->version) == 0;
     }
 
@@ -246,8 +246,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::FontHeader * const pHead 
             = reinterpret_cast<const Sfnt::FontHeader *>(pTable);
-		if (lTableSize < sizeof(Sfnt::FontHeader))
-			return false;
+        if (lTableSize < sizeof(Sfnt::FontHeader))
+            return false;
         bool r = be::swap(pHead->version) == OneFix
             && be::swap(pHead->magic_number) == FontHeader::MagicNumber
             && be::swap(pHead->glyph_data_format)
@@ -264,8 +264,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::PostScriptGlyphName * const pPost 
             = reinterpret_cast<const Sfnt::PostScriptGlyphName *>(pTable);
-		if (lTableSize < sizeof(Sfnt::PostScriptGlyphName))
-			return false;
+        if (lTableSize < sizeof(Sfnt::PostScriptGlyphName))
+            return false;
         const fixed format = be::swap(pPost->format);
         bool r = format == PostScriptGlyphName::Format1 
             || format == PostScriptGlyphName::Format2 
@@ -278,8 +278,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::HorizontalHeader * pHhea = 
             reinterpret_cast<const Sfnt::HorizontalHeader *>(pTable);
-		if (lTableSize < sizeof(Sfnt::HorizontalHeader))
-			return false;
+        if (lTableSize < sizeof(Sfnt::HorizontalHeader))
+            return false;
         bool r = be::swap(pHhea->version) == OneFix
             && be::swap(pHhea->metric_data_format) == 0
             && sizeof (Sfnt::HorizontalHeader) <= lTableSize;
@@ -290,8 +290,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::MaximumProfile * pMaxp = 
             reinterpret_cast<const Sfnt::MaximumProfile *>(pTable);
-		if (lTableSize < sizeof(Sfnt::MaximumProfile))
-			return false;
+        if (lTableSize < sizeof(Sfnt::MaximumProfile))
+            return false;
         bool r = be::swap(pMaxp->version) == OneFix
             && sizeof(Sfnt::MaximumProfile) <= lTableSize;
         return r;
@@ -336,8 +336,8 @@ bool CheckTable(const Tag TableId, const void * pTable, size_t lTableSize)
     {
         const Sfnt::FontNames * pName 
             = reinterpret_cast<const Sfnt::FontNames *>(pTable);
-		if (lTableSize < sizeof(Sfnt::FontNames))
-			return false;
+        if (lTableSize < sizeof(Sfnt::FontNames))
+            return false;
         return be::swap(pName->format) == 0;
     }
 
@@ -810,7 +810,7 @@ bool HorMetrics(gid16 nGlyphId, const void * pHmtx, size_t lHmtxSize, const void
     size_t cLongHorMetrics = be::swap(phhea->num_long_hor_metrics);
     if (nGlyphId < cLongHorMetrics) 
     {   // glyph id is acceptable
-		if ((nGlyphId + 1) * sizeof(Sfnt::HorizontalMetric) > lHmtxSize) return false;
+        if ((nGlyphId + 1) * sizeof(Sfnt::HorizontalMetric) > lHmtxSize) return false;
         nAdvWid = be::swap(phmtx[nGlyphId].advance_width);
         nLsb = be::swap(phmtx[nGlyphId].left_side_bearing);
     }
@@ -820,7 +820,7 @@ bool HorMetrics(gid16 nGlyphId, const void * pHmtx, size_t lHmtxSize, const void
         size_t lLsbOffset = sizeof(Sfnt::HorizontalMetric) * cLongHorMetrics +
             sizeof(int16) * (nGlyphId - cLongHorMetrics); // offset in bytes
         // We test like this as LsbOffset is an offset not a length.
-		if (lLsbOffset >= lHmtxSize - sizeof(int16) || cLongHorMetrics == 0)
+        if (lLsbOffset >= lHmtxSize - sizeof(int16) || cLongHorMetrics == 0)
         {
             nLsb = 0;
             return false;
@@ -891,13 +891,13 @@ bool CheckCmapSubtable4(const void * pCmapSubtable4, size_t table_len /*, unsign
 {
     if (!pCmapSubtable4) return false;
     const Sfnt::CmapSubTable * pTable = reinterpret_cast<const Sfnt::CmapSubTable *>(pCmapSubtable4);
-	// Bob H say some freeware TT fonts have version 1 (eg, CALIGULA.TTF)
+    // Bob H say some freeware TT fonts have version 1 (eg, CALIGULA.TTF) 
     // so don't check subtable version. 21 Mar 2002 spec changes version to language.
     if (be::swap(pTable->format) != 4) return false;
     const Sfnt::CmapSubTableFormat4 * pTable4 = reinterpret_cast<const Sfnt::CmapSubTableFormat4 *>(pCmapSubtable4);
     uint16 length = be::swap(pTable4->length);
-	if (length > table_len)
-		return false;
+    if (length > table_len)
+        return false;
     if (length < sizeof(Sfnt::CmapSubTableFormat4))
         return false;
     uint16 nRanges = be::swap(pTable4->seg_count_x2) >> 1;
@@ -905,37 +905,37 @@ bool CheckCmapSubtable4(const void * pCmapSubtable4, size_t table_len /*, unsign
         return false;
     // check last range is properly terminated
     uint16 chEnd = be::peek<uint16>(pTable4->end_code + nRanges - 1);
-	if (chEnd != 0xFFFF)
-		return false;
+    if (chEnd != 0xFFFF)
+        return false;
 #if 0
-	int lastend = -1;
-	for (int i = 0; i < nRanges; ++i)
-	{
-		uint16 end = be::peek<uint16>(pTable4->end_code + i);
-		uint16 start = be::peek<uint16>(pTable4->end_code + nRanges + 1 + i);
-		int16 delta = be::peek<int16>(pTable4->end_code + 2*nRanges + 1 + i);
-		uint16 offset = be::peek<uint16>(pTable4->end_code + 3*nRanges + 1 + i);
-		if (lastend >= end || lastend >= start)
-			return false;
-		if (offset)
-		{
-			const uint16 *gstart = pTable4->end_code + 3*nRanges + 1 + i + (offset >> 1);
-			const uint16 *gend = gstart + end - start;
-			if ((char *)gend >= (char *)pCmapSubtable4 + length)
-				return false;
-			while (gstart <= gend)
-			{
-				uint16 g = be::peek<uint16>(gstart++);
-				if (g && ((g + delta) & 0xFFFF) > maxgid)
-					return false;
-			}
-		}
-		else if (((delta + end) & 0xFFFF) > maxgid)
-			return false;
-		lastend = end;
-	}
+    int lastend = -1;
+    for (int i = 0; i < nRanges; ++i)
+    {
+        uint16 end = be::peek<uint16>(pTable4->end_code + i);
+        uint16 start = be::peek<uint16>(pTable4->end_code + nRanges + 1 + i);
+        int16 delta = be::peek<int16>(pTable4->end_code + 2*nRanges + 1 + i);
+        uint16 offset = be::peek<uint16>(pTable4->end_code + 3*nRanges + 1 + i);
+        if (lastend >= end || lastend >= start)
+            return false;
+        if (offset)
+        {
+            const uint16 *gstart = pTable4->end_code + 3*nRanges + 1 + i + (offset >> 1);
+            const uint16 *gend = gstart + end - start;
+            if ((char *)gend >= (char *)pCmapSubtable4 + length)
+                return false;
+            while (gstart <= gend)
+            {
+                uint16 g = be::peek<uint16>(gstart++);
+                if (g && ((g + delta) & 0xFFFF) > maxgid)
+                    return false;
+            }
+        }
+        else if (((delta + end) & 0xFFFF) > maxgid)
+            return false;
+        lastend = end;
+    }
 #endif
-	return true;
+    return true;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1086,23 +1086,23 @@ bool CheckCmapSubtable12(const void *pCmapSubtable12, size_t table_len /*, unsig
         return false;
     const Sfnt::CmapSubTableFormat12 * pTable12 = reinterpret_cast<const Sfnt::CmapSubTableFormat12 *>(pCmapSubtable12);
     uint32 length = be::swap(pTable12->length);
-	if (length > table_len)
-		return false;
+    if (length > table_len)
+        return false;
     if (length < sizeof(Sfnt::CmapSubTableFormat12))
         return false;
-	uint32 num_groups = be::swap(pTable12->num_groups);
-	if (length != (sizeof(Sfnt::CmapSubTableFormat12) + (num_groups - 1) * sizeof(uint32) * 3))
-		return false;
+    uint32 num_groups = be::swap(pTable12->num_groups);
+    if (length != (sizeof(Sfnt::CmapSubTableFormat12) + (num_groups - 1) * sizeof(uint32) * 3))
+        return false;
 #if 0
-	for (unsigned int i = 0; i < num_groups; ++i)
-	{
-		if (be::swap(pTable12->group[i].end_char_code)  - be::swap(pTable12->group[i].start_char_code) + be::swap(pTable12->group[i].start_glyph_id) > maxgid)
-			return false;
-		if (i > 0 && be::swap(pTable12->group[i].start_char_code) <= be::swap(pTable12->group[i-1].end_char_code))
-			return false;
-	}
+    for (unsigned int i = 0; i < num_groups; ++i)
+    {
+        if (be::swap(pTable12->group[i].end_char_code)  - be::swap(pTable12->group[i].start_char_code) + be::swap(pTable12->group[i].start_glyph_id) > maxgid)
+            return false;
+        if (i > 0 && be::swap(pTable12->group[i].start_char_code) <= be::swap(pTable12->group[i-1].end_char_code))
+            return false;
+    }
 #endif
-	return true;
+    return true;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1203,7 +1203,7 @@ size_t LocaLookup(gid16 nGlyphId,
         const void * pHead) // throw (std::out_of_range)
 {
     const Sfnt::FontHeader * pTable = reinterpret_cast<const Sfnt::FontHeader *>(pHead);
-	size_t res = -2;
+    size_t res = -2;
 
     // CheckTable verifies the index_to_loc_format is valid
     if (be::swap(pTable->index_to_loc_format) == Sfnt::FontHeader::ShortIndexLocFormat)
@@ -1211,24 +1211,24 @@ size_t LocaLookup(gid16 nGlyphId,
         if (nGlyphId < (lLocaSize >> 1) - 1) // allow sentinel value to be accessed
         {
             const uint16 * pShortTable = reinterpret_cast<const uint16 *>(pLoca);
-			res = be::peek<uint16>(pShortTable + nGlyphId) << 1;
-			if (res == static_cast<size_t>(be::peek<uint16>(pShortTable + nGlyphId + 1) << 1))
-				return -1;
+            res = be::peek<uint16>(pShortTable + nGlyphId) << 1;
+            if (res == static_cast<size_t>(be::peek<uint16>(pShortTable + nGlyphId + 1) << 1))
+                return -1;
         }
     }
-	else if (be::swap(pTable->index_to_loc_format) == Sfnt::FontHeader::LongIndexLocFormat)
+    else if (be::swap(pTable->index_to_loc_format) == Sfnt::FontHeader::LongIndexLocFormat)
     { // loca entries are four bytes
         if (nGlyphId < (lLocaSize >> 2) - 1)
         {
             const uint32 * pLongTable = reinterpret_cast<const uint32 *>(pLoca);
-			res = be::peek<uint32>(pLongTable + nGlyphId);
-			if (res == static_cast<size_t>(be::peek<uint32>(pLongTable + nGlyphId + 1)))
-				return -1;
+            res = be::peek<uint32>(pLongTable + nGlyphId);
+            if (res == static_cast<size_t>(be::peek<uint32>(pLongTable + nGlyphId + 1)))
+                return -1;
         }
     }
 
     // only get here if glyph id was bad
-	return res;
+    return res;
     //throw std::out_of_range("glyph id out of range for font");
 }
 
@@ -1239,7 +1239,7 @@ size_t LocaLookup(gid16 nGlyphId,
 void * GlyfLookup(const void * pGlyf, size_t nGlyfOffset, size_t nTableLen)
 {
     const uint8 * pByte = reinterpret_cast<const uint8 *>(pGlyf);
-		if (nGlyfOffset + pByte < pByte || nGlyfOffset + sizeof(Sfnt::Glyph) >= nTableLen)
+        if (nGlyfOffset + pByte < pByte || nGlyfOffset + sizeof(Sfnt::Glyph) >= nTableLen)
             return NULL;
     return const_cast<uint8 *>(pByte + nGlyfOffset);
 }

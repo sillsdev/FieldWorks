@@ -171,15 +171,15 @@ class Face::Table
     const Face *            _f;
     mutable const byte *    _p;
     uint32                  _sz;
-	bool                    _compressed;
+    bool                    _compressed;
 
-	Error decompress();
+    Error decompress();
 
-	void releaseBuffers();
+    void releaseBuffers();
 
 public:
     Table() throw();
-	Table(const Face & face, const Tag n, uint32 version=0xffffffff) throw();
+    Table(const Face & face, const Tag n, uint32 version=0xffffffff) throw();
     Table(const Table & rhs) throw();
     ~Table() throw();
 
@@ -205,7 +205,7 @@ Face::Table::Table(const Table & rhs) throw()
 inline
 Face::Table::~Table() throw()
 {
-	releaseBuffers();
+    releaseBuffers();
 }
 
 inline

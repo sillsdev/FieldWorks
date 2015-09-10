@@ -118,18 +118,18 @@ json & json::operator << (json::string s) throw()
 }
 
 json & json::operator << (json::number f) throw()
-{
-	context(seq);
-	if (std::numeric_limits<json::number>::infinity() == f)
-		fputs("Infinity", _stream);
-	else if (-std::numeric_limits<json::number>::infinity() == f)
-		fputs("-Infinity", _stream);
-	else if (std::numeric_limits<json::number>::quiet_NaN() == f ||
-			std::numeric_limits<json::number>::signaling_NaN() == f)
-		fputs("NaN", _stream);
-	else
-		fprintf(_stream, "%g", f);
-	return *this;
+{ 
+    context(seq); 
+    if (std::numeric_limits<json::number>::infinity() == f)
+        fputs("Infinity", _stream);
+    else if (-std::numeric_limits<json::number>::infinity() == f)
+        fputs("-Infinity", _stream);
+    else if (std::numeric_limits<json::number>::quiet_NaN() == f ||
+            std::numeric_limits<json::number>::signaling_NaN() == f)
+        fputs("NaN", _stream);
+    else
+        fprintf(_stream, "%g", f); 
+    return *this; 
 }
 json & json::operator << (json::integer d) throw()  { context(seq); fprintf(_stream, "%ld", d); return *this; }
 json & json::operator << (long unsigned d) throw()  { context(seq); fprintf(_stream, "%ld", d); return *this; }

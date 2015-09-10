@@ -42,11 +42,11 @@ class Silf;
 class Face;
 
 enum passtype {
-	PASS_TYPE_UNKNOWN = 0,
-	PASS_TYPE_LINEBREAK,
-	PASS_TYPE_SUBSTITUTE,
-	PASS_TYPE_POSITIONING,
-	PASS_TYPE_JUSTIFICATION
+    PASS_TYPE_UNKNOWN = 0,
+    PASS_TYPE_LINEBREAK,
+    PASS_TYPE_SUBSTITUTE,
+    PASS_TYPE_POSITIONING,
+    PASS_TYPE_JUSTIFICATION
 };
 
 namespace vm {
@@ -64,8 +64,8 @@ public:
         jump_past_end,
         arguments_exhausted,
         missing_return,
-		nested_context_item,
-		underfull_stack
+        nested_context_item,
+        underfull_stack
     };
 
 private:
@@ -86,25 +86,25 @@ private:
     void failure(const status_t) throw();
 
 public:
-	static size_t estimateCodeDataOut(size_t num_bytecodes);
+    static size_t estimateCodeDataOut(size_t num_bytecodes);
 
     Code() throw();
     Code(bool is_constraint, const byte * bytecode_begin, const byte * const bytecode_end,
-		 uint8 pre_context, uint16 rule_length, const Silf &, const Face &,
-		 enum passtype pt, byte * * const _out = 0);
+         uint8 pre_context, uint16 rule_length, const Silf &, const Face &,
+         enum passtype pt, byte * * const _out = 0);
     Code(const Machine::Code &) throw();
     ~Code() throw();
     
     Code & operator=(const Code &rhs) throw();
-	operator bool () const throw()                  { return _code && status() == loaded; }
-	status_t      status() const throw()            { return _status; }
-	bool          constraint() const throw()        { return _constraint; }
-	size_t        dataSize() const throw()          { return _data_size; }
-	size_t        instructionCount() const throw()  { return _instr_count; }
-	bool          immutable() const throw()         { return !(_delete || _modify); }
-	bool          deletes() const throw()           { return _delete; }
-	size_t        maxRef() const throw()            { return _max_ref; }
-	void          externalProgramMoved(ptrdiff_t) throw();
+    operator bool () const throw()                  { return _code && status() == loaded; }
+    status_t      status() const throw()            { return _status; }
+    bool          constraint() const throw()        { return _constraint; }
+    size_t        dataSize() const throw()          { return _data_size; }
+    size_t        instructionCount() const throw()  { return _instr_count; }
+    bool          immutable() const throw()         { return !(_delete || _modify); }
+    bool          deletes() const throw()           { return _delete; }
+    size_t        maxRef() const throw()            { return _max_ref; }
+    void          externalProgramMoved(ptrdiff_t) throw();
 
     int32 run(Machine &m, slotref * & map) const;
     
@@ -114,7 +114,7 @@ public:
 inline
 size_t  Machine::Code::estimateCodeDataOut(size_t n_bc)
 {
-	return n_bc * (sizeof(instr)+sizeof(byte));
+    return n_bc * (sizeof(instr)+sizeof(byte));
 }
 
 
@@ -158,11 +158,11 @@ inline Machine::Code & Machine::Code::operator=(const Machine::Code &rhs) throw(
 
 inline void Machine::Code::externalProgramMoved(ptrdiff_t dist) throw()
 {
-	if (_code && !_own)
-	{
-		_code += dist / sizeof(instr);
-		_data += dist;
-	}
+    if (_code && !_own)
+    {
+        _code += dist / sizeof(instr);
+        _data += dist;
+    }
 }
 
 } // namespace vm

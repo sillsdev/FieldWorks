@@ -1,0 +1,5 @@
+*.cpp -whitespace eol=lf
+*.h -whitespace eol=lf
+*.txt -whitespace eol=lf
+*.mk* -whitespace eol=lf
+README -whitespace eol=lf

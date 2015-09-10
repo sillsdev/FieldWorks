@@ -185,7 +185,7 @@ json & graphite2::operator << (json & j, const dslot & ds) throw()
     assert(ds.second);
     const Segment & seg = *ds.first;
     const Slot & s = *ds.second;
-	const SlotCollision *cslot = seg.collisionInfo(ds.second);
+    const SlotCollision *cslot = seg.collisionInfo(ds.second);
 
     j << json::object
         << "id"             << objectid(ds)
@@ -222,18 +222,18 @@ json & graphite2::operator << (json & j, const dslot & ds) throw()
             j   << objectid(dslot(&seg, c));
         j       << json::close;
     }
-	if (cslot)
-	{
-		// Note: the reason for using Positions to lump together related attributes is to make the
+    if (cslot)
+    {
+		// Note: the reason for using Positions to lump together related attributes is to make the 
 		// JSON output slightly more compact.
-		j << "collision" << json::flat << json::object
+        j << "collision" << json::flat << json::object
 //              << "shift" << cslot->shift() -- not used pass level, only within the collision routine itself
-			  << "offset" << cslot->offset()
-			  << "limit" << cslot->limit()
-			  << "flags" << cslot->flags()
-			  << "margin" << Position(cslot->margin(), cslot->marginWt())
-			  << "exclude" << cslot->exclGlyph()
-			  << "excludeoffset" << cslot->exclOffset();
+              << "offset" << cslot->offset()
+              << "limit" << cslot->limit()
+              << "flags" << cslot->flags()
+              << "margin" << Position(cslot->margin(), cslot->marginWt())
+              << "exclude" << cslot->exclGlyph()
+              << "excludeoffset" << cslot->exclOffset();
 		if (cslot->seqOrder() != 0)
 		{
 			j << "seqclass" << Position(cslot->seqClass(), cslot->seqProxClass())
@@ -242,8 +242,8 @@ json & graphite2::operator << (json & j, const dslot & ds) throw()
 				<< "seqbelow" << Position(cslot->seqBelowXlim(), cslot->seqBelowWt())
 				<< "seqvalign" << Position(cslot->seqValignHt(), cslot->seqValignWt());
 		}
-		j << json::close;
-	}
+        j << json::close;
+    }
     return j << json::close;
 }
 

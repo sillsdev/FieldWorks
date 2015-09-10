@@ -40,8 +40,8 @@ Slot::Slot(int16 *user_attrs) :
     m_index(0), m_parent(NULL), m_child(NULL), m_sibling(NULL),
     m_position(0, 0), m_shift(0, 0), m_advance(0, 0),
     m_attach(0, 0), m_with(0, 0), m_just(0.),
-	m_flags(0), m_attLevel(0), m_bidiCls(-1), m_bidiLevel(0),
-	m_userAttr(user_attrs), m_justs(NULL)
+    m_flags(0), m_attLevel(0), m_bidiCls(-1), m_bidiLevel(0), 
+    m_userAttr(user_attrs), m_justs(NULL)
 {
 }
 
@@ -87,24 +87,24 @@ void Slot::update(int /*numGrSlots*/, int numCharInfo, Position &relpos)
 
 Position Slot::finalise(const Segment *seg, const Font *font, Position & base, Rect & bbox, uint8 attrLevel, float & clusterMin, bool rtl, bool isFinal)
 {
-	SlotCollision *coll = NULL;
+    SlotCollision *coll = NULL;
     if (attrLevel && m_attLevel > attrLevel) return Position(0, 0);
-	float scale = font ? font->scale() : 1.0f;
-	Position shift(m_shift.x * (rtl * -2 + 1) + m_just, m_shift.y);
+    float scale = font ? font->scale() : 1.0f;
+    Position shift(m_shift.x * (rtl * -2 + 1) + m_just, m_shift.y);
     float tAdvance = m_advance.x + m_just;
-	if (isFinal && (coll = seg->collisionInfo(this)))
-	{
-		const Position &collshift = coll->offset();
-		if (!(coll->flags() & SlotCollision::COLL_KERN) || rtl)
-			shift = shift + collshift;
-	}
+    if (isFinal && (coll = seg->collisionInfo(this)))
+    {
+        const Position &collshift = coll->offset();
+        if (!(coll->flags() & SlotCollision::COLL_KERN) || rtl)
+            shift = shift + collshift;
+    }
     const GlyphFace * glyphFace = seg->getFace()->glyphs().glyphSafe(glyph());
     if (font)
     {
         scale = font->scale();
         shift *= scale;
         if (font->isHinted() && glyphFace)
-			tAdvance = (m_advance.x - glyphFace->theAdvance().x + m_just) * scale + font->advance(glyph());
+            tAdvance = (m_advance.x - glyphFace->theAdvance().x + m_just) * scale + font->advance(glyph());
         else
             tAdvance *= scale;
     }    
@@ -114,15 +114,15 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
     if (!m_parent)
     {
         res = base + Position(tAdvance, m_advance.y * scale);
-		clusterMin = m_position.x;
+        clusterMin = m_position.x;
     }
     else
     {
         float tAdv;
         m_position += (m_attach - m_with) * scale;
-		tAdv = m_advance.x >= 0.5f ? m_position.x + tAdvance - shift.x : 0.f;
+        tAdv = m_advance.x >= 0.5f ? m_position.x + tAdvance - shift.x : 0.f;
         res = Position(tAdv, 0);
-		if ((m_advance.x >= 0.5f || m_position.x < 0) && m_position.x < clusterMin) clusterMin = m_position.x;
+        if ((m_advance.x >= 0.5f || m_position.x < 0) && m_position.x < clusterMin) clusterMin = m_position.x;
     }
 
     if (glyphFace)
@@ -133,19 +133,19 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
 
     if (m_child && m_child != this && m_child->attachedTo() == this)
     {
-		Position tRes = m_child->finalise(seg, font, m_position, bbox, attrLevel, clusterMin, rtl, isFinal);
-		if ((!m_parent || m_advance.x >= 0.5f) && tRes.x > res.x) res = tRes;
+        Position tRes = m_child->finalise(seg, font, m_position, bbox, attrLevel, clusterMin, rtl, isFinal);
+        if ((!m_parent || m_advance.x >= 0.5f) && tRes.x > res.x) res = tRes;
     }
 
     if (m_parent && m_sibling && m_sibling != this && m_sibling->attachedTo() == m_parent)
     {
-		Position tRes = m_sibling->finalise(seg, font, base, bbox, attrLevel, clusterMin, rtl, isFinal);
+        Position tRes = m_sibling->finalise(seg, font, base, bbox, attrLevel, clusterMin, rtl, isFinal);
         if (tRes.x > res.x) res = tRes;
     }
     
     if (!m_parent && clusterMin < base.x)
     {
-		Position adj = Position(m_position.x - clusterMin, 0.);
+        Position adj = Position(m_position.x - clusterMin, 0.);
         res += adj;
         m_position += adj;
         if (m_child) m_child->floodShift(adj);
@@ -156,11 +156,11 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
 int32 Slot::clusterMetric(const Segment *seg, uint8 metric, uint8 attrLevel, bool rtl)
 {
     Position base;
-	if (glyph() >= seg->getFace()->glyphs().numGlyphs())
-		return 0;
+    if (glyph() >= seg->getFace()->glyphs().numGlyphs())
+        return 0;
     Rect bbox = seg->theGlyphBBoxTemporary(glyph());
     float clusterMin = 0.;
-	Position res = finalise(seg, NULL, base, bbox, attrLevel, clusterMin, rtl, false);
+    Position res = finalise(seg, NULL, base, bbox, attrLevel, clusterMin, rtl, false);
 
     switch (metrics(metric))
     {
@@ -220,7 +220,7 @@ int Slot::getAttr(const Segment *seg, attrCode ind, uint8 subindex) const
     case gr_slatAttLevel :  return m_attLevel;
     case gr_slatBreak :     return seg->charinfo(m_original)->breakWeight();
     case gr_slatCompRef :   return 0;
-	case gr_slatDir :       return seg->dir() & 1;
+    case gr_slatDir :       return seg->dir() & 1;
     case gr_slatInsert :    return isInsertBefore();
     case gr_slatPosX :      return int(m_position.x); // but need to calculate it
     case gr_slatPosY :      return int(m_position.y);
@@ -232,41 +232,41 @@ int Slot::getAttr(const Segment *seg, attrCode ind, uint8 subindex) const
     case gr_slatUserDefn :  return m_userAttr[subindex];
     case gr_slatSegSplit :  return seg->charinfo(m_original)->flags() & 3;
     case gr_slatBidiLevel:  return m_bidiLevel;
-	case gr_slatColFlags :		{ SlotCollision *c = seg->collisionInfo(this); return c ? c->flags() : 0; }
-	case gr_slatColLimitblx :	SLOTGETCOLATTR(limit().bl.x)
-	case gr_slatColLimitbly :	SLOTGETCOLATTR(limit().bl.y)
-	case gr_slatColLimittrx :	SLOTGETCOLATTR(limit().tr.x)
-	case gr_slatColLimittry :	SLOTGETCOLATTR(limit().tr.y)
-	case gr_slatColShiftx :		SLOTGETCOLATTR(offset().x)
-	case gr_slatColShifty :		SLOTGETCOLATTR(offset().y)
-	case gr_slatColMargin :		SLOTGETCOLATTR(margin())
-	case gr_slatColMarginWt :	SLOTGETCOLATTR(marginWt())
-	case gr_slatColExclGlyph :	SLOTGETCOLATTR(exclGlyph())
-	case gr_slatColExclOffx :	SLOTGETCOLATTR(exclOffset().x)
-	case gr_slatColExclOffy :	SLOTGETCOLATTR(exclOffset().y)
-	case gr_slatSeqClass :		SLOTGETCOLATTR(seqClass())
+    case gr_slatColFlags :		{ SlotCollision *c = seg->collisionInfo(this); return c ? c->flags() : 0; }
+    case gr_slatColLimitblx :	SLOTGETCOLATTR(limit().bl.x)
+    case gr_slatColLimitbly :	SLOTGETCOLATTR(limit().bl.y)
+    case gr_slatColLimittrx :	SLOTGETCOLATTR(limit().tr.x)
+    case gr_slatColLimittry :	SLOTGETCOLATTR(limit().tr.y)
+    case gr_slatColShiftx :		SLOTGETCOLATTR(offset().x)
+    case gr_slatColShifty :		SLOTGETCOLATTR(offset().y)
+    case gr_slatColMargin :		SLOTGETCOLATTR(margin())
+    case gr_slatColMarginWt :	SLOTGETCOLATTR(marginWt())
+    case gr_slatColExclGlyph :	SLOTGETCOLATTR(exclGlyph())
+    case gr_slatColExclOffx :	SLOTGETCOLATTR(exclOffset().x)
+    case gr_slatColExclOffy :	SLOTGETCOLATTR(exclOffset().y)
+    case gr_slatSeqClass :		SLOTGETCOLATTR(seqClass())
 	case gr_slatSeqProxClass :	SLOTGETCOLATTR(seqProxClass())
-	case gr_slatSeqOrder :		SLOTGETCOLATTR(seqOrder())
-	case gr_slatSeqAboveXoff :	SLOTGETCOLATTR(seqAboveXoff())
-	case gr_slatSeqAboveWt :	SLOTGETCOLATTR(seqAboveWt())
-	case gr_slatSeqBelowXlim :	SLOTGETCOLATTR(seqBelowXlim())
-	case gr_slatSeqBelowWt :	SLOTGETCOLATTR(seqBelowWt())
-	case gr_slatSeqValignHt :	SLOTGETCOLATTR(seqValignHt())
-	case gr_slatSeqValignWt :	SLOTGETCOLATTR(seqValignWt())
-	default : return 0;
+    case gr_slatSeqOrder :		SLOTGETCOLATTR(seqOrder())
+    case gr_slatSeqAboveXoff :	SLOTGETCOLATTR(seqAboveXoff())
+    case gr_slatSeqAboveWt :	SLOTGETCOLATTR(seqAboveWt())
+    case gr_slatSeqBelowXlim :	SLOTGETCOLATTR(seqBelowXlim())
+    case gr_slatSeqBelowWt :	SLOTGETCOLATTR(seqBelowWt())
+    case gr_slatSeqValignHt :	SLOTGETCOLATTR(seqValignHt())
+    case gr_slatSeqValignWt :	SLOTGETCOLATTR(seqValignWt())
+    default : return 0;
     }
 }
 
 #define SLOTCOLSETATTR(x) { \
-		SlotCollision *c = seg->collisionInfo(this); \
-		if (c) { c-> x ; c->setFlags(c->flags() & ~SlotCollision::COLL_KNOWN); } \
-		break; }
+        SlotCollision *c = seg->collisionInfo(this); \
+        if (c) { c-> x ; c->setFlags(c->flags() & ~SlotCollision::COLL_KNOWN); } \
+        break; }
 #define SLOTCOLSETCOMPLEXATTR(t, y, x) { \
-		SlotCollision *c = seg->collisionInfo(this); \
-		if (c) { \
-		const t &s = c-> y; \
-		c-> x ; c->setFlags(c->flags() & ~SlotCollision::COLL_KNOWN); } \
-		break; }
+        SlotCollision *c = seg->collisionInfo(this); \
+        if (c) { \
+        const t &s = c-> y; \
+        c-> x ; c->setFlags(c->flags() & ~SlotCollision::COLL_KNOWN); } \
+        break; }
 
 void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, const SlotMap & map)
 {
@@ -291,12 +291,12 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
         if (idx < map.size() && map[idx])
         {
             Slot *other = map[idx];
-			if (other == this || other == m_parent) break;
+            if (other == this || other == m_parent) break;
             if (m_parent) m_parent->removeChild(this);
-			if (!other->isChildOf(this) && other->child(this))
+            if (!other->isChildOf(this) && other->child(this))
             {
                 attachTo(other);
-				if ((map.dir() != 0) ^ (idx > subindex))
+                if ((map.dir() != 0) ^ (idx > subindex))
                     m_with = Position(advance(), 0);
                 else        // normal match to previous root
                     m_attach = Position(other->advance(), 0);
@@ -319,7 +319,7 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
         seg->charinfo(m_original)->breakWeight(value);
         break;
     case gr_slatCompRef :   break;      // not sure what to do here
-	case gr_slatDir : break;
+    case gr_slatDir : break;
     case gr_slatInsert :
         markInsertBefore(value? true : false);
         break;
@@ -332,29 +332,29 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
     case gr_slatJWidth :    just(value); break;
     case gr_slatSegSplit :  seg->charinfo(m_original)->addflags(value & 3); break;
     case gr_slatUserDefn :  m_userAttr[subindex] = value; break;
-	case gr_slatColFlags :  {
-		SlotCollision *c = seg->collisionInfo(this);
-		if (c)
-			c->setFlags(value);
-		break; }
-	case gr_slatColLimitblx :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(Position(value, s.bl.y), s.tr)))
-	case gr_slatColLimitbly :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(Position(s.bl.x, value), s.tr)))
-	case gr_slatColLimittrx :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(s.bl, Position(value, s.tr.y))))
-	case gr_slatColLimittry :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(s.bl, Position(s.tr.x, value))))
-	case gr_slatColMargin :		SLOTCOLSETATTR(setMargin(value))
-	case gr_slatColMarginWt :	SLOTCOLSETATTR(setMarginWt(value))
-	case gr_slatColExclGlyph :	SLOTCOLSETATTR(setExclGlyph(value))
-	case gr_slatColExclOffx :	SLOTCOLSETCOMPLEXATTR(Position, exclOffset(), setExclOffset(Position(value, s.y)))
-	case gr_slatColExclOffy :	SLOTCOLSETCOMPLEXATTR(Position, exclOffset(), setExclOffset(Position(s.x, value)))
-	case gr_slatSeqClass :		SLOTCOLSETATTR(setSeqClass(value))
+    case gr_slatColFlags :  {
+        SlotCollision *c = seg->collisionInfo(this);
+        if (c)
+            c->setFlags(value);
+        break; }
+    case gr_slatColLimitblx :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(Position(value, s.bl.y), s.tr)))
+    case gr_slatColLimitbly :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(Position(s.bl.x, value), s.tr)))
+    case gr_slatColLimittrx :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(s.bl, Position(value, s.tr.y))))
+    case gr_slatColLimittry :	SLOTCOLSETCOMPLEXATTR(Rect, limit(), setLimit(Rect(s.bl, Position(s.tr.x, value))))
+    case gr_slatColMargin :		SLOTCOLSETATTR(setMargin(value))
+    case gr_slatColMarginWt :	SLOTCOLSETATTR(setMarginWt(value))
+    case gr_slatColExclGlyph :	SLOTCOLSETATTR(setExclGlyph(value))
+    case gr_slatColExclOffx :	SLOTCOLSETCOMPLEXATTR(Position, exclOffset(), setExclOffset(Position(value, s.y)))
+    case gr_slatColExclOffy :	SLOTCOLSETCOMPLEXATTR(Position, exclOffset(), setExclOffset(Position(s.x, value)))
+    case gr_slatSeqClass :		SLOTCOLSETATTR(setSeqClass(value))
 	case gr_slatSeqProxClass :	SLOTCOLSETATTR(setSeqProxClass(value))
-	case gr_slatSeqOrder :		SLOTCOLSETATTR(setSeqOrder(value))
-	case gr_slatSeqAboveXoff :	SLOTCOLSETATTR(setSeqAboveXoff(value))
-	case gr_slatSeqAboveWt :	SLOTCOLSETATTR(setSeqAboveWt(value))
-	case gr_slatSeqBelowXlim :	SLOTCOLSETATTR(setSeqBelowXlim(value))
-	case gr_slatSeqBelowWt :	SLOTCOLSETATTR(setSeqBelowWt(value))
-	case gr_slatSeqValignHt :	SLOTCOLSETATTR(setSeqValignHt(value))
-	case gr_slatSeqValignWt :	SLOTCOLSETATTR(setSeqValignWt(value))
+    case gr_slatSeqOrder :		SLOTCOLSETATTR(setSeqOrder(value))
+    case gr_slatSeqAboveXoff :	SLOTCOLSETATTR(setSeqAboveXoff(value))
+    case gr_slatSeqAboveWt :	SLOTCOLSETATTR(setSeqAboveWt(value))
+    case gr_slatSeqBelowXlim :	SLOTCOLSETATTR(setSeqBelowXlim(value))
+    case gr_slatSeqBelowWt :	SLOTCOLSETATTR(setSeqBelowWt(value))
+    case gr_slatSeqValignHt :	SLOTCOLSETATTR(setSeqValignHt(value))
+    case gr_slatSeqValignWt :	SLOTCOLSETATTR(setSeqValignWt(value))
     default :
         break;
     }
@@ -436,7 +436,7 @@ bool Slot::removeSibling(Slot *ap)
     else if (ap == m_sibling)
     {
         m_sibling = m_sibling->nextSibling();
-		ap->sibling(NULL);
+        ap->sibling(NULL);
         return true;
     }
     else
@@ -447,6 +447,7 @@ bool Slot::removeSibling(Slot *ap)
 void Slot::setGlyph(Segment *seg, uint16 glyphid, const GlyphFace * theGlyph)
 {
     m_glyphid = glyphid;
+    m_bidiCls = -1;
     if (!theGlyph)
     {
         theGlyph = seg->getFace()->glyphs().glyphSafe(glyphid);
@@ -458,8 +459,8 @@ void Slot::setGlyph(Segment *seg, uint16 glyphid, const GlyphFace * theGlyph)
         }
     }
     m_realglyphid = theGlyph->attrs()[seg->silf()->aPseudo()];
-	if (m_realglyphid > seg->getFace()->glyphs().numGlyphs())
-		m_realglyphid = 0;
+    if (m_realglyphid > seg->getFace()->glyphs().numGlyphs())
+        m_realglyphid = 0;
     const GlyphFace *aGlyph = theGlyph;
     if (m_realglyphid)
     {
@@ -493,26 +494,26 @@ void SlotJustify::LoadSlot(const Slot *s, const Segment *seg)
 
 Slot * Slot::nextInCluster(const Slot *s) const
 {
-	Slot *base;
-	if (s->firstChild())
-		return s->firstChild();
-	else if (s->nextSibling())
-		return s->nextSibling();
-	while ((base = s->attachedTo()))
-	{
-		if (base->firstChild() == s && base->nextSibling())
-			return base->nextSibling();
-		s = base;
-	}
-	return NULL;
+    Slot *base;
+    if (s->firstChild())
+        return s->firstChild();
+    else if (s->nextSibling())
+        return s->nextSibling();
+    while ((base = s->attachedTo()))
+    {
+        if (base->firstChild() == s && base->nextSibling())
+            return base->nextSibling();
+        s = base;
+    }
+    return NULL;
 }
 
 bool Slot::isChildOf(const Slot *base) const
 {
-	if (m_parent == base)
-		return true;
-	else if (!m_parent)
-		return false;
-	else
-		return m_parent->isChildOf(base);
+    if (m_parent == base)
+        return true;
+    else if (!m_parent)
+        return false;
+    else
+        return m_parent->isChildOf(base);
 }

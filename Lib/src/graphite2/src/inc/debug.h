@@ -72,7 +72,7 @@ json & operator << (json & j, const Position & p) throw()
 inline
 json & operator << (json & j, const Rect & p) throw()
 {
-	return j << json::flat << json::array << p.bl.x << p.bl.y << p.tr.x << p.tr.y << json::close;
+    return j << json::flat << json::array << p.bl.x << p.bl.y << p.tr.x << p.tr.y << json::close;
 }
 
 

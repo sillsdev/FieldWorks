@@ -8,23 +8,22 @@ GR2_OBJECTS = \
     $(INT_DIR)\gr_segment.obj \
     $(INT_DIR)\gr_slot.obj \
     $(INT_DIR)\json.obj \
-    $(INT_DIR)\Bidi.obj \
     $(INT_DIR)\CachedFace.obj \
     $(INT_DIR)\CmapCache.obj \
     $(INT_DIR)\Code.obj \
-	$(INT_DIR)\Collider.obj \
-	$(INT_DIR)\Decompressor.obj \
+    $(INT_DIR)\Collider.obj \
+    $(INT_DIR)\Decompressor.obj \
     $(INT_DIR)\Face.obj \
     $(INT_DIR)\FeatureMap.obj \
     $(INT_DIR)\FileFace.obj \
     $(INT_DIR)\Font.obj \
     $(INT_DIR)\GlyphCache.obj \
     $(INT_DIR)\GlyphFace.obj \
-	$(INT_DIR)\Intervals.obj \
+    $(INT_DIR)\Intervals.obj \
     $(INT_DIR)\Justifier.obj \
     $(INT_DIR)\NameTable.obj \
     $(INT_DIR)\Pass.obj \
-	$(INT_DIR)\Position.obj \
+    $(INT_DIR)\Position.obj \
     $(INT_DIR)\SegCache.obj \
     $(INT_DIR)\SegCacheEntry.obj \
     $(INT_DIR)\SegCacheStore.obj \

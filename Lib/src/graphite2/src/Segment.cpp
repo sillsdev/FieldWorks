@@ -36,7 +36,7 @@ of the License or (at your option) any later version.
 #include "inc/Slot.h"
 #include "inc/Main.h"
 #include "inc/CmapCache.h"
-#include "inc/Bidi.h"
+//#include "inc/Bidi.h"
 #include "inc/Collider.h"
 #include "graphite2/Segment.h"
 
@@ -68,10 +68,10 @@ Segment::~Segment()
 {
     for (SlotRope::iterator i = m_slots.begin(); i != m_slots.end(); ++i)
         free(*i);
-	for (AttributeRope::iterator i = m_userAttrs.begin(); i != m_userAttrs.end(); ++i)
-		free(*i);
-	for (JustifyRope::iterator i = m_justifies.begin(); i != m_justifies.end(); ++i)
-		free(*i);
+    for (AttributeRope::iterator i = m_userAttrs.begin(); i != m_userAttrs.end(); ++i)
+        free(*i);
+    for (JustifyRope::iterator i = m_justifies.begin(); i != m_justifies.end(); ++i)
+        free(*i);
     delete[] m_charinfo;
 }
 
@@ -156,12 +156,12 @@ void Segment::appendSlot(int id, int cid, int gid, int iFeats, size_t coffset)
     aSlot->originate(id);
     aSlot->before(id);
     aSlot->after(id);
-	uint8 aBidi = m_silf->aBidi();
-	if (aBidi != 0xFF)
-	{
-		unsigned int bAttr = glyphAttr(gid, aBidi);
-		aSlot->setBidiClass((bAttr <= 22) * bAttr);
-	}
+//    uint8 aBidi = m_silf->aBidi();
+//    if (aBidi != 0xFF)
+//    {
+//        unsigned int bAttr = glyphAttr(gid, aBidi);
+//        aSlot->setBidiClass((bAttr <= 22) * bAttr);
+//    }
     if (m_last) m_last->next(aSlot);
     aSlot->prev(m_last);
     m_last = aSlot;
@@ -175,9 +175,9 @@ Slot *Segment::newSlot()
 {
     if (!m_freeSlots)
     {
-		// check that the segment doesn't grow indefinintely
-		if (m_numGlyphs > m_numCharinfo * MAX_SEG_GROWTH_FACTOR)
-			return NULL;
+        // check that the segment doesn't grow indefinintely
+        if (m_numGlyphs > m_numCharinfo * MAX_SEG_GROWTH_FACTOR)
+            return NULL;
         int numUser = m_silf->numUser();
 #if !defined GRAPHITE2_NTRACING
         if (m_face->logger()) ++numUser;
@@ -187,7 +187,7 @@ Slot *Segment::newSlot()
         if (!newSlots || !newAttrs) return NULL;
         for (size_t i = 0; i < m_bufSize; i++)
         {
-			::new (newSlots + i) Slot(newAttrs + i * numUser);
+            ::new (newSlots + i) Slot(newAttrs + i * numUser);
             newSlots[i].next(newSlots + i + 1);
         }
         newSlots[m_bufSize - 1].next(NULL);
@@ -215,7 +215,7 @@ void Segment::freeSlot(Slot *aSlot)
         aSlot->removeChild(aSlot->firstChild());
     }
     // reset the slot incase it is reused
-	::new (aSlot) Slot(aSlot->userAttrs());
+    ::new (aSlot) Slot(aSlot->userAttrs());
     memset(aSlot->userAttrs(), 0, m_silf->numUser() * sizeof(int16));
     // Update generation counter for debug
 #if !defined GRAPHITE2_NTRACING
@@ -322,46 +322,56 @@ void Segment::splice(size_t offset, size_t length, Slot * const startSlot,
 // reverse the slots but keep diacritics in their same position after their bases
 void Segment::reverseSlots()
 {
-	if (!m_first) return;
+    m_dir = m_dir ^ 64;                 // invert the reverse flag
+    if (m_first == m_last) return;      // skip 0 or 1 glyph runs
 
-	Slot *t = 0;
-	Slot *curr = m_first;
-	Slot *tlast = m_first;
-	Slot *out = 0;
+    Slot *t = 0;
+    Slot *curr = m_first;
+    Slot *tlast;
+    Slot *tfirst;
+    Slot *out = 0;
 
-	while (curr)
-	{
-		if (curr->getBidiClass() == 16)
-		{
-			Slot *d = curr->next();
-			while (d && d->getBidiClass() == 16)
-				d = d->next();
+    while (curr && getSlotBidiClass(curr) == 16)
+        curr = curr->next();
+    if (!curr) return;
+    tfirst = curr->prev();
+    tlast = curr;
 
-			d = d ? d->prev() : m_last;
-			Slot *p = out ? out->next() : 0;    // one after the diacritics
-			if (p)
-				p->prev(d);
-			else
-				tlast = d;
-			t = d->next();
-			d->next(p);
-			curr->prev(out);
-			if (out)
-				out->next(curr);
-		}
-		else
-		{
-			if (out)
-				out->prev(curr);
-			t = curr->next();
-			curr->next(out);
-			out = curr;
-		}
-		curr = t;
-	}
-	out->prev(0);
-	m_last = tlast;
-	m_first = out;
+    while (curr)
+    {
+        if (getSlotBidiClass(curr) == 16)
+        {
+            Slot *d = curr->next();
+            while (d && getSlotBidiClass(d) == 16)
+                d = d->next();
+
+            d = d ? d->prev() : m_last;
+            Slot *p = out->next();    // one after the diacritics. out can't be null
+            if (p)
+                p->prev(d);
+            else
+                tlast = d;
+            t = d->next();
+            d->next(p);
+            curr->prev(out);
+            out->next(curr);
+        }
+        else    // will always fire first time round the loop
+        {
+            if (out)
+                out->prev(curr);
+            t = curr->next();
+            curr->next(out);
+            out = curr;
+        }
+        curr = t;
+    }
+    out->prev(tfirst);
+    if (tfirst)
+        tfirst->next(out);
+    else
+        m_first = out;
+    m_last = tlast;
 }
 
 void Segment::linkClusters(Slot *s, Slot * end)
@@ -402,12 +412,12 @@ Position Segment::positionSlots(const Font *font, Slot * iStart, Slot * iEnd, bo
     if (!iStart)    iStart = m_first;
     if (!iEnd)      iEnd   = m_last;
 
-	if (isRtl)
+    if (isRtl)
     {
         for (Slot * s = iEnd, * const end = iStart->prev(); s && s != end; s = s->prev())
         {
             if (s->isBase())
-				currpos = s->finalise(this, font, currpos, bbox, 0, clusterMin = currpos.x, isRtl, isFinal);
+                currpos = s->finalise(this, font, currpos, bbox, 0, clusterMin = currpos.x, isRtl, isFinal);
         }
     }
     else
@@ -415,7 +425,7 @@ Position Segment::positionSlots(const Font *font, Slot * iStart, Slot * iEnd, bo
         for (Slot * s = iStart, * const end = iEnd->next(); s && s != end; s = s->next())
         {
             if (s->isBase())
-				currpos = s->finalise(this, font, currpos, bbox, 0, clusterMin = currpos.x, isRtl, isFinal);
+                currpos = s->finalise(this, font, currpos, bbox, 0, clusterMin = currpos.x, isRtl, isFinal);
         }
     }
     return currpos;
@@ -492,6 +502,7 @@ bool Segment::read_text(const Face *face, const Features* pFeats/*must not be NU
     return true;
 }
 
+#if 0
 Slot *process_bidi(Slot *start, int level, int prelevel, int &nextLevel, int dirover, int isol, int &cisol, int &isolerr, int &embederr, int init, Segment *seg, uint8 aMirror, BracketPairStack &stack);
 void resolveImplicit(Slot *s, Segment *seg, uint8 aMirror);
 void resolveWhitespace(int baseLevel, Slot *s);
@@ -508,11 +519,11 @@ void Segment::bidiPass(int paradir, uint8 aMirror)
     unsigned int ssize = 0;
     for (s = first(); s; s = s->next())
     {
-		if (s->getBidiClass() < 0)
-			s->setBidiClass(0);
+        if (getSlotBidiClass(s) < 0)
+            s->setBidiClass(0);
         bmask |= (1 << s->getBidiClass());
         s->setBidiLevel(baseLevel);
-		if (s->getBidiClass() == 21)
+        if (s->getBidiClass() == 21)
             ++ssize;
     }
 
@@ -541,17 +552,29 @@ void Segment::bidiPass(int paradir, uint8 aMirror)
         }
     }
 }
+#endif
+
+void Segment::doMirror(uint16 aMirror)
+{
+    Slot * s;
+    for (s = m_first; s; s = s->next())
+    {
+        unsigned short g = glyphAttr(s->gid(), aMirror);
+        if (g && (!(dir() & 4) || !glyphAttr(s->gid(), aMirror + 1)))
+            s->setGlyph(this, g);
+    }
+}
 
 bool Segment::initCollisions()
 {
-	if (m_collisions) free(m_collisions);
-	Slot *p = m_first;
-	m_collisions = gralloc<SlotCollision>(slotCount());
-	if (!m_collisions) return false;
-	for (unsigned short i = 0; i < slotCount(); ++i)
-	{
-		::new (m_collisions + p->index()) SlotCollision(this, p);
-		p = p->next();
-	}
-	return true;
+    if (m_collisions) free(m_collisions);
+    Slot *p = m_first;
+    m_collisions = gralloc<SlotCollision>(slotCount());
+    if (!m_collisions) return false;
+    for (unsigned short i = 0; i < slotCount(); ++i)
+    {
+        ::new (m_collisions + p->index()) SlotCollision(this, p);
+        p = p->next();
+    }
+    return true;
 }
