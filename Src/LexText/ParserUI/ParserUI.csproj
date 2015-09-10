@@ -169,9 +169,6 @@
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="SimpleRootSite">
       <Name>SimpleRootSite</Name>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>

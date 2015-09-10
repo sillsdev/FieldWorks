@@ -37,7 +37,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -618,7 +617,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void StoreClerkInPropertyTable(XmlNode clerkConfiguration)
 		{
 			string property = GetCorrespondingPropertyName(ToolConfiguration.GetIdOfTool(clerkConfiguration));
-			PropertyTable.SetProperty(property, this, false, true);
+			PropertyTable.SetProperty(property, this, false, false);
 			PropertyTable.SetPropertyDispose(property, true);
 		}
 

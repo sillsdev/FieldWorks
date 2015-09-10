@@ -467,12 +467,6 @@
     </Compile>
     <Compile Include="Sfm2FlexText.cs" />
     <Compile Include="ShowSpaceDecorator.cs" />
-    <Compile Include="StatisticsView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StatisticsView.Designer.cs">
-      <DependentUpon>StatisticsView.cs</DependentUpon>
-    </Compile>
     <Compile Include="SymbolicValue.cs" />
     <Compile Include="TextsFilterItem.cs" />
     <Compile Include="TitleContentsPane.cs">
@@ -580,10 +574,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="InvisibleSpaceCursor.cur" />
-    <EmbeddedResource Include="StatisticsView.resx">
-      <DependentUpon>StatisticsView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ZeroWidth.ico" />

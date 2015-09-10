@@ -179,6 +179,51 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Texts &amp; Words Statistics (using chosen texts).
+        /// </summary>
+        internal static string ksStatisticsView_HeaderText {
+            get {
+                return ResourceManager.GetString("ksStatisticsView_HeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total number of sentences (segments):.
+        /// </summary>
+        internal static string ksStatisticsViewTotalSentencesText {
+            get {
+                return ResourceManager.GetString("ksStatisticsViewTotalSentencesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total word count (tokens):.
+        /// </summary>
+        internal static string ksStatisticsViewTotalWordTokensText {
+            get {
+                return ResourceManager.GetString("ksStatisticsViewTotalWordTokensText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total number of unique words (types):.
+        /// </summary>
+        internal static string ksStatisticsViewTotalWordTypesText {
+            get {
+                return ResourceManager.GetString("ksStatisticsViewTotalWordTypesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        internal static string ksTextAreaStatisticsViewName {
+            get {
+                return ResourceManager.GetString("ksTextAreaStatisticsViewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to study the training materials for Language Explorer?
         ///
         ///If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.

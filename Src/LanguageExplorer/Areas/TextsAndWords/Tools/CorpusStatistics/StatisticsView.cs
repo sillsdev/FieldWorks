@@ -1,37 +1,54 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.IText;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.IText
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 {
+#if RANDYTODO
+
+	/*
+		<tool label="Statistics" value="corpusStatistics" icon="DocumentView">
+			<control>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.StatisticsView"/>
+				<parameters id="ITextContent" area="textsWords" clerk="interlinearTexts" treeBarAvailability="NotAllowed"/>
+			</control>
+		</tool>
+	 */
+#endif
+	/// <summary>
+	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
+	/// </summary>
 	public partial class StatisticsView : UserControl, IMainContentControl, IFWDisposable
 	{
 		private bool _shouldNotCall;
-
-		private string _areaName;
 		private FdoCache _cache;
-		private InterlinearTextsRecordClerk m_clerk;
+		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public StatisticsView()
 		{
 			InitializeComponent();
 
-			ContextMenu cm = new ContextMenu();
-
+			var cm = new ContextMenu();
 			var mi = new MenuItem("Copy");
-			mi.Click += new EventHandler(mi_Copy);
+			mi.Click += mi_Copy;
 			cm.MenuItems.Add(mi);
-
 			statisticsBox.ContextMenu = cm;
 		}
 
@@ -76,33 +93,48 @@ namespace SIL.FieldWorks.IText
 
 			_cache = PropertyTable.GetValue<FdoCache>("cache");
 
-#if RANDYTODO
-			var name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
-#else
-			var name = "FIND_CLERK_Name";
-#endif
-			var clerk = RecordClerk.FindClerk(PropertyTable, name);
-			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
+			const string clerkName = "interlinearTexts";
+			var clerkPropertyTableName = "RecordClerk-" + clerkName;
+			RecordClerk clerk;
+			if (PropertyTable.TryGetValue(clerkPropertyTableName, out clerk))
+			{
+				if (clerk is TemporaryRecordClerk)
+				{
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk();
+					_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				}
+				else
+				{
+					_interlinearTextsRecordClerk = (InterlinearTextsRecordClerk)clerk;
+				}
+			}
+			else
+			{
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk();
+				_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			}
+			_interlinearTextsRecordClerk = (clerk == null || clerk is TemporaryRecordClerk) ?
 				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true) :
 				(InterlinearTextsRecordClerk)clerk;
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).
-			m_clerk.ActivateUI(true);
-#if RANDYTODO
-			// TODO: Get area name some other way.
-			_areaName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "area", "unknown");
-#endif
+			_interlinearTextsRecordClerk.ActivateUI(true);
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			string toolName = PropertyTable.GetValue("currentContentControl", "");
+			var toolName = PropertyTable.GetValue("currentContentControl", "");
 			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty));
 		}
 
 		#endregion
 
+		#region Implementation of IMainUserControl
+
+		/// <summary>
+		/// Get or set the name to be used by the accessibility object.
+		/// </summary>
 		public string AccName
 		{
-			get { return ITextStrings.ksTextAreaStatisticsViewName; }
+			get { return LanguageExplorerResources.ksTextAreaStatisticsViewName; }
 			set { /* Do nothing. */ ; }
 		}
 
@@ -112,10 +144,12 @@ namespace SIL.FieldWorks.IText
 		/// <remarks>Set to null or string.Empty to not show the message box.</remarks>
 		public string MessageBoxTrigger { get; set; }
 
+		#endregion
+
 		#region Implementation of ICtrlTabProvider
 
 		/// <summary>
-		/// Gather up suitable targets to Cntrl-(Shift-)Tab into.
+		/// Gather up suitable targets to Ctrl(+Shift)+Tab into.
 		/// </summary>
 		/// <param name="targetCandidates">List of places to move to.</param>
 		/// <returns>A suitable target for moving to in Ctrl(+Shift)+Tab.
@@ -142,62 +176,59 @@ namespace SIL.FieldWorks.IText
 														  FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
 														  Cache.DefaultUserWs, Cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
-			Font headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
-
+			var headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
 			//refresh the statisticsDescription (in case of font changes)
-			statisticsBox.Text = ITextStrings.ksStatisticsView_HeaderText;
-
-			int row = 0;
+			statisticsBox.Text = LanguageExplorerResources.ksStatisticsView_HeaderText;
 			var textList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
-			int numberOfSegments = 0;
-			int wordCount = 0;
-			int uniqueWords = 0;
-
-			Dictionary<int, int> languageCount = new Dictionary<int, int>();
-			Dictionary<int, Set<String>> languageTypeCount = new Dictionary<int, Set<String>>();
+			var numberOfSegments = 0;
+			var wordCount = 0;
+			var uniqueWords = 0;
+			var languageCount = new Dictionary<int, int>();
+			var languageTypeCount = new Dictionary<int, Set<string>>();
 			//for each interesting text
-			foreach (var text in textList.InterestingTexts)
+			foreach (var interestingText in textList.InterestingTexts)
 			{
 				//if a text is deleted in Interlinear there could be a text in this list which has invalid data.
-				if (text.Hvo < 0)
+				if (interestingText.Hvo < 0)
 					continue;
 				//for every paragraph in the interesting text
-				for (int index = 0; index < text.ParagraphsOS.Count; ++index)
+				for (var index = 0; index < interestingText.ParagraphsOS.Count; ++index)
 				{
 					//count the segments in this paragraph
-					numberOfSegments += text[index].SegmentsOS.Count;
+					numberOfSegments += interestingText[index].SegmentsOS.Count;
 					//count all the things analyzed as words
-					var words = new List<IAnalysis>(text[index].Analyses);
+					var words = new List<IAnalysis>(interestingText[index].Analyses);
 					foreach (var word in words)
 					{
 						var wordForm = word.Wordform;
-						if (wordForm != null)
+						if (wordForm == null)
 						{
-							var valdWSs = wordForm.Form.AvailableWritingSystemIds;
-							foreach (var ws in valdWSs)
+							continue;
+						}
+						var valdWSs = wordForm.Form.AvailableWritingSystemIds;
+						foreach (var ws in valdWSs)
+						{
+							// increase the count of words(tokens) for this language
+							int count;
+							if (languageCount.TryGetValue(ws, out count))
 							{
-								// increase the count of words(tokens) for this language
-								int count = 0;
-								if (languageCount.TryGetValue(ws, out count))
-								{
-									languageCount[ws] = count + 1;
-								}
-								else
-								{
-									languageCount.Add(ws, 1);
-								}
-								//increase the count of unique words(types) for this language
-								Set<String> pair;
-								if (languageTypeCount.TryGetValue(ws, out pair))
-								{
-									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
-								}
-								else
-								{
-									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									languageTypeCount.Add(ws, new Set<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
-								}
+								languageCount[ws] = count + 1;
+							}
+							else
+							{
+								languageCount.Add(ws, 1);
+							}
+							//increase the count of unique words(types) for this language
+							Set<string> pair;
+							if (languageTypeCount.TryGetValue(ws, out pair))
+							{
+								//add the string for this writing system in all lower case to the set, unique count is case insensitive
+								pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
+							}
+							else
+							{
+								//add the string for this writing system in all lower case to the set, unique count is case insensitive
+								languageTypeCount.Add(ws, new Set<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
 							}
 						}
 					}
@@ -206,49 +237,43 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			// insert total word type count
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalWordTypesText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText + "\t"; // Todo: find the right System.?.NewLine constant
 
-			++row;
 			//add one row for the unique words in each language.
-			foreach (KeyValuePair<int, Set<String>> keyValuePair in languageTypeCount)
+			foreach (var keyValuePair in languageTypeCount)
 			{
 				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-
-				string labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
+				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
 				statisticsBox.Text += "" + keyValuePair.Value.Count;
-				++row;
 				uniqueWords += keyValuePair.Value.Count; //increase the total of unique words
 			}
 
 			// next insert the word count.
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalWordTokensText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalWordTokensText + "\t"; // Todo: find the right System.?.NewLine constant
 			statisticsBox.Text += wordCount;
-			++row;
 			//add one row for the token count for each language.
-			foreach (KeyValuePair<int, int> keyValuePair in languageCount)
+			foreach (var keyValuePair in languageCount)
 			{
 				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-
-				string labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
+				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
 				statisticsBox.Text += "" + keyValuePair.Value;
-				++row;
 			}
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalSentencesText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalSentencesText + "\t"; // Todo: find the right System.?.NewLine constant
 
 			// next insert the sentence count.
 			statisticsBox.Text += numberOfSegments;
 
 			// insert the total word type count into the richTextBox (it wasn't available earlier)
-			statisticsBox.SelectionStart = statisticsBox.Find(ITextStrings.ksStatisticsViewTotalWordTypesText) +
-										   ITextStrings.ksStatisticsViewTotalWordTypesText.Length;
+			statisticsBox.SelectionStart = statisticsBox.Find(LanguageExplorerResources.ksStatisticsViewTotalWordTypesText) +
+										   LanguageExplorerResources.ksStatisticsViewTotalWordTypesText.Length;
 			statisticsBox.SelectionLength = 1;
 			statisticsBox.SelectedText = "\t" + uniqueWords;
 
 			// Set the font for the header. Do this after we add the other stuff to make sure
 			// it doesn't apply to extra text added adjacent to it.
-			statisticsBox.Select(0, ITextStrings.ksStatisticsView_HeaderText.Length);
+			statisticsBox.Select(0, LanguageExplorerResources.ksStatisticsView_HeaderText.Length);
 			statisticsBox.SelectionFont = headerFont;
 			statisticsBox.Select(0, 0);
 		}
@@ -257,24 +282,27 @@ namespace SIL.FieldWorks.IText
 		public bool OnDisplayAddTexts(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = m_clerk != null;
+			display.Enabled = _interlinearTextsRecordClerk != null;
 			display.Visible = display.Enabled;
 			return true;
 		}
-#endif
 
 		public bool OnAddTexts(object args)
 		{
-			bool result = m_clerk.OnAddTexts(args);
+			bool result = _interlinearTextsRecordClerk.OnAddTexts(args);
 			if(result)
 			{
 				RebuildStatisticsTable();
 			}
 			return result;
 		}
+#endif
 
 		#region Implementation of IMainContentControl
 
+		/// <summary>
+		/// The control is about to go away, so do something first.
+		/// </summary>
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
@@ -282,9 +310,12 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+		/// <summary>
+		/// The Area name that uses this control.
+		/// </summary>
 		public string AreaName
 		{
-			get { return _areaName; }
+			get { return "textsWords"; }
 		}
 
 		#endregion
@@ -317,9 +348,8 @@ namespace SIL.FieldWorks.IText
 				return _cache;
 			}
 		}
-		//Code to add right click
 
-
+		// Code to add right click
 		void mi_Copy(object sender, EventArgs e)
 		{
 			statisticsBox.Copy();

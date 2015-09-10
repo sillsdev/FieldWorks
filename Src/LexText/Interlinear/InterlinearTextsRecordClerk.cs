@@ -215,7 +215,6 @@ namespace SIL.FieldWorks.IText
 			display.Enabled = false;
 			return true;
 		}
-#endif
 
 		/// <summary>
 		/// We use a unique method name for inserting a text, which could otherwise be handled simply
@@ -229,12 +228,9 @@ namespace SIL.FieldWorks.IText
 		{
 			if (!IsActiveClerk || !InDesiredArea("textsWords"))
 				return false;
-#if RANDYTODO
 			return AddNewText(argument as Command);
-#else
-			return false;
-#endif
 		}
+#endif
 
 		/// <summary>
 		/// Add a new text (but don't make it undoable)

@@ -742,21 +742,6 @@
   <data name="ksSfmImportProblem" xml:space="preserve">
     <value>There was a problem with the import. The system reported {0}.</value>
   </data>
-  <data name="ksTextAreaStatisticsViewName" xml:space="preserve">
-    <value>Statistics</value>
-  </data>
-  <data name="ksStatisticsView_HeaderText" xml:space="preserve">
-    <value>Texts &amp; Words Statistics (using chosen texts)</value>
-  </data>
-  <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
-    <value>Total number of sentences (segments):</value>
-  </data>
-  <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
-    <value>Total word count (tokens):</value>
-  </data>
-  <data name="ksStatisticsViewTotalWordTypesText" xml:space="preserve">
-    <value>Total number of unique words (types):</value>
-  </data>
   <data name="ksImportAnalysisLangMissing" xml:space="preserve">
     <value> is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
 Click "OK" to add it as a analysis writing system.

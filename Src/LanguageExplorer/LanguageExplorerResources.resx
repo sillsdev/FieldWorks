@@ -191,4 +191,19 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="Text_And_Words" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Text_And_Words.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
+    <value>Total number of sentences (segments):</value>
+  </data>
+  <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
+    <value>Total word count (tokens):</value>
+  </data>
+  <data name="ksStatisticsViewTotalWordTypesText" xml:space="preserve">
+    <value>Total number of unique words (types):</value>
+  </data>
+  <data name="ksStatisticsView_HeaderText" xml:space="preserve">
+    <value>Texts &amp; Words Statistics (using chosen texts)</value>
+  </data>
+  <data name="ksTextAreaStatisticsViewName" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
 </root>
