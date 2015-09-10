@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					var relations = new List<LexicalRelation>();
 					foreach (ILexReference lexRef in entry.LexEntryReferences.Union(entry.AllSenses.SelectMany(s => s.LexSenseReferences)))
 					{
-						string name = GetLexReferenceName(entry, lexRef.OwnerOfClass<ILexRefType>()).Normalize();
+						string name = GetLexReferenceName(entry, lexRef);
 						foreach (ICmObject obj in lexRef.TargetsRS)
 						{
 							ILexEntry otherEntry = null;
@@ -180,24 +180,44 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private string GetLexReferenceName(ILexEntry lexEntry, ILexRefType lexRefType)
+		private string GetLexReferenceName(ILexEntry lexEntry, ILexReference lexRef)
 		{
-			// The name we want to use for our lex reference is either the name or the reverse name
-			// (depending on the direction of the relationship, if relevant) of the owning lex ref type.
-			ITsString lexReferenceName = lexRefType.Name.BestVernacularAnalysisAlternative;
-
-			if (lexRefType.MappingType == (int)MappingTypes.kmtEntryAsymmetricPair ||
-				lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseAsymmetricPair ||
-				lexRefType.MappingType == (int)MappingTypes.kmtSenseAsymmetricPair ||
-				lexRefType.MappingType == (int)MappingTypes.kmtEntryTree ||
-				lexRefType.MappingType == (int)MappingTypes.kmtEntryOrSenseTree ||
-				lexRefType.MappingType == (int)MappingTypes.kmtSenseTree)
+			ILexRefType lexRefType = lexRef.OwnerOfClass<ILexRefType>();
+			string name = lexRefType.ShortName;
+			if (string.IsNullOrEmpty(name))
+				name = lexRefType.Abbreviation.BestAnalysisAlternative.Text;
+			switch ((LexRefTypeTags.MappingTypes) lexRefType.MappingType)
 			{
-				if (lexEntry.OwnOrd == 0 && lexRefType.Name != null) // the original code had a check for name length as well.
-					lexReferenceName = lexRefType.ReverseName.BestAnalysisAlternative;
-			}
+				case LexRefTypeTags.MappingTypes.kmtSenseTree:
+				case LexRefTypeTags.MappingTypes.kmtEntryTree:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
+				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair: // Entry Pair with different Forward/Reverse names
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair: // Entry or sense Pair with different Forward/Reverse names
+					if (lexRef.TargetsRS.Count > 0)
+					{
+						ICmObject firstObj = lexRef.TargetsRS[0];
+						ILexEntry firstEntry = null;
+						switch (firstObj.ClassID)
+						{
+							case LexEntryTags.kClassId:
+								firstEntry = (ILexEntry) firstObj;
+								break;
+							case LexSenseTags.kClassId:
+								firstEntry = firstObj.OwnerOfClass<ILexEntry>();
+								break;
+						}
 
-			return lexReferenceName.Text;
+						if (firstEntry != lexEntry)
+						{
+							name = lexRefType.ReverseName.BestAnalysisAlternative.Text;
+							if (string.IsNullOrEmpty(name))
+								name = lexRefType.ReverseAbbreviation.BestAnalysisAlternative.Text;
+						}
+					}
+					break;
+			}
+			return name.Normalize();
 		}
 
 		public LexiconSense AddSense()

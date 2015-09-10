@@ -578,6 +578,64 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
 		}
 
+		/// <summary>
+		/// Test that the name for asymmetric lexical relations are correct.
+		/// </summary>
+		[Test]
+		public void AsymmetricLexicalRelation()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				ILexEntry entry4 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form4", m_cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+
+				ILexRefType entryLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(entryLexRefType);
+				entryLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair;
+				entryLexRefType.Name.SetAnalysisDefaultWritingSystem("EntryName");
+				entryLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("EntryReverseName");
+
+				ILexRefType senseLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(senseLexRefType);
+				senseLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair;
+				senseLexRefType.Name.SetAnalysisDefaultWritingSystem("SenseName");
+				senseLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("SenseReverseName");
+
+				ILexReference entryLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				entryLexRefType.MembersOC.Add(entryLexRef);
+				entryLexRef.TargetsRS.Add(entry1);
+				entryLexRef.TargetsRS.Add(entry2);
+
+				ILexReference senseLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				senseLexRefType.MembersOC.Add(senseLexRef);
+				senseLexRef.TargetsRS.Add(entry3.SensesOS[0]);
+				senseLexRef.TargetsRS.Add(entry4.SensesOS[0]);
+			});
+
+			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form1").Single();
+			LexicalRelation relation = lexeme.LexicalRelations.First();
+			Assert.That(relation.Name, Is.EqualTo("EntryName"));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
+			relation = lexeme.LexicalRelations.First();
+			Assert.That(relation.Name, Is.EqualTo("EntryReverseName"));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form3").Single();
+			relation = lexeme.LexicalRelations.First();
+			Assert.That(relation.Name, Is.EqualTo("SenseName"));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form4").Single();
+			relation = lexeme.LexicalRelations.First();
+			Assert.That(relation.Name, Is.EqualTo("SenseReverseName"));
+		}
+
 		#endregion
 	}
 }
