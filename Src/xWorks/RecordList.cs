@@ -9,13 +9,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
-using System.Reflection;
 using System.Linq;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -28,918 +25,6 @@ using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
-
-	/// <summary>
-	/// this kind of the event is fired when he RecordList recognizes that its list has changed for any reason.
-	/// </summary>
-	public class ListChangedEventArgs : EventArgs
-	{
-		protected RecordList m_list;
-		protected ListChangedActions m_actions;
-		protected int m_hvoItem;
-
-		/// <summary>
-		/// Actions to take on a ListChanged event.
-		/// SkipRecordNavigation will skip broadcasting OnRecordNavigation.
-		/// SuppressSaveOnChangeRecord will broadcast OnRecordNavigation, but not save the cache (not saving the cache preserves the Undo/Redo stack)
-		/// Normal will broadcast OnRecordNavigation and save the cache
-		/// UpdateListItemName will simply reload the record tree bar item for the CurrentObject.
-		/// </summary>
-		public enum ListChangedActions {
-			SkipRecordNavigation,
-			SuppressSaveOnChangeRecord,
-			Normal,
-			UpdateListItemName
-		};
-
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="list"></param>
-		/// <param name="actions">Actions to take during the ListChanged event</param>
-		/// <param name="hvoItem">hvo of the affected item (may be 0)</param>
-		public ListChangedEventArgs(RecordList list, ListChangedActions actions, int hvoItem)
-		{
-			m_list = list;
-			m_actions = actions;
-			m_hvoItem = hvoItem;
-		}
-
-		public RecordList List
-		{
-			get
-			{
-				return m_list;
-			}
-		}
-
-		/// <summary>
-		/// if SkipRecordNavigation, RecordClerk can skip Broadcasting OnRecordNavigation.
-		/// </summary>
-		public ListChangedActions Actions
-		{
-			get
-			{
-				return m_actions;
-			}
-		}
-
-		/// <summary>
-		/// If nonzero, the hvo of the affected list item.
-		/// </summary>
-		public int ItemHvo
-		{
-			get { return m_hvoItem; }
-		}
-	}
-
-	/// <summary>
-	/// this is simply a definition of the kind of method which can be tied to this kind of event
-	/// </summary>
-	public delegate void ListChangedEventHandler(object sender, ListChangedEventArgs e);
-
-	/// <summary>
-	/// this is a specialty subclass for grabbing all of the items from a possibility list.
-	/// </summary>
-	public class PossibilityRecordList : RecordList
-	{
-		/// <summary>
-		/// A possibility list is specified in the XML file by specifying the owner and the
-		/// property of the list (without the "OA" used in FDO).
-		/// Exception: If owner is "unowned", then property should be a GUID of a list that
-		/// we'll get from the ICmPossibilityListRepository.
-		/// </summary>
-		public override void Init(XmlNode recordListNode)
-		{
-			CheckDisposed();
-
-			BaseInit(recordListNode);
-			string owner = XmlUtils.GetManditoryAttributeValue(recordListNode, "owner");
-			string property = XmlUtils.GetManditoryAttributeValue(recordListNode, "property");
-			m_owningObject = GetListFromOwnerAndProperty(m_cache, owner, property);
-			Debug.Assert(m_owningObject != null, "Illegal owner or other problem in spec for possibility list.");
-			m_oldLength = 0;
-
-			Debug.Assert(m_owningObject != null, "Failed to find possibility list.");
-			m_fontName = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
-			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-			m_flid  = CmPossibilityListTags.kflidPossibilities;
-		}
-
-		public static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
-		{
-			ICmObject obj = null;
-
-			switch (owner)
-			{
-				case "LangProject":
-					obj = cache.LanguageProject;
-					break;
-				case "LexDb":
-					obj = cache.LanguageProject.LexDbOA;
-					break;
-				case "MorphologicalData":
-					obj = cache.LanguageProject.MorphologicalDataOA;
-					break;
-				case "RnResearchNbk":
-					obj = cache.LanguageProject.ResearchNotebookOA;
-					break;
-				case "DsDiscourseData":
-					if (cache.LanguageProject.DiscourseDataOA == null)
-					{
-						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-							cache.ActionHandlerAccessor, () =>
-															{
-																cache.LanguageProject.GetDefaultChartTemplate();
-																// Fixes part of LT-8517; should create DiscourseDataOA
-																cache.LanguageProject.GetDefaultChartMarkers();
-															});
-					}
-					obj = cache.LanguageProject.DiscourseDataOA;
-					break;
-				case "Scripture":
-					if (cache.LanguageProject.TranslatedScriptureOA == null)
-					{
-						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
-							() => cache.LanguageProject.TranslatedScriptureOA = cache.ServiceLocator.GetInstance<IScriptureFactory>().Create());
-					}
-					obj = cache.LanguageProject.TranslatedScriptureOA;
-					break;
-				case "unowned":
-					// In this case 'property' contains a GUID string from the configuration XML.
-					var repo = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-					return repo.GetObject(new Guid(property));
-				default:
-					return null;
-			}
-			if (obj.GetType().GetProperty(property + "OA",
-				BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Instance | BindingFlags.GetProperty)== null)
-				return null;
-			var result = obj.GetType().InvokeMember(property + "OA",
-				BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Instance | BindingFlags.GetProperty, null, obj, null) as ICmPossibilityList;
-
-			// self-repairing!
-			if (result == null)
-			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
-					() =>
-						{
-							var newList = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							obj.GetType().InvokeMember(property + "OA",
-								BindingFlags.Public | BindingFlags.NonPublic |
-								BindingFlags.Instance | BindingFlags.SetProperty, null, obj,
-								new object[] {newList});
-							newList.ItemClsid = CmPossibilityTags.kClassId;
-							result = newList;
-						});
-			}
-			return result;
-		}
-
-		protected override bool ListAlreadySorted
-		{
-			get
-			{
-				return !(m_owningObject as ICmPossibilityList).IsSorted;
-			}
-		}
-
-		protected override IEnumerable<int> GetObjectSet()
-		{
-			return from obj in (m_owningObject as ICmPossibilityList).ReallyReallyAllPossibilities select obj.Hvo;
-		}
-
-		protected override ClassAndPropInfo GetMatchingClass(string className)
-		{
-			// A possibility list only allows one type of possibility to be owned in the list.
-			var pssl = (ICmPossibilityList)m_owningObject;
-			int possClass = pssl.ItemClsid;
-			string sPossClass = VirtualListPublisher.MetaDataCache.GetClassName(possClass);
-			// for the special case of the VariantEntryTypes list, allow inserting a LexEntryInflType object
-			// as long as the currently selected object has a parent of that class.
-			if (PropertyName == "VariantEntryTypes")
-			{
-				// return null only if the class of the owner does not match the given className
-				// in case of owner being the list itself, use the general class for the list items.
-				var currentObjOwner = CurrentObject.Owner;
-				string classNameOfOwnerOfCurrentObject = currentObjOwner.Hvo == pssl.Hvo
-														 ? sPossClass
-														 : currentObjOwner.ClassName;
-				if (classNameOfOwnerOfCurrentObject != className)
-					return null;
-			}
-			else if (sPossClass != className)
-			{
-				return null;
-			}
-
-			foreach(ClassAndPropInfo cpi in m_insertableClasses)
-			{
-				if (cpi.signatureClassName == className)
-				{
-					return cpi;
-				}
-			}
-			return null;
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Adjust the name of the menu item if appropriate. PossibilityRecordList overrides.
-		/// </summary>
-		/// <param name="command"></param>
-		/// <param name="display"></param>
-		public override void AdjustInsertCommandName(Command command, UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			var pssl = (ICmPossibilityList)m_owningObject;
-			string owningFieldName = pssl.Name.BestAnalysisAlternative.Text;
-			if (pssl.OwningFlid != 0)
-				owningFieldName = VirtualListPublisher.MetaDataCache.GetFieldName(pssl.OwningFlid);
-			string itemTypeName = pssl.ItemsTypeName();
-			if (itemTypeName != "*" + owningFieldName + "*")
-				display.Text = "_" + itemTypeName;	// prepend a keyboard accelarator marker
-			string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
-			command.ToolTipInsert = toolTipInsert.ToLower();
-		}
-#endif
-
-		// For this class we have to reload if sub-possibilities changed, too.
-		// Enhance JohnT: we could attempt to verify that hvo is something owned by our root object,
-		// and ignore if not. This would only be a gain if there is a probability of modifying some
-		// other possibility list while ours is active.
-		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			CheckDisposed();
-
-			// Singularly a bad idea to call the base code, which will do a reload,
-			// and then do another reload here, if the tags are matching, below.
-			// base.PropChanged (hvo, tag, ivMin, cvIns, cvDel);
-			// We'll call the base code, only if we don't deal with the change here.
-
-			if (tag == CmPossibilityTags.kflidSubPossibilities
-				 || tag == CmPossibilityListTags.kflidPossibilities
-				&& (cvIns > 0 || cvDel > 0))
-			{
-				// Reload the whole list, since a deleted/added node may have owned sub-possibilities.
-				// Those subpossibilities would remain in the full sorted set of objects,
-				// even though they have been deleted.
-				// That would then cause the crash seen in LT-6036,
-				// when the dead objects had a class of 0, which was right for a dead object.
-				// At least it was "right" for the current state of the cache code.
-
-				// They will need to be added to the sorted list on an insert, as well.
-
-				// So, whether an item was added or deleted, we need to reload the whole thing.
-				ReloadList();
-			}
-			else if (tag == CmPossibilityTags.kflidName ||
-				tag == CmPossibilityTags.kflidAbbreviation)
-			{
-				if (Clerk.BarHandler is TreeBarHandler)
-				{
-					if ((Clerk.BarHandler as TreeBarHandler).IsHvoATreeNode(hvo))
-					{
-						UpdateListItemName(hvo);
-					}
-				}
-				else
-				{
-					List<int> hvoTargets = new List<int>(new[] {hvo});
-					if (IndexOfFirstSortItem(hvoTargets) != -1)
-						UpdateListItemName(hvo);
-				}
-			}
-			else
-			{
-				base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-			}
-		}
-		#region navigation
-
-		/// <summary>
-		/// Return the root object at the specified index as a CmPossibility. (Will be null
-		/// if it is not a CmPossibility.)
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		ICmPossibility PossibilityAt(int index)
-		{
-			return RootObjectAt(index) as ICmPossibility;
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the first displayed object.
-		/// For possibility lists, the first item that isn't owned by another item.
-		/// </summary>
-		public override int FirstItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-					return -1;
-				for (int i = 0; i < m_sortedObjects.Count; i++)
-				{
-					var poss = PossibilityAt(i);
-					if (poss.OwningFlid != CmPossibilityTags.kflidSubPossibilities)
-						return i;
-				}
-				return -1; // Bizarre..maybe filtering would do this??
-			}
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the last displayed object.
-		/// For possibility lists, this is quite tricky to find.
-		/// </summary>
-		public override int LastItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-					return -1;
-				int lastTopIndex = -1;
-				for (int i = m_sortedObjects.Count; --i >= 0 ;)
-				{
-					var poss = PossibilityAt(i);
-					if (poss.OwningFlid != CmPossibilityTags.kflidSubPossibilities)
-					{
-						lastTopIndex = i;
-						break;
-					}
-				}
-				if (lastTopIndex == -1)
-					return -1; // Bizarre..maybe filtering would do this??
-				return LastChild(PossibilityAt(lastTopIndex).Hvo, lastTopIndex);
-			}
-		}
-
-		/// <summary>
-		/// If hvoPoss has children, return the index of the last of them
-		/// that occurs in m_sortedObjects
-		/// (and recursively, the last of its children).
-		/// If not, return the index of hvoPoss itself (the index passed).
-		/// </summary>
-		/// <param name="hvoPoss"></param>
-		/// <returns></returns>
-		int LastChild(int hvoPoss, int index)
-		{
-			var pss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoPoss);
-			int count = pss.SubPossibilitiesOS.Count;
-			if (count == 0)
-				return index; // no children
-
-			// Find the last child that occurs in the list.
-			for (int ichild = count; --ichild >= 0; )
-			{
-				int hvoChild = pss.SubPossibilitiesOS[ichild].Hvo;
-				int index1 = IndexOf(hvoChild);
-				if (index1 >= 0)
-					return LastChild(hvoChild, index1);
-			}
-			return index; // we didn't find it, treat as having no children.
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the object that follows the one
-		/// at m_currentIndex.
-		/// In a possibility list, if the current item has a child it is the first of those
-		/// in m_sortedObjects.
-		/// Otherwise, it's the first object owned by the owner of this AFTER this.
-		/// If the list is empty return -1.
-		/// If the current object is the last return m_currentIndex.
-		/// If m_currentIndex is -1 return -1.
-		/// </summary>
-		public override int NextItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
-					return -1;
-				ISilDataAccess sda = VirtualListPublisher;
-				int hvoCurrent = PossibilityAt(CurrentIndex).Hvo;
-				var curr = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoCurrent);
-				int count = curr.SubPossibilitiesOS.Count;
-				for (int ichild = 0; ichild < count; ichild++)
-				{
-
-					int index = IndexOf(curr.SubPossibilitiesOS[ichild].Hvo);
-					if (index >= 0)
-						return index;
-				}
-
-				for ( ; ; )
-				{
-					// look for a sibling of hvoCurrentBeforeGetObjectSet coming after the starting point.
-					var currentObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCurrent);
-					int hvoOwner = currentObj.Owner.Hvo;
-					int flidOwner = currentObj.OwningFlid;
-					bool fGotCurrent = false;
-
-					foreach (int hvoChild in VirtualListPublisher.VecProp(hvoOwner, (int)flidOwner))
-					{
-						if (hvoChild == hvoCurrent)
-						{
-							fGotCurrent = true;
-							continue;
-						}
-						if (!fGotCurrent)
-							continue; // skip items before current one.
-						int index = IndexOf(hvoChild);
-						if (index >= 0)
-							return index;
-					}
-					// No subsequent sibling of this.
-					// Look for a sibling of the owner.
-					// But, if the owning property is not sub-possibilities, we've reached the root
-					// and can search no further.
-					if (flidOwner != CmPossibilityTags.kflidSubPossibilities)
-						return CurrentIndex;
-					hvoCurrent = hvoOwner;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the object that precedes the one
-		/// at m_currentIndex.
-		/// In possibility lists, this is the last child of the preceding sibling,
-		/// or the owner,...
-		/// If the list is empty return -1.
-		/// If the current object is the first return m_currentIndex.
-		/// If m_currentIndex is -1 return -1.
-		/// </summary>
-		public override int PrevItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
-					return -1;
-				ISilDataAccess sda = VirtualListPublisher;
-				var pss = PossibilityAt(CurrentIndex);
-				int hvoCurrent = pss.Hvo;
-				int hvoOwner = pss.Owner.Hvo;
-				// Look for a previous sibling in the list.
-
-				int flidOwner = pss.OwningFlid;
-				if (flidOwner == 0)
-					return CurrentIndex;
-				int[] contents = VirtualListPublisher.VecProp(hvoOwner, (int)flidOwner);
-				int count = contents.Length;
-				bool fGotCurrent = false;
-				for (int ichild = count; --ichild >= 0; )
-				{
-					int hvoChild = contents[ichild];
-					if (hvoChild == hvoCurrent)
-					{
-						fGotCurrent = true;
-						continue;
-					}
-					if (!fGotCurrent)
-						continue; // skip items after current one.
-					int index = IndexOf(hvoChild);
-					if (index >= 0)
-						return LastChild(hvoChild, index);
-				}
-
-				// OK, no sibling. Return owner if it's in the list.
-				int index1 = IndexOf(hvoOwner);
-				if (index1 >= 0)
-					return index1;
-				return CurrentIndex; // no previous object exists.
-			}
-		}
-		#endregion
-	}
-
-	/// <summary>
-	/// Record list that can be used to bulk edit Entries or its child classes (e.g. Senses or Pronunciations).
-	/// The class owning relationship between these properties can be defined by the destinationClass of the
-	/// properties listed as 'sourceField' in the RecordList xml definition:
-	/// <code>
-	///		<ClassOwnershipTree>
-	///			<LexEntry sourceField="Entries">
-	///				<LexPronunciation sourceField="AllPronunciations"/>
-	///				<LexSense sourceField="AllSenses"/>
-	///			</LexEntry>
-	///		</ClassOwnershipTree>
-	/// </code>
-	/// </summary>
-	public class EntriesOrChildClassesRecordList : RecordList, IMultiListSortItemProvider
-	{
-		int m_flidEntries = 0;
-		int m_prevFlid = 0;
-		IDictionary<int, bool> m_reloadNeededForProperty = new Dictionary<int, bool>();
-		PartOwnershipTree m_pot = null;
-		XmlNode m_configuration = null;
-
-		bool m_suspendReloadUntilOnChangeListItemsClass = false;
-
-		public EntriesOrChildClassesRecordList()
-		{ }
-
-		/// <summary>
-		/// If m_flid is one of the special classes where we need to modify the expected destination class, do so.
-		/// </summary>
-		public override int ListItemsClass
-		{
-			get
-			{
-				var result = base.ListItemsClass;
-				if (result == 0)
-					return GhostParentHelper.GetBulkEditDestinationClass(Cache, m_flid);
-				return result;
-			}
-		}
-
-		/// <summary>
-		/// this list can work with multiple properties to load its list (e.g. Entries or AllSenses).
-		/// </summary>
-		/// <param name="recordListNode"></param>
-		public override void Init(XmlNode recordListNode)
-		{
-			CheckDisposed();
-			// suspend loading the property until given a class by RecordBrowseView via
-			// RecordClerk.OnChangeListItemsClass();
-			m_suspendReloadUntilOnChangeListItemsClass = true;
-
-			m_configuration = recordListNode;
-			BaseInit(recordListNode);
-			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
-			// used for finding first relative of corresponding current object
-			m_pot = PartOwnershipTree.Create(m_cache, this, true);
-
-			GetDefaultFontNameAndSize(analysis, m_cache, PropertyTable, out m_fontName, out m_typeSize);
-			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
-			// by default we'll setup for Entries
-			GetTargetFieldInfo(LexEntryTags.kClassId, owner, 0, out m_owningObject, out m_flid, out m_propertyName);
-
-		}
-
-		protected override void DisposeManagedResources()
-		{
-			if (m_pot != null && !m_pot.IsDisposed)
-				m_pot.Dispose();
-			base.DisposeManagedResources();
-		}
-
-		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			CheckDisposed();
-
-			if (m_fUpdatingList || m_reloadingList)
-				return;	// we're already in the process of changing our list.
-
-			bool fLoadSuppressed = m_requestedLoadWhileSuppressed;
-			using (var luh = new RecordClerk.ListUpdateHelper(Clerk))
-			{
-				// don't reload the entire list via propchanges.  just indicate we need to reload.
-				luh.TriggerPendingReloadOnDispose = false;
-				base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-
-				// even if RecordList is in m_fUpdatingList mode, we still want to make sure
-				// our alternate list figures out whether it needs to reload as well.
-				if (m_fUpdatingList)
-					TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel);
-
-				// If we edited the list of entries, all our properties are in doubt.
-				if (tag == Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
-				{
-					foreach (var key in m_reloadNeededForProperty.Keys.ToArray())
-						m_reloadNeededForProperty[key] = true;
-				}
-			}
-			// The ListUpdateHelper doesn't always reload the list when it needs it.  See the
-			// second bug listed in FWR-1081.
-			if (m_requestedLoadWhileSuppressed && !fLoadSuppressed && !m_fUpdatingList)
-				ReloadList();
-		}
-
-		protected override void MarkEntriesForReload()
-		{
-			m_reloadNeededForProperty[m_flidEntries] = true;
-		}
-
-		protected override void FinishedReloadList()
-		{
-			m_reloadNeededForProperty[m_flid] = false;
-		}
-
-		protected internal override bool RequestedLoadWhileSuppressed
-		{
-			get
-			{
-
-				return base.RequestedLoadWhileSuppressed ||
-					m_reloadNeededForProperty[m_flid];
-			}
-			set
-			{
-				base.RequestedLoadWhileSuppressed = value;
-			}
-		}
-
-		protected internal override bool NeedToReloadList()
-		{
-			return this.RequestedLoadWhileSuppressed;
-		}
-
-
-		public override void ReloadList()
-		{
-			if (m_suspendReloadUntilOnChangeListItemsClass)
-			{
-				m_requestedLoadWhileSuppressed = true;
-				return;
-			}
-			base.ReloadList();
-		}
-
-		internal override bool RestoreFrom(string pathname)
-		{
-			// If we are restoring, presumably the 'previous flid' (which should be the flid from the last complete
-			// ReloadList) should match the flid that is current, which in turn should correspond to the saved list
-			// of sorted objects.
-			m_prevFlid = m_flid;
-			return base.RestoreFrom(pathname);
-		}
-
-		/// <summary>
-		/// Stores the target flid (that is, typically the field we want to bulk edit) most recently passed to ReloadList.
-		/// </summary>
-		private int TargetFlid { get; set; }
-
-		protected internal override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
-		{
-			// reload list if it differs from current target class (or if forcing a reload anyway).
-			if (newListItemsClass != this.ListItemsClass || newTargetFlid != TargetFlid || force)
-			{
-				string owner = m_owningObject.GetType().Name;
-				ICmObject owningObj;
-				m_prevFlid = m_flid;
-				TargetFlid = newTargetFlid;
-				GetTargetFieldInfo(newListItemsClass, owner, newTargetFlid, out owningObj, out m_flid, out m_propertyName);
-				CheckExpectedListItemsClassInSync(newListItemsClass, this.ListItemsClass);
-				ReloadList();
-			}
-			// wait until afterwards, so that the dispose will reload the list for the first time
-			// whether or not we've loaded yet.
-			if (m_suspendReloadUntilOnChangeListItemsClass)
-			{
-				m_suspendReloadUntilOnChangeListItemsClass = false;
-				ReloadList();
-			}
-			// otherwise, we'll assume there isn't anything to load.
-		}
-
-		protected override int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrentBeforeGetObjectSet)
-		{
-			if (hvoCurrentBeforeGetObjectSet == 0)
-				return -1;
-			ICmObjectRepository repo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			if (!repo.IsValidObjectId(hvoCurrentBeforeGetObjectSet))
-				return -1;
-
-			// first lookup the old object in the new list, just in case it's there.
-			int newIndex = base.GetNewCurrentIndex(newSortedObjects, hvoCurrentBeforeGetObjectSet);
-			if (newIndex != -1)
-				return newIndex;
-			int newListItemsClass = this.ListItemsClass;
-			// NOTE: the class of hvoBeforeListChange could be different then prevListItemsClass, if the item is a ghost (owner).
-			int classOfObsoleteCurrentObj = repo.GetObject(hvoCurrentBeforeGetObjectSet).ClassID;
-			if (m_prevFlid == m_flid ||
-				DomainObjectServices.IsSameOrSubclassOf(VirtualListPublisher.MetaDataCache, classOfObsoleteCurrentObj, newListItemsClass))
-			{
-				// nothing else we can do, since we've already looked that class of object up
-				// in our newSortedObjects.
-				return -1;
-			}
-			// we've changed list items class, so find the corresponding new object.
-			Set<int> commonAncestors;
-			Set<int> relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid,
-				new Set<int>(new int[] {hvoCurrentBeforeGetObjectSet}),
-				m_flid,
-				out commonAncestors);
-			int newHvoRoot = relatives.Count > 0 ? relatives.ToArray()[0] : 0;
-			int hvoCommonAncestor = commonAncestors.Count > 0 ? commonAncestors.ToArray()[0] : 0;
-			if (newHvoRoot == 0 && hvoCommonAncestor != 0)
-			{
-				// see if we can find the parent in the list (i.e. it might be in a ghost list)
-				newIndex = base.GetNewCurrentIndex(newSortedObjects, hvoCommonAncestor);
-				if (newIndex != -1)
-					return newIndex;
-			}
-
-			return base.GetNewCurrentIndex(newSortedObjects, newHvoRoot);
-		}
-
-
-		/// <summary>
-		/// Get the appropriate flid for the targetClsId, and cache the results on m_flidAllSenses or m_flidEntries.
-		/// </summary>
-		/// <param name="targetClsId">if 0, use default "LexEntry" class</param>
-		/// <param name="owner"></param>
-		/// <param name="targetFlid">If non-zero, get a field suitable for bulk editing this field of the target class.</param>
-		/// <param name="owningObj"></param>
-		/// <param name="flid"></param>
-		/// <param name="flidName"></param>
-		private void GetTargetFieldInfo(int targetClsId, string owner, int targetFlid,
-			out ICmObject owningObj, out int flid, out string flidName)
-		{
-			// first try to find the expected source field.
-			flidName = m_pot.GetSourceFieldName(targetClsId, targetFlid);
-			flid = GetFlidOfVectorFromName(flidName, owner, out owningObj);
-			if (!m_reloadNeededForProperty.ContainsKey(flid))
-				m_reloadNeededForProperty.Add(flid, false);
-			if (m_flidEntries == 0 && targetClsId == LexEntryTags.kClassId)
-				m_flidEntries = flid;
-		}
-
-		/// <summary>
-		/// these bulk edit column filters/sorters can be considered Entries based, so that they can possibly
-		/// be reusable in other Entries clerks (e.g. the one used by Lexicon Edit, Browse, Dictionary).
-		/// </summary>
-		/// <param name="sorterOrFilter"></param>
-		/// <returns></returns>
-		internal protected override string PropertyTableId(string sorterOrFilter)
-		{
-			return String.Format("{0}.{1}_{2}", "LexDb", "Entries", sorterOrFilter);
-		}
-
-		#region IMultiListSortItemProvider Members
-
-		/// <summary>
-		/// See documentation for IMultiListSortItemProvider
-		/// </summary>
-		public object ListSourceToken
-		{
-			get { return m_flid; }
-		}
-
-		/// <summary>
-		/// See documentation for IMultiListSortItemProvider
-		/// </summary>
-		public XmlNode PartOwnershipTreeSpec
-		{
-			get
-			{
-				return m_configuration != null ? m_configuration.SelectSingleNode("./PartOwnershipTree") : null;
-			}
-		}
-
-		/// <summary>
-		/// See documentation for IMultiListSortItemProvider
-		/// </summary>
-		/// <param name="itemAndListSourceTokenPairs"></param>
-		/// <returns></returns>
-		public void ConvertItemsToRelativesThatApplyToCurrentList(ref IDictionary<int, object> oldItems)
-		{
-			Set<int> oldItemsToRemove = new Set<int>();
-			Set<int> itemsToAdd = new Set<int>();
-			// Create a PartOwnershipTree in a mode that can return more than one descendent relatives.
-			using (PartOwnershipTree pot = PartOwnershipTree.Create(Cache, this, false))
-			{
-				foreach (KeyValuePair<int, object> oldItem in oldItems)
-				{
-					IDictionary<int, object> dictOneOldItem = new Dictionary<int, object>();
-					dictOneOldItem.Add(oldItem);
-					Set<int> relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
-
-					// remove the old item if we found relatives we could convert over to.
-					if (relatives.Count > 0)
-					{
-						itemsToAdd.AddRange(relatives);
-						oldItemsToRemove.Add(oldItem.Key);
-					}
-				}
-			}
-
-			foreach (int itemToRemove in oldItemsToRemove)
-				oldItems.Remove(itemToRemove);
-
-			// complete any conversions by adding its relatives.
-			object sourceTag = ListSourceToken;
-			foreach (int relativeToAdd in itemsToAdd)
-			{
-				if (!oldItems.ContainsKey(relativeToAdd))
-					oldItems.Add(relativeToAdd, sourceTag);
-			}
-		}
-
-		private Set<int> FindCorrespondingItemsInCurrentList(IDictionary<int, object> itemAndListSourceTokenPairs, PartOwnershipTree pot)
-		{
-			// create a reverse index of classes to a list of items
-			IDictionary<int, Set<int>> sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
-
-			Set<int> relativesInCurrentList = new Set<int>();
-				foreach (KeyValuePair<int, Set<int>> sourceFlidToItems in sourceFlidsToItems)
-				{
-					Set<int> commonAncestors;
-					relativesInCurrentList.AddRange(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key,
-																			 sourceFlidToItems.Value, m_flid,
-																			 out commonAncestors));
-				}
-			return relativesInCurrentList;
-		}
-
-		private IDictionary<int, Set<int>> MapSourceFlidsToItems(IDictionary<int, object> itemAndListSourceTokenPairs)
-		{
-			IDictionary<int, Set<int>> sourceFlidsToItems = new Dictionary<int, Set<int>>();
-			foreach (KeyValuePair<int, object> itemAndSourceTag in itemAndListSourceTokenPairs)
-			{
-				if ((int)itemAndSourceTag.Value == m_flid)
-				{
-					// skip items in the current list
-					// (we're trying to lookup relatives to items that are a part of
-					// a previous list, not the current one)
-					continue;
-				}
-				Set<int> itemsInSourceFlid;
-				if (!sourceFlidsToItems.TryGetValue((int)itemAndSourceTag.Value, out itemsInSourceFlid))
-				{
-					itemsInSourceFlid = new Set<int>();
-					sourceFlidsToItems.Add((int)itemAndSourceTag.Value, itemsInSourceFlid);
-				}
-				itemsInSourceFlid.Add(itemAndSourceTag.Key);
-			}
-			return sourceFlidsToItems;
-		}
-
-		#endregion
-	}
-
-	/// <summary>
-	/// This type of record list is used in conjunction with a MatchingItemsRecordClerk.
-	/// </summary>
-	public class MatchingItemsRecordList : RecordList
-	{
-		private XmlNode m_configNode;
-		private IEnumerable<int> m_objs = null;
-
-		public override void Init(XmlNode recordListNode)
-		{
-			m_fEnableSendPropChanged = false;
-			m_configNode = recordListNode;
-			base.Init(recordListNode);
-		}
-
-		public override void InitLoad(bool loadList)
-		{
-			CheckDisposed();
-			ComputeInsertableClasses();
-			CurrentIndex = -1;
-			m_hvoCurrent = 0;
-		}
-
-		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-		}
-
-		/// <summary>
-		/// We never want to filter matching items displayed in the dialog.  See LT-6422.
-		/// </summary>
-		public override RecordFilter Filter
-		{
-			get
-			{
-				return null;
-			}
-			set
-			{
-				return;
-			}
-		}
-
-		protected override IEnumerable<int> GetObjectSet()
-		{
-			if (m_objs == null)
-				return new int[0]; // not null, throws exception if used in forall.
-			return m_objs;
-		}
-
-		/// <summary>
-		/// This reloads the list using the supplied set of hvos.
-		/// </summary>
-		/// <param name="rghvo"></param>
-		public void UpdateList(IEnumerable<int> objs)
-		{
-			m_objs = objs;
-			ReloadList();
-		}
-	}
-
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
@@ -960,6 +45,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private const int RecordListFlid = 89999956;
 
+		/// <summary>
+		/// we want to keep a reference to our window, separate from the PropertyTable
+		/// in case there's a race condition during dispose with the window
+		/// getting removed from the PropertyTable before it's been disposed.
+		/// </summary>
+		Form m_windowPendingOnActivated;
 		protected FdoCache m_cache;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -978,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected RecordFilter m_filter;
 		protected RecordFilter m_filterPrev;
-		protected string m_propertyName;
+		protected string m_propertyName = string.Empty;
 		protected string m_fontName;
 		protected int m_typeSize = 10;
 		protected bool m_reloadingList;
@@ -987,6 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		protected bool m_deletingObject;
 		protected int m_oldLength;
 		protected bool m_fUpdatingList;
+		protected bool m_usingAnalysisWs;
 		/// <summary>
 		/// The actual database flid from which we get our list of objects, and apply a filter to.
 		/// </summary>
@@ -1007,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		/// is kept in sync.
 		/// </summary>
 		protected int m_currentIndex = -1;
-
+		private int m_indexToRestoreDuringReload = -1;
 		/// <summary>
 		/// Basically RootObjectAt(m_currentIndex) (unless m_currentIndex is -1, when it is zero).
 		/// We maintain this so we can detect when PropChanged() represents a deletion of the current
@@ -1028,11 +120,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected ICmObject m_owningObject;
 		/// <summary>
-		/// This enables/disables SendPropChangedOnListChange().  The default is enabled (true).
+		/// This enables/disables SendPropChangedOnListChange(). The default is enabled (true).
 		/// </summary>
 		protected bool m_fEnableSendPropChanged = true;
 		/// <summary>
-		/// This enables/disables filtering independent of assigning a filter.  The default is enabled (true).
+		/// This enables/disables filtering independent of assigning a filter. The default is enabled (true).
 		/// </summary>
 		protected bool m_fEnableFilters = true;
 
@@ -1040,9 +132,6 @@ namespace SIL.FieldWorks.XWorks
 		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
 		/// </summary>
 		private ObjectListPublisher m_objectListPublisher;
-
-		// As passed to Init().
-		private XmlNode m_recordListNode;
 
 		/// <summary>
 		/// Set of objects that we own and have to dispose
@@ -1054,37 +143,52 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Construction & initialization
 
+		private RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs)
+		{
+			if (decorator == null) throw new ArgumentNullException("decorator");
+
+			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid); ;
+			m_oldLength = 0;
+			m_usingAnalysisWs = usingAnalysisWs;
+		}
+
 		/// <summary>
-		/// a factory method for RecordLists
+		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="subscriber"></param>
-		/// <param name="recordListNode"></param>
-		/// <param name="publisher"></param>
-		/// <returns></returns>
-		static public RecordList Create(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XmlNode recordListNode)
-		{
-			RecordList list = null;
-
-			//does the configuration specify a special RecordList class?
-			XmlNode customListNode = recordListNode.SelectSingleNode("dynamicloaderinfo");
-			if (customListNode != null)
-			{
-				list = (RecordList)DynamicLoader.CreateObject(customListNode);
-			}
-			else
-			{
-				list = new RecordList();
-			}
-
-			list.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			return list;
-		}
-
-		public RecordList()
+		internal RecordList(ISilDataAccessManaged decorator)
+			: this(decorator, false)
 		{
 		}
+
+		/// <summary>
+		/// Create RecordList for SDA-made up property on the given owner.
+		/// </summary>
+		internal RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
+			: this(decorator, usingAnalysisWs)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+			if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
+
+			m_owningObject = owner;
+			m_propertyName = propertyName;
+			m_flid = flid;
+		}
+
+		/// <summary>
+		/// Create RecordList for ordinary (or virtual) property.
+		/// </summary>
+		internal RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid)
+			: this(decorator, usingAnalysisWs)
+		{
+			m_propertyName = string.Empty;
+			m_fontName = MiscUtils.StandardSansSerif;
+			// Only other current option is to specify an ordinary property (or a virtual one).
+			m_flid = flid;
+			// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
+			m_owningObject = null;
+		}
+
+		#endregion Construction & initialization
 
 		/// <summary>
 		/// Get the font size from the Stylesheet
@@ -1094,11 +198,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
 		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
 		/// <returns>return Font size from stylesheet</returns>
-		static protected int GetFontHeightFromStylesheet(FdoCache cache, IPropertyTable propertyTable, bool analysisWs)
+		protected static int GetFontHeightFromStylesheet(FdoCache cache, IPropertyTable propertyTable, bool analysisWs)
 		{
 			int fontHeight;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
+			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			var wsContainer = cache.ServiceLocator.WritingSystems;
 			if (analysisWs)
 			{
 				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
@@ -1116,41 +220,6 @@ namespace SIL.FieldWorks.XWorks
 			return fontHeight;
 		}
 
-		public virtual void Init(XmlNode recordListNode)
-		{
-			CheckDisposed();
-
-			BaseInit(recordListNode);
-			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
-			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
-			if (!string.IsNullOrEmpty(m_propertyName))
-			{
-				m_flid = GetFlidOfVectorFromName(m_propertyName, owner, analysis,
-					out m_owningObject, out m_fontName, out m_typeSize);
-				UpdatePrivateList();
-			}
-			else
-			{
-				// We don't know which font to use, so choose a standard one for now.
-				m_fontName = MiscUtils.StandardSansSerif;
-				// Only other current option is to specify an ordinary property (or a virtual one).
-				m_flid = VirtualListPublisher.MetaDataCache.GetFieldId(
-					XmlUtils.GetManditoryAttributeValue(recordListNode, "class"),
-					XmlUtils.GetManditoryAttributeValue(recordListNode, "field"), true);
-				// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
-				m_owningObject = null;
-			}
-			m_oldLength = 0;
-		}
-
-		protected void BaseInit(XmlNode recordListNode)
-		{
-			m_recordListNode = recordListNode;
-			m_propertyName = XmlUtils.GetOptionalAttributeValue(recordListNode, "property", "");
-		}
-
-		#endregion Construction & initialization
-
 		#region Properties
 
 		/// <summary>
@@ -1165,70 +234,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (m_objectListPublisher == null)
-				{
-					var baseDa = m_cache.MainCacheAccessor as ISilDataAccessManaged;
-					if (m_recordListNode != null)
-					{
-						var virtualListSpec = XmlUtils.FindNode(m_recordListNode, "decoratorClass");
-						if (virtualListSpec != null)
-						{
-							baseDa = GetDynamicListPublisher(virtualListSpec);
-							if (baseDa is IFlexComponent)
-								((IFlexComponent)baseDa).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-							if (baseDa is ISetRootHvo)
-								((ISetRootHvo)baseDa).SetRootHvo(m_owningObject.Hvo);
-							if (baseDa is ISetCache)
-								((ISetCache)baseDa).SetCache(m_cache);
-						}
-					}
-					m_objectListPublisher = new ObjectListPublisher(baseDa, RecordListFlid);
-				}
 				return m_objectListPublisher;
 			}
-		}
-
-		/// <summary>
-		/// Get the list publisher specified by the argument node.
-		/// If the argument node has a "key" attribute, look in the mediator to see whether this
-		/// publisher has already been created; if so, use it.
-		/// Otherwise create it using the usual dynamic loader attributes (and save it if we have a key).
-		/// This allows multiple panes to readily use the same list publisher.
-		/// </summary>
-		/// <param name="virtualListSpec"></param>
-		private ISilDataAccessManaged GetDynamicListPublisher(XmlNode virtualListSpec)
-		{
-			string key = XmlUtils.GetOptionalAttributeValue(virtualListSpec, "key");
-			ISilDataAccessManaged result = null;
-			if (key != null)
-			{
-				result = PropertyTable.GetValue<ISilDataAccessManaged>(key);
-			}
-			if (result == null)
-			{
-				result = (ISilDataAccessManaged)DynamicLoader.CreateObject(virtualListSpec,
-					m_cache.MainCacheAccessor as ISilDataAccessManaged, virtualListSpec, m_cache.ServiceLocator);
-				if (key != null)
-				{
-					PropertyTable.SetProperty(key, result, false, true);
-				}
-			}
-			return result;
 		}
 
 		internal protected virtual string PropertyTableId(string sorterOrFilter)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
-			string className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
-			string fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);
-			if (String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
+			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
+			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
+			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
 			{
-				return String.Format("{0}.{1}_{2}", className, fieldName, sorterOrFilter);
+				return string.Format("{0}.{1}_{2}", className, fieldName, sorterOrFilter);
 			}
-			else
-			{
-				return String.Format("{0}.{1}_{2}", className, PropertyName, sorterOrFilter);
-			}
+
+			return string.Format("{0}.{1}_{2}", className, PropertyName, sorterOrFilter);
 		}
 
 		public string PropertyName
@@ -1255,6 +275,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 				m_sorter = value;
+				m_sorter.Cache = m_cache;
 			}
 		}
 
@@ -1528,7 +549,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (newFocusedObject == RecordedFocusedObject)
 					return;
-				var repo = Cache.ServiceLocator.ObjectRepository;
+				var repo = m_cache.ServiceLocator.ObjectRepository;
 				repo.RemoveFocusedObject(RecordedFocusedObject);
 				RecordedFocusedObject = newFocusedObject;
 				repo.AddFocusedObject(RecordedFocusedObject);
@@ -1579,15 +600,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 				return m_deletingObject;
-			}
-		}
-
-		public FdoCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache;
 			}
 		}
 
@@ -1664,8 +676,8 @@ namespace SIL.FieldWorks.XWorks
 			if (m_owningObject != null && hvo == m_owningObject.Hvo && tag != m_flid && cvIns > 0)
 			{
 				if (ListItemsClass == WfiWordformTags.kClassId &&
-					hvo == Cache.LangProject.Hvo &&
-					tag == Cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms)
+					hvo == m_cache.LangProject.Hvo &&
+					tag == m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms)
 				{
 					tag = m_flid;
 				}
@@ -1681,11 +693,11 @@ namespace SIL.FieldWorks.XWorks
 				noteChange.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 
-		private bool TryReloadForInvalidPathObjectsOnCurrentObject(int tag, int cvDel)
+		private void TryReloadForInvalidPathObjectsOnCurrentObject(int tag, int cvDel)
 		{
 			// see if the property is the VirtualFlid of the owning clerk. If so,
 			// the owning clerk has reloaded, so we should also reload.
-			RecordClerk clerkProvidingRootObject = null;
+			RecordClerk clerkProvidingRootObject;
 			if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
 				clerkProvidingRootObject.VirtualFlid == tag &&
 				cvDel > 0)
@@ -1696,29 +708,33 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Try to catch things that don't obviously affect us, but will cause problems.
-			if (cvDel > 0 && CurrentIndex >= 0 && IsPropOwning(tag))
+			if (cvDel <= 0 || CurrentIndex < 0 || !IsPropOwning(tag))
 			{
-				// We've deleted an object. Unfortunately we can't find out what object was deleted.
-				// Therefore it will be too slow to check every item in our list. Checking out the current one
-				// thoroughly prevents many problems (e.g., LT-4880)
-				IManyOnePathSortItem item = SortedObjects[CurrentIndex] as IManyOnePathSortItem;
-				{
-					if (!m_cache.ServiceLocator.IsValidObjectId(item.KeyObject))
-					{
-						ReloadList();
-						return true;
-					}
-					for (int i = 0; i < item.PathLength; i++)
-					{
-						if (!m_cache.ServiceLocator.IsValidObjectId(item.PathObject(i)))
-						{
-							ReloadList();
-							return true;
-						}
-					}
-				}
+				return;
 			}
-			return false;
+			// We've deleted an object. Unfortunately we can't find out what object was deleted.
+			// Therefore it will be too slow to check every item in our list. Checking out the current one
+			// thoroughly prevents many problems (e.g., LT-4880)
+			var item = SortedObjects[CurrentIndex];
+			if (!(item is IManyOnePathSortItem))
+			{
+				return;
+			}
+			var asManyOnePathSortItem = (IManyOnePathSortItem)item;
+			if (!m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.KeyObject))
+			{
+				ReloadList();
+				return;
+			}
+			for (var i = 0; i < asManyOnePathSortItem.PathLength; i++)
+			{
+				if (m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.PathObject(i)))
+				{
+					continue;
+				}
+				ReloadList();
+				return;
+			}
 		}
 
 		protected virtual bool TryHandleUpdateOrMarkPendingReload(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -1726,14 +742,13 @@ namespace SIL.FieldWorks.XWorks
 			if (tag == m_flid)
 			{
 				if (m_owningObject != null && m_owningObject.Hvo != hvo)
-					return true;		// This PropChanged doesn't really apply to us.
-				else
 				{
-					ReloadList(ivMin, cvIns, cvDel);
-					return true;
+					return true;		// This PropChanged doesn't really apply to us.
 				}
+				ReloadList(ivMin, cvIns, cvDel);
+				return true;
 			}
-			else if (tag == SegmentTags.kflidAnalyses && m_objectListPublisher.OwningFieldName == "Wordforms")
+			if (tag == SegmentTags.kflidAnalyses && m_objectListPublisher.OwningFieldName == "Wordforms")
 			{
 				// Changing this potentially changes the list of wordforms that occur in the interesting texts.
 				// Hopefully we don't rebuild the list every time; usually this can only be changed in another view.
@@ -1749,32 +764,28 @@ namespace SIL.FieldWorks.XWorks
 				ReloadList();
 				return true;
 			}
-			else
-			{
-				// This may be a change to content we depend upon.
 
-				// 1) see if the property is the VirtualFlid of the owning clerk. If so,
-				// the owning clerk has reloaded, so we should also reload.
-				RecordClerk clerkProvidingRootObject = null;
-				if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
-					clerkProvidingRootObject.VirtualFlid == tag &&
-					cvDel > 0)
-				{
-					// we're deleting or replacing items, so assume need to reload.
-					// we want to wait until after everything is finished reloading, however.
-					m_requestedLoadWhileSuppressed = true;
-					return true;
-				}
-				// 2) Entries depend upon a few different properties.
-				if (m_flid == Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries &&
-					EntriesDependsUponProp(tag))
-				{
-					MarkEntriesForReload();
-					return true;
-				}
+			// This may be a change to content we depend upon.
+			// 1) see if the property is the VirtualFlid of the owning clerk. If so,
+			// the owning clerk has reloaded, so we should also reload.
+			RecordClerk clerkProvidingRootObject = null;
+			if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
+				clerkProvidingRootObject.VirtualFlid == tag &&
+				cvDel > 0)
+			{
+				// we're deleting or replacing items, so assume need to reload.
+				// we want to wait until after everything is finished reloading, however.
+				m_requestedLoadWhileSuppressed = true;
+				return true;
+			}
+			// 2) Entries depend upon a few different properties.
+			if (m_flid != m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries || !EntriesDependsUponProp(tag))
+			{
+				return false;
 			}
 
-			return false;
+			MarkEntriesForReload();
+			return true;
 		}
 
 		protected virtual void MarkEntriesForReload()
@@ -1818,7 +829,7 @@ namespace SIL.FieldWorks.XWorks
 		internal protected virtual bool NeedToReloadList()
 		{
 			bool fReload = RequestedLoadWhileSuppressed;
-			if (Flid == Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
+			if (Flid == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
 				fReload |= ReloadLexEntries;
 			return fReload;
 		}
@@ -1978,7 +989,7 @@ namespace SIL.FieldWorks.XWorks
 			for (int i = 0; i < SortedObjects.Count; i++)
 			{
 				int rootHvo = RootHvoAt(i);
-				if (!Cache.ServiceLocator.IsValidObjectId(rootHvo) || !objectSet.Contains(rootHvo))
+				if (!m_cache.ServiceLocator.IsValidObjectId(rootHvo) || !objectSet.Contains(rootHvo))
 				{
 					indices.Insert(0, i);
 				}
@@ -2199,11 +1210,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool IsInvalidItem(ManyOnePathSortItem item)
 		{
-			if (!Cache.ServiceLocator.IsValidObjectId(item.KeyObject))
+			if (!m_cache.ServiceLocator.IsValidObjectId(item.KeyObject))
 				return true;
 			for (int i = 0; i < item.PathLength; i++)
 			{
-				if (!Cache.ServiceLocator.IsValidObjectId(item.PathObject(i)))
+				if (!m_cache.ServiceLocator.IsValidObjectId(item.PathObject(i)))
 					return true;
 			}
 			return false;
@@ -2570,7 +1581,6 @@ namespace SIL.FieldWorks.XWorks
 			set { m_requestedLoadWhileSuppressed = value; }
 		}
 
-		private int m_indexToRestoreDuringReload = -1;
 
 		/// <summary>
 		/// Answer true if the current object is valid. Currently we just check for deleted objects.
@@ -2624,8 +1634,8 @@ namespace SIL.FieldWorks.XWorks
 				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
 				if (PropertyTable != null)
 				{
-					Form window = PropertyTable.GetValue<Form>("window");
-					IApp app = PropertyTable.GetValue<IApp>("App");
+					var window = PropertyTable.GetValue<Form>("window");
+					var app = PropertyTable.GetValue<IApp>("App");
 					if (window != null && app != null && window != app.ActiveMainWindow)
 					{
 						// make sure we don't install more than one.
@@ -2654,8 +1664,8 @@ namespace SIL.FieldWorks.XWorks
 				m_reloadingList = true;
 				if (UpdatePrivateList())
 					return; // Cannot complete the reload until PropChangeds complete.
-				int newCurrentIndex = CurrentIndex;
-				ArrayList newSortedObjects = null;
+				var newCurrentIndex = CurrentIndex;
+				ArrayList newSortedObjects;
 				ListChangedEventArgs.ListChangedActions actions;
 
 				// Get the HVO of the current object (but only if it hasn't been deleted).
@@ -2778,8 +1788,8 @@ namespace SIL.FieldWorks.XWorks
 				progress.SetMilestone(xWorksStrings.ksSorting);
 				// Allocate an arbitrary 20% for making the items.
 				var objectSet = GetObjectSet();
-				int count = objectSet.Count();
-				int done = 0;
+				var count = objectSet.Count();
+				var done = 0;
 				foreach (var obj in objectSet)
 				{
 					done++;
@@ -2804,12 +1814,6 @@ namespace SIL.FieldWorks.XWorks
 			m_windowPendingOnActivated = window;
 		}
 
-		/// <summary>
-		/// we want to keep a reference to our window, separate from the PropertyTable
-		/// in case there's a race condition during dispose with the window
-		/// getting removed from the PropertyTable before it's been disposed.
-		/// </summary>
-		Form m_windowPendingOnActivated = null;
 		/// <summary>
 		/// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
 		/// </summary>
@@ -2861,8 +1865,6 @@ namespace SIL.FieldWorks.XWorks
 
 		protected int MakeItemsFor(ArrayList sortedObjects, int hvo)
 		{
-//			if (!obj.IsValidObject)
-//				throw new Exception("GetObjectSet returned an invalid object with HVO " + obj.Hvo);
 			int start = sortedObjects.Count;
 			if (m_sorter == null)
 				sortedObjects.Add(new ManyOnePathSortItem(hvo, null, null));
@@ -2880,27 +1882,19 @@ namespace SIL.FieldWorks.XWorks
 						i++; // advance loop if we don't delete!
 					else
 					{
-						//IManyOnePathSortItem hasBeen = (IManyOnePathSortItem)sortedObjects[i];
 						sortedObjects.RemoveAt(i);
-						//hasBeen.Dispose();
 					}
 				}
 			}
-//			for (int i = start; i < sortedObjects.Count; i++)
-//			{
-//				IManyOnePathSortItem item = sortedObjects[i] as IManyOnePathSortItem;
-//				item.AssertValid();
-//				if (!item.KeyCmObjectUsing(m_cache).IsValidObject)
-//					throw new Exception("IManyOnePathSortItem has an invalid key object with HVO " + item.KeyObject);
-//			}
+
 			return sortedObjects.Count - start;
 		}
 
 		protected void SendPropChangedOnListChange(int newCurrentIndex, ArrayList newSortedObjects, ListChangedEventArgs.ListChangedActions actions)
 		{
 			//Populate the virtual cache property which will hold this set of hvos, in this order.
-			int[] hvos = new int[newSortedObjects.Count];
-			int i = 0;
+			var hvos = new int[newSortedObjects.Count];
+			var i = 0;
 			foreach(IManyOnePathSortItem item in newSortedObjects)
 				hvos[i++] = item.RootObjectHvo;
 			// In case we're already displaying it, we must have an accurate old length, or if it gets shorter
@@ -3116,7 +2110,7 @@ namespace SIL.FieldWorks.XWorks
 				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
 			}
 			if (hvoNew != 0)
-				return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew);
+				return m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew);
 			return null;
 		}
 
@@ -3176,8 +2170,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TObj newObj;
 			int hvoNew = 0;
-			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
-			options.SuspendPropChangedDuringModification = true;
+			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions
+{SuspendPropChangedDuringModification = true};
 			using (new RecordClerk.ListUpdateHelper(Clerk, options))
 			{
 				newObj = createAndInsertMethodObj.Create();
@@ -3187,40 +2181,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			CurrentIndex = IndexOf(hvoNew);
 			return newObj;
-		}
-
-		internal class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
-		{
-			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
-			{
-				HvoOwner = hvoOwner;
-				CpiPath = cpiPath;
-				List = list;
-			}
-
-			private readonly int HvoOwner;
-			private readonly IList<ClassAndPropInfo> CpiPath;
-			private readonly RecordList List;
-
-			#region ICreateAndInsert<ICmObject> Members
-
-			public ICmObject Create()
-			{
-				return List.CreateNewObject(HvoOwner, CpiPath);
-			}
-
-			#endregion
-		}
-
-		/// <summary>
-		/// Interface for creating method objects that can be passed into DoCreateAndInsert
-		/// in order to create an object, insert them into our list, and adjust CurrentIndex in one operation.
-		/// </summary>
-		/// <typeparam name="TObject"></typeparam>
-		public interface ICreateAndInsert<TObject>
-			where TObject : ICmObject
-		{
-			TObject Create();
 		}
 
 		/// <summary>
@@ -3262,9 +2222,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// get the index of an item in the list that has a root object that is owned by hvo
 		/// </summary>
-		/// <param name="hvo"></param>
+		/// <param name="hvoTarget"></param>
 		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfChildOf(int hvoTarget, FdoCache cache)
+		public int IndexOfChildOf(int hvoTarget)
 		{
 			CheckDisposed();
 
@@ -3295,9 +2255,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// get the index of an item in the list that has a root object that (directly or indirectly) owns hvo
 		/// </summary>
-		/// <param name="hvo"></param>
+		/// <param name="hvoTarget"></param>
 		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfParentOf(int hvoTarget, FdoCache cache)
+		public int IndexOfParentOf(int hvoTarget)
 		{
 			CheckDisposed();
 
@@ -3324,43 +2284,9 @@ namespace SIL.FieldWorks.XWorks
 			return -1;
 		}
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <remarks> notice that currently, we do not require (or allow)
-		///  the class owning object to be specified. It is inferred.
-		///  Also notice that we assume that all of these collections are owned by,
-		///  essentially, a Singleton object in the database.  For example,
-		///  there is only one lexical database, so we do not need nor have a need for a way to
-		///  specify which lexical database we want to browse.</remarks>
-		///  <remarks> The initial plan was to do something smarter, so that we would not have this
-		///  big switch statement.  There are various possibilities, but this is our first pass
-		///  in order to get something working.</remarks>
-		///  <param name="name">the name of the vector, as defined here</param>
-		///  <param name="owner">the name of the owner of the vector (can be null if using a
-		///  defined type)</param>
-		///  <param name="analysisWs">True to use the analysis font, false otherwise</param>
-		/// <param name="owningObject">the object which owns the vector</param>
-		///  <param name="fontName"></param>
-		/// <param name="typeSize"></param>
-		/// <returns>The real flid of the vector in the database.</returns>
-		internal int GetFlidOfVectorFromName(string name, string owner, bool analysisWs, out ICmObject owningObject, out string fontName,
-			out int typeSize)
-		{
-			// Many of these are vernacular, but if not,
-			// they should set it to the default anal font by using the "analysisWs" property.
-			GetDefaultFontNameAndSize(analysisWs, m_cache, PropertyTable, out fontName, out typeSize);
-
-			return GetFlidOfVectorFromName(name, owner, out owningObject, ref fontName, ref typeSize);
-		}
-
-		internal int GetFlidOfVectorFromName(string propertyName, string owner, out ICmObject owningObject)
-		{
-			string fontName = "";
-			int typeSize = 0;
-			return GetFlidOfVectorFromName(propertyName, owner, out owningObject, ref fontName, ref typeSize);
-		}
-
+#if RANDYTODO
+		// TODO: Delete in the end, but keep for now, so areas/tools know what to give us.
+		// TODO: We now get the owning object, flid, and whether the WS is vern or Anal in a constructor.
 		/// <summary>
 		/// Return the Flid for the model property that this vector represents.
 		/// </summary>
@@ -3417,11 +2343,14 @@ namespace SIL.FieldWorks.XWorks
 				case "Entries":
 					if (owner == "ReversalIndex")
 					{
+#if RANDYTODO
+		// TODO: The client has to deal with creating a new index, since it has to feed in the owning object in a constructor.
 						if (m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count == 0)
 						{
 							// invoke the Reversal listener to create the index for this invalid state
 							Publisher.Publish("InsertReversalIndex_FORCE", null);
 						}
+#endif
 
 						if (m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
 						{
@@ -3429,11 +2358,14 @@ namespace SIL.FieldWorks.XWorks
 							realFlid = ReversalIndexTags.kflidEntries;
 						}
 					}
+#if RANDYTODO
+					// TODO: DONE: Handled in EntriesOrChildClassesRecordList subclass.
 					else
 					{
 						owningObject = m_cache.LanguageProject.LexDbOA;
-						realFlid = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+						realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 					}
+#endif
 					break;
 				case "Scripture_0_0_Content": // StText that is contents of first section of first book.
 					try
@@ -3464,10 +2396,10 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
 						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
-						   ()=>
+						   () =>
 						   {
-								m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
-								m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+							   m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
+							   m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
 						   });
 					}
 					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
@@ -3567,6 +2499,8 @@ namespace SIL.FieldWorks.XWorks
 					owningObject = m_cache.LanguageProject.SemanticDomainListOA;
 					realFlid = CmPossibilityListTags.kflidPossibilities;
 					break;
+#if RANDYTODO
+					// TODO: DONE: Handled in EntriesOrChildClassesRecordList subclass.
 				case "AllSenses":
 				case "AllEntryRefs":
 					{
@@ -3575,19 +2509,12 @@ namespace SIL.FieldWorks.XWorks
 						// Todo: something about initial sorting...
 						break;
 					}
+#endif
 			}
 
 			return realFlid;
 		}
-
-		internal static void GetDefaultFontNameAndSize(bool analysisWs, FdoCache cache, IPropertyTable propertyTable, out string fontName, out int typeSize)
-		{
-			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			fontName = analysisWs
-				? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName
-				: wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
-			typeSize = GetFontHeightFromStylesheet(cache, propertyTable, analysisWs);
-		}
+#endif
 
 		protected virtual ClassAndPropInfo GetMatchingClass(string className)
 		{
@@ -3687,7 +2614,7 @@ namespace SIL.FieldWorks.XWorks
 			// actually persisting anything.  Some lists store dummy objects.
 			if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				return;
-			var repo = Cache.ServiceLocator.ObjectRepository;
+			var repo = m_cache.ServiceLocator.ObjectRepository;
 			foreach (var obj in m_sortedObjects)
 			{
 				ManyOnePathSortItem item = obj as ManyOnePathSortItem;
@@ -3743,12 +2670,12 @@ namespace SIL.FieldWorks.XWorks
 			// missing things. For example, if the program starts up in interlinear text view, and the user
 			// creates entries as a side effect of glossing texts, we shouldn't use the saved list of
 			// lex entries when we switch to the lexicon view.
-			if (Cache.ServiceLocator.ObjectRepository.InstancesCreatedThisSession(ListItemsClass))
+			if (m_cache.ServiceLocator.ObjectRepository.InstancesCreatedThisSession(ListItemsClass))
 				return false;
 			ArrayList items;
 			using (var stream = new StreamReader(pathname))
 			{
-				items = ManyOnePathSortItem.ReadItems(stream, Cache.ServiceLocator.ObjectRepository);
+				items = ManyOnePathSortItem.ReadItems(stream, m_cache.ServiceLocator.ObjectRepository);
 				stream.Close();
 			}
 			// This particular cache cannot reliably be used again, since items may be created or deleted
@@ -3816,26 +2743,39 @@ namespace SIL.FieldWorks.XWorks
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 			m_oldLength = 0;
+			var wsContainer = m_cache.ServiceLocator.WritingSystems;
+			m_fontName = m_usingAnalysisWs ? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName : wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
+			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
+
+			if (m_owningObject != null)
+			{
+				UpdatePrivateList();
+			}
 		}
 
 		#endregion
-	}
 
-	/// <summary>
-	/// Similarly an interface that Virtual List Publisher decorators may implement if they need
-	/// to be notified of the root object that their virtual property applies to.
-	/// </summary>
-	interface ISetRootHvo
-	{
-		void SetRootHvo(int hvo);
-	}
+		private class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
+		{
+			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
+			{
+				HvoOwner = hvoOwner;
+				CpiPath = cpiPath;
+				List = list;
+			}
 
-	/// <summary>
-	/// Similarly an interface that Virtual List Publisher decorators may implement if they need
-	/// to be notified of the Cache.
-	/// </summary>
-	public interface ISetCache
-	{
-		void SetCache(FdoCache cache);
+			private readonly int HvoOwner;
+			private readonly IList<ClassAndPropInfo> CpiPath;
+			private readonly RecordList List;
+
+			#region ICreateAndInsert<ICmObject> Members
+
+			public ICmObject Create()
+			{
+				return List.CreateNewObject(HvoOwner, CpiPath);
+			}
+
+			#endregion
+		}
 	}
 }

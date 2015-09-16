@@ -221,6 +221,17 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Get an optional attribute value from an XElement.
+		/// </summary>
+		/// <param name="node">The XElement to look in.</param>
+		/// <param name="attrName">The attribute to find.</param>
+		/// <returns>The value of the attribute, or null, if not found.</returns>
+		public static string GetOptionalAttributeValue(XElement node, string attrName)
+		{
+			return GetOptionalAttributeValue(node, attrName, null);
+		}
+
+		/// <summary>
 		/// Get an optional attribute value from an XmlNode.
 		/// </summary>
 		/// <param name="node">The XmlNode to look in.</param>

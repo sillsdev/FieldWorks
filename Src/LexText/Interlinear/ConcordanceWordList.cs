@@ -3,7 +3,6 @@ using System.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
@@ -11,12 +10,11 @@ using SIL.FieldWorks.XWorks;
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
-	/// This class provides the RecordList for the InterlinearTextsRecordsClerk. It exists to provide a pre-filtered
+	/// This class provides the RecordList for the InterlinearTextsRecordClerk. It exists to provide a pre-filtered
 	/// list of Wordforms and to prevent jarring reloads of the Wordlist when the user is indirectly modifying the
 	/// lists content. (i.e. typing in the baseline pane in the Text & Words\Word Concordance view)
 	///
 	/// The contents of this list are a result of parsing the texts and passing the results through a decorator.
-	///
 	/// </summary>
 	class ConcordanceWordList : RecordList
 	{
@@ -25,6 +23,16 @@ namespace SIL.FieldWorks.IText
 		private bool selectionChanged = true;
 		//This indicates that a reload has been requested,
 		private bool reloadRequested;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="decorator"></param>
+		/// <param name="languageProject"></param>
+		internal ConcordanceWordList(ConcDecorator decorator, ILangProject languageProject)
+			: base(decorator, false, 0, languageProject, "InterestingTexts")
+		{
+		}
 
 		public override void OnChangeFilter(FilterChangeEventArgs args)
 		{
@@ -74,7 +82,7 @@ namespace SIL.FieldWorks.IText
 		/// This is used in situations like switching views. In such cases we should force a reload.
 		/// </summary>
 		/// <returns></returns>
-		protected override bool NeedToReloadList()
+		internal protected override bool NeedToReloadList()
 		{
 			return base.NeedToReloadList() || reloadRequested;
 		}
@@ -114,13 +122,13 @@ namespace SIL.FieldWorks.IText
 			if (m_flid != ObjectListPublisher.OwningFlid)
 				return false; // we are not involved in the reload process.
 
-			if (((IActionHandlerExtensions)Cache.ActionHandlerAccessor).CanStartUow)
+			if (((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow)
 				ParseAndUpdate(); // do it now
 			else // do it as soon as possible. (we might be processing PropChanged.)
 			{
 				// REVIEW (FWR-1906): Do we need to do this reload only the first time, or also (as here) when the prop change is from undo or redo?
 				// Enhance JohnT: is there some way we can be sure only one of these tasks gets added?
-				((IActionHandlerExtensions)Cache.ActionHandlerAccessor).DoAtEndOfPropChangedAlways(RecordList_PropChangedCompleted);
+				((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).DoAtEndOfPropChangedAlways(RecordList_PropChangedCompleted);
 				return true;
 			}
 			return false;
@@ -130,9 +138,9 @@ namespace SIL.FieldWorks.IText
 		{
 			var publisher = (VirtualListPublisher as ObjectListPublisher);
 			publisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, ParseInterestingTexts);
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, ParseInterestingTexts);
 			publisher.SetOwningPropValue(
-				(from wf in Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances() select wf.Hvo).ToArray());
+				(from wf in m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances() select wf.Hvo).ToArray());
 		}
 
 		/// <summary>
@@ -141,12 +149,12 @@ namespace SIL.FieldWorks.IText
 		private void ParseInterestingTexts()
 		{
 			// Also it should be forced to be empty if FwUtils.IsOkToDisplayScriptureIfPresent returns false.
-			IEnumerable<IStText> scriptureTexts = Cache.LangProject.TranslatedScriptureOA == null ? new IStText[0] :
-				from aText in Cache.LangProject.TranslatedScriptureOA.StTexts
+			IEnumerable<IStText> scriptureTexts = m_cache.LangProject.TranslatedScriptureOA == null ? new IStText[0] :
+				from aText in m_cache.LangProject.TranslatedScriptureOA.StTexts
 				where IsInterestingScripture(aText)
 				select aText;
 			// Enhance JohnT: might eventually want to be more selective here, perhaps a genre filter.
-			IEnumerable<IStText> vernacularTexts = from st in Cache.LangProject.Texts select st.ContentsOA;
+			IEnumerable<IStText> vernacularTexts = from st in m_cache.LangProject.Texts select st.ContentsOA;
 			// Filtered list that excludes IScrBookAnnotations.
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
 			int count = (from text in texts from para in text.ParagraphsOS select para).Count();

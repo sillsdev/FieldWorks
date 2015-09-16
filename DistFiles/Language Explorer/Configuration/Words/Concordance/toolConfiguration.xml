@@ -19,7 +19,7 @@
 		</clerk>
 		<clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
 			<recordList class="WfiWordform" field="Occurrences">
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences"/>
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>

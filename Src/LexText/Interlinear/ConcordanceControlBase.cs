@@ -65,11 +65,9 @@ namespace SIL.FieldWorks.IText
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 #if RANDYTODO
 			var name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
-#else
-			var name = "FAKE_CLERK_NAME_FIX_ME";
-#endif
 			m_clerk = PropertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			m_clerk.ConcordanceControl = this;
+#endif
 		}
 
 		#endregion

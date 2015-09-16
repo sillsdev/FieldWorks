@@ -11,6 +11,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.XWorks;
@@ -94,13 +95,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			_cache = PropertyTable.GetValue<FdoCache>("cache");
 
 			const string clerkName = "interlinearTexts";
-			var clerkPropertyTableName = "RecordClerk-" + clerkName;
+			const string clerkPropertyTableName = "RecordClerk-" + clerkName;
 			RecordClerk clerk;
 			if (PropertyTable.TryGetValue(clerkPropertyTableName, out clerk))
 			{
 				if (clerk is TemporaryRecordClerk)
 				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk();
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_cache.LanguageProject, new InterestingTextsDecorator(_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _cache.ServiceLocator));
 					_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				}
 				else
@@ -110,19 +111,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk();
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_cache.LanguageProject, new InterestingTextsDecorator(_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _cache.ServiceLocator));
 				_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			}
-			_interlinearTextsRecordClerk = (clerk == null || clerk is TemporaryRecordClerk) ?
-				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true) :
-				(InterlinearTextsRecordClerk)clerk;
-			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
+			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
 			// the set of selected texts).
 			_interlinearTextsRecordClerk.ActivateUI(true);
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			var toolName = PropertyTable.GetValue("currentContentControl", "");
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty));
+			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("currentContentControl", ""), Guid.Empty));
 		}
 
 		#endregion

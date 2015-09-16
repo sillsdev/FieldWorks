@@ -247,11 +247,13 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, loadList);
 #if RANDYTODO
+			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, loadList);
 			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
-#endif
 			return clerk;
+#else
+			return null;
+#endif
 		}
 
 		/// <summary>

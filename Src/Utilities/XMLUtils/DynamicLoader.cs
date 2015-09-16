@@ -13,15 +13,8 @@ namespace SIL.Utils
 	/// <summary>
 	/// Summary description for DynamicLoader.
 	/// </summary>
-	public class DynamicLoader
+	public static class DynamicLoader
 	{
-		protected DynamicLoader()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
 		/// </summary>
@@ -128,14 +121,14 @@ namespace SIL.Utils
 
 		static string CouldNotCreateObjectMsg(string assemblyPath, string className)
 		{
-			return "XCore found the DLL "
+			return "Found the DLL "
 				+ assemblyPath
 				+ " but could not create the class: "
 				+ className
-				+ ". If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the name space (e.g. XCore.Ticker).";
+				+ ". If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the name space.";
 		}
 
-		public static object CreateObject(string assemblyPath1, string className1, BindingFlags flags, params object[] args)
+		private static object CreateObject(string assemblyPath1, string className1, BindingFlags flags, params object[] args)
 		{
 			Assembly assembly;
 			string assemblyPath = GetAssembly(assemblyPath1, out assembly);

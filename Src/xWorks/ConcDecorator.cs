@@ -40,8 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		private InterestingTextList m_interestingTexts;
 		private bool m_fRefreshSuspended;
 
-		public ConcDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+		public ConcDecorator(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
 			: base(domainDataByFlid)
 		{
 			m_services = services;

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -19,27 +18,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class AllReversalEntriesRecordList : RecordList
 	{
-		public override void Init(XmlNode recordListNode)
+		internal AllReversalEntriesRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base(decorator, true, ReversalIndexTags.kflidEntries, reversalIndex, "AllEntries")
 		{
-			CheckDisposed();
-
-			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(recordListNode);
-			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
-			//LT-14722 Crash when clicking Reversal Indexes
-			//Clerk is null when going to Reversal Indexes for the first time.
-			if (Clerk != null)
-			{
-				Guid riGuid = GetReversalIndexGuid(PropertyTable, Publisher);
-				if (riGuid != Guid.Empty)
-				{
-					var cache = PropertyTable.GetValue<FdoCache>("cache");
-					var ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
-					m_owningObject = ri;
-					m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
-				}
-			}
+			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;
 		}
 
@@ -112,6 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Delete the current object, reporting progress as far as possible.
 		/// </summary>
 		/// <param name="state"></param>
+		/// <param name="thingToDelete"></param>
 		public override void DeleteCurrentObject(ProgressState state, ICmObject thingToDelete)
 		{
 			CheckDisposed();
@@ -121,7 +105,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ReloadList();
 		}
 
-		protected override string PropertyTableId(string sorterOrFilter)
+		internal protected override string PropertyTableId(string sorterOrFilter)
 		{
 			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)

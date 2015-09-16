@@ -2,8 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.LexEd;
 
@@ -22,20 +25,31 @@ namespace LexEdDllTests
 			ISubscriber subscriber;
 			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
-			using(var cache = CreateCache())
-			using(var recordList = new TestReversalRecordList())
+			using (var cache = CreateCache())
 			{
-				propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);
-				recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
-				recordList.Init(null);
-				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
+				var reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				var reversalIndex = reversalIndexRepository.AllInstances().FirstOrDefault();
+				if (reversalIndex == null)
+				{
+					// Create one.
+					reversalIndex = reversalIndexRepository.FindOrCreateIndexForWs(cache.DefaultAnalWs);
+				}
+				using (var recordList = new TestReversalRecordList(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), reversalIndex))
+				{
+					propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);
+					recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
+					propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
 
-				var propTableId = recordList.GetPropertyTableId(FieldName);
-				StringAssert.Contains(FieldName, propTableId);
-				StringAssert.Contains(wsId, propTableId);
+					var propTableId = recordList.GetPropertyTableId(FieldName);
+					StringAssert.Contains(FieldName, propTableId);
+					StringAssert.Contains(wsId, propTableId);
+				}
 			}
 		}
 
+#if RANDYTODO
+		// TODO: Can't make reversal stuff, without a reversal in the new world order.
+		// TODO: The responsibility for making one now rests with the client, not the clerk/list world.
 		[Test]
 		public void PropertyTableIdReturnsNullIfNoActiveReversalIndex()
 		{
@@ -49,10 +63,12 @@ namespace LexEdDllTests
 				Assert.Null(recordList.GetPropertyTableId(FieldName));
 			}
 		}
+#endif
 
 		class TestReversalRecordList : AllReversalEntriesRecordList
 		{
-			public TestReversalRecordList()
+			internal TestReversalRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+				: base(serviceLocator, decorator, reversalIndex)
 			{
 			}
 

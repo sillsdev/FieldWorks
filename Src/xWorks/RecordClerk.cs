@@ -35,7 +35,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
@@ -59,14 +58,175 @@ namespace SIL.FieldWorks.XWorks
 	{
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
 
-		protected string m_id;
-		private XmlNode m_clerkConfiguration;
+		protected readonly string m_id;
 		/// <summary>
 		/// this will be null is this clerk is dependent on another one. Only the top-level clerk
 		/// gets to be represented by and interact with the tree bar.
 		/// </summary>
 		protected RecordBarHandler m_recordBarHandler;
-		protected RecordList m_list;
+		/// <summary>
+		/// The record list for the clerk.
+		/// </summary>
+		protected readonly RecordList m_list;
+		/// <summary>
+		/// when this is not null, that means there is another clerk managing a list,
+		/// and the selected item of that list provides the object that this
+		/// RecordClerk gets items out of. For example, the WfiAnalysis clerk
+		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
+		/// be displaying the analyses of.
+		/// </summary>
+		protected RecordClerk m_clerkProvidingRootObject;
+		/// <summary>
+		/// When this is non-null, there may be another clerk which contains a similar list of objects,
+		/// for example, in Notebook most views use a record clerk that has AllRecords, but document
+		/// view has only the top-level records. When our selected record changes, we want to notify the
+		/// other Clerk, if it exists.
+		/// </summary>
+		private readonly RecordClerk m_relatedClerk;
+		/// <summary>
+		/// When m_relatedClerk is not null, and this is also not null, it controls how we find the
+		/// related object which we should switch to when a view using this is activated.
+		/// owned: try to find one of our own objects which is or is owned by the object selected in the
+		/// related clerk (e.g., Base Records clerk should try to find an object that is or owns the record
+		/// selected in the records clerk).
+		/// ownee: if the other clerk's object is or owns the object already selected in this, don't change.
+		/// otherwise try to select the object owned in the other clerk. (e.g., Records Clerk should not
+		/// switch to a higher-level record if it is in one that corresponds to part of the selection in
+		/// the base record clerk).
+		/// </summary>
+		private readonly string m_relationToRelatedClerk;
+		/// <summary>
+		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
+		/// this does not include the filters they can get that by using the FilterBar.
+		/// </summary>
+		protected RecordFilterListProvider m_filterProvider;
+		private bool m_editable = true;
+		private bool m_suppressSaveOnChangeRecord = false; // true during delete and insert and ShowRecord calls caused by them.
+		private bool m_skipShowRecord = false; // skips navigations while a user is editing something.
+		private readonly bool m_shouldHandleDeletion = true; // false, if the dependent clerk is to handle deletion, as for reversals.
+		private bool m_allowDeletions = true;	// false if nothing is to be deleted for this record clerk.
+		/// <summary>
+		/// We need to store what filter we are responsible for setting, locally, so
+		/// that when the user says "no filter/all records",
+		/// we can selectively remove just this filter from the set that is being kept by the
+		/// RecordList. That list would contain filters contributed from other sources, in particular
+		/// the FilterBar.
+		/// </summary>
+		protected RecordFilter m_activeMenuBarFilter;
+		/// <summary />
+		protected IRecordChangeHandler m_rch;
+		/// <summary>
+		/// The display name of what is currently being sorted. This variable is persisted as a user
+		/// setting. When the sort name is null it indicates that the items in the clerk are not
+		/// being sorted or that the current sorting should not be displayed (i.e. the default column
+		/// is being sorted).
+		/// </summary>
+		private string m_sortName;
+		private bool m_isDefaultSort;
+		private RecordSorter m_defaultSorter;
+		private string m_defaultSortLabel;
+		private RecordFilter m_defaultFilter;
+
+		#region Event Handling
+		public event EventHandler SorterChangedByClerk;
+		public event FilterChangeHandler FilterChangedByClerk;
+		#endregion Event Handling
+
+		#region Constructors
+
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		{
+			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException("id");
+			if (recordList == null) throw new ArgumentNullException("recordList");
+			if (defaultSorter == null) throw new ArgumentNullException("defaultSorter");
+			if (string.IsNullOrWhiteSpace(defaultSortLabel)) throw new ArgumentNullException("defaultSortLabel");
+
+			m_id = id;
+			m_list = recordList;
+			m_list.Clerk = this;
+			m_defaultSorter = defaultSorter;
+			m_defaultSortLabel = defaultSortLabel;
+			m_defaultFilter = defaultFilter; // Null is fine.
+			m_allowDeletions = allowDeletions;
+			m_shouldHandleDeletion = shouldHandleDeletion;
+		}
+
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		/// <param name="filterProvider"></param>
+		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordFilterListProvider filterProvider)
+			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+			if (filterProvider == null) throw new ArgumentNullException("filterProvider");
+
+			m_filterProvider = filterProvider;
+		}
+
+		/// <summary>
+		/// Contructor for subservient clerk.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		/// <param name="clerkProvidingRootObject"></param>
+		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk clerkProvidingRootObject)
+			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+			if (clerkProvidingRootObject == null) throw new ArgumentNullException("clerkProvidingRootObject");
+
+			m_clerkProvidingRootObject = clerkProvidingRootObject;
+		}
+
+#if RANDYTODO
+		// TODO: I don't see any evidence in the xml config files that 'relatedClerk' is ever used.
+		// TODO: So, be ready remove this in the end, if never used.
+		// TODO: Remove blockage if I ever find that it is used.
+		/// <summary>
+		/// Contructor for related clerk.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		/// <param name="relatedClerk"></param>
+		/// <param name="relationToRelatedClerk"></param>
+		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk relatedClerk, string relationToRelatedClerk)
+			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+			if (relatedClerk == null) throw new ArgumentNullException("relatedClerk");
+			if (string.IsNullOrWhiteSpace(relationToRelatedClerk)) throw new ArgumentNullException("relationToRelatedClerk");
+
+			m_relatedClerk = relatedClerk;
+			m_relationToRelatedClerk = relationToRelatedClerk;
+		}
+#endif
+
+		#endregion Constructors
 
 		#region Implementation of IPropertyTableProvider
 
@@ -107,36 +267,26 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = publisher;
 			Subscriber = subscriber;
 
-#if RANDYTODO
-			// TODO: There is no xml config element (now null in next call), so figure out how to live without it.
-#endif
-			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(null);
-			m_clerkConfiguration = clerkConfiguration;
-			m_id = XmlUtils.GetOptionalAttributeValue(m_clerkConfiguration, "id", "missingId");
-			m_clerkProvidingRootObject = XmlUtils.GetOptionalAttributeValue(m_clerkConfiguration, "clerkProvidingOwner");
-			m_shouldHandleDeletion = XmlUtils.GetOptionalBooleanAttributeValue(m_clerkConfiguration, "shouldHandleDeletion", true);
-			m_fAllowDeletions = XmlUtils.GetOptionalBooleanAttributeValue(m_clerkConfiguration, "allowDeletions", true);
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
-			m_list = RecordList.Create(cache, PropertyTable, Publisher, Subscriber, m_clerkConfiguration.SelectSingleNode("recordList"));
-			m_list.Clerk = this;
-			m_relatedClerk = XmlUtils.GetOptionalAttributeValue(m_clerkConfiguration, "relatedClerk");
-			m_relationToRelatedClerk = XmlUtils.GetOptionalAttributeValue(m_clerkConfiguration, "relationToRelatedClerk");
+			m_list.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 
-			TryRestoreSorter(m_clerkConfiguration, cache);
-			TryRestoreFilter(m_clerkConfiguration, cache);
+			TryRestoreSorter();
+			TryRestoreFilter();
 			m_list.ListChanged += OnListChanged;
 			m_list.AboutToReload += m_list_AboutToReload;
 			m_list.DoneReload += m_list_DoneReload;
 
+			if (m_filterProvider != null)
+			{
+				Subscriber.Subscribe("FilterListChanged", FilterListChanged_Message_Handler);
+			}
+#if RANDYTODO
 			XmlNode recordFilterListProviderNode = ToolConfiguration.GetDefaultRecordFilterListProvider(m_clerkConfiguration);
 			bool fSetFilterMenu = false;
 			if (recordFilterListProviderNode != null)
 			{
-#if RANDYTODO
 				// TODO: There is only one concrete class (WfiRecordFilterListProvider) used in one RecordClerk,
 				// TODO: which is used by several tools.
 				m_filterProvider = RecordFilterListProvider.Create(PropertyTable, recordFilterListProviderNode);
-#endif
 				if (m_filterProvider != null && m_list.Filter != null)
 				{
 					// find any matching persisted menubar filter
@@ -170,31 +320,9 @@ namespace SIL.FieldWorks.XWorks
 				Debug.Assert(TryClerkProvidingRootObject(out clerkProvidingRootObject),
 					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
 			}
+#endif
 
-			//mediator. TraceLevel = TraceLevel.Info;
-
-			//we do not want to be a top-level colleague, because
-			//if we were, we would always receive events, for example navigation events
-			//which might be intended for another RecordClerk, specifically the RecordClerk
-			//being used by the currently active vector editor, browse view, etc.
-
-			//so, instead, we let the currently active view include us as a "child" colleague.
-			//NO! mediator.AddColleague(this);
-
-
-
-			// Install this object in the PropertyTable so that others can find it.
-			// NB: This *must* be done before the call to SetupDataContext,
-			// or we are asking for an infinite loop, has SetupDataContext()
-			// causes user interface widgets to wake up and look for this object.
-			// If we have not registered the existence of this object yet in the property table,
-			// those widgets will be inclined to try to create us.  Hence, the infinite loop.
-
-			//Note that, on the downside, this means that we need to be careful
-			//not to broadcast any record changes until we are actually initialize enough
-			//to deal with the resulting request that will come from those widgets.
-
-			StoreClerkInPropertyTable(m_clerkConfiguration);
+			StoreClerkInPropertyTable();
 
 			SetupDataContext(false);
 		}
@@ -219,77 +347,6 @@ namespace SIL.FieldWorks.XWorks
 				return m_list.ListItemsClass;
 			}
 		}
-
-		/// <summary>
-		/// when this is not null, that means there is another clerk managing a list,
-		/// and the selected item of that list provides the object that this
-		/// RecordClerk gets items out of. For example, the WfiAnalysis clerk
-		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
-		/// be displaying the analyses of.
-		/// </summary>
-		protected string m_clerkProvidingRootObject;
-
-		/// <summary>
-		/// When this is non-null, there may be another clerk which contains a similar list of objects,
-		/// for example, in Notebook most views use a record clerk that has AllRecords, but document
-		/// view has only the top-level records. When our selected record changes, we want to notify the
-		/// other Clerk, if it exists.
-		/// </summary>
-		private string m_relatedClerk;
-
-		/// <summary>
-		/// When m_relatedClerk is not null, and this is also not null, it controls how we find the
-		/// related object which we should switch to when a view using this is activated.
-		/// owned: try to find one of our own objects which is or is owned by the object selected in the
-		/// related clerk (e.g., Base Records clerk should try to find an object that is or owns the record
-		/// selected in the records clerk).
-		/// ownee: if the other clerk's object is or owns the object already selected in this, don't change.
-		/// otherwise try to select the object owned in the other clerk. (e.g., Records Clerk should not
-		/// switch to a higher-level record if it is in one that corresponds to part of the selection in
-		/// the base record clerk).
-		/// </summary>
-		private string m_relationToRelatedClerk;
-
-		/// <summary>
-		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
-		/// this does not include the filters they can get that by using the FilterBar.
-		/// </summary>
-		protected RecordFilterListProvider m_filterProvider;
-
-		private bool m_editable = true;
-		private bool m_suppressSaveOnChangeRecord = false; // true during delete and insert and ShowRecord calls caused by them.
-		private bool m_skipShowRecord = false; // skips navigations while a user is editing something.
-		private bool m_shouldHandleDeletion = true; // false, if the dependent clerk is to handle deletion, as for reversals.
-		private bool m_fAllowDeletions = true;	// false if nothing is to be deleted for this record clerk.
-
-		/// <summary>
-		/// We need to store what filter we are responsible for setting, locally, so
-		/// that when the user says "no filter/all records",
-		/// we can selectively remove just this filter from the set that is being kept by the
-		/// RecordList. That list would contain filters contributed from other sources, in particular
-		/// the FilterBar.
-		/// </summary>
-		protected RecordFilter m_activeMenuBarFilter;
-		protected IRecordChangeHandler m_rch = null;
-
-		/// <summary>
-		/// Store the XmlNode that configured the default filter for the clerk in Init().
-		/// </summary>
-		XmlNode m_filterNode = null;
-
-		/// <summary>
-		/// The display name of what is currently being sorted. This variable is persisted as a user
-		/// setting. When the sort name is null it indicates that the items in the clerk are not
-		/// being sorted or that the current sorting should not be displayed (i.e. the default column
-		/// is being sorted).
-		/// </summary>
-		private string m_sortName = null;
-		private bool m_isDefaultSort = false;
-
-		#region Event Handling
-		public event EventHandler SorterChangedByClerk;
-		public event FilterChangeHandler FilterChangedByClerk;
-		#endregion Event Handling
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -389,17 +446,23 @@ namespace SIL.FieldWorks.XWorks
 					m_rch.Dispose();
 				if (m_recordBarHandler != null)
 					m_recordBarHandler.Dispose();
+				if (m_filterProvider != null)
+				{
+					Subscriber.Unsubscribe("FilterListChanged", FilterListChanged_Message_Handler);
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_list = null;
-			m_id = null;
 			m_clerkProvidingRootObject = null;
 			m_recordBarHandler = null;
 			m_filterProvider = null;
 			m_activeMenuBarFilter = null;
 			m_rch = null;
 			m_fIsActiveInGui = false;
+			m_defaultSorter = null;
+			m_defaultSortLabel = null;
+			m_defaultFilter = null;
+
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -471,7 +534,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				CheckDisposed();
 				return m_list.PropertyTableId("sortName");
 			}
 		}
@@ -480,7 +542,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				CheckDisposed();
 				return m_list.PropertyTableId("filter");
 			}
 		}
@@ -489,7 +550,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				CheckDisposed();
 				return m_list.PropertyTableId("sorter");
 			}
 		}
@@ -497,19 +557,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="clerkConfiguration"></param>
-		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new filter,
 		/// <c>false</c> if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, FdoCache cache)
+		protected virtual bool TryRestoreFilter()
 		{
 			RecordFilter filter = null;
-			string persistFilter = PropertyTable.GetValue<string>(FilterPropertyTableId, SettingsGroup.LocalSettings);
+			var persistFilter = PropertyTable.GetValue<string>(FilterPropertyTableId, SettingsGroup.LocalSettings);
 			if (m_list.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
 				// do nothing.
-				string currentFilter = DynamicLoader.PersistObject(m_list.Filter, "filter");
+				var currentFilter = DynamicLoader.PersistObject(m_list.Filter, "filter");
 				if (currentFilter == persistFilter)
 					return false;
 			}
@@ -521,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.
-						filter.Cache = cache;
+						filter.Cache = Cache;
 					}
 				}
 				catch
@@ -531,36 +589,29 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (filter == null || !filter.IsValid)
 			{
-				m_filterNode = ToolConfiguration.GetDefaultFilter(clerkConfiguration);
-				filter = m_filterNode != null ? RecordFilter.Create(cache, m_filterNode) : null;
+				filter = m_defaultFilter;
 			}
 			if (m_list.Filter == filter)
 				return false;
 			m_list.Filter = filter;
-			m_list.TransferOwnership(filter as IDisposable);
 			return true;
 		}
 
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="clerkConfiguration"></param>
-		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new sorter,
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
+		protected virtual bool TryRestoreSorter()
 		{
 			m_sortName = PropertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
 
-			string persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings);
-			var fwdisposable = m_list.Sorter as IFWDisposable;
-			if (fwdisposable != null && fwdisposable.IsDisposed)
-				m_list.Sorter = null;
+			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings);
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
 				// do nothing
-				string currentSorter = DynamicLoader.PersistObject(m_list.Sorter, "sorter");
+				var currentSorter = DynamicLoader.PersistObject(m_list.Sorter, "sorter");
 				if (currentSorter == persistSorter)
 					return false;
 			}
@@ -578,26 +629,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (sorter == null)
 			{
-				XmlNode sorterNode = ToolConfiguration.GetDefaultSorter(clerkConfiguration);
-				if (sorterNode != null)
-				{
-					sorter = PropertyRecordSorter.Create(cache, sorterNode);
-					m_sortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
-				}
+				sorter = m_defaultSorter;
+				m_sortName = m_defaultSortLabel;
 			}
-			// If sorter is null, allow any sorter which may have been installed during
+			// If sorter is still null, allow any sorter which may have been installed during
 			// record list initialization to prevail.
-			if (sorter != null)
+			if (sorter == null)
 			{
-				// (LT-9515) restored sorters need to set some properties that could not be persisted.
-				sorter.Cache = cache;
-				if (m_list.Sorter == sorter)
-					return false;
-				m_list.Sorter = sorter;
-				m_list.TransferOwnership(sorter as IDisposable);
-				return true;
+				return false; // we didn't change anything.
 			}
-			return false; // we didn't change anything.
+			if (m_list.Sorter == sorter)
+				return false;
+			// (LT-9515) restored sorters need to set some properties that could not be persisted.
+			m_list.Sorter = sorter;
+			return true;
 		}
 
 		/// <summary>
@@ -607,16 +652,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if we restored either a sorter or a filter.</returns>
 		internal protected bool UpdateFiltersAndSortersIfNeeded()
 		{
-			bool fRestoredSorter = TryRestoreSorter(m_clerkConfiguration, Cache);
-			bool fRestoredFilter = TryRestoreFilter(m_clerkConfiguration, Cache);
+			bool fRestoredSorter = TryRestoreSorter();
+			bool fRestoredFilter = TryRestoreFilter();
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
 			return fRestoredSorter || fRestoredFilter;
 		}
 
-		protected virtual void StoreClerkInPropertyTable(XmlNode clerkConfiguration)
+		protected virtual void StoreClerkInPropertyTable()
 		{
-			string property = GetCorrespondingPropertyName(ToolConfiguration.GetIdOfTool(clerkConfiguration));
+			var property = GetCorrespondingPropertyName(m_id);
 			PropertyTable.SetProperty(property, this, false, false);
 			PropertyTable.SetPropertyDispose(property, true);
 		}
@@ -725,7 +770,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected FdoCache Cache
 		{
-			get { return m_list.Cache; }
+			get { return PropertyTable.GetValue<FdoCache>("cache"); }
 		}
 
 		/// <summary>
@@ -982,13 +1027,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// In case we can't find the argument in the list, see if it is an owner of anything
 				// in the list. This is useful, for example, when asked to find a LexEntry in a list of senses.
-				index = m_list.IndexOfChildOf(hvoTarget, Cache);
+				index = m_list.IndexOfChildOf(hvoTarget);
 			}
 			if (index == -1)
 			{
 				// Still no luck. See if one of the argument's owners is in the list (e.g., may be a subrecord
 				// in DN, and only parent currently showing).
-				index = m_list.IndexOfParentOf(hvoTarget, Cache);
+				index = m_list.IndexOfParentOf(hvoTarget);
 			}
 			return index;
 		}
@@ -1029,7 +1074,7 @@ namespace SIL.FieldWorks.XWorks
 					// target before complaining to the user about a filter being on.
 					var mdc = (IFwMetaDataCacheManaged)m_list.VirtualListPublisher.MetaDataCache;
 					int clidList = mdc.FieldExists(m_list.Flid) ? mdc.GetDstClsId(m_list.Flid) : -1;
-					int clidObj = m_list.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
+					int clidObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
 
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
@@ -1249,7 +1294,8 @@ namespace SIL.FieldWorks.XWorks
 				OnChangeFilterClearAll(null); // get rid of all the ones we're allowed to.
 				return;
 			}
-			else if (m_filterProvider != null)
+
+			if (m_filterProvider != null)
 			{
 				addf = (RecordFilter)m_filterProvider.GetFilter(filterName);
 				if (addf == null || addf is NullFilter)
@@ -1272,7 +1318,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_clerkProvidingRootObject !=null)
 				{
-					return ClerkSelectedObjectPropertyId(m_clerkProvidingRootObject);
+					return ClerkSelectedObjectPropertyId(m_clerkProvidingRootObject.Id);
 				}
 				//don't do this, because then you die when the debugger tries to show the RecordClerk.
 				//Debug.Fail("Why is this property being called when the clerk is not dependent on another clerk?");
@@ -1374,7 +1420,7 @@ namespace SIL.FieldWorks.XWorks
 			if (ShouldNotHandleDeletionMessage)
 				return false;
 
-			display.Enabled = m_fAllowDeletions && m_list.IsCurrentObjectValid() && m_list.CurrentObject != null;
+			display.Enabled = m_allowDeletions && m_list.IsCurrentObjectValid() && m_list.CurrentObject != null;
 			if (display.Text.Contains("{0}") && m_list.IsCurrentObjectValid())
 			{
 				// Insert the class name of the thing we will delete
@@ -1806,60 +1852,57 @@ namespace SIL.FieldWorks.XWorks
 
 		internal virtual bool SetCurrentFromRelatedClerk()
 		{
-			if (!String.IsNullOrEmpty(m_relatedClerk))
+			if (m_relatedClerk == null || !Cache.ServiceLocator.IsValidObjectId(m_relatedClerk.CurrentObjectHvo))
 			{
-				var relatedClerk = FindClerk(PropertyTable, m_relatedClerk);
-				if (relatedClerk != null && Cache.ServiceLocator.IsValidObjectId(relatedClerk.CurrentObjectHvo))
+				return false;
+			}
+
+			var target = m_relatedClerk.CurrentObject;
+			if (m_relationToRelatedClerk.StartsWith("root:"))
+			{
+				// The object to look for in our list is a 'root' of the one in the other list:
+				// that is, the object in the other list itself or one of its owners, the highest one in the
+				// hierarchy of a specified class. For example, the other list may contain subrecords,
+				// we want to select an owning top-level record.
+				var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
+				var mdc = Cache.MetaDataCacheAccessor;
+				var classId = mdc.GetClassId(className);
+				var targetObj = target;
+				for(;targetObj != null; targetObj = targetObj.Owner)
 				{
-					var target = relatedClerk.CurrentObject;
-					if (m_relationToRelatedClerk != null && m_relationToRelatedClerk.StartsWith("root:"))
+					if (targetObj.ClassID == classId)
+						target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
+				}
+				if (target != m_relatedClerk.CurrentObject)
+					SetSubitem(m_relatedClerk.CurrentObject);
+				else
+					SetSubitem(null); // same object, no need for special subitem behavior.
+			}
+			else if ( m_relationToRelatedClerk == "part")
+			{
+				if (m_relatedClerk is SubitemRecordClerk)
+				{
+					// It should keep track of precisely which object we want.
+					var subitemClerk = m_relatedClerk as SubitemRecordClerk;
+					if (subitemClerk.UsedToSyncRelatedClerk)
 					{
-						// The object to look for in our list is a 'root' of the one in the other list:
-						// that is, the object in the other list itself or one of its owners, the highest one in the
-						// hierarchy of a specified class. For example, the other list may contain subrecords,
-						// we want to select an owning top-level record.
-						var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
-						var mdc = Cache.MetaDataCacheAccessor;
-						var classId = mdc.GetClassId(className);
-						var targetObj = target;
-						for(;targetObj != null; targetObj = targetObj.Owner)
-						{
-							if (targetObj.ClassID == classId)
-								target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
-						}
-						if (target != relatedClerk.CurrentObject)
-							SetSubitem(relatedClerk.CurrentObject);
-						else
-							SetSubitem(null); // same object, no need for special subitem behavior.
+						// We've synchronized this clerk from the related one ONCE. In case we initialize
+						// another view from this Clerk, we don't want to do it again...for example, if we
+						// switch from doc to Edit, then change records, then switch to Browse, we want
+						// to stay on the same record, not switch again to the document view one.
+						// Of course this would be a problem if more than one Clerk had the same
+						// related clerk, but that hasn't happened yet.
+						return false;
 					}
-					else if (m_relationToRelatedClerk != null && m_relationToRelatedClerk == "part")
+					if (subitemClerk.Subitem != null)
 					{
-						if (relatedClerk is SubitemRecordClerk)
-						{
-							// It should keep track of precisely which object we want.
-							var subitemClerk = relatedClerk as SubitemRecordClerk;
-							if (subitemClerk.UsedToSyncRelatedClerk)
-							{
-								// We've synchronized this clerk from the related one ONCE. In case we initialize
-								// another view from this Clerk, we don't want to do it again...for example, if we
-								// switch from doc to Edit, then change records, then switch to Browse, we want
-								// to stay on the same record, not switch again to the document view one.
-								// Of course this would be a problem if more than one Clerk had the same
-								// related clerk, but that hasn't happened yet.
-								return false;
-							}
-							if (subitemClerk.Subitem != null)
-							{
-								target = subitemClerk.Subitem;
-								subitemClerk.UsedToSyncRelatedClerk = true;
-							}
-						}
+						target = subitemClerk.Subitem;
+						subitemClerk.UsedToSyncRelatedClerk = true;
 					}
-					JumpToRecord(target.Hvo);
-					return true;
 				}
 			}
-			return false;
+			JumpToRecord(target.Hvo);
+			return true;
 		}
 
 		private void ResetStatusBarMessageForCurrentObject()
@@ -1914,7 +1957,7 @@ namespace SIL.FieldWorks.XWorks
 			clerkProvidingRootObject = null;
 			if (IsPrimaryClerk)
 				return false;
-			clerkProvidingRootObject = FindClerk(PropertyTable, m_clerkProvidingRootObject);
+			clerkProvidingRootObject = m_clerkProvidingRootObject;
 			return clerkProvidingRootObject != null;
 		}
 
@@ -2132,16 +2175,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// update the contents of the filter list.
+		/// Update the contents of the filter list.
 		/// </summary>
-		protected void OnFilterListChanged(object argument)
+		private void FilterListChanged_Message_Handler(object newValue)
 		{
-			//review: I (JH) couldn't find where/if this method is called.
-			if (m_filterProvider != null)
-			{
-				m_filterProvider.ReLoad();
-			}
+			m_filterProvider.ReLoad();
 		}
+
 		public ICmObject CurrentObject
 		{
 			get
@@ -2588,9 +2628,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static string GetCorrespondingPropertyName(string vectorName)
+		public static string GetCorrespondingPropertyName(string clerkId)
 		{
-			return "RecordClerk-" + vectorName;
+			return "RecordClerk-" + clerkId;
 		}
 
 		public void OnChangeSorter()
@@ -2612,10 +2652,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void ResetFilterToDefault()
 		{
-			RecordFilter defaultFilter = null;
-			if (m_filterNode != null)
-				defaultFilter = RecordFilter.Create(Cache, m_filterNode);
-			OnChangeFilter(new FilterChangeEventArgs(defaultFilter, m_list.Filter));
+			OnChangeFilter(new FilterChangeEventArgs(m_defaultFilter, m_list.Filter));
 		}
 
 		public void OnChangeFilter(FilterChangeEventArgs args)
@@ -2749,7 +2786,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			if (m_list.Sorter == null || m_sortName == null
-				|| (m_isDefaultSort && ToolConfiguration.GetDefaultSorter(m_clerkConfiguration) != null))
+				|| (m_isDefaultSort && m_defaultSorter != null))
 			{
 				b.BackBrush = System.Drawing.Brushes.Transparent;
 				b.TextForReal = "";
@@ -3188,140 +3225,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	/// <summary>
-	/// This is a record clerk that can be used in a disposable context such as in a
-	/// guicontrol in a dialog. For example, a normal RecordClerk will publish that it has become the "ActiveClerk"
-	/// whenever ActivateUI is called. We don't want this to happen for record clerks that will only be used in a dialog,
-	/// because the "ActiveClerk" will then become disposed after the dialog closes.
-	/// </summary>
-	public class TemporaryRecordClerk : RecordClerk
-	{
-		public override void ActivateUI(bool useRecordTreeBar)
-		{
-			// by default, we won't publish that we're the "ActiveClerk" or other usual effects.
-			// but we do want to say that we're being actively used in a gui.
-			m_fIsActiveInGui = true;
-		}
-		public override bool IsControllingTheRecordTreeBar
-		{
-			get
-			{
-				return true; // assume this will be true, say for instance in the context of a dialog.
-			}
-			set
-			{
-				// do not do anything here, unless you want to manage the "ActiveClerk" property.
-			}
-		}
-		public override void OnPropertyChanged(string name)
-		{
-			// Objects of this class do not respond to 'propchanged' actions.
-		}
-
-		#region Overrides of RecordClerk
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
-		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			// If we have a RecordList, it shouldn't generate PropChanged messages.
-			if (m_list != null)
-				m_list.EnableSendPropChanged = false;
-		}
-
-		#endregion
-	}
-
-	/// <summary>
-	/// This is a record clerk that can be used in a guicontrol where the parent control knows
-	/// when the list contents have changed, and to what.  You must use a MatchingItemsRecordList
-	/// whenever you use a MatchingItemsRecordClerk.
-	/// </summary>
-	public class MatchingItemsRecordClerk : TemporaryRecordClerk
-	{
-		public void UpdateList(IEnumerable<int> objs)
-		{
-			((MatchingItemsRecordList) m_list).UpdateList(objs);
-		}
-
-
-		protected override void StoreClerkInPropertyTable(XmlNode clerkConfiguration)
-		{
-			// Don't bother storing in the property table.
-		}
-
-		/// <summary>
-		/// Set the specified index in the list.
-		/// </summary>
-		/// <param name="index"></param>
-		public void SetListIndex(int index)
-		{
-			CheckDisposed();
-
-			try
-			{
-				m_list.CurrentIndex = index;
-			}
-			catch (IndexOutOfRangeException error)
-			{
-				throw new IndexOutOfRangeException("The MatchingItemsRecordClerk tried to jump to a record which is not in the current active set of records.", error);
-			}
-		}
-
-		/// <summary>
-		/// Allow the sorter to be set according to the search criteria.
-		/// </summary>
-		public void SetSorter(RecordSorter sorter)
-		{
-			m_list.Sorter = sorter;
-		}
-
-		protected override bool TryRestoreFilter(XmlNode clerkConfiguration, FdoCache cache)
-		{
-			return false;
-		}
-
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
-		{
-			return false;
-		}
-	}
-
-	/// <summary>
-	/// This interface is implemented by ConcDecorator in LexEdDll, which is configured to be the
-	/// SDA that the Clerk's VirtualListPublisher decorates. This allows the Clerk to make available
-	/// the selected analysis occurrence, without introducing a (circular) dependency between xWorks and LexEdDll.
-	/// </summary>
-	public interface IAnalysisOccurrenceFromHvo
-	{
-		IParaFragment OccurrenceFromHvo(int hvo);
-	}
-
-	/// <summary>
-	/// This one is used for concordances. Currently a concordance never controls the record bar, and indicating this
-	/// prevents a variety of activity that undesirably calls CurrentObject, which causes problems because in a concordance
-	/// list the HVOs don't correspond to real FDO objects.
-	/// </summary>
-	public class ConcRecordClerk : TemporaryRecordClerk
-	{
-		public override bool IsControllingTheRecordTreeBar
-		{
-			get
-			{
-				return false;
-			}
-			set
-			{
-
-			}
-		}
-	}
-
+#if RANDYTODO
+	// TODO: The RecordClerkFactory class will go away.
+	// TODO: It could go away now, but it is useful to know what the old xml config node is supposed to contain.
 	/// <summary>
 	/// This class creates a RecordClerk, or one of its subclasses, based on what is declared in the main clerk element.
 	/// </summary>
@@ -3333,11 +3239,7 @@ namespace SIL.FieldWorks.XWorks
 				<dynamicloaderinfo/>
 			*/
 			RecordClerk newClerk;
-#if RANDYTODO
 			XmlNode clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(configurationNode);
-#else
-			XmlNode clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(null);
-#endif
 			Debug.Assert(clerkNode != null, "Could not find clerk.");
 			XmlNode customClerkNode = clerkNode.SelectSingleNode("dynamicloaderinfo");
 			if (customClerkNode == null)
@@ -3360,8 +3262,14 @@ namespace SIL.FieldWorks.XWorks
 			return newClerk;
 		}
 	}
+#endif
 
-	public class ToolConfiguration
+#if RANDYTODO
+	// TODO: The ToolConfiguration class will go away.
+	// TODO: It could go away now, as it always expects the now defunct xml config node.
+	// TODO: But, it can stay for now, to keep the compiler happier.
+#endif
+	public static class ToolConfiguration
 	{
 		static public string GetIdOfTool(XmlNode node)
 		{
@@ -3455,123 +3363,5 @@ namespace SIL.FieldWorks.XWorks
 				return null;//no sorter defined
 			}
 		}
-	}
-
-	/// <summary>
-	/// The argument used when we broadcast OnRecordNavigation.
-	/// </summary>
-	public class RecordNavigationInfo : IComparable
-	{
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		/// <param name="clerk">The clerk.</param>
-		/// <param name="suppressSaveOnChangeRecord"></param>
-		/// <param name="skipShowRecord"></param>
-		/// <param name="suppressFocusChange"></param>
-		public RecordNavigationInfo(RecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
-		{
-			Clerk = clerk;
-			HvoOfCurrentObjAtTimeOfNavigation = Clerk != null && Clerk.CurrentObjectHvo != 0 ? Clerk.CurrentObjectHvo : 0;
-			SuppressSaveOnChangeRecord = suppressSaveOnChangeRecord;
-			SkipShowRecord = skipShowRecord;
-			SuppressFocusChange = suppressFocusChange;
-		}
-
-		/// <summary>
-		///  The clerk that broadcast the change.
-		/// </summary>
-		public RecordClerk Clerk
-		{
-			get; private set;
-		}
-
-		/// <summary>
-		/// Whether a change of record should result in a save (and discard of undo items).
-		/// This is suppressed if the change is caused by creating or deleting a record.
-		/// </summary>
-		public bool SuppressSaveOnChangeRecord
-		{
-			get; private set;
-		}
-
-		/// <summary>
-		/// Indicates whether the this action should skip ShowRecord
-		/// (e.g. to avoid losing the context/pane where the user may be editing.)
-		/// </summary>
-		public bool SkipShowRecord
-		{
-			get; private set;
-		}
-
-		/// <summary>
-		/// HvoOfClerkAtTimeOfNavigation is needed in Equals() for determining whether or not
-		/// RecordNavigationInfo has changed in the property table.
-		/// </summary>
-		public int HvoOfCurrentObjAtTimeOfNavigation
-		{
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether to suppress focus changes.
-		/// </summary>
-		/// <value><c>true</c> if focus changes will be suppressed; otherwise, <c>false</c>.</value>
-		public bool SuppressFocusChange
-		{
-			get; private set;
-		}
-
-		/// <summary>
-		/// Given an argument from OnRecordNavigation, expected to be a RecordNavigationInfo,
-		/// if it really is return it's clerk. Otherwise return null.
-		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public static RecordClerk GetSendingClerk(object argument)
-		{
-			var info = argument as RecordNavigationInfo;
-			if (info == null)
-				return null;
-			return info.Clerk;
-		}
-
-		#region IComparable Members
-
-		/// <summary>
-		/// RecordNavigation info can be considered equivalent if
-		/// the CurrentObject hasn't changed.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			return CompareTo(obj) == 0;
-		}
-
-		public override int GetHashCode()
-		{
-			return Clerk.VirtualFlid & HvoOfCurrentObjAtTimeOfNavigation;
-		}
-
-		public int CompareTo(object obj)
-		{
-			return ReflectionHelper.HaveSamePropertyValues(this, obj) ? 0 : -1;
-		}
-
-		#endregion
-	}
-
-	/// <summary>
-	/// This interface may be implemented by a virtual handler to request that a specified item be added to the list.
-	/// The initial use is when following a link to a Scripture section that is not in the current Scripture filter.
-	/// </summary>
-	public interface IAddItemToVirtualProperty
-	{
-		/// <summary>
-		/// Add the item to the property this handler represents, if possible. Return the index where it was
-		/// inserted, or -1 if it could not be inserted.
-		/// </summary>
-		bool Add(int hvoOwner, int hvoItem);
 	}
 }

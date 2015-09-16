@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
 		{
-			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, null, cache.ServiceLocator);
+			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, cache.ServiceLocator);
 			cd.InitializeFlexComponent(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber);
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

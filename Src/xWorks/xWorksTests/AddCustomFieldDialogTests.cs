@@ -15,10 +15,14 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class AddCustomFieldDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+#if RANDYTODO
+		// TODO: See is there is a replacement for this.
+#endif
 		/// <summary>
 		/// Test the code that populates the Lists combo.
 		/// </summary>
 		[Test]
+		[Ignore("Moving away form all that xml.")]
 		public void PopulateListsCombo()
 		{
 			string source =

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -17,17 +16,14 @@ namespace SIL.FieldWorks.XWorks
 	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
-		private IFdoServiceLocator m_services;
 		private int m_notifieeCount;
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
-		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
 			: base(domainDataByFlid)
 		{
 			SetOverrideMdc(new InterestingTextsMdc(base.MetaDataCache as IFwMetaDataCacheManaged));
-			m_services = services;
 		}
 
 		// Override these methods to notice when we are disconnected and stop receiving notifications

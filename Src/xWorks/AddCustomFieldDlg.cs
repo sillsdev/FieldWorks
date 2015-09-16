@@ -236,6 +236,8 @@ namespace SIL.FieldWorks.XWorks
 					continue;
 				var owner = recordList.Attributes["owner"].Value;
 				var property = recordList.Attributes["property"].Value;
+#if RANDYTODO
+				// TODO: Need another way to get the list, since that static is present now.
 				var list = PossibilityRecordList.GetListFromOwnerAndProperty(cache, owner, property);
 				if (!(list is ICmPossibilityList))
 					continue; // some tools in the lists area are not actually lists.
@@ -250,6 +252,7 @@ namespace SIL.FieldWorks.XWorks
 					var label = elt.Attributes["label"].Value;
 					result.Add(new IdAndString<Guid>(list.Guid, label));
 				}
+#endif
 			}
 			result.Sort((x, y) => x.Name.CompareTo(y.Name));
 			return result;

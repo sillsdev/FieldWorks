@@ -386,6 +386,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				var paramsNode = tool.SelectSingleNode(".//control/parameters[@clerk]");
 				if (paramsNode == null)
 					continue;
+#if RANDYTODO
 				var clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(paramsNode);
 				if (clerkNode == null)
 					continue;
@@ -402,6 +403,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					realParams[1] = toolName;
 					return true;
 				}
+#endif
 			}
 			// If it's not a known list, try custom.
 			realParams[1] = GetCustomListToolName(list);
@@ -660,8 +662,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XmlNode x = windowConfig.SelectSingleNode(toolParamNodeXPath);
 			if (x == null)
 				x = FindToolParamNode(windowConfig, curList);
+#if RANDYTODO
+			// TODO: I'm not sure who the "I" is, but clerks are disposed by the PropertyTable.
 			// REVIEW: I'm not sure where the created RecordClerk gets disposed
 			RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+#endif
 		}
 
 		private void AddCommandToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)

@@ -49,6 +49,10 @@
     <Reference Include="FDO">
       <HintPath>..\..\Output\Release\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="Filters, Version=9.0.0.13771, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Filters.dll</HintPath>
+    </Reference>
     <Reference Include="Framework, Version=9.0.0.26306, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Framework.dll</HintPath>

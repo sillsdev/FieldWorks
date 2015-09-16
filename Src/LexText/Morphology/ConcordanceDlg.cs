@@ -157,6 +157,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			PropertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
 			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
 
+#if RANDYTODO
 			// Gather up the nodes.
 			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
 			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
@@ -180,6 +181,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			clerk.ProgressReporter = m_progAdvInd;
 			m_recordClerks[WfiGlossTags.kClassId] = clerk;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
+#endif
 
 
 			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);

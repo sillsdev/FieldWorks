@@ -228,10 +228,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_btnApply.Enabled = false;
 				m_cbNewSpelling.TextChanged += m_dstWordform_TextChanged;
 
+#if RANDYTODO
 				// Setup source browse view.
 				var toolNode = configurationParameters.SelectSingleNode("controls/control[@id='srcSentences']/parameters");
 				m_srcClerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 				m_srcClerk.OwningObject = m_srcwfiWordform;
+#endif
 				m_sourceSentences.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
 				m_specialSda = m_sourceSentences.BrowseViewer.SpecialCache;
@@ -1951,9 +1953,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
-		public RespellingSda(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
-			: base(domainDataByFlid, configurationNode, services)
+		public RespellingSda(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
+			: base(domainDataByFlid, services)
 		{
 			SetOverrideMdc(new RespellingMdc(MetaDataCache as IFwMetaDataCacheManaged));
 		}

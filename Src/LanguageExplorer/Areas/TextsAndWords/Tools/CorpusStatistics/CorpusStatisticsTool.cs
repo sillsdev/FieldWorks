@@ -14,6 +14,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// </summary>
 	internal sealed class CorpusStatisticsTool : ITool
 	{
+		private StatisticsView _statisticsView;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +69,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
+			// Remove StatisticsView the right panel of 'mainCollapsingSplitContainer'.
+			mainCollapsingSplitContainer.SecondControl.Controls.Remove(_statisticsView);
+			_statisticsView.Dispose();
+			_statisticsView = null;
 		}
 
 		/// <summary>
@@ -79,7 +84,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
+			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
+			_statisticsView = new StatisticsView();
+			mainCollapsingSplitContainer.SecondControl.Controls.Add(_statisticsView);
+			_statisticsView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 		}
 
 		/// <summary>

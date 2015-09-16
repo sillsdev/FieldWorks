@@ -256,6 +256,7 @@
     <Compile Include="AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ConcRecordClerk.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredXHTMLGenerator.cs" />
     <Compile Include="CssGenerator.cs" />
@@ -295,6 +296,9 @@
     <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="EntriesOrChildClassesRecordList.cs" />
+    <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
+    <Compile Include="ICreateAndInsert.cs" />
     <Compile Include="IDictionaryListOptionsView.cs" />
     <Compile Include="DictionaryDetailsView\SenseOptionsView.cs">
       <SubType>UserControl</SubType>
@@ -315,6 +319,8 @@
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="ISetCache.cs" />
+    <Compile Include="ISetRootHvo.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
@@ -371,10 +377,15 @@
     <Compile Include="LinkListener.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ListChangedEventArgs.cs" />
+    <Compile Include="ListChangedEventHandler.cs" />
     <Compile Include="MacroListener.cs" />
+    <Compile Include="MatchingItemsRecordClerk.cs" />
+    <Compile Include="MatchingItemsRecordList.cs" />
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PossibilityRecordList.cs" />
     <Compile Include="PublishToWebonaryController.cs" />
     <Compile Include="PublishToWebonaryDlg.cs">
       <SubType>Form</SubType>
@@ -383,6 +394,7 @@
       <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="PublishToWebonaryModel.cs" />
+    <Compile Include="RecordNavigationInfo.cs" />
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>
@@ -412,6 +424,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SubitemRecordClerk.cs" />
+    <Compile Include="TemporaryRecordClerk.cs" />
     <Compile Include="TextListeners.cs">
       <SubType>Code</SubType>
     </Compile>

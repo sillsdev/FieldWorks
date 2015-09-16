@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			});
 
-			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			});
 
-			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)

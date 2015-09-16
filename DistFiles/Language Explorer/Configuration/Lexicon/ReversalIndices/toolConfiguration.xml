@@ -12,7 +12,6 @@
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlDocView"/>
 								<parameters area="lexicon" clerk="AllReversalEntries" altTitleId="ReversalEntry-Plural-TODO-Remove" persistContext="Reversal" backColor="White" layout="" layoutProperty="ReversalIndexPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="ReversalIndex">
-									<!--decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ReversalEntryPublicationDecorator"/-->
 								</parameters>
 							</control>
 							<!-- The following configureLayouts node is required only to help migrate old configurations to the new format -->

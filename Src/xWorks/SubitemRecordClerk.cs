@@ -1,15 +1,26 @@
-﻿using System.Xml;
+﻿// Copyright (c) 2003-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
 {
+#if RANDYTODO
+	// TODO: This class is not in the main config files, so never created.
+	// TODO: That doesn't prevent two code clients from thinking it *is* used, of course:
+	// TODO: XmlDocView & RecordClerk ask if the clerk is SubitemRecordClerk here and there,
+	// TODO: but it never is.
+#endif
 	/// <summary>
 	/// A SubItemRecordClerk has an additional notion of the current item. Within the current item of the
 	/// RecordList, a smaller item may be selected. For example, the main list may be of top-level
-	/// RnGenericRecords, but the SubItemRecordClerk can trak owned records.
+	/// RnGenericRecords, but the SubItemRecordClerk can track owned records.
 	/// Currently, the subitem must be owned by the top-level item, and displayed in the document view
 	/// using direct owning relationships. Possible subitems are configured by noting the property
 	/// that can contain them (possibly recursively).
@@ -17,6 +28,35 @@ namespace SIL.FieldWorks.XWorks
 	public class SubitemRecordClerk : RecordClerk
 	{
 		internal int SubitemFlid { get; private set; }
+		private readonly string m_className;
+		private readonly string m_fieldName;
+
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		/// <param name="className"></param>
+		/// <param name="fieldName"></param>
+		internal SubitemRecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, string className, string fieldName)
+			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+			if (string.IsNullOrWhiteSpace(className))
+			{
+				throw new ArgumentNullException("className");
+			}
+			if (string.IsNullOrWhiteSpace(fieldName))
+			{
+				throw new ArgumentNullException("fieldName");
+			}
+			m_className = className.Trim();
+			m_fieldName = fieldName.Trim();
+		}
 
 		#region Overrides of RecordClerk
 
@@ -29,12 +69,8 @@ namespace SIL.FieldWorks.XWorks
 		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
-#if RANDYTODO
-			// TODO: Figure out how to set these parameters when the xml is gone.
-			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
-			var subitemNames = XmlUtils.GetManditoryAttributeValue(clerkConfiguration, "field").Split('.');
-			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(subitemNames[0].Trim(), subitemNames[1].Trim(), true);
-#endif
+
+			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(m_className, m_fieldName, true);
 		}
 
 		#endregion
@@ -48,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 			Subitem = subitem;
 		}
 
-		internal override void ViewChangedSelectedRecord(SIL.FieldWorks.Common.FwUtils.FwObjectSelectionEventArgs e, SIL.FieldWorks.Common.COMInterfaces.IVwSelection sel)
+		internal override void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e, IVwSelection sel)
 		{
 			base.ViewChangedSelectedRecord(e, sel);
 			UsedToSyncRelatedClerk = false;

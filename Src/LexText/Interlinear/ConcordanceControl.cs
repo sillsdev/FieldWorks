@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -18,6 +17,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
@@ -1635,13 +1635,28 @@ namespace SIL.FieldWorks.IText
 	{
 		ConcordanceControlBase m_concordanceControl = null;
 
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		internal OccurrencesOfSelectedUnit(string id, MatchingConcordanceItems recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+		}
+
 		internal ConcordanceControlBase ConcordanceControl
 		{
 			get { return m_concordanceControl; }
 			set
 			{
 				m_concordanceControl = value;
-				((MatchingConcordanceItems) m_list).OwningControl = value;
+				((MatchingConcordanceItems)m_list).OwningControl = value;
 			}
 		}
 
@@ -1677,6 +1692,14 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class MatchingConcordanceItems : RecordList
 	{
+		/// <summary>
+		/// Create bare-bones RecordList for made up owner and a property on it.
+		/// </summary>
+		public MatchingConcordanceItems(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
+			: base(new ConcDecorator(domainDataByFlid, services))
+		{
+		}
+
 		internal ConcordanceControlBase OwningControl { get; set; }
 
 		#region Overrides of RecordList

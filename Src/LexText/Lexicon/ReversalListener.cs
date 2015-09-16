@@ -18,6 +18,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -399,6 +400,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public abstract class ReversalClerk : RecordClerk
 	{
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		internal ReversalClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+		}
+
 		#region Overrides of RecordClerk
 
 		/// <summary>
@@ -465,6 +481,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
+#if RANDYTODO
+				// TODO: This just won't work in the new world order!
+#endif
 				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.CodeDirectory,
 																			   FwDirectoryFinder.ksFlexFolderName),
 																  @"Configuration"),
@@ -508,10 +527,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// The stored sorter files keep messing us up here, so we need to do a bit of post-deserialization processing.
 		/// </summary>
 		/// <returns>true if we restored something different from what was already there.</returns>
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
+		protected override bool TryRestoreSorter()
 		{
-			var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache }; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
-			if (base.TryRestoreSorter(clerkConfiguration, cache) && Sorter is GenRecordSorter)
+			var fakevc = new XmlBrowseViewBaseVc
+			{
+				SuppressPictures = true, // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
+				Cache = Cache
+			};
+			if (base.TryRestoreSorter() && Sorter is GenRecordSorter)
 			{
 				var sorter = (GenRecordSorter)Sorter;
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
@@ -530,7 +553,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if(newGuid.Equals(Guid.Empty))
 				return false;
-			var ri = cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if(ri == null)
 				return false;
 			var writingSystem = (IWritingSystem)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
@@ -588,7 +611,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var item = m_list.SortItemAt(lastValidIndex);
 			if (item == null)
 				return lastValidIndex;
-			var parentIndex = m_list.IndexOfParentOf(item.KeyObject, Cache);
+			var parentIndex = m_list.IndexOfParentOf(item.KeyObject);
 
 			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
@@ -789,6 +812,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class ReversalEntryClerk : ReversalClerk
 	{
+		///// <summary>
+		///// Contructor.
+		///// </summary>
+		///// <param name="id">Clerk id/name.</param>
+		///// <param name="recordList">Record list for the clerk.</param>
+		///// <param name="defaultSorter">The default record sorter.</param>
+		///// <param name="defaultSortLabel"></param>
+		///// <param name="defaultFilter">The default filter to use.</param>
+		///// <param name="allowDeletions"></param>
+		///// <param name="shouldHandleDeletion"></param>
+		internal ReversalEntryClerk(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base("AllReversalEntries", new ReversalIndexPOSRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
+		{
+		}
+
 		protected override ICmObject NewOwningObject(IReversalIndex ri)
 		{
 			return ri;

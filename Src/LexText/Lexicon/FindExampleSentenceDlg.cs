@@ -168,9 +168,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// 2. load the browse view. (upper pane)
 			XmlNode xnBrowseViewControlParameters = this.BrowseViewControlParameters;
 
+#if RANDYTODO
 			// First create our Clerk, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
 			m_clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			m_clerk.OwningObject = m_owningSense;
+#endif
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
 			m_rbv.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);

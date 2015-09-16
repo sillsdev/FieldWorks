@@ -4,6 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -21,9 +24,9 @@ namespace SIL.FieldWorks.Common.Controls
 	public class LayoutCache
 	{
 		IFwMetaDataCache m_mdc;
-		Inventory m_layoutInventory;
-		Inventory m_partInventory;
-		Dictionary<Tuple<int, string, bool>, XmlNode> m_map = new Dictionary<Tuple<int, string, bool>, XmlNode>();
+		readonly Inventory m_layoutInventory;
+		readonly Inventory m_partInventory;
+		readonly Dictionary<Tuple<int, string, bool>, XmlNode> m_map = new Dictionary<Tuple<int, string, bool>, XmlNode>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -240,7 +243,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// The specification that can be used to create a PartOwnershipTree helper.
 		/// </summary>
-		XmlNode PartOwnershipTreeSpec { get;  }
+		XElement PartOwnershipTreeSpec { get;  }
 
 		/// <summary>
 		///
@@ -279,8 +282,8 @@ namespace SIL.FieldWorks.Common.Controls
 	public class PartOwnershipTree : FwDisposableBase
 	{
 		FdoCache m_cache = null;
-		XmlNode m_classOwnershipTree = null;
-		XmlNode m_parentToChildrenSpecs = null;
+		XElement m_classOwnershipTree = null;
+		XElement m_parentToChildrenSpecs = null;
 
 		/// <summary>
 		/// Factory for returning a PartOwnershipTree
@@ -304,23 +307,21 @@ namespace SIL.FieldWorks.Common.Controls
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
-			XmlNode partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
+			var partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
 			m_cache = cache;
-			m_classOwnershipTree = partOwnershipTreeSpec.SelectSingleNode(".//ClassOwnershipTree");
-			XmlNode parentClassPathsToChildren = partOwnershipTreeSpec.SelectSingleNode(".//ParentClassPathsToChildren");
-			m_parentToChildrenSpecs = parentClassPathsToChildren.Clone();
+			m_classOwnershipTree = partOwnershipTreeSpec.Element("ClassOwnershipTree");
+			var parentClassPathsToChildren = partOwnershipTreeSpec.Element("ParentClassPathsToChildren");
+			m_parentToChildrenSpecs = XElement.Parse(parentClassPathsToChildren.ToString());
 			// now go through the seq specs and set the "firstOnly" to the requested value.
-			XmlNodeList xnl = m_parentToChildrenSpecs.SelectNodes(".//seq");
-			if (xnl == null)
-				return;
-			foreach (XmlElement xe in xnl)
+			var seqElements = m_parentToChildrenSpecs.Elements("part").Elements("seq");
+			foreach (var xe in seqElements)
 			{
-				XmlAttribute xaFirstOnly = xe.Attributes["firstOnly"];
+				var xaFirstOnly = xe.Attribute("firstOnly");
 				if (xaFirstOnly == null)
 				{
-					// create the first only attribute
-					xaFirstOnly = xe.OwnerDocument.CreateAttribute("firstOnly");
-					xe.Attributes.Append(xaFirstOnly);
+					// Create the first only attribute, with no value (reset soon).
+					xaFirstOnly = new XAttribute("firstOnly", string.Empty);
+					xe.Add(xaFirstOnly);
 				}
 				xaFirstOnly.Value = fReturnFirstDecendentOnly.ToString().ToLowerInvariant();
 			}
@@ -351,10 +352,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string GetSourceFieldName(int targetClsId, int targetFieldId)
 		{
-			string flidName;
-			string targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
-			XmlNode classNode = m_classOwnershipTree.SelectSingleNode(".//" + targetClassName);
-			flidName = XmlUtils.GetManditoryAttributeValue(classNode, "sourceField");
+			var targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
+			var classNode = m_classOwnershipTree.Descendants(targetClassName).First();
+			var flidName = XmlUtils.GetManditoryAttributeValue(classNode, "sourceField");
 			if (targetFieldId != 0)
 			{
 				var altSourceField = XmlUtils.GetOptionalAttributeValue(classNode, "altSourceField");
@@ -387,10 +387,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flidForCurrentList"></param>
 		/// <param name="commonAncestors"></param>
 		/// <returns></returns>
-		public Set<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, Set<int> itemsBeforeListChange, int flidForCurrentList, out Set<int> commonAncestors)
+		public HashSet<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, HashSet<int> itemsBeforeListChange, int flidForCurrentList, out HashSet<int> commonAncestors)
 		{
-			Set<int> relatives = new Set<int>();
-			commonAncestors = new Set<int>();
+			HashSet<int> relatives = new HashSet<int>();
+			commonAncestors = new HashSet<int>();
 			int newListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForCurrentList);
 			int prevListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForItemsBeforeListChange);
 			RelationshipOfRelatives relationshipOfTarget = FindTreeRelationship(prevListItemsClass, newListItemsClass);
@@ -463,10 +463,10 @@ namespace SIL.FieldWorks.Common.Controls
 							if (!commonAncestors.Contains(hvoCommonAncestor))
 							{
 								GhostParentHelper gph = GetGhostParentHelper(flidForCurrentList);
-								Set<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
+								HashSet<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
 								if (descendents.Count > 0)
 								{
-									relatives.AddRange(descendents);
+									relatives.UnionWith(descendents);
 								}
 								else if (gph != null && gph.IsGhostOwnerClass(hvoCommonAncestor))
 								{
@@ -486,27 +486,30 @@ namespace SIL.FieldWorks.Common.Controls
 			return GhostParentHelper.CreateIfPossible(Cache.ServiceLocator, flidToTry);
 		}
 
-		private Set<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
+		private HashSet<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
 		{
-			string listPropertyName = Cache.MetaDataCacheAccessor.GetFieldName(relativesFlid);
-			string parentObjName = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCommonAncestor).ClassName;
-			string xpathToPart = "./part[@id='" + parentObjName + "-Jt-" + listPropertyName + "']";
-			XmlNode pathSpec = m_parentToChildrenSpecs.SelectSingleNode(xpathToPart);
-			Debug.Assert(pathSpec != null,
-				String.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
+			var listPropertyName = Cache.MetaDataCacheAccessor.GetFieldName(relativesFlid);
+			var parentObjName = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCommonAncestor).ClassName;
+			var xpathToPart = "./part[@id='" + parentObjName + "-Jt-" + listPropertyName + "']";
+			var pathSpec = m_parentToChildrenSpecs.XPathSelectElement(xpathToPart);
+			Debug.Assert(pathSpec != null, string.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
 			if (pathSpec == null)
-				return new Set<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
+			{
+				return new HashSet<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
+}
 			// get the part spec that gives us the path from obsolete current (parent) list item object
 			// to the new one.
 			var vc = new XmlBrowseViewBaseVc(m_cache, null);
 			var parentItem = new ManyOnePathSortItem(hvoCommonAncestor, null, null);
 			var collector = new XmlBrowseViewBaseVc.ItemsCollectorEnv(null, m_cache, hvoCommonAncestor);
-			vc.DisplayCell(parentItem, pathSpec, hvoCommonAncestor, collector);
+			var doc = new XmlDocument();
+			doc.LoadXml(pathSpec.ToString());
+			vc.DisplayCell(parentItem, doc.FirstChild, hvoCommonAncestor, collector);
 			if (collector.HvosCollectedInCell != null && collector.HvosCollectedInCell.Count > 0)
 			{
-				return collector.HvosCollectedInCell;
+				return new HashSet<int>(collector.HvosCollectedInCell);
 			}
-			return new Set<int>();
+			return new HashSet<int>();
 		}
 
 		private RelationshipOfRelatives FindTreeRelationship(int prevListItemsClass, int newListItemsClass)
@@ -519,12 +522,12 @@ namespace SIL.FieldWorks.Common.Controls
 			else
 			{
 				// lookup new class in ownership tree and decide how to select the most related object
-				string newClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(newListItemsClass);
-				string prevClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(prevListItemsClass);
-				XmlNode prevClassNode = m_classOwnershipTree.SelectSingleNode(".//" + prevClassName);
-				XmlNode newClassNode = m_classOwnershipTree.SelectSingleNode(".//" + newClassName);
+				var newClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(newListItemsClass);
+				var prevClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(prevListItemsClass);
+				var prevClassNode = m_classOwnershipTree.XPathSelectElement(".//" + prevClassName);
+				var newClassNode = m_classOwnershipTree.XPathSelectElement(".//" + newClassName);
 				// determine if prevClassName is owned (has anscestor) by the new.
-				bool fNewIsAncestorOfPrev = prevClassNode.SelectSingleNode("ancestor::" + newClassName) != null;
+				bool fNewIsAncestorOfPrev = prevClassNode.XPathSelectElement("ancestor::" + newClassName) != null;
 				if (fNewIsAncestorOfPrev)
 				{
 					relationshipOfTarget = RelationshipOfRelatives.Ancestor;
@@ -532,7 +535,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 				{
 					// okay, now find most related object in new items list.
-					bool fNewIsChildOfPrev = newClassNode.SelectSingleNode("ancestor::" + prevClassName) != null;
+					bool fNewIsChildOfPrev = newClassNode.XPathSelectElement("ancestor::" + prevClassName) != null;
 					if (fNewIsChildOfPrev)
 					{
 						relationshipOfTarget = RelationshipOfRelatives.Descendent;
@@ -546,27 +549,27 @@ namespace SIL.FieldWorks.Common.Controls
 			return relationshipOfTarget;
 		}
 
-		private XmlNode GetTreeNode(int classId)
+		private XElement GetTreeNode(int classId)
 		{
-			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(classId);
-			return m_classOwnershipTree.SelectSingleNode(".//" + className);
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(classId);
+			return m_classOwnershipTree.XPathSelectElement(".//" + className);
 		}
 
 		private int GetHvoCommonAncestor(int hvoBeforeListChange, int prevListItemsClass, int newListItemsClass)
 		{
-			XmlNode prevClassNode = GetTreeNode(prevListItemsClass);
-			XmlNode newClassNode = GetTreeNode(newListItemsClass);
+			var prevClassNode = GetTreeNode(prevListItemsClass);
+			var newClassNode = GetTreeNode(newListItemsClass);
 			int hvoCommonAncestor = 0;
 			// NOTE: the class of hvoBeforeListChange could be different then prevListItemsClass, if the item is a ghost (owner).
 			int classOfHvoBeforeListChange = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoBeforeListChange).ClassID;
 			// so go up the parent of the previous one until it's an ancestor of the newClass.
-			XmlNode ancestorOfPrev = prevClassNode.ParentNode;
+			var ancestorOfPrev = prevClassNode.Parent;
 			while (ancestorOfPrev != null)
 			{
-				if (newClassNode.SelectSingleNode("ancestor::" + ancestorOfPrev.Name) != null)
+				if (newClassNode.XPathSelectElement("ancestor::" + ancestorOfPrev.Name) != null)
 				{
-					XmlNode commonAncestor = ancestorOfPrev;
-					var classCommonAncestor = Cache.MetaDataCacheAccessor.GetClassId(commonAncestor.Name);
+					var commonAncestor = ancestorOfPrev;
+					var classCommonAncestor = Cache.MetaDataCacheAccessor.GetClassId(commonAncestor.Name.ToString());
 					if (DomainObjectServices.IsSameOrSubclassOf(Cache.DomainDataByFlid.MetaDataCache, classOfHvoBeforeListChange, classCommonAncestor))
 						hvoCommonAncestor = hvoBeforeListChange;
 					else
@@ -576,7 +579,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					break;
 				}
-				ancestorOfPrev = ancestorOfPrev.ParentNode;
+				ancestorOfPrev = ancestorOfPrev.Parent;
 			}
 			return hvoCommonAncestor;
 		}

@@ -2,7 +2,6 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
@@ -10,6 +9,8 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -18,6 +19,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class ReversalEntryPOSClerk : ReversalClerk
 	{
+		///// <summary>
+		///// Contructor.
+		///// </summary>
+		///// <param name="id">Clerk id/name.</param>
+		///// <param name="recordList">Record list for the clerk.</param>
+		///// <param name="defaultSorter">The default record sorter.</param>
+		///// <param name="defaultSortLabel"></param>
+		///// <param name="defaultFilter">The default filter to use.</param>
+		///// <param name="allowDeletions"></param>
+		///// <param name="shouldHandleDeletion"></param>
+		internal ReversalEntryPOSClerk(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base("ReversalEntriesPOS", new ReversalIndexPOSRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
+		{
+		}
+
 		protected override ICmObject NewOwningObject(IReversalIndex ri)
 		{
 			return ri.PartsOfSpeechOA;
@@ -279,21 +295,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class ReversalIndexPOSRecordList : RecordList
 	{
-		public override void Init(XmlNode recordListNode)
+		internal ReversalIndexPOSRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base(decorator, true, CmPossibilityListTags.kflidPossibilities, reversalIndex.PartsOfSpeechOA, string.Empty)
 		{
-			CheckDisposed();
-
-			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(recordListNode);
 			m_flid = CmPossibilityListTags.kflidPossibilities;
-			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(PropertyTable, Publisher);
-			if (riGuid != Guid.Empty)
-			{
-				var cache = PropertyTable.GetValue<FdoCache>("cacke");
-				var ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
-				m_owningObject = ri.PartsOfSpeechOA;
-				m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
-			}
+			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;
 		}
 

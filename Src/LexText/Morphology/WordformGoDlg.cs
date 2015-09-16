@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region Other methods
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
+			Justification = "searchEngine is disposed by the property table.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");

@@ -923,7 +923,7 @@ namespace SIL.FieldWorks.IText
 #if RANDYTODO
 			m_clerk = ToolConfiguration.FindClerk(PropertyTable, configurationParameters);
 #else
-			m_clerk = ToolConfiguration.FindClerk(PropertyTable, null); // TODO: need alternate way to get clerk.
+			m_clerk = null; // TODO: need alternate way to get clerk.
 #endif
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}

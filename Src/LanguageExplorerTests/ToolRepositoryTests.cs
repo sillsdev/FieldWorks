@@ -145,14 +145,13 @@ namespace LanguageExplorerTests
 			TestArea(currentAreaName, myToolNamesInOrder);
 		}
 
-		private void TestArea(string currentAreaName, List<string> myToolNamesInOrder)
+		private void TestArea(string currentAreaName, IList<string> myToolNamesInOrder)
 		{
 			var currentArea = _areaRepository.GetArea(currentAreaName);
 			var myToolsInOrderFromToolRepository = _toolRepository.AllToolsForAreaInOrder(myToolNamesInOrder,
 				currentArea.MachineName);
 			var myToolsInOrderFromArea = currentArea.AllToolsInOrder;
-			Assert.AreEqual(myToolsInOrderFromToolRepository.Count, myToolsInOrderFromArea.Count);
-			Assert.AreEqual(myToolsInOrderFromToolRepository, myToolsInOrderFromArea);
+			CollectionAssert.AreEqual(myToolsInOrderFromToolRepository, myToolsInOrderFromArea);
 		}
 	}
 }
