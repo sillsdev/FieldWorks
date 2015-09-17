@@ -657,7 +657,7 @@ namespace FwBuildTasks
 		public List<string> LinkerVersion = new List<string>();
 		public List<List<EmbedInfo>> LinkerResources = new List<List<EmbedInfo>>();
 		public List<string> LinkerAlArgs = new List<string>();
-		internal override bool RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources)
+		internal override void RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources)
 		{
 			LinkerPath.Add(outputDllPath);
 			LinkerCulture.Add(culture);
@@ -666,19 +666,17 @@ namespace FwBuildTasks
 			LinkerVersion.Add(version);
 			LinkerResources.Add(resources);
 			LinkerAlArgs.Add(BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources));
-			return true;
 		}
 
 		public List<string> ResGenOutputPaths = new List<string>();
 		public List<string> ResGenResxPaths = new List<string>();
 		public List<string> ResGenOriginalFolders = new List<string>();
 
-		internal override bool RunResGen(string outputResourcePath, string resxPath, string originalFolder)
+		internal override void RunResGen(string outputResourcePath, string resxPath, string originalFolder)
 		{
 			ResGenOutputPaths.Add(outputResourcePath);
 			ResGenResxPaths.Add(resxPath);
 			ResGenOriginalFolders.Add(originalFolder);
-			return true;
 		}
 	}
 }
