@@ -579,10 +579,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 
 		/// <summary>
-		/// Test that the name for asymmetric lexical relations are correct.
+		/// Test that the name for entry tree lexical relations are correct.
 		/// </summary>
 		[Test]
-		public void AsymmetricLexicalRelation()
+		public void EntryTreeLexicalRelationName()
 		{
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
@@ -592,48 +592,62 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
 				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
 					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
-				ILexEntry entry4 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form4", m_cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
 				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
 				ILexRefType entryLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(entryLexRefType);
-				entryLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair;
-				entryLexRefType.Name.SetAnalysisDefaultWritingSystem("EntryName");
-				entryLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("EntryReverseName");
-
-				ILexRefType senseLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(senseLexRefType);
-				senseLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair;
-				senseLexRefType.Name.SetAnalysisDefaultWritingSystem("SenseName");
-				senseLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("SenseReverseName");
+				entryLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtEntryTree;
+				entryLexRefType.Name.SetAnalysisDefaultWritingSystem("Part");
+				entryLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("Whole");
 
 				ILexReference entryLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 				entryLexRefType.MembersOC.Add(entryLexRef);
 				entryLexRef.TargetsRS.Add(entry1);
 				entryLexRef.TargetsRS.Add(entry2);
-
-				ILexReference senseLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-				senseLexRefType.MembersOC.Add(senseLexRef);
-				senseLexRef.TargetsRS.Add(entry3.SensesOS[0]);
-				senseLexRef.TargetsRS.Add(entry4.SensesOS[0]);
+				entryLexRef.TargetsRS.Add(entry3);
 			});
 
 			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form1").Single();
-			LexicalRelation relation = lexeme.LexicalRelations.First();
-			Assert.That(relation.Name, Is.EqualTo("EntryName"));
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Part", "Part"}));
 
 			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
-			relation = lexeme.LexicalRelations.First();
-			Assert.That(relation.Name, Is.EqualTo("EntryReverseName"));
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
+		}
 
-			lexeme = m_lexicon.FindMatchingLexemes("form3").Single();
-			relation = lexeme.LexicalRelations.First();
-			Assert.That(relation.Name, Is.EqualTo("SenseName"));
+		/// <summary>
+		/// Test that the name for sense tree lexical relations are correct.
+		/// </summary>
+		[Test]
+		public void SenseTreeLexicalRelationName()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
-			lexeme = m_lexicon.FindMatchingLexemes("form4").Single();
-			relation = lexeme.LexicalRelations.First();
-			Assert.That(relation.Name, Is.EqualTo("SenseReverseName"));
+				ILexRefType senseLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(senseLexRefType);
+				senseLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseTree;
+				senseLexRefType.Name.SetAnalysisDefaultWritingSystem("Part");
+				senseLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("Whole");
+
+				ILexReference senseLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				senseLexRefType.MembersOC.Add(senseLexRef);
+				senseLexRef.TargetsRS.Add(entry1.SensesOS[0]);
+				senseLexRef.TargetsRS.Add(entry2.SensesOS[0]);
+				senseLexRef.TargetsRS.Add(entry3.SensesOS[0]);
+			});
+
+			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form1").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Part", "Part"}));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
 		}
 
 		#endregion

@@ -169,6 +169,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        internal static string ksOther {
+            get {
+                return ResourceManager.GetString("ksOther", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The {0} project already exists..
         /// </summary>
         internal static string ksProjectExistsText1 {

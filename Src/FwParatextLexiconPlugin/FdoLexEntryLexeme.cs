@@ -134,7 +134,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					var relations = new List<LexicalRelation>();
 					foreach (ILexReference lexRef in entry.LexEntryReferences.Union(entry.AllSenses.SelectMany(s => s.LexSenseReferences)))
 					{
-						string name = GetLexReferenceName(entry, lexRef);
+						ILexEntry parentEntry;
+						string name = GetLexReferenceName(entry, lexRef, out parentEntry);
 						foreach (ICmObject obj in lexRef.TargetsRS)
 						{
 							ILexEntry otherEntry = null;
@@ -148,7 +149,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 									break;
 							}
 							if (otherEntry != null && otherEntry != entry)
-								relations.Add(new FdoLexicalRelation(m_lexicon.GetEntryLexeme(otherEntry), name));
+							{
+								relations.Add(new FdoLexicalRelation(m_lexicon.GetEntryLexeme(otherEntry),
+									parentEntry != null && parentEntry != entry && parentEntry != otherEntry ? Strings.ksOther : name));
+							}
 						}
 					}
 
@@ -180,13 +184,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private string GetLexReferenceName(ILexEntry lexEntry, ILexReference lexRef)
+		private string GetLexReferenceName(ILexEntry lexEntry, ILexReference lexRef, out ILexEntry parentEntry)
 		{
+			parentEntry = null;
 			ILexRefType lexRefType = lexRef.OwnerOfClass<ILexRefType>();
 			string name = lexRefType.ShortName;
 			if (string.IsNullOrEmpty(name))
 				name = lexRefType.Abbreviation.BestAnalysisAlternative.Text;
-			switch ((LexRefTypeTags.MappingTypes) lexRefType.MappingType)
+			var mappingType = (LexRefTypeTags.MappingTypes) lexRefType.MappingType;
+			switch (mappingType)
 			{
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
@@ -213,6 +219,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 							name = lexRefType.ReverseName.BestAnalysisAlternative.Text;
 							if (string.IsNullOrEmpty(name))
 								name = lexRefType.ReverseAbbreviation.BestAnalysisAlternative.Text;
+						}
+
+						if (mappingType == LexRefTypeTags.MappingTypes.kmtSenseTree
+							|| mappingType == LexRefTypeTags.MappingTypes.kmtEntryTree
+							|| mappingType == LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
+						{
+							parentEntry = firstEntry;
 						}
 					}
 					break;

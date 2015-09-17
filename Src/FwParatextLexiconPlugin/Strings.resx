@@ -174,4 +174,7 @@
   <data name="ksProjectOpen" xml:space="preserve">
     <value>The selected project is currently open in FieldWorks Language Explorer. The project must be closed in order to associate it with a ParaTExt project.</value>
   </data>
+  <data name="ksOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
 </root>
