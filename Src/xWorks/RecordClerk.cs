@@ -7,6 +7,10 @@
 // Last reviewed:
 //
 // <remarks>
+#if RANDYTODO
+// TODO: If the first line in the remark is true, then think about merging RecordClerk & RecordList,
+// TODO: since that "xCore/xWorks environment" is headed to the bitbucket.
+#endif
 //	This class, essentially, adapts a RecordList to the xCore/xWorks environment.
 //	This class is entered into the XCore PropertyTable, so that it is persistent even when
 //	the use or the current tools are changing.  This allows us to not lose track of what record

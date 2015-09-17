@@ -71,6 +71,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose Texts....
+        /// </summary>
+        internal static string chooseTexts {
+            get {
+                return ResourceManager.GetString("chooseTexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose texts to display and use..
+        /// </summary>
+        internal static string chooseTextsToDisplayAndUse {
+            get {
+                return ResourceManager.GetString("chooseTextsToDisplayAndUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Grammar {

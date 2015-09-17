@@ -15,6 +15,7 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildTopStuffUI()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildBottomStuffUI()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::SetupMoveHereButtonsToMatchTemplate()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView::Activate(SIL.CoreImpl.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)

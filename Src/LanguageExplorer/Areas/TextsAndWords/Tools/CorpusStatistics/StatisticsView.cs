@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2008-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,25 +19,17 @@ using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 {
-#if RANDYTODO
-	// TODO: The 'parameters' element is not yet handled, but the rest is done.
-	/*
-		<tool label="Statistics" value="corpusStatistics" icon="DocumentView">
-			<control>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.StatisticsView"/>
-				<parameters id="ITextContent" area="textsWords" clerk="interlinearTexts" treeBarAvailability="NotAllowed"/>
-			</control>
-		</tool>
-	 */
-#endif
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
 	public partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl, IFWDisposable
 	{
-		private bool _shouldNotCall;
-		private FdoCache _cache;
 		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
+		private ToolStrip _toolStripView;
+		private bool _toolStripViewCreatedLocally;
+		private ToolStripButton _chooseTextsToolStripButton;
+		private ToolStripMenuItem _viewToolStripMenuItem;
+		private ToolStripMenuItem _chooseTextsToolStripMenuItem;
 
 		/// <summary>
 		/// Constructor
@@ -48,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			var cm = new ContextMenu();
 			var mi = new MenuItem("Copy");
-			mi.Click += mi_Copy;
+			mi.Click += Copy_Menu_Item_Click;
 			cm.MenuItems.Add(mi);
 			statisticsBox.ContextMenu = cm;
 		}
@@ -92,8 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			Publisher = publisher;
 			Subscriber = subscriber;
 
-			_cache = PropertyTable.GetValue<FdoCache>("cache");
-
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			const string clerkName = "interlinearTexts";
 			const string clerkPropertyTableName = "RecordClerk-" + clerkName;
 			RecordClerk clerk;
@@ -101,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			{
 				if (clerk is TemporaryRecordClerk)
 				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_cache.LanguageProject, new InterestingTextsDecorator(_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _cache.ServiceLocator));
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
 					_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				}
 				else
@@ -111,7 +102,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_cache.LanguageProject, new InterestingTextsDecorator(_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _cache.ServiceLocator));
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
 				_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			}
 			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
@@ -135,8 +126,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-#if RANDYTODO
-#endif
+			_chooseTextsToolStripButton.Click -= AddTexts_Clicked;
+			_chooseTextsToolStripMenuItem.Click -= AddTexts_Clicked;
+
+			// Remove menu item.
+			_viewToolStripMenuItem.DropDownItems.Remove(_chooseTextsToolStripMenuItem);
+			_chooseTextsToolStripMenuItem.Dispose();
+			_chooseTextsToolStripMenuItem = null;
+
+			// Remove toolbar button.
+			_toolStripView.Items.Remove(_chooseTextsToolStripButton);
+			_chooseTextsToolStripButton.Dispose();
+			_chooseTextsToolStripButton = null;
+
+			// If we also created the toolbar, then get rid of it.
+			if (_toolStripViewCreatedLocally)
+			{
+				// Get rid of entire toolbar, since we added it.
+				toolStripContainer.TopToolStripPanel.Controls.Remove(_toolStripView);
+				_toolStripView.Dispose();
+				_toolStripView = null;
+				_toolStripViewCreatedLocally = false;
+			}
 		}
 
 		/// <summary>
@@ -145,33 +156,52 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "See TODO-Linux comment")]
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-#if RANDYTODO
-			// TODO: Add menu & toolbar item for original "CmdChooseTexts" command.
-<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture" />
+			// Add toolbar button (and maybe the entire toolbar).
+			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
+			var toolbars = toolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false);
+			if (toolbars.Length == 0)
+			{
+				// Need to create the tool strip ourselves.
+				_toolStripViewCreatedLocally = true;
+				_toolStripView = new ToolStrip
+				{
+					Name = "toolStripView"
+				};
+				toolStripContainer.TopToolStripPanel.Controls.Add(_toolStripView);
+				toolStripContainer.TopToolStripPanel.Controls.SetChildIndex(_toolStripView, 0);
+			}
+			else
+			{
+				// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
+				_toolStripView = (ToolStrip)toolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false)[0];
+			}
+			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
+			{
+				DisplayStyle = ToolStripItemDisplayStyle.Image,
+				ToolTipText = LanguageExplorerResources.chooseTextsToDisplayAndUse,
+				ImageTransparentColor = Color.Magenta,
+				Size = new Size(24, 24),
+				Text = LanguageExplorerResources.chooseTexts
+			};
+			_toolStripView.Items.Add(_chooseTextsToolStripButton);
 
-<menu id="View" label="_View" b4InsertMenu="true">
-	<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-	<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-	<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-	<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-	<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
-	<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local" />
-	<item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false" />
-	<item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false" />
-	<item label="-" translate="do not translate" />
-	<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local" />
-	<item command="CmdChooseTexts" defaultVisible="false" /> <-- This is it, and it is last on the View menu.
-</menu>
+			// Add menu item to View menu.
+			_chooseTextsToolStripMenuItem = new ToolStripMenuItem(LanguageExplorerResources.chooseTexts, LanguageExplorerResources.AddScripture.ToBitmap())
+			{
+				ImageTransparentColor = Color.Magenta,
+				ToolTipText = LanguageExplorerResources.chooseTexts
+			};
+			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
+			_viewToolStripMenuItem = (ToolStripMenuItem)menuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
+			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
 
-<toolbar id="View">
-	<item command="CmdChooseTexts" defaultVisible="false" /> <-- This is it, and it is first in the View toolbar, which we may also need to create, if so, it goes right before the "Standard" toolbar.
-	<item command="CmdChangeFilterClearAll" />
-</toolbar>
-			// TODO: Add one event handler for the menu & the toolbar that does what the current "OnAddTexts" does.
-#endif
+			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
+			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
 		}
 
 		/// <summary>
@@ -241,16 +271,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		{
 			statisticsBox.Clear();
 			// TODO-Linux: SelectionTabs isn't implemented on Mono
-			statisticsBox.SelectionTabs = new int[] { 10, 300};
+			statisticsBox.SelectionTabs = new[] { 10, 300};
 			//retrieve the default UI font.
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
 														  FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
-														  Cache.DefaultUserWs, Cache.WritingSystemFactory);
+														  cache.DefaultUserWs, cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
 			var headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
 			//refresh the statisticsDescription (in case of font changes)
 			statisticsBox.Text = LanguageExplorerResources.ksStatisticsView_HeaderText;
-			var textList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
+			var textList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, cache.ServiceLocator);
 			var numberOfSegments = 0;
 			var wordCount = 0;
 			var uniqueWords = 0;
@@ -313,7 +344,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			//add one row for the unique words in each language.
 			foreach (var keyValuePair in languageTypeCount)
 			{
-				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
+				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
 				statisticsBox.Text += "" + keyValuePair.Value.Count;
@@ -326,7 +357,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			//add one row for the token count for each language.
 			foreach (var keyValuePair in languageCount)
 			{
-				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
+				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
 				statisticsBox.Text += "" + keyValuePair.Value;
@@ -349,26 +380,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			statisticsBox.Select(0, 0);
 		}
 
-#if RANDYTODO
-		public bool OnDisplayAddTexts(object commandObject, ref UIItemDisplayProperties display)
+		void AddTexts_Clicked(object sender, EventArgs e)
 		{
-			CheckDisposed();
-			display.Enabled = _interlinearTextsRecordClerk != null;
-			display.Visible = display.Enabled;
-			return true;
-		}
-
-		// TODO: Make this a regular event handler on the "Choose Texts..." menu, when it gets added.
-		public bool OnAddTexts(object args)
-		{
-			bool result = _interlinearTextsRecordClerk.OnAddTexts(args);
-			if(result)
+			if (_interlinearTextsRecordClerk.AddTexts())
 			{
 				RebuildStatisticsTable();
 			}
-			return result;
 		}
-#endif
 
 		#region Implementation of IMainContentControl
 
@@ -410,19 +428,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 		#endregion
 
-		/// <summary>
-		/// FDO cache.
-		/// </summary>
-		protected FdoCache Cache
-		{
-			get
-			{
-				return _cache;
-			}
-		}
-
 		// Code to add right click
-		void mi_Copy(object sender, EventArgs e)
+		void Copy_Menu_Item_Click(object sender, EventArgs e)
 		{
 			statisticsBox.Copy();
 		}

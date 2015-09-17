@@ -4,6 +4,12 @@
 
 namespace SIL.CoreImpl
 {
+#if RANDYTODO
+	// TODO: I wonder if this interface is really needed now?
+	// TODO: I expect there to be far less need for a control to know about its area name now,
+	// TODO: and PrepareToGoAway sounds like a poor man's version of
+	// TODO: what the new Deactivate method does on IMajorFlexComponent
+#endif
 	/// <summary>
 	/// All Controls that can be used as main controls in an IFwMainWnd,
 	/// must implement the IMainContentControl interface.

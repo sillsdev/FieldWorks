@@ -209,4 +209,10 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="AddScripture" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\AddScripture.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="chooseTextsToDisplayAndUse" xml:space="preserve">
+    <value>Choose texts to display and use.</value>
+  </data>
+  <data name="chooseTexts" xml:space="preserve">
+    <value>Choose Texts...</value>
+  </data>
 </root>

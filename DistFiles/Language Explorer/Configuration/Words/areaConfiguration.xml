@@ -29,7 +29,6 @@
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
 		</command>
-		<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
 		<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary"/>
 		<command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote"/>
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
@@ -306,11 +305,6 @@
 		<menu id="Edit">
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
 		</menu>
-		<menu id="View">
-			<item command="CmdChooseTexts" defaultVisible="false"/>
-			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
-		</menu>
-
 		<menu id="Data">
 			<item label="-" translate="do not translate"/>
 			<item command="CmdParse" defaultVisible="false"/>
@@ -541,9 +535,6 @@
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
-		<toolbar id="View">
-			<item command="CmdChooseTexts" defaultVisible="false"/>
-		</toolbar>
 		<toolbar id="Insert">
 			<item command="CmdInsertText" defaultVisible="false"/>
 			<!--item command="CmdLexiconLookup" defaultVisible="false"/-->
@@ -657,7 +648,6 @@
 				<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
-				<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
 			</tools>
 		</parameters>
 	</item>

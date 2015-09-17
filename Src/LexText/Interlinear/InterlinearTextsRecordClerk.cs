@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.IText
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
-		protected internal bool OnAddTexts(object args)
+		internal bool AddTexts()
 		{
 			CheckDisposed();
 			// get saved scripture choices
