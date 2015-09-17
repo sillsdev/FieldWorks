@@ -583,6 +583,7 @@ namespace LanguageExplorer.Impls
 
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
 
 		}
 

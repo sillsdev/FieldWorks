@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 {
@@ -21,21 +22,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private ToolStripItem _refreshMenu;
 		private ToolStripItem _refreshToolBarBtn;
 		private ToolStripItem _fileExportMenu;
-		private bool _fileExportOriginalValue;
+
+		private bool _fileExportVisibleOriginalValue;
+		private bool _fileExportEnabledOriginalValue;
 
 		void FileExportMenu_Click(object sender, EventArgs e)
 		{
-#if RANDYTODO
-			// TODO: Have to move ExportDialog (and a lot more) from xWorks to this project,
-			// TODO: before this can be enabled.
 			using (var dlg = new ExportDialog())
 			{
 				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				dlg.ShowDialog();
 			}
-#else
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), @"Grammar Sketch export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
-#endif
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -101,8 +98,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			_refreshToolBarBtn = null;
 
 			_fileExportMenu.Click -= FileExportMenu_Click;
-			_fileExportMenu.Enabled = _fileExportOriginalValue;
-			_fileExportMenu.Visible = _fileExportOriginalValue;
+			_fileExportMenu.Visible = _fileExportVisibleOriginalValue;
+			_fileExportMenu.Enabled = _fileExportEnabledOriginalValue;
 			_fileExportMenu = null;
 		}
 
@@ -138,7 +135,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			// File->Export menu is visible and enabled in this tool.
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
 			_fileExportMenu = menuStrip.Items.Find("exportToolStripMenuItem", true)[0];
-			_fileExportOriginalValue = _fileExportMenu.Enabled;
+			_fileExportVisibleOriginalValue = _fileExportMenu.Visible;
+			_fileExportEnabledOriginalValue = _fileExportMenu.Enabled;
 			_fileExportMenu.Visible = true;
 			_fileExportMenu.Enabled = true;
 			_fileExportMenu.Click += FileExportMenu_Click;

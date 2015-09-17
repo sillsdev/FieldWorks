@@ -316,7 +316,6 @@ namespace LanguageExplorer.Impls
 			this.exportToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
-			this.exportToolStripMenuItem.Visible = false;
 			// 
 			// toolStripMenuItem3
 			// 
