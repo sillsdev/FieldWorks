@@ -14,3 +14,14 @@ T: LanguageExplorerTests.SilSidePaneTests.NavPaneOptionsDlgTests
 T: LanguageExplorerTests.SilSidePaneTests.OutlookBarButtonTests
 T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests_UnspecifiedItemAreaStyle
 T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests
+
+#-------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+# variable is passed in, so we shouldn't dispose it
+T: LanguageExplorerTests.Discourse.MockRibbon
+
+# Unit test: Dispose of variable is done in TestFixtureTearDown
+T: LanguageExplorerTests.Discourse.AdvancedMTDialogLogicTests
+T: LanguageExplorerTests.Discourse.DiscourseExportTests
+T: LanguageExplorerTests.Discourse.DiscourseTestHelper
+T: LanguageExplorerTests.Discourse.InterlinRibbonTests

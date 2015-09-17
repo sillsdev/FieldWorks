@@ -16,7 +16,7 @@ M: System.Void SIL.FieldWorks.ApplicationBusyDialog::ShowOnSeparateThread(SIL.Fi
 M: System.Boolean SIL.FieldWorks.FieldWorks::LaunchApplicationFromCommandLine(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 
 # Reference only
-M: System.Void SIL.FieldWorks.FieldWorks::ShowSplashScreen(SIL.FieldWorks.Common.Framework.IFlexApp)
+M: System.Void SIL.FieldWorks.FieldWorks::ShowSplashScreen()
 M: System.Collections.Generic.List`1<System.Diagnostics.Process> SIL.FieldWorks.FieldWorks::get_ExistingProcesses()
 M: System.Void SIL.FieldWorks.FieldWorks::FollowLink(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.IFlexApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)

@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			get
 			{
 				string dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonApplicationData), string.Format("SIL/Icu{0}", Version));
+					Environment.SpecialFolder.CommonApplicationData), "SIL", string.Format("Icu{0}", Version));
 
 				string icuDirValueName = string.Format("Icu{0}DataDir", Version);
 				using(var userKey = RegistryHelper.CompanyKey)

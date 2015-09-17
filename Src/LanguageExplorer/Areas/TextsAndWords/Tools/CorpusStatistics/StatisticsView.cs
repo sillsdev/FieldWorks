@@ -20,7 +20,7 @@ using SIL.Utils;
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 {
 #if RANDYTODO
-
+	// TODO: The 'parameters' element is not yet handled, but the rest is done.
 	/*
 		<tool label="Statistics" value="corpusStatistics" icon="DocumentView">
 			<control>
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	public partial class StatisticsView : UserControl, IMainContentControl, IFWDisposable
+	public partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl, IFWDisposable
 	{
 		private bool _shouldNotCall;
 		private FdoCache _cache;
@@ -120,6 +120,80 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			RebuildStatisticsTable();
 			//add our current state to the history system
 			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("currentContentControl", ""), Guid.Empty));
+		}
+
+		#endregion
+
+		#region Implementation of IMajorFlexComponent
+
+		/// <summary>
+		/// Deactivate the component.
+		/// </summary>
+		/// <remarks>
+		/// This is called on the outgoing component, when the user switches to a component.
+		/// </remarks>
+		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
+			StatusBar statusbar)
+		{
+#if RANDYTODO
+#endif
+		}
+
+		/// <summary>
+		/// Activate the component.
+		/// </summary>
+		/// <remarks>
+		/// This is called on the component that is becoming active.
+		/// </remarks>
+		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
+			StatusBar statusbar)
+		{
+#if RANDYTODO
+			// TODO: Add menu & toolbar item for original "CmdChooseTexts" command.
+<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture" />
+
+<menu id="View" label="_View" b4InsertMenu="true">
+	<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+	<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+	<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+	<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+	<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+	<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local" />
+	<item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false" />
+	<item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false" />
+	<item label="-" translate="do not translate" />
+	<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local" />
+	<item command="CmdChooseTexts" defaultVisible="false" /> <-- This is it, and it is last on the View menu.
+</menu>
+
+<toolbar id="View">
+	<item command="CmdChooseTexts" defaultVisible="false" /> <-- This is it, and it is first in the View toolbar, which we may also need to create, if so, it goes right before the "Standard" toolbar.
+	<item command="CmdChangeFilterClearAll" />
+</toolbar>
+			// TODO: Add one event handler for the menu & the toolbar that does what the current "OnAddTexts" does.
+#endif
+		}
+
+		/// <summary>
+		/// Do whatever might be needed to get ready for a refresh.
+		/// </summary>
+		public void PrepareToRefresh()
+		{
+		}
+
+		/// <summary>
+		/// Finish the refresh.
+		/// </summary>
+		public void FinishRefresh()
+		{
+		}
+
+		/// <summary>
+		/// The properties are about to be saved, so make sure they are all current.
+		/// Add new ones, as needed.
+		/// </summary>
+		public void EnsurePropertiesAreCurrent()
+		{
 		}
 
 		#endregion
@@ -284,6 +358,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			return true;
 		}
 
+		// TODO: Make this a regular event handler on the "Choose Texts..." menu, when it gets added.
 		public bool OnAddTexts(object args)
 		{
 			bool result = _interlinearTextsRecordClerk.OnAddTexts(args);

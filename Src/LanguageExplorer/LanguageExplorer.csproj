@@ -345,6 +345,71 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.Designer.cs">
+      <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ChartLocation.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartBody.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartRowDecorator.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChart.Designer.cs">
+      <DependentUpon>ConstituentChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartLogic.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExporter.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbonDecorator.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\MaxStringWidthForChartColumn.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseStrings.Designer.cs">
+      <DependentUpon>DiscourseStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.Designer.cs">
+      <DependentUpon>SelectClausesDialog.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.resx">
+      <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\ConstChartBody.resx">
+      <DependentUpon>ConstChartBody.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\ConstituentChart.resx">
+      <DependentUpon>ConstituentChart.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\DiscourseStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DiscourseStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.resx">
+      <DependentUpon>SelectClausesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchHtmlViewer.resx">
       <DependentUpon>GrammarSketchHtmlViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -370,12 +435,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\AddScripture.ico" />
     <Content Include="images\Lists.ico" />
+    <Content Include="images\LT.ico" />
+    <Content Include="images\LT.png" />
     <Content Include="images\Notebook.ico" />
     <None Include="images\Text_And_Words.ico" />
     <None Include="gendarme-LanguageExplorer.ignore" />
     <None Include="images\Grammar.ico" />
     <Content Include="images\Lexicon32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\TextsAndWords\Discourse\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

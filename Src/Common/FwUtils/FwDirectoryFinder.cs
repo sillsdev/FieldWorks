@@ -77,9 +77,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the full path of the FW Language Explorer executable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string FlexExe
+		public static string FieldWorksExe
 		{
-			get { return ExeOrDllPath("Flex.exe"); }
+			get { return ExeOrDllPath("FieldWorks.exe"); }
 		}
 
 		/// ------------------------------------------------------------------------------------

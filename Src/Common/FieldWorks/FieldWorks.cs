@@ -1199,11 +1199,11 @@ namespace SIL.FieldWorks
 		/// Displays the splash screen
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void ShowSplashScreen(IFlexApp app)
+		private static void ShowSplashScreen()
 		{
 			s_splashScreen = new FwSplashScreen
 			{
-				ProductExecutableAssembly = Assembly.LoadFile(app.ProductExecutableFile)
+				ProductExecutableAssembly = Assembly.GetExecutingAssembly()
 			};
 			s_splashScreen.Show(!FwRegistrySettings.DisableSplashScreenSetting, s_noUserInterface);
 			s_splashScreen.Refresh();
@@ -2901,7 +2901,7 @@ namespace SIL.FieldWorks
 
 			UsageEmailDialog.IncrementLaunchCount(app.SettingsKey); // count launches for bug reporting
 
-			ShowSplashScreen(app);
+			ShowSplashScreen();
 
 			try
 			{

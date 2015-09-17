@@ -621,21 +621,14 @@ namespace SIL.FieldWorks.IText
 
 		private void CreateCChart()
 		{
-			m_constChartPane = (InterlinDocChart)DynamicLoader.CreateObject("Discourse.dll",
-																		"SIL.FieldWorks.Discourse.ConstituentChart",
-																		new object[] { Cache });
-			SetupChartPane();
-			m_tpCChart.Controls.Add(m_constChartPane);
-			if (m_styleSheet != null)
-				m_styleSheet = ((IStyleSheet)m_constChartPane).StyleSheet;
-		}
-
-		private void SetupChartPane()
-		{
+			m_constChartPane = (InterlinDocChart)DynamicLoader.CreateObject("LanguageExplorer.dll", "LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart", Cache);
 			(m_constChartPane as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
+			m_tpCChart.Controls.Add(m_constChartPane);
+			if (m_styleSheet != null)
+				m_styleSheet = ((IStyleSheet)m_constChartPane).StyleSheet;
 		}
 
 		/// <summary>

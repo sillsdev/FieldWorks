@@ -2,12 +2,24 @@
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+# m_cache is passed in to the class, so we shouldn't dispose it
+T: SIL.FieldWorks.FDO.FdoCache LanguageExplorer.Areas.TextsAndWords.Discourse.AdvancedMTDialogLogic
+T: LanguageExplorer.Areas.TextsAndWords.Discourse.DiscourseExporter
 
 # reference only
 T: System.Windows.Forms.Form
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+# variable is added to Controls and disposed there
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildTopStuffUI()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildBottomStuffUI()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::SetupMoveHereButtonsToMatchTemplate()
+
+# variable added to menu and disposed there
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::MakeMoveItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Windows.Forms.ContextMenuStrip,System.EventHandler,System.EventHandler,System.String)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::MakePreposedOrPostPosedMenuItem(System.Windows.Forms.ContextMenuStrip,LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Int32,System.String,System.Boolean)
 
 # added to control and disposed there
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlViewer::InitHtmlControl()
@@ -36,3 +48,8 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: LanguageExplorer.Controls.SilSidePane.Item
 T: LanguageExplorer.Controls.SilSidePane.OutlookBarButtonCollection
 T: LanguageExplorer.Controls.SilSidePane.Tab
+
+# variable is passed in, so we shouldn't dispose it
+T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod
+T: LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic
+T: LanguageExplorer.Areas.TextsAndWords.Discourse.MaxStringWidthForChartColumn

@@ -36,27 +36,102 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BasicUtils, Version=9.0.0.26639, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces, Version=9.0.0.26642, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\COMInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="CoreImpl, Version=9.0.0.11711, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=9.0.0.26689, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="ITextDll, Version=9.0.0.26705, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ITextDll.dll</HintPath>
+    </Reference>
     <Reference Include="LanguageExplorer">
       <HintPath>..\..\Output\Release\LanguageExplorer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="RootSite, Version=9.0.0.26693, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=8.1.2.24232, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleRootSite, Version=9.0.0.26683, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SimpleRootSite.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="XMLUtils, Version=9.0.0.26687, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="xWorks, Version=9.0.0.26702, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\xWorks.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="AreaRepositoryTests.cs" />
+    <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
+    <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
+    <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
+    <Compile Include="Discourse\ConstituentChartTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Discourse\DiscourseExportTests.cs" />
+    <Compile Include="Discourse\DiscourseTestHelper.cs" />
+    <Compile Include="Discourse\InMemoryDiscourseTestBase.cs" />
+    <Compile Include="Discourse\InMemoryLogicTest.cs" />
+    <Compile Include="Discourse\InMemoryMovedTextTests.cs" />
+    <Compile Include="Discourse\InMemoryMoveEditTests.cs" />
+    <Compile Include="Discourse\InterlinRibbonTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Discourse\LogicTest.cs" />
+    <Compile Include="Discourse\NotifyChangeSpy.cs" />
+    <Compile Include="Discourse\TestCCLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />

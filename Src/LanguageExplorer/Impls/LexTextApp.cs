@@ -1263,7 +1263,7 @@ Old Mediator methods/commands
 		/// ------------------------------------------------------------------------------------
 		public string ProductExecutableFile
 		{
-			get { return FwDirectoryFinder.FlexExe; }
+			get { return FwDirectoryFinder.FieldWorksExe; }
 		}
 
 		/// ------------------------------------------------------------------------------------
