@@ -10,6 +10,7 @@ using System.Drawing;
 using SIL.Utils;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Palaso.UI.WindowsForms.Widgets;
 using XCore;
 
 namespace SIL.FieldWorks
@@ -28,7 +29,6 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private Container components = null;
 
-		private TableLayoutPanel tableLayoutPanel;
 		private Button openButton;
 		private Button receiveButton;
 		private Button createButton;
@@ -39,7 +39,6 @@ namespace SIL.FieldWorks
 		private LinkLabel m_openSampleOrLastProjectLink;
 		IHelpTopicProvider m_helpTopicProvider = null;
 		private Panel topPanel;
-		private Label m_lblProjectLoadError;
 
 		#endregion
 
@@ -53,10 +52,8 @@ namespace SIL.FieldWorks
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeToFieldWorksDlg));
-			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.topPanel = new System.Windows.Forms.Panel();
 			this.m_openSampleOrLastProjectLink = new System.Windows.Forms.LinkLabel();
-			this.m_lblProjectLoadError = new System.Windows.Forms.Label();
 			this.m_sampleOrLastProjectLinkLabel = new System.Windows.Forms.Label();
 			this.openButton = new System.Windows.Forms.Button();
 			this.receiveButton = new System.Windows.Forms.Button();
@@ -70,35 +67,20 @@ namespace SIL.FieldWorks
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.tableLayoutPanel.SuspendLayout();
+			this.mainVerticalLayout = new System.Windows.Forms.FlowLayoutPanel();
+			this.m_lblProjectLoadError = new Palaso.UI.WindowsForms.Widgets.BetterLabel();
 			this.topPanel.SuspendLayout();
 			this.reportingInfoLayout.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).BeginInit();
 			this.buttonLayout.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.mainVerticalLayout.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// tableLayoutPanel
-			// 
-			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
-			this.tableLayoutPanel.Controls.Add(this.topPanel, 0, 0);
-			this.tableLayoutPanel.Controls.Add(this.openButton, 0, 1);
-			this.tableLayoutPanel.Controls.Add(this.receiveButton, 0, 2);
-			this.tableLayoutPanel.Controls.Add(this.createButton, 0, 3);
-			this.tableLayoutPanel.Controls.Add(this.importButton, 0, 4);
-			this.tableLayoutPanel.Controls.Add(this.restoreButton, 0, 5);
-			this.tableLayoutPanel.Controls.Add(this.alwaysOpenLastProjectCheckBox, 0, 6);
-			this.tableLayoutPanel.Controls.Add(this.reportingInfoLayout, 0, 7);
-			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 0, 8);
-			this.tableLayoutPanel.Name = "tableLayoutPanel";
 			// 
 			// topPanel
 			// 
-			this.topPanel.Controls.Add(this.m_openSampleOrLastProjectLink);
-			this.topPanel.Controls.Add(this.m_lblProjectLoadError);
-			this.topPanel.Controls.Add(this.m_sampleOrLastProjectLinkLabel);
 			resources.ApplyResources(this.topPanel, "topPanel");
+			this.topPanel.Controls.Add(this.m_openSampleOrLastProjectLink);
+			this.topPanel.Controls.Add(this.m_sampleOrLastProjectLinkLabel);
 			this.topPanel.Name = "topPanel";
 			// 
 			// m_openSampleOrLastProjectLink
@@ -107,11 +89,6 @@ namespace SIL.FieldWorks
 			this.m_openSampleOrLastProjectLink.Name = "m_openSampleOrLastProjectLink";
 			this.m_openSampleOrLastProjectLink.TabStop = true;
 			this.m_openSampleOrLastProjectLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_openProjectLink_LinkClicked);
-			// 
-			// m_lblProjectLoadError
-			// 
-			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
-			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
 			// 
 			// m_sampleOrLastProjectLinkLabel
 			// 
@@ -199,9 +176,9 @@ namespace SIL.FieldWorks
 			// 
 			// buttonLayout
 			// 
+			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Controls.Add(this.helpButton);
 			this.buttonLayout.Controls.Add(this.closeButton);
-			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Name = "buttonLayout";
 			// 
 			// helpButton
@@ -218,29 +195,47 @@ namespace SIL.FieldWorks
 			this.closeButton.UseVisualStyleBackColor = true;
 			this.closeButton.Click += new System.EventHandler(this.m_btnExit_Click);
 			// 
-			// flowLayoutPanel1
+			// mainVerticalLayout
 			// 
-			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
-			this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			resources.ApplyResources(this.mainVerticalLayout, "mainVerticalLayout");
+			this.mainVerticalLayout.Controls.Add(this.topPanel);
+			this.mainVerticalLayout.Controls.Add(this.m_lblProjectLoadError);
+			this.mainVerticalLayout.Controls.Add(this.openButton);
+			this.mainVerticalLayout.Controls.Add(this.receiveButton);
+			this.mainVerticalLayout.Controls.Add(this.createButton);
+			this.mainVerticalLayout.Controls.Add(this.importButton);
+			this.mainVerticalLayout.Controls.Add(this.restoreButton);
+			this.mainVerticalLayout.Controls.Add(this.alwaysOpenLastProjectCheckBox);
+			this.mainVerticalLayout.Controls.Add(this.reportingInfoLayout);
+			this.mainVerticalLayout.Controls.Add(this.buttonLayout);
+			this.mainVerticalLayout.Name = "mainVerticalLayout";
+			// 
+			// m_lblProjectLoadError
+			// 
+			this.m_lblProjectLoadError.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.m_lblProjectLoadError.Cursor = System.Windows.Forms.Cursors.Default;
+			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
+			this.m_lblProjectLoadError.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
+			this.m_lblProjectLoadError.ReadOnly = true;
+			this.m_lblProjectLoadError.TabStop = false;
 			// 
 			// WelcomeToFieldWorksDlg
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.flowLayoutPanel1);
+			this.Controls.Add(this.mainVerticalLayout);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "WelcomeToFieldWorksDlg";
-			this.tableLayoutPanel.ResumeLayout(false);
 			this.topPanel.ResumeLayout(false);
 			this.reportingInfoLayout.ResumeLayout(false);
 			this.reportingInfoLayout.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).EndInit();
 			this.buttonLayout.ResumeLayout(false);
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
+			this.mainVerticalLayout.ResumeLayout(false);
+			this.mainVerticalLayout.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -248,12 +243,13 @@ namespace SIL.FieldWorks
 
 		#endregion
 
-		private FlowLayoutPanel flowLayoutPanel1;
+		private FlowLayoutPanel mainVerticalLayout;
 		private FlowLayoutPanel buttonLayout;
 		private FlowLayoutPanel reportingInfoLayout;
 		private Button helpButton;
 		private Button closeButton;
 		private PictureBox infoIcon;
 		private TextBox reportingInfoLabel;
+		private BetterLabel m_lblProjectLoadError;
 	}
 }

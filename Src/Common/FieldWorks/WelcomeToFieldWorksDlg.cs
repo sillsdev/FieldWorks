@@ -7,6 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -88,16 +89,13 @@ namespace SIL.FieldWorks
 			{
 				m_helpTopic = "khtpUnableToOpenProject";
 				Text = Properties.Resources.kstidUnableToOpenProjectCaption;
-
 				m_lblProjectLoadError.Text = exception.Message;
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
 			}
 
 			if (!showReportingRow)
 			{
-				var reportingInfoRow = tableLayoutPanel.GetRow(reportingInfoLayout);
-				Debug.Assert(reportingInfoRow >= 0, @"Refactoring or the designer has broken behavior here.");
-				tableLayoutPanel.RowStyles[reportingInfoRow].Height = 0;
+				reportingInfoLayout.Visible = false;
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -311,6 +309,7 @@ namespace SIL.FieldWorks
 			m_sampleOrLastProjectLinkLabel.Visible = false;
 			m_openSampleOrLastProjectLink.Visible = false;
 			m_lblProjectLoadError.Visible = true;
+			Icon = SystemIcons.Exclamation;
 		}
 
 		internal void ShowLinkHideErrorLabel()
