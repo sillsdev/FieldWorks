@@ -126,10 +126,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="LexEdDll, Version=8.1.0.28599, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\LexEdDll.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
