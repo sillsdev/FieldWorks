@@ -74,6 +74,36 @@ namespace SIL.FieldWorks.Common.RootSites
 		private IActionHandler m_ActionHandler;
 		private int m_Depth;
 		private bool m_InReset;
+		private bool m_PreeditIsOpen;
+
+		/// <summary>
+		/// Preedit event handler.
+		/// </summary>
+		public delegate void PreeditEventHandler(object sender, EventArgs e);
+
+		/// <summary>
+		/// Occurs when the preedit started.
+		/// </summary>
+		public event PreeditEventHandler PreeditOpened;
+
+		/// <summary>
+		/// Occurs when the preedit gets closed.
+		/// </summary>
+		public event PreeditEventHandler PreeditClosed;
+
+		private void OnPreeditOpened()
+		{
+			if (PreeditOpened != null)
+				PreeditOpened(this, EventArgs.Empty);
+			m_PreeditIsOpen = true;
+		}
+
+		private void OnPreeditClosed()
+		{
+			if (PreeditClosed != null)
+				PreeditClosed(this, EventArgs.Empty);
+			m_PreeditIsOpen = false;
+		}
 
 		/// <summary>
 		/// Reset the selection and optionally cancel any open compositions.
@@ -90,26 +120,43 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_InReset = true;
 			try
 			{
-				if (cancel && m_ActionHandler != null)
+				if (cancel)
 				{
-					m_ActionHandler.Rollback(m_Depth);
-					retVal = true;
+					if (m_ActionHandler != null)
+					{
+						m_ActionHandler.Rollback(m_Depth);
+						retVal = true;
+					}
+					else if (m_InitialSelection != null && m_EndOfPreedit != null)
+					{
+						var selHelper = SetupForTypingEventHandler(false, true);
+						if (selHelper != null)
+						{
+							// Update selection so that we can delete the preedit-text
+							UpdateSelectionForReplacingPreeditText(selHelper, 0);
+							selHelper.SetSelection(true);
+
+							if (selHelper.IsValid && selHelper.IsRange)
+							{
+								var tss = CreateTsStringUsingSelectionProps(string.Empty, null, false);
+								selHelper.Selection.ReplaceWithTsString(tss);
+							}
+						}
+					}
 				}
-				bool resetSelections = m_ActionHandler != null;
 				m_ActionHandler = null;
 
 				if (m_InitialSelection != null)
 					m_InitialSelection.RestoreSelection();
-				if (resetSelections)
-				{
-					m_InitialSelection = null;
-					m_EndOfPreedit = null;
-				}
+
+				m_InitialSelection = null;
+				m_EndOfPreedit = null;
 				return retVal;
 			}
 			finally
 			{
 				m_InReset = false;
+				OnPreeditClosed();
 			}
 		}
 
@@ -238,15 +285,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					selHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
 				selHelper.IchEnd = bottom;
 
-				if (m_ActionHandler == null && m_InitialSelection != null && m_EndOfPreedit != null)
-				{
-					// we don't have an action handler which means we didn't roll back the
-					// preedit. This means we have create a range selection that deletes the
-					// preedit.
-					selHelper.IchAnchor = Math.Max(0, m_InitialSelection.SelectionHelper.GetIch(
-						SelectionHelper.SelLimitType.Top) - countBackspace);
-					selHelper.IchEnd = m_EndOfPreedit.GetIch(SelectionHelper.SelLimitType.Bottom);
-				}
+				UpdateSelectionForReplacingPreeditText(selHelper, countBackspace);
 				selHelper.SetSelection(true);
 
 				// Insert 'text'
@@ -262,6 +301,19 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_ActionHandler.EndUndoTask();
 					m_ActionHandler = null;
 				}
+				OnPreeditClosed();
+			}
+		}
+
+		private void UpdateSelectionForReplacingPreeditText(SelectionHelper selHelper, int countBackspace)
+		{
+			if (m_ActionHandler == null && m_InitialSelection != null && m_EndOfPreedit != null)
+			{
+				// we don't have an action handler which means we didn't roll back the
+				// preedit. This means we have to create a range selection that deletes the
+				// preedit.
+				selHelper.IchAnchor = Math.Max(0, m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
+				selHelper.IchEnd = m_EndOfPreedit.GetIch(SelectionHelper.SelLimitType.Bottom);
 			}
 		}
 
@@ -387,6 +439,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Create a new, independent selection helper for m_InitialSelHelper - we want
 				// to remember the current selection
 				m_InitialSelection = new SelectionWrapper(AssociatedSimpleRootSite);
+				OnPreeditOpened();
 			}
 
 			var ibusText = obj as IBusText;

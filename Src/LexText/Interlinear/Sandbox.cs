@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mediator"></param>
 		public Sandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
-			: base(cache, mediator, ss, choices)
+			: this(cache, mediator, ss, choices)
 		{
 			FocusBox = focusBox;
 			m_interlinDoc = focusBox.InterlinDoc;

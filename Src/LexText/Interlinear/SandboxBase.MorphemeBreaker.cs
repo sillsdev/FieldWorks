@@ -1016,6 +1016,11 @@ namespace SIL.FieldWorks.IText
 			m_monitorPropChanges = false;
 		}
 
+		internal bool IsMonitoring
+		{
+			get { return m_monitorPropChanges; }
+		}
+
 		#region FwDisposableBase
 
 		protected override void DisposeManagedResources()

@@ -980,10 +980,11 @@ namespace SIL.FieldWorks.IText
 
 		#endregion Properties
 
-		#region Construction, initiliazation & Disposal
+		#region Construction, initialization & Disposal
 
 		public SandboxBase()
 		{
+			SubscribeToRootSiteEventHandlerEvents();
 			InitializeComponent();
 			CurrentAnalysisTree = new AnalysisTree();
 			// Tab should move between the piles inside the focus box!  See LT-9228.
@@ -1072,7 +1073,37 @@ namespace SIL.FieldWorks.IText
 		// Cf. the SandboxBase.Designer.cs file for this method.
 		//protected override void Dispose(bool disposing)
 
-		#endregion Construction, initiliazation & Disposal
+		#endregion Construction, initialization & Disposal
+
+		private void SubscribeToRootSiteEventHandlerEvents()
+		{
+#if __MonoCS__
+			var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
+			if (ibusRootSiteEventHandler != null)
+			{
+				ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
+				ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+			}
+#endif
+		}
+
+		private void OnPreeditOpened (object sender, EventArgs e)
+		{
+			// While the pre-edit window is open we don't want to check for new morpheme breaks
+			// (see LT-16237)
+			SandboxEditMonitor.StopMonitoring();
+		}
+
+		private void OnPreeditClosed (object sender, EventArgs e)
+		{
+			SandboxEditMonitor.StartMonitoring();
+		}
+
+		private bool PassKeysToKeyboardHandler
+		{
+			get { return !SandboxEditMonitor.IsMonitoring; }
+		}
+
 
 		#region Other methods
 
@@ -4027,69 +4058,91 @@ namespace SIL.FieldWorks.IText
 		/// <param name="e"></param>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if ((e.KeyCode == Keys.Down || e.KeyCode == Keys.Up) &&
-				(e.Alt || IsIconSelected))
+			if (PassKeysToKeyboardHandler)
 			{
-				OnOpenCombo();
-				e.Handled = true;
+				base.OnKeyDown(e);
 				return;
 			}
-			else if (e.KeyCode == Keys.Space && IsIconSelected)
+
+			switch (e.KeyCode)
 			{
-				OnOpenCombo();
-				e.Handled = true;
-				return;
-			}
-			else if (e.KeyCode == Keys.Tab && !e.Control && !e.Alt)
-			{
-				HandleTab(e.Shift);
-				// skip base.OnKeyDown, so RootSite will not try to move our cursor
-				// to another field in addition to HandleTab causing Tab to advance
-				// past the expected icon/field.
-				return;
-			}
-			else if (e.KeyCode == Keys.Enter)
-			{
-				if (e.Alt)
-				{
-					OnOpenCombo();
-					e.Handled = true;
-				}
-				else
-				{
-					OnHandleEnter();
-				}
-				return;
-			}
-			else if (e.KeyCode == Keys.End)
-			{
-				if (HandleEndKey(e.Control))
+				case Keys.Up:
+					if (e.Alt || IsIconSelected)
+					{
+						OnOpenCombo();
+						e.Handled = true;
+						return;
+					}
+					if (!e.Control && !e.Shift)
+					{
+						if (HandleUpKey())
+							return;
+					}
+					break;
+				case Keys.Down:
+					if (e.Alt || IsIconSelected)
+					{
+						OnOpenCombo();
+						e.Handled = true;
+						return;
+					}
+					if (!e.Control && !e.Shift)
+					{
+						if (HandleDownKey())
+							return;
+					}
+					break;
+				case Keys.Space:
+					if (IsIconSelected)
+					{
+						OnOpenCombo();
+						e.Handled = true;
+						return;
+					}
+					break;
+				case Keys.Tab:
+					if (!e.Control && !e.Alt)
+					{
+						HandleTab(e.Shift);
+						// skip base.OnKeyDown, so RootSite will not try to move our cursor
+						// to another field in addition to HandleTab causing Tab to advance
+						// past the expected icon/field.
+						return;
+					}
+					break;
+				case Keys.Enter:
+					if (e.Alt)
+					{
+						OnOpenCombo();
+						e.Handled = true;
+					}
+					else
+					{
+						OnHandleEnter();
+					}
 					return;
-			}
-			else if (e.KeyCode == Keys.Home)
-			{
-				if (HandleHomeKey(e.Control))
-					return;
-			}
-			else if (e.KeyCode == Keys.Right && !e.Control && !e.Shift)
-			{
-				if (HandleRightKey())
-					return;
-			}
-			else if (e.KeyCode == Keys.Left && !e.Control && !e.Shift)
-			{
-				if (HandleLeftKey())
-					return;
-			}
-			else if (e.KeyCode == Keys.Up && !e.Control && !e.Shift)
-			{
-				if (HandleUpKey())
-					return;
-			}
-			else if (e.KeyCode == Keys.Down && !e.Control && !e.Shift)
-			{
-				if (HandleDownKey())
-					return;
+				case Keys.End:
+					if (HandleEndKey(e.Control))
+						return;
+					break;
+				case Keys.Home:
+					if (HandleHomeKey(e.Control))
+						return;
+					break;
+				case Keys.Right:
+					if (!e.Control && !e.Shift)
+					{
+						if (HandleRightKey())
+							return;
+					}
+					break;
+				case Keys.Left:
+					if (!e.Control && !e.Shift)
+					{
+						if (HandleLeftKey())
+							return;
+					}
+					break;
 			}
 			base.OnKeyDown(e);
 		}
@@ -4108,24 +4161,25 @@ namespace SIL.FieldWorks.IText
 			Justification = "tree is a reference")]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			if (IsWordPosIconSelected && !Char.IsControl(e.KeyChar))
+			if (!PassKeysToKeyboardHandler)
 			{
-				OnOpenCombo();
-				PopupTree tree = (m_ComboHandler as IhMissingWordPos).Tree;
-				tree.SelectNodeStartingWith(Surrogates.StringFromCodePoint(e.KeyChar));
+				if (IsWordPosIconSelected && !Char.IsControl(e.KeyChar))
+				{
+					OnOpenCombo();
+					PopupTree tree = (m_ComboHandler as IhMissingWordPos).Tree;
+					tree.SelectNodeStartingWith(Surrogates.StringFromCodePoint(e.KeyChar));
+				}
+
+				if (e.KeyChar == '\t' || e.KeyChar == '\r')
+				{
+					// gobble these up in Sandbox. so the base.OnKeyPress()
+					// does not duplicate what we've handled in OnKeyDown().
+					e.Handled = true;
+					return;
+				}
 			}
 
-			if (e.KeyChar == '\t' || e.KeyChar == '\r')
-			{
-				// gobble these up in Sandbox. so the base.OnKeyPress()
-				// does not duplicate what we've handled in OnKeyDown().
-				e.Handled = true;
-				return;
-			}
-			else
-			{
-				base.OnKeyPress(e);
-			}
+			base.OnKeyPress(e);
 		}
 
 		/// <summary>
