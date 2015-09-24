@@ -1,0 +1,9 @@
+Code-Review+2: MarkS <marksvc@gmail.com>
+Verified+1: MarkS <marksvc@gmail.com>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Thu, 24 Sep 2015 16:52:20 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3378
+Project: FieldWorks
+Branch: refs/heads/release/8.2
