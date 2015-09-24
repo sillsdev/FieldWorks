@@ -236,7 +236,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			StopParser();
 			bool dummy;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
+				FDOBackendProvider.ModelVersion, "0.13", null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -340,7 +341,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+																  null, FDOBackendProvider.ModelVersion, "0.13",
+																  Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -576,7 +578,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -609,7 +611,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -662,7 +664,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null,
+								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -707,7 +709,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -715,6 +717,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ReportDuplicateBridge();
 			}
 			return true;
+		}
+
+		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
+		private void BroadcastMasterRefresh()
+		{
+			_mediator.BroadcastMessage("MasterRefresh", null);
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
@@ -799,7 +807,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -905,14 +913,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Directory.CreateDirectory(liftProjectDir);
 			}
 			_liftPathname = GetLiftPathname(liftProjectDir);
-			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
+			PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
 			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1355,7 +1363,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
+				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dataChanged, out dummy);
 		}
 

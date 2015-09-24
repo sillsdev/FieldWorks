@@ -11,7 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
-using System.Windows.Forms;
 using SIL.Utils;
 
 using IPCFramework;
@@ -131,11 +130,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string LIFT = @"LIFT";
 
 		/// <summary>
-		/// Project name grafted to the pipe URI so multiple projects can S/R simultaneously
-		/// </summary>
-		private static string _sFwProjectName = ""; // REVIEW (Hasso) 2014.01: this variable is never read.
-
-		/// <summary>
 		/// Event handler delegate that passes a jump URL.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -151,7 +145,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static object _waitObject = new object();
 		private static bool _flexBridgeTerminated;
-		private static IIPCHost _noBlockerHost;
+		private static Tuple<IIPCHost, Action> _noBlockerHostAndCallback;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 		private static string _pipeID;
@@ -168,14 +162,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
 		/// <param name="liftModelVersionNumber">Version of LIFT schema that is supported by FLEx.</param>
 		/// <param name="writingSystemId">The id of the first vernacular writing system</param>
+		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
+		/// <param name="onNonBlockerCommandComplete">Callback called when a non-blocker command has completed</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
-		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
 		/// <returns>true if successful, false otherwise</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ServiceHost gets disposed in KillTheHost()")]
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
-												  int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId,
+			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName)
 		{
 			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
@@ -184,7 +179,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var args = "";
 			projectName = "";
 			_projectName = "";
-			_sFwProjectName = ""; // REVIEW (Hasso) 2014.01: this variable is never read
 			var userNameActual = userName;
 			if (string.IsNullOrEmpty(userName))
 				userNameActual = Environment.UserName; // default so we can always pass something.
@@ -192,11 +186,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				AddArg(ref args, "-u", userNameActual);
 			}
-			if (!String.IsNullOrEmpty(projectFolder))
+			if (!string.IsNullOrEmpty(projectFolder))
 			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
-				if (projectFolder != FwDirectoryFinder.ProjectsDirectory)
-					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder); // REVIEW (Hasso) 2014.01: this variable is never read
 			}
 
 			AddArg(ref args, "-v", command);
@@ -227,7 +219,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
 			AddArg(ref args, "-locale", locale);
 
-			if (_noBlockerHost != null)
+			if (_noBlockerHostAndCallback != null)
 			{
 				return false;
 			}
@@ -238,17 +230,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// make a new FLExBridge
-			IIPCHost host = IPCHostFactory.Create();
+			var host = IPCHostFactory.Create();
 			host.VerbosityLevel = 1;
 			if (!host.Initialize<FLExBridgeService, IFLExBridgeService>("FLExBridgeEndpoint" + _pipeID, AlertFlex, CleanupHost))
 				return false;
 
-			LaunchFlexBridge(host, command, args, ref changesReceived, ref projectName);
+			LaunchFlexBridge(host, command, args, onNonBlockerCommandComplete, ref changesReceived, ref projectName);
 
 			return true;
 		}
 
-		private static void LaunchFlexBridge(IIPCHost host, string command, string args, ref bool changesReceived, ref string projectName)
+		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
+			ref bool changesReceived, ref string projectName)
 		{
 			// Launch the bridge process.
 			using (Process.Start(FullFieldWorksBridgePath(), args))
@@ -266,22 +259,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// This skips the piping and doesn't pause the Flex UI thread for the
 				// two 'view' options and for the 'About Flex Bridge' and 'Check for Updates'.
-				_noBlockerHost = host; // so we can kill the host when the bridge quits
+				// We store the host and a callback so that, when FLExBridge quits, we can kill the host and call the callback.
+				_noBlockerHostAndCallback = new Tuple<IIPCHost, Action> (host, onNonBlockerCommandComplete);
 			}
 			else
 			{
 				// This uses all the piping and also blocks the Flex UI thread, while Flex Bridge is running.
-				Cursor.Current = Cursors.WaitCursor;
+				using (new WaitCursor())
+				{
+					// Pause UI thread until FLEx Bridge terminates:
+					Monitor.Enter(_waitObject);
+					if (_flexBridgeTerminated == false)
+						Monitor.Wait(_waitObject, -1);
+					Monitor.Exit(_waitObject);
 
-				// Pause UI thread until FLEx Bridge terminates:
-				Monitor.Enter(_waitObject);
-				if (_flexBridgeTerminated == false)
-					Monitor.Wait(_waitObject, -1);
-				Monitor.Exit(_waitObject);
-
-				projectName = _projectName;
-				changesReceived = _receivedChanges;
-				Cursor.Current = Cursors.Default;
+					projectName = _projectName;
+					changesReceived = _receivedChanges;
+				}
 				KillTheHost(host);
 			}
 		}
@@ -499,13 +493,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			void EndBridgeWorkOngoing(IAsyncResult result);
 		}
 
+		/// <remarks>Called when the connection with FLExBridge terminates (currently ~15 seconds after the user closes the FB window)</remarks>
 		static void CleanupHost()
 		{
 			Console.WriteLine(@"FLExBridgeHelper.CleanupHost()");
-			if (_noBlockerHost != null)
+			if (_noBlockerHostAndCallback != null)
 			{
-				KillTheHost(_noBlockerHost);
-				_noBlockerHost = null;
+				KillTheHost(_noBlockerHostAndCallback.Item1);
+				if(_noBlockerHostAndCallback.Item2 != null)
+					_noBlockerHostAndCallback.Item2();
+				_noBlockerHostAndCallback = null;
 			}
 		}
 
