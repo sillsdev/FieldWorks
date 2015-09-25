@@ -391,8 +391,8 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
-			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
+			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LanguageExplorer.dll"
+				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
 			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" menu="mnuDataTree-Help">
@@ -505,7 +505,7 @@
 		</part>
 		<part id="LexSense-Detail-ComplexFormEntries" type="Detail">
 			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuDataTree-Help"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -514,19 +514,19 @@
 		</part>
 		<part id="LexSense-Detail-VisibleComplexFormEntries" type="Detail">
 			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-EntryLevel">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-EntryLevel">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-Subentries" type="Detail">
 			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views." menu="mnuDataTree-Help"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-VariantForms" type="Detail">
 			<slice field="VariantFormEntries" label="Variants of Sense" editable="no" menu="mnuDataTree-Help"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -665,8 +665,8 @@
 			<configureMlString field="MLOwnerOutlineName" />
 		</part>
 		<part id="LexSense-Detail-CurrentLexReferences" type="detail">
-			<slice label="Lexical Relations" field="LexSenseReferences" editor="custom" assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice" />
+			<slice label="Lexical Relations" field="LexSenseReferences" editor="custom" assemblyPath="LanguageExplorer.dll"
+				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
 		</part>
 		<part id="LexSense-Jt-StemComplexFormsConfig">
 			<seq field="VisibleComplexFormBackRefs" layout="publishStemSenseComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>

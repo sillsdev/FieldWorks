@@ -154,7 +154,7 @@
 	<!-- ************************ resources ********************* -->
 	<!-- ********************************************************** -->
 	<resources>
-		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ImageHolder" field="buttonImages" size="small" labels="nbkRecord, goToRecord"/>
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Notebook.NotebookImageHolder" field="buttonImages" size="small" labels="nbkRecord, goToRecord"/>
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->

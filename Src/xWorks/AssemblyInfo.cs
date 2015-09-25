@@ -11,4 +11,3 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("xWorksTests")]
 [assembly: InternalsVisibleTo("LanguageExplorer")]
 [assembly: InternalsVisibleTo("ITextDll")]
-[assembly: InternalsVisibleTo("LexEdDll")]

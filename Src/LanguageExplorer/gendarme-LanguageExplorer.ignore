@@ -2,12 +2,14 @@
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
 # m_cache is passed in to the class, so we shouldn't dispose it
 T: SIL.FieldWorks.FDO.FdoCache LanguageExplorer.Areas.TextsAndWords.Discourse.AdvancedMTDialogLogic
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.DiscourseExporter
 
 # reference only
 T: System.Windows.Forms.Form
+T: LanguageExplorer.Dumpster.ReversalListener
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
@@ -16,6 +18,7 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildBottomStuffUI()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::SetupMoveHereButtonsToMatchTemplate()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView::Activate(SIL.CoreImpl.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
+M: System.Void LanguageExplorer.Dumpster.ReversalClerk::DeleteReversalIndex(SIL.FieldWorks.FDO.IReversalIndex)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)
@@ -24,10 +27,21 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLo
 
 # added to control and disposed there
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.GrammarSketch.GeneratedHtmlViewer::InitHtmlControl()
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice::FinishInit()
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice/ReversalIndexEntrySliceView::ReversalIndexEntrySliceView_RightMouseClickedEvent(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg::AddConfigurableControls()
+M: System.Void LanguageExplorer.Areas.Lexicon.SwapLexemeWithAllomorphDlg::SetDlgInfo(SIL.FieldWorks.FDO.FdoCache,SIL.CoreImpl.IPropertyTable,SIL.FieldWorks.FDO.ILexEntry)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::AddFinalContextMenuStripOptions(System.Windows.Forms.ContextMenuStrip)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteFromReference(SIL.FieldWorks.FDO.ILexReference)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteReference(SIL.FieldWorks.FDO.ILexReference)
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::OnMouseClick(System.Windows.Forms.MouseEventArgs)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice/ReversalIndexEntrySliceView::OnLostFocus(System.EventArgs)
+M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayDataTreeInsert(System.Object,XCore.UIItemDisplayProperties&)
+M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayInsertMediaFile(System.Object,XCore.UIItemDisplayProperties&)
+M: System.Void LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncher::HandleChooser()
 
 # added to collection and disposed there
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()
@@ -38,9 +52,19 @@ M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookButtonPanel::Overflo
 
 # Disposed in finally block
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBarPanelRenderer::OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionLauncher::HandleChooser()
+M: SIL.FieldWorks.FDO.ICmObject LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::GetRootObject(SIL.FieldWorks.FDO.ILexRefType)
+M: SIL.FieldWorks.FDO.ICmObject LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::GetChildObject(SIL.FieldWorks.FDO.ILexRefType)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferencePairLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceSequenceLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeBranchesLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootLauncher::HandleChooser()
 
 # FwRegistrySettings disposed in Dispose method.
 M: System.Void LanguageExplorer.Impls.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)
+
+# GetEnumerator() returns an object
+M: System.Collections.IEnumerator LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalEntryGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
@@ -49,6 +73,9 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: LanguageExplorer.Controls.SilSidePane.Item
 T: LanguageExplorer.Controls.SilSidePane.OutlookBarButtonCollection
 T: LanguageExplorer.Controls.SilSidePane.Tab
+T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.GoldEticGuidFixer
+T: LanguageExplorer.Areas.Lexicon.HomographResetter
+T: LanguageExplorer.Areas.Lexicon.DeleteEntriesSensesWithoutInterlinearization
 
 # variable is passed in, so we shouldn't dispose it
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod

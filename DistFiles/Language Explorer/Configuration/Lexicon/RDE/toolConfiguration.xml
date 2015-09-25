@@ -29,7 +29,7 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 								<parameters clerk="SemanticDomainList" id="SemanticDomainList" filterPath="Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml" treeBarAvailability="Required" layout="RDE" msgBoxTrigger="CategorizedEntry-Intro" allowInsertDeleteRecord="false">
 									<menuHandler>
-										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler"/>
 									</menuHandler>
 								</parameters>
 							</control>

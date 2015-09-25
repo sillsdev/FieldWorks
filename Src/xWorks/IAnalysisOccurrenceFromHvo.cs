@@ -7,9 +7,9 @@ using SIL.FieldWorks.FDO.DomainServices;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// This interface is implemented by ConcDecorator in LexEdDll, which is configured to be the
+	/// This interface is implemented by ConcDecorator in LanguageExplorer, which is configured to be the
 	/// SDA that the Clerk's VirtualListPublisher decorates. This allows the Clerk to make available
-	/// the selected analysis occurrence, without introducing a (circular) dependency between xWorks and LexEdDll.
+	/// the selected analysis occurrence, without introducing a (circular) dependency between xWorks and LanguageExplorer.
 	/// </summary>
 	public interface IAnalysisOccurrenceFromHvo
 	{

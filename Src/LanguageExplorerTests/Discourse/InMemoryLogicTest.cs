@@ -1,8 +1,13 @@
+// Copyright (c) 2008-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
@@ -230,7 +235,7 @@ namespace LanguageExplorerTests.Discourse
 				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeBeforeMenuItem, 0);
 
 				// Verify items generated from chart markers. These results depend on the default chart markers.
-				// The 'Mark' part comes from DiscourseStrings.ksMarkMenuItemFormat. I decided not to repeat the
+				// The 'Mark' part comes from LanguageExplorerResources.ksMarkMenuItemFormat. I decided not to repeat the
 				// formatting code here, as it makes the test code too much like the production.
 				var itemG1 = AssertHasMenuWithText(strip.Items, "Mark Group1", 1);
 				var itemG2 = AssertHasMenuWithText(strip.Items, "Mark Group2", 2);
@@ -245,7 +250,7 @@ namespace LanguageExplorerTests.Discourse
 
 				// The target cell isn't empty so we shouldn't have this menu item.
 				// Except LT-8545 says possibility markers aren't 'contents' as such
-				//AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem);
+				//AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem);
 			}
 		}
 
@@ -298,9 +303,9 @@ namespace LanguageExplorerTests.Discourse
 			// missing marker
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
-				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
+				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
 					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move missing marker
 			}
 		}
@@ -316,9 +321,9 @@ namespace LanguageExplorerTests.Discourse
 			// make an arbitrary marker
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
-				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
+				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
 					Assert.IsFalse(itemMissing.Checked, "Missing item in cell with other marker should not be checked.");
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move possibility markers
 			}
 		}
@@ -340,9 +345,9 @@ namespace LanguageExplorerTests.Discourse
 			{
 
 				// Verify
-				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
+				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
 					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move possibility markers
 			}
 		}
@@ -353,7 +358,7 @@ namespace LanguageExplorerTests.Discourse
 			const int icol = 2; // Subject (special) column
 			var row0 = m_helper.MakeRow1a();
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, icol)))
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem); // can't toggle in subject column
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem); // can't toggle in subject column
 		}
 
 		[Test]
@@ -368,8 +373,8 @@ namespace LanguageExplorerTests.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
 				// Should not be able to add a Missing Marker, since this this an AutoMissingMarker column.
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem);
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move possibility markers
 			}
 		}
@@ -382,9 +387,9 @@ namespace LanguageExplorerTests.Discourse
 			var row0 = m_helper.MakeRow1a();
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, icol)))
 			{
-				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
+				using (var itemMissing = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem, 0))
 					Assert.IsFalse(itemMissing.Checked, "missing item in empty cell should not be checked");
-				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveMenuItem);
 				// can't move empty cell
 			}
 		}

@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					/*
 					<utilityCatalog>
-						<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.HomographResetter"/>
+						<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.HomographResetter"/>
 					</utilityCatalog>
 					*/
 					IUtility util = DynamicLoader.CreateObject(node) as IUtility;

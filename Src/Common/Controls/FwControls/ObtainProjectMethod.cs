@@ -122,14 +122,14 @@ namespace SIL.FieldWorks.Common.Controls
 				PickAnthroMethod, null, helpTopicProvider);
 		}
 
-		internal const string ImportLexiconDll = @"LexEdDll.dll";
-		internal const string ImportLexiconClass = @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener";
+		internal const string ImportLexiconDll = @"LanguageExplorer.dll";
+		internal const string ImportLexiconClass = @"LanguageExplorer.Dumpster.FLExBridgeListener";
 		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
 
 		internal static void CallImportObtainedLexicon(FdoCache cache, string liftPath, Form parent)
 		{
 			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
+			// the LanguageExplorer project, nor is there any straightforward way to move the code we need into some project we can
 			// reference, or any obviously suitable project to move it to without creating other References loops.
 			// nasty reflections call seems less technical debt than creating an otherwise unnecessary project.
 			// (It puts up its own progress dialog.)

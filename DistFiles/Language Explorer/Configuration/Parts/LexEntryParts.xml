@@ -25,11 +25,11 @@
 				   menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexEntry-Detail-Messages" type="detail">
-			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
+			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice"
+		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice"
 					   menu="mnuDataTree-Help">
 		  <deParams displayProperty='HeadWord' />
 		</slice>
@@ -46,7 +46,7 @@
 	</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostVariantOf" type="detail">
 	  <if field="VariantEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice"
+		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice"
 					   menu="mnuDataTree-Help" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
 		  <deParams displayProperty='HeadWord'/>
 		</slice>
@@ -744,7 +744,7 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
-			<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice" />
+			<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
 		</part>
 		<part id="LexEntry-Detail-Etymology" type="detail">
 			<obj field="Etymology" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular" ghostLabel="Etymology"
@@ -752,19 +752,19 @@
 		</part>
 		<part id="LexEntry-Detail-ComplexFormEntries" type="Detail">
 			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-VisibleComplexFormEntries" type="Detail">
 			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-Subentries" type="Detail">
 			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary views." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -929,13 +929,13 @@
 		</part>
 		<part id="LexEntryRef-Detail-ComponentLexemes" type="Detail">
 			<if field="RefType" intequals="1">
-				<slice field="ComponentLexemes" label="Components" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+				<slice field="ComponentLexemes" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
 					   menu="mnuReorderVector">
 					<deParams displayProperty='HeadWord' />
 				</slice>
 			</if>
 			<if field="RefType" intequals="0">
-				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
 					   menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntryRef-VariantOf">
 					<deParams displayProperty='HeadWord' />
 				</slice>
@@ -943,7 +943,7 @@
 		</part>
 		<part id="LexEntryRef-Detail-PrimaryLexemes" type="Detail">
 			<if field="RefType" intequals="1">
-				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
 					   menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
 					<deParams displayProperty='HeadWord' />
 				</slice>

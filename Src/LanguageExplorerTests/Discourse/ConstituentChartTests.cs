@@ -1,8 +1,6 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2013-01-30 ConstituentChartTests.cs
 
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;

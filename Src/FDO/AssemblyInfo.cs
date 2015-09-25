@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------------------------
-Copyright (c) 2002-2013 SIL International
+Copyright (c) 2002-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 ----------------------------------------------------------------------------------------------*/
@@ -14,4 +14,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("FDOBrowser")]
 [assembly: InternalsVisibleTo("fwdb2xml")]
 [assembly: InternalsVisibleTo("FwControls")] // To get at FDOBackendProvider.ModelVersion
-[assembly: InternalsVisibleTo("LexEdDll")] // To get at FDOBackendProvider.ModelVersion
+[assembly: InternalsVisibleTo("LanguageExplorer")] // To get at FDOBackendProvider.ModelVersion

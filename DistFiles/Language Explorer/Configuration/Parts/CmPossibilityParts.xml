@@ -379,7 +379,7 @@
 			</slice>
 		</part>
 		<part id="LexEntryInflType-Detail-InflFeats" type="Detail">
-			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FeatureSystemInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.FeatureSystemInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 	</bin>
 

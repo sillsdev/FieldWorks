@@ -33,7 +33,7 @@
 								<parameters area="lexicon" clerk="AllReversalEntries" layout="Normal" treeBarAvailability="NotAllowed"
 									emptyTitleId="No-ReversalIndexEntries">
 									<menuHandler>
-										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryMenuHandler"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryMenuHandler"/>
 									</menuHandler>
 								</parameters>
 							</control>

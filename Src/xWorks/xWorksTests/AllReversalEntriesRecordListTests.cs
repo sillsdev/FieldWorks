@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			const string reversalIndexClerk = @"
 <recordList owner='ReversalIndex' property='AllEntries'>
-	<dynamicloaderinfo assemblyPath='LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList' />
+	<dynamicloaderinfo assemblyPath='LanguageExplorer.dll' class='LanguageExplorer.Areas.Lexicon.AllReversalEntriesRecordList' />
 </recordList>";
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(reversalIndexClerk);

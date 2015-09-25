@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 #if RANDYTODO
-		// TODO: LexEdDll isn't built yet, so tests fials on remake.
+		// TODO: LanguageExplorer isn't built yet, so test fails on remake.
 		// TODO: Restore at some point.
 		/// <summary/>
 		[Test]

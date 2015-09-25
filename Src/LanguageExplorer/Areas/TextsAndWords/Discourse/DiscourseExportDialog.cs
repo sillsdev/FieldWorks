@@ -23,10 +23,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// </summary>
 	public class DiscourseExportDialog : ExportDialog
 	{
-		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
-		int m_hvoRoot;
-		IVwViewConstructor m_vc;
-		int m_wsLineNumber;
+		private readonly List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
+		readonly int m_hvoRoot;
+		readonly IVwViewConstructor m_vc;
+		readonly int m_wsLineNumber;
 
 		public DiscourseExportDialog(int hvoRoot, IVwViewConstructor vc, int wsLineNumber)
 		{
@@ -48,9 +48,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			m_helpTopic = "khtpExportDiscourse";
-			columnHeader1.Text = DiscourseStrings.ksFormat;
-			columnHeader2.Text = DiscourseStrings.ksExtension;
-			Text = DiscourseStrings.ksExportDiscourse;
+			columnHeader1.Text = LanguageExplorerResources.ksFormat;
+			columnHeader2.Text = LanguageExplorerResources.ksExtension;
+			Text = LanguageExplorerResources.ksExportDiscourse;
 		}
 
 		#endregion
@@ -88,11 +88,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var fxtPath = (string)m_exportList.SelectedItems[0].Tag;
 			var ddNode = m_ddNodes[NodeIndex(fxtPath)];
 			var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
-			DiscourseExporter exporter;
 			using (new WaitCursor(this))
 			{
 				try
 				{
+					DiscourseExporter exporter;
 					ExportPhase1(out exporter, outPath);
 					var rootDir = FwDirectoryFinder.CodeDirectory;
 					var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
@@ -107,59 +107,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 							string sTransform = Path.Combine(sTransformPath, transform);
 							exporter.PostProcess(sTransform, outPath, 1);
 							break;
-						//case "openOffice":
-						//    // Generate the styles first, based on the original export file.
-						//    string styleFilePath;
-						//    using (TempFileCollection tempFiles = new TempFileCollection()) // wanted only to get the default temp file dir and name
-						//    {
-						//        styleFilePath = tempFiles.AddExtension("xml", false);
-						//    }
-						//    XslCompiledTransform xsl = new XslCompiledTransform();
-						//    XmlNode implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
-						//    string styleFileTransform = "xml2OOStyles.xsl";
-						//    if (implementation != null)
-						//        styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "styleTransform", styleFileTransform);
-						//    xsl.Load(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + styleFileTransform);
-						//    xsl.Transform(outPath, styleFilePath);
-
-						//    // Now generate the content. Do this after using outPath as the source above, because it renames the file.
-						//    string contentFileTransform = "xml2OO.xsl";
-						//    if (implementation != null)
-						//        contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
-						//    exporter.PostProcess(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + contentFileTransform, outPath, 1);
-						//    string intermediateFile = CollectorEnv.RenameOutputToPassN(outPath, 2);
-						//    using (FileStream outFile = new FileStream(outPath, FileMode.Create))
-						//    {
-						//        using (ZipOutputStream zipFile = new ZipOutputStream(outFile))
-						//        {
-						//            WriteFileToZipUncompressed("mimetype", rootDir + @"\Language Explorer\Export Templates\Interlinear\mimetype", zipFile);
-						//            WriteFileToZipUncompressed("META-INF/manifest.xml", rootDir + @"\Language Explorer\Export Templates\Interlinear\manifest.xml", zipFile);
-						//            WriteFileToZip("styles.xml", styleFilePath, zipFile);
-						//            WriteFileToZip("content.xml", intermediateFile, zipFile);
-						//            zipFile.Finish();
-						//            zipFile.Close();
-						//        }
-						//        outFile.Close();
-						//    }
-						//    File.Delete(styleFilePath);
-						//    File.Delete(intermediateFile);
-						//    //System.IO.File.Copy(rootDir + @"\Language Explorer\Export Templates\Interlinear\EmptyOfficeDoc.odt",
-						//    //    outPath);
-						//    //ZipFile OOFile = new ZipFile(outPath, ZipConstants.GZIP, System.IO.FileMode.Open);
-						//    //System.IO.File.Delete("content.xml");
-						//    //System.IO.File.Move(intermediateFile, "content.xml");
-						//    //OOFile.Add("content.xml");
-						//    ////OOFile.AddAs("content.xml", intermediateFile);
-						//    //OOFile.Close();
-						//    break;
 					}
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show(this, String.Format(DiscourseStrings.ksExportErrorMsg, e.Message));
+					MessageBox.Show(this, String.Format(LanguageExplorerResources.ksExportErrorMsg, e.Message));
 				}
 			}
-			this.Close();
+			Close();
 		}
 
 		protected int NodeIndex(string tag)

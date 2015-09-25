@@ -228,6 +228,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		#region Construction, Initialization, and disposal
 
+		/// <summary />
 		internal GrammarSketchHtmlViewer()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -439,6 +440,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				File.SetAttributes(dlgFileName, FileAttributes.Normal);
 		}
 
+		/// <summary />
 		public void OnBeforeNavigate(object sender, HtmlControlEventArgs e)
 		{
 			CheckDisposed();
@@ -496,6 +498,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			ShowSketch();
 		}
 
+		/// <summary />
 		public void PerformRetrieval(out string outputPath, ProgressDialogWorkingOn dlg)
 		{
 			CheckDisposed();
@@ -643,6 +646,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			return true;
 		}
 
+		/// <summary />
 		public string AreaName
 		{
 			get
@@ -655,6 +659,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		#endregion // IMainContentControl implementation
 
+		/// <summary />
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			var ao = new ControlAccessibleObject(this)
@@ -694,6 +699,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		#region ICtrlTabProvider implementation
 
+		/// <summary />
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)

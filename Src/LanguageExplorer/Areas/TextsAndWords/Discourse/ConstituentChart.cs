@@ -743,13 +743,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				// Remove MoveHere button
 				var lastButton = m_MoveHereButtons[m_MoveHereButtons.Count - 1];
-				lastButton.Click -= new EventHandler(btnMoveHere_Click);
+				lastButton.Click -= btnMoveHere_Click;
 				m_buttonRow.Controls.Remove(lastButton);
 				m_MoveHereButtons.Remove(lastButton);
 
 				// Remove Context Menu button
 				var lastBtnContextMenu = m_ContextMenuButtons[m_ContextMenuButtons.Count - 1];
-				lastBtnContextMenu.Click -= new EventHandler(btnContextMenu_Click);
+				lastBtnContextMenu.Click -= btnContextMenu_Click;
 				m_buttonRow.Controls.Remove(lastBtnContextMenu);
 				m_ContextMenuButtons.Remove(lastBtnContextMenu);
 			}
@@ -758,7 +758,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				// Install MoveHere button
 				var newButton = new Button();
-				newButton.Click += new EventHandler(btnMoveHere_Click);
+				newButton.Click += btnMoveHere_Click;
 				var sColName = m_logic.GetColumnLabel(m_MoveHereButtons.Count);
 				// Holds column name while setting buttons
 				m_buttonRow.Controls.Add(newButton);
@@ -774,13 +774,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				newButton.Text = GetBtnName(sColName, btnSpace);
 
 				// Set up the ToolTip text for the Button.
-				m_toolTip.SetToolTip(newButton, String.Format(DiscourseStrings.ksMoveHereToolTip, sColName));
+				m_toolTip.SetToolTip(newButton, string.Format(LanguageExplorerResources.ksMoveHereToolTip, sColName));
 
 				m_MoveHereButtons.Add(newButton);
 
 				// Install context menu button
 				var newBtnContextMenu = new Button();
-				newBtnContextMenu.Click += new EventHandler(btnContextMenu_Click);
+				newBtnContextMenu.Click += btnContextMenu_Click;
 				newBtnContextMenu.Image = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon;
 				m_buttonRow.Controls.Add(newBtnContextMenu);
 				m_ContextMenuButtons.Add(newBtnContextMenu);
@@ -803,11 +803,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var templates = m_cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
 			if (templates.Count == 0 || templates[0].SubPossibilitiesOS.Count == 0)
 			{
-				MessageBox.Show(this, DiscourseStrings.ksNoColumns, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, LanguageExplorerResources.ksNoColumns, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			if (templates.Count != 1)
 			{
-				MessageBox.Show(this, DiscourseStrings.ksOnlyOneTemplateAllowed, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, LanguageExplorerResources.ksOnlyOneTemplateAllowed, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 

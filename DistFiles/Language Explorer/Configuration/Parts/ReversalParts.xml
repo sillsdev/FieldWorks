@@ -3,13 +3,13 @@
 <PartInventory>
 	<bin class="ReversalIndexEntry">
 		<part id="ReversalIndexEntry-Detail-ChangeHandler" type="detail">
-			<RecordChangeHandler assemblyPath="LexEdDll.dll" listName="RecordClerk-AllReversalEntries"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryChangeHandler"/>
+			<RecordChangeHandler assemblyPath="LanguageExplorer.dll" listName="RecordClerk-AllReversalEntries"
+				class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryChangeHandler"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
 			<slice attr="ReversalForm" field="ReversalForm" label="Form" editor="CustomWithParams"
-				assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryFormSlice"
+				assemblyPath="LanguageExplorer.dll"
+				class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryFormSlice"
 				menu="mnuDataTree-Help"/>
 		</part>
 		<part id="ReversalIndexEntry-Jt-ReversalForm" type="JtView">
@@ -22,7 +22,7 @@
 		</part>
 		<part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
 			<slice field="ReferringSenses" label="Senses" menu="mnuReorderVector" reorder="true"
-				editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RevEntrySensesCollectionReferenceSlice" >
+				editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.RevEntrySensesCollectionReferenceSlice" >
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
 			</slice>
 		</part>

@@ -18,7 +18,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using System.Diagnostics;
 using System.IO;
-using SIL.Utils.ComTypes;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -606,9 +605,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_rowRepo = m_cache.ServiceLocator.GetInstance<IConstChartRowRepository>();
 			m_wordGrpRepo = m_cache.ServiceLocator.GetInstance<IConstChartWordGroupRepository>();
 			m_partRepo = m_cache.ServiceLocator.GetInstance<IConstituentChartCellPartRepository>();
-			m_sMovedTextBefore = m_tssFact.MakeString(DiscourseStrings.ksMovedTextBefore,
+			m_sMovedTextBefore = m_tssFact.MakeString(LanguageExplorerResources.ksMovedTextBefore,
 													m_cache.DefaultUserWs);
-			m_sMovedTextAfter = m_tssFact.MakeString(DiscourseStrings.ksMovedTextAfter,
+			m_sMovedTextAfter = m_tssFact.MakeString(LanguageExplorerResources.ksMovedTextAfter,
 													m_cache.DefaultUserWs);
 			LoadFormatProps();
 		}
@@ -1011,7 +1010,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void PrintNotesCellHeader(IVwEnv vwenv, int analWs)
 		{
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, false);
-			vwenv.AddString(m_tssFact.MakeString(DiscourseStrings.ksNotesColumnHeader, analWs));
+			vwenv.AddString(m_tssFact.MakeString(LanguageExplorerResources.ksNotesColumnHeader, analWs));
 			vwenv.CloseTableCell();
 		}
 
@@ -1411,7 +1410,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void SetupMissingMarker()
 		{
-			m_missMkr = m_cache.TsStrFactory.MakeString(DiscourseStrings.ksMissingMarker, m_cache.DefaultAnalWs);
+			m_missMkr = m_cache.TsStrFactory.MakeString(LanguageExplorerResources.ksMissingMarker, m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
@@ -1629,8 +1628,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			if (!m_chart.BadChart)
 			{
-				MessageBox.Show(DiscourseStrings.ksFoundAndFixingInvalidDataCells,
-								DiscourseStrings.ksInvalidInternalConstituentChartData,
+				MessageBox.Show(LanguageExplorerResources.ksFoundAndFixingInvalidDataCells,
+								LanguageExplorerResources.ksInvalidInternalConstituentChartData,
 								MessageBoxButtons.OK, MessageBoxIcon.Information);
 				m_chart.BadChart = true;
 			}

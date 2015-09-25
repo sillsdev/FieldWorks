@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -615,9 +614,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// The last wordform in this row is "after" our ChOrph's logical position, but the first isn't
 		/// and the right Following Cell is in this row.
 		/// </summary>
-		/// <param name="iPara"></param>
-		/// <param name="offset"></param>
-		/// <param name="precCell"></param>
 		private int NarrowSearchBackward(int iPara, int offset, ChartLocation precCell, int icolFoll)
 		{
 			Debug.Assert(precCell != null && precCell.IsValidLocation);
@@ -969,7 +965,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal void MoveToColumnInUOW(int icol)
 		{
 			IConstChartRow modifiedRow = null;
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWordToColumn, DiscourseStrings.ksRedoMoveWordToColumn,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWordToColumn, LanguageExplorerResources.ksRedoMoveWordToColumn,
 				Cache.ActionHandlerAccessor, () => MoveToColumn(icol, out modifiedRow));
 			FireRowModifiedEvent(modifiedRow);
 		}
@@ -996,7 +992,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			modifiedRow = null;
 			var selectedWordforms = m_ribbon.SelectedOccurrences;
 			if (selectedWordforms == null || selectedWordforms.Length == 0)
-				return DiscourseStrings.ksNoWordformsMsg;
+				return LanguageExplorerResources.ksNoWordformsMsg;
 			Cache.ActionHandlerAccessor.AddAction(new UpdateRibbonAction(this, false));
 			int iPara, offset; // 'out' vars for IsChOrph()
 			var rowFinal = LastRow;
@@ -1012,7 +1008,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					var finalCell = new ChartLocation(rowFinal, icol);
 					MoveChOrphToColumn(iPara, offset, selectedWordforms, finalCell);
 				}
-				else return DiscourseStrings.ksChooseDifferentColumn;
+				else return LanguageExplorerResources.ksChooseDifferentColumn;
 			}
 			else
 			{
@@ -1177,9 +1173,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		public string MoveToHereInNewClause(int ihvo)
 		{
-			var result = DiscourseStrings.ksNoWordformsMsg;
+			var result = LanguageExplorerResources.ksNoWordformsMsg;
 			IConstChartRow modifiedRow = null;
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWordToColumn, DiscourseStrings.ksRedoMoveWordToColumn,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWordToColumn, LanguageExplorerResources.ksRedoMoveWordToColumn,
 				Cache.ActionHandlerAccessor, () =>
 			{
 				MakeNewRow();
@@ -1498,7 +1494,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (ccellsToDelete == 0 && crowsToDelete == 0)
 				return;
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoClearChart, DiscourseStrings.ksRedoClearChart,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoClearChart, LanguageExplorerResources.ksRedoClearChart,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				// Because of possible side effects of deleting cells and rows, we'll do it
@@ -1821,9 +1817,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var selectedWordforms = m_ribbon.SelectedOccurrences;
 			if (selectedWordforms == null || selectedWordforms.Length == 0)
-				return DiscourseStrings.ksNoWordformsMsg;
+				return LanguageExplorerResources.ksNoWordformsMsg;
 			IConstChartRow rowModified = null;
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMakeMoved, DiscourseStrings.ksRedoMakeMoved,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				MoveToColumn(icolActual, out rowModified);
@@ -2008,7 +2004,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (tag.TagRA == null)
 						// This is the missing marker
 					{
-						UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksRedoMarkMissing, DiscourseStrings.ksUndoMarkMissing,
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMarkMissing, LanguageExplorerResources.ksUndoMarkMissing,
 								Cache.ActionHandlerAccessor, () => cell.Row.CellsOS.Remove(tag));
 						break;
 					}
@@ -2018,7 +2014,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				var icellPartInsertAt = FindIndexOfFirstCellPartInOrAfterColumn(cell);
 				// Enhance JohnT: may want to make this configurable.
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMarkMissing, DiscourseStrings.ksRedoMarkMissing,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMarkMissing, LanguageExplorerResources.ksRedoMarkMissing,
 					Cache.ActionHandlerAccessor, () => MakeMissingMarker(cell, icellPartInsertAt));
 			}
 		}
@@ -2139,7 +2135,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			IConstChartClauseMarker newClauseMrkr = null;
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMakeDepClause, DiscourseStrings.ksRedoMakeDepClause,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeDepClause, LanguageExplorerResources.ksRedoMakeDepClause,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				// There's about to be something in the source cell.
@@ -2320,24 +2316,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Menu items for Moving cell contents.
 			if (CellContainsWordforms(clickedCell))
 			{
-				MakeMoveItems(clickedCell, menu, new EventHandler(itemMoveForward_Click),
-					new EventHandler(itemMoveBack_Click), DiscourseStrings.ksMoveMenuItem);
-				MakeMoveItems(clickedCell, menu, new EventHandler(itemMoveWordForward_Click),
-					new EventHandler(itemMoveWordBack_Click), DiscourseStrings.ksMoveWordMenuItem);
+				MakeMoveItems(clickedCell, menu, itemMoveForward_Click, itemMoveBack_Click, LanguageExplorerResources.ksMoveMenuItem);
+				MakeMoveItems(clickedCell, menu, itemMoveWordForward_Click, itemMoveWordBack_Click, LanguageExplorerResources.ksMoveWordMenuItem);
 			}
 
 			menu.Items.Add(new ToolStripSeparator());
 
 			// Menu items allowing the user to toggle whether the line ends a paragraph.
-			var itemREP = new OneValMenuItem(DiscourseStrings.ksRowEndsParaMenuItem, clickedCell.HvoRow);
-			itemREP.CheckState = clickedCell.Row.EndParagraph ? CheckState.Checked : CheckState.Unchecked;
-			itemREP.Click += new EventHandler(itemREP_Click);
+			var itemREP = new OneValMenuItem(LanguageExplorerResources.ksRowEndsParaMenuItem, clickedCell.HvoRow)
+			{
+				CheckState = clickedCell.Row.EndParagraph ? CheckState.Checked : CheckState.Unchecked
+			};
+			itemREP.Click += itemREP_Click;
 			menu.Items.Add(itemREP);
 
 			// Menu items allowing the user to toggle whether the line ends a sentence.
-			var itemRES = new OneValMenuItem(DiscourseStrings.ksRowEndsSentMenuItem, clickedCell.Row.Hvo);
-			itemRES.CheckState = clickedCell.Row.EndSentence ? CheckState.Checked : CheckState.Unchecked;
-			itemRES.Click += new EventHandler(itemRES_Click);
+			var itemRES = new OneValMenuItem(LanguageExplorerResources.ksRowEndsSentMenuItem, clickedCell.Row.Hvo)
+			{
+				CheckState = clickedCell.Row.EndSentence ? CheckState.Checked : CheckState.Unchecked
+			};
+			itemRES.Click += itemRES_Click;
 			menu.Items.Add(itemRES);
 
 			// Menu items allowing the cell to be visually merged with an empty cell to the left or right.
@@ -2348,9 +2346,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (clickedCell.ColIndex > 0 &&
 					IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex - 1)))
 				{
-					var itemMergeBefore = new RowColMenuItem(DiscourseStrings.ksMergeBeforeMenuItem,
+					var itemMergeBefore = new RowColMenuItem(LanguageExplorerResources.ksMergeBeforeMenuItem,
 						clickedCell);
-					itemMergeBefore.Click += new EventHandler(itemMergeBefore_Click);
+					itemMergeBefore.Click += itemMergeBefore_Click;
 					if (cellPart.MergesBefore)
 						itemMergeBefore.Checked = true;
 					menu.Items.Add(itemMergeBefore);
@@ -2358,35 +2356,35 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (clickedCell.ColIndex < AllMyColumns.Length - 1
 					&& IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex + 1)))
 				{
-					var itemMergeAfter = new RowColMenuItem(DiscourseStrings.ksMergeAfterMenuItem,
+					var itemMergeAfter = new RowColMenuItem(LanguageExplorerResources.ksMergeAfterMenuItem,
 						clickedCell);
 					var cellPartLast = FindCellPartInColumn(clickedCell, false);
 					if (cellPartLast.MergesAfter)
 						itemMergeAfter.Checked = true;
 					menu.Items.Add(itemMergeAfter);
-					itemMergeAfter.Click += new EventHandler(itemMergeAfter_Click);
+					itemMergeAfter.Click += itemMergeAfter_Click;
 				}
 			}
 
-			var itemNewRow = new RowColMenuItem(DiscourseStrings.ksInsertRowMenuItem, clickedCell);
+			var itemNewRow = new RowColMenuItem(LanguageExplorerResources.ksInsertRowMenuItem, clickedCell);
 			menu.Items.Add(itemNewRow);
-			itemNewRow.Click += new EventHandler(itemNewRow_Click);
+			itemNewRow.Click += itemNewRow_Click;
 
-			var itemCFH = new RowColMenuItem(DiscourseStrings.ksClearFromHereOnMenuItem, clickedCell);
+			var itemCFH = new RowColMenuItem(LanguageExplorerResources.ksClearFromHereOnMenuItem, clickedCell);
 			menu.Items.Add(itemCFH);
-			itemCFH.Click += new EventHandler(itemCFH_Click);
+			itemCFH.Click += itemCFH_Click;
 
 			menu.Items.Add(new ToolStripSeparator());
 
 			// Menu items for inserting arbitrary markers from the ChartMarkers list.
 			var chartMarkerList = Cache.LangProject.DiscourseDataOA.ChartMarkersOA;
-			GeneratePlMenuItems(menu, chartMarkerList, new EventHandler(ToggleMarker_Item_Click), clickedCell);
+			GeneratePlMenuItems(menu, chartMarkerList, ToggleMarker_Item_Click, clickedCell);
 
 			var mms = MissingState(clickedCell);
 			if (mms != MissingMarkerState.kmmsDoesNotApply)
 			{
-				var itemMissingMarker = new RowColMenuItem(DiscourseStrings.ksMarkMissingItem, clickedCell);
-				itemMissingMarker.Click += new EventHandler(itemMissingMarker_Click);
+				var itemMissingMarker = new RowColMenuItem(LanguageExplorerResources.ksMarkMissingItem, clickedCell);
+				itemMissingMarker.Click += itemMissingMarker_Click;
 				itemMissingMarker.Checked = (mms == MissingMarkerState.kmmsChecked);
 				menu.Items.Add(itemMissingMarker);
 			}
@@ -2492,20 +2490,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				if (!(part is IConstChartClauseMarker))
 					continue;
-				var itemR = new RowColMenuItem(DiscourseStrings.ksRemoveDependentMarkerMenuItem, srcCell);
-				itemR.Click += new EventHandler(itemR_Click);
+				var itemR = new RowColMenuItem(LanguageExplorerResources.ksRemoveDependentMarkerMenuItem, srcCell);
+				itemR.Click += itemR_Click;
 				menu.Items.Add(itemR);
 				return;
 			}
-			var itemMDC = MakeDepClauseItem(srcCell, irow, DiscourseStrings.ksMakeDepClauseMenuItem,
+			var itemMDC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeDepClauseMenuItem,
 				ClauseTypes.Dependent);
 			menu.Items.Add(itemMDC);
 
-			var itemMSC = MakeDepClauseItem(srcCell, irow, DiscourseStrings.ksMakeSpeechClauseMenuItem,
+			var itemMSC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSpeechClauseMenuItem,
 				ClauseTypes.Speech);
 			menu.Items.Add(itemMSC);
 
-			var itemMSoC = MakeDepClauseItem(srcCell, irow, DiscourseStrings.ksMakeSongClauseMenuItem,
+			var itemMSoC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSongClauseMenuItem,
 				ClauseTypes.Song);
 			menu.Items.Add(itemMSoC);
 		}
@@ -2524,7 +2522,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="cell"></param>
 		protected void RemoveDepClause(ChartLocation cell)
 		{
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoRemoveClauseMarker, DiscourseStrings.ksRedoRemoveClauseMarker,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoRemoveClauseMarker, LanguageExplorerResources.ksRedoRemoveClauseMarker,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var clauseMarker in PartsInCell(cell).OfType<IConstChartClauseMarker>())
@@ -2548,8 +2546,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var item = sender as RowColMenuItem;
 			var crowDel = m_chart.RowsOS.Count - item.SrcRow.IndexInOwner;
-			if (MessageBox.Show(String.Format(DiscourseStrings.ksDelRowWarning, crowDel),
-				DiscourseStrings.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+			if (MessageBox.Show(String.Format(LanguageExplorerResources.ksDelRowWarning, crowDel),
+				LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 			{
 				ClearChartFromHereOn(item.SrcCell);
 			}
@@ -2563,7 +2561,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void InsertRowInUOW(IConstChartRow prevRow)
 		{
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoInsertRow, DiscourseStrings.ksRedoInsertRow,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsertRow, LanguageExplorerResources.ksRedoInsertRow,
 							Cache.ActionHandlerAccessor, () => InsertRow(prevRow));
 		}
 
@@ -2583,13 +2581,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var itemMove = new ToolStripMenuItem(mainLabel);
 			if (TryGetNextCell(srcCell))
 			{
-				var itemMoveForward = new RowColMenuItem(DiscourseStrings.ksForwardMenuItem, srcCell);
+				var itemMoveForward = new RowColMenuItem(LanguageExplorerResources.ksForwardMenuItem, srcCell);
 				itemMoveForward.Click += forward;
 				itemMove.DropDownItems.Add(itemMoveForward);
 			}
 			if (TryGetPreviousCell(srcCell))
 			{
-				var itemMoveBack = new RowColMenuItem(DiscourseStrings.ksBackMenuItem, srcCell);
+				var itemMoveBack = new RowColMenuItem(LanguageExplorerResources.ksBackMenuItem, srcCell);
 				itemMoveBack.Click += backward;
 				itemMove.DropDownItems.Add(itemMoveBack);
 			}
@@ -2624,10 +2622,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			int icol = srcCell.ColIndex;
 			MakePreposedOrPostPosedMenuItem(menu, srcCell, 0, icol,
-				DiscourseStrings.ksPostposeFromMenuItem,
+				LanguageExplorerResources.ksPostposeFromMenuItem,
 				fMMDifferentRow && fMMBackward); // True if a MT Marker is already out there.
 			MakePreposedOrPostPosedMenuItem(menu, srcCell, icol + 1, AllMyColumns.Length,
-				DiscourseStrings.ksPreposeFromMenuItem,
+				LanguageExplorerResources.ksPreposeFromMenuItem,
 				fMMDifferentRow && fMMForward);
 		}
 
@@ -2648,7 +2646,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// If no subitems, don't make the parent.
 			// First check if another clause is possible?
-			bool fAnotherClausePossible = IsAnotherClausePossible(srcCell.Row, text == DiscourseStrings.ksPreposeFromMenuItem);
+			bool fAnotherClausePossible = IsAnotherClausePossible(srcCell.Row, text == LanguageExplorerResources.ksPreposeFromMenuItem);
 			if ((icolStart >= icolLim) && !fMarkerPresent && !fAnotherClausePossible)
 				return;
 			var itemMTSubmenu = new ToolStripMenuItem(text);
@@ -2656,17 +2654,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			for (int i = icolStart; i < icolLim; i++)
 			{
 				var itemCol = new TwoColumnMenuItem(GetColumnLabel(i), srcCell.ColIndex, i, srcCell.Row);
-				itemCol.Click += new EventHandler(itemCol_Click);
+				itemCol.Click += itemCol_Click;
 				itemCol.Checked = IsMarkedAsMovedFrom(srcCell, i);
 				itemMTSubmenu.DropDownItems.Add(itemCol);
 			}
 			// We always need the "Advanced..." option if IsAnotherClausePossible is true, or there are available columns.
-			RowColMenuItem itemAdvanced = new RowColMenuItem(DiscourseStrings.ksAdvancedDlgMenuItem, srcCell);
+			RowColMenuItem itemAdvanced = new RowColMenuItem(LanguageExplorerResources.ksAdvancedDlgMenuItem, srcCell);
 			itemMTSubmenu.DropDownItems.Add(itemAdvanced);
-			if (text == DiscourseStrings.ksPreposeFromMenuItem)
-				itemAdvanced.Click += new EventHandler(itemAnotherPre_Click);
+			if (text == LanguageExplorerResources.ksPreposeFromMenuItem)
+				itemAdvanced.Click += itemAnotherPre_Click;
 			else
-				itemAdvanced.Click += new EventHandler(itemAnotherPost_Click);
+				itemAdvanced.Click += itemAnotherPost_Click;
 			if (fMarkerPresent)
 				itemAdvanced.Checked = true;
 		}
@@ -2751,7 +2749,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Go find the marker that points to this cell and remove it.
 				var marker = FindMovedMarkerOtherRow(srcCell, fPrepose);
 				var markerCell = new ChartLocation((IConstChartRow)marker.Owner, IndexOfColumnForCellPart(marker));
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksRedoMakeMoved, DiscourseStrings.ksUndoMakeMoved,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMakeMoved, LanguageExplorerResources.ksUndoMakeMoved,
 											Cache.ActionHandlerAccessor, () => RemoveMovedFrom(srcCell, marker));
 				return;
 			}
@@ -2777,7 +2775,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var fromRow = dlg.SelectedRow.Row;
 			var iColMovedFrom = IndexOfColumn(dlg.SelectedColumn.Column);
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMakeMoved, DiscourseStrings.ksRedoMakeMoved,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 				Cache.ActionHandlerAccessor, () =>
 			{
 				// LT-7668 If user chooses to make a movedText marker and one exists already for this cell
@@ -2945,7 +2943,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		protected virtual void DisplayWarning()
 		{
-			MessageBox.Show(DiscourseStrings.ksTextEditWarning, DiscourseStrings.ksWarning,
+			MessageBox.Show(LanguageExplorerResources.ksTextEditWarning, LanguageExplorerResources.ksWarning,
 							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
@@ -3007,13 +3005,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var srcCell = new ChartLocation(item.Row, item.Source);
 			var dstCell = new ChartLocation(item.Row, item.Destination);
 			if (item.Checked)
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksRedoMakeMoved, DiscourseStrings.ksUndoMakeMoved,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMakeMoved, LanguageExplorerResources.ksUndoMakeMoved,
 											Cache.ActionHandlerAccessor, () => RemoveMovedFrom(dstCell, srcCell));
 			else
 			{
 				var wordGrp = FindFirstWordGroup(PartsInCell(dstCell));
 
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMakeMoved, DiscourseStrings.ksRedoMakeMoved,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 											Cache.ActionHandlerAccessor, () =>
 				{
 					IConstChartMovedTextMarker mtmarker;
@@ -3069,7 +3067,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var markerRefs = SelectListItemReferences(PartsInCell(cell));
 			foreach (var poss in list.PossibilitiesOS)
 			{
-				menu.Items.Add(MakePlItem(clickHandler, cell, poss, markerRefs, DiscourseStrings.ksMarkMenuItemFormat));
+				menu.Items.Add(MakePlItem(clickHandler, cell, poss, markerRefs, LanguageExplorerResources.ksMarkMenuItemFormat));
 			}
 		}
 
@@ -3130,12 +3128,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public void AddOrRemoveMarker(RowColPossibilityMenuItem item)
 		{
 			if (item.Checked)
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoRemoveMarker, DiscourseStrings.ksRedoRemoveMarker,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoRemoveMarker, LanguageExplorerResources.ksRedoRemoveMarker,
 					Cache.ActionHandlerAccessor, () => RemoveListItemPart(item.SrcCell, item.m_hvoPoss));
 			else
 			{
 				var icellPartInsertAt = FindIndexOfCellPartInLaterColumn(item.SrcCell);
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoAddMarker, DiscourseStrings.ksRedoAddMarker,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddMarker, LanguageExplorerResources.ksRedoAddMarker,
 					Cache.ActionHandlerAccessor, () => MakeChartTag(item.SrcCell, item.m_hvoPoss, icellPartInsertAt));
 			}
 		}
@@ -3160,9 +3158,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (irowSrc > 0)
 			{
 				// put in just one 'previous clause' item.
-				var item = new DepClauseMenuItem(DiscourseStrings.ksPreviousClauseMenuItem,
+				var item = new DepClauseMenuItem(LanguageExplorerResources.ksPreviousClauseMenuItem,
 					srcCell, new [] { m_chart.RowsOS[irowSrc - 1] });
-				item.Click += new EventHandler(itemDC_Click);
+				item.Click += itemDC_Click;
 				item.DepType = depType;
 				itemMDC.DropDownItems.Add(item);
 			}
@@ -3172,19 +3170,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				string label;
 				switch (irow - irowSrc)
 				{
-					case 1: label = DiscourseStrings.ksNextClauseMenuItem; break;
-					case 2: label = DiscourseStrings.ksNextTwoClausesMenuItem; break;
-					default: label = String.Format(DiscourseStrings.ksNextNClausesMenuItem, (irow - irowSrc)); break;
+					case 1: label = LanguageExplorerResources.ksNextClauseMenuItem; break;
+					case 2: label = LanguageExplorerResources.ksNextTwoClausesMenuItem; break;
+					default: label = string.Format(LanguageExplorerResources.ksNextNClausesMenuItem, (irow - irowSrc)); break;
 				}
 				depClauseRows.Add(m_chart.RowsOS[irow]);
 				var item = new DepClauseMenuItem(label, srcCell, depClauseRows.ToArray());
-				item.Click += new EventHandler(itemDC_Click);
+				item.Click += itemDC_Click;
 				itemMDC.DropDownItems.Add(item);
 				item.DepType = depType;
 			}
-			var itemOther = new DepClauseMenuItem(DiscourseStrings.ksOtherMenuItem, srcCell, null);
+			var itemOther = new DepClauseMenuItem(LanguageExplorerResources.ksOtherMenuItem, srcCell, null);
 			itemMDC.DropDownItems.Add(itemOther);
-			itemOther.Click += new EventHandler(itemOther_Click);
+			itemOther.Click += itemOther_Click;
 			itemOther.DepType = depType;
 
 			return itemMDC;
@@ -3258,14 +3256,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var irow = curRow.IndexInOwner;
 
 			if (curRow.EndParagraph)
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksRedoLastRowInPara, DiscourseStrings.ksUndoLastRowInPara,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoLastRowInPara, LanguageExplorerResources.ksUndoLastRowInPara,
 					Cache.ActionHandlerAccessor, () => curRow.EndParagraph = false);
 			else
 			{
 				// Save EOS state for determining if we need to renumber rows
 				fSentWasOn = curRow.EndSentence;
 
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoLastRowInPara, DiscourseStrings.ksRedoLastRowInPara,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoLastRowInPara, LanguageExplorerResources.ksRedoLastRowInPara,
 											Cache.ActionHandlerAccessor, () =>
 				{
 					// Set both EOP and EOS
@@ -3294,7 +3292,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			if (curRow.EndSentence)
 			{
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksRedoLastRowInSent, DiscourseStrings.ksUndoLastRowInSent,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoLastRowInSent, LanguageExplorerResources.ksUndoLastRowInSent,
 											Cache.ActionHandlerAccessor, () =>
 				{
 					// unchecking EOS, unchecks EOP too
@@ -3306,7 +3304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				});
 			}
 			else
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoLastRowInSent, DiscourseStrings.ksRedoLastRowInSent,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoLastRowInSent, LanguageExplorerResources.ksRedoLastRowInSent,
 											Cache.ActionHandlerAccessor, () =>
 				{
 					curRow.EndSentence = true;
@@ -3341,7 +3339,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		public string ToggleMergedCellFlag(ChartLocation srcCell, bool following)
 		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(DiscourseStrings.ksUndoMergeCells, DiscourseStrings.ksRedoMergeCells,
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LanguageExplorerResources.ksUndoMergeCells, LanguageExplorerResources.ksRedoMergeCells,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				var cellPart = FindCellPartInColumn(srcCell, false);
@@ -3377,17 +3375,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var menu = new ContextMenuStrip();
 
-			var itemNewClause = new OneValMenuItem(DiscourseStrings.ksMoveHereInNewClause, icol);
-			itemNewClause.Click += new EventHandler(itemNewClause_Click);
+			var itemNewClause = new OneValMenuItem(LanguageExplorerResources.ksMoveHereInNewClause, icol);
+			itemNewClause.Click += itemNewClause_Click;
 			menu.Items.Add(itemNewClause);
 
-			var itemMT = new ToolStripMenuItem(DiscourseStrings.ksMovedFromMenuItem);
+			var itemMT = new ToolStripMenuItem(LanguageExplorerResources.ksMovedFromMenuItem);
 			for (int ihvo = 0; ihvo < AllMyColumns.Length; ihvo++)
 			{
 				if (ihvo == icol)
 					continue;
 				var item = new TwoColumnMenuItem(GetColumnLabel(ihvo), icol, ihvo);
-				item.Click += new EventHandler(InsertMovedText_Click);
+				item.Click += InsertMovedText_Click;
 				itemMT.DropDownItems.Add(item);
 			}
 			menu.Items.Add(itemMT);
@@ -3634,7 +3632,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Normal case, merging/moving to cell on same row.
 				prevCell = new ChartLocation(srcCell.Row, srcCell.ColIndex - 1);
 			}
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveCellBack, DiscourseStrings.ksRedoMoveCellBack,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveCellBack, LanguageExplorerResources.ksRedoMoveCellBack,
 										Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, prevCell, false));
 		}
 
@@ -3674,7 +3672,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Normal case, merging/moving to cell on same row.
 				dstCell = new ChartLocation(srcCell.Row, srcCell.ColIndex + 1);
 			}
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveCellForward, DiscourseStrings.ksRedoMoveCellForward,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveCellForward, LanguageExplorerResources.ksRedoMoveCellForward,
 										Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, dstCell, true));
 		}
 
@@ -3710,12 +3708,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (srcWordGroup.GetOccurrences().Count() == 1 &&
 				(listOfPartsInSrc.Count == ipartInCell + 1 || FindFirstWordGroup(listOfPartsInSrc.GetRange(ipartInCell + 1, listOfPartsInSrc.Count - 1)) == null))
 			{
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWord, DiscourseStrings.ksRedoMoveWord,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 											Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, dstCell, false));
 				return;
 			}
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWord, DiscourseStrings.ksRedoMoveWord,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
@@ -3763,12 +3761,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (srcWordGroup.GetOccurrences().Count == 1 &&
 				(listOfPartsInSrc.Count == 1 || (ipartInCell > 0 && FindLastWordGroup(listOfPartsInSrc.GetRange(0, ipartInCell - 1)) == null)))
 			{
-				UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWord, DiscourseStrings.ksRedoMoveWord,
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 											Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, dstCell, true));
 				return;
 			}
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoMoveWord, DiscourseStrings.ksRedoMoveWord,
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 										Cache.ActionHandlerAccessor, () =>
 			{
 				// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
@@ -3851,188 +3849,188 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		#region for test only
 		static public string FTO_MovedTextMenuText
 		{
-			get { return DiscourseStrings.ksMovedFromMenuItem; }
+			get { return LanguageExplorerResources.ksMovedFromMenuItem; }
 		}
 		static public string FTO_InsertAsClauseMenuText
 		{
-			get { return DiscourseStrings.ksMoveHereInNewClause; }
+			get { return LanguageExplorerResources.ksMoveHereInNewClause; }
 		}
 		static public string FTO_MovedTextBefore
 		{
-			get { return DiscourseStrings.ksMovedTextBefore; }
+			get { return LanguageExplorerResources.ksMovedTextBefore; }
 		}
 		static public string FTO_MovedTextAfter
 		{
-			get { return DiscourseStrings.ksMovedTextAfter; }
+			get { return LanguageExplorerResources.ksMovedTextAfter; }
 		}
 		static public string FTO_InsertMissingMenuText
 		{
-			get { return DiscourseStrings.ksMarkMissingItem; }
+			get { return LanguageExplorerResources.ksMarkMissingItem; }
 		}
 		static public string FTO_MakeDepClauseMenuText
 		{
-			get { return DiscourseStrings.ksMakeDepClauseMenuItem; }
+			get { return LanguageExplorerResources.ksMakeDepClauseMenuItem; }
 		}
 		static public string FTO_MakeSpeechClauseMenuItem
 		{
-			get { return DiscourseStrings.ksMakeSpeechClauseMenuItem; }
+			get { return LanguageExplorerResources.ksMakeSpeechClauseMenuItem; }
 		}
 		static public string FTO_MakeSongClauseMenuItem
 		{
-			get { return DiscourseStrings.ksMakeSongClauseMenuItem; }
+			get { return LanguageExplorerResources.ksMakeSongClauseMenuItem; }
 		}
 		static public string FTO_PreviousClauseMenuItem
 		{
-			get { return DiscourseStrings.ksPreviousClauseMenuItem; }
+			get { return LanguageExplorerResources.ksPreviousClauseMenuItem; }
 		}
 		static public string FTO_NextClauseMenuItem
 		{
-			get { return DiscourseStrings.ksNextClauseMenuItem; }
+			get { return LanguageExplorerResources.ksNextClauseMenuItem; }
 		}
 		static public string FTO_NextTwoClausesMenuItem
 		{
-			get { return DiscourseStrings.ksNextTwoClausesMenuItem; }
+			get { return LanguageExplorerResources.ksNextTwoClausesMenuItem; }
 		}
 		static public string FTO_NextNClausesMenuItem
 		{
-			get { return DiscourseStrings.ksNextNClausesMenuItem; }
+			get { return LanguageExplorerResources.ksNextNClausesMenuItem; }
 		}
 		static public string FTO_RowEndsParaMenuItem
 		{
-			get { return DiscourseStrings.ksRowEndsParaMenuItem; }
+			get { return LanguageExplorerResources.ksRowEndsParaMenuItem; }
 		}
 		static public string FTO_RowEndsSentMenuItem
 		{
-			get { return DiscourseStrings.ksRowEndsSentMenuItem; }
+			get { return LanguageExplorerResources.ksRowEndsSentMenuItem; }
 		}
 		static public string FTO_MergeAfterMenuItem
 		{
-			get { return DiscourseStrings.ksMergeAfterMenuItem; }
+			get { return LanguageExplorerResources.ksMergeAfterMenuItem; }
 		}
 		static public string FTO_MergeBeforeMenuItem
 		{
-			get { return DiscourseStrings.ksMergeBeforeMenuItem; }
+			get { return LanguageExplorerResources.ksMergeBeforeMenuItem; }
 		}
 		static public string FTO_UndoMoveCellForward
 		{
-			get { return DiscourseStrings.ksUndoMoveCellForward; }
+			get { return LanguageExplorerResources.ksUndoMoveCellForward; }
 		}
 		static public string FTO_RedoMoveCellForward
 		{
-			get { return DiscourseStrings.ksRedoMoveCellForward; }
+			get { return LanguageExplorerResources.ksRedoMoveCellForward; }
 		}
 		static public string FTO_MoveMenuItem
 		{
-			get { return DiscourseStrings.ksMoveMenuItem; }
+			get { return LanguageExplorerResources.ksMoveMenuItem; }
 		}
 		static public string FTO_ForwardMenuItem
 		{
-			get { return DiscourseStrings.ksForwardMenuItem; }
+			get { return LanguageExplorerResources.ksForwardMenuItem; }
 		}
 		static public string FTO_BackMenuItem
 		{
-			get { return DiscourseStrings.ksBackMenuItem; }
+			get { return LanguageExplorerResources.ksBackMenuItem; }
 		}
 		static public string FTO_UndoMoveCellBack
 		{
-			get { return DiscourseStrings.ksUndoMoveCellBack; }
+			get { return LanguageExplorerResources.ksUndoMoveCellBack; }
 		}
 		static public string FTO_RedoMoveCellBack
 		{
-			get { return DiscourseStrings.ksRedoMoveCellBack; }
+			get { return LanguageExplorerResources.ksRedoMoveCellBack; }
 		}
 
 		static public string FTO_PreposeFromMenuItem
 		{
-			get { return DiscourseStrings.ksPreposeFromMenuItem; }
+			get { return LanguageExplorerResources.ksPreposeFromMenuItem; }
 		}
 		static public string FTO_PostposeFromMenuItem
 		{
-			get { return DiscourseStrings.ksPostposeFromMenuItem; }
+			get { return LanguageExplorerResources.ksPostposeFromMenuItem; }
 		}
 		static public string FTO_AnotherClause
 		{
-			get { return DiscourseStrings.ksAdvancedDlgMenuItem; }
+			get { return LanguageExplorerResources.ksAdvancedDlgMenuItem; }
 		}
 		static public string FTO_UndoPreposeFrom
 		{
-			get { return DiscourseStrings.ksUndoPreposeFrom; }
+			get { return LanguageExplorerResources.ksUndoPreposeFrom; }
 		}
 		static public string FTO_RedoPreposeFrom
 		{
-			get { return DiscourseStrings.ksRedoPreposeFrom; }
+			get { return LanguageExplorerResources.ksRedoPreposeFrom; }
 		}
 		static public string FTO_UndoPostposeFrom
 		{
-			get { return DiscourseStrings.ksUndoPostposeFrom; }
+			get { return LanguageExplorerResources.ksUndoPostposeFrom; }
 		}
 		static public string FTO_RedoPostposeFrom
 		{
-			get { return DiscourseStrings.ksRedoPostposeFrom; }
+			get { return LanguageExplorerResources.ksRedoPostposeFrom; }
 		}
 		static public string FTO_UndoMoveWord
 		{
-			get { return DiscourseStrings.ksUndoMoveWord; }
+			get { return LanguageExplorerResources.ksUndoMoveWord; }
 		}
 		static public string FTO_RedoMoveWord
 		{
-			get { return DiscourseStrings.ksRedoMoveWord; }
+			get { return LanguageExplorerResources.ksRedoMoveWord; }
 		}
 		static public string FTO_MoveWordMenuItem
 		{
-			get { return DiscourseStrings.ksMoveWordMenuItem; }
+			get { return LanguageExplorerResources.ksMoveWordMenuItem; }
 		}
 		static public string FTO_InsertRowMenuItem
 		{
-			get { return DiscourseStrings.ksInsertRowMenuItem; }
+			get { return LanguageExplorerResources.ksInsertRowMenuItem; }
 		}
 		static public string FTO_UndoInsertRow
 		{
-			get { return DiscourseStrings.ksUndoInsertRow; }
+			get { return LanguageExplorerResources.ksUndoInsertRow; }
 		}
 		static public string FTO_RedoInsertRow
 		{
-			get { return DiscourseStrings.ksRedoInsertRow; }
+			get { return LanguageExplorerResources.ksRedoInsertRow; }
 		}
 		static public string FTO_UndoAddMarker
 		{
-			get { return DiscourseStrings.ksUndoAddMarker; }
+			get { return LanguageExplorerResources.ksUndoAddMarker; }
 		}
 		static public string FTO_RedoAddMarker
 		{
-			get { return DiscourseStrings.ksRedoAddMarker; }
+			get { return LanguageExplorerResources.ksRedoAddMarker; }
 		}
 		static public string FTO_ClearFromHereOnMenuItem
 		{
-			get { return DiscourseStrings.ksClearFromHereOnMenuItem; }
+			get { return LanguageExplorerResources.ksClearFromHereOnMenuItem; }
 		}
 		static public string FTO_UndoClearChart
 		{
-			get { return DiscourseStrings.ksUndoClearChart; }
+			get { return LanguageExplorerResources.ksUndoClearChart; }
 		}
 		static public string FTO_RedoClearChart
 		{
-			get { return DiscourseStrings.ksRedoClearChart; }
+			get { return LanguageExplorerResources.ksRedoClearChart; }
 		}
 		static public string FTO_OtherMenuItem
 		{
-			get { return DiscourseStrings.ksOtherMenuItem; }
+			get { return LanguageExplorerResources.ksOtherMenuItem; }
 		}
 		static public string FTO_RedoRemoveClauseMarker
 		{
-			get { return DiscourseStrings.ksRedoRemoveClauseMarker; }
+			get { return LanguageExplorerResources.ksRedoRemoveClauseMarker; }
 		}
 		static public string FTO_UndoRemoveClauseMarker
 		{
-			get { return DiscourseStrings.ksUndoRemoveClauseMarker; }
+			get { return LanguageExplorerResources.ksUndoRemoveClauseMarker; }
 		}
 		static public string FTO_UndoMakeNewRow
 		{
-			get { return DiscourseStrings.ksUndoMakeNewRow; }
+			get { return LanguageExplorerResources.ksUndoMakeNewRow; }
 		}
 		static public string FTO_RedoMakeNewRow
 		{
-			get { return DiscourseStrings.ksRedoMakeNewRow; }
+			get { return LanguageExplorerResources.ksRedoMakeNewRow; }
 		}
 		#endregion for test only
 
@@ -4072,7 +4070,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// Add one more column for notes.
 			var ch = new ColumnHeader();
-			ch.Text = DiscourseStrings.ksNotesColumnHeader;
+			ch.Text = LanguageExplorerResources.ksNotesColumnHeader;
 			view.Columns.Add(ch);
 		}
 
@@ -4082,11 +4080,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			foreach (var col in AllMyColumns)
 			{
-				var ch = new ColumnHeader();
-
-				// ensure NFC -- See LT-8815.
-				//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
-				ch.Text = col.Name.BestAnalysisAlternative.Text.Normalize();
+				var ch = new ColumnHeader
+				{
+					Text = col.Name.BestAnalysisAlternative.Text.Normalize()
+				};
 				if (ChartIsRtL)
 					view.Columns.Insert(1, ch); // should be safe because the Notes column will get added first.
 				else
@@ -4098,8 +4095,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeRowNumberColumnHeader(ListView view)
 		{
-			var ch = new ColumnHeader();
-			ch.Text = ""; // otherwise default is 'column header'!
+			var ch = new ColumnHeader
+			{
+				Text = string.Empty
+			};
+			// otherwise default is 'column header'!
 			view.Columns.Add(ch);
 		}
 
@@ -4231,7 +4231,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				foreach (var part in row.CellsOS)
 				{
 					if (part.Hvo == hvoTarget)
-						return cPrevMovedText == 0 ? false : true;
+						return cPrevMovedText != 0;
 					if (IsMovedText(part))
 						cPrevMovedText++;
 				}

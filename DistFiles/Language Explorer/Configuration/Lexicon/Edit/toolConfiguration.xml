@@ -48,7 +48,7 @@
 											suppressInfoBar="ifNotFirst" layout="Normal" treeBarAvailability="NotAllowed" emptyTitleId="No-LexEntries"
 											printLayout="publishStem">
 											<menuHandler>
-												<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
+												<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler"/>
 											</menuHandler>
 										</parameters>
 									</control>

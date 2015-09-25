@@ -45,9 +45,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_bottomStuff.ResumeLayout();
 
 			// Setup localized dialog
-			SetCaption(fPrepose ? DiscourseStrings.ksAdvDlgPreposeCaption : DiscourseStrings.ksAdvDlgPostposeCaption);
-			SetMainText(fPrepose ? DiscourseStrings.ksAdvDlgMainPreText : DiscourseStrings.ksAdvDlgMainPostText);
-			SetPartialText(fPrepose ? DiscourseStrings.ksAdvDlgPartialPre : DiscourseStrings.ksAdvDlgPartialPost);
+			SetCaption(fPrepose ? LanguageExplorerResources.ksAdvDlgPreposeCaption : LanguageExplorerResources.ksAdvDlgPostposeCaption);
+			SetMainText(fPrepose ? LanguageExplorerResources.ksAdvDlgMainPreText : LanguageExplorerResources.ksAdvDlgMainPostText);
+			SetPartialText(fPrepose ? LanguageExplorerResources.ksAdvDlgPartialPre : LanguageExplorerResources.ksAdvDlgPartialPost);
 
 			ResumeLayout();
 

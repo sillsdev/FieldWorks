@@ -47,7 +47,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Participants" type="Detail">
-			<slice field="Participants" label="Participants" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RoledParticipantsSlice">
+			<slice field="Participants" label="Participants" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RoledParticipantsSlice">
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
 					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
@@ -137,23 +137,23 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-SeeAlso" type="Detail">
-			<slice field="SeeAlso" label="See Also" editor="custom" assemblyPath="LexEdDll.dll"
-			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			<slice field="SeeAlso" label="See Also" editor="custom" assemblyPath="LanguageExplorer.dll"
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-SupportingEvidence" type="Detail">
-			<slice field="SupportingEvidence" label="Supporting Evidence" editor="custom" assemblyPath="LexEdDll.dll"
-			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			<slice field="SupportingEvidence" label="Supporting Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-CounterEvidence" type="Detail">
-			<slice field="CounterEvidence" label="Counter Evidence" editor="custom" assemblyPath="LexEdDll.dll"
-			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			<slice field="CounterEvidence" label="Counter Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-SupersededBy" type="Detail">
-			<slice field="SupersededBy" label="Superseded By" editor="custom" assemblyPath="LexEdDll.dll"
-			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			<slice field="SupersededBy" label="Superseded By" editor="custom" assemblyPath="LanguageExplorer.dll"
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
 		</part>
 
 		<part id="RnGenericRec-Jt-Title" type="jtview">

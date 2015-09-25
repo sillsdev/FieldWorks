@@ -728,7 +728,7 @@ InterlinMaster user:
 			labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small"
 			labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser, ArchiveWithRamp"/>
-		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryImages" field="buttonImages" size="small"
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryImages" field="buttonImages" size="small"
 			labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry"/>
 		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small"
 			labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst"/>
@@ -754,7 +754,7 @@ InterlinMaster user:
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
-		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.FLExBridgeListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.CombinedStylesListHandler"/>

@@ -52,6 +52,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="DetailControls, Version=9.0.0.22999, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\DetailControls.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=9.0.0.26689, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FDO.dll</HintPath>
@@ -59,6 +63,14 @@
     <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwCoreDlgs, Version=9.0.0.22997, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils, Version=9.0.0.22994, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="ITextDll, Version=9.0.0.26705, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -100,6 +112,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="XMLViews, Version=9.0.0.22998, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>
+    </Reference>
     <Reference Include="xWorks, Version=9.0.0.26702, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\xWorks.dll</HintPath>
@@ -132,6 +148,12 @@
     <Compile Include="Discourse\LogicTest.cs" />
     <Compile Include="Discourse\NotifyChangeSpy.cs" />
     <Compile Include="Discourse\TestCCLogic.cs" />
+    <Compile Include="Dumpster\FlexBridgeListenerTests.cs" />
+    <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
+    <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />
@@ -145,6 +167,7 @@
     <None Include="BuildInclude.targets" />
     <None Include="gendarme-LanguageExplorerTests.ignore" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

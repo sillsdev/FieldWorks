@@ -76,10 +76,10 @@
 	<controls>
 		<parameters id="guicontrols">
 			<guicontrol id="findExampleSentences">
-				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FindExampleSentenceDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg"/>
 				<parameters id="senseConcordanceControls">
 					<control id="ConcOccurrenceList">
-						<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ConcOccurrenceBrowseView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcOccurrenceBrowseView"/>
 						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false"
 							clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
 							<include path="../Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
@@ -308,7 +308,7 @@
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener"/>
-		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalListener">
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalListener">
 			<parameters clerk="AllReversalEntries"/>
 		</listener>
 	</listeners>
@@ -341,9 +341,9 @@
 					</sortMethods>
 				</clerk>
 				<clerk id="AllReversalEntries">
-					<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalEntryClerk"/>
 					<recordList owner="ReversalIndex" property="AllEntries">
-						<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.AllReversalEntriesRecordList"/>
 					</recordList>
 					<filters/>
 					<sortMethods>

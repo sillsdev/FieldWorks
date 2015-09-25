@@ -15,6 +15,9 @@ T: LanguageExplorerTests.SilSidePaneTests.OutlookBarButtonTests
 T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests_UnspecifiedItemAreaStyle
 T: LanguageExplorerTests.SilSidePaneTests.SidePaneTests
 
+# Test cache disposed in TearDown methods
+T: LanguageExplorerTests.Grammar.GoldEticGuidFixerTests
+
 #-------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 # variable is passed in, so we shouldn't dispose it

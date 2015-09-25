@@ -5,9 +5,9 @@
 	<!-- ********************************************************** -->
 	<clerks>
 		<clerk id="ReversalEntriesPOS">
-			<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryPOSClerk"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS.ReversalEntryPOSClerk"/>
 			<recordList owner="ReversalIndex" property="PartsOfSpeech">
-				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexPOSRecordList"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS.ReversalIndexPOSRecordList"/>
 			</recordList>
 			<filters/>
 			<sortMethods>
@@ -45,7 +45,7 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 								<parameters area="lists" clerk="ReversalEntriesPOS" treeBarAvailability="NotAllowed" persistContext="listsEdit" layout="Reversal" emptyTitleId="No-PartsOfSpeech">
 									<menuHandler>
-										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalPOSMenuHandler"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS.ReversalPOSMenuHandler"/>
 									</menuHandler>
 								</parameters>
 							</control>

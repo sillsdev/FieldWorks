@@ -167,10 +167,10 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromMsFeatures" type="Detail">
-			<slice label="From Inflection Features" field="FromMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="From Inflection Features" field="FromMsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToMsFeatures" type="Detail">
-			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
 			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
@@ -413,13 +413,13 @@
 		</part>
 	<part id="MoAffixAllomorph-Detail-MsEnvFeatures" type="Detail">
 	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
-		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"
 			   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-MsEnvFeatures"/>
 	  </if>
 	</part>
 	<part id="MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm" type="Detail">
 	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
-		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 	  </if>
 	</part>
   </bin>
@@ -513,7 +513,7 @@
 			</slice>
 		</part>
 		<part id="MoInflAffMsa-Detail-InflFeats" type="Detail">
-			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
 			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
@@ -640,7 +640,7 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-MsFeatures" type="Detail">
-			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
 			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
@@ -724,7 +724,7 @@
 		<part id="MoMorphSynAnalysis-Detail-MainEdit" type="Detail">
 			<!-- Implements what should be the first thing shown for all MSA classes,
 			which allows editing of an MSA in a dlg. -->
-			<slice label="Category Info." editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MSADlgLauncherSlice"/>
+			<slice label="Category Info." editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MSADlgLauncherSlice"/>
 		</part>
 		<part id="MoMorphSynAnalysis-Jt-Unknown" type="jtview">
 			<!-- Implements the default layout which all classes should override -->
@@ -1716,10 +1716,10 @@
 	</bin>
 	<bin class="FsFeatStruc">
 		<part id="FsFeatStruc-Detail-FeatureSpecs" type="Detail">
-			<slice label="Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Features" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="FsFeatStruc-Detail-RegionFeatureSpecs" type="Detail">
-			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="FsFeatStruc-Detail-Type" type="Detail">
 			<slice field="Type" label="Feature Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
@@ -2511,7 +2511,7 @@
 	  </span>
 	</part>
 	<part id="PhPhoneme-Detail-Features" type="Detail">
-	  <slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice">
+	  <slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit.PhonologicalFeatureListDlgLauncherSlice">
 		  <deParams ws="best vernacular" displayProperty="LongName"/>
 		<chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
 		  <chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
@@ -2558,7 +2558,7 @@
 
   <bin class="PhNCFeatures">
 	<part id="PhNCFeatures-Detail-Features" type="Detail">
-	<slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice">
+	<slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit.PhonologicalFeatureListDlgLauncherSlice">
 	  <deParams ws="best vernacular"/>
 	  <chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
 		<chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>

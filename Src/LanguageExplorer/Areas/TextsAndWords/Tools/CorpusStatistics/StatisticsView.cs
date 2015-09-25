@@ -177,8 +177,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-				_toolStripView = (ToolStrip)toolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false)[0];
+				_toolStripViewCreatedLocally = false;
+				_toolStripView = (ToolStrip)toolbars[0];
 			}
 			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
 			{

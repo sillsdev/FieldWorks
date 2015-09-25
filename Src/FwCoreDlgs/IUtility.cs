@@ -17,6 +17,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Set the UtilityDlg.
 		/// </summary>
+		/// <remarks>
+		/// This must be set, before calling any other property or method.
+		/// </remarks>
 		UtilityDlg Dialog {set;}
 
 		/// <summary>
