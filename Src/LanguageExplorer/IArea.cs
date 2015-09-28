@@ -10,7 +10,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for each Area in the main IFwMainWnd
 	/// </summary>
-	public interface IArea : IMajorFlexUiComponent
+	internal interface IArea : IMajorFlexUiComponent
 	{
 		/// <summary>
 		/// Get the most recently persisted tool, or the default tool if

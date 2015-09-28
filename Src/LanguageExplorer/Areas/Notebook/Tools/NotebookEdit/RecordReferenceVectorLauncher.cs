@@ -12,7 +12,7 @@ using SIL.FieldWorks.LexText.Controls;
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
 	/// <summary />
-	internal class RecordReferenceVectorLauncher : VectorReferenceLauncher
+	internal sealed class RecordReferenceVectorLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

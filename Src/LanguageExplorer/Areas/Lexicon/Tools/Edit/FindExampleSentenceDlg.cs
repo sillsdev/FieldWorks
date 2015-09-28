@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -180,19 +181,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
 			};
 
-#if RANDYTODO
-			// TODO: Block while BasicPaneBarContainer is moving out of xcore and into LanguageExplorer.
-			// TODO: Re-enable when this gets moved into LanguageExplorer.
-			// TODO: That will keep this project from needing to depend on LanguageExplorer.
 			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
 #if RANDYTODO
 			// TODO: replace following null with IPaneBar impl.
 #endif
 			pbc.Init(PropertyTable, m_previewPane, null);
 			pbc.Dock = DockStyle.Fill;
-			pbc.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgPreviewPaneTitle;
+			pbc.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
-#endif
 			if (m_previewPane.RootBox == null)
 				m_previewPane.MakeRoot();
 
@@ -210,10 +206,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_rbv.Init(m_previewPane, m_clerk.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
-#if RANDYTODO
-			// TODO: Block while BasicPaneBarContainer is moving out of xcore and into LanguageExplorer.
-			// TODO: Re-enable when this gets moved into LanguageExplorer.
-			// TODO: That will keep this project from needing to depend on LanguageExplorer.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
 #if RANDYTODO
 			// TODO: replace following null with IPaneBar impl.
@@ -221,9 +213,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			pbc1.Init(PropertyTable, m_rbv, null);
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;
-			pbc1.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgBrowseViewPaneTitle;
+			pbc1.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgBrowseViewPaneTitle;
 			panel1.Controls.Add(pbc1);
-#endif
 
 			CheckAddBtnEnabling();
 		}
@@ -319,47 +310,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
-		}
-	}
-
-	/// <summary />
-	internal class ConcOccurrenceBrowseView : RecordBrowseView
-	{
-		int m_hvoSelectedOccurrence; // dummy HVO for occurrence, only understood by ConcSda
-		XmlView m_previewPane;
-		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
-
-		/// <summary />
-		internal void Init(XmlView pubView, ISilDataAccess sda)
-		{
-			m_previewPane = pubView;
-			m_decoratedSda = sda;
-		}
-
-		/// <summary />
-		public override void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)
-		{
-			PreviewCurrentSelection(e.Hvo);
-			base.OnSelectionChanged(sender, e);
-		}
-
-		/// <summary />
-		protected override void ShowRecord()
-		{
-			if (!m_fullyInitialized || m_suppressShowRecord)
-				return;
-			if (Clerk == null || Clerk.CurrentObjectHvo == 0)
-				return;
-			PreviewCurrentSelection(Clerk.CurrentObjectHvo);
-			base.ShowRecord();
-		}
-
-		private void PreviewCurrentSelection(int hvoOccurrence)
-		{
-			if (m_hvoSelectedOccurrence == hvoOccurrence)
-				return;
-			m_hvoSelectedOccurrence = hvoOccurrence;
-			m_previewPane.RootObjectHvo = m_decoratedSda.get_ObjectProp(m_hvoSelectedOccurrence, ConcDecorator.kflidSegment);
 		}
 	}
 }

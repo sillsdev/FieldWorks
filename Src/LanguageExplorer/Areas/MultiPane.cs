@@ -16,6 +16,11 @@ using SIL.Utils;
 
 namespace LanguageExplorer.Areas
 {
+#if RANDYTODO
+	// TODO: Why do we need the "CollapsingSplitContainer"? Can they be collapsed into one?
+	// TODO: "CollapsingSplitContainer" is used by the main window as its top level splitter.
+	// TODO: "MultiPane" is then used by numerous tools in the right half of the "CollapsingSplitContainer".
+#endif
 	/// <summary>
 	/// A MultiPane (actually currently more a DualPane) displays two child controls,
 	/// either side by side or one above the other, with a splitter between them.

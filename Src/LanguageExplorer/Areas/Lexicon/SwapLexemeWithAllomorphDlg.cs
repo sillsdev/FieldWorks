@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for SwapLexemeWithAllomorphDlg.
 	/// </summary>
-	internal class SwapLexemeWithAllomorphDlg : Form, IFWDisposable
+	internal sealed class SwapLexemeWithAllomorphDlg : Form, IFWDisposable
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
 		private FdoCache m_cache;
@@ -171,6 +171,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

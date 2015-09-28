@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls
 	/// Most of the methods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	public partial class PaneBarContainer : BasicPaneBarContainer, IMainContentControl, IFWDisposable, IPostLayoutInit
+	internal sealed partial class PaneBarContainer : BasicPaneBarContainer, IMainContentControl, IFWDisposable, IPostLayoutInit
 	{
 		#region Data Members
 

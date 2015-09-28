@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// A slice to show the IReversalIndexEntry objects.
 	/// </summary>
-	internal class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
+	internal sealed class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications.
@@ -125,7 +125,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="cvIns">the number of characters inserted</param>
 		/// <param name="cvDel">the number of characters deleted</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
 

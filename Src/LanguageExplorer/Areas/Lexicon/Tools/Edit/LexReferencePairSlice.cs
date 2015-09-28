@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// LexReferencePairSlice is used to support selecting
 	/// of a Sense or Entry tree.
 	/// </summary>
-	public class LexReferencePairSlice : CustomAtomicReferenceSlice, ILexReferenceSlice
+	internal sealed class LexReferencePairSlice : CustomAtomicReferenceSlice, ILexReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferencePairSlice"/> class.

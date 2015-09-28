@@ -22,7 +22,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void ReceiveButtonIsDisabled()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
+			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
 						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider"), null, false))
 			{
 				var receiveButton = ReflectionHelper.GetField(dlg, "receiveButton") as Button;

@@ -11,6 +11,11 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
+#if RANDYTODO
+	// TODO: Have SidePane be used as the main control in the left side of the main splitter.
+	// TODO: As it is used now, it is created by then dumps its contents into
+	// TODO: _containingControl (see constructor and its Init method).
+#endif
 	/// <summary>
 	/// SidePane is the main class for clients to use of the SilSidePane library.
 	/// SidePane is intended to be placed on the side of an application, and

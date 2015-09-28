@@ -32,7 +32,7 @@
 									</seq>
 								</column>
 								<column label="Category" width="33%" bulkEdit="external">
-									<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.BulkReversalEntryPosEditor"/>
+									<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries.BulkReversalEntryPosEditor"/>
 									<properties>
 										<editable value="false"/>
 									</properties>

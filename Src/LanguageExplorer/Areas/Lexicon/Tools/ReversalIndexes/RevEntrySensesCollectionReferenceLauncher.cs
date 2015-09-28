@@ -12,7 +12,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
 	/// <summary />
-	internal class RevEntrySensesCollectionReferenceLauncher : VectorReferenceLauncher
+	internal sealed class RevEntrySensesCollectionReferenceLauncher : VectorReferenceLauncher
 	{
 		private System.ComponentModel.IContainer components = null;
 

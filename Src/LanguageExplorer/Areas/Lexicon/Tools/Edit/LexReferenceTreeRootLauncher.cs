@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
@@ -16,7 +15,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Summary description for LexReferenceTreeRootLauncher.
 	/// </summary>
-	public class LexReferenceTreeRootLauncher : AtomicReferenceLauncher
+	/// <remarks>
+	/// A test derives from this class, so it can't be made sealed.
+	/// </remarks>
+	internal class LexReferenceTreeRootLauncher : AtomicReferenceLauncher
 	{
 		/// <summary />
 		public LexReferenceTreeRootLauncher()

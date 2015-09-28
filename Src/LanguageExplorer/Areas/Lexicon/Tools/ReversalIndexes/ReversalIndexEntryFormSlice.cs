@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary>
 	/// Summary description for ReversalIndexEntryFormSlice.
 	/// </summary>
-	internal class ReversalIndexEntryFormSlice : MultiStringSlice
+	internal sealed class ReversalIndexEntryFormSlice : MultiStringSlice
 	{
 #pragma warning disable 0414
 		private XmlNode m_configNode = null;

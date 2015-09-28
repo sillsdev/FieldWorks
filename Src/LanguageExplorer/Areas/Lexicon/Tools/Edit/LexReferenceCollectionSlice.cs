@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary />
-	public class LexReferenceCollectionSlice : CustomReferenceVectorSlice, ILexReferenceSlice
+	internal sealed class LexReferenceCollectionSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceCollectionSlice"/> class.

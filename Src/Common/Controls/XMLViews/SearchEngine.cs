@@ -44,7 +44,10 @@ namespace SIL.FieldWorks.Common.Controls
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
-				propertyTable.SetProperty(propName, searchEngine, false, true);
+				// Don't persist it, and if anyone ever cares about hearing that it changed,
+				// then create a new override of this method that feeds the last bool parameter in as 'true'.
+				// This default method can then feed that override 'false'.
+				propertyTable.SetProperty(propName, searchEngine, false, false);
 				propertyTable.SetPropertyDispose(propName, true);
 			}
 			return searchEngine;

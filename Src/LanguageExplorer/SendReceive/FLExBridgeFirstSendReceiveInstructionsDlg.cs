@@ -12,7 +12,7 @@ namespace LanguageExplorer.SendReceive
 	/// <summary>
 	/// A dlg window that instructs the user about doing S/R for the first time.
 	/// </summary>
-	internal partial class FLExBridgeFirstSendReceiveInstructionsDlg : Form
+	internal sealed partial class FLExBridgeFirstSendReceiveInstructionsDlg : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 

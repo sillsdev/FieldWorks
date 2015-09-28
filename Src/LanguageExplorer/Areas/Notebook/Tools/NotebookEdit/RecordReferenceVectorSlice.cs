@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
 	/// <summary />
-	internal class RecordReferenceVectorSlice : CustomReferenceVectorSlice
+	internal sealed class RecordReferenceVectorSlice : CustomReferenceVectorSlice
 	{
 		/// <summary />
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

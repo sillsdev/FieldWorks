@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	// This class is used in Tools...Utilities to delete all entries and senses that do not have
 	// analyzed occurrences in the interesting list of interlinear texts. It warns the user prior
 	// to actually deleting the entries and senses.
-	internal class DeleteEntriesSensesWithoutInterlinearization : IUtility
+	internal sealed class DeleteEntriesSensesWithoutInterlinearization : IUtility
 	{
 		private UtilityDlg m_dlg;
 

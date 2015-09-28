@@ -9,7 +9,10 @@ using SIL.CoreImpl;
 namespace LanguageExplorer.Controls
 {
 	/// <summary />
-	public class BasicPaneBarContainer : UserControl
+	/// <remarks>
+	/// Used by: FindExampleSentenceDlg
+	/// </remarks>
+	internal class BasicPaneBarContainer : UserControl
 	{
 		#region Data Members
 
@@ -34,8 +37,7 @@ namespace LanguageExplorer.Controls
 			if (PropertyTable != null && PropertyTable != propertyTable)
 				throw new ArgumentException("Mis-matched property tables being set for this object.");
 
-			if (PropertyTable == null)
-				PropertyTable = propertyTable;
+			PropertyTable = propertyTable;
 			PaneBar = paneBar;
 			Controls.Add(PaneBar as Control);
 

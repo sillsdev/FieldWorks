@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls
 	/// will have to do that.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
+	internal partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
 	{
 		/// <summary />
 		public const int kCollapsedSize = 16;

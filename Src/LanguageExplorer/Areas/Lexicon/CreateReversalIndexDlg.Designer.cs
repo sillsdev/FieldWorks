@@ -8,6 +8,9 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace LanguageExplorer.Areas.Lexicon
 {
 	partial class CreateReversalIndexDlg
@@ -17,10 +20,13 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

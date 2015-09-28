@@ -15,7 +15,7 @@ namespace LanguageExplorer
 	///
 	/// NB: This interface is not intended to be used outside of FwMainWnd, except for tests.
 	/// </remarks>
-	public interface IAreaRepository : IFlexComponent
+	internal interface IAreaRepository : IFlexComponent
 	{
 		/// <summary>
 		/// Get the most recently persisted area, or the default area if

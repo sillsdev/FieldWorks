@@ -10,7 +10,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for major FLEx components
 	/// </summary>
-	public interface IMajorFlexComponent : IFlexComponent
+	internal interface IMajorFlexComponent : IFlexComponent
 	{
 		/// <summary>
 		/// Deactivate the component.

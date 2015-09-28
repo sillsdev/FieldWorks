@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary />
-	internal class LexReferenceTreeBranchesSlice : CustomReferenceVectorSlice, ILexReferenceSlice
+	internal sealed class LexReferenceTreeBranchesSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceTreeBranchesSlice"/> class.

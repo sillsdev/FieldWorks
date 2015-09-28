@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
+using LanguageExplorer.HelpTopics;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.CoreImpl.MessageBoxEx;
@@ -105,12 +106,14 @@ Old Mediator methods/commands
 		/// </summary>
 		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level
 		/// stuff.</param>
-		/// <param name="helpTopicProvider">An application-specific help topic provider.</param>
+		/// <param name="helpTopicProvider"></param>
 		/// <param name="appArgs">The application arguments.</param>
 		/// ------------------------------------------------------------------------------------
-		internal LexTextApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider,
-			FwAppArgs appArgs)
+		internal LexTextApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
 		{
+			if (fwManager == null) throw new ArgumentNullException("fwManager");
+			if (helpTopicProvider == null) throw new ArgumentNullException("helpTopicProvider");
+
 			IsModalDialogOpen = false;
 			PictureHolder = new PictureHolder();
 			m_fwManager = fwManager;

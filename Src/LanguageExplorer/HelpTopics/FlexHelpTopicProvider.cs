@@ -13,9 +13,11 @@ namespace LanguageExplorer.HelpTopics
 	/// FLEx-specific HelpTopicProvider
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FlexHelpTopicProvider : HelpTopicProviderBase
+	internal sealed class FlexHelpTopicProvider : HelpTopicProviderBase
 	{
 		private static ResourceManager s_helpResources = null;
+
+		internal FlexHelpTopicProvider() {}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

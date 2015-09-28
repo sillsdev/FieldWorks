@@ -13,10 +13,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Summary description for LexReferenceCollectionLauncher.
 	/// </summary>
-	internal class LexReferenceCollectionLauncher : VectorReferenceLauncher
+	internal sealed class LexReferenceCollectionLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
-		protected ICmObject m_displayParent;
+		private ICmObject m_displayParent;
 
 		/// <summary />
 		public LexReferenceCollectionLauncher()

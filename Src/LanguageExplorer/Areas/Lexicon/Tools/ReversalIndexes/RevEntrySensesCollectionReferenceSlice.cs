@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary>
 	/// Provides a class that uses the Go dlg for selecting entries for subentries.
 	/// </summary>
-	internal class RevEntrySensesCollectionReferenceSlice : CustomReferenceVectorSlice
+	internal sealed class RevEntrySensesCollectionReferenceSlice : CustomReferenceVectorSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RevEntrySensesCollectionReferenceSlice"/> class.

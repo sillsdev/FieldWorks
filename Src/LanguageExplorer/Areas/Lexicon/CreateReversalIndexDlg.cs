@@ -15,7 +15,7 @@ using SIL.Utils;
 namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary />
-	internal partial class CreateReversalIndexDlg : Form, IFWDisposable
+	internal sealed partial class CreateReversalIndexDlg : Form, IFWDisposable
 	{
 		private int m_hvoRevIdx = 0;
 		private FdoCache m_cache;

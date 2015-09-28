@@ -13,7 +13,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Specialization of StylesXmlAccessor for loading the Flex factory styles.
 	/// </summary>
-	public class FlexStylesXmlAccessor : StylesXmlAccessor
+	internal class FlexStylesXmlAccessor : StylesXmlAccessor
 	{
 		private readonly ILexDb m_lexicon;
 
@@ -23,7 +23,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="lexicon">The lexical database</param>
 		/// -------------------------------------------------------------------------------------
-		public FlexStylesXmlAccessor(ILexDb lexicon)
+		internal FlexStylesXmlAccessor(ILexDb lexicon)
 			: base(lexicon.Cache)
 		{
 			m_lexicon = lexicon;
@@ -106,7 +106,7 @@ namespace LanguageExplorer
 		/// <param name="lp">The language project</param>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureCurrentStylesheet(ILangProject lp, IThreadedProgress progressDlg)
+		internal static void EnsureCurrentStylesheet(ILangProject lp, IThreadedProgress progressDlg)
 		{
 			// We don't need to establish a NonUndoableUnitOfWork here because caller has already
 			// done it and if not, the internal code of StylesXmlAccessor will do it for us.

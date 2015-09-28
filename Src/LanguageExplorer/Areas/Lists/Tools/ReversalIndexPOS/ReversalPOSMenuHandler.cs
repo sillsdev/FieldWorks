@@ -1,0 +1,273 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
+
+namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
+{
+	/// <summary>
+	/// ReversalPOSMenuHandler inherits from DTMenuHandler and adds some special smarts.
+	/// this class would normally be constructed by the factory method on DTMenuHandler,
+	/// when the XML configuration of the RecordEditView specifies this class.
+	///
+	/// This is an IxCoreColleague, so it gets a chance to modify
+	/// the display characteristics of the menu just before the menu is displayed.
+	/// </summary>
+	internal sealed class ReversalPOSMenuHandler : DTMenuHandler
+	{
+#if RANDYTODO
+	/// <summary>
+	/// handle the message to see if the menu item should be enabled
+	/// </summary>
+	/// <param name="commandObject"></param>
+	/// <param name="display"></param>
+	/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
+		public virtual bool OnDisplayMoveReversalPOS(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			Slice slice = m_dataEntryForm.CurrentSlice;
+			if (slice == null || slice.Object == null)
+			{
+				display.Enabled = false;
+			}
+			else
+			{
+				display.Enabled = CanMergeOrMove;
+				display.Visible = InFriendlyArea;
+			}
+			if(!display.Enabled)
+				display.Text += StringTable.Table.GetString("(cannot move this)");
+			return true; //we've handled this
+		}
+#endif
+
+		/// <summary />
+		public bool OnMoveReversalPOS(object cmd)
+		{
+			FdoCache cache = Cache;
+			var labels = new List<ObjectLabel>();
+			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
+			{
+				if (!pos.SubPossibilitiesOS.Contains(POS))
+				{
+					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
+				}
+			}
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
+				LanguageExplorerResources.ksCategoryToMoveTo, null))
+			{
+				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					IPartOfSpeech currentPOS = POS;
+					IPartOfSpeech newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveRevCategory,
+						LanguageExplorerResources.ksRedoMoveRevCategory, cache.ActionHandlerAccessor,
+						() =>
+						{
+							newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
+							if (!newOwner.SubPossibilitiesOS.Contains(currentPOS)) //this is also prevented in the interface, but I'm paranoid
+							{
+								newOwner.SubPossibilitiesOS.Add(currentPOS);
+							}
+						});
+					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
+					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
+					Publisher.Publish("JumpToRecord", newOwner.MainPossibility.Hvo);
+				}
+			}
+
+			return true;
+		}
+
+#if RANDYTODO
+		protected override bool CanInsert(Command command, Slice currentSlice, out int index)
+		{
+			if (base.CanInsert(command, currentSlice, out index))
+			{
+				switch (command.Id)
+				{
+					case "CmdDataTree-Insert-POS-AffixSlot":
+					case "CmdDataTree-Insert-POS-AffixTemplate":
+					case "CmdDataTree-Insert-POS-InflectionClass":
+						return false;
+					default:
+						return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// handle the message to see if the menu item should be enabled
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
+		public virtual bool OnDisplayMergeReversalPOS(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			Slice slice = m_dataEntryForm.CurrentSlice;
+			if (slice == null || slice.Object == null)
+			{
+				display.Enabled = false;
+			}
+			else
+			{
+				display.Enabled = CanMergeOrMove;
+				display.Visible = InFriendlyArea;
+			}
+			if(!display.Enabled)
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
+			return true; //we've handled this
+		}
+#endif
+
+		/// <summary />
+		public bool OnMergeReversalPOS(object cmd)
+		{
+			FdoCache cache = Cache;
+			var labels = new List<ObjectLabel>();
+			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
+				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
+				LanguageExplorerResources.ksCategoryToMergeInto, null))
+			{
+				dlg.SetHelpTopic("khtpMergeCategories");
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					var currentPOS = POS;
+					var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
+					// Pass false to MergeObject, since we really don't want to merge the string info.
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMergeRevCategory,
+						LanguageExplorerResources.ksRedoMergeRevCategory, cache.ActionHandlerAccessor,
+						()=> survivor.MergeObject(currentPOS, false));
+					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
+					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
+					Publisher.Publish("JumpToRecord", survivor.MainPossibility.Hvo);
+				}
+			}
+
+			return true;
+		}
+
+#if RANDYTODO
+	/// <summary>
+	/// handle the message to see if the menu item should be enabled
+	/// </summary>
+	/// <param name="commandObject"></param>
+	/// <param name="display"></param>
+	/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
+		public virtual bool OnDisplayPromoteReversalSubPOS(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			Slice slice = m_dataEntryForm.CurrentSlice;
+			if (slice == null || slice.Object == null)
+				display.Enabled = false;
+			else
+				display.Enabled = true;
+
+			return true; //we've handled this
+		}
+#endif
+
+		/// <summary />
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice and cache are references")]
+		public bool OnPromoteReversalSubPOS(object cmd)
+		{
+			Slice slice = m_dataEntryForm.CurrentSlice;
+			Debug.Assert(slice != null, "No slice was current");
+			if (slice != null)
+			{
+				FdoCache cache = m_dataEntryForm.Cache;
+				var sliceObj = slice.Object as ICmPossibility;
+				var newOwner = sliceObj.Owner.Owner;
+				switch (newOwner.ClassID)
+				{
+					default:
+						throw new ArgumentException("Illegal class.");
+					case PartOfSpeechTags.kClassId:
+					{
+						var pos = (IPartOfSpeech)newOwner;
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoPromote, LanguageExplorerResources.ksRedoPromote,
+							pos.Cache.ActionHandlerAccessor,
+							()=>pos.SubPossibilitiesOS.Add(sliceObj));
+						break;
+					}
+					case CmPossibilityListTags.kClassId:
+					{
+						var posList = (ICmPossibilityList)newOwner;
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoPromote, LanguageExplorerResources.ksRedoPromote,
+							posList.Cache.ActionHandlerAccessor,
+							()=>posList.PossibilitiesOS.Add(sliceObj));
+						break;
+					}
+				}
+			}
+			return true;
+		}
+
+		private bool CanMergeOrMove
+		{
+			get
+			{
+				return POS.OwningList.ReallyReallyAllPossibilities.Count > 1;
+			}
+		}
+
+		private Set<ICmPossibility> MergeOrMoveCandidates
+		{
+			get
+			{
+				var pos = POS;
+				var candidates = pos.OwningList.ReallyReallyAllPossibilities;
+				candidates.Remove(pos);
+				return candidates;
+			}
+		}
+
+		private IPartOfSpeech POS
+		{
+			get
+			{
+				return m_dataEntryForm.CurrentSlice.Object as IPartOfSpeech;
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>
+		/// This is something of a hack until we come up with a generic solution to
+		/// the problem on how to control we are CommandSet are handled by listeners are
+		/// visible.
+		/// </remarks>
+		private bool InFriendlyArea
+		{
+			get
+			{
+				return (PropertyTable.GetValue<string>("areaChoice") == "lists"
+					&& PropertyTable.GetValue<string>("ToolForAreaNamed_lists") == "reversalToolReversalIndexPOS");
+			}
+		}
+	}
+}

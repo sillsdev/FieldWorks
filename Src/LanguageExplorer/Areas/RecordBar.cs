@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.Utils;
 
@@ -7,12 +8,12 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// Summary description for RecordBar.
 	/// </summary>
-	public class RecordBar : UserControl, IFWDisposable
+	internal sealed class RecordBar : UserControl, IFWDisposable
 	{
 		/// <summary />
-		protected TreeView m_treeView;
+		private TreeView m_treeView;
 		/// <summary />
-		protected ListView m_listView;
+		private ListView m_listView;
 		private ColumnHeader m_columnHeader1;
 		private Control m_optionalHeaderControl;
 
@@ -130,6 +131,8 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// This is an IxCoreColleague, so it gets a chance to modify
 	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
-	internal class LexEntryMenuHandler : DTMenuHandler
+	internal sealed class LexEntryMenuHandler : DTMenuHandler
 	{
 		/// <summary>
 		/// Need a default constructor for dynamic loading
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// determine if this is the correct place [it's the only one that handles the message, and
 		/// it defaults to false, so it should be]
 		/// </summary>
-		protected  bool InFriendlyAreaShow_DictionaryPubPreview
+		private  bool InFriendlyAreaShow_DictionaryPubPreview
 		{
 			get
 			{
@@ -350,7 +350,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
-		public virtual bool OnPictureProperties(object cmd)
+		public bool OnPictureProperties(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			if (slice != null)
@@ -428,7 +428,7 @@ namespace LanguageExplorer.Areas.Lexicon
 #endif
 
 		/// <summary />
-		public virtual bool OnSwapLexemeWithAllomorph(object cmd)
+		public bool OnSwapLexemeWithAllomorph(object cmd)
 		{
 			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
 			FdoCache cache = m_dataEntryForm.Cache;

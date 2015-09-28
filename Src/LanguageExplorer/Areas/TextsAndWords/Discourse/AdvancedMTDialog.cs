@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// A dialog class for marking SOME of the text in a CChart cell as pre/postposed
 	/// from the same or different rows of the chart. The logic is in a separate class.
 	/// </summary>
-	public partial class AdvancedMTDialog : Form
+	internal sealed partial class AdvancedMTDialog : Form
 	{
 		private AdvancedMTDialogLogic m_AMTDLogic;
 		private HelpProvider helpProvider;

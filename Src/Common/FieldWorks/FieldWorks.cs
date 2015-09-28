@@ -109,6 +109,7 @@ namespace SIL.FieldWorks
 		private static bool s_renameSuccessful;
 		private static string s_renameNewName;
 		private static IFlexApp s_flexApp;
+		private static IHelpTopicProvider s_helpTopicProvider;
 		private static IFieldWorksManager s_fwManager;
 		private static FdoCache s_cache;
 		private static string s_sWsUser;
@@ -2851,8 +2852,13 @@ namespace SIL.FieldWorks
 		{
 			if (s_flexApp == null)
 			{
+				if (s_helpTopicProvider == null)
+				{
+					GetHelpTopicProvider();
+				}
 				s_flexApp = (IFlexApp)DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
-					FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(), args);
+					FwUtils.ksFullFlexAppObjectName, s_fwManager, s_helpTopicProvider, args);
+				s_helpTopicProvider = null;
 				s_flexAppKey = s_flexApp.SettingsKey;
 			}
 			return s_flexApp;
@@ -3397,8 +3403,12 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static IHelpTopicProvider GetHelpTopicProvider()
 		{
-			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
-				"LanguageExplorer.HelpTopics.FlexHelpTopicProvider");
+			if (s_flexApp != null)
+			{
+				return s_flexApp;
+			}
+			return s_helpTopicProvider ?? (s_helpTopicProvider = (IHelpTopicProvider) DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
+						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider"));
 		}
 
 		/// ------------------------------------------------------------------------------------

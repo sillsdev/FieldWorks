@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	public partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl, IFWDisposable
+	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl, IFWDisposable
 	{
 		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
 		private ToolStrip _toolStripView;

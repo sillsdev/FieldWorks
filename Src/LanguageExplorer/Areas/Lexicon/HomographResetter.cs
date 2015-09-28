@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for HomographResetter.
 	/// </summary>
-	internal class HomographResetter : IUtility
+	internal sealed class HomographResetter : IUtility
 	{
 		private UtilityDlg m_dlg;
 

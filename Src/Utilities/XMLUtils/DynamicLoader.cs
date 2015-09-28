@@ -54,8 +54,6 @@ namespace SIL.Utils
 		/// them has the name xpathToConfigurationNode, the value is used as an xpath (relative to the
 		/// input configuration) to find a node that is passed as an argument to the constructor.
 		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="rootAssemblyPath"></param>
 		/// <returns></returns>
 		static public Object CreateObject(XmlNode configuration)
 		{

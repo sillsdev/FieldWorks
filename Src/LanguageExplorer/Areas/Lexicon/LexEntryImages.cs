@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.Utils;
 
@@ -11,7 +12,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for LexEntryImages.
 	/// </summary>
-	internal class LexEntryImages : UserControl, IFWDisposable
+	internal sealed class LexEntryImages : UserControl, IFWDisposable
 	{
 		/// <summary />
 		public System.Windows.Forms.ImageList buttonImages;
@@ -29,6 +30,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

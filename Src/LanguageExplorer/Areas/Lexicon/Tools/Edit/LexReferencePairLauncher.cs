@@ -15,10 +15,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Summary description for LexReferencePairLauncher.
 	/// </summary>
-	internal class LexReferencePairLauncher : AtomicReferenceLauncher
+	internal sealed class LexReferencePairLauncher : AtomicReferenceLauncher
 	{
 		/// <summary />
-		protected ICmObject m_displayParent;
+		private ICmObject m_displayParent;
 
 		/// <summary />
 		public LexReferencePairLauncher()

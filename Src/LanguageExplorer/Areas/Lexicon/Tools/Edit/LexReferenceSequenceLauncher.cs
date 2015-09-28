@@ -16,10 +16,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// TODO: how similar is this class to LexReferenceTreeBranchesLauncher and
 	/// LexReferenceCollectionLauncher? Could they all inherit from the same class?
 	/// </summary>
-	internal class LexReferenceSequenceLauncher : VectorReferenceLauncher
+	internal sealed class LexReferenceSequenceLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
-		protected ICmObject m_displayParent = null;
+		private ICmObject m_displayParent = null;
 
 		/// <summary />
 		public LexReferenceSequenceLauncher()

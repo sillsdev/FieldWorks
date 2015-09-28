@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -14,11 +13,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.XWorks;
 
 #if RANDYTODO
-// TODO:
-//	1. Move whole file to: Areas\Lexicon
-//	2. After the move commit:
-//		Split up file into the two classes. The file names should match the two classes.
-//		BulkReversalEntryPosEditor will end up in: Lexicon\Tools\BulkEditReversalEntries
+// TODO: After the 'tidy' commit: Rename this file.
 #endif
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -46,6 +41,9 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for AllReversalEntriesRecordList.
 	/// </summary>
+	/// <remarks>
+	/// Can't be sealed, since a test derives from the class.
+	/// </remarks>
 	internal class AllReversalEntriesRecordList : RecordList
 	{
 		/// <summary />
@@ -154,94 +152,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				return String.Format("{0}.{1}-{2}_{3}", className, PropertyName, reversalLang, sorterOrFilter);
 			}
-		}
-	}
-
-#if RANDYTODO
-	// TODO: Only used in:
-/*
-<tool label="Bulk Edit Reversal Entries" value="reversalBulkEditReversalEntries" icon="BrowseView">
-*/
-#endif
-	/// <summary />
-	internal class BulkReversalEntryPosEditor : BulkPosEditorBase
-	{
-		/// <summary />
-		protected override ICmPossibilityList List
-		{
-			get
-			{
-				ICmPossibilityList list = null;
-				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
-				if (!riGuid.Equals(Guid.Empty))
-				{
-					try
-					{
-						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
-						list = ri.PartsOfSpeechOA;
-					}
-					catch
-					{
-						// Can't get an index if we have a bad guid.
-					}
-				}
-				return list;
-			}
-		}
-
-		/// <summary />
-		public override List<int> FieldPath
-		{
-			get
-			{
-				return new List<int>(new[] { ReversalIndexEntryTags.kflidPartOfSpeech, CmPossibilityTags.kflidName});
-			}
-		}
-
-		/// <summary>
-		/// Execute the change requested by the current selection in the combo.
-		/// Basically we want the PartOfSpeech indicated by m_selectedHvo, even if 0,
-		/// to become the POS of each record that is appropriate to change.
-		/// We do nothing to records where the check box is turned off,
-		/// and nothing to ones that currently have an MSA other than an IMoStemMsa.
-		/// (a) If the owning entry has an IMoStemMsa with the
-		/// right POS, set the sense to use it.
-		/// (b) If the sense already refers to an IMoStemMsa, and any other senses
-		/// of that entry which point at it are also to be changed, change the POS
-		/// of the MSA.
-		/// (c) If the entry has an IMoStemMsa which is not used at all, change it to the
-		/// required POS and use it.
-		/// (d) Make a new IMoStemMsa in the ILexEntry with the required POS and point the sense at it.
-		/// </summary>
-		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
-		{
-			CheckDisposed();
-
-			m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoBulkEditRevPOS,
-				LanguageExplorerResources.ksRedoBulkEditRevPOS);
-			int i = 0;
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (int entryId in itemsToChange)
-			{
-				i++;
-				if (i % interval == 0)
-				{
-					state.PercentDone = i * 80 / itemsToChange.Count() + 20;
-					state.Breath();
-				}
-				IReversalIndexEntry entry = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entryId);
-				if (m_selectedHvo == 0)
-					entry.PartOfSpeechRA = null;
-				else
-					entry.PartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_selectedHvo);
-			}
-			m_cache.DomainDataByFlid.EndUndoTask();
-		}
-
-		/// <summary />
-		protected override bool CanFakeIt(int hvo)
-		{
-			return true;
 		}
 	}
 }

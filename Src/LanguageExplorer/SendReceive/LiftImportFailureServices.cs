@@ -16,7 +16,7 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// File name for Lift import failure flag.
 		/// </summary>
-		public const string FailureFilename = "FLExImportFailure.notice";
+		private const string FailureFilename = "FLExImportFailure.notice";
 
 		/// <summary>
 		/// Get the import failure status.

@@ -7,7 +7,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for major FLEx components
 	/// </summary>
-	public interface IMajorFlexUiComponent : IMajorFlexComponent
+	internal interface IMajorFlexUiComponent : IMajorFlexComponent
 	{
 		/// <summary>
 		/// Get the internal name of the component.

@@ -10,7 +10,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for the tool repository.
 	/// </summary>
-	public interface IToolRepository : IFlexComponent
+	internal interface IToolRepository : IFlexComponent
 	{
 		/// <summary>
 		/// Get the most recently persisted tool, or the default tool if

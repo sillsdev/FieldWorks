@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace LanguageExplorer.Controls
 {
 	partial class PaneBarContainer
@@ -15,6 +17,8 @@ namespace LanguageExplorer.Controls
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null))

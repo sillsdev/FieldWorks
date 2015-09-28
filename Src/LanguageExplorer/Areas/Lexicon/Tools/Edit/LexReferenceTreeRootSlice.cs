@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// LexReferenceTreeRootSlice is used to support selecting
 	/// of a Sense or Entry tree.
 	/// </summary>
-	internal class LexReferenceTreeRootSlice : CustomAtomicReferenceSlice, ILexReferenceSlice
+	internal sealed class LexReferenceTreeRootSlice : CustomAtomicReferenceSlice, ILexReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceTreeRootSlice"/> class.

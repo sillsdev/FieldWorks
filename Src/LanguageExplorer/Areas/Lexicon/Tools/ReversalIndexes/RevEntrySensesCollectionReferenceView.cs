@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary>
 	/// Main class for displaying the VectorReferenceSlice.
 	/// </summary>
-	internal class RevEntrySensesCollectionReferenceView : VectorReferenceView
+	internal sealed class RevEntrySensesCollectionReferenceView : VectorReferenceView
 	{
 		#region Constants and data members
 

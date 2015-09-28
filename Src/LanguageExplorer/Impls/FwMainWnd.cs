@@ -65,7 +65,7 @@ namespace LanguageExplorer.Impls
 	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 	/// </remarks>
 #endif
-	internal partial class FwMainWnd : Form, IFwMainWnd
+	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing = 0;
@@ -900,6 +900,8 @@ namespace LanguageExplorer.Impls
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

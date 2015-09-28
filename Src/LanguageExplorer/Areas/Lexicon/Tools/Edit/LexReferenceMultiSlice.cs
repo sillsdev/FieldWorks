@@ -26,21 +26,10 @@ using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary />
-	public interface ILexReferenceSlice
-	{
-		Slice ParentSlice { get; set; }
-#if RANDYTODO
-		bool HandleDeleteCommand(Command cmd);
-#endif
-		void HandleLaunchChooser();
-		void HandleEditCommand();
-	}
-
 	/// <summary>
 	/// Summary description for LexReferenceMultiSlice.
 	/// </summary>
-	internal class LexReferenceMultiSlice : Slice
+	internal sealed class LexReferenceMultiSlice : Slice
 	{
 		private List<ILexReference> m_refs;
 		private List<ILexRefType> m_refTypesAvailable = new List<ILexRefType>();
@@ -328,7 +317,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "ToolStripMenuItems are added to menu and disposed there")]
-		protected ContextMenuStrip SetupContextMenuStrip()
+		private ContextMenuStrip SetupContextMenuStrip()
 		{
 			ContextMenuStrip contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
 
@@ -764,7 +753,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		protected void ExpandNewNode()
+		private void ExpandNewNode()
 		{
 			try
 			{

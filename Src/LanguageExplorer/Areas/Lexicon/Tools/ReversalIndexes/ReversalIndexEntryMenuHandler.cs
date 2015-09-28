@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// This is an IxCoreColleague, so it gets a chance to modify
 	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
-	internal class ReversalIndexEntryMenuHandler : DTMenuHandler
+	internal sealed class ReversalIndexEntryMenuHandler : DTMenuHandler
 	{
 		/// <summary>
 		/// Need a default constructor for dynamic loading
@@ -217,7 +217,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// the problem on how to control we are CommandSet are handled by listeners are
 		/// visible.
 		/// </remarks>
-		protected  bool InFriendlyArea
+		private bool InFriendlyArea
 		{
 			get
 			{

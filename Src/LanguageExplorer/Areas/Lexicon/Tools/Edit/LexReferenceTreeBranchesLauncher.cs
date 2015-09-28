@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Summary description for LexReferenceTreeBranchesLauncher.
 	/// </summary>
-	internal class LexReferenceTreeBranchesLauncher : VectorReferenceLauncher
+	internal sealed class LexReferenceTreeBranchesLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
 		public LexReferenceTreeBranchesLauncher()

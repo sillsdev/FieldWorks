@@ -9,7 +9,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for each Tool in an IArea
 	/// </summary>
-	public interface ITool : IMajorFlexUiComponent
+	internal interface ITool : IMajorFlexUiComponent
 	{
 		/// <summary>
 		/// Get the area machine name the tool is for.
