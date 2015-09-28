@@ -117,14 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ksAreaXLostItsDefaultTool" xml:space="preserve">
-    <value>Your settings have developed a problem in which they don't know what tool is the default for the area {0}. Please report this problem.</value>
-  </data>
   <data name="ksCannotLocateWsForX" xml:space="preserve">
     <value>Could not locate the writing system based on the locale '{0}'.</value>
-  </data>
-  <data name="ksCannotShowX" xml:space="preserve">
-    <value>Sorry, could not show {0}.</value>
   </data>
   <data name="ksCannotUndoTransducingCitForms" xml:space="preserve">
     <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
@@ -142,47 +136,5 @@
   </data>
   <data name="ksWhenToTransduceCitForms" xml:space="preserve">
     <value>This can be used to convert Citation Forms into another writing system.</value>
-  </data>
-  <data name="CannotFindToolNamed0" xml:space="preserve">
-    <value>Could not locate the tool named '{0}'.</value>
-  </data>
-  <data name="ksNewFeature" xml:space="preserve">
-    <value>New Feature</value>
-  </data>
-  <data name="ksUnderDevelopment" xml:space="preserve">
-    <value>Under Development</value>
-  </data>
-  <data name="ksUpgradeValidCharsWarning" xml:space="preserve">
-    <value>FieldWorks now provides a way for you to specify for each writing system which characters are found in words (word-forming) and which characters are not found in words (punctuation, symbols, spacing).
-
-Before using Text or Concordance tools, we recommend you add word-forming characters so that Language Explorer does not change where it thinks the word boundaries are in your texts. If you use apostrophes, hyphens, zero-width characters, or superscript numbers within words, these should be added and specified as word-forming.
-
-Would you like to do this now?</value>
-  </data>
-  <data name="ksCharsWithinWords" xml:space="preserve">
-    <value>Characters within words</value>
-    <comment>Caption for message box.</comment>
-  </data>
-  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
-  </data>
-  <data name="ksDb4oProjectNotShareableTextLine1" xml:space="preserve">
-    <value>This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.</value>
-  </data>
-  <data name="ksDb4oProjectNotShareableTitle" xml:space="preserve">
-    <value>Project format not compatible for Send/Receive</value>
-  </data>
-  <data name="ksClickOK" xml:space="preserve">
-    <value>Click OK.</value>
-  </data>
-  <data name="ksDb4oProjectNotShareableTextLine2" xml:space="preserve">
-    <value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
-  </data>
-  <data name="ksWarning" xml:space="preserve">
-    <value>Warning</value>
-    <comment>used for dialog caption when project name has non-Ascii characters</comment>
-  </data>
-  <data name="ksExistingProjectName" xml:space="preserve">
-    <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
   </data>
 </root>

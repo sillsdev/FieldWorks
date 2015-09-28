@@ -1869,8 +1869,7 @@ namespace SIL.FieldWorks
 				return;
 			}
 
-			using (RestoreProjectDlg dlg = new RestoreProjectDlg(settings,
-				GetHelpTopicProvider()))
+			using (RestoreProjectDlg dlg = new RestoreProjectDlg(settings, GetHelpTopicProvider()))
 			{
 				dlg.ShowInTaskbar = true;
 				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
@@ -3398,8 +3397,8 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static IHelpTopicProvider GetHelpTopicProvider()
 		{
-			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
-				"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
+			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
+				"LanguageExplorer.HelpTopics.FlexHelpTopicProvider");
 		}
 
 		/// ------------------------------------------------------------------------------------

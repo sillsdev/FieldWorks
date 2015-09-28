@@ -10,6 +10,7 @@ T: LanguageExplorer.Areas.TextsAndWords.Discourse.DiscourseExporter
 # reference only
 T: System.Windows.Forms.Form
 T: LanguageExplorer.Dumpster.ReversalListener
+T: LanguageExplorer.Dumpster.AreaListener
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
@@ -34,6 +35,7 @@ M: System.Void LanguageExplorer.Areas.Lexicon.SwapLexemeWithAllomorphDlg::SetDlg
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::AddFinalContextMenuStripOptions(System.Windows.Forms.ContextMenuStrip)
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteFromReference(SIL.FieldWorks.FDO.ILexReference)
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteReference(SIL.FieldWorks.FDO.ILexReference)
+M: System.Void LanguageExplorer.Dumpster.AreaListener::AddCommandToConfigForList(SIL.FieldWorks.FDO.ICmPossibilityList,System.Xml.XmlNode)
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
@@ -76,6 +78,7 @@ T: LanguageExplorer.Controls.SilSidePane.Tab
 T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.GoldEticGuidFixer
 T: LanguageExplorer.Areas.Lexicon.HomographResetter
 T: LanguageExplorer.Areas.Lexicon.DeleteEntriesSensesWithoutInterlinearization
+T: LanguageExplorer.UtilityTools.SampleCitationFormTransducer
 
 # variable is passed in, so we shouldn't dispose it
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod

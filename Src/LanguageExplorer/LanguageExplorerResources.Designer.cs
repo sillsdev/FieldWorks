@@ -71,6 +71,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not locate the tool named &apos;{0}&apos;..
+        /// </summary>
+        internal static string CannotFindToolNamed0 {
+            get {
+                return ResourceManager.GetString("CannotFindToolNamed0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Texts....
         /// </summary>
         internal static string chooseTexts {

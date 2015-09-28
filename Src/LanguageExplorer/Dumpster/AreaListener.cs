@@ -1,3 +1,7 @@
+// Copyright (c) 2012-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,12 +16,12 @@ using SIL.FieldWorks.FDO;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using Logger = SIL.Utils.Logger;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// Summary description for AreaListener.
 	/// </summary>
-	public class AreaListener : IFlexComponent, IFWDisposable
+	internal sealed class AreaListener : IFlexComponent, IFWDisposable
 	{
 		#region Member variables
 
@@ -111,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
@@ -1021,7 +1025,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return node != null;
 		}
 
-		protected string GetCurrentAreaName()
+		private string GetCurrentAreaName()
 		{
 			return PropertyTable.GetValue<string>("areaChoice");
 		}
@@ -1036,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			XmlNode node;
 			if (!TryGetToolNode(null, (string)toolName, out node))
-				throw new ApplicationException (String.Format(LexTextStrings.CannotFindToolNamed0, toolName));
+				throw new ApplicationException (String.Format(LanguageExplorerResources.CannotFindToolNamed0, toolName));
 
 			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			// We might not be in the right area, so adjust that if needed (LT-4511).

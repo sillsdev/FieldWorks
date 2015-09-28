@@ -47,8 +47,8 @@ namespace SIL.FieldWorks.Common.Controls
 				// Use FLEx's help provider. I (RBR) hope TeScrInitializer can figure out
 				// what to do with it. The "SE" version used it,
 				// so no ground has been lost.
-				var helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
-						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
+				var helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
+						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider");
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				TeScrInitializer.EnsureMinimalScriptureInitialization(cache, progressDlg,
 					helpProvider));

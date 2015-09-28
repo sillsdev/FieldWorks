@@ -12,32 +12,18 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks
 {
-#if RANDYTODO
-	// TODO: Reference to LexTextDll.dll removed, so this is called before LexTextDll is built, so fails.
-	// TODO: Restore it, or something like it, at some point.
 	/// <summary/>
 	[TestFixture]
 	public class WelcomeToFieldWorksDlgTests : BaseTest
 	{
-		/// <summary/>
-		[Test]
-		public void Basic()
-		{
-			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
-						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider"), null, false))
-			{
-				Assert.That(dlg, Is.Not.Null);
-			}
-		}
-
 		/// <summary>
 		/// Receive button should be enabled/disabled based on FlexBridge availability.
 		/// </summary>
 		[Test]
 		public void ReceiveButtonIsDisabled()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
-						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider"), null, false))
+			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.LanguageExplorerDll,
+						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider"), null, false))
 			{
 				var receiveButton = ReflectionHelper.GetField(dlg, "receiveButton") as Button;
 				if (FLExBridgeHelper.IsFlexBridgeInstalled())
@@ -47,5 +33,4 @@ namespace SIL.FieldWorks
 			}
 		}
 	}
-#endif
 }

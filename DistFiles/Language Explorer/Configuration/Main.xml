@@ -753,7 +753,7 @@ InterlinMaster user:
 		<include path="Grammar/areaConfiguration.xml" query="root/listeners/*"/>
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
-		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.AreaListener"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.FLExBridgeListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>

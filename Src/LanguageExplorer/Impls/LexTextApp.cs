@@ -2325,7 +2325,7 @@ Old Mediator methods/commands
 				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
+				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
 			return true;
@@ -2347,7 +2347,7 @@ Old Mediator methods/commands
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
+				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
 			return true;

@@ -87,9 +87,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the full path of the FW Language Explorer dynamic load library.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("FlexDll is deprecated, please use LanguageExplorerDll instead.")]
 		public static string FlexDll
 		{
-			get { return ExeOrDllPath("LexTextDll.dll"); }
+			get { return LanguageExplorerDll; }
 		}
 
 		/// ------------------------------------------------------------------------------------

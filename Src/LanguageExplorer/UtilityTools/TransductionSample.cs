@@ -1,11 +1,16 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer.UtilityTools
 {
 	/// <summary>
 	/// SampleCitationFormTransducer can be used with the Tools:Utilities dialog
@@ -31,6 +36,23 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return Label;
 		}
 
+		private string InvokePython(string arguments)
+		{
+			using (var p = new Process())
+			{
+				p.StartInfo.FileName = "python";
+				var dir = FwDirectoryFinder.GetCodeSubDirectory(Path.Combine("Language Explorer", "UserScripts"));
+				p.StartInfo.Arguments = System.IO.Path.Combine(dir, "TransduceCitationForms.py ") + " " + arguments;
+				p.StartInfo.RedirectStandardOutput = true;
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.CreateNoWindow = true;
+				p.Start();
+				p.WaitForExit(1000);
+				var output = p.StandardOutput.ReadToEnd();
+				return output;
+			}
+		}
+
 		#region IUtility implementation
 
 		/// <summary>
@@ -40,8 +62,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			get
 			{
-				Debug.Assert(m_dlg != null);
-				return LexTextStrings.ksTransduceCitationForms;
+				return TransductionSampleStrings.ksTransduceCitationForms;
 			}
 		}
 
@@ -55,9 +76,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			set
 			{
-				Debug.Assert(value != null);
-				Debug.Assert(m_dlg == null);
-
 				m_dlg = value;
 			}
 		}
@@ -67,7 +85,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		public void LoadUtilities()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.Utilities.Items.Add(this);
 
 		}
@@ -77,27 +94,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		public void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.WhenDescription = LexTextStrings.ksWhenToTransduceCitForms;
-			m_dlg.WhatDescription = LexTextStrings.ksDemoOfUsingPython;
-			m_dlg.RedoDescription = LexTextStrings.ksCannotUndoTransducingCitForms;
-		}
-
-		private string InvokePython(string arguments)
-		{
-			using (Process p = new Process())
-			{
-				p.StartInfo.FileName = "python";
-				string dir = FwDirectoryFinder.GetCodeSubDirectory("/Language Explorer/UserScripts");
-				p.StartInfo.Arguments = System.IO.Path.Combine(dir, "TransduceCitationForms.py ") + " " + arguments;
-				p.StartInfo.RedirectStandardOutput = true;
-				p.StartInfo.UseShellExecute = false;
-				p.StartInfo.CreateNoWindow = true;
-				p.Start();
-				p.WaitForExit(1000);
-				string output = p.StandardOutput.ReadToEnd();
-				return output;
-			}
+			m_dlg.WhenDescription = TransductionSampleStrings.ksWhenToTransduceCitForms;
+			m_dlg.WhatDescription = TransductionSampleStrings.ksDemoOfUsingPython;
+			m_dlg.RedoDescription = TransductionSampleStrings.ksCannotUndoTransducingCitForms;
 		}
 		/// <summary>
 		/// Have the utility do what it does.
@@ -116,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (ws == 0)
 				{
 					System.Windows.Forms.MessageBox.Show(
-						String.Format(LexTextStrings.ksCannotLocateWsForX, locale));
+						String.Format(TransductionSampleStrings.ksCannotLocateWsForX, locale));
 					return;
 				}
 
@@ -134,7 +133,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			catch(Exception e)
 			{
 				System.Windows.Forms.MessageBox.Show(
-					String.Format(LexTextStrings.ksErrorMsgWithStackTrace, e.Message, e.StackTrace));
+					String.Format(TransductionSampleStrings.ksErrorMsgWithStackTrace, e.Message, e.StackTrace));
 			}
 		}
 		#endregion IUtility implementation

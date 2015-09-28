@@ -1,18 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FlexHelpTopicProvider.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Reflection;
 using System.Resources;
 using SIL.FieldWorks.Common.Framework;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer.HelpTopics
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -34,7 +28,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (s_helpResources == null)
 			{
-				s_helpResources = new ResourceManager("SIL.FieldWorks.XWorks.LexText.HelpTopicPaths",
+				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths",
 					Assembly.GetExecutingAssembly());
 			}
 

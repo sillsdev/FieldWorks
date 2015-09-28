@@ -984,4 +984,7 @@ you expect.</value>
   <data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
     <value>Failed LIFT S/R Detected</value>
   </data>
+  <data name="CannotFindToolNamed0" xml:space="preserve">
+    <value>Could not locate the tool named '{0}'.</value>
+  </data>
 </root>
