@@ -1845,6 +1845,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (type == SelLimitType.End)
 				m_fEndSet = true;
 			GetSelInfo(type).ich = value;
+
+			// Force recalculation of top/bottom of selection
+			m_iTop = -1;
 		}
 
 		/// -----------------------------------------------------------------------------------
