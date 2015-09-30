@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   xmlns:user="urn:my-scripts">
@@ -632,9 +632,9 @@ DoEntry
 			</xsl:when>
 			</xsl:choose>
 			<xsl:call-template name="DoEntryResidue"/>
-			<!-- Custom fields in this Sense -->
-			<xsl:call-template name="JoinCustomOnFwid"/>
 		  </LexEntryRef>
+		  <!-- Custom fields in this Sense -->
+		  <xsl:call-template name="JoinCustomOnFwid"/>
 		</LexEntry>
 	  </xsl:for-each>
 	</xsl:if>
