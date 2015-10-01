@@ -6,7 +6,9 @@
    <item id="gPAPhonFeatures" guid="f73b279f-195f-4a8b-be1f-ef6a299636d6" type="group">
 	  <abbrev ws="en">all</abbrev>
 	  <term ws="en">All phonological features</term>
-	  <def ws="en">Selecting this check box selects all the features in this catalog; if you clear this check box all the features are cleared.   The features below are also included as binary features in the Phonology Assistant program.   Note that we offer these features as a potential convenience to you. The exact set of features you need may well be different. We recognize that there is still debate about the best set of features to use.</def>
+	  <def ws="en">“Selecting this check box selects all the features in this catalog; if you clear this check box all the features are cleared.
+The features below are also included as binary features in the Phonology Assistant program.
+Note that we offer these features as a potential convenience to you. The exact set of features you need may well be different. We recognize that there is still debate about the best set of features to use.”</def>
 	  <citation>[http://www.sil.org/computing/pa/] Date accessed: 12-Feb-2009</citation>
 	  <item id="gPAMajorClassFeature" posid="Adjective" guid="f673a43d-ba35-44f1-a4d0-308a292c4b97" status="visible" type="group">
 		 <abbrev ws="en">mcf</abbrev>
