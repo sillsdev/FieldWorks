@@ -14,6 +14,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// </summary>
 	internal sealed class AnalysesTool : ITool
 	{
+		private MultiPane _multiPane;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +69,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
+			MultiPaneFactory.RemoveFromParentAndDispose(_multiPane);
+			_multiPane = null;
 		}
 
 		/// <summary>
@@ -79,7 +82,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
+			_multiPane = MultiPaneFactory.Create(
+				PropertyTable, Publisher, Subscriber,
+				mainCollapsingSplitContainer.SecondControl,
+				this,
+				"WordsAndAnalysesMultiPane",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("WordList view for tool: {0}", MachineName)), "WordList",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("SingleWord view for tool: {0}", MachineName)), "SingleWord",
+				Orientation.Vertical);
 		}
 
 		/// <summary>

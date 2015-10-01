@@ -6,18 +6,18 @@ using System;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 
-namespace LanguageExplorer.Controls
+namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary />
 	/// <remarks>
 	/// Used by: FindExampleSentenceDlg
 	/// </remarks>
-	internal class BasicPaneBarContainer : UserControl
+	internal sealed class BasicPaneBarContainer : UserControl, IPropertyTableProvider
 	{
 		#region Data Members
 
 		/// <summary />
-		protected IPaneBar m_paneBar;
+		private IPaneBar m_paneBar;
 
 		#endregion Data Members
 
@@ -27,12 +27,9 @@ namespace LanguageExplorer.Controls
 		public IPropertyTable PropertyTable { get; set; }
 
 		/// <summary>
-		/// Init for basic PaneBar.
+		/// Init for basic BasicPaneBarContainer.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="mainControl"></param>
-		/// <param name="paneBar"></param>
-		public void Init(IPropertyTable propertyTable, Control mainControl, IPaneBar paneBar)
+		internal void Init(IPropertyTable propertyTable, Control mainControl, IPaneBar paneBar)
 		{
 			if (PropertyTable != null && PropertyTable != propertyTable)
 				throw new ArgumentException("Mis-matched property tables being set for this object.");
@@ -47,10 +44,10 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		public IPaneBar PaneBar
+		internal IPaneBar PaneBar
 		{
 			get { return m_paneBar; }
-			private set
+			set
 			{
 				if (m_paneBar != null)
 				{
@@ -60,7 +57,7 @@ namespace LanguageExplorer.Controls
 				var pbAsControl = m_paneBar as Control;
 				if (pbAsControl != null && pbAsControl.AccessibleName == null)
 				{
-					pbAsControl.AccessibleName = "XCore.PaneBar";
+					pbAsControl.AccessibleName = @"LanguageExplorer.Controls.PaneBar";
 				}
 			}
 		}

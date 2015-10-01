@@ -27,10 +27,12 @@ namespace LanguageExplorer.Controls
 	/// Most of the methods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	internal sealed partial class PaneBarContainer : BasicPaneBarContainer, IMainContentControl, IFWDisposable, IPostLayoutInit
+	internal sealed partial class PaneBarContainer : UserControl, IMainContentControl, IFWDisposable, IPostLayoutInit
 	{
 		#region Data Members
 
+		/// <summary />
+		private IPaneBar m_paneBar;
 		private XmlNode m_configurationParameters;
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
@@ -47,6 +49,28 @@ namespace LanguageExplorer.Controls
 		public PaneBarContainer()
 		{
 			InitializeComponent();
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public PaneBarContainer(Control mainControl)
+			: this()
+		{
+			m_mainControl = mainControl;
+			// Put it in a local variable,
+			// since we know that is a UserControl,
+			// so we know it has 'AccessibleName' and can be put into 'Controls'.
+			var paneBar = new PaneBar.PaneBar();
+			m_paneBar = paneBar;
+			if (paneBar.AccessibleName == null)
+			{
+				paneBar.AccessibleName = @"LanguageExplorer.Controls.PaneBar";
+			}
+
+			mainControl.Dock = DockStyle.Fill;
+			Controls.Add(paneBar);
+			Controls.Add(m_mainControl);
 		}
 
 #if __MonoCS__ // FWNX-425
@@ -280,6 +304,15 @@ namespace LanguageExplorer.Controls
 				initReceiver.PostLayoutInit();
 		}
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
 		#region Implementation of IPublisherProvider
 
 		/// <summary>
@@ -309,6 +342,8 @@ namespace LanguageExplorer.Controls
 			PropertyTable = propertyTable;
 			Publisher = publisher;
 			Subscriber = subscriber;
+
+			m_paneBar.InitializeFlexComponent(propertyTable, publisher, subscriber);
 		}
 
 		#endregion

@@ -16,7 +16,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// This class MainUserControl is derived from UserControl.  It was created to
 	/// serve as a central place for functionality, currently Accessibility related,
-	/// for the many classes that exten UserControl.  Using this class takes just a
+	/// for the many classes that extend UserControl.  Using this class takes just a
 	/// minute to implement, but it provides some default Accessibility functionality.
 	///
 	/// This class declares an XmlNode m_configurationParameters as protected to be

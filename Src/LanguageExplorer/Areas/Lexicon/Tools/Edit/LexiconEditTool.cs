@@ -14,6 +14,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal sealed class LexiconEditTool : ITool
 	{
+		private MultiPane _multiPane;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +69,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
 			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
+			MultiPaneFactory.RemoveFromParentAndDispose(_multiPane);
+			_multiPane = null;
 		}
 
 		/// <summary>
@@ -78,7 +81,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
+			_multiPane = MultiPaneFactory.Create(
+				PropertyTable, Publisher, Subscriber,
+				mainCollapsingSplitContainer.SecondControl,
+				this,
+				"LexItemsAndDetailMultiPane",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("Details view for tool: {0}", MachineName)), "Details",
+				Orientation.Vertical);
 		}
 
 		/// <summary>

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -182,10 +182,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 
 			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
-#if RANDYTODO
-			// TODO: replace following null with IPaneBar impl.
-#endif
-			pbc.Init(PropertyTable, m_previewPane, null);
+			pbc.Init(PropertyTable, m_previewPane, new PaneBar());
 			pbc.Dock = DockStyle.Fill;
 			pbc.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
@@ -207,10 +204,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
-#if RANDYTODO
-			// TODO: replace following null with IPaneBar impl.
-#endif
-			pbc1.Init(PropertyTable, m_rbv, null);
+			pbc1.Init(PropertyTable, m_rbv, new PaneBar());
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;
 			pbc1.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgBrowseViewPaneTitle;

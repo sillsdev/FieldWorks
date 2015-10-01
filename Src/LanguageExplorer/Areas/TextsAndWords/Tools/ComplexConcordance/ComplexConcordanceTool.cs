@@ -79,6 +79,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+#if RANDYTODO
+			// TODO: This tool need Itext's ConcordanceContainer main control and a gaggle of other stuff currently in IText.
+#endif
 			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
 		}
 

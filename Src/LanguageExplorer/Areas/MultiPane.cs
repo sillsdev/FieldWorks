@@ -40,6 +40,8 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal event EventHandler ShowFirstPaneChanged;
 
+		private readonly string m_areaMachineName;
+		private readonly string m_id;
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
 		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.
@@ -54,11 +56,11 @@ namespace LanguageExplorer.Areas
 		// Technically, we could just look it up in the config file,
 		// but this will be faster.
 //		private bool m_fDontCollapseFillPane = false;
-		private string m_defaultPrintPaneId = "";
-		private string m_defaultFocusControl = "";
+		private string m_defaultPrintPaneId = string.Empty;
+		private string m_defaultFocusControl = string.Empty;
 		private XmlNode m_configurationParameters;
 		//the name of the tool which this MultiPane is a part of.
-		private string toolName = "";
+		private string m_toolName = string.Empty;
 
 		/// <summary>
 		/// Constructor
@@ -72,6 +74,19 @@ namespace LanguageExplorer.Areas
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
+
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		internal MultiPane(string toolMachineName, string areaMachineName, string id)
+			: this()
+		{
+			m_toolName = toolMachineName;
+			m_areaMachineName = areaMachineName;
+			m_id = id;
+		}
+
 
 		/// <summary />
 		internal string PropertyControllingVisibilityOfFirstPane
@@ -275,7 +290,7 @@ namespace LanguageExplorer.Areas
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			var toolNode = configurationParameters.SelectSingleNode("ancestor::tool");
-			toolName = toolNode == null ? "" : toolNode.Attributes["value"].Value;
+			m_toolName = toolNode == null ? "" : toolNode.Attributes["value"].Value;
 //			m_fDontCollapseFillPane = XmlUtils.GetOptionalBooleanAttributeValue(
 //				m_configurationParameters, "dontCollapseFillPane", false);
 
@@ -505,10 +520,10 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				return String.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
-					m_configurationParameters.Attributes["area"].Value,
-					PropertyTable.GetValue("currentContentControl", ""),
-					m_configurationParameters.Attributes["id"].Value);
+				return string.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
+					m_areaMachineName,
+					PropertyTable.GetValue("currentContentControl", string.Empty),
+					m_id);
 			}
 		}
 
@@ -613,7 +628,7 @@ namespace LanguageExplorer.Areas
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
-			if (PropertyTable.GetValue("ToolForAreaNamed_lexicon", "") != toolName)
+			if (PropertyTable.GetValue("ToolForAreaNamed_lexicon", "") != m_toolName)
 			{
 				return;
 			}

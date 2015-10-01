@@ -338,6 +338,9 @@
     <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddComplexFormChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddPrimaryLexemeChooserCommand.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\BasicPaneBarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcOccurrenceBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -380,6 +383,7 @@
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOS.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalPOSMenuHandler.cs" />
+    <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RecordReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -390,9 +394,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TemporaryToolProviderHack.cs" />
-    <Compile Include="Controls\BasicPaneBarContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Controls\PaneBarContainerFactory.cs" />
     <Compile Include="Controls\PaneBar\PanelButton.cs">
       <SubType>Component</SubType>
     </Compile>

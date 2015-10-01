@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Resources;
 
@@ -14,6 +15,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 	/// </summary>
 	internal sealed class ConfidenceEditTool : ITool
 	{
+		private PaneBarContainer _paneBarContainer;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +70,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(_paneBarContainer);
+			_paneBarContainer = null;
 		}
 
 		/// <summary>
@@ -79,7 +83,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
+			_paneBarContainer = PaneBarContainerFactory.Create(
+				PropertyTable, Publisher, Subscriber,
+				mainCollapsingSplitContainer.SecondControl,
+				TemporaryToolProviderHack.CreateNewLabel(this));
 		}
 
 		/// <summary>

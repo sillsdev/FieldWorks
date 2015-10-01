@@ -20,15 +20,38 @@ namespace LanguageExplorer.Areas
 		internal static void SetupToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer, ITool tool)
 		{
 			mainCollapsingSplitContainer.SecondControl.SuspendLayout();
+			var newTempControl = CreateNewLabel(tool);
+			mainCollapsingSplitContainer.SecondControl.Controls.Add(newTempControl);
+			mainCollapsingSplitContainer.SecondControl.ResumeLayout();
+		}
+
+		internal static Label CreateNewLabel(ITool tool)
+		{
 			var newTempControl = new Label
 			{
-				Text = @"Selected Tool: " + tool.UiName,
+				Text = GetText(tool),
 				Dock = DockStyle.Fill,
 				ForeColor = Color.Ivory,
 				BackColor = Color.Coral
 			};
-			mainCollapsingSplitContainer.SecondControl.Controls.Add(newTempControl);
-			mainCollapsingSplitContainer.SecondControl.ResumeLayout();
+			return newTempControl;
+		}
+
+		internal static Label CreateNewLabel(string labelText)
+		{
+			var newTempControl = new Label
+			{
+				Text = labelText,
+				Dock = DockStyle.Fill,
+				ForeColor = Color.Ivory,
+				BackColor = Color.Coral
+			};
+			return newTempControl;
+		}
+
+		private static string GetText(IMajorFlexUiComponent tool)
+		{
+			return @"Selected Tool: " + tool.UiName;
 		}
 
 		/// <summary />

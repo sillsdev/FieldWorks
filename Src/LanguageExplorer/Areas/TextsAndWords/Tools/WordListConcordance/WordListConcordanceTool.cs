@@ -14,6 +14,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	/// </summary>
 	internal sealed class WordListConcordanceTool : ITool
 	{
+		private MultiPane _multiPane;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +69,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(mainCollapsingSplitContainer);
+			MultiPaneFactory.RemoveFromParentAndDispose(_multiPane);
+			_multiPane = null;
 		}
 
 		/// <summary>
@@ -79,7 +82,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			TemporaryToolProviderHack.SetupToolDisplay(mainCollapsingSplitContainer, this);
+			_multiPane = MultiPaneFactory.Create(
+				PropertyTable, Publisher, Subscriber,
+				mainCollapsingSplitContainer.SecondControl,
+				this,
+				"ReversalIndexItemsAndDetailMultiPane",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("Doc Reversals view for tool: {0}", MachineName)), "Doc Reversals",
+				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse Entries view for tool: {0}", MachineName)), "Browse Entries",
+				Orientation.Vertical);
 		}
 
 		/// <summary>

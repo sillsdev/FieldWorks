@@ -23,6 +23,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		public PaneBar()
 		{
 			InitializeComponent();
+			Dock = DockStyle.Top;
 		}
 
 		#region Implementation of IPaneBar
