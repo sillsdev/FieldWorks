@@ -824,9 +824,6 @@ To disable go to Tools-&gt;Options-&gt;Privacy.</value>
   <data name="m_lblProjectLoadError.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Left</value>
   </data>
-  <data name="m_lblProjectLoadError.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="m_lblProjectLoadError.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>

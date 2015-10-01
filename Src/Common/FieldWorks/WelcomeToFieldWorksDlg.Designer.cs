@@ -219,6 +219,7 @@ namespace SIL.FieldWorks
 			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
 			this.m_lblProjectLoadError.ReadOnly = true;
 			this.m_lblProjectLoadError.TabStop = false;
+			this.m_lblProjectLoadError.IsTextSelectable = true;
 			// 
 			// WelcomeToFieldWorksDlg
 			// 
