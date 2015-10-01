@@ -726,10 +726,10 @@ To disable go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>3, 384</value>
   </data>
   <data name="buttonLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 0</value>
+    <value>3, 3, 3, 5</value>
   </data>
   <data name="buttonLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 5</value>
+    <value>0, 0, 0, 0</value>
   </data>
   <data name="buttonLayout.Size" type="System.Drawing.Size, System.Drawing">
     <value>400, 31</value>
@@ -837,7 +837,7 @@ To disable go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>True</value>
   </data>
   <data name="m_lblProjectLoadError.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 0</value>
+    <value>380, 0</value>
   </data>
   <data name="m_lblProjectLoadError.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -864,10 +864,13 @@ To disable go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>3, 3, 3, 0</value>
   </data>
   <data name="mainVerticalLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>406, 415</value>
+    <value>400, 400</value>
   </data>
   <data name="mainVerticalLayout.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="mainVerticalLayout.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;mainVerticalLayout.Name" xml:space="preserve">
     <value>mainVerticalLayout</value>
@@ -894,7 +897,7 @@ To disable go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>GrowAndShrink</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>597, 662</value>
+    <value>400, 400</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

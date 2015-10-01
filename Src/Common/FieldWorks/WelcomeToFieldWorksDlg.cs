@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
 using Logger = SIL.Utils.Logger;
+using Palaso.UI.WindowsForms.Widgets;
 
 namespace SIL.FieldWorks
 {
@@ -216,6 +217,34 @@ namespace SIL.FieldWorks
 			// This dialog may be created when no other forms are active. Calling Activate will
 			// make sure that the dialog comes up visible and activated.
 			Activate();
+
+			if (MiscUtils.IsUnix)
+				ReLayoutCorrectly();
+		}
+
+		/// <summary>
+		/// Adjust dialog so that the height of the main FlowLayoutPanel is the right value to
+		/// contain the displayed controls.
+		/// A better solution will be to fix Mono FlowLayoutPanel to not include
+		/// non-Visible controls in the FlowLayoutPanel height calculation, if that is what
+		/// it is doing when it AutoSizes.
+		/// </summary>
+		private void ReLayoutCorrectly()
+		{
+			var shrunkWidth = this.mainVerticalLayout.Width;
+			this.mainVerticalLayout.AutoSize = false;
+			this.mainVerticalLayout.Width = shrunkWidth;
+
+			var heightOfVisibleControls = 0;
+			foreach (Control control in this.mainVerticalLayout.Controls)
+			{
+				if (control.Visible == false)
+					continue;
+				heightOfVisibleControls += control.Height;
+				heightOfVisibleControls += control.Margin.Top;
+				heightOfVisibleControls += control.Margin.Bottom;
+			}
+			this.mainVerticalLayout.Height = heightOfVisibleControls;
 		}
 		#endregion
 
