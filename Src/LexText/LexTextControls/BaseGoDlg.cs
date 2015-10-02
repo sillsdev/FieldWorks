@@ -640,24 +640,28 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_btnClose
 			//
 			resources.ApplyResources(this.m_btnClose, "m_btnClose");
+			this.m_btnClose.AutoSize = true;
 			this.m_btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.m_btnClose.Name = "m_btnClose";
 			//
 			// m_btnOK
 			//
 			resources.ApplyResources(this.m_btnOK, "m_btnOK");
+			this.m_btnOK.AutoSize = true;
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.m_btnOK.Name = "m_btnOK";
 			//
 			// m_btnInsert
 			//
 			resources.ApplyResources(this.m_btnInsert, "m_btnInsert");
+			this.m_btnInsert.AutoSize = true;
 			this.m_btnInsert.Name = "m_btnInsert";
 			this.m_btnInsert.Click += new System.EventHandler(this.m_btnInsert_Click);
 			//
 			// m_btnHelp
 			//
 			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
+			this.m_btnHelp.AutoSize = true;
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
 			//
