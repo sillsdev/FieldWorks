@@ -12,9 +12,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.XWorks;
 
-#if RANDYTODO
-// TODO: After the 'tidy' commit: Rename this file.
-#endif
 namespace LanguageExplorer.Areas.Lexicon
 {
 #if RANDYTODO

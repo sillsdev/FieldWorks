@@ -7,9 +7,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 
-#if RANDYTODO
-// TODO: After the 'tidy' commit: Rename this file.
-#endif
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
 	/// <summary>

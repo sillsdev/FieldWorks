@@ -1221,9 +1221,8 @@ namespace LanguageExplorer.Impls
 
 		private void SetWindowTitle()
 		{
-			Text = string.Format("{0} - {1} {2}",
+			Text = string.Format("{0} - {1}",
 				_flexApp.Cache.ProjectId.UiName,
-				FwUtils.ksSuiteName,
 				FwUtils.ksSuiteName);
 		}
 

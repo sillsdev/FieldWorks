@@ -335,6 +335,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddComplexFormChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddPrimaryLexemeChooserCommand.cs" />
@@ -368,7 +369,6 @@
     <Compile Include="Areas\Lexicon\DeleteEntriesSensesWithoutInterlinearization.cs" />
     <Compile Include="Areas\Lexicon\HomographResetter.cs" />
     <Compile Include="Areas\Lexicon\LexEntryMenuHandler.cs" />
-    <Compile Include="Areas\Lexicon\ReversalEntryBulkEdit.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -380,7 +380,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryMenuHandler.cs" />
-    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOS.cs" />
+    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOSClerk.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalPOSMenuHandler.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
