@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else
 					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetClassId(dstClass);
 
-				// And the one property of that imaginary obejct we are displaying.
+				// And the one property of that imaginary object we are displaying.
 				string stringProp = XmlUtils.GetManditoryAttributeValue(nodeObjProp, "ghost");
 				// Special case for making a Text
 				if (m_flidEmptyProp == RnGenericRecTags.kflidText)

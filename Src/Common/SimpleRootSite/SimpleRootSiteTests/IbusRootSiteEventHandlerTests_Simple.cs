@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TestCase("b", 0, 1, /* Input: */ "\u4FDD\u989D", 0, /* expected: */ "b\u4FDD\u989D", 0, 1, TestName="UCursorPos0_RangeSelection")]
 
 		[TestCase("abc", 0, 1, /* Input: */ "e", 1,/* expected: */ "aebc", 0, 1, TestName="UExistingText_RangeSelection")]
-		[TestCase("abc", 1, 0, /* Input: */ "e", 1,/* expected: */ "aebc", 1, 0, TestName="UExistingText_RangeSelection_Backwards")]
+		[TestCase("abc", 1, 0, /* Input: */ "e", 1,/* expected: */ "eabc", 2, 1, TestName="UExistingText_RangeSelection_Backwards")]
 		[TestCase("abc", 0, 3, /* Input: */ "e", 1,/* expected: */ "abce", 0, 3, TestName="UReplaceAll")]
 		public void UpdatePreedit(
 			string text, int selectionStart, int selectionEnd,

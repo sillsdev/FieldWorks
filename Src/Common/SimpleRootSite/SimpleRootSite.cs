@@ -503,6 +503,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
+		/// Gets the root site event handler.
+		/// </summary>
+		internal object RootSiteEventHandler { get { return m_rootSiteEventHandler; }}
+
+		/// <summary>
 		/// The default creates a normal horizontal orientation manager. Override to create one of the other
 		/// classes as needed.
 		/// </summary>

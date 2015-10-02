@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public bool get_TasksSinceMark(bool fUndo)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
 		public int CurrentDepth

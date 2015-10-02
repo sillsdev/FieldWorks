@@ -74,7 +74,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		private IActionHandler m_ActionHandler;
 		private int m_Depth;
 		private bool m_InReset;
-		private bool m_PreeditIsOpen;
 
 		/// <summary>
 		/// Preedit event handler.
@@ -95,14 +94,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (PreeditOpened != null)
 				PreeditOpened(this, EventArgs.Empty);
-			m_PreeditIsOpen = true;
 		}
 
 		private void OnPreeditClosed()
 		{
 			if (PreeditClosed != null)
 				PreeditClosed(this, EventArgs.Empty);
-			m_PreeditIsOpen = false;
 		}
 
 		/// <summary>
@@ -122,7 +119,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (cancel)
 				{
-					if (m_ActionHandler != null)
+					if (m_ActionHandler != null && m_ActionHandler.get_TasksSinceMark(true))
 					{
 						m_ActionHandler.Rollback(m_Depth);
 						retVal = true;
@@ -256,8 +253,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else if (rollBackPreviousTask)
 			{
-				m_ActionHandler.Rollback(m_Depth);
-				selHelper = m_InitialSelection.SelectionHelper;
+				if (m_ActionHandler.get_TasksSinceMark(true))
+				{
+					m_ActionHandler.Rollback(m_Depth);
+					selHelper = new SelectionHelper(m_InitialSelection.SelectionHelper);
+				}
+				else if (m_InitialSelection.SelectionHelper.IsRange)
+					return selHelper;
+				else
+					return new SelectionHelper(m_InitialSelection.SelectionHelper);
 			}
 			else
 				return selHelper;
@@ -284,9 +288,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.IchAnchor = Math.Max(0,
 					selHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
 				selHelper.IchEnd = bottom;
+				selHelper.SetSelection(true);
 
 				UpdateSelectionForReplacingPreeditText(selHelper, countBackspace);
-				selHelper.SetSelection(true);
 
 				// Insert 'text'
 				ITsString str = CreateTsStringUsingSelectionProps(text, selectionProps, false);
@@ -307,13 +311,18 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private void UpdateSelectionForReplacingPreeditText(SelectionHelper selHelper, int countBackspace)
 		{
-			if (m_ActionHandler == null && m_InitialSelection != null && m_EndOfPreedit != null)
+			if ((m_ActionHandler == null || !m_ActionHandler.get_TasksSinceMark(true))
+				&& m_InitialSelection != null && m_EndOfPreedit != null)
 			{
-				// we don't have an action handler which means we didn't roll back the
-				// preedit. This means we have to create a range selection that deletes the
-				// preedit.
-				selHelper.IchAnchor = Math.Max(0, m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
-				selHelper.IchEnd = m_EndOfPreedit.GetIch(SelectionHelper.SelLimitType.Bottom);
+				// we don't have an action handler (or we have nothing to rollback) which means
+				// we didn't roll back the preedit. This means we have to create a range selection
+				// that deletes the preedit.
+				var bottom = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+				selHelper.IchAnchor = Math.Max(0,
+					m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
+				selHelper.IchEnd = Math.Max(bottom,
+					m_EndOfPreedit.GetIch(SelectionHelper.SelLimitType.Bottom));
+				selHelper.SetSelection(true);
 			}
 		}
 
@@ -452,12 +461,27 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			var selectionProps = GetSelectionProps(selHelper);
 
-			// Replace any previous pre-edit text. selHelper points to
-			// the position after inserting the previous pre-edit text, so it will be the
-			// end of our range selection. The bottom of m_InitialSelHelper is the position at
-			// the end of the initial range selection, so it will be part of the anchor.
-			selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
-			selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+			// Replace any previous pre-edit text.
+			if (m_InitialSelection.SelectionHelper.Selection.EndBeforeAnchor)
+			{
+				// If we have a backwards selection we insert the pre-edit before the selected
+				// text. selHelper points to the originally selected text (which got moved because
+				// we inserted the pre-edit before it). The top of m_InitialSelection is the
+				// start of the pre-edit, the top of selHelper is the position before the
+				// originally selected text
+				Debug.Assert(m_InitialSelection.SelectionHelper.IsRange);
+				selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.End);
+				selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Top);
+			}
+			else
+			{
+				// selHelper points to the position after inserting the previous pre-edit text,
+				// so it will be the end of our range selection. The bottom of m_InitialSelection
+				// is the position at the end of the initial range selection, so it will be part
+				// of the anchor.
+				selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+				selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+			}
 			selHelper.SetSelection(true);
 
 			// Update the pre-edit text
@@ -470,7 +494,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_InitialSelection.SelectionHelper.IsRange)
 			{
 				// keep the range selection
-				selHelper = m_InitialSelection.SelectionHelper;
+				if (m_InitialSelection.SelectionHelper.Selection.EndBeforeAnchor)
+				{
+					// we inserted before the original selection but we want to keep the original
+					// text selected, so we have to adjust
+					selHelper = new SelectionHelper(m_InitialSelection.SelectionHelper);
+					selHelper.IchAnchor += str.Length;
+					selHelper.IchEnd += str.Length;
+				}
+				else
+					selHelper = m_InitialSelection.SelectionHelper;
 			}
 			else
 			{

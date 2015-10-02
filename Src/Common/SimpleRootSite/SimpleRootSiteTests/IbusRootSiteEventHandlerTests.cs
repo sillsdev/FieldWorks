@@ -1,7 +1,6 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 #if __MonoCS__
 using System;
 using System.Collections.Generic;
@@ -243,19 +242,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			// Setup
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
-
-			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
+			((DummyRootBox)m_dummySimpleRootSite.RootBox).Text = "ABC";
 
 			// Select B
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -283,30 +270,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void HandleNullActionHandler()
 		{
-			m_dummySimpleRootSite.DataAccess.SetActionHandler(null);
-			int anchor = 1;
-			int end = 0;
-
 			// Setup
+			m_dummySimpleRootSite.DataAccess.SetActionHandler(null);
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
+			((DummyRootBox)m_dummySimpleRootSite.RootBox).Text = "ABC";
 
-			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
-			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
-			// Commit by pressing space
-			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
-
-			// Select B
+			// Select A
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
-			preedit.Anchor = anchor;
-			preedit.End = end;
+			preedit.Anchor = 1;
+			preedit.End = 0;
 
 			// Exercise
 			m_dummyIBusCommunicator.ProcessKeyEvent('d', lparams['D'], Keys.None);
@@ -322,6 +294,48 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.That(preedit.Anchor, Is.EqualTo(1));
 			Assert.That(preedit.End, Is.EqualTo(1));
 		}
+
+		private void PressKeys(string input)
+		{
+			foreach (var c in input)
+				m_dummyIBusCommunicator.ProcessKeyEvent(c, lparams[c.ToString().ToUpper()[0]], Keys.None);
+		}
+
+		[Test]
+		[TestCase("d",   1, 2, "ABdC",  "d", 1, 2, TestName="OneKey_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("d",   2, 1, "AdBC",  "d", 3, 2, TestName="OneKey_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd",  1, 2, "ABddC","dd", 1, 2, TestName="TwoKeys_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("dd",  2, 1, "AddBC","dd", 4, 3, TestName="TwoKeys_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd",  2, 3, "ABCdd","dd", 2, 3, TestName="TwoKeysEnd_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("dd",  3, 2, "ABddC","dd", 5, 4, TestName="TwoKeysEnd_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd ", 2, 3, "ABD",    "", 3, 3, TestName="Commit_ForwardSelection_IPAfter")]
+		[TestCase("dd ", 3, 2, "ABD",    "", 3, 3, TestName="Commit_BackwardSelection_IPAfter")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
+		public void CorrectPlacementOfPreedit(string input, int anchor, int end, string expectedText,
+			string expectedPreedit, int expectedAnchor, int expectedEnd)
+		{
+			// Setup
+			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
+			((DummyRootBox)m_dummySimpleRootSite.RootBox).Text = "ABC";
+
+			// Make range selection from anchor to end
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			preedit.Anchor = anchor;
+			preedit.End = end;
+
+			// Exercise
+			PressKeys(input);
+
+			// Verify
+			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
+			preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			Assert.That(document.Text, Is.EqualTo(expectedText));
+			Assert.That(m_dummyIBusCommunicator.PreEdit, Is.EqualTo(expectedPreedit));
+			Assert.That(preedit.Anchor, Is.EqualTo(expectedAnchor), "Anchor");
+			Assert.That(preedit.End, Is.EqualTo(expectedEnd), "End");
+		}
+
 	}
 
 	#region Mock classes used for testing InputBusController
