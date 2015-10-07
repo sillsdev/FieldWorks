@@ -131,18 +131,15 @@
 			</para>
 		</part>
 		<part id="WfiAnalysis-Detail-InterlinearAnal" type="Detail">
-			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice" menu="mnuDataTree-Help">
+			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.InterlinearSlice" menu="mnuDataTree-Help">
 				<deParams editable="true"/>
 			</slice>
 		</part>
 		<part id="WfiAnalysis-Detail-InterlinearParse" type="Detail">
-			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice" menu="mnuDataTree-Help">
+			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.InterlinearSlice" menu="mnuDataTree-Help">
 				<deParams editable="false"/>
 			</slice>
 		</part>
-		<!--<part id="WfiAnalysis-Detail-WordGlossSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-WordGloss" hotlinks="mnuDataTree-WordGloss-Hotlinks" header="true"/>
-		</part>-->
 		<part id="WfiAnalysis-Detail-WordGlosses" type="Detail">
 			<seq field="Meanings"/>
 		</part>

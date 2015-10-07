@@ -6,9 +6,8 @@ using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.LexText.Controls;
 
-namespace SIL.FieldWorks.XWorks.MorphologyEditor
+namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Handles a TreeCombo control (Widgets assembly) for use in selecting inflection features.

@@ -373,9 +373,9 @@
 	<!--  ************************ resources ***********************   -->
 	<!--  **********************************************************   -->
 	<resources>
-		<imageList assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.ImageHolder" field="smallImages" size="small"
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.ImageHolder" field="smallImages" size="small"
 			labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right, AddSubItem"/>
-		<imageList assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MEImages" field="buttonImages" size="small"
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.MEImages" field="buttonImages" size="small"
 			labels="pos, endocompoundRule, exocompoundRule, phoneme, boundaryMarker, naturalClass, environment, morphCoprohib, alloCoprohib, coprohibGroup, AddItem, addFeature, addComplexFeature, addExceptionFeature, metathesis"
 		/>
 	</resources>
@@ -383,9 +383,9 @@
 	<!--  ************************ listeners ***********************   -->
 	<!--  **********************************************************   -->
 	<listeners>
-		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterCatDlgListener"/>
-		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterInflFeatDlgListener"/>
-		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterPhonFeatDlgListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterCatDlgListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterInflFeatDlgListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterPhonFeatDlgListener"/>
 	</listeners>
 	<!--  **********************************************************   -->
 	<!--  ************************ defaultProperties ***********************   -->

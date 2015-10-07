@@ -987,4 +987,47 @@ you expect.</value>
   <data name="CannotFindToolNamed0" xml:space="preserve">
     <value>Could not locate the tool named '{0}'.</value>
   </data>
+  <data name="ksAnalysisX" xml:space="preserve">
+    <value>Analysis {0}</value>
+    <comment>{0} is a number ("Analysis 1" for first, etc)</comment>
+  </data>
+  <data name="ksCannotMergeWordformsYet" xml:space="preserve">
+    <value>Merging wordforms needs serious definition, before it can be done. Sorry.</value>
+  </data>
+  <data name="ksFiltered" xml:space="preserve">
+    <value>ksFiltered</value>
+  </data>
+  <data name="ksNoAnalysis" xml:space="preserve">
+    <value>no analysis</value>
+  </data>
+  <data name="ksNoRecords" xml:space="preserve">
+    <value>No Records</value>
+  </data>
+  <data name="ksRedoAssignAnalyses" xml:space="preserve">
+    <value>Redo Assign Analyses</value>
+  </data>
+  <data name="ksRedoChangingApprovalStatus" xml:space="preserve">
+    <value>Redo Changing Approval Status</value>
+  </data>
+  <data name="ksTodo_WordformEditing" xml:space="preserve">
+    <value>TODO: Basic wordform editing happens here.</value>
+  </data>
+  <data name="ksUndoAssignAnalyses" xml:space="preserve">
+    <value>Undo Assign Analyses</value>
+  </data>
+  <data name="ksUndoChangingApprovalStatus" xml:space="preserve">
+    <value>Undo Changing Approval Status</value>
+  </data>
+  <data name="ksChangeTo" xml:space="preserve">
+    <value>Choose Value:</value>
+  </data>
+  <data name="ksListChoiceDesc" xml:space="preserve">
+    <value>Select a feature and a value to change it to</value>
+  </data>
+  <data name="ksTargetFeature" xml:space="preserve">
+    <value>Choose Feature:</value>
+  </data>
+  <data name="ksClose" xml:space="preserve">
+    <value>&amp;Close</value>
+  </data>
 </root>

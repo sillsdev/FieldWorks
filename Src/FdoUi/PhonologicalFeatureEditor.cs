@@ -10,10 +10,10 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.XWorks.MorphologyEditor;
 using SIL.Utils;
 using SIL.CoreImpl;
 using System.Linq;
+using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
 {

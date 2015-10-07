@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <utilityCatalog>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.HomographResetter"/>
-	<utility assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.ParserAnalysisRemover"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.ParserAnalysisRemover"/>
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.ErrorFixer"/>
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.WriteAllObjectsUtility"/>
 	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.DuplicateWordformFixer"/>

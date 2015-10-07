@@ -453,7 +453,7 @@
     <Compile Include="SandboxBase.designer.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="SandboxBase.GetRealyAnalysisMethod.cs">
+    <Compile Include="SandboxBase.GetRealAnalysisMethod.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
       <SubType>UserControl</SubType>
     </Compile>

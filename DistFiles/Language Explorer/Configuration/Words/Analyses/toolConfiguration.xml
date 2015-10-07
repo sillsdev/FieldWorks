@@ -24,8 +24,7 @@
 								<parameters area="textsWords" clerk="concordanceWords" persistContext="normalEdit" suppressInfoBar="false" layout="Normal"
 									treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100">
 									<menuHandler>
-										<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.WordsEditToolMenuHandler"
-										/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.WordsEditToolMenuHandler" />
 									</menuHandler>
 								</parameters>
 							</control>

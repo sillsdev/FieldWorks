@@ -1,7 +1,0 @@
-# Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
-
-# GetEnumerator() returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.MorphologyEditor.RespellingTests/<GetParaFragmentsInSegmentForWord>*::System.Collections.IEnumerable.GetEnumerator()

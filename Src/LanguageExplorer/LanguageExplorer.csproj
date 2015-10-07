@@ -125,6 +125,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
+    <Reference Include="PhonEnvValidator, Version=9.0.0.11055, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\PhonEnvValidator.dll</HintPath>
+    </Reference>
     <Reference Include="Reporting, Version=9.0.0.19060, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Reporting.dll</HintPath>
@@ -335,6 +339,58 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Areas\AreaResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AreaResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.Designer.cs">
+      <DependentUpon>AssignFeaturesToPhonemes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\BasicIPASymbolSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\RegRuleFormulaControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\RegRuleFormulaSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateEventArgs.cs" />
+    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateMenuHandler.cs" />
+    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PosEdit\MetaRuleFormulaControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\PosEdit\MetaRuleFormulaSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Lexicon\Tools\Edit\AffixRuleFormulaControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Lexicon\Tools\Edit\AffixRuleFormulaSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddComplexFormChooserCommand.cs" />
@@ -393,7 +449,50 @@
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RoledParticipantsSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Areas\PhEnvStrRepresentationSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\RuleFormulaControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\RuleFormulaSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\RuleFormulaView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\TemporaryToolProviderHack.cs" />
+    <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\RespellerDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\RespellerDlg.Designer.cs">
+      <DependentUpon>RespellerDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\TextAndWordsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TextAndWordsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\AnalysisInterlinearRS.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\InterlinearSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\OneAnalysisSandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\OneAnalysisSandbox.Designer.cs">
+      <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\Analyses\ParserAnalysisRemover.cs" />
+    <Compile Include="Areas\TextsAndWords\WordformGoDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\WordformGoSearchEngine.cs" />
     <Compile Include="Controls\PaneBarContainerFactory.cs" />
     <Compile Include="Controls\PaneBar\PanelButton.cs">
       <SubType>Component</SubType>
@@ -411,10 +510,22 @@
     <Compile Include="Dumpster\FLExBridgeListener.cs" />
     <Compile Include="Areas\Lexicon\ReversalClerk.cs" />
     <Compile Include="Areas\Lexicon\ReversalEntryClerk.cs" />
+    <Compile Include="Dumpster\MasterCatDlgListener.cs" />
+    <Compile Include="Dumpster\MasterDlgListener.cs" />
+    <Compile Include="Dumpster\MasterInflFeatDlgListener.cs" />
+    <Compile Include="Dumpster\MasterPhonFeatDlgListener.cs" />
+    <Compile Include="Dumpster\MorphologyListener.cs" />
+    <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Dumpster\ReversalListener.cs" />
     <Compile Include="HelpTopics\FlexHelpTopicProvider.cs" />
     <Compile Include="IArea.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="images\Morphology\ImageHolder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="images\Morphology\MEImages.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="IMajorFlexComponent.cs" />
     <Compile Include="IMajorFlexUiComponent.cs" />
@@ -670,6 +781,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TransductionSampleStrings.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Areas\AreaResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicLauncher.resx">
+      <DependentUpon>AdhocCoProhibAtomicLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorLauncher.resx">
+      <DependentUpon>AdhocCoProhibVectorLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\RecordBar.resx">
       <DependentUpon>RecordBar.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -681,7 +804,35 @@
       <DependentUpon>MultiPane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\ConcordanceDlg.resx">
+      <DependentUpon>ConcordanceDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\RespellerDlg.resx">
+      <DependentUpon>RespellerDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\TextAndWordsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TextAndWordsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\Analyses\AnalysisInterlinearRS.resx">
+      <DependentUpon>AnalysisInterlinearRS.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\WordformGoDlg.resx">
+      <DependentUpon>WordformGoDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="HelpTopics\HelpTopicPaths.resx" />
+    <EmbeddedResource Include="images\Morphology\ImageHolder.resx">
+      <DependentUpon>ImageHolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\Morphology\MEImages.resx">
+      <DependentUpon>MEImages.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.resx">
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -944,8 +1095,25 @@
     <Content Include="images\LexTextImages\Subentry.bmp" />
     <Content Include="images\LexTextImages\TwoHalfs.GIF" />
     <Content Include="images\LexTextImages\_WhatAreThese.txt" />
+    <Content Include="images\Morphology\AddItem.bmp" />
+    <Content Include="images\Morphology\AddSubItem.bmp" />
+    <Content Include="images\Morphology\adhoc Allomorph rule.ico" />
+    <Content Include="images\Morphology\adhoc Group.ico" />
+    <Content Include="images\Morphology\adhoc Morpheme rule.ico" />
+    <Content Include="images\Morphology\Environment.ico" />
+    <Content Include="images\Morphology\Exception Feature.ico" />
+    <Content Include="images\Morphology\Headed Comp Rule.ico" />
+    <Content Include="images\Morphology\Insert Cat.ico" />
+    <Content Include="images\Morphology\Insert Complex Feature.ico" />
+    <Content Include="images\Morphology\Insert Feature.ico" />
+    <Content Include="images\Morphology\Insert Sub-Cat.ico" />
+    <EmbeddedResource Include="images\Morphology\ME.ico" />
+    <Content Include="images\Morphology\Metathesis.ico" />
     <Content Include="images\Lists.ico" />
     <Content Include="images\LT.png" />
+    <Content Include="images\Morphology\Natural Class.ico" />
+    <Content Include="images\Morphology\non-Headed Comp Rule.ico" />
+    <Content Include="images\Morphology\Phoneme.ico" />
     <Content Include="images\Notebook.ico" />
     <Content Include="LT.ico" />
     <None Include="images\Text_And_Words.ico" />

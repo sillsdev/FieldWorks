@@ -11,6 +11,9 @@ T: LanguageExplorer.Areas.TextsAndWords.Discourse.DiscourseExporter
 T: System.Windows.Forms.Form
 T: LanguageExplorer.Dumpster.ReversalListener
 T: LanguageExplorer.Dumpster.AreaListener
+T: LanguageExplorer.Dumpster.MorphologyListener
+T: LanguageExplorer.Dumpster.MasterDlgListener
+T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateMenuHandler
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
@@ -58,6 +61,8 @@ M: System.Void LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit.VariantEn
 M: System.Void LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse.NotebookBrowseTool::Activate(SIL.CoreImpl.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
 M: System.Void LanguageExplorer.Areas.Notebook.Tools.NotebookDocument.NotebookDocumentTool::Activate(SIL.CoreImpl.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms.BulkEditWordformsTool::Activate(SIL.CoreImpl.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.InterlinearSlice::FinishInit()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.AnalysisInterlinearRs::MakeRoot()
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)
@@ -74,6 +79,7 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice:
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteFromReference(SIL.FieldWorks.FDO.ILexReference)
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteReference(SIL.FieldWorks.FDO.ILexReference)
 M: System.Void LanguageExplorer.Dumpster.AreaListener::AddCommandToConfigForList(SIL.FieldWorks.FDO.ICmPossibilityList,System.Xml.XmlNode)
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice::FinishInit()
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
@@ -82,6 +88,8 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice
 M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayDataTreeInsert(System.Object,XCore.UIItemDisplayProperties&)
 M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayInsertMediaFile(System.Object,XCore.UIItemDisplayProperties&)
 M: System.Void LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
+M: System.Boolean LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
 
 # added to collection and disposed there
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()
@@ -99,12 +107,21 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferencePairLaunche
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceSequenceLauncher::HandleChooser()
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeBranchesLauncher::HandleChooser()
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicLauncher::HandleChooser()
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorLauncher::HandleChooser()
 
 # FwRegistrySettings disposed in Dispose method.
 M: System.Void LanguageExplorer.Impls.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 
+# Disposed in Dispose(bool) method
+M: System.Boolean LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetDlgInfo(SIL.FieldWorks.FDO.IWfiWordform,System.Windows.Forms.Form,SIL.FieldWorks.Common.RootSites.IApp)
+
 # GetEnumerator() returns an object
 M: System.Collections.IEnumerator LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalEntryGoDlg.ReversalEntrySearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator LanguageExplorer.Areas.TextsAndWords.WordformGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
+
+# REVIEW: not sure about this one
+M: System.Void LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetSuggestions()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
@@ -117,6 +134,14 @@ T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.GoldEticGuidFixer
 T: LanguageExplorer.Areas.Lexicon.HomographResetter
 T: LanguageExplorer.Areas.Lexicon.DeleteEntriesSensesWithoutInterlinearization
 T: LanguageExplorer.UtilityTools.SampleCitationFormTransducer
+T: LanguageExplorer.Areas.TextsAndWords.ConcordanceDlg/ProgressReporting
+T: LanguageExplorer.Areas.TextsAndWords.RespellUndoAction
+T: LanguageExplorer.Areas.TextsAndWords.OccurrenceComparer
+T: LanguageExplorer.Areas.TextsAndWords.OccurrenceSorter
+T: LanguageExplorer.Areas.TextsAndWords.RespellingSda
+T: LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.ParserAnalysisRemover
+T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateEventArgs
+T: LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RuleFormulaVc
 
 # variable is passed in, so we shouldn't dispose it
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod

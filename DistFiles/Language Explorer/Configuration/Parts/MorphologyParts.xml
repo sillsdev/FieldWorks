@@ -476,10 +476,10 @@
 	</bin>
 	<bin class="MoAffixProcess">
 		<part id="MoAffixProcess-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AffixRuleFormulaSlice"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.AffixRuleFormulaSlice"/>
 		</part>
 		<part id="MoAffixProcess-Detail-RuleFormulaBasic" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AffixRuleFormulaSlice" helpTopicID="khtpField-LexemeForm-RuleFormula"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.AffixRuleFormulaSlice" helpTopicID="khtpField-LexemeForm-RuleFormula"/>
 		</part>
 	</bin>
 	<bin class="MoUnclassifiedAffixMsa">
@@ -1369,7 +1369,7 @@
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
 				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
 			</slice>
 		</part>
@@ -2135,24 +2135,24 @@
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-FirstAllomorph" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-RestOfAllos">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2327,24 +2327,24 @@
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-FirstMorpheme" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-RestOfMorphs">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2499,7 +2499,7 @@
 			<slice field="Name" label="Refer to as" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"/>
 		</part>
 	<part id="PhPhoneme-Detail-BasicIPASymbol" type="Detail">
-	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.BasicIPASymbolSlice" ws="pronunciation" menu="mnuDataTree-Help"/>
+	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.BasicIPASymbolSlice" ws="pronunciation" menu="mnuDataTree-Help"/>
 	</part>
 	<part id="PhPhoneme-Jt-BasicIPASymbol" type="jtview">
 	  <string field="BasicIPASymbol" />
@@ -2580,7 +2580,7 @@
 			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
 		</part>
 		<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
-			<slice field="StringRepresentation" label="String Representation" editor="CustomWithParams" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.PhEnvStrRepresentationSlice" menu="mnuDataTree-StringRepresentation-Insert">
+			<slice field="StringRepresentation" label="String Representation" editor="CustomWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.PhEnvStrRepresentationSlice" menu="mnuDataTree-StringRepresentation-Insert">
 				<deParams ws="vernacular"/>
 			</slice>
 		</part>
@@ -2765,7 +2765,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
 				</chooserInfo>
@@ -2778,7 +2778,7 @@
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
 		</part>
 		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
 		</part>
 	</bin>
 

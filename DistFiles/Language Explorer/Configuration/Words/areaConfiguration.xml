@@ -558,20 +558,20 @@
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
-		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MorphologyListener">
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MorphologyListener">
 			<parameters clerk="concordanceWords"/>
 		</listener>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserListener"/>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserParametersListener"/>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener"/>
-		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener">
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerDlgListener">
 			<parameters>
 				<clerks>
 					<clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
-						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerTemporaryRecordClerk"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerTemporaryRecordClerk"/>
 						<recordList class="WfiWordform" field="Occurrences">
-							<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerRecordList"/>
-							<decoratorClass assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellingSda"/>
+							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerRecordList"/>
+							<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellingSda"/>
 						</recordList>
 						<filters/>
 						<sortMethods/>

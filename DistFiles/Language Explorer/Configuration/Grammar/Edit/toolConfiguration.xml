@@ -155,7 +155,7 @@
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="PhonemesBulkEdit">
 					<control>
-						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AssignFeaturesToPhonemes"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes"/>
 						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true"
 							bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false"
