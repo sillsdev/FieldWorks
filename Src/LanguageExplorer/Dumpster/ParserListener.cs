@@ -1,11 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserListener.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
 // <remarks>
 // This is an XCore "Listener" which facilitates interaction with the Parser.
 // </remarks>
@@ -16,12 +11,13 @@
 //		</listeners>
 //	</code>
 // </example>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -30,7 +26,7 @@ using SIL.Utils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.FDO.Infrastructure;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// this class just gets all the parser calling and event and receiving

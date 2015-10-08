@@ -1,15 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TryAWordDlg.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
 // <remarks>
 // Implementation of:
 //		TryAWordDlg - Dialog for parsing a single wordform
 // </remarks>
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -19,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Dumpster;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -27,7 +24,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 
 	/// <summary>

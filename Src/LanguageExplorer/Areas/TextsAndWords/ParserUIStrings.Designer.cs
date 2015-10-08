@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SIL.FieldWorks.LexText.Controls {
+namespace LanguageExplorer.Areas.TextsAndWords {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.LexText.Controls.ParserUIStrings", typeof(ParserUIStrings).Assembly);
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.TextsAndWords.ParserUIStrings", typeof(ParserUIStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

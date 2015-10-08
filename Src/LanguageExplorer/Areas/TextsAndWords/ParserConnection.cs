@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserConnection.cs
-// Responsibility: John Hatton
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Handles acquiring a parser and safely subscribing to and receiving events from it.

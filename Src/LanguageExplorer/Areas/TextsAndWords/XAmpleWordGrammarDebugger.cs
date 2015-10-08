@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +16,7 @@ using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_cache and m_mediator are references")]

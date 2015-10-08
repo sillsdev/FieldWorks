@@ -89,6 +89,14 @@
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
+      <Package>Geckofx-Core</Package>
+      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
+      <Package>Geckofx-WinForms</Package>
+      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -125,6 +133,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
+    <Reference Include="ParserCore, Version=9.0.0.8713, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ParserCore.dll</HintPath>
+    </Reference>
     <Reference Include="PhonEnvValidator, Version=9.0.0.11055, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\PhonEnvValidator.dll</HintPath>
@@ -150,6 +162,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -465,6 +478,22 @@
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Areas\TextsAndWords\HCTrace.cs" />
+    <Compile Include="Areas\TextsAndWords\ImportWordSetDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dumpster\ImportWordSetListener.cs" />
+    <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
+    <Compile Include="Areas\TextsAndWords\ParserConnection.cs" />
+    <Compile Include="Areas\TextsAndWords\ParserParametersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\ParserTraceUITransform.cs" />
+    <Compile Include="Areas\TextsAndWords\ParserUIStrings.Designer.cs">
+      <DependentUpon>ParserUIStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\RespellerDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -489,10 +518,23 @@
       <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\ParserAnalysisRemover.cs" />
+    <Compile Include="Areas\TextsAndWords\TryAWordDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\TryAWordRootSite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\TryAWordSandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\WebPageInteractor.cs" />
     <Compile Include="Areas\TextsAndWords\WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\WordformGoSearchEngine.cs" />
+    <Compile Include="Areas\TextsAndWords\WordImporter.cs" />
+    <Compile Include="Areas\TextsAndWords\XAmpleTrace.cs" />
+    <Compile Include="Areas\TextsAndWords\XAmpleWordGrammarDebugger.cs" />
     <Compile Include="Controls\PaneBarContainerFactory.cs" />
     <Compile Include="Controls\PaneBar\PanelButton.cs">
       <SubType>Component</SubType>
@@ -515,6 +557,7 @@
     <Compile Include="Dumpster\MasterInflFeatDlgListener.cs" />
     <Compile Include="Dumpster\MasterPhonFeatDlgListener.cs" />
     <Compile Include="Dumpster\MorphologyListener.cs" />
+    <Compile Include="Dumpster\ParserListener.cs" />
     <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Dumpster\ReversalListener.cs" />
     <Compile Include="HelpTopics\FlexHelpTopicProvider.cs" />
@@ -808,6 +851,19 @@
       <DependentUpon>ConcordanceDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\ImportWordSetDlg.resx">
+      <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\ParserParametersDlg.resx">
+      <DependentUpon>ParserParametersDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\ParserUIStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\RespellerDlg.resx">
       <DependentUpon>RespellerDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -819,6 +875,9 @@
     <EmbeddedResource Include="Areas\TextsAndWords\Tools\Analyses\AnalysisInterlinearRS.resx">
       <DependentUpon>AnalysisInterlinearRS.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\TryAWordDlg.resx">
+      <DependentUpon>TryAWordDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\WordformGoDlg.resx">
       <DependentUpon>WordformGoDlg.cs</DependentUpon>

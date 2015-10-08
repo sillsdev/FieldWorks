@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -12,13 +12,15 @@
 // </remarks>
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// Summary description for ImportWordSetListener.

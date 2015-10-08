@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WordGrammarDebuggingTests.cs
-// Responsibility:
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -12,14 +9,12 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-
 using NUnit.Framework;
-
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorerTests.TextsAndWords
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -91,7 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.FixtureSetup();
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
-				"LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults");
+				"LanguageExplorerTests/TextsAndWords/WordGrammarDebuggingInputsAndResults");
 
 			SetUpMasterTransform();
 			CreateResultTransform("M3FXTDump.xml", out m_sResultTransform);

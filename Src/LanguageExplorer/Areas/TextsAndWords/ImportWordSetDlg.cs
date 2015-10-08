@@ -1,16 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWordSetDlg.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
 // <remarks>
 // Implementation of:
 //		ImportWordSetDlg - Dialog for editing XML representation of parser parameters
 //                            (MoMorphData : ParserParameters)
 // </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Text;
@@ -20,9 +16,10 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Summary description for ImportWordSetDlg.

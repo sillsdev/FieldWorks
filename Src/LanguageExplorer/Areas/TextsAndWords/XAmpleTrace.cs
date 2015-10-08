@@ -1,22 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // THIS NEEDS TO BE REFACTORED!!
-//
-// File: XAmpleTrace.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
 // <remarks>
 // Implementation of:
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
+
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Summary description for XAmpleTrace.

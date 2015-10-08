@@ -1,11 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserParametersDlg.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
 // <remarks>
 // Implementation of:
 //		ParserParametersDlg - Dialog for editing XML representation of parser parameters
@@ -13,18 +8,18 @@
 // </remarks>
 
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using System.Data;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Summary description for ParserParametersDlg.
@@ -177,7 +172,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// dataGrid1
 			//
 			resources.ApplyResources(this.m_dataGrid1, "m_dataGrid1");
-			this.m_dataGrid1.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
+			this.m_dataGrid1.DataMember = global::LanguageExplorer.Areas.TextsAndWords.ParserUIStrings.ksIdle_;
 			this.m_dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
 			this.m_dataGrid1.Name = "m_dataGrid1";
 			//
@@ -191,7 +186,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// dataGrid2
 			//
 			resources.ApplyResources(this.m_dataGrid2, "m_dataGrid2");
-			this.m_dataGrid2.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
+			this.m_dataGrid2.DataMember = global::LanguageExplorer.Areas.TextsAndWords.ParserUIStrings.ksIdle_;
 			this.m_dataGrid2.HeaderForeColor = System.Drawing.SystemColors.ControlText;
 			this.m_dataGrid2.Name = "m_dataGrid2";
 			//

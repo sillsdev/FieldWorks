@@ -13,7 +13,7 @@ Revision History is at the end of this file.
 Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
-<xsl:include href="../../../../Src/Transforms/Application/UnifyTwoFeatureStructures.xsl"/>
+<xsl:include href="../../../Src/Transforms/Application/UnifyTwoFeatureStructures.xsl"/>
   <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Main template

@@ -14,6 +14,9 @@ T: LanguageExplorer.Dumpster.AreaListener
 T: LanguageExplorer.Dumpster.MorphologyListener
 T: LanguageExplorer.Dumpster.MasterDlgListener
 T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateMenuHandler
+T: LanguageExplorer.Dumpster.ImportWordSetListener
+T: LanguageExplorer.Dumpster.ParserParametersListener
+T: LanguageExplorer.Dumpster.ParserListener
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
@@ -80,6 +83,10 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice:
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice::DeleteReference(SIL.FieldWorks.FDO.ILexReference)
 M: System.Void LanguageExplorer.Dumpster.AreaListener::AddCommandToConfigForList(SIL.FieldWorks.FDO.ICmPossibilityList,System.Xml.XmlNode)
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice::FinishInit()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.ParserParametersDlg::SetDlgInfo(System.String,System.String,System.String)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.ParserParametersDlg::PopulateDataGrid(System.Windows.Forms.DataGrid,System.String)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.WebPageInteractor::HandleDomClick(System.Object,Gecko.DomMouseEventArgs)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.WebPageInteractor::HandleHtmlControlBrowserDomMouseMove(System.Object,Gecko.DomMouseEventArgs)
 
 # reference only
 M: System.Boolean SIL.FieldWorks.Common.Framework.IFlexApp::PreFilterMessage(System.Windows.Forms.Message&)
@@ -142,8 +149,20 @@ T: LanguageExplorer.Areas.TextsAndWords.RespellingSda
 T: LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.ParserAnalysisRemover
 T: LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateEventArgs
 T: LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RuleFormulaVc
+T: LanguageExplorer.Areas.TextsAndWords.ParserTraceBase
+T: LanguageExplorer.Areas.TextsAndWords.WebPageInteractor
+T: LanguageExplorer.Areas.TextsAndWords.WordImporter
 
 # variable is passed in, so we shouldn't dispose it
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MaxStringWidthForChartColumn
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+#generated code
+T: FormatHCTrace
+T: FormatXAmpleParse
+T: FormatXAmpleTrace
+T: FormatXAmpleWordGrammarDebuggerResult

@@ -1,25 +1,17 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WordImporter.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
 // <remarks>
 // Implements WordImporter
 // </remarks>
 
-using System;
 using System.IO;
 using System.Collections.Generic;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// a class for parsing text files and populating WfiWordSets with them.
@@ -76,8 +68,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Collect up a set of unique WfiWordforms.
 		/// </summary>
-		/// <param name="wfi"></param>
-		/// <param name="ws"></param>
 		/// <param name="wordforms">Table of unique wordforms.</param>
 		/// <param name="buffer"></param>
 		private void GetUniqueWords(Dictionary<string, IWfiWordform> wordforms, string buffer)
