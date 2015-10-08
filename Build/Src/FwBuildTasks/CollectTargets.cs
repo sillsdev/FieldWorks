@@ -87,8 +87,6 @@ namespace FwBuildTasks
 			CollectInfo(infoScr2);
 			var infoScr3 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr3);
-			var infoPhr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/PhraseTranslationHelper"));
-			CollectInfo(infoPhr);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
 			WriteTargetFiles();
@@ -115,13 +113,10 @@ namespace FwBuildTasks
 		/// </summary>
 		private void ProcessCsProjFile(string filename)
 		{
-			if (filename.Contains("Src/LexText/Extensions/") || filename.Contains("Src\\LexText\\Extensions\\"))
-				return;		// Skip the extensions -- they're either obsolete or nonstandard.
 			var project = Path.GetFileNameWithoutExtension(filename);
 			if (project == "ICSharpCode.SharpZLib")
 				return;
 			if (project == "VwGraphicsReplayer" ||
-				project == "SilSidePaneTestApp" ||
 				project == "SfmStats" ||
 				project == "ConvertSFM")
 			{
@@ -404,9 +399,7 @@ namespace FwBuildTasks
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-						project == "FxtExe" ||					// These projects weren't built by nant normally.
-						project.StartsWith("LinuxSmokeTest"))
+					if (project.StartsWith("LinuxSmokeTest"))
 					{
 						continue;
 					}
@@ -422,9 +415,7 @@ namespace FwBuildTasks
 				first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-						project == "FxtExe" ||					// These projects weren't built by nant normally.
-						project == "FixFwData" ||
+					if (project == "FixFwData" ||
 						project.StartsWith("LinuxSmokeTest") ||
 						project.EndsWith("Tests") ||			// These are tests.
 						project == "TestUtils" ||				// This is a test.
