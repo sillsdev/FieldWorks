@@ -11,7 +11,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// The 'TryAWordSandbox' is an IText Sandbox that is used within the Try A word dialog.
 	/// </summary>
-	public class TryAWordSandbox : SandboxBase
+	internal sealed class TryAWordSandbox : SandboxBase
 	{
 		#region Data members
 

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// index is used to represent what contexts in <c>StrucDesc</c> are associated with each of
 	/// the four cells.
 	/// </summary>
-	public class MetaRuleFormulaControl : RuleFormulaControl
+	internal sealed class MetaRuleFormulaControl : RuleFormulaControl
 	{
 		public MetaRuleFormulaControl(XmlNode configurationNode)
 			: base(configurationNode)

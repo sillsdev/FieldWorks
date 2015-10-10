@@ -568,7 +568,7 @@
 			<parameters>
 				<clerks>
 					<clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerTemporaryRecordClerk"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordClerk"/>
 						<recordList class="WfiWordform" field="Occurrences">
 							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerRecordList"/>
 							<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellingSda"/>

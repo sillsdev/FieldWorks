@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas
 	/// Rules that extend this class override the methods that provide information about the
 	/// various table cells in the rule and the data contained in each cell.
 	/// </summary>
-	public class RuleFormulaControl : ButtonLauncher
+	internal class RuleFormulaControl : ButtonLauncher
 	{
 		protected enum RuleInsertType
 		{

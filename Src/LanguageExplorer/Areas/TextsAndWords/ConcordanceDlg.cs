@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// the displayed text instances will not include thsoe that have been assigned to
 	/// an analysis or to a word gloss.
 	/// </summary>
-	public class ConcordanceDlg : Form, IFwGuiControl
+	internal sealed class ConcordanceDlg : Form, IFwGuiControl
 	{
 		#region Data Members
 
@@ -257,6 +257,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -296,7 +298,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// This class provides access to the status strip's progress bar.
 		/// </summary>
-		protected class ProgressReporting : IProgress
+		private class ProgressReporting : IProgress
 		{
 			event CancelEventHandler IProgress.Canceling
 			{

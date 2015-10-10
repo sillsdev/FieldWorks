@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// This class serves to remove all analyses that are only approved by the parser.
 	/// Analyses that have a human evaluation (approved or disapproved) remain afterwards.
 	/// </summary>
-	public class ParserAnalysisRemover : IUtility
+	internal sealed class ParserAnalysisRemover : IUtility
 	{
 		#region Data members
 

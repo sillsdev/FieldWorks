@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// <summary>
 	/// This class represents a <c>PhRegularRule</c> slice.
 	/// </summary>
-	public class RegRuleFormulaSlice : RuleFormulaSlice
+	internal sealed class RegRuleFormulaSlice : RuleFormulaSlice
 	{
 		public override void FinishInit()
 		{

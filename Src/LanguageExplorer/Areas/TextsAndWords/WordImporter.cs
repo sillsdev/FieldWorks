@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// a class for parsing text files and populating WfiWordSets with them.
 	/// </summary>
-	public class WordImporter
+	internal sealed class WordImporter
 	{
 		private ILgCharacterPropertyEngine m_lgCharPropEngineVern;
 		private FdoCache m_cache;

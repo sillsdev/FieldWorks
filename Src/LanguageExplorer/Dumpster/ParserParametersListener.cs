@@ -1,25 +1,22 @@
 // Copyright (c) 2005-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Implementation of:
-//		ImportWordSetListener - XCore listener that fires up an ImportWordSetDlg, if needed.
-// </remarks>
 
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
 namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
-	/// Summary description for ImportWordSetListener.
+	/// Summary description for ParserParametersListener.
 	/// </summary>
-	internal sealed class ImportWordSetListener : IFlexComponent, IFWDisposable
+	internal sealed class ParserParametersListener : IFlexComponent, IFWDisposable
 	{
 		#region Implementation of IPropertyTableProvider
 
@@ -97,7 +94,7 @@ namespace LanguageExplorer.Dumpster
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~ImportWordSetListener()
+		~ParserParametersListener()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -164,42 +161,33 @@ namespace LanguageExplorer.Dumpster
 		#region XCORE Message Handlers
 
 		/// <summary>
-		/// </summary>
-		/// <remarks> this is something of a hack until we come up with a generic solution to the problem
-		/// on how to control we are CommandSet are handled by listeners are visible. It is difficult
-		/// because some commands, like this one, may be appropriate from more than 1 area.</remarks>
-		/// <returns></returns>
-		private bool InFriendlyArea
-		{
-			get
-			{
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				return (areaChoice == "textsWords");
-			}
-		}
-
-#if RANDYTODO
-		public virtual bool OnDisplayImportWordSet(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-#endif
-
-		/// <summary>
 		/// Handles the xWorks message for Edit Parser Parameters
 		/// </summary>
 		/// <param name="argument">The xCore Command object.</param>
 		/// <returns>false</returns>
-		public bool OnImportWordSet(object argument)
+		public bool OnEditParserParameters(object argument)
 		{
 			CheckDisposed();
 
-			using (ImportWordSetDlg dlg = new ImportWordSetDlg(PropertyTable, Publisher))
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			if (cache == null)
+				throw new ArgumentException("no cache!");
+
+			using (var dlg = new ParserParametersDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window"));
+				IMoMorphData md = cache.LangProject.MorphologicalDataOA;
+				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
+				if (dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window")) == DialogResult.OK)
+				{
+					using (var helper = new UndoableUnitOfWorkHelper(
+						cache.ActionHandlerAccessor,
+						ParserUIStrings.ksUndoEditingParserParameters,
+						ParserUIStrings.ksRedoEditingParserParameters))
+					{
+						md.ParserParameters = dlg.XmlRep;
+						helper.RollBack = false;
+					}
+				}
 			}
 			return true;
 		}

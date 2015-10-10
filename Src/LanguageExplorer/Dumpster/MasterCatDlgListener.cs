@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -13,7 +12,7 @@ namespace LanguageExplorer.Dumpster
 	/// <summary>
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
-	public class MasterCatDlgListener : MasterDlgListener
+	internal sealed class MasterCatDlgListener : MasterDlgListener
 	{
 		#region Properties
 

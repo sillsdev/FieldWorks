@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// <summary>
 	/// This is the main class for the interlinear text control view of one analysis of one wordform.
 	/// </summary>
-	public class AnalysisInterlinearRs : RootSite, INotifyControlInCurrentSlice
+	internal sealed class AnalysisInterlinearRs : RootSite, INotifyControlInCurrentSlice
 	{
 		#region Data members
 
@@ -256,7 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Have the sandbox come and go, as apropriate.
 		/// </summary>
-		public virtual bool SliceIsCurrent
+		public bool SliceIsCurrent
 		{
 			set
 			{

@@ -19,7 +19,7 @@ using SIL.FieldWorks.IText;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	class TryAWordRootSite : RootSiteControl
+	internal sealed class TryAWordRootSite : RootSiteControl
 	{
 		private InterlinVc m_vc;
 		private ITsString m_sWordForm;

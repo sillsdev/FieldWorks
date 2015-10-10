@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 {
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_cache and m_mediator are references")]
-	public class HCTrace : IParserTrace
+	internal sealed class HCTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
 		private static ParserTraceUITransform TraceTransform

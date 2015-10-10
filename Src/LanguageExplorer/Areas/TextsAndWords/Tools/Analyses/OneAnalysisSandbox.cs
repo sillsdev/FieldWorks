@@ -10,7 +10,7 @@ using SIL.FieldWorks.IText;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
-	public partial class OneAnalysisSandbox : SandboxBase
+	internal sealed partial class OneAnalysisSandbox : SandboxBase
 	{
 		#region Construction
 

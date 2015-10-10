@@ -8,6 +8,7 @@
 // </remarks>
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Text;
 using SIL.CoreImpl;
@@ -16,7 +17,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for ImportWordSetDlg.
 	/// </summary>
-	public class ImportWordSetDlg : Form, IFWDisposable
+	internal sealed class ImportWordSetDlg : Form, IFWDisposable
 	{
 		#region Data members
 		private IPublisher m_publisher;
@@ -90,6 +90,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	public class TryAWordDlg : Form, IFlexComponent, IFWDisposable
+	internal sealed class TryAWordDlg : Form, IFlexComponent, IFWDisposable
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "Code in question is only compiled on Windows")]
-		public void SetDlgInfo(IWfiWordform wordform, ParserListener parserListener)
+		internal void SetDlgInfo(IWfiWordform wordform, ParserListener parserListener)
 		{
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
@@ -251,6 +251,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose( bool disposing )
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

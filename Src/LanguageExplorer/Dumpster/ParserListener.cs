@@ -32,7 +32,7 @@ namespace LanguageExplorer.Dumpster
 	/// this class just gets all the parser calling and event and receiving
 	/// out of the form code. It is scheduled for refactoring
 	/// </summary>
-	public class ParserListener : IFlexComponent, IFWDisposable, IVwNotifyChange
+	internal sealed class ParserListener : IFlexComponent, IFWDisposable, IVwNotifyChange
 	{
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
@@ -96,7 +96,7 @@ namespace LanguageExplorer.Dumpster
 
 		#endregion
 
-		public ParserConnection Connection
+		internal ParserConnection Connection
 		{
 			get
 			{
@@ -363,7 +363,7 @@ namespace LanguageExplorer.Dumpster
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
@@ -692,17 +692,17 @@ namespace LanguageExplorer.Dumpster
 
 		#region TraceSwitch methods
 
-		protected void TraceVerbose(string s)
+		private void TraceVerbose(string s)
 		{
 			if(m_traceSwitch.TraceVerbose)
 				Trace.Write(s);
 		}
-		protected void TraceVerboseLine(string s)
+		private void TraceVerboseLine(string s)
 		{
 			if(m_traceSwitch.TraceVerbose)
 				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
 		}
-		protected void TraceInfoLine(string s)
+		private void TraceInfoLine(string s)
 		{
 			if(m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
 				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);

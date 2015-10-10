@@ -10,7 +10,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Interface for parser trace processing
 	/// </summary>
-	public interface IParserTrace
+	internal interface IParserTrace
 	{
 		/// <summary>
 		/// Create an HTML page of the results

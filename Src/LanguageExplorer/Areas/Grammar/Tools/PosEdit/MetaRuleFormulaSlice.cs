@@ -4,7 +4,7 @@
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
-	public class MetaRuleFormulaSlice : RuleFormulaSlice
+	internal sealed class MetaRuleFormulaSlice : RuleFormulaSlice
 	{
 		public MetaRuleFormulaSlice()
 		{

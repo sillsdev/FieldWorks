@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas
 	/// This class represents a Views rootsite control that is used to display a rule
 	/// formula. It notifies the rule formula control about key presses and right clicks.
 	/// </summary>
-	public class RuleFormulaView : RootSiteControl
+	internal sealed class RuleFormulaView : RootSiteControl
 	{
 		RuleFormulaControl m_formulaControl = null;
 		ICmObject m_obj = null;

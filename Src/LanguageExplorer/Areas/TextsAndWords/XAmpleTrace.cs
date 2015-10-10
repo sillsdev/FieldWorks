@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_mediator is a reference")]
-	public class XAmpleTrace : IParserTrace
+	internal sealed class XAmpleTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
 		private static ParserTraceUITransform TraceTransform

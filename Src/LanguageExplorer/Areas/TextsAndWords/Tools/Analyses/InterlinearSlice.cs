@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// A tree control item where the embedded form is a View (specifically
 	/// SIL.FieldWorks.Common.Framework.RootSite).
 	/// </summary>
-	public class InterlinearSlice : ViewSlice
+	internal sealed class InterlinearSlice : ViewSlice
 	{
 		public InterlinearSlice()
 		{

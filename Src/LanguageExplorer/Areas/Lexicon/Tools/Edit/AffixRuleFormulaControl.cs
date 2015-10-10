@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// the contexts in the <c>Input</c> field of <c>MoAffixProcess</c>. The data in the result
 	/// cell consists of the rule mapping objects in the <c>Output</c> field.
 	/// </summary>
-	public class AffixRuleFormulaControl : RuleFormulaControl
+	internal sealed class AffixRuleFormulaControl : RuleFormulaControl
 	{
 		// column that is scheduled to be removed
 		private IPhContextOrVar m_removeCol;
@@ -692,7 +692,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-		protected bool RemoveFromOutput(bool forward, SelectionHelper sel, out int index)
+		private bool RemoveFromOutput(bool forward, SelectionHelper sel, out int index)
 		{
 			index = -1;
 			bool reconstruct = false;

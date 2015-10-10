@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for ParserParametersDlg.
 	/// </summary>
-	public class ParserParametersDlg : Form, IFWDisposable
+	internal sealed class ParserParametersDlg : Form, IFWDisposable
 	{
 		private const string HelpTopic = "khtpParserParamters";
 
@@ -108,6 +108,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

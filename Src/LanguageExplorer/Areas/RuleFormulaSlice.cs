@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas
 	/// This is a view slice that contains a <c>RuleFormulaControl</c>. It is extended by
 	/// phonological/morphological rule slices.
 	/// </summary>
-	public class RuleFormulaSlice : ViewSlice
+	internal class RuleFormulaSlice : ViewSlice
 	{
 		public override RootSite RootSite
 		{

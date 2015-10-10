@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Handles acquiring a parser and safely subscribing to and receiving events from it.
 	/// </summary>
-	public sealed class ParserConnection : FwDisposableBase, IAsyncResult
+	internal sealed class ParserConnection : FwDisposableBase, IAsyncResult
 	{
 		private readonly ParserScheduler m_scheduler;
 

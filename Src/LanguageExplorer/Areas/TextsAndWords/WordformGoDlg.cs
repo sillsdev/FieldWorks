@@ -16,11 +16,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for WordformGoDlg.
 	/// </summary>
-	public class WordformGoDlg : BaseGoDlg
+	internal sealed class WordformGoDlg : BaseGoDlg
 	{
 		#region	Data members
 
-		protected int m_oldSearchWs;
+		private int m_oldSearchWs;
 
 		#endregion
 

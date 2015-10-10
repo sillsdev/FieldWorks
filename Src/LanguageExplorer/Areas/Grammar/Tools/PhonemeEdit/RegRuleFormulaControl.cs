@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// <c>PhSegRuleRHS</c>. The right context cell consists of a phonological context from the <c>RightContext</c>
 	/// field of <c>PhSegRuleRHS</c>.
 	/// </summary>
-	public class RegRuleFormulaControl : RuleFormulaControl
+	internal sealed class RegRuleFormulaControl : RuleFormulaControl
 	{
 		public RegRuleFormulaControl(XmlNode configurationNode)
 			: base(configurationNode)

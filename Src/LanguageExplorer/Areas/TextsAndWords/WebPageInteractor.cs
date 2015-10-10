@@ -17,7 +17,7 @@ using Gecko;
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	[System.Runtime.InteropServices.ComVisible(true)]
-	public class WebPageInteractor
+	internal sealed class WebPageInteractor
 	{
 		private readonly HtmlControl m_htmlControl;
 		private readonly IPublisher m_publisher;
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 #if __MonoCS__
-		protected GeckoElement GetParentTable(GeckoElement element)
+		private GeckoElement GetParentTable(GeckoElement element)
 		{
 			while (element != null && element.TagName.ToLowerInvariant() != "table".ToLowerInvariant())
 				element = element.ParentElement as GeckoElement;
@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return element;
 		}
 
-		protected string GetParameterFromJavaScriptFunctionCall(string javascript)
+		private string GetParameterFromJavaScriptFunctionCall(string javascript)
 		{
 			int start = javascript.IndexOf('(');
 			int end = javascript.IndexOf(')');
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return javascript.Substring(start + 1, end - start - 1);
 		}
 
-		protected void HandleHtmlControlBrowserDomMouseMove(object sender, DomMouseEventArgs e)
+		private void HandleHtmlControlBrowserDomMouseMove(object sender, DomMouseEventArgs e)
 		{
 			if (sender == null || e == null || e.Target == null)
 				return;
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			MouseMove();
 		}
 
-		protected void HandleDomClick(object sender, DomMouseEventArgs e)
+		private void HandleDomClick(object sender, DomMouseEventArgs e)
 		{
 			if (sender == null || e == null || e.Target == null)
 				return;
@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		/// <param name="sForm">form to adjust</param>
 		/// <returns>adjusted form</returns>
-		protected string AdjustForm(string sForm)
+		private string AdjustForm(string sForm)
 		{
 			string sResult1 = sForm.Replace("&", "&amp;");
 			string sResult2 = sResult1.Replace("<", "&lt;");

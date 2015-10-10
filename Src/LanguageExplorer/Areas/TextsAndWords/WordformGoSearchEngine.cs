@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// This is the search engine for WordformGoDlg.
 	/// </summary>
-	internal class WordformGoSearchEngine : SearchEngine
+	internal sealed class WordformGoSearchEngine : SearchEngine
 	{
 		private readonly Virtuals m_virtuals;
 

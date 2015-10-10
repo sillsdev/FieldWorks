@@ -8,7 +8,7 @@ using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	public class AffixRuleFormulaSlice : RuleFormulaSlice
+	internal sealed class AffixRuleFormulaSlice : RuleFormulaSlice
 	{
 		public AffixRuleFormulaSlice()
 		{
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 #endif
 
-		public virtual bool OnMappingJumpToPhoneme(object args)
+		public bool OnMappingJumpToPhoneme(object args)
 		{
 			CheckDisposed();
 			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
