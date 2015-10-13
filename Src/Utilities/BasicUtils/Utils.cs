@@ -799,6 +799,13 @@ namespace SIL.Utils
 				try
 				{
 					ci = CultureInfo.GetCultureInfo(sWs);
+
+					// if the CultureInfo doesn't exist, don't return junk.
+					if (ci.EnglishName.Equals(string.Format("Unknown Language ({0})", sWs)))
+					{
+						ci = null;
+						idx = sWs.LastIndexOf('-');
+					}
 				}
 				catch
 				{
