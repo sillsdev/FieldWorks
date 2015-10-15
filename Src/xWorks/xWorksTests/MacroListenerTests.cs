@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
@@ -21,17 +19,23 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_Mediator gets disposed in TestTearDown method")]
+		Justification="m_mediator gets disposed in TestTearDown method")]
 	public class MacroListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private Mediator m_Mediator;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		public override void TestTearDown()
 		{
-			if (m_Mediator != null)
+			if (m_mediator != null)
 			{
-				m_Mediator.Dispose();
-				m_Mediator = null;
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
 			}
 			base.TestTearDown();
 		}
@@ -92,10 +96,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private MacroListener MakeMacroListenerWithCache()
 		{
-			m_Mediator = new Mediator();
-			m_Mediator.PropertyTable.SetProperty("cache", Cache);
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable.SetProperty("cache", Cache, true);
 			var ml = new MacroListener();
-			ml.Init(m_Mediator, null);
+			ml.Init(m_mediator, m_propertyTable, null);
 			return ml;
 		}
 

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +12,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -990,6 +995,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			adjuster.RunTest();
 		}
 
+		/// <summary/>
+		[Test]
+		public void SegmentIsOutsideOfRange_DoesNotThrowNPE()
+		{
+			var adjuster = new AnalysisAdjuster();
+			var analOccurWithNullSeg = new AnalysisOccurrence(null, 0);
+			var analOccurWithRealSeg = new AnalysisOccurrence(new Segment(), 0);
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(null, null)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(null, analOccurWithNullSeg)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(null, analOccurWithRealSeg)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithNullSeg, null)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithNullSeg, analOccurWithNullSeg)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithNullSeg, analOccurWithRealSeg)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithRealSeg, null)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithRealSeg, analOccurWithNullSeg)));
+			Assert.DoesNotThrow(() => adjuster.SegmentIsOutsideOfRange(new TestAnalysisReference(analOccurWithRealSeg, analOccurWithRealSeg)));
+		}
+
 		#region Deletion tests
 		/// <summary>
 		///
@@ -1520,15 +1543,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			adjuster.RunTest();
 		}
 		#endregion
-
-		///// <summary>
-		/////
-		///// WANTTESTPORT (FLEx) A higher-level test, more an integration one...do we still need this??
-		///// </summary>
-		//[Test, Ignore]
-		//public virtual void LT7841_UndoDeleteParagraphBreakResultsInRefresh()
-		//{
-		//}
 
 		#region Sentence replace tests
 		/// <summary>
@@ -4035,4 +4049,73 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public int ColumnIndex { get; private set; }
 	}
 	#endregion
+
+	#region TestAnalysisReference class
+	internal class TestAnalysisReference : IAnalysisReference
+	{
+		private readonly AnalysisOccurrence m_endRef, m_begRef;
+
+		public TestAnalysisReference(AnalysisOccurrence endRef, AnalysisOccurrence begRef)
+		{
+			m_endRef = endRef;
+			m_begRef = begRef;
+		}
+
+		public AnalysisOccurrence EndRef() { return m_endRef; }
+
+		public AnalysisOccurrence BegRef() { return m_begRef; }
+
+		#region not implemented
+		public ICmObjectId Id { get { throw new NotImplementedException(); } }
+		public ICmObject GetObject(ICmObjectRepository repo) { throw new NotImplementedException(); }
+		public int Hvo { get { throw new NotImplementedException(); } }
+		public ICmObject Owner { get { throw new NotImplementedException(); } }
+		public int OwningFlid { get { throw new NotImplementedException(); } }
+		public int OwnOrd { get { throw new NotImplementedException(); } }
+		public int ClassID { get { throw new NotImplementedException(); } }
+		public Guid Guid { get { throw new NotImplementedException(); } }
+		public string ClassName { get { throw new NotImplementedException(); } }
+		public void Delete() { throw new NotImplementedException(); }
+		public IFdoServiceLocator Services { get { throw new NotImplementedException(); } }
+		public ICmObject OwnerOfClass(int clsid) { throw new NotImplementedException(); }
+		public T OwnerOfClass<T>() where T : ICmObject { throw new NotImplementedException(); }
+		public ICmObject Self { get { throw new NotImplementedException(); } }
+		public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure) { throw new NotImplementedException(); }
+		public void PostClone(Dictionary<int, ICmObject> copyMap) { throw new NotImplementedException(); }
+		public void AllReferencedObjects(List<ICmObject> collector) { throw new NotImplementedException(); }
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor) { throw new NotImplementedException(); }
+		public bool IsOwnedBy(ICmObject possibleOwner) { throw new NotImplementedException(); }
+		public ICmObject ReferenceTargetOwner(int flid) { throw new NotImplementedException(); }
+		public bool IsFieldRequired(int flid) { throw new NotImplementedException(); }
+		public int IndexInOwner { get { throw new NotImplementedException(); } }
+		public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid) { throw new NotImplementedException(); }
+		public bool IsValidObject { get { throw new NotImplementedException(); } }
+		public FdoCache Cache { get { throw new NotImplementedException(); } }
+		public void MergeObject(ICmObject objSrc) { throw new NotImplementedException(); }
+		public void MergeObject(ICmObject objSrc, bool fLoseNoStringData) { throw new NotImplementedException(); }
+		public bool CanDelete { get { throw new NotImplementedException(); } }
+		public string ShortName { get { throw new NotImplementedException(); } }
+		public ITsString ObjectIdName { get { throw new NotImplementedException(); } }
+		public ITsString ShortNameTSS { get { throw new NotImplementedException(); } }
+		public ITsString DeletionTextTSS { get { throw new NotImplementedException(); } }
+		public ITsString ChooserNameTS { get { throw new NotImplementedException(); } }
+		public string SortKey { get { throw new NotImplementedException(); } }
+		public string SortKeyWs { get { throw new NotImplementedException(); } }
+		public int SortKey2 { get { throw new NotImplementedException(); } }
+		public string SortKey2Alpha { get { throw new NotImplementedException(); } }
+		public HashSet<ICmObject> ReferringObjects { get { throw new NotImplementedException(); } }
+		public IEnumerable<ICmObject> OwnedObjects { get { throw new NotImplementedException(); } }
+		public IEnumerable<ICmObject> AllOwnedObjects { get { throw new NotImplementedException(); } }
+		public bool IsValidRef { get { throw new NotImplementedException(); } }
+		public void ChangeToDifferentSegment(ISegment newSeg, bool fBegin, bool fEnd) { throw new NotImplementedException(); }
+		public void ChangeToDifferentIndex(int newIndex, bool fBegin, bool fEnd) { throw new NotImplementedException(); }
+		public List<AnalysisOccurrence> GetOccurrences() { throw new NotImplementedException(); }
+		public bool IsAfter(IAnalysisReference otherReference) { throw new NotImplementedException(); }
+		public bool GrowFromEnd(bool fignorePunct) { throw new NotImplementedException(); }
+		public bool GrowFromBeginning(bool fignorePunct) { throw new NotImplementedException(); }
+		public bool ShrinkFromEnd(bool fignorePunct) { throw new NotImplementedException(); }
+		public bool ShrinkFromBeginning(bool fignorePunct) { throw new NotImplementedException(); }
+		#endregion not implemented
+	}
+	#endregion TestAnalysisReference class
 }

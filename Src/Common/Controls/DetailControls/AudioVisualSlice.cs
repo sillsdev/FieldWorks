@@ -10,12 +10,10 @@
 // This file contains AudioVisualSlice, AudioVisualLauncher, AudioVisualView, and AudioVisualVc
 // classes.  These encapsulate a CmMedia object for display in a detail view.
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -132,12 +130,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
 			ctrl.Initialize(
-				(FdoCache)Mediator.PropertyTable.GetValue("cache"),
+				m_propertyTable.GetValue<FdoCache>("cache"),
 				Media.MediaFileRA,
 				CmFileTags.kflidInternalPath,
 				"InternalPath",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"InternalPath",
 				"user");
 		}
@@ -150,7 +149,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get
 			{
 				CheckDisposed();
-				return (this.Control as AudioVisualLauncher).RootSite;
+				return (Control as AudioVisualLauncher).RootSite;
 			}
 		}
 
@@ -297,26 +296,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj"></param>
-		/// <param name="flid"></param>
-		/// <param name="fieldName"></param>
-		/// <param name="persistProvider"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="obj"></param>
+		///  <param name="flid"></param>
+		///  <param name="fieldName"></param>
+		///  <param name="persistProvider"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
-		/// <param name="displayWs"></param>
+		///  <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator,
+			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable,
 			string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator,
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable,
 				displayNameProperty, displayWs);
-			m_view.Init(mediator, obj as ICmFile, flid);
+			m_view.Init(obj as ICmFile, flid);
 		}
 		/// <summary>
 		/// Handle launching of the media player.
@@ -434,10 +434,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_vc = null;
 		}
 
-		public void Init(Mediator mediator, ICmFile obj, int flid)
+		public void Init(ICmFile obj, int flid)
 		{
 			CheckDisposed();
-			m_fdoCache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_fdoCache = m_propertyTable.GetValue<FdoCache>("cache");
 			m_file = obj;
 			m_flid = flid;
 			if (m_rootb == null)
@@ -446,7 +446,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			else if (m_file != null)
 			{
-				m_rootb.SetRootObject(m_file.Hvo, m_vc, AudioVisualView.kfragPathname,
+				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname,
 					m_rootb.Stylesheet);
 				m_rootb.Reconstruct();
 			}

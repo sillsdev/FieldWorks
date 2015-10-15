@@ -10,11 +10,11 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Forms;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -86,10 +86,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
-				dlg.SetDlginfo(cache.LangProject.MsFeatureSystemOA, m_mediator, true);
-				switch (dlg.ShowDialog((Form)m_mediator.PropertyTable.GetValue("window")))
+				dlg.SetDlginfo(cache.LangProject.MsFeatureSystemOA, m_mediator, m_propertyTable, true);
+				switch (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

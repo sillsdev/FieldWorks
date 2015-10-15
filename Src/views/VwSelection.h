@@ -20,6 +20,7 @@ namespace TestViews
 {
 	class TestVwPattern;
 	class TestVwTextSelection;
+	class TestVwTextStore;
 };
 
 typedef enum
@@ -456,6 +457,7 @@ class VwTextSelection : public VwSelection
 	friend class GetSelectionStringMethod;
 	friend class TestViews::TestVwPattern;
 	friend class TestViews::TestVwTextSelection;
+	friend class TestViews::TestVwTextStore;
 public:
 	// IUnknown
 	STDMETHOD(QueryInterface)(REFIID iid, void ** ppv);

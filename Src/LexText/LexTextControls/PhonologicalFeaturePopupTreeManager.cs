@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
@@ -28,8 +27,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache,  bool useAbbr, Mediator mediator, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
-			: base(treeCombo, cache, mediator, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 			m_closedFeature = closedFeature;
 		}
@@ -131,7 +130,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature);
 						var fs = CreateEmptyFeatureStructureInAnnotation(null);
-						dlg.SetDlgInfo(Cache, m_mediator, fs);
+						dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, fs);
 						dlg.ShowIgnoreInsteadOfDontCare = true;
 						dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
 

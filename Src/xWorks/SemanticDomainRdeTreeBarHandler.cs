@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -44,13 +43,13 @@ namespace SIL.FieldWorks.XWorks
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="treeBarControl is a reference")]
-		internal override void Init(Mediator mediator, XmlNode node)
+		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
-			base.Init(mediator, node);
+			base.Init(mediator, propertyTable, node);
 
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			var treeBarControl = GetTreeBarControl(mediator);
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			var treeBarControl = GetTreeBarControl();
 			SetupAndShowHeaderPanel(node, treeBarControl);
 			m_searchTimer = new SearchTimer(treeBarControl, 500, HandleChangeInSearchText,
 				new List<Control> { treeBarControl.TreeView, treeBarControl.ListView });
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Semantic Domains should be editable only in the Lists area.
-		protected bool Editable { get { return "lists".Equals(m_mediator.PropertyTable.GetStringProperty("areaChoice", null)); } }
+		protected bool Editable { get { return "lists".Equals(m_propertyTable.GetStringProperty("areaChoice", null)); } }
 
 		private FwTextBox CreateSearchBox()
 		{
@@ -187,22 +186,20 @@ namespace SIL.FieldWorks.XWorks
 			return m_textSearch.Height + m_titleBar.Height;
 		}
 
-		private RecordBar GetTreeBarControl(Mediator mediator)
+		private RecordBar GetTreeBarControl()
 		{
-			var window = (XWindow)mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			return window.TreeBarControl;
 		}
 
 		private void SetInfoBarText(XmlNode handlerNode, PaneBar infoBar)
 		{
-			var stringTable = m_mediator.StringTbl;
-
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.
 			var titleId = XmlUtils.GetAttributeValue(handlerNode, "altTitleId");
 			if (titleId != null)
 			{
-				XmlViewsUtils.TryFindString(stringTable, "AlternativeTitles", titleId, out titleStr);
+				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
 				if (titleStr == null)
@@ -216,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void UpdateHeaderVisibility()
 		{
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			if (window == null || window.IsDisposed)
 				return;
 

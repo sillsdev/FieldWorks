@@ -8,12 +8,12 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.IO;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SIL.Utils
 {
@@ -22,18 +22,53 @@ namespace SIL.Utils
 	/// </summary>
 	public class StringTable
 	{
+		private static StringTable s_singletonStringTable;
+
 		protected string m_baseDirectory;
 		protected StringTable m_parent;
 		protected XmlDocument m_document;
-		private string m_sWsLoaded = null;
-
+		private string m_sWsLoaded;
 		/// <summary>
 		/// This table is keyed by the groupXPathFragment passed to GetStringWithXPath.
 		/// The value is another Dictioanry, from the id string to the string value we want.
 		/// </summary>
-		Dictionary<string, Dictionary<string, string>> m_pathsToStrings = new Dictionary<string, Dictionary<string, string>>();
+		readonly Dictionary<string, Dictionary<string, string>> m_pathsToStrings = new Dictionary<string, Dictionary<string, string>>();
 
-		public StringTable(string baseDirectory)
+		/// <summary>
+		/// Return the singleton StringTable instance.
+		/// </summary>
+		public static StringTable Table
+		{
+			get
+			{
+				if (s_singletonStringTable == null)
+				{
+					// Half my kingdom to be able to get at FwDirectoryFinder.FlexFolder from here!
+					var parentOfLanguageExplorerFolder = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
+					{
+						// If a dev machine, move up to parent of 'output' folder.
+						parentOfLanguageExplorerFolder = Path.GetDirectoryName(parentOfLanguageExplorerFolder);
+					}
+					if (Directory.Exists(Path.Combine(parentOfLanguageExplorerFolder, "DistFiles")))
+					{
+						// If a dev machine, move down to "Distfiles" folder.
+						parentOfLanguageExplorerFolder = Path.Combine(parentOfLanguageExplorerFolder, "DistFiles");
+					}
+					// Finally, "parentOfLanguageExplorerFolder" should have the child folder named "Language Explorer" for devs or users.
+					// I suppose I could throw if that is not the case, as StringTable can't load if it isn't.
+					// Naw, just let it crash and someone will make a new JIRA issue for the crash. ;-)
+					s_singletonStringTable = new StringTable(Path.Combine(parentOfLanguageExplorerFolder, "Language Explorer", "Configuration"));
+				}
+				return s_singletonStringTable;
+			}
+		}
+
+		/// <summary>
+		/// Create an instance of the StringTable.
+		/// </summary>
+		/// <param name="baseDirectory"></param>
+		internal StringTable(string baseDirectory)
 		{
 			m_parent = null;
 			m_baseDirectory = baseDirectory;
@@ -208,7 +243,7 @@ namespace SIL.Utils
 
 
 			string inheritPath = XmlUtils.GetOptionalAttributeValue(node, "inheritPath");
-			if (inheritPath != null && inheritPath.Length>0)
+			if (!string.IsNullOrEmpty(inheritPath))
 			{
 				string path = Path.Combine(baseDirectory, inheritPath);
 				m_parent = new StringTable(path);
@@ -257,7 +292,7 @@ namespace SIL.Utils
 		{
 			if (fTrim)
 				id = id.Trim();
-			Dictionary<string, string> items = null;
+			Dictionary<string, string> items;
 			if (m_pathsToStrings.ContainsKey(rootXPathFragment))
 			{
 				items = m_pathsToStrings[rootXPathFragment];
@@ -351,7 +386,7 @@ namespace SIL.Utils
 		public string[] GetStringsFromStringListNode(XmlNode node)
 		{
 			string ids=XmlUtils.GetManditoryAttributeValue(node, "ids");
-			string[] idList = ids.Split(new char[]{','});
+			string[] idList = ids.Split(',');
 			string[] strings = new string[idList.Length];
 			string groupPath = "";
 			string simplePath = XmlUtils.GetOptionalAttributeValue(node, "group");
@@ -377,7 +412,7 @@ namespace SIL.Utils
 			if(simplePath == "")
 				return "";
 			string path = "";
-			string[] names = simplePath.Split(new char[]{'/'});
+			string[] names = simplePath.Split('/');
 			foreach(string name in names)
 			{
 				path += "group[@id = '" + name.Trim() + "']/";
@@ -399,10 +434,7 @@ namespace SIL.Utils
 				GetXPathFragmentFromSimpleNotation("LocalizedAttributes"), false);
 			if (String.IsNullOrEmpty(sLocValue))
 				return sValue;
-			else if (sLocValue == "*" + sValue + "*")
-				return sValue;
-			else
-				return sLocValue;
+			return sLocValue == "*" + sValue + "*" ? sValue : sLocValue;
 		}
 
 		/// <summary>
@@ -419,10 +451,7 @@ namespace SIL.Utils
 				GetXPathFragmentFromSimpleNotation("LocalizedLiterals"), false);
 			if (String.IsNullOrEmpty(sLocValue))
 				return sValue;
-			else if (sLocValue == "*" + sValue + "*")
-				return sValue;
-			else
-				return sLocValue;
+			return sLocValue == "*" + sValue + "*" ? sValue : sLocValue;
 		}
 
 		/// <summary>
@@ -437,10 +466,7 @@ namespace SIL.Utils
 				GetXPathFragmentFromSimpleNotation("LocalizedContextHelp"), false);
 			if (String.IsNullOrEmpty(sLocValue))
 				return null;
-			else if (sLocValue == "*" + sId + "*")
-				return null;
-			else
-				return sLocValue;
+			return sLocValue == "*" + sId + "*" ? null : sLocValue;
 		}
 	}
 }

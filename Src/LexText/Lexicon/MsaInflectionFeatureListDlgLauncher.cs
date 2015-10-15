@@ -30,13 +30,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="obj"></param>
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
+		/// <param name="persistProvider"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="displayNameProperty"></param>
+		/// <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
-			m_msaInflectionFeatureListDlgLauncherView.Init(mediator, obj as IFsFeatStruc);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			m_msaInflectionFeatureListDlgLauncherView.Init(cache, obj as IFsFeatStruc);
 		}
 
 		/// <summary>
@@ -59,7 +64,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case MoAffixAllomorphTags.kClassId:
 							IMoAffixAllomorph allo = parentSlice.Object as IMoAffixAllomorph;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
-							dlg.SetDlgInfo(m_cache, m_mediator, allo, owningFlid);
+							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, allo, owningFlid);
 							break;
 						/*case LexEntryInflTypeTags.kClassId:
 							ILexEntryInflType leit = parentSlice.Object as ILexEntryInflType;
@@ -69,27 +74,27 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						default:
 							IMoMorphSynAnalysis msa = parentSlice.Object as IMoMorphSynAnalysis;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
-							dlg.SetDlgInfo(m_cache, m_mediator, msa, owningFlid);
+							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, msa, owningFlid);
 							break;
 					}
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, originalFs,
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs,
 						(parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid);
 				}
 
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
-				dlg.Text = m_mediator.StringTbl.GetStringWithXPath("InflectionFeatureTitle", ksPath);
-				dlg.Prompt = m_mediator.StringTbl.GetStringWithXPath("InflectionFeaturePrompt", ksPath);
-				dlg.LinkText = m_mediator.StringTbl.GetStringWithXPath("InflectionFeatureLink", ksPath);
+				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
+				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturePrompt", ksPath);
+				dlg.LinkText = StringTable.Table.GetStringWithXPath("InflectionFeatureLink", ksPath);
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
 					// Note that this may set m_obj to null. dlg.FS will be null if all inflection features have been
 					// removed. That is a valid state for this slice; m_obj deleted is not.
 					m_obj = dlg.FS;
-					m_msaInflectionFeatureListDlgLauncherView.Init(m_mediator, dlg.FS);
+					m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
 				}
 				else if (result == DialogResult.Yes)
 				{
@@ -242,24 +247,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					int owningFlid;
 					ILexEntryInflType leit = parentSlice.Object as ILexEntryInflType;
 					owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
-					dlg.SetDlgInfo(m_cache, m_mediator, leit, owningFlid);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, leit, owningFlid);
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, originalFs,
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs,
 						(parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid);
 				}
 
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
-				dlg.Text = m_mediator.StringTbl.GetStringWithXPath("InflectionFeatureTitle", ksPath);
-				dlg.Prompt = m_mediator.StringTbl.GetStringWithXPath("InflectionFeaturesPrompt", ksPath);
-				dlg.LinkText = m_mediator.StringTbl.GetStringWithXPath("InflectionFeaturesLink", ksPath);
+				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
+				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturesPrompt", ksPath);
+				dlg.LinkText = StringTable.Table.GetStringWithXPath("InflectionFeaturesLink", ksPath);
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
 					if (dlg.FS != null)
 						m_obj = dlg.FS;
-					m_msaInflectionFeatureListDlgLauncherView.Init(m_mediator, dlg.FS);
+					m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
 				}
 				else if (result == DialogResult.Yes)
 				{

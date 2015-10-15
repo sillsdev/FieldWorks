@@ -3,7 +3,7 @@ using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils
 {
-	public class DummyKeyboardAdaptor : FwDisposableBase, IKeyboardAdaptor
+	public class DummyKeyboardAdaptor : FwDisposableBase, IKeyboardRetrievingAdaptor, IKeyboardSwitchingAdaptor
 	{
 		private readonly KeyboardDescription m_defaultKeyboard;
 
@@ -45,6 +45,12 @@ namespace SIL.Utils
 			return true;
 		}
 
+		public string GetKeyboardSetupApplication(out string arguments)
+		{
+			arguments = null;
+			return null;
+		}
+
 		public KeyboardDescription DefaultKeyboard
 		{
 			get { return m_defaultKeyboard; }
@@ -58,6 +64,21 @@ namespace SIL.Utils
 		public KeyboardAdaptorType Type
 		{
 			get { return KeyboardAdaptorType.System; }
+		}
+
+		public bool IsApplicable
+		{
+			get { return true; }
+		}
+
+		public IKeyboardSwitchingAdaptor SwitchingAdaptor
+		{
+			get { return this; }
+		}
+
+		public bool IsSecondaryKeyboardSetupApplication
+		{
+			get { return false; }
 		}
 	}
 }

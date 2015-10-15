@@ -504,21 +504,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Enabled = false;
 			DialogResult = DialogResult.OK;
 
-			//
-			// Validate input
-			//
-
-			if (CheckForNonAsciiProjectName(ProjectName))
-			{
-				if (DisplayNonAsciiWarningDialog() == DialogResult.Cancel)
-				{
-					ProjectName = RemoveNonAsciiCharsFromProjectName();
-					m_txtName.Focus();
-					Enabled = true;
-					DialogResult = DialogResult.None; // Return to New FieldWorks Project dialog
-					return;
-				}
-			}
 			Logger.WriteEvent(string.Format(
 				"Creating new language project: name: {0}, vernacular ws: {1}, anal ws: {2}",
 				ProjectName, m_cbVernWrtSys.Text, m_cbAnalWrtSys.Text));
@@ -561,17 +546,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Create new project
 			//
 			CreateNewLangProjWithProgress();
-		}
-
-		private string RemoveNonAsciiCharsFromProjectName()
-		{
-			return Unicode.RemoveNonAsciiCharsFromString(ProjectName);
-		}
-
-		// Made internal so that FwProjPropertiesDlg can use it too.
-		internal static bool CheckForNonAsciiProjectName(string projName)
-		{
-			return Unicode.CheckForNonAsciiCharacters(projName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -768,17 +742,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return true; }
 		}
 
-		/// <summary>
-		/// Displays a warning to the user that they have entered a project name containing
-		/// non-Ascii characters which may prevent them from using Send/Receive.
-		/// Protected for testing.
-		/// </summary>
-		protected virtual DialogResult DisplayNonAsciiWarningDialog()
-		{
-			return MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning + FwCoreDlgs.ksOKToContinueCancelToChangeName, FwCoreDlgs.ksWarning,
-				MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
-		}
-
 		#endregion
 
 		#region Interface methods
@@ -819,7 +782,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (MessageBox.Show(string.Format(FwCoreDlgs.ksNLPFolderDoesNotExist, dataDirectory),
 									FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 					return false; // can't go on.
-				using (var dlg = new ProjectLocationSharingDlg(helpTopicProvider))
+				using (var dlg = new ProjectLocationDlg(helpTopicProvider))
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
 						return false; // can't go on.

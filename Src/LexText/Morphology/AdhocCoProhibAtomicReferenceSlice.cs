@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Drawing;
-
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -35,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			//We need to set the Font so the height of this slice will be
 			//set appropriately to fit the text.
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			int fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
 					"Normal", stylesheet,
 					m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);
@@ -46,10 +45,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class AdhocCoProhibAtomicReferenceDisabledSlice : AdhocCoProhibAtomicReferenceSlice
 	{
-		public AdhocCoProhibAtomicReferenceDisabledSlice()
-			: base()
-		{
-		}
 		public override void FinishInit()
 		{
 			CheckDisposed();

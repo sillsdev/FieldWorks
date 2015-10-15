@@ -3382,7 +3382,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 	} LgEndSegmentType; 
 
-
 	
 
 
@@ -3401,10 +3400,8 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 			[in] BSTR bstrData);
 		
 		
-		
-		
-		
-		HRESULT FontIsValid();
+		[propget] HRESULT FontIsValid(
+			[out, retval] ComBool * pfValid);
 
 		
 		
@@ -3480,7 +3477,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IRenderEngine;
 	};
-	#line 1109 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3605,7 +3602,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
-#line 1234 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 #line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"

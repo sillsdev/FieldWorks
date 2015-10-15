@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -35,6 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		protected string s_helpTopic = "khtpCustomLists";
 		private HelpProvider m_helpProvider;
 		protected readonly Mediator m_mediator;
+		protected readonly PropertyTable m_propertyTable;
 		private FdoCache m_cache;
 		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
@@ -47,12 +47,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public CustomListDlg(Mediator mediator)
+		public CustomListDlg(Mediator mediator, PropertyTable propertyTable)
 		{
 			m_finSetup = true;
 			InitializeComponent();
 			StartPosition = FormStartPosition.CenterParent;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_btnOK.Enabled = false;
 
 			InitializeWSCombo();
@@ -61,9 +62,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CustomListDlg_Load(object sender, EventArgs e)
 		{
-			if (m_mediator != null && m_mediator.HelpTopicProvider != null)
+			if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") != null)
 				InitializeHelpProvider();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			InitializeMultiStringControls();
 			InitializeDialogFields();
 			m_finSetup = false;
@@ -244,8 +245,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeHelpProvider()
 		{
-			m_helpProvider = new HelpProvider { HelpNamespace = m_mediator.HelpTopicProvider.HelpFile };
-			m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			m_helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+			};
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 		}
@@ -328,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_mediator == null && m_cache == null)
 					return null;
 				if (m_cache == null)
-					m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+					m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 				return m_cache;
 			}
 			set
@@ -341,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mediator == null)
 				return;
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
 		#region Implementation of IFWDisposable
@@ -542,8 +546,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:AddListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public AddListDlg(Mediator mediator) :
-			base(mediator)
+		public AddListDlg(Mediator mediator, PropertyTable propertyTable) :
+			base(mediator, propertyTable)
 		{
 			s_helpTopic = "khtpNewCustomList";
 		}
@@ -651,8 +655,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ConfigureListDlg(Mediator mediator, ICmPossibilityList possList) :
-			base(mediator)
+		public ConfigureListDlg(Mediator mediator, PropertyTable propertyTable, ICmPossibilityList possList) :
+			base(mediator, propertyTable)
 		{
 			m_curList = possList;
 			m_fchangesMade = false;

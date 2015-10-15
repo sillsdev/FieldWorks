@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
 using System.Xml;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-
 using SIL.Utils;
 
 namespace XCore
@@ -19,20 +16,22 @@ namespace XCore
 	{
 		protected XmlNode m_configuration;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// a factory method for RecordFilterListProvider
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable">The property table</param>
 		/// <param name="configuration">The configuration.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public RecordFilterListProvider Create(Mediator mediator, XmlNode configuration)
+		static public RecordFilterListProvider Create(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
 		{
 			RecordFilterListProvider p = (RecordFilterListProvider)DynamicLoader.CreateObject(configuration);
 			if (p != null)
-				p.Init(mediator, configuration);
+				p.Init(mediator, propertyTable, configuration);
 			return p;
 		}
 
@@ -42,12 +41,14 @@ namespace XCore
 		/// Initialize the filter list. this is called because we are an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable">The PropertyTable</param>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(Mediator mediator, XmlNode configuration)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
 		{
-			m_configuration = configuration;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
+			m_configuration = configuration;
 		}
 
 		/// <summary>

@@ -67,6 +67,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private System.ComponentModel.IContainer components;
 
 		Mediator m_mediator;
+		PropertyTable m_propertyTable;
 		XmlNode m_configurationNode = null;
 		/// <summary>
 		/// Browse viewer
@@ -183,12 +184,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="spec">The parameters element of the BV, containing the
 		/// 'columns' elements that specify the BE bar (among other things).</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+		public BulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
 			: this()
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_bv = bv;
 			m_bv.FilterChanged += BrowseViewFilterChanged;
 			m_bv.RefreshCompleted += BrowseViewSorterChanged;
@@ -262,8 +265,8 @@ namespace SIL.FieldWorks.Common.Controls
 					m_findReplaceTab.Enabled = m_deleteTab.Enabled = true;
 			}
 
-			m_operationsTabControl.SelectedIndexChanged += new EventHandler(m_operationsTabControl_SelectedIndexChanged);
-			m_operationsTabControl.Deselecting += new TabControlCancelEventHandler(m_operationsTabControl_Deselecting);
+			m_operationsTabControl.SelectedIndexChanged += m_operationsTabControl_SelectedIndexChanged;
+			m_operationsTabControl.Deselecting += m_operationsTabControl_Deselecting;
 
 			BulkCopyTabPageSettings.TrySwitchToLastSavedTab(this);
 			// events like SelectedIndexChanged do not fire until after initialization,
@@ -271,9 +274,9 @@ namespace SIL.FieldWorks.Common.Controls
 			m_operationsTabControl_SelectedIndexChanged(null, new EventArgs());
 			m_setupOrRestoredBulkEditBarTab = true;
 
-			m_previewButton.Click += new EventHandler(m_previewButton_Click);
-			m_ApplyButton.Click += new EventHandler(m_ApplyButton_Click);
-			m_closeButton.Click += new EventHandler(m_closeButton_Click);
+			m_previewButton.Click += m_previewButton_Click;
+			m_ApplyButton.Click += m_ApplyButton_Click;
+			m_closeButton.Click += m_closeButton_Click;
 
 			m_findReplaceSummaryLabel.WritingSystemFactory = m_cache.WritingSystemFactory;
 		}
@@ -441,10 +444,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_listChoiceTargetCombo.ClearItems();
 			m_listChoiceTargetCombo.Text = "";
 
-			StringTable tbl = null;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				tbl = m_mediator.StringTbl;
-
 			// Here we figure which columns we can bulk edit.
 			int icol = -1; // will increment at start of loop.
 			foreach (XmlNode colSpec in m_bv.ColumnSpecs)
@@ -452,7 +451,7 @@ namespace SIL.FieldWorks.Common.Controls
 				icol++;
 				if (m_beItems[icol] != null)
 				{
-					string label = XmlUtils.GetLocalizedAttributeValue(tbl, colSpec, "label", null);
+					string label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null);
 					if (label == null)
 						label = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
 					m_listChoiceTargetCombo.Items.Add(new TargetFieldItem(label, icol));
@@ -649,12 +648,9 @@ namespace SIL.FieldWorks.Common.Controls
 			return (ICmPossibilityList)result;
 		}
 
-		internal static string GetColumnLabel(Mediator mediator, XmlNode colSpec)
+		internal static string GetColumnLabel(XmlNode colSpec)
 		{
-			StringTable tbl = null;
-			if (mediator != null && mediator.HasStringTable)
-				tbl = mediator.StringTbl;
-			string colName = XmlUtils.GetLocalizedAttributeValue(tbl, colSpec, "label", null);
+			string colName = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null);
 			if (colName == null)
 				colName = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
 			return colName;
@@ -697,7 +693,7 @@ namespace SIL.FieldWorks.Common.Controls
 					var list = (ICmPossibilityList) m_cache.ServiceLocator.GetObject(hvoList);
 					if (RequiresDialogChooser(list))
 					{
-						besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
+						besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
 						break;
 					}
 					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
@@ -711,7 +707,7 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
 					break;
 				case "integer":
 					flid = GetFlidFromClassDotName(colSpec, "field");
@@ -743,16 +739,16 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new BooleanChooserBEditControl(items, flid);
 					break;
 				case "complexListMultiple":
-					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
 					break;
 				case "semanticDomainListMultiple":
-					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, this, colSpec);
+					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, m_propertyTable, this, colSpec);
 					break;
 				case "variantEntryTypes":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
 					break;
 				case "complexEntryTypes":
-					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, m_propertyTable, colSpec);
 					break;
 				default:
 					return null;
@@ -760,10 +756,17 @@ namespace SIL.FieldWorks.Common.Controls
 			besc.Cache = m_bv.Cache;
 			besc.DataAccess = m_bv.SpecialCache;
 			besc.Stylesheet = m_bv.StyleSheet;
-			besc.Mediator = m_mediator;
+			if (besc.Mediator != m_mediator)
+			{
+				besc.Mediator = m_mediator;
+			}
+			if (besc.PropTable != m_propertyTable)
+			{
+				besc.PropTable = m_propertyTable;
+			}
 			if (besc is IGhostable)
 				(besc as IGhostable).InitForGhostItems(besc.Cache, colSpec);
-			besc.ValueChanged += new FwSelectionChangedEventHandler(besc_ValueChanged);
+			besc.ValueChanged += besc_ValueChanged;
 			BulkEditItem bei = new BulkEditItem(besc);
 			return bei;
 		}
@@ -1253,14 +1256,11 @@ namespace SIL.FieldWorks.Common.Controls
 		List<ListClassTargetFieldItem> ListItemsClassesInfo(Set<int> classes)
 		{
 			List<ListClassTargetFieldItem> targetClasses = new List<ListClassTargetFieldItem>();
-			if (!m_mediator.HasStringTable)
-				return targetClasses;
-			StringTable tbl = m_mediator.StringTbl;
 			foreach (int classId in classes)
 			{
 				string pluralOfClass;
 				// get plural form labels from AlternativeTitles
-				XmlViewsUtils.TryFindPluralFormFromClassId(m_bv.SpecialCache.MetaDataCache, tbl, classId, out pluralOfClass);
+				XmlViewsUtils.TryFindPluralFormFromClassId(m_bv.SpecialCache.MetaDataCache, classId, out pluralOfClass);
 				if (pluralOfClass.Length > 0)
 				{
 					targetClasses.Add(new ListClassTargetFieldItem(pluralOfClass +
@@ -1461,7 +1461,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string helpTopic = "";
 
-			switch(m_mediator.PropertyTable.GetStringProperty("currentContentControl", null))
+			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
 			{
 				case "bulkEditEntriesOrSenses":
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
@@ -1478,7 +1478,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			if(helpTopic != "")
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopic);
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 		}
 
 		/// <summary>
@@ -1647,7 +1647,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Both of these need manual disposing.
 				// 'using' with the ProgressState fixes LT-4186, since it forces the manual Dispose call,
 				// which, in turn, clears the progress panel.
-				using (ProgressState state = CreateSimpleProgressState(m_mediator))
+				using (ProgressState state = CreateSimpleProgressState())
 				using (new WaitCursor(this))
 				{
 					previewOrSuggestTask(state);
@@ -1942,14 +1942,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// because this project can't reference XWorks.
 		/// Possibly all of them could be moved to the project that defines StatusBarProgressPanel?
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <returns></returns>
-		ProgressState CreateSimpleProgressState(Mediator mediator)
+		ProgressState CreateSimpleProgressState()
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = m_propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -1985,7 +1981,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Both of these need manual disposing.
 				// 'using' with the ProgressState fixes LT-4186, since it forces the manual Dispose call,
 				// which, in turn, clears the progress panel.
-				using (ProgressState state = CreateSimpleProgressState(m_mediator))
+				using (ProgressState state = CreateSimpleProgressState())
 				using (new SIL.Utils.WaitCursor(this))
 				{
 					try
@@ -2300,7 +2296,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (bei != null && bei.BulkEditControl.CanClearField)
 				{
 					XmlNode colSpec = m_bv.ColumnSpecs[icol] as XmlNode;
-					string label = GetColumnLabel(m_mediator, colSpec);
+					string label = GetColumnLabel(colSpec);
 					TargetFieldItem tfi = null;
 					try
 					{
@@ -2890,15 +2886,14 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_bulkEditBar = bulkEditBar;
 				string settingsXml = SerializeSettings();
-				Mediator mediator = bulkEditBar.m_mediator;
 				// first store current tab settings in the property table.
 				string currentTabSettingsKey = BuildCurrentTabSettingsKey(bulkEditBar);
-				mediator.PropertyTable.SetProperty(currentTabSettingsKey, settingsXml, false, PropertyTable.SettingsGroup.LocalSettings);
-				mediator.PropertyTable.SetPropertyPersistence(currentTabSettingsKey, true);
+				bulkEditBar.m_propertyTable.SetProperty(currentTabSettingsKey, settingsXml, PropertyTable.SettingsGroup.LocalSettings, false);
+				bulkEditBar.m_propertyTable.SetPropertyPersistence(currentTabSettingsKey, true);
 				// next store the *key* to the current tab settings in the property table.
 				string lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
-				mediator.PropertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, false, PropertyTable.SettingsGroup.LocalSettings);
-				mediator.PropertyTable.SetPropertyPersistence(lastTabSettingsKey, true);
+				bulkEditBar.m_propertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, PropertyTable.SettingsGroup.LocalSettings, false);
+				bulkEditBar.m_propertyTable.SetPropertyPersistence(lastTabSettingsKey, true);
 			}
 
 			private string SerializeSettings()
@@ -2913,19 +2908,17 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <returns></returns>
 			static private BulkEditTabPageSettings DeserializeLastTabPageSettings(BulkEditBar bulkEditBar)
 			{
-				Mediator mediator = bulkEditBar.m_mediator;
 				string lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
 				// the value of LastTabSettings is the key to the tab settings in the property table.
-				string tabSettingsKey = mediator.PropertyTable.GetStringProperty(lastTabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
+				string tabSettingsKey = bulkEditBar.m_propertyTable.GetStringProperty(lastTabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
 				return DeserializeTabPageSettings(bulkEditBar, tabSettingsKey);
 			}
 
 			static private BulkEditTabPageSettings DeserializeTabPageSettings(BulkEditBar bulkEditBar, string tabSettingsKey)
 			{
-				Mediator mediator = bulkEditBar.m_mediator;
 				string settingsXml = "";
 				if (tabSettingsKey.Length > 0)
-					settingsXml = mediator.PropertyTable.GetStringProperty(tabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
+					settingsXml = bulkEditBar.m_propertyTable.GetStringProperty(tabSettingsKey, "", PropertyTable.SettingsGroup.LocalSettings);
 				BulkEditTabPageSettings restoredTabPageSettings = null;
 				if (settingsXml.Length > 0)
 				{
@@ -2938,7 +2931,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// if we can find an existing class/type, we can try to deserialize to it.
 					BulkEditTabPageSettings basicTabPageSettings = new BulkEditTabPageSettings();
 					Type pgSettingsType = basicTabPageSettings.GetType();
-					string baseClassTypeName = pgSettingsType.FullName.Split(new char[] { '+' })[0];
+					string baseClassTypeName = pgSettingsType.FullName.Split('+')[0];
 					Type targetType = assembly.GetType(baseClassTypeName + "+" + className, false);
 
 					// deserialize
@@ -3530,13 +3523,12 @@ namespace SIL.FieldWorks.Common.Controls
 				// persist for the duration of the app, but not after closing the app.
 				// 1) the Find & Replace pattern
 				string keyFindPattern = BuildFindPatternKey(bulkEditBar);
-				Mediator mediator = bulkEditBar.m_mediator;
 				// store the Replace string into the Pattern
 				m_bulkEditBar.m_pattern.ReplaceWith = m_bulkEditBar.m_tssReplace;
 				VwPatternSerializableSettings patternSettings = new VwPatternSerializableSettings(m_bulkEditBar.m_pattern);
 				string patternAsXml = XmlUtils.SerializeObjectToXmlString(patternSettings);
-				mediator.PropertyTable.SetProperty(keyFindPattern, patternAsXml, false);
-				mediator.PropertyTable.SetPropertyPersistence(keyFindPattern, true);
+				bulkEditBar.m_propertyTable.SetProperty(keyFindPattern, patternAsXml, false);
+				bulkEditBar.m_propertyTable.SetPropertyPersistence(keyFindPattern, true);
 			}
 
 			/// <summary>
@@ -3597,7 +3589,7 @@ namespace SIL.FieldWorks.Common.Controls
 						else
 						{
 							// next see if we can restore the pattern from deserializing settings stored in the property table.
-							string patternAsXml = m_bulkEditBar.m_mediator.PropertyTable.GetStringProperty(BuildFindPatternKey(m_bulkEditBar), null);
+							string patternAsXml = m_bulkEditBar.m_propertyTable.GetStringProperty(BuildFindPatternKey(m_bulkEditBar), null);
 
 							VwPatternSerializableSettings settings = (VwPatternSerializableSettings)XmlUtils.DeserializeXmlString(patternAsXml,
 								typeof(VwPatternSerializableSettings));
@@ -3804,10 +3796,10 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				//Change the Title from "Find and Replace" to "Bulk Replace Setup"
 				findDlg.Text = String.Format(XMLViewsStrings.khtpBulkReplaceTitle);
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+				IApp app = m_propertyTable.GetValue<IApp>("App");
 				findDlg.SetDialogValues(m_cache, m_pattern, m_bv.BrowseView.StyleSheet,
-					FindForm(), m_mediator.HelpTopicProvider, app);
-				findDlg.RestoreAndPersistSettingsIn(m_mediator);
+					FindForm(), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
+				findDlg.RestoreAndPersistSettingsIn(m_mediator, m_propertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = m_tssReplace;
 
@@ -3932,15 +3924,21 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				icol++;
 				FieldReadWriter accessor = null;
-				string optionLabel = GetColumnLabel(m_mediator, node);
+				string optionLabel = GetColumnLabel(node);
 				try
 				{
 					if (fIsSourceCombo)
-						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, (IApp)m_mediator.PropertyTable.GetValue("App"));
+					{
+						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, m_propertyTable.GetValue<IApp>("App"));
+					}
 					else
+					{
 						accessor = FieldReadWriter.Create(node, m_cache, m_bv.RootObjectHvo);
+					}
 					if (accessor == null)
+					{
 						continue;
+					}
 					// Use the decorated data access - see FWR-376.
 					accessor.DataAccess = m_bv.SpecialCache;
 				}
@@ -4024,8 +4022,8 @@ namespace SIL.FieldWorks.Common.Controls
 			try
 			{
 				string prevEC = m_transduceProcessorCombo.Text;
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_mediator.HelpTopicProvider, app, null,
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, null,
 					m_transduceProcessorCombo.Text, null, true))
 				{
 					dlg.ShowDialog();
@@ -4477,6 +4475,8 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		/// <summary>Get and set the mediator.</summary>
 		Mediator Mediator { get; set; }
+		/// <summary>Get/Set the property table.</summary>
+		PropertyTable PropTable { get; set; }
 		/// <summary>Retrieve the control that does the work.</summary>
 		Control Control { get; }
 		/// <summary>Get or set the cache. Client promises to set this immediately after creation.</summary>
@@ -5711,6 +5711,11 @@ namespace SIL.FieldWorks.Common.Controls
 			set { m_mediator = value; }
 		}
 
+		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
 		public FdoCache Cache
 		{
 			get { return m_cache; }
@@ -5860,6 +5865,11 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_mediator; }
 			set	{ m_mediator = value; }
 		}
+
+		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
 
 		public Control Control
 		{
@@ -6236,14 +6246,16 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator,  XmlNode colSpec)
+		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
-			BulkEditBar.GetColumnLabel(mediator, colSpec),
+			BulkEditBar.GetColumnLabel(colSpec),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayWs", "best analorvern"),
 			BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec))
 		{
+			Mediator = mediator;
+			PropTable = propertyTable;
 		}
 
 		/// <summary>
@@ -6276,11 +6288,11 @@ namespace SIL.FieldWorks.Common.Controls
 			using (new WaitCursor(this.Control))
 			{
 				var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList);
-				var persistProvider = new PersistenceProvider(m_mediator.PropertyTable);
+				var persistProvider = new PersistenceProvider(m_mediator, PropTable);
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, list.PossibilitiesOS,
 					m_displayNameProperty, m_displayWs);
 				using (var chooser = new ReallySimpleListChooser(persistProvider,
-					labels, m_fieldName, m_cache, m_chosenObjs, m_mediator.HelpTopicProvider))
+					labels, m_fieldName, m_cache, m_chosenObjs, PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					chooser.Atomic = Atomic;
 					chooser.Cache = m_cache;
@@ -6331,6 +6343,11 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_mediator; }
 			set { m_mediator = value; }
 		}
+
+		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
 
 		public Control Control
 		{
@@ -6651,8 +6668,8 @@ namespace SIL.FieldWorks.Common.Controls
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, BulkEditBar bar, XmlNode colSpec) :
-			base(cache, mediator, colSpec)
+		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
+			base(cache, mediator, propertyTable, colSpec)
 		{
 			m_suggestButton = new Button();
 			m_suggestButton.Text = XMLViewsStrings.ksSuggestButtonText;
@@ -6810,8 +6827,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		internal VariantEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, XmlNode colSpec)
-			: base(cache, mediator, colSpec)
+		internal VariantEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
+			: base(cache, mediator, propertyTable, colSpec)
 		{
 		}
 	}
@@ -6820,8 +6837,8 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		Set<int> m_complexEntryRefs = null;
 
-		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, XmlNode colSpec)
-			: base(cache, mediator, colSpec)
+		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
+			: base(cache, mediator, propertyTable, colSpec)
 		{
 		}
 

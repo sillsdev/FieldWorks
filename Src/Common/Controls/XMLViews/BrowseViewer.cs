@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -232,6 +231,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary></summary>
 		protected internal Mediator m_mediator;
+		/// <summary></summary>
+		protected internal PropertyTable m_propertyTable;
 
 		/// <summary></summary>
 		public event FilterChangeHandler FilterChanged;
@@ -856,9 +857,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sda);
+			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda);
 		}
 
 		/// <summary>
@@ -873,7 +874,7 @@ namespace SIL.FieldWorks.Common.Controls
 			= new Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>>();
 
 		internal void ContructorSurrogate(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			CheckDisposed();
 
@@ -887,8 +888,11 @@ namespace SIL.FieldWorks.Common.Controls
 				s_selectedCache.Remove(key); // don't reuse again while this view is open
 			}
 			else
+			{
 				m_specialCache = new XMLViewsDataCache(sda, nodeSpec);
+			}
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_lvHeader = new DhListView(this);
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -906,7 +910,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// generated properly.
 			m_sortItemProvider = sortItemProvider;
 			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
-			CreateBrowseViewClass(hvoRoot, fakeFlid, mediator);
+			CreateBrowseViewClass(hvoRoot, fakeFlid, mediator, propertyTable);
 			// This would eventually get set in the startup process later, but we need it at least by the time
 			// we make the filter bar so the LayoutCache exists.
 			BrowseView.Vc.Cache = cache;
@@ -961,10 +965,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_xbv.Mediator.PropertyTable.SetDefault("SortedFromEnd", false, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("SortedFromEnd", false, PropertyTable.SettingsGroup.LocalSettings, false);
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_xbv.Mediator.PropertyTable.SetDefault("SortedByLength", false, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("SortedByLength", false, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			//
 			// FilterBar
@@ -972,7 +976,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlAttribute xa = m_nodeSpec.Attributes["filterBar"];
 			if (xa != null && xa.Value == "true")
 			{
-				m_filterBar = new FilterBar(this, m_nodeSpec, (IApp)m_mediator.PropertyTable.GetValue("App"));
+				m_filterBar = new FilterBar(this, m_nodeSpec, m_propertyTable.GetValue<IApp>("App"));
 				m_filterBar.FilterChanged += FilterChangedHandler;
 				//m_filterBar.Dock = System.Windows.Forms.DockStyle.Top;
 				m_filterBar.Name = "FilterBar";
@@ -984,7 +988,7 @@ namespace SIL.FieldWorks.Common.Controls
 			xa = m_nodeSpec.Attributes["bulkEdit"];
 			if (xa != null && xa.Value == "true")
 			{
-				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, mediator, m_cache);
+				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, mediator, propertyTable, m_cache);
 				m_bulkEditBar.Dock = DockStyle.Bottom;
 				m_bulkEditBar.Name = "BulkEditBar";
 				m_bulkEditBar.AccessibleName = "BulkEditBar";
@@ -1129,17 +1133,18 @@ namespace SIL.FieldWorks.Common.Controls
 			SaveSelectionItems(new Set<int>(selectionItemsToSave));
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="bv"></param>
-		/// <param name="spec"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="bv"></param>
+		///  <param name="spec"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
-		/// <returns></returns>
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+		///  <returns></returns>
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
 		{
-			return new BulkEditBar(bv, spec, mediator, cache);
+			return new BulkEditBar(bv, spec, mediator, propertyTable, cache);
 		}
 
 		/// <summary/>
@@ -1275,10 +1280,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Currently, if you add a new attribute here,
 			// you need to update the conditionals in LayoutFinder.SameFinder (cf. LT-2858).
-			StringTable tbl = null;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				tbl = m_mediator.StringTbl;
-			string label = XmlUtils.GetLocalizedAttributeValue(tbl, node, "label", null);
+			string label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
 			if (label == null)
 			{
 				if (node.Attributes["label"] == null)
@@ -1290,13 +1292,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return ch;
 		}
 
-		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, Mediator mediator)
+		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, Mediator mediator, PropertyTable propertyTable)
 		{
 			if (m_nodeSpec.Attributes["editRowModelClass"] != null)
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
 			else
 				m_xbv = new XmlBrowseView();
-			m_xbv.Init(mediator, m_nodeSpec); // BEFORE the init that makes the VC...that needs the ID.
+			m_xbv.Init(mediator, propertyTable, m_nodeSpec); // BEFORE the init that makes the VC...that needs the ID.
 			m_xbv.Init(m_nodeSpec, hvoRoot, fakeFlid, m_cache, mediator, this);
 			m_xbv.SelectionChangedEvent += new FwSelectionChangedEventHandler(OnSelectionChanged);
 			m_xbv.SelectedIndexChanged += new EventHandler(m_xbv_SelectedIndexChanged);
@@ -1836,7 +1838,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_xbv.Mediator != null)
 			{
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				width = m_xbv.Mediator.PropertyTable.GetIntProperty(PropName, -1, PropertyTable.SettingsGroup.LocalSettings);
+				width = m_propertyTable.GetIntProperty(PropName, -1, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			return width;
 		}
@@ -1891,16 +1893,16 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.StyleSheet, bv)
+				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.PropTable, bv.StyleSheet, bv)
 			{
 				// add only the specified column to this browseview.
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator,
+			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator, PropertyTable propertyTable,
 				IVwStylesheet styleSheet, BrowseViewer bv)
 			{
-				base.Init(mediator, nodeSpec);
+				base.Init(mediator, propertyTable, nodeSpec);
 				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
 				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
 				m_bv = null;
@@ -1930,7 +1932,7 @@ namespace SIL.FieldWorks.Common.Controls
 				get
 				{
 					if (m_xbvvc == null)
-						m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, m_fakeFlid, m_stringTable, this);
+						m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
 					return m_xbvvc;
 				}
 			}
@@ -2033,8 +2035,8 @@ namespace SIL.FieldWorks.Common.Controls
 				return -1;
 			}
 
-			public OneColumnXmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, StringTable stringTable, XmlBrowseViewBase xbv)
-				: base(xnSpec, fakeFlid, stringTable, xbv)
+			public OneColumnXmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+				: base(xnSpec, fakeFlid, xbv)
 			{
 			}
 		}
@@ -2135,13 +2137,13 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				m_xbv.Mediator.PropertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings);
+				m_propertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings, true);
 			}
 		}
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			string Id1 = m_xbv.Mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			string Id1 = m_propertyTable.GetStringProperty("currentContentControl", "");
 			string Id2 = BrowseView.GetCorrespondingPropertyName("Column");
 			string PropName = Id1 + "_" + Id2 + "_" + iCol + "_Width";
 			return PropName;
@@ -2425,7 +2427,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return;			// Can't sort by this column.
 			m_icolCurrent = e.Column;
 
-			XWindow window = (XWindow)m_xbv.Mediator.PropertyTable.GetValue("window");
+			XWindow window = m_propertyTable.GetValue<XWindow>("window");
 			window.ShowContextMenu("mnuBrowseHeader",
 				new Point(Cursor.Position.X, Cursor.Position.Y),
 				new TemporaryColleagueParameter(m_xbv.Mediator, this, false),
@@ -2441,9 +2443,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private void HandleConfigIconClick(ConfigIconClickEventArgs e)
 		{
 			var menu = components.ContextMenu("configIconContextMenu");
-			StringTable tbl = null;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				tbl = m_mediator.StringTbl;
 			// add items
 			foreach (XmlNode node in m_xbv.Vc.ComputePossibleColumns())
 			{
@@ -2452,17 +2451,14 @@ namespace SIL.FieldWorks.Common.Controls
 				if (vis != "always" && vis != "menu")
 					continue;
 
-				string label = XmlUtils.GetLocalizedAttributeValue(tbl, node, "label", null) ??
+				string label = XmlUtils.GetLocalizedAttributeValue( node, "label", null) ??
 							   XmlUtils.GetManditoryAttributeValue(node, "label");
-				MenuItem mi = new MenuItem(label, new EventHandler(ConfigItemClicked));
+				MenuItem mi = new MenuItem(label, ConfigItemClicked);
 
 				// tick the checkbox for items that match something in current visible list.
-				StringTable stringTbl = null;
-				if (m_mediator != null && m_mediator.HasStringTable)
-					stringTbl = m_mediator.StringTbl;
 				//Check an option if the label matches, or the unaltered label matches (for multiunicode fields)
-				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null ||
-				   XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label, stringTbl) != null)
+				if (XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label) != null ||
+				   XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label) != null)
 				{
 					mi.Checked = true;
 				}
@@ -2470,7 +2466,7 @@ namespace SIL.FieldWorks.Common.Controls
 				menu.MenuItems.Add(mi);
 			}
 			menu.MenuItems.Add("-");
-			menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, new EventHandler(ConfigMoreChoicesItemClicked));
+			menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, ConfigMoreChoicesItemClicked);
 
 			menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
 		}
@@ -2505,11 +2501,8 @@ namespace SIL.FieldWorks.Common.Controls
 		// Handle the 'more column choices' item.
 		private void ConfigMoreChoicesItemClicked(object sender, EventArgs args)
 		{
-			StringTable stringTbl = null;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				stringTbl = m_mediator.StringTbl;
 			using (ColumnConfigureDialog dlg = new ColumnConfigureDialog(m_xbv.Vc.PossibleColumnSpecs,
-				new List<XmlNode>(ColumnSpecs), m_mediator, stringTbl))
+				new List<XmlNode>(ColumnSpecs), m_propertyTable))
 			{
 				dlg.RootObjectHvo = RootObjectHvo;
 				dlg.FinishInitialization();
@@ -2699,13 +2692,10 @@ namespace SIL.FieldWorks.Common.Controls
 			MenuItem mi = sender as MenuItem;
 			List<XmlNode> newColumns = new List<XmlNode>(ColumnSpecs);
 			List<XmlNode> possibleColumns = m_xbv.Vc.PossibleColumnSpecs;
-			StringTable stringTbl = null;
-			if (m_mediator != null && m_mediator.HasStringTable)
-				stringTbl = m_mediator.StringTbl;
 			//set the column to any column in the specs that matches the menu item text
 			// or the unaltered text (for multiunicode fields).
-			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl)
-						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text, stringTbl);
+			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text)
+						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text);
 			bool fRemovingColumn = true;
 			bool fOrderChanged = false;
 			//The column with this label was not found in the current columns
@@ -2714,7 +2704,7 @@ namespace SIL.FieldWorks.Common.Controls
 				//therefore we are inserting, not removing
 				fRemovingColumn = false;
 				//find the column with the matching label in the possible columns
-				column = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", mi.Text, stringTbl);
+				column = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", mi.Text);
 			}
 			int position = XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, column);
 			if (fRemovingColumn)
@@ -2748,10 +2738,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private FilterBarCellFilter MakeFilter(List<XmlNode> possibleColumns, string colName, IMatcher matcher)
 		{
-			XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", colName, null);
+			XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", colName);
 			if (colSpec == null)
 				return null;
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, BrowseView.Vc, app);
 			return new FilterBarCellFilter(finder, matcher);
 		}
@@ -2773,10 +2763,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public RecordFilter FilterFromLink()
 		{
-			string linkSetupInfo = m_mediator.PropertyTable.GetStringProperty("LinkSetupInfo", null);
+			string linkSetupInfo = m_propertyTable.GetStringProperty("LinkSetupInfo", null);
 			if (linkSetupInfo == null)
 				return null;
-			m_mediator.PropertyTable.RemoveProperty("LinkSetupInfo");
+			m_propertyTable.RemoveProperty("LinkSetupInfo");
 			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling" &&
 				linkSetupInfo != "FilterAnthroItems")
 				return null; // Only setting we know as yet.
@@ -2786,7 +2776,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var spellFilter = new FilterBarCellFilter();
 			if (linkSetupInfo == "TeReviewUndecidedSpelling" || linkSetupInfo == "TeCorrectSpelling")
 			{
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status", null);
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
 				if (colSpec == null)
 					return null;
 				int desiredItem;
@@ -2820,12 +2810,12 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else if (linkSetupInfo == "FilterAnthroItems")
 			{
-				var itemHvos = m_mediator.PropertyTable.GetStringProperty("HvoOfAnthroItem", null);
+				var itemHvos = m_propertyTable.GetStringProperty("HvoOfAnthroItem", null);
 				if (itemHvos == null)
 					return null;
-				m_mediator.PropertyTable.RemoveProperty("HvoOfAnthroItem");
+				m_propertyTable.RemoveProperty("HvoOfAnthroItem");
 
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories", null);
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
 				if (colSpec == null)
 					return null;
 
@@ -3007,7 +2997,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			colList.Append("</root>");
-			m_xbv.Mediator.PropertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), XCore.PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, true);
 		}
 
 		/// <summary>
@@ -3048,7 +3038,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (colSpec == null || colSpec.Attributes == null || colSpec.Attributes["layout"] == null)
 				return XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, colSpec) >= 0;
 			//Be as non-specific about the column as we can, writing system options and width and other things may give false negatives
-			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value, null) != null;
+			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value) != null;
 		}
 
 		/// <summary>
@@ -3109,8 +3099,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (colSpec != null)
 			{
-				IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc,
-					(IApp) m_mediator.PropertyTable.GetValue("App"));
+				IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, m_propertyTable.GetValue<IApp>("App"));
 				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
 			return null;
@@ -3225,13 +3214,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// main XmlBrowseView.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			base.m_configurationParameters = configurationParameters;
-			m_xbv.Init(mediator, configurationParameters);
+			m_xbv.Init(mediator, propertyTable, configurationParameters);
 			m_xbv.AccessibleName = "BrowseViewer";
 			m_mediator = mediator;
 		}
@@ -3268,6 +3258,11 @@ namespace SIL.FieldWorks.Common.Controls
 					return m_xbv.Mediator; // sometimes set before our own
 				return null;
 			}
+		}
+
+		internal PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
 		}
 
 		/// <summary>
@@ -4088,9 +4083,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-								  FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider,
+								  FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sda)
+			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{
 
 		}
@@ -4214,10 +4209,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// main XmlBrowseView.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 
 			// Set the initial value
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);

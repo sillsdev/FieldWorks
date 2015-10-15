@@ -5,7 +5,6 @@
 // File: FwTextBox.cs
 // Responsibility:
 //
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -13,13 +12,13 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Collections.Generic;
-
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.CoreImpl;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -608,12 +607,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <param name="grower"></param>
-		/// <param name="mediator"></param>
-		public void AdjustForStyleSheet(Form parent, Control grower, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void AdjustForStyleSheet(Form parent, Control grower, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

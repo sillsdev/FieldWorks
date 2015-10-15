@@ -14,32 +14,37 @@ namespace XCore
 	public class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;
+		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
 
 		/// <summary>
 		/// create a PersistenceProvider which uses the XCore PropertyTable.
 		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="context">used to provide persistence and access to settings
 		/// limited to a particular context. For example, if they control is used in
 		/// three different places, we don't necessarily want to control to use the
 		/// same settings each time. So each case would need its own context string.</param>
-		/// <param name="propertyTable"></param>
-		public PersistenceProvider(string context, PropertyTable propertyTable)
+		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable, string context)
 		{
-			m_contextString= context;
-			m_propertyTable = propertyTable;
-		}
-		/// <summary>
-		/// create a PersistenceProvider which uses the XCore PropertyTable.
-		/// </summary>
-		/// <param name="propertyTable"></param>
-		public PersistenceProvider(PropertyTable propertyTable)
-		{
-			m_contextString= "Default";
+			m_contextString = context;
+			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 		}
 
-		public void RestoreWindowSettings(string id,Form form)
+		/// <summary>
+		/// create a PersistenceProvider which uses the XCore PropertyTable.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable)
+			: this(mediator, propertyTable, "Default")
+
+		{
+		}
+
+		public void RestoreWindowSettings(string id, Form form)
 		{
 			object state = Get(id,"windowState");
 			//don't bother restoring the program to the minimized state.
@@ -79,12 +84,13 @@ namespace XCore
 
 		protected object Get(string id,string label)
 		{
-			return m_propertyTable.GetValue(GetPrefix(id)+"-"+label);
+			return m_propertyTable.GetValue<object>(GetPrefix(id) + "-" + label);
 		}
 
 		protected void Set(string id,string label, object value)
 		{
-			m_propertyTable.SetProperty(GetPrefix(id)+"-"+label, value);
+			var propertyName = GetPrefix(id) + "-" + label;
+			m_propertyTable.SetProperty(propertyName, value, true);
 		}
 
 		public void PersistWindowSettings(string id,Form form)
@@ -101,9 +107,9 @@ namespace XCore
 				Set(id, "windowLocation", form.Location);
 		}
 
-		public Object GetInfoObject(string id, Object defaultValue)
+		public object GetInfoObject(string id, object defaultValue)
 		{
-			return m_propertyTable.GetValue(GetPrefix(id), defaultValue);
+			return m_propertyTable.GetValue<object>(GetPrefix(id), defaultValue);
 		}
 		public void SetInfoObject(string id, Object info)
 		{

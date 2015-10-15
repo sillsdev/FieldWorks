@@ -14,6 +14,8 @@ using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -49,7 +51,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				Debug.Assert(m_dlg != null);
-				return m_dlg.Mediator.StringTbl.GetStringWithXPath("Label", kPath);
+				return StringTable.Table.GetStringWithXPath("Label", kPath);
 			}
 		}
 
@@ -86,9 +88,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void OnSelection()
 		{
 			Debug.Assert(m_dlg != null);
-			m_dlg.WhenDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("WhenDescription", kPath);
-			m_dlg.WhatDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("WhatDescription", kPath);
-			m_dlg.RedoDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("RedoDescription", kPath);
+			m_dlg.WhenDescription = StringTable.Table.GetStringWithXPath("WhenDescription", kPath);
+			m_dlg.WhatDescription = StringTable.Table.GetStringWithXPath("WhatDescription", kPath);
+			m_dlg.RedoDescription = StringTable.Table.GetStringWithXPath("RedoDescription", kPath);
 		}
 
 		/// <summary>
@@ -97,7 +99,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
 			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)
 				return;

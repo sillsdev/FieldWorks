@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
@@ -990,7 +989,7 @@ namespace SIL.FieldWorks.IText
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -1000,6 +999,7 @@ namespace SIL.FieldWorks.IText
 			m_caches.MainCache = cache;
 			Cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			// We need to set this for various inherited things to work,
 			// for example, automatically setting the correct keyboard.
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
@@ -1008,18 +1008,15 @@ namespace SIL.FieldWorks.IText
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
-			if (mediator != null && mediator.PropertyTable != null)
-			{
-				mediator.PropertyTable.SetProperty("FirstControlToHandleMessages", this, false, PropertyTable.SettingsGroup.LocalSettings);
-				mediator.PropertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
-			}
+			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
 
 			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
 				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: this(cache, mediator, ss, choices)
+		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: this(cache, mediator, propertyTable, ss, choices)
 		{
 			// finish setup with the WordBundleAnalysis
 			LoadForWordBundleAnalysis(hvoAnalysis);
@@ -1384,7 +1381,7 @@ namespace SIL.FieldWorks.IText
 					if (bldrError.Length > 0)
 					{
 						var msg = bldrError.ToString().Trim();
-						var wnd = (FindForm() ?? Mediator.PropertyTable.GetValue("window")) as IWin32Window;
+						var wnd = FindForm() ?? m_propertyTable.GetValue<IWin32Window>("window");
 						MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 				}
@@ -2273,7 +2270,7 @@ namespace SIL.FieldWorks.IText
 			DisposeComboHandler();
 			if (!m_fInMouseDrag)
 			{
-				m_ComboHandler = InterlinComboHandler.MakeCombo(m_mediator.HelpTopicProvider,
+				m_ComboHandler = InterlinComboHandler.MakeCombo(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					vwselNew, this, fMouseDown);
 			}
 			else
@@ -2874,7 +2871,7 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					//Debug.WriteLine("hvoReal=" + hvoReal.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-					return rightClickUiObj.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
+					return rightClickUiObj.HandleRightClick(Mediator, m_propertyTable, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{
@@ -3807,7 +3804,7 @@ namespace SIL.FieldWorks.IText
 			if (m_hvoWordGloss != 0)
 				existingGloss = m_caches.MainCache.ServiceLocator.GetInstance<IWfiGlossRepository>().GetObject(m_hvoWordGloss);
 			return new GetRealAnalysisMethod(
-				m_mediator != null ? m_mediator.HelpTopicProvider : null, this, m_caches,
+				m_propertyTable != null ? m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, this, m_caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
 				m_choices, m_tssWordform, fWantOnlyWfiAnalysis);
 		}
@@ -4316,7 +4313,7 @@ namespace SIL.FieldWorks.IText
 				if (hvoTarget == 0)
 					return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
-				targetUiObj.HandleCtrlClick(Mediator, this);
+				targetUiObj.HandleCtrlClick(this);
 			}
 		}
 

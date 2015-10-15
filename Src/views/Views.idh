@@ -2605,7 +2605,7 @@ Last reviewed:
 		// you to perform whatever action is appropriate for activating the hot link.
 
 		// @param bstrData The entire string of the ktptObjData property.
-		// @param sda The data access for getting the external links folder.
+		// @param psda The data access for getting the external links folder.
 		HRESULT DoHotLinkAction(
 			[in] BSTR bstrData,
 			[in] ISilDataAccess * psda);

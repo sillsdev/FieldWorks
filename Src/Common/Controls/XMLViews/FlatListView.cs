@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private XmlNode m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
@@ -60,21 +61,23 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="xnConfig">The config node.</param>
 		/// <param name="objs">The objs.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable,
 			XmlNode xnConfig, IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configNode = xnConfig;
 			SuspendLayout();
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
 
 			StoreData(objs);
-			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache, m_mediator,
+			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache, m_mediator, m_propertyTable,
 				null, m_listPublisher);
 			m_bvList.Location = new Point(0, 0);
 			m_bvList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom |

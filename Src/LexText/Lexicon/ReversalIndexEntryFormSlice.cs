@@ -13,16 +13,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 #pragma warning disable 0414
 		private XmlNode m_configNode = null;
-		private StringTable m_stringTbl = null;
 		private IPersistenceProvider m_persistProvider = null;
 #pragma warning restore 0414
 
 		public ReversalIndexEntryFormSlice(FdoCache cache, string editor, int flid, XmlNode node,
-			ICmObject obj, StringTable stringTbl, IPersistenceProvider persistenceProvider, int ws)
+			ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, WritingSystemServices.kwsAllReversalIndex, 0, false, true, true)
 		{
 			m_configNode = node;
-			m_stringTbl = stringTbl;
 			m_persistProvider = persistenceProvider;
 		}
 	}

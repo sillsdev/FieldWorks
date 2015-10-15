@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
@@ -60,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Visible = InFriendlyArea;
 			}
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot move this)");
+				display.Text += StringTable.Table.GetString("(cannot move this)");
 			return true; //we've handled this
 		}
 
@@ -75,7 +74,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
 				}
 			}
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_mediator.HelpTopicProvider, labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMoveTo, null))
 			{
 				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
@@ -141,7 +140,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Visible = InFriendlyArea;
 			}
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot merge this)");
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
 			return true; //we've handled this
 		}
 
@@ -151,7 +150,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_mediator.HelpTopicProvider, labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMergeInto, null))
 			{
 				dlg.SetHelpTopic("khtpMergeCategories");
@@ -267,8 +266,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "lists"
-					&& m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lists", null) == "reversalToolReversalIndexPOS");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "lists"
+					&& m_propertyTable.GetStringProperty("ToolForAreaNamed_lists", null) == "reversalToolReversalIndexPOS");
 			}
 		}
 	}
@@ -280,14 +279,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 
 
-		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
+		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(cache, mediator, recordListNode);
+			BaseInit(cache, mediator, propertyTable, recordListNode);
 			m_flid = CmPossibilityListTags.kflidPossibilities;
-			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator);
+			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator, propertyTable);
 			if (riGuid != Guid.Empty)
 			{
 				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;

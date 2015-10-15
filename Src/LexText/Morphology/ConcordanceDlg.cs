@@ -41,6 +41,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private IWfiWordform m_wordform;
 		private FdoCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private XmlNode m_configurationNode;
 		private RecordBrowseView m_currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (RecordClerk clerk in m_recordClerks.Values)
 				{
 					// Take it out of the Mediator and Dispose it.
-					m_mediator.PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
+					m_propertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
 					clerk.Dispose();
 				}
 				m_recordClerks.Clear();
@@ -139,9 +140,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_wordform = null;
 			m_cache = null;
-			if (m_mediator != null)
-				m_mediator.PropertyTable.RemoveProperty("IgnoreStatusPanel");
+			m_propertyTable.RemoveProperty("IgnoreStatusPanel");
 			m_mediator = null;
+			m_propertyTable = null;
 			m_configurationNode = null;
 			m_currentBrowseView = null;
 			m_specialSda = null;
@@ -258,10 +259,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Initilize the gui control.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationNode">NB: In this case it is the main 'window' element node,
 		/// se we have to drill down to find the control definition node(s).</param>
 		/// <param name="sourceObject"></param>
-		public void Init(Mediator mediator, XmlNode configurationNode, ICmObject sourceObject)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
 		{
 			CheckDisposed();
 
@@ -271,6 +273,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_cache = sourceObject.Cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationNode = configurationNode;
 			if (sourceObject is IWfiWordform)
 			{
@@ -284,14 +287,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_wordform = anal.OwnerOfClass<IWfiWordform>();
 			}
 
-			helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
+			helpProvider.HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile;
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			helpProvider.SetShowHelp(this, true);
 
 
-			m_mediator.PropertyTable.SetProperty("IgnoreStatusPanel", true);
-			m_mediator.PropertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
+			m_propertyTable.SetProperty("IgnoreStatusPanel", true, true);
+			m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
 			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
 
 			// Gather up the nodes.
@@ -299,21 +302,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
 			var configNode = m_configurationNode.SelectSingleNode(xpath);
 			// And create the RecordClerks.
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, configNode, true);
+			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
 			clerk.ProgressReporter = m_progAdvInd;
 			m_recordClerks[WfiWordformTags.kClassId] = clerk;
 			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, configNode, true);
+			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
 			clerk.ProgressReporter = m_progAdvInd;
 			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
 			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, configNode, true);
+			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
 			clerk.ProgressReporter = m_progAdvInd;
 			m_recordClerks[WfiGlossTags.kClassId] = clerk;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
@@ -379,7 +382,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			ShowDialog((Form)m_mediator.PropertyTable.GetValue("window"));
+			ShowDialog(m_propertyTable.GetValue<Form>("window"));
 		}
 
 		#endregion IFwGuiControl implementation
@@ -555,10 +558,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (!IsDisposed && m_mediator != null)
+			if (!IsDisposed && m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("IgnoreStatusPanel", false);
-				m_mediator.PropertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
+				m_propertyTable.SetProperty("IgnoreStatusPanel", false, true);
+				m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
 			}
 		}
 
@@ -599,11 +602,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				clerk.OwningObject = selObj;
 
 				m_currentBrowseView = new RecordBrowseView();
-				m_currentBrowseView.Init(m_mediator, configurationNode);
+				m_currentBrowseView.Init(m_mediator, m_propertyTable, configurationNode);
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
-				m_mediator.PropertyTable.SetProperty(sPropName, true, false);
-				m_mediator.PropertyTable.SetPropertyPersistence(sPropName, false);
+				m_propertyTable.SetProperty(sPropName, true, false);
+				m_propertyTable.SetPropertyPersistence(sPropName, false);
 				m_currentBrowseView.Dock = DockStyle.Fill;
 				m_pnlConcBrowseHolder.Controls.Add(m_currentBrowseView);
 				m_currentBrowseView.CheckBoxChanged += m_currentBrowseView_CheckBoxChanged;
@@ -636,7 +639,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 
 				// Set the initial value for the filtering status.
-				var sFilterMsg = m_mediator.PropertyTable.GetStringProperty("DialogFilterStatus", String.Empty);
+				var sFilterMsg = m_propertyTable.GetStringProperty("DialogFilterStatus", String.Empty);
 				if (sFilterMsg != null)
 					sFilterMsg = sFilterMsg.Trim();
 				SetFilterStatus(!String.IsNullOrEmpty(sFilterMsg));
@@ -733,7 +736,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
 		#endregion Event Handlers

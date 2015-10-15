@@ -7,6 +7,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics.CodeAnalysis;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -16,6 +17,46 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to start an undoable UOW.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to end the undoable UOW, Undo everything, and 'commit',
+		/// which will essentially clear out the Redo stack.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestTearDown()
+		{
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			base.TestTearDown();
+		}
+
+		#endregion
 		/// <summary>
 		/// Test the indicated method.
 		/// </summary>
@@ -656,7 +697,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
-			var sandbox = new SandboxBase(Cache, null, null, lineChoices, occurrence.Analysis.Hvo);
+			var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, occurrence.Analysis.Hvo);
 			sandbox.MakeRoot();
 			return sandbox;
 		}

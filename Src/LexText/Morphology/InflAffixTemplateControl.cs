@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Xml;
 using System.Drawing;
@@ -16,17 +15,14 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
 
@@ -37,9 +33,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class InflAffixTemplateControl : XmlView
 	{
-		ICmObject m_obj = null;		// item clicked
-		IMoInflAffixSlot m_slot = null;		// slot to which chosen MSA belongs
-		IMoInflAffixTemplate m_template = null;
+		ICmObject m_obj;		// item clicked
+		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
+		IMoInflAffixTemplate m_template;
 		string m_sStem;
 		string m_sSlotChooserTitle;
 		string m_sSlotChooserInstructionalText;
@@ -56,8 +52,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
-		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XmlNode xnSpec, StringTable stringTable)
-			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), stringTable, true)
+		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XmlNode xnSpec)
+			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), true)
 		{
 			m_xnSpec = xnSpec["deParams"];
 			Cache = cache;
@@ -96,24 +92,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			OnLostFocus(new EventArgs());
 		}
 
-		public void SetStringTableValues(StringTable stringTable)
+		public void SetStringTableValues()
 		{
 			CheckDisposed();
 
-			m_sStem = stringTable.GetString("Stem", "Linguistics/Morphology/TemplateTable");
+			m_sStem = StringTable.Table.GetString("Stem", "Linguistics/Morphology/TemplateTable");
 
-			m_sSlotChooserTitle = stringTable.GetString("SlotChooserTitle", "Linguistics/Morphology/TemplateTable");
-			m_sSlotChooserInstructionalText = stringTable.GetString("SlotChooserInstructionalText", "Linguistics/Morphology/TemplateTable");
-			m_sObligatorySlot = stringTable.GetString("ObligatorySlot", "Linguistics/Morphology/TemplateTable");
-			m_sOptionalSlot = stringTable.GetString("OptionalSlot", "Linguistics/Morphology/TemplateTable");
+			m_sSlotChooserTitle = StringTable.Table.GetString("SlotChooserTitle", "Linguistics/Morphology/TemplateTable");
+			m_sSlotChooserInstructionalText = StringTable.Table.GetString("SlotChooserInstructionalText", "Linguistics/Morphology/TemplateTable");
+			m_sObligatorySlot = StringTable.Table.GetString("ObligatorySlot", "Linguistics/Morphology/TemplateTable");
+			m_sOptionalSlot = StringTable.Table.GetString("OptionalSlot", "Linguistics/Morphology/TemplateTable");
 
-			m_sNewSlotName = stringTable.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
-			m_sUnnamedSlotName = stringTable.GetString("UnnamedSlotName", "Linguistics/Morphology/TemplateTable");
+			m_sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
+			m_sUnnamedSlotName = StringTable.Table.GetString("UnnamedSlotName", "Linguistics/Morphology/TemplateTable");
 
-			m_sInflAffixChooserTitle = stringTable.GetString("InflAffixChooserTitle", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffixChooserInstructionalTextReq = stringTable.GetString("InflAffixChooserInstructionalTextReq", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffixChooserInstructionalTextOpt = stringTable.GetString("InflAffixChooserInstructionalTextOpt", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffix = stringTable.GetString("InflAffix", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserTitle = StringTable.Table.GetString("InflAffixChooserTitle", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserInstructionalTextReq = StringTable.Table.GetString("InflAffixChooserInstructionalTextReq", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserInstructionalTextOpt = StringTable.Table.GetString("InflAffixChooserInstructionalTextOpt", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffix = StringTable.Table.GetString("InflAffix", "Linguistics/Morphology/TemplateTable");
 
 		}
 
@@ -505,11 +501,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			}
 			var labels = ObjectLabel.CreateObjectLabels(Cache, candidates.OrderBy(iafmsa => iafmsa.Owner.ShortName), null);
-			XCore.PersistenceProvider persistProvider = new PersistenceProvider(m_mediator.PropertyTable);
+			XCore.PersistenceProvider persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
 			var aiForceMultipleChoices = new ICmObject[0];
 			var chooser = new SimpleListChooser(persistProvider, labels,
 				m_ChooseInflectionalAffixHelpTopic, Cache, aiForceMultipleChoices,
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.SetFontForDialog(new int[] { Cache.DefaultVernWs, Cache.DefaultAnalWs }, StyleSheet, WritingSystemFactory);
 			chooser.Cache = Cache;
@@ -521,12 +517,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				chooser.InstructionalText = m_sInflAffixChooserInstructionalTextReq;
 			chooser.AddLink(m_sInflAffix, SimpleListChooser.LinkType.kDialogLink,
-				new MakeInflAffixEntryChooserCommand(Cache, true, m_sInflAffix, fIsPrefixSlot, slot, m_mediator));
+				new MakeInflAffixEntryChooserCommand(Cache, true, m_sInflAffix, fIsPrefixSlot, slot, m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(slot.Hvo, slot.OwningFlid);
 			string sGuiControl = XmlUtils.GetOptionalAttributeValue(cmd.ConfigurationNode, "guicontrol");
 			if (!String.IsNullOrEmpty(sGuiControl))
 			{
-				chooser.ReplaceTreeView(m_mediator, sGuiControl);
+				chooser.ReplaceTreeView(m_mediator, m_propertyTable, sGuiControl);
 			}
 			return chooser;
 		}
@@ -630,10 +626,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				slotFlid = MoInflAffixTemplateTags.kflidSuffixSlots;
 			var labels = ObjectLabel.CreateObjectLabels(Cache, m_template.ReferenceTargetCandidates(slotFlid), null);
-			PersistenceProvider persistProvider =
-				new PersistenceProvider(m_mediator.PropertyTable);
+			PersistenceProvider persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
 			SimpleListChooser chooser = new SimpleListChooser(persistProvider, labels,
-				m_ChooseSlotHelpTopic, m_mediator.HelpTopicProvider);
+				m_ChooseSlotHelpTopic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.Cache = Cache;
 			chooser.TextParamHvo = m_template.Owner.Hvo;
@@ -644,11 +639,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
-				false, m_mediator));
+				false, m_mediator, m_propertyTable));
 			sLabel = String.Format(m_sOptionalSlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, true,
-				m_mediator));
+				m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
 		}
@@ -898,7 +893,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_ChooseInflectionalAffixHelpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
 			return true;
 		}
 
@@ -1231,7 +1226,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
 				// Display help only if there's a topic linked to the generated ID in the resource file.
-				if (m_mediator.HelpTopicProvider.GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
+				if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
 					return Cache.TsStrFactory.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			return null;

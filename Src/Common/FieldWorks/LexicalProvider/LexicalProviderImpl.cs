@@ -1,12 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2011-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: LexicalProviderImpl.cs
 // Responsibility: FW Team
@@ -76,13 +71,19 @@ namespace SIL.FieldWorks.LexicalProvider
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider();
-				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
-				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
+				using (Mediator mediator = new Mediator())
+				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				{
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
+					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					var flexApp = FieldWorks.GetOrCreateFlexApp();
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
+					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+					propertyTable.SetProperty("App", flexApp, true);
 
-				LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, mediator.HelpTopicProvider,
-					"UserHelpFile", tss, null);
+					LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						"UserHelpFile", tss, null);
+				}
 			});
 		}
 
@@ -106,13 +107,19 @@ namespace SIL.FieldWorks.LexicalProvider
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider();
-				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
-				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
+				using (Mediator mediator = new Mediator())
+				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				{
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
+					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					var flexApp = FieldWorks.GetOrCreateFlexApp();
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
+					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+					propertyTable.SetProperty("App", flexApp, true);
 
-				LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, mediator.HelpTopicProvider,
-					"UserHelpFile", tss);
+					LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						"UserHelpFile", tss);
+				}
 			});
 		}
 

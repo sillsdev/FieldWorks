@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -50,12 +51,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, string displayNameProperty, string displayWs)
+			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, obj, this, new MetaRuleFormulaVc(cache, mediator), MetaRuleFormulaVc.kfragRule);
+			m_view.Init(mediator, propertyTable, obj, this, new MetaRuleFormulaVc(mediator, propertyTable), MetaRuleFormulaVc.kfragRule);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -506,8 +507,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		IPhMetathesisRule m_rule = null;
 
-		public MetaRuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
-			: base(cache, mediator)
+		public MetaRuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
+			: base(mediator, propertyTable)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,

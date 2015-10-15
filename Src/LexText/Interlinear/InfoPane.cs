@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
@@ -24,6 +23,7 @@ namespace SIL.FieldWorks.IText
 		// Local variables.
 		private FdoCache m_cache;
 		Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		RecordEditView m_xrev;
 		int m_currentRoot = 0;		// Stores the root (IStText) Hvo.
 
@@ -36,21 +36,22 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 		}
 
-		public InfoPane(FdoCache cache, Mediator mediator, RecordClerk clerk)
+		public InfoPane(FdoCache cache, Mediator mediator, PropertyTable propertyTable, RecordClerk clerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			Initialize(cache, mediator, clerk);
+			Initialize(cache, mediator, propertyTable, clerk);
 		}
 
 		/// <summary>
 		/// Initialize the pane with a Mediator and a RecordClerk.
 		/// </summary>
-		internal void Initialize(FdoCache cache, Mediator mediator, RecordClerk clerk)
+		internal void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, RecordClerk clerk)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			InitializeInfoView(clerk);
 		}
 
@@ -58,15 +59,17 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_mediator == null)
 				return;
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			if (m_propertyTable == null)
+				return;
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 				return;
 			XmlNode xnControl = xnWindow.SelectSingleNode(
 				"controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
 			if (xnControl == null)
 				return;
-			var activeClerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-			var toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			var activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+			var toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
 			if(m_xrev != null)
 			{
 				//when re-using the infoview we want to remove and dispose of the old recordeditview and
@@ -86,16 +89,16 @@ namespace SIL.FieldWorks.IText
 				//misbehaves in the Concordance view (it uses the filter from the InterlinearTexts view)
 				m_xrev.Clerk = null;
 			}
-			m_xrev.Init(m_mediator, xnControl); // <-- This call will change the ActiveClerk
+			m_xrev.Init(m_mediator, m_propertyTable, xnControl); // <-- This call will change the ActiveClerk
 			DisplayCurrentRoot();
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
 			// There are times when moving to the InfoPane causes the wrong ActiveClerk to be set.
 			// See FWR-3390 (and InterlinearTextsRecordClerk.OnDisplayInsertInterlinText).
-			var activeClerkNew = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+			var activeClerkNew = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
 			{
-				m_mediator.PropertyTable.SetProperty("ActiveClerk", activeClerk);
+				m_propertyTable.SetProperty("ActiveClerk", activeClerk, true);
 				activeClerk.ActivateUI(true);
 			}
 		}

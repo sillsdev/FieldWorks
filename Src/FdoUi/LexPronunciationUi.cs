@@ -31,16 +31,16 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Handle the context menu for inserting a LexPronunciation.
 		/// </summary>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static LexPronunciationUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexPronunciationUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexPronunciationUi result = null;
-			FdoCache cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ActionHandlerAccessor,
 				() =>
 			{

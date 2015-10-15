@@ -13,7 +13,7 @@ T: SIL.FieldWorks.FdoUi.InflectionFeatureEditor
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # Reference only, or Dispose called in finally block
-M: System.Void SIL.FieldWorks.FdoUi.LexEntryUi::DisplayEntry(SIL.FieldWorks.FDO.FdoCache,System.Windows.Forms.IWin32Window,XCore.Mediator,XCore.IHelpTopicProvider,System.String,SIL.FieldWorks.Common.COMInterfaces.ITsString)
+M: System.Void SIL.FieldWorks.FdoUi.LexEntryUi::DisplayEntry(SIL.FieldWorks.FDO.FdoCache,System.Windows.Forms.IWin32Window,XCore.Mediator,XCore.PropertyTable,XCore.IHelpTopicProvider,System.String,SIL.FieldWorks.Common.COMInterfaces.ITsString)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

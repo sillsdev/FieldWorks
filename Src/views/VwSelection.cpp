@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -5141,10 +5141,12 @@ void VwTextSelection::UnprotectedCommit(bool * pfOk)
 	LockThis();
 
 	CommitAndContinue(pfOk);
+	// Force future edits to start editing again. Without this, when Commit is used from outside the subsystem
+	// (e.g., when switching views), we can go on saving data in m_qtsbProp which becomes out of date.
 	if (*pfOk)
 		m_qtsbProp.Clear();
 	// We can't be still committing or still needing to commit, but we might be still working.
-	if (!fWasWorking)
+	if (!fWasWorking) // TODO REVIEW (Hasso): If we wasn't working before, why is we working now?
 		m_csCommitState = kcsWorking;
 }
 
@@ -5280,9 +5282,6 @@ void VwTextSelection::CommitAndContinue(bool * pfOk, VwChangeInfo * pci)
 		// Update the property.
 		DoUpdateProp(m_pvpbox->Root(), m_hvoEdit, m_tagEdit, m_vnp, m_qvvcEdit, m_fragEdit,
 			m_qtsbProp, pfOk);
-		// Force future edits to start editing again. Without this, when Commit is used from
-		// outside the subsystem (e.g., when switching views), we can go on saving data
-		// in m_qtsbProp which becomes out of date.
 	}
 	catch(...)
 	{
@@ -7259,23 +7258,10 @@ void CompareStrings(ITsString * ptss1, ITsString * ptss2,
 		*pichwMinDiff = *pichwLimDiff;
 }
 
-/*----------------------------------------------------------------------------------------------
-	Update a property.
-
-	@param prootb
-	@param hvo
-	@param tag
-	@param vnp
-	@param pvvcEdit
-	@param fragEdit
-	@param ptsb
-	@param pfOk
-	@param pci if not null (default), record change info here instead of sending PropChanged.
-----------------------------------------------------------------------------------------------*/
 void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwNoteProps vnp,
 	IVwViewConstructor * pvvcEdit, int fragEdit, ITsStrBldr * ptsb, bool * pfOk)
 {
-	*pfOk = false; // only set true if we make it all the way (though failures throw exceptions)
+	*pfOk = false; // set true only if we make it all the way (though failures throw exceptions)
 
 #ifdef ENABLE_TSF
 	IViewInputMgr * pvim = prootb->InputManager();
@@ -7286,7 +7272,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 	CheckHr(ptsb->GetString(&qtssNewSub));
 	// At this point, the new string may not be normalized. But saving it to the database WILL
 	// cause it to get normalized. If we just let it happen, we're in trouble, because that may
-	// well change the length and hence, the proper position of the insertion point.
+	// well change the length and hence, the proper position of the insertion point (IP).
 	// To see the effect, remove the next few lines, and type 132 while holding down alt.
 	// This generates a-umlaut. Do this somewhere not at the end of a line, and then type space.
 	// See it change to a - space - box.
@@ -7311,6 +7297,14 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 			CheckHr(qtssT->NfdAndFixOffsets(&qtssNewSub, &poffset, 1));
 		}
 		ichNormalizedAnchor = ichNormalizedEnd = ichOffset + m_ichMinEditProp;
+		// If m_ichAnchor got adjusted during normalization, mark that a normalization commit is in progress.
+		// Until we get the PropChange notification and update the contents of our paragraph's text source, things are in an inconsistent
+		// state: ichAnchor represents a position in the normalized string, but the paragraph box still contains the unnormalized string. So if
+		// recipients of NotifyChange try to find things out about the selection while in this state, they may get invalid results or even
+		// out-of-range crashes. We solve this by postponing NotifyChange until after the PropChanged (which updates the paragraph content).
+		// We also use use the IsNormalizationCommitInProgress flag to prevent adjusting ichAnchor a second time when we update the paragraph.
+		if (ichNormalizedAnchor != m_ichAnchor)
+			m_qrootb->BeginNormalizationCommit(hvo, tag);
 		int cch;
 		CheckHr(qtssNewSub->get_Length(&cch));
 		ichNormalizedLim = m_ichMinEditProp + cch;
@@ -7488,8 +7482,8 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 #endif
 					)
 				{
-						CheckHr(qsda->SetMultiStringAlt(hvo, tag, fragEdit, qtssNewSub));
-					}
+					CheckHr(qsda->SetMultiStringAlt(hvo, tag, fragEdit, qtssNewSub));
+				}
 			} else
 			{
 				// ENHANCE: JohnT: figure how to handle this. We may need some more notifier
@@ -7501,7 +7495,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				ThrowHr(WarnHr(E_NOTIMPL));
 			}
 			break;
-		} // switch (cpt)
+		} // switch (vnp)
 	}
 
 	*pfOk = true;
@@ -7519,102 +7513,8 @@ void VwTextSelection::LoseFocus(IVwSelection * pvwselNew, ComBool * pfOk)
 {
 	AssertPtr(pfOk);
 	AssertPtrN(pvwselNew);
-
-	//StrAppBuf strb;
-	//strb.Format("Lose:%d\n", this);
-	//OutputDebugString(strb.Chars());
-
 	*pfOk = true;
-
 	Assert(!m_qtsbProp); // Any pending edit should have already been committed.
-
-	//// See if the new selection is another text selection. If not, we need to validate the
-	//// changes with a call to Commit().
-	//VwTextSelectionPtr qtsel;
-	//HRESULT hr = S_OK;
-	//if (pvwselNew)
-	//	IgnoreHr(hr = pvwselNew->QueryInterface(CLSID_VwTextSelection, (void **) &qtsel));
-	//if (!pvwselNew || FAILED(hr))
-	//{
-	//	Commit(pfOk);
-	//	return;
-	//}
-
-	//// We know that the new selection is a VwTextSelection. Is it in the same text box? If not
-	//// we need to validate.
-	//if (m_pvpbox != qtsel->m_pvpbox)
-	//{
-	//	Commit(pfOk);
-	//	return;
-	//}
-
-	//// If the new one is a multi-para selection we'd better commit, as it can't be entirely in
-	//// this prop.
-	//if (qtsel->m_pvpboxEnd)
-	//{
-	//	Commit(pfOk);
-	//	return;
-	//}
-
-	//int ichAnchorNew = qtsel->m_ichAnchor;
-	//if (ichAnchorNew < m_ichMinEditProp || ichAnchorNew > m_ichLimEditProp)
-	//{
-	//	Commit(pfOk);
-	//	return;
-	//}
-
-	//int ichEndNew = qtsel->m_ichEnd;
-	//if (ichEndNew < m_ichMinEditProp || ichEndNew > m_ichLimEditProp)
-	//{
-	//	Commit(pfOk);
-	//	return;
-	//}
-
-	//if (ichAnchorNew == ichEndNew)
-	//{
-	//	// It's an IP: its fAssocPrev affects whether it is in the same property.
-	//	if ((qtsel->m_fAssocPrevious && ichAnchorNew == m_ichMinEditProp) ||
-	//		(!qtsel->m_fAssocPrevious && ichAnchorNew == m_ichLimEditProp))
-	//	{
-	//		Commit(pfOk);
-	//		return;
-	//	}
-	//}
-
-	//// OK, the new selection can edit the same property. Copy over all the editing-related vars
-	//// and then clear all our own variables (just to facilitate freeing things). This would be
-	//// same thing as calling StartEditing();
-	//qtsel->m_qtsbProp = m_qtsbProp;
-	//m_qtsbProp.Clear();
-
-	//// Copy the Prop min and lim.
-	//qtsel->m_ichMinEditProp = m_ichMinEditProp;
-	//qtsel->m_ichLimEditProp = m_ichLimEditProp;
-
-	//// Don't copy the fAssocPrevious status. It is part of the real information in the new sel.
-	//// Copying can cause real problems, for example if the new sel is at the start of the line,
-	//// so m_fAssocPrevious must be false, but in the old selection it was true.
-	////qtsel->m_fAssocPrevious = m_fAssocPrevious;
-
-	//// Copy other member variables set in the call to EditableSubstringAt.
-	//qtsel->m_hvoEdit = m_hvoEdit;
-	//qtsel->m_tagEdit = m_tagEdit;
-	//qtsel->m_qvvcEdit = m_qvvcEdit;
-	//qtsel->m_fragEdit = m_fragEdit;
-	//qtsel->m_qanote = m_qanote;
-	//m_qanote.Clear();
-	//qtsel->m_iprop = m_iprop;
-	//qtsel->m_itssProp = m_itssProp;
-	//qtsel->m_vnp = m_vnp;
-
-	//qtsel->m_hvoParaOwner = m_hvoParaOwner;
-	//qtsel->m_tagParaProp = m_tagParaProp;
-	//qtsel->m_pnoteParaOwner = m_pnoteParaOwner;
-	//qtsel->m_ipropPara = m_ipropPara;
-	//qtsel->m_ihvoFirstPara = m_ihvoFirstPara;
-	//qtsel->m_ihvoLastPara = m_ihvoLastPara;
-
-	//// Allow the new selection to take over responsibility for committing changes
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -14350,6 +14250,9 @@ bool VwTextSelection::AdjustForStringReplacement(VwTxtSrc * psrcModify, int itss
 	VwTxtSrc * psrcRep)
 {
 	bool fDidChange = false;
+	// If a normalization commit is in progress for this Selection, ichs have already been adjusted as part of the normalization.
+	if (this == m_qrootb->Selection() && m_qrootb->IsNormalizationCommitInProgress())
+		return fDidChange;
 	if (m_qtsbProp)
 	{
 		int ichMinChange = psrcModify->IchStartString(itssMin);

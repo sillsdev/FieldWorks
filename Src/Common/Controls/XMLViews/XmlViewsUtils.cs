@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text; // StringBuilder
-
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -46,39 +45,37 @@ namespace SIL.FieldWorks.Common.Controls
 		/// looks up plural form alternative first for given flid, secondly for its destination class.
 		/// </summary>
 		/// <param name="mdc"></param>
-		/// <param name="tbl"></param>
 		/// <param name="owningFlid"></param>
 		/// <param name="titleStr">*{dstClass}* if couldn't find result.</param>
 		/// <returns>true if we found an alternate form. false if titleStr is null or in *{key}* format.</returns>
-		public static bool TryFindPluralFormFromFlid(IFwMetaDataCache mdc, StringTable tbl, int owningFlid, out string titleStr)
+		public static bool TryFindPluralFormFromFlid(IFwMetaDataCache mdc, int owningFlid, out string titleStr)
 		{
 			// first see if we can find an expanded name for the name of a flid.
 			string flidName = mdc.GetFieldName(owningFlid);
 			if (!String.IsNullOrEmpty(flidName))
 			{
-				if (TryFindString(tbl, "AlternativeTitles", flidName, out titleStr))
+				if (TryFindString("AlternativeTitles", flidName, out titleStr))
 					return true;
 			}
 			// secondly, see if we can find the plural form for the destination class.
 			int dstClass = mdc.GetDstClsId(owningFlid);
-			return TryFindPluralFormFromClassId(mdc, tbl, dstClass, out titleStr);
+			return TryFindPluralFormFromClassId(mdc, dstClass, out titleStr);
 		}
 
 		/// <summary>
 		///
 		/// </summary>
 		/// <param name="mdc"></param>
-		/// <param name="tbl"></param>
 		/// <param name="clsId"></param>
 		/// <param name="titleStr">*{dstClass}* if couldn't find result.</param>
 		/// <returns>true if we found an alternate form. false if titleStr is null or in *{ClassName}* format.</returns>
-		public static bool TryFindPluralFormFromClassId(IFwMetaDataCache mdc, StringTable tbl, int clsId, out string titleStr)
+		public static bool TryFindPluralFormFromClassId(IFwMetaDataCache mdc, int clsId, out string titleStr)
 		{
 			titleStr = null;
 			if (clsId != 0)
 			{
 				string className = mdc.GetClassName(clsId);
-				return TryFindString(tbl, "AlternativeTitles", String.Format("{0}-Plural", className), out titleStr);
+				return TryFindString("AlternativeTitles", String.Format("{0}-Plural", className), out titleStr);
 			}
 			return false;
 		}
@@ -86,14 +83,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="tbl"></param>
 		/// <param name="group"></param>
 		/// <param name="key"></param>
 		/// <param name="result"></param>
 		/// <returns>true if we found a value associated with the given key. false if result is in *{key}* format.</returns>
-		public static bool TryFindString(StringTable tbl, string group, string key, out string result)
+		public static bool TryFindString(string group, string key, out string result)
 		{
-			result = tbl.GetString(key, group);
+			result = StringTable.Table.GetString(key, group);
 			return FoundStringTableString(key, result);
 		}
 
@@ -201,16 +197,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="nodes">The nodes.</param>
 		/// <param name="attName">Name of the att.</param>
 		/// <param name="attVal">The att val.</param>
-		/// <param name="tbl">The TBL.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static int FindIndexOfAttrVal(List<XmlNode> nodes, string attName, string attVal,
-			StringTable tbl)
+		public static int FindIndexOfAttrVal(List<XmlNode> nodes, string attName, string attVal)
 		{
 			int index = 0;
 			foreach (XmlNode node in nodes)
 			{
-				string sAttr = XmlUtils.GetLocalizedAttributeValue(tbl, node, attName, null);
+				string sAttr = XmlUtils.GetLocalizedAttributeValue(node, attName, null);
 				if (sAttr == attVal)
 					return index;
 				index++;
@@ -328,13 +322,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="nodes">The nodes.</param>
 		/// <param name="attName">Name of the att.</param>
 		/// <param name="attVal">The att val.</param>
-		/// <param name="tbl">The TBL.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode FindNodeWithAttrVal(List<XmlNode> nodes, string attName, string attVal,
-			StringTable tbl)
+		public static XmlNode FindNodeWithAttrVal(List<XmlNode> nodes, string attName, string attVal)
 		{
-			int index = FindIndexOfAttrVal(nodes, attName, attVal, tbl);
+			int index = FindIndexOfAttrVal(nodes, attName, attVal);
 			if (index == -1)
 				return null;
 			return nodes[index];
@@ -590,14 +582,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		static internal string[] ChildKeys(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, StringTable stringTbl, int wsForce)
+			LayoutCache layoutCache, XmlNode caller, int wsForce)
 		{
 			string[] result = null;
 			foreach (XmlNode child in layout.ChildNodes)
 			{
 				if (child is XmlComment)
 					continue;
-				result = Concatenate(result, StringsFor(fdoCache, sda, child, hvo, layoutCache, caller, stringTbl, wsForce));
+				result = Concatenate(result, StringsFor(fdoCache, sda, child, hvo, layoutCache, caller, wsForce));
 			}
 			return result;
 		}
@@ -615,9 +607,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 
 		static private string[] AssembleChildKeys(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, StringTable stringTbl, int wsForce)
+			LayoutCache layoutCache, XmlNode caller, int wsForce)
 		{
-			return Assemble(ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce));
+			return Assemble(ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce));
 		}
 
 		/// <summary>
@@ -760,11 +752,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layoutCache">The layout cache.</param>
 		/// <param name="caller">where layout is a component of a 'part' element, caller
 		/// is the 'part ref' that invoked it.</param>
-		/// <param name="stringTbl">The string TBL.</param>
 		/// <param name="wsForce">if non-zero, "string" elements are forced to use that writing system for multistrings.</param>
 		/// <returns></returns>
 		static public string[] StringsFor(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, StringTable stringTbl, int wsForce)
+			LayoutCache layoutCache, XmlNode caller, int wsForce)
 		{
 			// Some nodes are known to be uninteresting.
 			if (XmlVc.CanSkipNode(layout))
@@ -822,7 +813,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return new[] {AddMultipleAlternatives(fdoCache, sda, wsIds, hvo, flid, caller)};
 				}
 				case "multiling":
-					return ProcessMultiLingualChildren(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce);
+					return ProcessMultiLingualChildren(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				case "layout":
 					// "layout" can occur when GetNodeToUseForColumn returns a phony 'layout'
 					// formed by unifying a layout with child nodes. Assemble its children.
@@ -831,31 +822,31 @@ namespace SIL.FieldWorks.Common.Controls
 				case "para":
 				case "span":
 				{
-					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce);
+					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				}
 				case "column":
 					// top-level node for whole column; concatenate children as for "para"
 					// if multipara is false, otherwise as for "div"
 					if (XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false))
-						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce);
+						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 					else
-						return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce);
+						return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 
 				case "part":
 				{
 					string partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
 					if (partref == null)
-						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce); // an actual part, made up of its pieces
+						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
 					XmlNode part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
 					// This is the critical place where we introduce a caller. The 'layout' is really a 'part ref' which is the
 					// 'caller' for all embedded nodes in the called part.
-					return StringsFor(fdoCache, sda, part, hvo, layoutCache, layout, stringTbl, wsForce);
+					return StringsFor(fdoCache, sda, part, hvo, layoutCache, layout, wsForce);
 				}
 				case "div":
 				case "innerpile":
 				{
 					// Concatenate keys for child nodes (as distinct strings)
-					return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, stringTbl, wsForce);
+					return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				}
 				case "obj":
 				{
@@ -869,7 +860,7 @@ namespace SIL.FieldWorks.Common.Controls
 					XmlNode layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
 					if (layoutTarget == null)
 						break;
-					return ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, stringTbl, wsForce);
+					return ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce);
 				}
 				case "seq":
 				{
@@ -894,7 +885,7 @@ namespace SIL.FieldWorks.Common.Controls
 						XmlNode layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
 						if (layoutTarget == null)
 							continue; // should not happen, but best recovery we can make
-						result = Concatenate(result, ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, stringTbl, wsForce));
+						result = Concatenate(result, ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce));
 						// add a separator between the new childkey group and the previous childkey group
 						if (i > 0 && prevResultLength != GetArrayLength(result) && prevResultLength > 0)
 						{
@@ -915,36 +906,33 @@ namespace SIL.FieldWorks.Common.Controls
 						if (whereNode.Name != "where")
 						{
 							if (whereNode.Name == "otherwise")
-								return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, stringTbl, wsForce);
+								return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
 							continue; // ignore any other nodes,typically comments
 						}
 						// OK, it's a where node.
 						if (XmlVc.ConditionPasses(whereNode, hvo, fdoCache, sda, caller))
-							return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, stringTbl, wsForce);
+							return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
 					}
 					break; // if no condition passes and no otherwise, return null.
 				}
 				case "if":
 				{
 					if (XmlVc.ConditionPasses(layout, hvo, fdoCache, sda, caller))
-						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, stringTbl, wsForce);
+						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
 					break;
 				}
 				case "ifnot":
 				{
 					if (!XmlVc.ConditionPasses(layout, hvo, fdoCache, sda, caller))
-						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, stringTbl, wsForce);
+						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
 					break;
 				}
 				case "lit":
 				{
 					string literal = layout.InnerText;
-					if (stringTbl != null)
-					{
-						string sTranslate = XmlUtils.GetOptionalAttributeValue(layout, "translate", "");
-						if (sTranslate.Trim().ToLower() != "do not translate")
-							literal = stringTbl.LocalizeLiteralValue(literal);
-					}
+					string sTranslate = XmlUtils.GetOptionalAttributeValue(layout, "translate", "");
+					if (sTranslate.Trim().ToLower() != "do not translate")
+						literal = StringTable.Table.LocalizeLiteralValue(literal);
 					return new[] { literal };
 				}
 				case "int":
@@ -985,7 +973,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		static private string[] ProcessMultiLingualChildren(FdoCache fdoCache, ISilDataAccess sda, XmlNode frag, int hvo,
-			LayoutCache layoutCache, XmlNode caller, StringTable stringTbl, int wsForce)
+			LayoutCache layoutCache, XmlNode caller, int wsForce)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs == null)
@@ -1004,7 +992,7 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach (int WSId in wsIds)
 				{
 					s_qwsCurrent = fdoCache.ServiceLocator.WritingSystemManager.Get(WSId);
-					result = Concatenate(result, ChildKeys(fdoCache, sda, frag, hvo, layoutCache, caller, stringTbl, wsForce));
+					result = Concatenate(result, ChildKeys(fdoCache, sda, frag, hvo, layoutCache, caller, wsForce));
 				}
 			}
 			finally

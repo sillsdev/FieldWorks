@@ -58,10 +58,10 @@
 			<guicontrol id="matchingRecords">
 				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
 					<columns>
-						<column label="Record Type" layout="" editable="false" width="72000">
+						<column label="Record Type" editable="false" width="72000">
 							<obj field="Type" layout="Name"/>
 						</column>
-						<column label="Title" layout="" editable="false" width="196000">
+						<column label="Title" editable="false" width="196000">
 							<string field="Title"/>
 						</column>
 					</columns>
@@ -89,6 +89,10 @@
 			<item command="CmdInsertSubrecord" defaultVisible="false"/>
 			<item command="CmdInsertSubsubrecord" defaultVisible="false"/>
 			<item command="CmdAddToLexicon" label="Entry..." defaultVisible="false"/>
+		</menu>
+		<!-- This is really the Tools-Configure submenu.-->
+		<menu id="Configure">
+			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>

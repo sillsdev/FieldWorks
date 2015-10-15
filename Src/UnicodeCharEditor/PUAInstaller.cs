@@ -550,12 +550,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			string codeBaseUri = Assembly.GetExecutingAssembly().CodeBase;
 			string path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 
-			var result= Path.Combine(path, exeName + ".exe");
-			if (File.Exists(result))
-				return result; // typical end-user machine
-			// developer machine, executing assembly is in output/debug.
-			return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)),
-				Path.Combine("DistFiles", Path.Combine("Windows", exeName + ".exe")));
+			return Path.Combine(path, exeName + ".exe");
 #else
 	// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
 			return exeName;

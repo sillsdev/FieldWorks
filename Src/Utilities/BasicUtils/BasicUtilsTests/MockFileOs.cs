@@ -602,6 +602,11 @@ namespace SIL.Utils
 			ExistingDirectories.Add(directory);
 		}
 
+		long IFileOS.FileLength(string filePath)
+		{
+			// g'd enough for a mock
+			return m_existingFiles[filePath].ContentsAsBytes.Length;
+		}
 		#endregion
 
 		#region Private helper methods

@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,10 +25,11 @@ namespace XCore
 	/// </remarks>
 	public class Ticker : XCoreUserControl, IxCoreContentControl
 	{
-		private System.Windows.Forms.RichTextBox m_textBox;
+		private RichTextBox m_textBox;
 		private System.ComponentModel.IContainer components=null;
-		private System.Windows.Forms.Button button1;
+		private Button button1;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -82,17 +82,19 @@ namespace XCore
 		#endregion  IxCoreCtrlTabProvider implementation
 
 		#region IxCoreColleague implementation
+
 		/// <summary>
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			base.m_configurationParameters = configurationParameters;
+			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 		}
 
@@ -152,6 +154,7 @@ namespace XCore
 					m_mediator.RemoveColleague(this);
 			}
 			m_mediator = null;
+			m_propertyTable = null;
 
 			base.Dispose( disposing );
 		}
@@ -209,7 +212,7 @@ namespace XCore
 		{
 			CheckDisposed();
 
-			WriteLine ("property '"+name+"' changed.");
+			WriteLine ("property '" + name + "' changed.");
 		}
 
 		/// <summary>
@@ -220,7 +223,7 @@ namespace XCore
 			CheckDisposed();
 
 			WriteLine ("--------Properties table");
-			WriteLine(m_mediator.PropertyTable.GetPropertiesDumpString());
+			WriteLine(m_propertyTable.GetPropertiesDumpString());
 			return true;//we handled this, no need to ask anyone else.
 		}
 		/// <summary>
@@ -252,11 +255,11 @@ namespace XCore
 			m_textBox.Text += s + Environment.NewLine;
 		}
 
-		private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
-			if(e.Button == MouseButtons.Right)
+			if (e.Button == MouseButtons.Right)
 			{
-				XWindow window = (XWindow)this.FindForm();
+				XWindow window = (XWindow)FindForm();
 //				window.ShowContextMenu("TestContextMenu",this, e.X,e.Y);
 				window.ShowContextMenu("TestContextMenu", new Point(e.X, e.Y), null, null);
 //				ContextMenu menu =window.ShowContextMenu("TestContextMenu");

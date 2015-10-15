@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Data;
 using System.Windows.Forms;
+using System.Xml;
 using SIL.Utils;
 
 namespace XCore
@@ -98,7 +98,7 @@ namespace XCore
 	/// <summary>
 	/// PaneBar, AKA "information bar"
 	/// </summary>
-	public class PaneBar : System.Windows.Forms.UserControl, IPaneBar, IxCoreColleague
+	public class PaneBar : UserControl, IPaneBar, IxCoreColleague
 	{
 		private IImageCollection m_smallImages;
 		private IUIMenuAdapter m_menuBarAdapter;
@@ -106,7 +106,7 @@ namespace XCore
 
 		#region Data members
 
-		private XCore.Mediator m_mediator;
+		private Mediator m_mediator;
 		private Hashtable m_propertiesToWatch =new Hashtable();
 
 		private PanelEx m_panelMain;
@@ -138,7 +138,7 @@ namespace XCore
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="button added to collection")]
-		protected  void  AddHotlink(XCore.ChoiceBase choice)
+		protected  void  AddHotlink(ChoiceBase choice)
 		{
 			PanelButton button = new PanelButton(choice, m_smallImages);
 
@@ -195,7 +195,7 @@ namespace XCore
 		private void WatchPropertyOfButton(PanelButton button)
 		{
 			//for now, only handles Boolean properties
-			BoolPropertyChoice choice = button.Tag as XCore.BoolPropertyChoice;
+			BoolPropertyChoice choice = button.Tag as BoolPropertyChoice;
 			if (choice != null)
 				m_propertiesToWatch.Add(choice.BoolPropertyName, button);
 		}
@@ -217,7 +217,7 @@ namespace XCore
 		///
 		/// </summary>
 		/// <param name="group"></param>
-		public  void  AddGroup(XCore.ChoiceGroup group)
+		public  void  AddGroup(ChoiceGroup group)
 		{
 			ClearMainPanelControls();
 			ArrayList l = new ArrayList(group.Count);
@@ -229,7 +229,7 @@ namespace XCore
 
 			foreach(ChoiceRelatedClass item in l)
 			{
-				XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
+				ChoiceRelatedClass choice = (ChoiceRelatedClass)Tag;
 				UIItemDisplayProperties display = item.GetDisplayProperties();
 				if (!display.Visible)
 					continue;
@@ -246,24 +246,26 @@ namespace XCore
 		}
 
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="config"></param>
-		/// <returns></returns>
-		public void Init (Mediator mediator, System.Xml.XmlNode config)
+		///  <returns></returns>
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode config)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="smallImages"></param>
+		///  </summary>
+		///  <param name="smallImages"></param>
+		/// <param name="menuBarAdapter"></param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		public void  Init (IImageCollection smallImages, IUIMenuAdapter menuBarAdapter, Mediator mediator)
+		public void Init(IImageCollection smallImages, IUIMenuAdapter menuBarAdapter, Mediator mediator)
 		{
 			m_mediator = mediator;
 			mediator.AddColleague(this);
@@ -336,7 +338,7 @@ namespace XCore
 
 		private void ClearMainPanelControls()
 		{
-			this.m_panelMain.Controls.Clear();
+			m_panelMain.Controls.Clear();
 			m_propertiesToWatch.Clear();
 		}
 

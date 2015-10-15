@@ -1,14 +1,7 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
-
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -20,7 +13,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 {
 	public class MSADlgLauncher : ButtonLauncher
 	{
-		private SIL.FieldWorks.XWorks.LexEd.MSADlglauncherView m_msaDlglauncherView;
+		private MSADlglauncherView m_msaDlglauncherView;
 		private System.ComponentModel.IContainer components = null;
 
 		public MSADlgLauncher()
@@ -38,13 +31,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="obj"></param>
 		/// <param name="flid"></param>
 		/// <param name="fieldName"></param>
+		/// <param name="persistProvider"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="displayNameProperty"></param>
+		/// <param name="displayWs"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
-			m_msaDlglauncherView.Init(mediator, obj as IMoMorphSynAnalysis);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			m_msaDlglauncherView.Init(m_propertyTable.GetValue<FdoCache>("cache"), obj as IMoMorphSynAnalysis);
 		}
 
 		/// <summary>
@@ -61,6 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				dlg.SetDlgInfo(m_cache,
 					m_persistProvider,
 					m_mediator,
+					m_propertyTable,
 					entry,
 					SandboxGenericMSA.Create(originalMsa),
 					originalMsa.Hvo,

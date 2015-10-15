@@ -1,7 +1,6 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -34,8 +33,8 @@ namespace SIL.FieldWorks.IText
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 		private IBookImporter m_bookImporter;
 
-		public InterlinearExportDialog(Mediator mediator, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
-			: base(mediator)
+		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
+			: base(mediator, propertyTable)
 		{
 			m_objRoot = objRoot;
 			m_vc = vc;
@@ -98,7 +97,7 @@ namespace SIL.FieldWorks.IText
 			IFilterTextsDialog<IStText> dlg = null;
 			try
 			{
-				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_cache.ServiceLocator);
+				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
 				var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
 				var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
 				if (!isOkToDisplayScripture)
@@ -108,11 +107,11 @@ namespace SIL.FieldWorks.IText
 				var interestingTexts = textsToChooseFrom.ToArray();
 				if (isOkToDisplayScripture)
 				{
-					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_mediator.HelpTopicProvider, m_bookImporter);
+					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_bookImporter);
 				}
 				else
 				{
-					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_mediator.HelpTopicProvider);
+					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				}
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'

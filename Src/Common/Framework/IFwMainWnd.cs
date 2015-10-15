@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd
+	public interface IFwMainWnd : IxWindow
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -41,13 +41,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		FwApp App { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Mediater for the window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		Mediator Mediator { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

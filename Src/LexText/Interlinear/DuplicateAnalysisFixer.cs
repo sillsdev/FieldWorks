@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.IText
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeAnalyses, ITextStrings.ksRedoMergeAnalyses,
 				cache.ActionHandlerAccessor,
 				() => WfiWordformServices.MergeDuplicateAnalyses(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));

@@ -9,7 +9,7 @@
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;CopyDlls;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -249,7 +249,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;ensureTLBsUpToDate;IcuData;CopyDlls;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;ensureTLBsUpToDate;CopyDlls;IcuData;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
@@ -301,6 +301,14 @@
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
+		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
+		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful</IcuDownloadUrl>
+		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/.lastSuccessful</IcuDownloadUrl>
 		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
 		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful</IcuDownloadUrl>
 		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
@@ -308,6 +316,8 @@
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
+		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/.lastSuccessful</Icu4cDownloadUrl>
+		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -325,6 +335,10 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Media.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
@@ -340,6 +354,7 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.dll" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.TestUtilities.dll" LocalFilename="$(fwrt)/Downloads/SIL.TestUtilities.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, and Spart."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
@@ -355,9 +370,14 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Spart.dll" LocalFilename="$(fwrt)/Downloads/Spart.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
 					  Condition="'$(OS)'=='Windows_NT'"/>
@@ -369,6 +389,8 @@
 					  Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading latest successful artifacts for Chorus."/>
+
+		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
@@ -378,7 +400,13 @@
 		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for ICU.NET."/>
+		<Message Text="Downloading latest successful artifacts for ExCss."/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+
+		<Message Text="Downloading latest successful artifacts for ICU.NET"/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
@@ -407,6 +435,19 @@
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Machine.dll" LocalFilename="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Collections.dll" LocalFilename="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.HermitCrab.dll" LocalFilename="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
+
+		<Message Text="Downloading latest successful artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/gennorm2.exe" LocalFilename="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icutu$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt.lib" LocalFilename="$(fwrt)/Downloads/icudt.lib" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin.lib" LocalFilename="$(fwrt)/Downloads/icuin.lib" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
+
+		<Message Text="Downloading NUnit." />
+		<DownloadFile Address="$(NUnitDownloadUrl)" LocalFilename="$(fwrt)/Downloads/NUnit-2.6.4.zip" />
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -432,6 +473,9 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
@@ -449,6 +493,7 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.TestUtilities.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -459,12 +504,18 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- xBuild and MsBuild generate different case artifacts's off the same solution file. (sigh) -->
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Spart.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
@@ -480,6 +531,11 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll.config" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -498,20 +554,17 @@
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- ICU dlls -->
-		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icudt$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icuin$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
+		<!-- ICU libs -->
+		<Copy SourceFiles="$(fwrt)/Downloads/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Lib/src/icu/bin/icuuc$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(fwrt)/Downloads/icuin.lib" DestinationFolder="$(fwrt)/Lib"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/Downloads/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-
-		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu$(IcuVersion).dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- protobuf-net dlls -->
 		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
@@ -520,6 +573,14 @@
 		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
+		<!-- NUnit dlls -->
+		<Unzip ZipFilename="$(fwrt)/Downloads/NUnit-2.6.4.zip" ToDir="$(fwrt)/Downloads/" />
+		<CreateItem Include="$(fwrt)/Downloads/NUnit-2.6.4/**/*">
+			<Output TaskParameter="Include" ItemName="NUnitFiles"/>
+		</CreateItem>
+		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<ForceDelete Files="$(fwrt)/Downloads/NUnit-2.6.4/" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -565,11 +626,11 @@
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="$(dir-outputBase)"
+			Value="/usr/lib/fieldworks"
 			Condition="'$(OS)'=='Unix'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="$(dir-outputBase)/EC/Plugins"
+			Value="/usr/lib/fieldworks/EC/Plugins"
 			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
@@ -614,12 +675,12 @@
 		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" />
 		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" />
 	</ItemGroup>
-	<Target Name="GenerateIcuData" Inputs="@(IcuDataSources)" Outputs="$(fwrt)/DistFiles/Icu$(IcuVersion).zip">
+	<Target Name="GenerateIcuData" Inputs="@(IcuDataSources)" Outputs="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" DependsOnTargets="CopyDlls">
 		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
 		<PropertyGroup>
-			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(fwrt)/Lib/src/icu/bin/gennorm2.exe</gennorm2>
+			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(dir-outputBase)\gennorm2.exe</gennorm2>
 			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
 		</PropertyGroup>
 		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />

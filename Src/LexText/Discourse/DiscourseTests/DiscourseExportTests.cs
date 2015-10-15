@@ -4,7 +4,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.Discourse
 			m_chart = m_helper.SetupAChart();
 
 			m_constChart = new ConstituentChart(Cache, m_logic);
-			m_constChart.Init(null, null);
+			m_constChart.Init(null, null, null);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
 

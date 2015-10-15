@@ -61,13 +61,17 @@
 	 <xsl:apply-templates/>
   </xsl:template>
 
+  <xsl:template match="LexSenseLink_LexSenseReferences">
+	 <xsl:apply-templates/>
+  </xsl:template>
+
   <xsl:template match="LexSenseLink_ReversalName">
 	<xsl:if test="Str/Run">
 	  <xsl:call-template name="ProcessString"></xsl:call-template>
 	</xsl:if>
 	<xsl:if test="AStr/Run">
 	  <xsl:call-template name="ProcessMultiString"></xsl:call-template>
-	</xsl:if><xsl:text>&#13;&#10;</xsl:text>
+	</xsl:if>
   </xsl:template>
 
   <!-- ***************************************** -->

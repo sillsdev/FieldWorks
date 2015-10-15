@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2010-06-29 TestColumnConfigureDialog.cs
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -23,23 +22,29 @@ namespace XMLViewsTests
 	public class TestColumnConfigureDialog : BaseTest
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private FdoCache m_cache;
 
 		[SetUp]
 		public void SetUp()
 		{
 			m_mediator = new Mediator();
-			m_mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
+			m_propertyTable = new PropertyTable(m_mediator);
+			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
-			m_mediator.PropertyTable.SetProperty("cache", m_cache);
+			m_propertyTable.SetProperty("cache", m_cache, true);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
 			m_mediator.Dispose();
+			m_mediator = null;
 			m_cache.Dispose();
+			m_cache = null;
 		}
 
 		#region AfterMovingItemArrowsAreNotImproperlyDisabled
@@ -54,8 +59,7 @@ namespace XMLViewsTests
 
 			List<XmlNode> possibleColumns = new List<XmlNode>();
 
-			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_mediator,
-				m_mediator.StringTbl);
+			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_propertyTable);
 			window.FinishInitialization();
 
 			return window;

@@ -174,12 +174,12 @@ LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:IX86 /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
 	/LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared" \
-	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib" /LIBPATH:"$(BUILD_ROOT)\Lib\src\icu\lib"
+	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ELSE
 LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:IX86 /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
-	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib" /LIBPATH:"$(BUILD_ROOT)\Lib\src\icu\lib"
+	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ENDIF
 
 LINK_OPTS_PS=
@@ -194,7 +194,7 @@ MIDL_OPTS=$(MIDL_OPTS) /Oicf /env win32 /I"$(COM_OUT_DIR)" /error all /error all
 
 REGSVR_OPTS=/s $(REGSVR_OPTS)
 
-USER_INCLUDE=$(OUT_DIR);$(COM_OUT_DIR);$(INT_DIR);$(COM_INT_DIR);$(BUILD_ROOT)\Lib\$(BUILD_CONFIG);$(BUILD_ROOT)\Include;$(BUILD_ROOT)\Lib\src\icu\include;$(USER_INCLUDE)
+USER_INCLUDE=$(OUT_DIR);$(COM_OUT_DIR);$(INT_DIR);$(COM_INT_DIR);$(BUILD_ROOT)\Lib\$(BUILD_CONFIG);$(BUILD_ROOT)\Include;$(USER_INCLUDE)
 
 # Include ICU libraries here to make them available to all components whose .mak file includes this one.
 LINK_LIBS=icuin.lib icudt.lib icuuc.lib $(LINK_LIBS)

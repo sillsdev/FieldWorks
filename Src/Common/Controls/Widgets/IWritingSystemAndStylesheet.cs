@@ -24,22 +24,22 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// <summary>
 	/// helps controls setup WritingSystem[Factory] and Stylesheet related functionality
 	/// </summary>
-	public class WritingSystemAndStylesheetHelper
+	public static class WritingSystemAndStylesheetHelper
 	{
 		/// <summary>
 		/// setup the given control's WritingSystem[Factory] and Stylesheet related functionality
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="control"></param>
 		/// <param name="cache"></param>
-		/// <param name="mediator">used to get stylesheet</param>
 		/// <param name="wsDefault">used to set WritingSytemCode and Font for the control</param>
-		public static void SetupWritingSystemAndStylesheetInfo(IWritingSystemAndStylesheet control,
-			FdoCache cache, Mediator mediator, int wsDefault)
+		public static void SetupWritingSystemAndStylesheetInfo(PropertyTable propertyTable, IWritingSystemAndStylesheet control,
+			FdoCache cache, int wsDefault)
 		{
 			control.WritingSystemFactory = cache.WritingSystemFactory;
 			control.WritingSystemCode = wsDefault;
 			control.Font = new System.Drawing.Font(cache.ServiceLocator.WritingSystemManager.Get(wsDefault).DefaultFontName, 10);
-			control.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			control.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 		}
 	}
 

@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using System.Diagnostics;
-
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -25,6 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FdoCache m_cache;
 		private List<TreeNode> m_nodes = new List<TreeNode>();
@@ -112,14 +112,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="posList"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="posList"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		/// <param name="subItemOwner"></param>
-		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
+		///  <param name="subItemOwner"></param>
+		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
 
@@ -127,20 +128,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_posList = posList;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
 			m_mediator = mediator;
-			if (mediator != null)
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				object locWnd = m_mediator.PropertyTable.GetValue("masterCatListDlgLocation");
-				object szWnd = m_mediator.PropertyTable.GetValue("masterCatListDlgSize");
-				if (locWnd != null && szWnd != null)
+				if (m_propertyTable.PropertyExists("masterCatListDlgLocation") &&
+					m_propertyTable.PropertyExists("masterCatListDlgSize"))
 				{
-					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					var locWnd = m_propertyTable.GetValue<Point>("masterCatListDlgLocation");
+					var szWnd = m_propertyTable.GetValue<Size>("masterCatListDlgSize");
+					Rectangle rect = new Rectangle(locWnd, szWnd);
 					ScreenUtils.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				if (m_helpTopicProvider != null)
 				{
 					helpProvider = new HelpProvider();
@@ -500,8 +503,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_mediator != null)
 			{
-				m_mediator.PropertyTable.SetProperty("masterCatListDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("masterCatListDlgSize", Size);
+				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true);
+				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true);
 			}
 		}
 

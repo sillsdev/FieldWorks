@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 #if __MonoCS__
@@ -250,6 +251,11 @@ namespace SIL.Utils
 			{
 				Directory.CreateDirectory(directory);
 			}
+
+			public long FileLength(string filePath)
+			{
+				return new FileInfo(filePath).Length;
+			}
 		}
 		#endregion
 
@@ -276,37 +282,41 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Opens the two files specified and determines whether or not they are byte-for-byte
-		/// identical.
+		/// If sizes are equal then compare hashes, non malicious hash collisions are so unlikely as to be ignorable
 		/// </summary>
-		/// <param name="file1"></param>
-		/// <param name="file2"></param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public static bool AreFilesIdentical(string file1, string file2)
 		{
-			TextReader sr1 = null;
-			TextReader sr2 = null;
-			try
-			{
-				sr1 = OpenFileForRead(file1, Encoding.Default);
-				sr2 = OpenFileForRead(file2, Encoding.Default);
-				string str1 = sr1.ReadToEnd();
-				string str2 = sr2.ReadToEnd();
-
-				return str1 == str2;
-			}
-			catch
+			// Return false rather than throwing for non-existant input
+			if(!s_fileos.FileExists(file1) || !s_fileos.FileExists(file2))
 			{
 				return false;
 			}
-			finally
+			if(file1.Equals(file2))
 			{
-				if (sr1 != null)
-					sr1.Dispose();
-				if (sr2 != null)
-					sr2.Dispose();
+				return true; // Identical file paths means identical files
 			}
+			// Compare file sizes
+			if(s_fileos.FileLength(file1) != s_fileos.FileLength(file2))
+			{
+				return false;
+			}
+
+			// Declare byte arrays to store our file hashes
+			byte[] fileHash1;
+			byte[] fileHash2;
+
+			// compute the hashes for comparison
+			using(var hash = HashAlgorithm.Create())
+			using(Stream fileStream1 = OpenStreamForRead(file1),
+							 fileStream2 = OpenStreamForRead(file2))
+			{
+				// hash each file
+				fileHash1 = hash.ComputeHash(fileStream1);
+				fileHash2 = hash.ComputeHash(fileStream2);
+			}
+
+			return BitConverter.ToString(fileHash1) == BitConverter.ToString(fileHash2);
 		}
 
 		/// ------------------------------------------------------------------------------------

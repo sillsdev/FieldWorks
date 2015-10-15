@@ -1007,7 +1007,6 @@ Description:
 
 	} LgEndSegmentType; // Hungarian est
 
-
 	/*******************************************************************************************
 		Interface IRenderEngine
 		// rendering engine: constructs segments and does a few other
@@ -1025,11 +1024,9 @@ Description:
 			[in] IVwGraphics * pvg,
 			[in] BSTR bstrData);
 		// Return an indication of whether the font is valid for the renderer.
-		// S_OK means it is valid, E_FAIL means the font was not available,
-		// E_UNEXPECTED means the font could not be used to initialize the renderer in the
-		// expected way (eg, the Graphite tables could not be found).
-		// Assumes InitNew() has already been called to set the font name.
-		HRESULT FontIsValid();
+		// Assumes InitRenderer() has already been called to set the font name.
+		[propget] HRESULT FontIsValid(
+			[out, retval] ComBool * pfValid);
 
 		// Give the maximum length of information that this renderer might want to pass
 		// from one segment to another in SimpleBreakPoint>>pbNextSegDat.

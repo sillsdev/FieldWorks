@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class ParserListener : IxCoreColleague, IFWDisposable, IVwNotifyChange
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -59,12 +60,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 			mediator.AddColleague(this);
 
 			m_sda = m_cache.MainCacheAccessor;
@@ -121,7 +123,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
 			{
-				var wordform = m_mediator.PropertyTable.GetValue(propertyName) as IWfiWordform;
+				var wordform = m_propertyTable.GetValue<IWfiWordform>(propertyName);
 				if (wordform != null)
 					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
 			}
@@ -211,8 +213,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void UpdateStatusPanelProgress()
 		{
 			var statusMessage = ParserQueueString + " " + ParserActivityString;
-			m_mediator.PropertyTable.SetProperty("StatusPanelProgress", statusMessage);
-			m_mediator.PropertyTable.SetPropertyPersistence("StatusPanelProgress", false);
+			m_propertyTable.SetProperty("StatusPanelProgress", statusMessage, true);
+			m_propertyTable.SetPropertyPersistence("StatusPanelProgress", false);
 
 			if (m_parserConnection != null)
 			{
@@ -230,7 +232,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					else
 					{
-						var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+						var app = m_propertyTable.GetValue<IApp>("App");
 						ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
 													  app.ActiveMainWindow, false);
 					}
@@ -404,7 +406,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				return InInterlinearText ? m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as IStText : null;
+				return InInterlinearText ? m_propertyTable.GetValue<IStText>("ActiveClerkSelectedObject") : null;
 			}
 		}
 		private IWfiWordform CurrentWordform
@@ -413,9 +415,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IWfiWordform wordform = null;
 				if (InInterlinearText)
-					wordform = (IWfiWordform) m_mediator.PropertyTable.GetValue("TextSelectedWord");
+					wordform = m_propertyTable.GetValue<IWfiWordform>("TextSelectedWord");
 				else if (InWordAnalyses)
-					wordform = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as IWfiWordform;
+					wordform = m_propertyTable.GetValue<IWfiWordform>("ActiveClerkSelectedObject");
 				return wordform;
 			}
 		}
@@ -517,7 +519,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", "");
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", "");
 				return areaChoice == "textsWords";
 			}
 		}
@@ -526,7 +528,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "toolBulkEditWordforms");
 			}
 		}
@@ -535,8 +537,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
-				string tabName = m_mediator.PropertyTable.GetStringProperty("InterlinearTab", "");
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+				string tabName = m_propertyTable.GetStringProperty("InterlinearTab", "");
 				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
@@ -654,8 +656,8 @@ namespace SIL.FieldWorks.LexText.Controls
 												if (m_dialog.WindowState != FormWindowState.Minimized)
 													m_prevWindowState = m_dialog.WindowState;
 											};
-				m_dialog.SetDlgInfo(m_mediator, CurrentWordform, this);
-				var form = (FwXWindow) m_mediator.PropertyTable.GetValue("window");
+				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, CurrentWordform, this);
+				var form = m_propertyTable.GetValue<FwXWindow>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
 				// Marc Durdin suggested switching to a different window and back.

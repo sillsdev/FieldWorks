@@ -1,12 +1,19 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using SIL.Linq;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -35,7 +42,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			display.Enabled = CanMergeOrMove;
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot merge this)");
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
 
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -114,14 +121,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Debug.Assert(slice != null, "No slice was current");
 				var currentEntry = (IReversalIndexEntry) slice.Object;
 				dlg.ReversalIndex = currentEntry.ReversalIndex;
-				dlg.FilteredReversalEntries.Add(currentEntry);
+				AddEntryAndChildrenRecursively(dlg.FilteredReversalEntryHvos, currentEntry);
 				IReversalIndexEntry owningEntry = currentEntry.OwningEntry;
 				if (owningEntry != null)
-					dlg.FilteredReversalEntries.Add(owningEntry);
+					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams {m_btnText = LexEdStrings.ks_MoveEntry, m_title = LexEdStrings.ksMoveRevEntry};
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				dlg.SetDlgInfo(cache, wp, m_mediator);
+				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				dlg.SetDlgInfo(cache, wp, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var newOwner = (IReversalIndexEntry) dlg.SelectedObject;
@@ -132,7 +139,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							newOwner.MoveIfNeeded(currentEntry);
 							newOwner.SubentriesOS.Add(currentEntry);
 						});
-					RecordClerk clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+					RecordClerk clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 					if (clerk != null)
 						clerk.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
@@ -140,8 +147,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainEntry.Hvo);
 				}
 			}
-
 			return true;
+		}
+
+		private static void AddEntryAndChildrenRecursively(ICollection<int> hvos, IReversalIndexEntry entry)
+		{
+			hvos.Add(entry.Hvo);
+			entry.AllOwnedObjects.Where(obj => obj is IReversalIndexEntry).ForEach(subentry => hvos.Add(subentry.Hvo));
 		}
 
 		/// <summary>
@@ -208,8 +220,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "lexicon"
-					&& m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "lexicon"
+					&& m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete");
 			}
 		}
 	}

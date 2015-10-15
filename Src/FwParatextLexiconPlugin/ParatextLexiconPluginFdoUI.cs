@@ -187,7 +187,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			public bool InvokeRequired
 			{
-				get { return SynchronizeInvoke.InvokeRequired; }
+				get
+				{
+					ISynchronizeInvoke si = SynchronizeInvoke;
+					if (si == null)
+						return false;
+					return si.InvokeRequired;
+				}
 			}
 		}
 	}

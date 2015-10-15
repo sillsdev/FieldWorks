@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override string DtdRequiredVersion
 		{
-			get { return "B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F"; }
+			get { return "B8521229-70FB-4DD9-A022-434714B8DE4B"; }
 		}
 
 		/// ------------------------------------------------------------------------------------

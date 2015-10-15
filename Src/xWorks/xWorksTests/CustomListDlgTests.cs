@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -183,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetDialogTitle_Configure()
 		{
 			// Configure subclass of CustomListDlg
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				// Dialog Title should default to "Configure List"
 				Assert.AreEqual("Configure List", dlg.Text,
@@ -199,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
-			using (var dlg = new AddListDlg(null))
+			using (var dlg = new AddListDlg(null, null))
 			{
 				// SUT; Get default checkbox values
 				var hier = dlg.SupportsHierarchy;
@@ -221,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				// SUT; Set non-default checkbox values
 				dlg.SupportsHierarchy = true;
@@ -244,7 +243,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetDefaultWsComboEntries()
 		{
 			// SUT
-			using (var dlg = new AddListDlg(null))
+			using (var dlg = new AddListDlg(null, null))
 			{
 				// Verify
 				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
@@ -261,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetWsComboSelectedItem()
 		{
 			// SUT
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
@@ -368,7 +367,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class TestCustomListDlg : CustomListDlg
 	{
-		public TestCustomListDlg() : base(null)
+		public TestCustomListDlg()
+			: base(null, null)
 		{
 		}
 

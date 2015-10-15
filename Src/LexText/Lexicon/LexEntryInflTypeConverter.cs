@@ -9,6 +9,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
+using XCore;
 using ProgressBarWrapper = SIL.FieldWorks.FdoUi.ProgressBarWrapper;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -108,15 +109,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
 						   where lexEntryType.ClassID == classId
 						   select lexEntryType;
-			var mediator = m_dlg.Mediator;
-			var persistProvider =(IPersistenceProvider) mediator.PropertyTable.GetValue("persistProvider");
-			string fieldName = mediator.StringTbl.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
+			var persistProvider = m_dlg.PropTable.GetValue<IPersistenceProvider>("persistProvider");
+			string fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
 			return new SimpleListChooser(persistProvider,
 										 labels,
 										 fieldName,
 										 m_cache,
 										 contents,
-										 mediator.HelpTopicProvider);
+										 m_dlg.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -194,8 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			Debug.Assert(m_dlg != null);
-						m_cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			m_cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertIrregularlyInflectedFormVariants, LexEdStrings.ksRedoConvertIrregularlyInflectedFormVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryInflTypeTags.kClassId));
@@ -247,8 +246,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			Debug.Assert(m_dlg != null);
-			m_cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
+			m_cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertVariants, LexEdStrings.ksRedoConvertVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryTypeTags.kClassId));

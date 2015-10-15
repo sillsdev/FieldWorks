@@ -1,13 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.XWorks.MorphologyEditor;
 using SIL.Utils;
 using XCore;
 using PhonologicalFeatureChooserDlg = SIL.FieldWorks.LexText.Controls.PhonologicalFeatureChooserDlg;
@@ -28,17 +23,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj"></param>
-		/// <param name="flid"></param>
-		/// <param name="fieldName"></param>
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
-			m_PhonologicalFeatureListDlgLauncherView.Init(mediator, obj as IFsFeatStruc);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
+			m_PhonologicalFeatureListDlgLauncherView.Init(m_propertyTable.GetValue<FdoCache>("cache"), obj as IFsFeatStruc);
 			if (Slice.Object.ClassID == PhPhonemeTags.kClassId)
 				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.Object as IPhPhoneme;
 		}
@@ -72,9 +63,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 
 				if (originalFs == null)
-					dlg.SetDlgInfo(m_cache, m_mediator, parentSlice.Object, owningFlid);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, parentSlice.Object, owningFlid);
 				else
-					dlg.SetDlgInfo(m_cache, m_mediator, originalFs);
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, originalFs);
 
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)

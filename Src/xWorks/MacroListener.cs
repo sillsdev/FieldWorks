@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
@@ -26,15 +21,18 @@ namespace SIL.FieldWorks.XWorks
 	public class MacroListener : IxCoreColleague
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		/// <summary>
 		/// Standard member for IXCoreColleague. The configurationParameters are not currently used.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
 		}
 
@@ -130,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private IVwSelection GetSelection()
 		{
-			var window = m_mediator.PropertyTable.GetValue("window") as FwXWindow;
+			var window = m_propertyTable.GetValue<FwXWindow>("window");
 			if (window == null || !(window.ActiveView is IVwRootSite))
 				return null;
 			var rootBox = ((IVwRootSite) window.ActiveView).RootBox;
@@ -184,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 			// for safety require selection to be in a single property.
 			if (hvoA != hvoE || flid != flidE || ws != wsE)
 				return false;
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
 			obj = cache.ServiceLocator.ObjectRepository.GetObject(hvoA);
 			start = Math.Min(ichA, ichE);
 			length = Math.Max(ichA, ichE) - start;

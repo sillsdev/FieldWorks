@@ -174,9 +174,9 @@ namespace SIL.FieldWorks
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FileProjectSharingLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
 		{
-			FieldWorks.FileProjectSharingLocation(dialogOwner, fwApp);
+			FieldWorks.FileProjectLocation(dialogOwner, fwApp);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -22,11 +22,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: base(cache, mediator, ss, choices, hvoAnalysis)
+		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: base(cache, mediator, propertyTable, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;
 			InitializeComponent();

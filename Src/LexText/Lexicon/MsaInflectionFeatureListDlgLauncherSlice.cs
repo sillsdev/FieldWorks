@@ -1,11 +1,11 @@
 using System;
 using System.Xml;
-
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -87,12 +87,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
@@ -226,12 +227,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}

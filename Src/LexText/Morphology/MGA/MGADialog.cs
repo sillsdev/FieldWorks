@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -16,7 +15,6 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text;
 using System.Xml;
-
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.Utils;
@@ -34,7 +32,6 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		private int m_panelBottomHeight = 0;
 		private readonly FdoCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly Mediator m_mediator;
 		private Button buttonInsert;
 		private Button buttonRemove;
 		private Button buttonAcceptGloss;
@@ -99,14 +96,13 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		/// Initializes a new instance of the <see cref="MGADialog"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
+		/// <param name="helpTopicProvider"></param>
 		/// <param name="sMorphemeForm">The s morpheme form.</param>
 		/// ------------------------------------------------------------------------------------
-		public MGADialog(FdoCache cache, Mediator mediator, string sMorphemeForm)
+		public MGADialog(FdoCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 		{
-			m_mediator = mediator;
 			m_cache = cache;
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_helpTopicProvider = helpTopicProvider;
 			InitForm();
 			labelAllomorph.Text = sMorphemeForm;
 
@@ -260,9 +256,9 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
-				string sMsg1 = m_mediator.StringTbl.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
-				string sMsg = String.Format(sMsg1, glbiConflict.ToString());
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
+				string sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
+				string sMsg = String.Format(sMsg1, glbiConflict);
+				string sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
 				MessageBox.Show(sMsg, sCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}

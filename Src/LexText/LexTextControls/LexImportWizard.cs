@@ -13,7 +13,9 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using Microsoft.Win32;		// For Registry and RegistryKey.
+using Microsoft.Win32;
+using Sfm2Xml;
+// For Registry and RegistryKey.
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
@@ -34,8 +36,9 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class LexImportWizard : WizardDialog, IFwExtension
 	{
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
-		private FdoCache m_cache = null;
-		private Mediator m_mediator = null;
+		private FdoCache m_cache;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
 		private bool m_formHasLoaded = false;	// so we don't process text changed msgs
@@ -212,17 +215,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_wizard = this;
 			m_cache = cache;
 			m_mediator = mediator;
-			if (mediator != null)
+			m_propertyTable = propertyTable;
+			if (propertyTable != null)
 			{
-				m_app = (IApp) mediator.PropertyTable.GetValue("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+				m_app = propertyTable.GetValue<IApp>("App");
+				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			}
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
@@ -336,8 +341,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// added so it could invoke the Styles dialog
 		// so many dlgs are passing a cache and mediator - seems to be crying
-		//   out for a beter solution.
-		public XCore.Mediator Mediator
+		//   out for a better solution.
+		public Mediator Mediator
 		{
 			get
 			{
@@ -348,6 +353,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				return m_mediator;
 			}
+		}
+
+		public PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
 		}
 
 		private void LexImportWizard_Load(object sender, System.EventArgs e)
@@ -876,7 +886,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// get list of current Language descriptor values
 			Hashtable langDescs = GetUILanguages();
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -921,7 +931,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs,
-					m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
 			dlg.LangToModify(desc, name, map);
 			if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1132,7 +1142,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
 			using (LexImportWizardMarker dlg = new LexImportWizardMarker(m_LexFields))
 			{
-			dlg.Init(contentMapping, langDescs, m_cache, m_mediator.HelpTopicProvider, m_app, m_stylesheet);
+				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet);
 			DialogResult dr = dlg.ShowDialog(this);
 
 			// Custom fields have to be handled independantly of the dialogresult being ok sense they
@@ -1894,7 +1904,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			if(helpTopic != null)
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopic);
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 		}
 
 		protected override void OnFinishButton()
@@ -3656,18 +3666,18 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion
 
-		private void listViewMappingLanguages_DoubleClick(object sender, System.EventArgs e)
+		private void listViewMappingLanguages_DoubleClick(object sender, EventArgs e)
 		{
 			btnModifyMappingLanguage.PerformClick();	// same as pressing the modify button
 		}
 
-		private void btnBackup_Click(object sender, System.EventArgs e)
+		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			dlg.ShowDialog(this);
 		}
 
-		private void listViewContentMapping_DoubleClick(object sender, System.EventArgs e)
+		private void listViewContentMapping_DoubleClick(object sender, EventArgs e)
 		{
 			btnModifyContentMapping.PerformClick();
 		}
@@ -3680,12 +3690,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				lblFinishWOImport.Visible = false;
 		}
 
-		private void m_DisplayImportReport_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void m_DisplayImportReport_KeyDown(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void m_DisplayImportReport_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void m_DisplayImportReport_KeyUp(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
@@ -4052,21 +4062,21 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddCharMapping_Click(object sender, System.EventArgs e)
 		{
-			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
-			dlg.Init(null, GetUILanguages(), m_cache);
-			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
-			dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
-			dlg.SetExistingElementNames(ExtractExistingElementNames(false));
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				m_dirtySenseLastSave = true;
+				dlg.Init(null, GetUILanguages(), m_cache);
+				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
+				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
+				dlg.SetExistingElementNames(ExtractExistingElementNames(false));
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_dirtySenseLastSave = true;
 
-				// now add the new item and then select it
-				AddInLineMarker(dlg.IFM(), true);
-				listViewCharMappings.Focus();
+					// now add the new item and then select it
+					AddInLineMarker(dlg.IFM(), true);
+					listViewCharMappings.Focus();
+				}
 			}
-		}
 		}
 
 		private void btnModifyCharMapping_Click(object sender, System.EventArgs e)
@@ -4078,7 +4088,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int selIndex = selIndexes[0];	// only support 1
 			Sfm2Xml.ClsInFieldMarker selectedIFM;
 			selectedIFM = listViewCharMappings.Items[selIndex].Tag as Sfm2Xml.ClsInFieldMarker;
-			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
 			dlg.Init(selectedIFM, GetUILanguages(), m_cache);
 			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
@@ -4164,38 +4174,57 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mediator = pi.GetValue(wndActive, null) as Mediator;
 			if (m_mediator != null)
 			{
-				m_app = (IApp) m_mediator.PropertyTable.GetValue("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				m_app = m_propertyTable.GetValue<IApp>("App");
+				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 		}
 
-		private Sfm2Xml.LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
+		private LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
 		{
 			string sig = "";
-			if (fd.Type == CellarPropertyType.MultiUnicode)
-				sig = "MultiUnicode";
-			else if (fd.Type == CellarPropertyType.String)
-				sig = "string";
-			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
-				sig = "text";
-			else if (fd.Type == CellarPropertyType.ReferenceAtomic && fd.ListRootId != Guid.Empty)
-				sig = "ListRef";
-			else if (fd.Type == CellarPropertyType.ReferenceCollection && fd.ListRootId != Guid.Empty)
-				sig = "ListMultiRef";
-			// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
-			// Not sure these string values are actually used for anything; if they are, it might be a problem,
-			// because I haven't been able to track down how or where they are used.
-			else if (fd.Type == CellarPropertyType.GenDate)
-				sig = "Date";
-			else if (fd.Type == CellarPropertyType.Integer)
-				sig = "Integer";
-			else if (fd.Type == CellarPropertyType.Numeric)
-				sig = "Number";
-			else
+			switch (fd.Type)
 			{
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
+				case CellarPropertyType.MultiUnicode:
+					sig = "MultiUnicode";
+					break;
+				case CellarPropertyType.String:
+					sig = "string";
+					break;
+				case CellarPropertyType.OwningAtomic:
+					if (fd.DstCls == StTextTags.kClassId)
+					{
+						sig = "text";
+					}
+					break;
+				case CellarPropertyType.ReferenceAtomic:
+					if (fd.ListRootId != Guid.Empty)
+					{
+						sig = "ListRef";
+					}
+					break;
+				case CellarPropertyType.ReferenceCollection:
+					if (fd.ListRootId != Guid.Empty)
+					{
+						sig = "ListMultiRef";
+					}
+					break;
+				// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
+				// Not sure these string values are actually used for anything; if they are, it might be a problem,
+				// because I haven't been able to track down how or where they are used.
+				case CellarPropertyType.GenDate:
+					sig = "Date";
+					break;
+				case CellarPropertyType.Integer:
+					sig = "Integer";
+					break;
+				case CellarPropertyType.Numeric:
+					sig = "Number";
+					break;
+				default:
+					throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
-			Sfm2Xml.LexImportCustomField lif = new Sfm2Xml.LexImportCustomField(
+
+			LexImportCustomField lif = new LexImportCustomField(
 				fd.Class,
 				"NOT SURE YET _ Set In The Calling method???",
 				//fd.CustomId,
@@ -4216,57 +4245,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				lif.IsAbbrField = true;
 			////lif.CustomFieldID = fd.CustomId;	// save the guid for this field
 			return lif;
-		}
-
-/*		private Sfm2Xml.LexImportField FieldDescriptionToLexImportField(FieldDescription fd)
-		{
-			string sig = "";
-			if (fd.Type == 16 || fd.Type == 20)
-				sig = "MultiUnicode";
-			else if (fd.Type == 13 || fd.Type == 17)
-				sig = "String";
-			else
-			{
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
-			}
-
-			Sfm2Xml.LexImportField lif = new Sfm2Xml.LexImportField(
-				fd.Name,
-				fd.Userlabel,
-				fd.Name,
-				sig,
-				false,
-				(sig=="MultiUnicode")?true:false,
-				false,
-				"MDFVALUE");
-
-			return lif;
-		}
-*/
-		private void GetCustomFields(FdoCache cache)
-		{
-			// m_CustomFields
-			// FieldDescription.ClearDataAbout(m_cache);
-			foreach (FieldDescription fd in FieldDescription.FieldDescriptors(cache))
-			{
-				if (fd.IsCustomField && fd.Class > 4999 && fd.Class < 6000)
-				{
-					// As per LT-7462, limit displayed fields to ones with classes
-					// from module 5 (5000-5999) - GordonM
-
-					//m_CustomFields.AddField(fd.Class.ToString(), "Entry",
-					//    new Sfm2Xml.LexImportField(
-					// m_customFields.Add(new FDWrapper(fd, true));
-					int asdf = 88;
-					asdf++;
-					m_CustomFields.AddField("className", "partOf", FieldDescriptionToLexImportField(fd));
-					// <Class name="Entry" partOf="records">
-					// <Class name="Sense" partOf="Entry Subentry">
-					// <Class name="Subentry" partOf="Entry">
-					// <Class name="Variant" partOf="Entry Subentry Sense">
-
-				}
-			}
 		}
 	}
 }

@@ -47,7 +47,6 @@ namespace SIL.FieldWorks.IText
 		private System.ComponentModel.IContainer components;
 
 		private FdoCache m_cache;
-		private Mediator m_mediator;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcMorphNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
@@ -59,20 +58,19 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ComplexConcMorphNode node)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcMorphNode node)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_node = node;
 
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_formTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_formTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_glossTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_glossTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_entryTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_entryTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_entryTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
@@ -98,8 +96,9 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.PartsOfSpeechOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									m_mediator,
-									(Form) m_mediator.PropertyTable.GetValue("window"));
+									mediator,
+									propertyTable,
+									propertyTable.GetValue<Form>("window"));
 
 			if (m_node.Category != null)
 			{
@@ -111,7 +110,7 @@ namespace SIL.FieldWorks.IText
 				m_catPopupTreeManager.LoadPopupTree(0);
 			}
 
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));

@@ -17,17 +17,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 			// have chooser title use the same text as the label
-			if (Mediator != null && Mediator.HasStringTable)
-				m_fieldName = XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl,
-					m_configurationNode, "label", m_fieldName);
-			else if (StringTbl != null)
-				m_fieldName = XmlUtils.GetLocalizedAttributeValue(StringTbl,
-					m_configurationNode, "label", m_fieldName);
-			else
-				m_fieldName = XmlUtils.GetOptionalAttributeValue(
-					m_configurationNode, "label", m_fieldName);
+			m_fieldName = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", m_fieldName);
 
-			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator,
+			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
 				"", "analysis");
 		}
 

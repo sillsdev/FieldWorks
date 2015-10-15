@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using System.Diagnostics;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -49,10 +48,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			this.Image = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon;
-			this.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.Text = FwCoreDlgControls.kstidFontFeatures;
-			this.Enabled = false;
+			Image = Resources.ResourceHelper.ButtonMenuArrowIcon;
+			ImageAlign = ContentAlignment.MiddleRight;
+			Text = FwCoreDlgControls.kstidFontFeatures;
+			Enabled = false;
 		}
 
 		/// <summary>
@@ -60,7 +59,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -118,18 +117,18 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				// Make a VwGraphics and initialize it.
 				IVwGraphicsWin32 vwGraphics32 = VwGraphicsWin32Class.Create();
-				m_vwGraphics = (IVwGraphics)vwGraphics32;
+				m_vwGraphics = vwGraphics32;
 				m_graphics = ctrl.CreateGraphics();
 				m_hdc = m_graphics.GetHdc();
 				((IVwGraphicsWin32)m_vwGraphics).Initialize(m_hdc);
 
 				// Select our font into it.
-				LgCharRenderProps chrp = new LgCharRenderProps();
+				var chrp = new LgCharRenderProps();
 				chrp.szFaceName = new ushort[32];
 				for (int ich = 0; ich < fontName.Length; ++ich)
 				{
 					if (ich < 32)
-						chrp.szFaceName[ich] = (ushort)fontName[ich];
+						chrp.szFaceName[ich] = fontName[ich];
 				}
 				if (fontName.Length < 32)
 					chrp.szFaceName[fontName.Length] = 0;
@@ -168,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
@@ -186,16 +185,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				IsDisposed = true;
 			}
 			#endregion
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Closes this instance.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public void Close()
-			{
-				Dispose();
-			}
 		}
 		#endregion // class HoldDummyGraphics
 
@@ -306,77 +295,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Fonts the has graphite tables.
-		/// </summary>
-		/// <param name="fontName">Name of the font.</param>
-		/// <param name="fBold">if set to <c>true</c> [f bold].</param>
-		/// <param name="fItalic">if set to <c>true</c> [f italic].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private bool FontHasGraphiteTables(string fontName, bool fBold, bool fItalic)
-		{
-			try
-			{
-				using (var hdg = new HoldDummyGraphics(fontName, fBold, fItalic, this))
-				{
-					// Ask it whether that font has the main Graphite data table. If it does,
-					// we assume it is a Graphite font.
-					int tblSize = 0;
-					const int tag_Silf = 0x53696c66;
-					hdg.m_vwGraphics.GetFontData(tag_Silf, ref tblSize, null);
-					if (tblSize > 0)
-						return true;
-				}
-			}
-			catch
-			{
-				return false;
-			}
-
-			// This has not yet been fully tested, should be equivalent to the following C++.
-
-			//			StrApp str("Software\\SIL\\GraphiteFonts");
-			//			bool f;
-			//			RegKey hkey;
-			//			f = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, str, 0, katRead, &hkey);
-			//			if (f != ERROR_SUCCESS)
-			//				return false;
-			//
-			//			DWORD dwIndex = 0;
-			//			for ( ; ; )
-			//			{
-			//				achar rgch[256];
-			//				DWORD cb = isizeof(rgch);
-			//				LONG l = ::RegEnumKeyEx(hkey, dwIndex, rgch, &cb, NULL, NULL, NULL, NULL);
-			//				if (_tcscmp(pszFontKey, rgch) == 0)
-			//					return true;
-			//				else if (l == ERROR_NO_MORE_ITEMS)
-			//					return false;
-			//				else if (l != ERROR_SUCCESS)
-			//					return false;
-			//				dwIndex++;
-			//			}
-
-			// This code is a fallback for finding old Graphite fonts installed using the
-			// deprecated GrFontInst program.
-			// On a few broken Windows machines, normal registry access to HKLM returns null (LT-15158).
-			if (RegistryHelper.CompanyKeyLocalMachine == null)
-				return false;
-
-			using (RegistryKey regKey = RegistryHelper.CompanyKeyLocalMachine.OpenSubKey("GraphiteFonts"))
-			{
-				if (regKey == null)
-					return false;
-				string[] subkeys = regKey.GetSubKeyNames();
-				foreach (string key in subkeys)
-					if (key == fontName)
-						return true;
-				return false;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Setups the font features.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -390,21 +308,20 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_isGraphiteFont = false;
 				return;
 			}
-			IRenderEngine renderer;
-			if (FontHasGraphiteTables(m_fontName, false, false))
-			{
-				renderer = GraphiteEngineClass.Create();
-				m_isGraphiteFont = true;
-			}
-			else
-			{
-				renderer = UniscribeEngineClass.Create();
-				m_isGraphiteFont = false;
-			}
-			renderer.WritingSystemFactory = m_wsf;
+
 			using (var hdg = new HoldDummyGraphics(m_fontName, false, false, this))
 			{
+				IRenderEngine renderer = GraphiteEngineClass.Create();
 				renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
+				// check if the font is a valid Graphite font
+				if (!renderer.FontIsValid)
+				{
+					m_isGraphiteFont = false;
+					Enabled = false;
+					return;
+				}
+				renderer.WritingSystemFactory = m_wsf;
+				m_isGraphiteFont = true;
 				m_featureEngine = renderer as IRenderingFeatures;
 				if (m_featureEngine == null)
 				{
@@ -455,7 +372,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			int ich;
 			// skip any leading spaces.
 			for (ich = ichMin; ich < stFeatures.Length && stFeatures[ich] == ' '; ++ich)
-				;
+			{
+			}
 			// Check for finding the beginning of a field id (at least one decimal digit).
 			if (ich >= stFeatures.Length || stFeatures[ich] < '0' || stFeatures[ich] > '9')
 			{
@@ -472,7 +390,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			// Skip any trailing spaces after the field id.
 			for ( ; ich < stFeatures.Length && stFeatures[ich] == ' '; ++ich)
-				;
+			{
+			}
 			// Check for the mandatory equal sign.
 			if (ich >= stFeatures.Length || stFeatures[ich] != '=')
 			{
@@ -481,7 +400,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			// skip any trailing spaces after the equal sign.
 			for (++ich; ich < stFeatures.Length && stFeatures[ich] == ' '; ++ich)
-				;
+			{
+			}
 			ichLim = ich;
 			return fid;
 		}
@@ -505,7 +425,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				ichLim = ichMin;
 				return Int32.MaxValue;
 			}
-			byte[] bVals = new byte[4] { 0, 0, 0, 0 };
+			var bVals = new byte[] { 0, 0, 0, 0 };
 			int ich;
 			int ib;
 			for (ib = 0, ich = ichMin + 1; ich < stFeatures.Length; ++ich, ++ib)
@@ -676,7 +596,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			/// --------------------------------------------------------------------------------
 			internal FontFeatureMenuItem(string label, int featureIndex,
 				FontFeaturesButton ffbtn) :
-				base(label, new System.EventHandler(ffbtn.ItemClickHandler))
+				base(label, ffbtn.ItemClickHandler)
 			{
 				m_featureIndex = featureIndex;
 			}
@@ -728,7 +648,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				}
 				int cValueIds;
 				int nDefault;
-				int [] valueIds = new int[0];
+				int [] valueIds;
 				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
 				{
 					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM,
@@ -836,10 +756,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		private void ItemClickHandler(Object sender, System.EventArgs e)
+		private void ItemClickHandler(Object sender, EventArgs e)
 		{
-			FontFeatureMenuItem item = sender as FontFeatureMenuItem;
-			FontFeatureMenuItem parent = item.Parent as FontFeatureMenuItem;
+			var item = (FontFeatureMenuItem) sender;
+			var parent = item.Parent as FontFeatureMenuItem;
 			if (parent == null)
 			{
 				// top-level (checked) item

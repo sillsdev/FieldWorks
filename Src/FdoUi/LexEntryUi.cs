@@ -6,12 +6,9 @@
 // Responsibility: ?
 // Last reviewed: Steve Miller (FindEntryForWordform only)
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -20,8 +17,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -131,65 +126,24 @@ namespace SIL.FieldWorks.FdoUi
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Create the mediator if it doesn't already exist.  Ensure that the string table in
-		/// the mediator is loaded from the Flex string table.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="fRestoreStringTable">output flag that we should restore the original string table</param>
-		/// <param name="stOrig">output is the original string table</param>
-		/// ------------------------------------------------------------------------------------
-		protected static Mediator EnsureValidMediator(Mediator mediator,
-			out bool fRestoreStringTable, out StringTable stOrig)
-		{
-			if (mediator == null)
-			{
-				mediator = new Mediator();
-				fRestoreStringTable = false;
-				stOrig = null;
-			}
-			else
-			{
-				try
-				{
-					stOrig = mediator.StringTbl;
-					// Check whether this is the Flex string table: look for a lexicon type
-					// string and compare the value with what is produced when it's not found.
-					string s = stOrig.GetString("MoCompoundRule-Plural", "AlternativeTitles");
-					fRestoreStringTable = (s == "*MoCompoundRule-Plural*");
-				}
-				catch
-				{
-					stOrig = null;
-					fRestoreStringTable = true;
-				}
-			}
-			if (fRestoreStringTable || stOrig == null)
-			{
-				string dir = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
-				mediator.StringTbl = new StringTable(dir);
-			}
-			return mediator;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
+		///  ------------------------------------------------------------------------------------
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvoSrc"></param>
-		/// <param name="tagSrc"></param>
-		/// <param name="wsSrc"></param>
-		/// <param name="ichMin"></param>
-		/// <param name="ichLim"></param>
-		/// <param name="owner"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="hvoSrc"></param>
+		///  <param name="tagSrc"></param>
+		///  <param name="wsSrc"></param>
+		///  <param name="ichMin"></param>
+		///  <param name="ichLim"></param>
+		///  <param name="owner"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
-		/// <param name="helpFileKey">string key to get the help file name</param>
-		/// ------------------------------------------------------------------------------------
+		///  <param name="helpFileKey">string key to get the help file name</param>
+		///  ------------------------------------------------------------------------------------
 		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, Mediator mediator,
+			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -236,15 +190,14 @@ namespace SIL.FieldWorks.FdoUi
 						wfa = (anal as IWfiGloss).OwnerOfClass<IWfiAnalysis>();
 				}
 			}
-			DisplayEntries(cache, owner, mediator, helpProvider, helpFileKey, tssWf, wfa);
+			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
 			LexEntryUi leui = null;
-			Mediator mediator = null;
 			try
 			{
 				leui = FindEntryForWordform(cache, tssWf);
@@ -265,23 +218,13 @@ namespace SIL.FieldWorks.FdoUi
 					leui = FindEntryForWordform(cache, tssWf);
 				}
 
-				// Ensure that we have a valid mediator with the proper string table.
-				bool fRestore;
-				StringTable stOrig;
-				mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
-				FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
-				if (cache2 != cache)
-					mediator.PropertyTable.SetProperty("cache", cache);
-				EnsureWindowConfiguration(mediator);
-				IVwStylesheet styleSheet = GetStyleSheet(cache, mediator);
+				EnsureWindowConfiguration(propertyTable);
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				if (leui == null)
 				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
 					if (entry == null)
 					{
-						// Restore the original string table in the mediator if needed.
-						if (fRestore)
-							mediator.StringTbl = stOrig;
 						return;
 					}
 					leui = new LexEntryUi(entry);
@@ -289,59 +232,41 @@ namespace SIL.FieldWorks.FdoUi
 				if (mediator != null)
 					leui.Mediator = mediator;
 				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 			finally
 			{
 				if (leui != null)
 					leui.Dispose();
-				if (mediator != mediatorIn)
-					mediator.Dispose();
 			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn,
+		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
-			DisplayEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tssWfIn, wfa);
+			DisplayEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
-			StringTable stOrig;
-			Mediator mediator;
-			IVwStylesheet styleSheet;
-			bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
-			try
+			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
+			if (entries == null || entries.Count == 0)
 			{
-
-				if (entries == null || entries.Count == 0)
-				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
-					if (entry == null)
-						return;
-					entries = new List<ILexEntry>(1);
-					entries.Add(entry);
-				}
-				DisplayEntriesRecursive(cache, owner, mediator, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+				ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
+				if (entry == null)
+					return;
+				entries = new List<ILexEntry>(1);
+				entries.Add(entry);
 			}
-			finally
-			{
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
-			}
+			DisplayEntriesRecursive(cache, owner, mediator, propertyTable, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
-			Mediator mediator, IVwStylesheet stylesheet,
+			Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
@@ -366,7 +291,7 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// Look for another entry to display.  (If the user doesn't select another
 					// entry, loop back and redisplay the current entry.)
-					var entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
 					if (entry != null)
 					{
 						// We need a list that contains the entry we found to display on the
@@ -405,33 +330,16 @@ namespace SIL.FieldWorks.FdoUi
 			(sender as Form).TopMost = false;
 		}
 
-		private static bool EnsureFlexTypeSetup(FdoCache cache, Mediator mediatorIn, out StringTable stOrig, out Mediator mediator, out IVwStylesheet styleSheet)
-		{
-			// Ensure that we have a valid mediator with the proper string table.
-			bool fRestore = false;
-			stOrig = null;
-			mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
-			FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			if (cache2 != cache)
-				mediator.PropertyTable.SetProperty("cache", cache);
-			EnsureWindowConfiguration(mediator);
-			styleSheet = GetStyleSheet(cache, mediator);
-			return fRestore;
-		}
-
 		/// <summary>
-		/// Determine a stylesheet from a mediator, or create a new one. Currently this is done
+		/// Determine a stylesheet from a PropertyTable, or create a new one. Currently this is done
 		/// by looking for the main window and seeing whether it has a StyleSheet property that
 		/// returns one. (We use reflection because the relevant classes are in DLLs we can't
 		/// reference.)
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <returns></returns>
-		private static IVwStylesheet StyleSheetFromMediator(Mediator mediator)
+		private static IVwStylesheet StyleSheetFromPropertyTable(PropertyTable propertyTable)
 		{
-			if (mediator == null)
-				return null;
-			Form mainWindow = mediator.PropertyTable.GetValue("window") as Form;
+			Form mainWindow = propertyTable.GetValue<Form>("window");
 			if (mainWindow == null)
 				return null;
 			System.Reflection.PropertyInfo pi = mainWindow.GetType().GetProperty("StyleSheet");
@@ -440,23 +348,23 @@ namespace SIL.FieldWorks.FdoUi
 			return pi.GetValue(mainWindow, null) as IVwStylesheet;
 		}
 
-		private static IVwStylesheet GetStyleSheet(FdoCache cache, Mediator mediator)
+		private static IVwStylesheet GetStyleSheet(FdoCache cache, PropertyTable propertyTable)
 		{
-			IVwStylesheet vss = StyleSheetFromMediator(mediator);
+			IVwStylesheet vss = StyleSheetFromPropertyTable(propertyTable);
 			if (vss != null)
 				return vss;
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
-			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
+			propertyTable.SetProperty("FwStyleSheet", styleSheet, true);
+			propertyTable.SetPropertyPersistence("FwStyleSheet", false);
 			return styleSheet;
 		}
 
-		private static void EnsureWindowConfiguration(Mediator mediator)
+		private static void EnsureWindowConfiguration(PropertyTable propertyTable)
 		{
-			XmlNode xnWindow = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
+			XmlNode xnWindow = propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 			{
 				string configFile = FwDirectoryFinder.GetCodeFile("Language Explorer/Configuration/Main.xml");
@@ -464,16 +372,16 @@ namespace SIL.FieldWorks.FdoUi
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
-				mediator.PropertyTable.SetProperty("WindowConfiguration", windowConfigurationNode);
-				mediator.PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, true);
+				propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn,
+		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
-			DisplayRelatedEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tss, true);
+			DisplayRelatedEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tss, true);
 		}
 
 		/// ------------------------------------------------------------
@@ -483,7 +391,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="owner">The owning window.</param>
-		/// <param name="mediatorIn">The mediator.</param>
+		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="tssWf">The ITsString for the word form.</param>
@@ -491,7 +400,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
-			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
 			if (tssWf == null || tssWf.Length == 0)
@@ -512,17 +421,12 @@ namespace SIL.FieldWorks.FdoUi
 				IVwCacheDa cdaTemp;
 				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
 					return;
-				StringTable stOrig;
-				Mediator mediator;
-				IVwStylesheet styleSheet;
-				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
-					mediatorIn, hideInsertButton))
+					mediator, hideInsertButton))
 				{
 					rw.ShowDialog(owner);
 				}
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 		}
 
@@ -534,12 +438,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache">The cache.</param>
 		/// <param name="sel">The sel.</param>
 		/// <param name="owner">The owner.</param>
-		/// <param name="mediatorIn"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey"></param>
 		/// ------------------------------------------------------------------------------------
 		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
-			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey)
+			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			if (sel == null)
 				return;
@@ -573,16 +478,11 @@ namespace SIL.FieldWorks.FdoUi
 				IVwCacheDa cdaTemp;
 				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
 					return;
-				StringTable stOrig;
-				Mediator mediator;
-				IVwStylesheet styleSheet;
-				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
-				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediatorIn, false))
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
+				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediator, false))
 				{
 					rw.ShowDialog(owner);
 				}
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 		}
 
@@ -603,48 +503,36 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator,
+		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm, IWin32Window owner)
 		{
-			// Ensure that we have a valid mediator with the proper string table.
-			bool fRestore = false;
-			StringTable stOrig = null;
-			mediator = EnsureValidMediator(mediator, out fRestore, out stOrig);
-			try
+			using (EntryGoDlg entryGoDlg = new EntryGoDlg())
 			{
-				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
+				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
+				// but reset after activated.
+				SetCurrentModalForm(entryGoDlg);
+				var wp = new WindowParams
 				{
-					// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
-					// but reset after activated.
-					SetCurrentModalForm(entryGoDlg);
-					var wp = new WindowParams
-								 {
-									 m_btnText = FdoUiStrings.ksShow,
-									 m_title = FdoUiStrings.ksFindInDictionary,
-									 m_label = FdoUiStrings.ksFind_
-								 };
-					if (owner == null)
-						entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
-					entryGoDlg.Owner = owner as Form;
-					entryGoDlg.SetDlgInfo(cache, wp, mediator, tssForm);
-					entryGoDlg.SetHelpTopic("khtpFindInDictionary");
-					if (entryGoDlg.ShowDialog() == DialogResult.OK)
-					{
-						var entry = entryGoDlg.SelectedObject as ILexEntry;
-						Debug.Assert(entry != null);
-						return entry;
-					}
+					m_btnText = FdoUiStrings.ksShow,
+					m_title = FdoUiStrings.ksFindInDictionary,
+					m_label = FdoUiStrings.ksFind_
+				};
+				if (owner == null)
+					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
+				entryGoDlg.Owner = owner as Form;
+				entryGoDlg.SetDlgInfo(cache, wp, mediator, propertyTable, tssForm);
+				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
+				if (entryGoDlg.ShowDialog() == DialogResult.OK)
+				{
+					var entry = entryGoDlg.SelectedObject as ILexEntry;
+					Debug.Assert(entry != null);
+					return entry;
 				}
-			}
-			finally
-			{
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 			return null;
 		}
@@ -666,7 +554,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(this.Object.Cache, this.Mediator, tssWf, owner);
+				var entry = ShowFindEntryDialog(Object.Cache, Mediator, m_propertyTable, tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))

@@ -775,15 +775,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Project name you have entered contains one or more non-ASCII characters. If you use this name for your project, you will be unable to use the Send/Receive project function..
-        /// </summary>
-        public static string ksNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksNonAsciiProjectNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The processor you have created does not perform a Unicode to Unicode conversion;
         ///it is for use with a legacy encoding.
         ///It cannot be used in Bulk Edit operations..
@@ -791,15 +782,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksNoUnicodeToUnicode {
             get {
                 return ResourceManager.GetString("ksNoUnicodeToUnicode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to  Click &apos;OK&apos; to continue with this project name or &apos;Cancel&apos; to enter a different name..
-        /// </summary>
-        public static string ksOKToContinueCancelToChangeName {
-            get {
-                return ResourceManager.GetString("ksOKToContinueCancelToChangeName", resourceCulture);
             }
         }
         

@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.IText
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
 		protected FdoCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
@@ -50,16 +51,15 @@ namespace SIL.FieldWorks.IText
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, Mediator mediator)
+		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
-			if (m_mediator != null)
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
-			//var settingsPath = FwRegistryHelper.FieldWorksRegistryKey.GetValue(kSfmImportSettingsRegistryKeyName) as string;
-			//if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
-			//    settingsPath = GetDefaultInputSettingsPath();
-			//m_loadSettingsFileBox.Text = settingsPath;
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
+			{
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			}
 			SetDialogTitle();
 		}
 
@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.IText
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts");
+				var clerk = RecordClerk.FindClerk(m_propertyTable, "interlinearTexts");
 				if (clerk != null)
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
@@ -744,7 +744,7 @@ namespace SIL.FieldWorks.IText
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
 				var destinationsFilter = GetDestinationsFilter();
-				dlg.SetupDlg(m_helpTopicProvider, (IApp)m_mediator.PropertyTable.GetValue("App"), m_cache,
+				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>("App"), m_cache,
 					mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
@@ -781,7 +781,7 @@ namespace SIL.FieldWorks.IText
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicID);
 		}
 
 		private void m_browseSaveSettingsFileButon_Click(object sender, EventArgs e)

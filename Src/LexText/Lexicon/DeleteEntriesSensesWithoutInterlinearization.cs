@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.Impl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.FwCoreDlgs;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -62,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				{
 					DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);
@@ -72,7 +69,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
 		{
 			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, null, cache.ServiceLocator);
-			cd.SetMediator(m_dlg.Mediator); // This lets the ConcDecorator use the interesting list of texts.
+			cd.SetMediator(m_dlg.Mediator, m_dlg.PropTable); // This lets the ConcDecorator use the interesting list of texts.
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = entries.Length;
@@ -85,8 +82,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				List<IMoForm> forms = new List<IMoForm>();
 				if (entry.LexemeFormOA != null)
 					forms.Add(entry.LexemeFormOA);
-				foreach (IMoForm mfo in entry.AlternateFormsOS)
-					forms.Add(mfo);
+				forms.AddRange(entry.AlternateFormsOS);
 				foreach (IMoForm mfo in forms)
 				{
 					foreach (ICmObject cmo in mfo.ReferringObjects)

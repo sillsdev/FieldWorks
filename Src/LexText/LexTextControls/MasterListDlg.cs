@@ -7,18 +7,14 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.LexText.Controls.MGA;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
@@ -32,6 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected IFdoOwningCollection<IFsFeatDefn> m_featureList;
 		protected bool m_launchedFromInsertMenu = false;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected IFsFeatDefn m_selFeatDefn;
@@ -158,28 +155,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="featSys"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="featSys"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, bool launchedFromInsertMenu)
+		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
 			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
-			SetDlginfo(featSys, mediator, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
+			SetDlginfo(featSys, mediator, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="featSys"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="featSys"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		/// <param name="sWindowKey">used to store location and size of dialog window</param>
-		/// <param name="sXmlFile">file containing the XML form of the gloss list</param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
+		///  <param name="sWindowKey">used to store location and size of dialog window</param>
+		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
+		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();
 
@@ -187,14 +186,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_featureList = featSys.FeaturesOC;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
 			m_mediator = mediator;
-			if (mediator != null)
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
 			{
 				m_sWindowKeyLocation = sWindowKey + "Location";
 				m_sWindowKeySize = sWindowKey + "Size";
 
 				ResetWindowLocationAndSize();
 
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				helpProvider = new HelpProvider();
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
@@ -208,11 +208,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void ResetWindowLocationAndSize()
 		{
 			// Get location to the stored values, if any.
-			object locWnd = m_mediator.PropertyTable.GetValue(m_sWindowKeyLocation);
-			object szWnd = m_mediator.PropertyTable.GetValue(m_sWindowKeySize);
-			if (locWnd != null && szWnd != null)
+			if (m_propertyTable.PropertyExists(m_sWindowKeyLocation) &&
+				m_propertyTable.PropertyExists(m_sWindowKeySize))
 			{
-				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+				var locWnd = m_propertyTable.GetValue<Point>(m_sWindowKeyLocation);
+				var szWnd = m_propertyTable.GetValue<Size>(m_sWindowKeySize);
+				Rectangle rect = new Rectangle(locWnd, szWnd);
 				ScreenUtils.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
@@ -524,10 +525,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty(m_sWindowKeyLocation, Location);
-				m_mediator.PropertyTable.SetProperty(m_sWindowKeySize, Size);
+				m_propertyTable.SetProperty(m_sWindowKeyLocation, Location, true);
+				m_propertyTable.SetProperty(m_sWindowKeySize, Size, true);
 			}
 		}
 

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -24,9 +21,10 @@ namespace SIL.FieldWorks.Filters
 			var andFilter = new AndFilter();
 			var wsf = new WordSetFilter(wfiset);
 			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
 			{
-				mediator.PropertyTable.SetProperty("cache", Cache);
-				flp.Init(mediator, null);
+				propertyTable.SetProperty("cache", Cache, true);
+				flp.Init(mediator, propertyTable, null);
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);

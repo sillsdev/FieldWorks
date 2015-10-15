@@ -44,29 +44,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Mediator that passes off messages.
 		/// </summary>
 		private XCore.Mediator m_mediator;
-		private XmlNode m_configurationParameters;
+		private PropertyTable m_propertyTable;
 		private IWfiWordformRepository m_wordformRepos;
-		private FdoCache m_cache;
 
 		#endregion Data members
-
-		#region Properties
-
-		private IWfiWordform Wordform
-		{
-			get
-			{
-				IWfiWordform wf = null;
-				string clerkId = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "clerk");
-				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
-				RecordClerk clerk = (RecordClerk)m_mediator.PropertyTable.GetValue(propertyName);
-				if (clerk != null)
-					wf = clerk.CurrentObject as IWfiWordform;
-				return wf;
-			}
-		}
-
-		#endregion Properties
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -125,8 +106,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				string text = wf.Form.VernacularDefaultWritingSystem.Text;
 				if (!string.IsNullOrEmpty(text))
 				{
-					SpellingHelper.SetSpellingStatus(text, m_cache.DefaultVernWs,
-													m_cache.LanguageWritingSystemFactoryAccessor,
+					SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs,
+													Cache.LanguageWritingSystemFactoryAccessor,
 													wf.SpellingStatus == (int)SpellingStatusStates.correct);
 				}
 
@@ -181,13 +162,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Dispose managed resources here.
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
-				if (m_cache != null && !m_cache.IsDisposed && m_cache.DomainDataByFlid != null)
-					m_cache.DomainDataByFlid.RemoveNotification(this);
+				if (Cache != null && !Cache.IsDisposed && Cache.DomainDataByFlid != null)
+					Cache.DomainDataByFlid.RemoveNotification(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_mediator = null;
-			m_configurationParameters = null;
+			m_propertyTable = null;
 
 			m_isDisposed = true;
 		}
@@ -196,16 +177,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region IxCoreColleague implementation
 
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_configurationParameters = configurationParameters;
+			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			m_wordformRepos = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			m_cache.DomainDataByFlid.AddNotification(this);
+			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
 				OnEnableVernacularSpelling();
 		}
@@ -286,8 +267,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				OnEnableVernacularSpelling();
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);
-			m_mediator.PropertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
+			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
+			m_propertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
 			RestartSpellChecking();
 			return true;
 		}
@@ -295,12 +276,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
-			return m_mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return m_propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
 		private void RestartSpellChecking()
 		{
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			if (app != null)
 			{
 				app.RestartSpellChecking();
@@ -317,17 +298,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (cache == null)
+			if (Cache == null)
 				return false; // impossible?
-			WfiWordformServices.ConformSpellingDictToWordforms(cache);
+			WfiWordformServices.ConformSpellingDictToWordforms(Cache);
 			return true; // handled
 		}
 
-		private FdoCache Cache
-		{
-			get { return (FdoCache)m_mediator.PropertyTable.GetValue("cache"); }
-		}
+		private FdoCache Cache { get; set; }
 
 		/// <summary>
 		/// Enable vernacular spelling.
@@ -356,7 +333,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (InFriendlyArea && m_mediator != null)
 			{
-				var clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+				var clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
 				{
 					display.Visible = true;
@@ -377,9 +354,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// If successful return its guid, otherwise, return Guid.Empty.
 		/// </summary>
 		/// <returns></returns>
-		internal static Guid ActiveWordform(FdoCache cache, Mediator mediator)
+		internal static Guid ActiveWordform(FdoCache cache, PropertyTable propertyTable)
 		{
-			IApp app = mediator.PropertyTable.GetValue("App") as IApp;
+			IApp app = propertyTable.GetValue<IApp>("App");
 			if (app == null)
 				return Guid.Empty;
 			IFwMainWnd window = app.ActiveMainWindow as IFwMainWnd;
@@ -443,7 +420,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public bool OnViewIncorrectWords(object argument)
 		{
 			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
-				"Analyses", ActiveWordform(Cache, m_mediator));
+				"Analyses", ActiveWordform(Cache, m_propertyTable));
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
@@ -462,8 +439,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var dlg = new WordformGoDlg())
 			{
-				var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
-				dlg.SetDlgInfo(cache, null, m_mediator);
+				dlg.SetDlgInfo(Cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
 			}
@@ -482,7 +458,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -528,7 +504,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				if (m_mainWindowNode == null)
-					m_mainWindowNode = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+					m_mainWindowNode = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				return m_mainWindowNode;
 			}
 		}
@@ -612,7 +588,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -664,7 +640,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			using (IFwGuiControl ctrl = new ConcordanceDlg())
 			{
-				ctrl.Init(m_mediator, MainWindowNode, concordOnObject);
+				ctrl.Init(m_mediator, m_propertyTable, MainWindowNode, concordOnObject);
 				ctrl.Launch();
 			}
 		}
@@ -753,12 +729,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			var cmd = (Command)commandObject;
 			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
 			var specifiedClsid = 0;
-			if ((cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged).ClassExists(className))
-				specifiedClsid = cache.MetaDataCacheAccessor.GetClassId(className);
+			if ((Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged).ClassExists(className))
+				specifiedClsid = Cache.MetaDataCacheAccessor.GetClassId(className);
 			var anal = Analysis;
 			if (anal != null)
 			{
@@ -788,7 +763,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			var cmd = (Command)commandObject;
 			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
 			var guid = Guid.Empty;
@@ -1016,7 +990,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (InFriendlyArea && m_mediator != null && m_dataEntryForm.Root != null)
 			{
 #pragma warning disable 0219
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 				display.Visible = true;
 				display.Enabled = Wordform != null;
 #pragma warning restore 0219
@@ -1036,7 +1009,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public bool OnAddApprovedAnalysis(object argument)
 		{
 			var mainWnd = (FwXWindow)m_dataEntryForm.FindForm();
-			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(mainWnd.Mediator.HelpTopicProvider))
+			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IWfiWordform wf = Wordform;
 				if (wf == null)
@@ -1045,7 +1018,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				string morphs = tssWord.Text;
 				var cache = Cache;
 				dlg.Initialize(tssWord, morphs, cache.MainCacheAccessor.WritingSystemFactory,
-					cache, m_dataEntryForm.Mediator.StringTbl, m_dataEntryForm.StyleSheet);
+					cache, m_dataEntryForm.StyleSheet);
 				// Making the form active fixes problems like LT-2619.
 				// I'm (RandyR) not sure what adverse impact might show up by doing this.
 				mainWnd.Activate();

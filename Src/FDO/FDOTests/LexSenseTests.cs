@@ -179,6 +179,64 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual("2.2.1", sense2_2_1.LexSenseOutline.Text);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_DefinitionBeatsGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("definition", ws));
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("definition"));
+			});
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_DefinitionNullGivesGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
+			});
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_EmptyDefinitionGivesGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("", ws));
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
+			});
+		}
 	}
 
 	/// <summary>
@@ -652,11 +710,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		private bool RunMergeSense(ILexEntry entry)
 		{
 			var sense = entry.SensesOS[0];
-			Set<int> newItems;
-			bool fSenseDeleted;
-			newItems = new Set<int>();
+			var newItems = new Set<int>();
 			newItems.Add(sense.Hvo);
-			fSenseDeleted = sense.RDEMergeSense(sense.SemanticDomainsRC.ToArray()[0].Hvo, newItems);
+			var fSenseDeleted = sense.RDEMergeSense(sense.SemanticDomainsRC.ToArray()[0].Hvo, newItems);
 			return fSenseDeleted;
 		}
 
@@ -745,10 +801,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Lexeme Form)", "Meaning (Definition)" }, false);
-			ITsString[] data = new ITsString[] {MakeVernString("kick"), MakeAnalysisString("strike with foot")};
+			var nodes = MakeNodeList(new[] { "Word (Lexeme Form)", "Meaning (Definition)" }, false);
+			ITsString[] data = {MakeVernString("kick"), MakeAnalysisString("strike with foot")};
 
-			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 			var entry = (ILexEntry) sense.Owner;
@@ -763,10 +819,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
-			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeAnalysisString("strike with foot") };
+			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot") };
 
-			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 			var entry = (ILexEntry)sense.Owner;
@@ -786,11 +842,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Word (Lexeme Form)", "Meaning (Gloss)", "Meaning (Definition)"}, false);
-			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeVernString("kickL"),
+			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Word (Lexeme Form)", "Meaning (Gloss)", "Meaning (Definition)"}, false);
+			ITsString[] data = { MakeVernString("kick"), MakeVernString("kickL"),
 				MakeAnalysisString("strike with foot"), MakeAnalysisString("strike sharply with foot") };
 
-			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 			var entry = (ILexEntry)sense.Owner;
@@ -811,12 +867,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)"}, false);
-			nodes.AddRange(MakeNodeList(new string[] {"Morph Type"}, true));
-			ITsString[] data = new ITsString[] { MakeVernString("kick"),
+			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Meaning (Gloss)"}, false);
+			nodes.AddRange(MakeNodeList(new[] {"Morph Type"}, true));
+			ITsString[] data = { MakeVernString("kick"),
 				MakeAnalysisString("strike with foot"), Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs)};
 
-			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 			var entry = (ILexEntry)sense.Owner;
@@ -834,8 +890,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
-			var transduceList = MakeNodeList(new string[] {"Bibliograph", "Semantic", "Scientific", "Example", "Reference", "Translation"}, false);
+			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			var transduceList = MakeNodeList(new[] {"Bibliograph", "Semantic", "Scientific", "Example", "Reference", "Translation"}, false);
 			nodes.AddRange(transduceList);
 
 			// First merge tests case where old value is empty.
@@ -845,11 +901,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			XmlUtils.SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
 			XmlUtils.SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
 			XmlUtils.SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
-			ITsString[] data = new ITsString[] { MakeVernString("kick"),
+			ITsString[] data = { MakeVernString("kick"),
 				MakeAnalysisString("strike with foot"), MakeAnalysisString("see Encycopledia under football"), MakeVernString("used for a forceful motion"),
 				MakeAnalysisString("kickS"), MakeVernString("kick the ball"), MakeAnalysisString("my head"), MakeAnalysisString("strike the ball with your foot")};
 
-			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
 			// Second merge tests case where the old objects have data.
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);

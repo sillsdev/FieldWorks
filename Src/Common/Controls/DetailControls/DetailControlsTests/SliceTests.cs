@@ -3,15 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2010-08-03 SliceTests.cs
-
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -23,6 +20,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private DataTree m_DataTree;
 		private Slice m_Slice;
 		private Mediator m_Mediator;
+		private PropertyTable m_propertyTable;
 
 		/// <summary/>
 		public override void TestTearDown()
@@ -41,6 +39,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_Mediator.Dispose();
 				m_Mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
 			}
 
 			base.TestTearDown();
@@ -128,15 +131,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
 		}
 
-		/// <summary>Helper</summary>
-		private Mediator GenerateMediator()
-		{
-			var mediator = new Mediator();
-			mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
-			mediator.PropertyTable.SetProperty("cache", Cache);
-			return mediator;
-		}
-
 		/// <remarks>
 		/// Currently just enough to compile and run.
 		/// </remarks>
@@ -148,8 +142,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = GenerateMediator();
+			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			m_propertyTable.SetProperty("cache", Cache, false);
 
 			m_Slice.Expand();
 		}
@@ -167,8 +164,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = GenerateMediator();
+			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			m_propertyTable.SetProperty("cache", Cache, false);
 
 			m_Slice.Collapse();
 		}

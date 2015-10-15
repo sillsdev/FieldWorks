@@ -54,6 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Mediator that passes off messages.
 		/// </summary>
 		protected XCore.Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 
 		/// <summary>
 		/// COnfiguration information.
@@ -84,18 +88,6 @@ namespace SIL.FieldWorks.XWorks
 			return h;
 		}
 
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				return m_mediator.StringTbl;
-			}
-		}
-
 		public DataTree DtTree
 		{
 			set
@@ -110,9 +102,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configuration = configurationParameters;
 		}
 
@@ -162,13 +155,13 @@ namespace SIL.FieldWorks.XWorks
 				return false; // should not happen, but play safe
 			var obj = m_dataEntryForm.CurrentSlice.Object;
 			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
-				m_mediator.HelpTopicProvider, app, true))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 					dlg.UseMultiStringCaption(obj.Cache, WritingSystemServices.kwsVernAnals, stylesheet);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
@@ -279,10 +272,10 @@ namespace SIL.FieldWorks.XWorks
 				dlg.InitialDirectory = Cache.LangProject.LinkedFilesRootDir;
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
-				if (m_mediator != null && m_mediator.HasStringTable)
-					dlg.Title = m_mediator.StringTbl.GetString(keyCaption);
 				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
+				{
 					dlg.Title = defaultCaption;
+				}
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
@@ -294,14 +287,14 @@ namespace SIL.FieldWorks.XWorks
 					if (dialogResult == DialogResult.OK)
 					{
 						string file = MoveOrCopyFilesDlg.MoveCopyOrLeaveMediaFile(dlg.FileName,
-							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider);
+							Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 						if (String.IsNullOrEmpty(file))
 							return true;
-						string sFolderName = null;
-						if (m_mediator != null && m_mediator.HasStringTable)
-							sFolderName = m_mediator.StringTbl.GetString("kstidMediaFolder");
-						if (sFolderName == null || sFolderName.Length == 0 || sFolderName == "*kstidMediaFolder*")
+						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
+						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
+						{
 							sFolderName = CmFolderTags.LocalMedia;
+						}
 						if (!obj.IsValidObject)
 							return true; // Probably some other client deleted it while we were choosing the file.
 						int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
@@ -345,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ActionHandlerAccessor,
 					() =>
 					{
-						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator);
+						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator, m_propertyTable);
 						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
 					});
 			}
@@ -370,7 +363,7 @@ namespace SIL.FieldWorks.XWorks
 			string helpTopicID = null;
 			if (m_dataEntryForm.CurrentSlice != null)
 				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopicID);
 
 			return true;
 		}
@@ -381,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 			string helpTopicID = null;
 			if (m_dataEntryForm.CurrentSlice != null)
 				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
-			display.Visible = display.Enabled = (m_mediator.HelpTopicProvider.GetHelpString(helpTopicID) != null);
+			display.Visible = display.Enabled = (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopicID) != null);
 
 			return true;
 		}
@@ -783,18 +776,20 @@ namespace SIL.FieldWorks.XWorks
 			//			if(current.GetObjectHvoForMenusToOperateOn() == m_dataEntryForm.Root.Hvo && !current.WrapsAtomic)
 			//			{
 			//				display.Enabled = false;
-			//				display.Text += StringTbl.GetString("(Programming error: would delete this record.)");
+			//				display.Text += Table.GetString("(Programming error: would delete this record.)");
 			//			}
 			//			else
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot delete this)");
+				display.Text += StringTable.Table.GetString("(cannot delete this)");
 
 			if (display.Text.Contains("{0}"))
 			{
 				// Insert the class name of the thing we will delete
 				var obj = current.GetObjectForMenusToOperateOn();
 				if (obj != null)
-					display.Text = string.Format(display.Text, m_mediator.StringTbl.GetString(obj.ClassName, "ClassNames"));
+				{
+					display.Text = string.Format(display.Text, StringTable.Table.GetString(obj.ClassName, "ClassNames"));
+				}
 			}
 
 			return true;//we handled this, no need to ask anyone else.
@@ -838,7 +833,7 @@ namespace SIL.FieldWorks.XWorks
 			Command command = (Command)commandObject;
 			display.Enabled = current != null && current.CanDeleteReferenceNow(command);
 			if (!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot delete this)");
+				display.Text += StringTable.Table.GetString("(cannot delete this)");
 			return true;//we handled this, no need to ask anyone else.
 		}
 
@@ -866,7 +861,7 @@ namespace SIL.FieldWorks.XWorks
 			Slice current = m_dataEntryForm.CurrentSlice;
 			display.Enabled = current != null && current.GetCanMergeNow();
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot merge this)");
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
 
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -1209,7 +1204,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 			return m_dataEntryForm.Root is ILexEntry;
 		}
@@ -1221,7 +1216,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 
 			var ent = m_dataEntryForm.Root as ILexEntry;
@@ -1267,7 +1262,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className == current.Object.ClassName)
 			{
 				string tool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
-				if (tool == null || tool == m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+				if (tool == null || tool == m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				{
 					int hvo = GetSelectedComponentHvo();
 					var ler = current.Object as ILexEntryRef;
@@ -1555,10 +1550,10 @@ namespace SIL.FieldWorks.XWorks
 			string menuId = null;
 			if (caller != null)
 				menuId = ShowContextMenu2Id(caller, fHotLinkOnly);
-			if (menuId == null || menuId.Length == 0)
+			if (string.IsNullOrEmpty(menuId))
 				menuId = ShowContextMenu2Id(configuration, fHotLinkOnly);
 
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			XWindow window = m_propertyTable.GetValue<XWindow>("window");
 
 			//an empty menu attribute means no menu
 			if (menuId != null && menuId.Length== 0)

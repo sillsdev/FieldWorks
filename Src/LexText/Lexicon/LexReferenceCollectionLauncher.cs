@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -63,7 +67,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{
@@ -83,7 +87,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			AddItem(obj, LexEdStrings.ksUndoAddRef, LexEdStrings.ksRedoAddRef);
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			var lrcv = new LexReferenceCollectionView();
 			if (m_displayParent != null)

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -82,11 +83,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
 				Debug.Assert(cache != null);
-				var owningObj = m_mediator.PropertyTable.GetValue("ActiveClerkOwningObject") as ICmObject;
-				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, m_mediator, true, null);
-				switch (dlg.ShowDialog((Form)m_mediator.PropertyTable.GetValue("window")))
+				var owningObj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, m_mediator, m_propertyTable, true, null);
+				switch (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

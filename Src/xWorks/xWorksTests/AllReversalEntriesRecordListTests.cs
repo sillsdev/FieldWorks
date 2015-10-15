@@ -12,6 +12,7 @@ namespace SIL.FieldWorks.XWorks
 	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected List<ICmObject> m_createdObjectList;
 
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
@@ -46,16 +47,27 @@ namespace SIL.FieldWorks.XWorks
 
 
 					if (m_window != null && !m_window.IsDisposed)
+					{
 						m_window.Dispose();
-					m_window = null;
+						m_window = null;
+					}
 
 					if (m_mediator != null && !m_mediator.IsDisposed)
+					{
 						m_mediator.Dispose();
-					m_mediator = null;
+						m_mediator = null;
+					}
+					if (m_propertyTable != null && !m_propertyTable.IsDisposed)
+					{
+						m_propertyTable.Dispose();
+						m_propertyTable = null;
+					}
 
 					if (m_allReversalEntriesRecordList != null && !m_allReversalEntriesRecordList.IsDisposed)
+					{
 						m_allReversalEntriesRecordList.Dispose();
-					m_allReversalEntriesRecordList = null;
+						m_allReversalEntriesRecordList = null;
+					}
 				}
 				IsDisposed = true;
 			}
@@ -169,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			UndoAllActions();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 		}
 
 		private void UndoAllActions()
@@ -185,9 +197,10 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			((MockFwXWindow)m_window).ClearReplacements();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 			ProcessPendingItems();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);
@@ -247,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 			XmlNode newNode = doc.DocumentElement;
 			using (var list = new AllReversalEntriesRecordList())
 			{
-				list.Init(Cache, m_mediator, newNode);
+				list.Init(Cache, m_mediator, m_propertyTable, newNode);
 
 				Assert.IsNull(list.OwningObject,
 					"When AllReversalEntriesRecordList is called and the Clerk is null then the OwningObject should not be set, i.e. left as Null");

@@ -39,15 +39,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the search engine.
 		/// </summary>
-		public static SearchEngine Get(Mediator mediator, string propName, Func<SearchEngine> searchEngineFactory)
+		public static SearchEngine Get(Mediator mediator, PropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
 		{
-			var searchEngine = (SearchEngine) mediator.PropertyTable.GetValue(propName);
+			var searchEngine = propertyTable.GetValue<SearchEngine>(propName);
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
-				mediator.PropertyTable.SetProperty(propName, searchEngine);
-				mediator.PropertyTable.SetPropertyDispose(propName, true);
-				mediator.PropertyTable.SetPropertyPersistence(propName, false);
+				propertyTable.SetProperty(propName, searchEngine, true);
+				propertyTable.SetPropertyDispose(propName, true);
+				propertyTable.SetPropertyPersistence(propName, false);
 			}
 			return searchEngine;
 		}
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public IEnumerable<int> Search(IEnumerable<SearchField> fields)
 		{
-			return PerformSearch(fields.ToArray(), () => false);
+			return FilterResults(PerformSearch(fields.ToArray(), () => false));
 		}
 
 		/// <summary>
@@ -182,7 +182,16 @@ namespace SIL.FieldWorks.Common.Controls
 			if (results == null || IsSearchCanceled(queue))
 				return;
 
-			m_synchronizationContext.Post(OnSearchCompleted, new SearchCompletedEventArgs(work, results));
+			m_synchronizationContext.Post(OnSearchCompleted, new SearchCompletedEventArgs(work, FilterResults(results)));
+		}
+
+		/// <summary>
+		/// If some objects need to be filtered out of the results (for instance the item we started from in the merge dialog)
+		/// then this function can be used to do it.
+		/// </summary>
+		protected virtual IEnumerable<int> FilterResults(IEnumerable<int> results)
+		{
+			return results;
 		}
 
 		private IEnumerable<int> PerformSearch(IList<SearchField> fields, Func<bool> isSearchCanceled)

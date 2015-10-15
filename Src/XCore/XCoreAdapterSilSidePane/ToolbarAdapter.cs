@@ -9,15 +9,11 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
 using System.Collections.Generic;
-
-
-// for ImageCollection
 
 namespace XCore
 {
@@ -160,18 +156,18 @@ namespace XCore
 		protected void DepersistLayout()
 		{
 			//comes from the user settings file
-			string previousVersion = (string)m_mediator.PropertyTable.GetValue("PreviousToolbarVersion", "notSet");
+			string previousVersion = m_propertyTable.GetValue("PreviousToolbarVersion", "notSet");
 
 			//Comes from the configuration file in the properties section. Increment it there to force a reset
 			// of user toobars.
-			string currentVersion = (string)m_mediator.PropertyTable.GetValue("CurrentToolbarVersion", "notSet");
-			m_mediator.PropertyTable.SetPropertyPersistence("CurrentToolbarVersion", false);
+			string currentVersion = m_propertyTable.GetValue("CurrentToolbarVersion", "notSet");
+			m_propertyTable.SetPropertyPersistence("CurrentToolbarVersion", false);
 
 			if(previousVersion.Equals(currentVersion)) //else, leave as default
 			{
 			}
 			//remember now
-			m_mediator.PropertyTable.SetProperty("PreviousToolbarVersion", currentVersion);
+			m_propertyTable.SetProperty("PreviousToolbarVersion", currentVersion, true);
 		}
 
 		/// <summary>

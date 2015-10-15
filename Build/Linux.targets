@@ -76,7 +76,6 @@
 	<Target Name="linuxLibs" DependsOnTargets="iculibs">
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
-		<!-- Always copy from Release -->
 		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>
@@ -84,25 +83,31 @@
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatformBase)/*.*">
-			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.so">
+			<Output TaskParameter="Include" ItemName="LinuxECShlibs"/>
 		</CreateItem>
-		<Copy SourceFiles="@(LinuxDebugLibs)"
+		<Copy SourceFiles="@(LinuxECShlibs)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/*.config">
-			<Output TaskParameter="Include" ItemName="LinuxLibConfigFiles"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.dll">
+			<Output TaskParameter="Include" ItemName="LinuxECLibs"/>
 		</CreateItem>
-		<Copy SourceFiles="@(LinuxLibConfigFiles)"
+		<Copy SourceFiles="@(LinuxECLibs)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/ECPlugins/*.xml">
-			<Output TaskParameter="Include" ItemName="LinuxLibECPlugins"/>
+		<CreateItem Include="/usr/lib/fieldworks/*.dll.config">
+			<Output TaskParameter="Include" ItemName="LinuxECConfigs"/>
 		</CreateItem>
-		<MakeDir Directories="$(dir-outputBase)/EC/Plugins" Condition="'$(action)'!='clean'"/>
-		<Copy SourceFiles="@(LinuxLibECPlugins)"
+		<Copy SourceFiles="@(LinuxECConfigs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/usr/lib/fieldworks/EC/Plugins/*.xml">
+			<Output TaskParameter="Include" ItemName="LinuxECPlugins"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxECPlugins)"
 			  DestinationFolder="$(dir-outputBase)/EC/Plugins"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
@@ -193,8 +198,35 @@
 					   Key="SOFTWARE\SIL\EncodingConverterRepository\MoveRepositoryTo"
 					   Value="$(fwrt)/DistFiles/MoveRepositoryTo"/>
 		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
+					   Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
+		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\Microsoft\.NETFramework\AssemblyFolders\Primary Interop Assemblies"
-					   Value="${dir.outputBase}"/>
+					   Value="$(dir-outputBase)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\InitIcu"
+					   Value="1"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootDataDir"
+					   Value="$(FW_ROOTDATA)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootCodeDir"
+					   Value="$(FW_ROOTCODE)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\ProjectsDir"
+					   Value="$(FW_ROOT)/Projects"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\Icu54DataDir"
+					   Value="$(ICU_DATA)/icudt54l"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\Icu54Dir"
+					   Value="$(ICU_DATA)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\PluginDir"
+					   Value="$(dir-outputBase)/EC/Plugins"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+					   Value="$(dir-outputBase)"/>
 		<!-- These are obsolete, as far as I know. -->
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\Firebird Project\Firebird Server\Instances\DefaultInstance"
@@ -245,6 +277,7 @@
 		<Graphite2Sources Include="$(fwrt)/Lib/src/graphite2/src/*.*" />
 	</ItemGroup>
 	<Target Name="graphite2Linux" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)/Lib/linux/$(config-capital)/libgraphite2.a" Condition="'$(action)'!='clean'">
+		<MakeDir Directories="$(fwrt)/Lib/linux/$(config-capital)" />
 		<Make ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
 				Configuration="$(config-capital)" Target="$(make-target)"

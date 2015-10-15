@@ -1,12 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Linq;
-using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -22,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new RecordGoDlg())
 			{
 				var wp = new WindowParams { m_title = LexEdStrings.ksIdentifyRecord, m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

@@ -1,6 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -132,7 +135,7 @@ namespace FwBuildTasks
 						GenerateFailureReport(testCaseName, testCaseNode);
 						break;
 					default:
-						throw new ApplicationException("Unimplemented NUnit testresult");
+						throw new ApplicationException(String.Format("Unimplemented NUnit testresult: {0}", testResult));
 				}
 			}
 		}

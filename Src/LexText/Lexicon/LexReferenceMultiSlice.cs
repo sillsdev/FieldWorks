@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
@@ -17,7 +16,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -323,8 +321,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			m_refTypesAvailable.Clear();
 			m_rgfReversedRefType.Clear();
-			string formatName = Mediator.StringTbl.GetString("InsertSymmetricReference", "LexiconTools");
-			string formatNameWithReverse = Mediator.StringTbl.GetString("InsertAsymmetricReference", "LexiconTools");
+			string formatName = StringTable.Table.GetString("InsertSymmetricReference", "LexiconTools");
+			string formatNameWithReverse = StringTable.Table.GetString("InsertAsymmetricReference", "LexiconTools");
 			foreach (var lrt in m_cache.LanguageProject.LexDbOA.ReferencesOA.PossibilitiesOS.Cast<ILexRefType>())
 			{
 				if (m_obj is ILexEntry)
@@ -485,9 +483,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 			if(HelpId == "LexSenseReferences")
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpFieldLexSenseLexicalRelations");
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpFieldLexSenseLexicalRelations");
 			else if(HelpId == "LexEntryReferences")
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpFieldLexEntryCrossReference");
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpFieldLexEntryCrossReference");
 			else
 				Debug.Assert(false, "Tried to show help for a LexReferenceMultiSlice that does not have an associated Help Topic ID");
 		}
@@ -621,7 +619,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams { m_title = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.ReverseName.BestAnalysisAlternative.Text), m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, Mediator);
+				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;
@@ -699,7 +697,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
 				dlg.StartingEntry = objEntry as ILexEntry;
 
-				dlg.SetDlgInfo(m_cache, wp, Mediator);
+				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;
@@ -787,10 +785,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				var mainWindow = (Form) Mediator.PropertyTable.GetValue("window");
+				var mainWindow = m_propertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 					{
 
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
@@ -821,15 +819,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 									tisb.Append(LexEdStrings.ksDeleteSequenceCollectionB);
 
-									dlg.SetDlgInfo(ui, m_cache, Mediator, tisb.GetString());
+									dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable, tisb.GetString());
 								}
 								else
 								{
-									dlg.SetDlgInfo(ui, m_cache, Mediator);
+									dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
 								}
 								break;
 							default:
-								dlg.SetDlgInfo(ui, m_cache, Mediator);
+								dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
 								break;
 						}
 
@@ -863,10 +861,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				var mainWindow = Mediator.PropertyTable.GetValue("window") as Form;
+				var mainWindow = m_propertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 					{
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
 
@@ -884,10 +882,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 							tisb.Append(String.Format(LexEdStrings.ksDeleteLexTree, StringUtils.kChHardLB));
-							dlg.SetDlgInfo(ui, m_cache, Mediator, tisb.GetString() );
+							dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable, tisb.GetString());
 							break;
 						default:
-							dlg.SetDlgInfo(ui, m_cache, Mediator);
+							dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
 							break;
 						}
 
@@ -929,7 +927,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				using (var dlg = new LexReferenceDetailsDlg(m_mediator.HelpTopicProvider))
+				using (var dlg = new LexReferenceDetailsDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					dlg.ReferenceName = lr.Name.AnalysisDefaultWritingSystem.Text;
 					dlg.ReferenceComment = lr.Comment.AnalysisDefaultWritingSystem.Text;

@@ -6,6 +6,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,9 +21,9 @@ namespace SIL.FieldWorks.XWorks
 	public class SubitemRecordClerk : RecordClerk
 	{
 		internal int SubitemFlid { get; private set; }
-		public override void Init(XCore.Mediator mediator, System.Xml.XmlNode viewConfiguration)
+		public override void Init(XCore.Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
 		{
-			base.Init(mediator, viewConfiguration);
+			base.Init(mediator, propertyTable, viewConfiguration);
 			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
 			var subitemNames = XmlUtils.GetManditoryAttributeValue(clerkConfiguration, "field").Split('.');
 			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(subitemNames[0].Trim(), subitemNames[1].Trim(), true);

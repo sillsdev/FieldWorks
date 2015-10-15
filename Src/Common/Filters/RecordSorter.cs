@@ -12,7 +12,6 @@
 //	This does not imply that all sorting will always be done in memory, only that we haven't
 //	yet designed or implemented a way to do the sorting while querying.
 // </remarks>
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -213,7 +212,7 @@ namespace SIL.FieldWorks.Filters
 	/// <summary>
 	/// Abstract RecordSorter base class.
 	/// </summary>
-	public abstract class RecordSorter : IPersistAsXml, IStoresFdoCache, IAcceptsStringTable,
+	public abstract class RecordSorter : IPersistAsXml, IStoresFdoCache,
 		IReportsSortProgress, INoteComparision
 	{
 		/// <summary>
@@ -261,19 +260,6 @@ namespace SIL.FieldWorks.Filters
 			set { }// do nothing by default.
 		}
 		#endregion IStoresFdoCache
-
-		#region IAcceptsStringTable Members
-
-		public virtual StringTable StringTable
-		{
-			set
-			{
-				// do nothing by default
-			}
-		}
-
-		#endregion
-
 
 		/// <summary>
 		/// Method to retrieve the IComparer used by this sorter
@@ -1069,15 +1055,6 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		public override StringTable StringTable
-		{
-			set
-			{
-				if (m_comp is IAcceptsStringTable)
-					(m_comp as IAcceptsStringTable).StringTable = value;
-			}
-		}
-
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
 		/// the specified object. This default method makes a single mopsi not involving any
@@ -1206,7 +1183,7 @@ namespace SIL.FieldWorks.Filters
 	/// a (simpler) IComparer to compare the strings.
 	/// </summary>
 	public class StringFinderCompare : IComparer, IPersistAsXml, IStoresFdoCache, IStoresDataAccess,
-		IAcceptsStringTable, ICloneable
+		ICloneable
 	{
 		/// <summary></summary>
 		protected IComparer m_subComp;
@@ -1592,21 +1569,6 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 		#endregion
-
-		#region IAcceptsStringTable
-
-		public StringTable StringTable
-		{
-			set
-			{
-				if (m_finder is IAcceptsStringTable)
-					((IAcceptsStringTable) m_finder).StringTable = value;
-				if (m_subComp is IAcceptsStringTable)
-					((IAcceptsStringTable) m_subComp).StringTable = value;
-			}
-		}
-
-		#endregion IAcceptsStringTable
 
 		#region ICloneable Members
 		/// <summary>

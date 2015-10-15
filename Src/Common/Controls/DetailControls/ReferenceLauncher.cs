@@ -8,15 +8,10 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
@@ -46,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get
 			{
 				CheckDisposed();
-				return ((CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType((int)m_flid) == CellarPropertyType.ReferenceSequence);
+				return ((CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence);
 			}
 		}
 
@@ -178,7 +173,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (referenceTargetOwner != null)
 						chooser.TextParamHvo = referenceTargetOwner.Hvo;
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(m_configurationNode, Mediator);
+					chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
 				}
 
 				var res = chooser.ShowDialog(MainControl.FindForm());
@@ -211,7 +206,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			SimpleListChooser x = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, m_mediator.HelpTopicProvider);
+				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}

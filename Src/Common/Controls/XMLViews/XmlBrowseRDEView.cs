@@ -1,7 +1,6 @@
 // Copyright (c) 2005-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -118,7 +117,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_fakeFlid, m_stringTable, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
 				}
 				return base.Vc;
 			}
@@ -384,10 +383,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string LocalizeIfPossible(string sValue)
 		{
-			if (m_stringTable == null)
-				return sValue;
-			else
-				return m_stringTable.LocalizeAttributeValue(sValue);
+			return StringTable.Table.LocalizeAttributeValue(sValue);
 		}
 
 		/// <summary>
@@ -789,11 +785,10 @@ namespace SIL.FieldWorks.Common.Controls
 			Type factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
 			object factory = Cache.ServiceLocator.GetService(factoryType);
 			System.Reflection.MethodInfo mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
-			object[] parameters = new object[4];
-			parameters[0] = (object)m_hvoRoot;
-			parameters[1] = (object)columns;
-			parameters[2] = (object)rgtss;
-			parameters[3] = (m_mediator != null && m_mediator.HasStringTable) ? (object)m_mediator.StringTbl : null;
+			object[] parameters = new object[3];
+			parameters[0] = m_hvoRoot;
+			parameters[1] = columns;
+			parameters[2] = rgtss;
 			int newObjHvo = (int)mi.Invoke(factory, parameters);
 			return newObjHvo;
 		}

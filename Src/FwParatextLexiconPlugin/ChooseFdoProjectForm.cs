@@ -5,6 +5,7 @@ using System.Net;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -32,7 +33,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else
 			{
-				m_selectedItem = (LanguageProjectInfo)listBox.SelectedItem;
+				m_selectedItem = (LanguageProjectInfo) listBox.SelectedItem;
+				if (ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
+				{
+					MessageBox.Show(this, Strings.ksProjectOpen, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
 			}
 			DialogResult = DialogResult.OK;
 

@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -276,7 +275,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						break;
 				}
 				string sClassRaw = mdc.GetClassName(m_clidDst);
-				string sClass = m_mediator.StringTbl.GetString(sClassRaw, "ClassNames");
+				string sClass = StringTable.Table.GetString(sClassRaw, "ClassNames");
 				string sUndo = String.Format(DetailControlsStrings.ksUndoCreate0, sClass);
 				string sRedo = String.Format(DetailControlsStrings.ksRedoCreate0, sClass);
 				int hvoNewObj = 0;

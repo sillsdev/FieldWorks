@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public void Process()
 		{
-			var cache = (FdoCache)Dialog.Mediator.PropertyTable.GetValue("cache");
+			var cache = Dialog.PropTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);
@@ -86,9 +87,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid,
-																															badPartOfSpeech.Owner as IPartOfSpeech);
-				badPartOfSpeech.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
+				IPartOfSpeech badPartOfSpeechOwner = badPartOfSpeech.Owner as IPartOfSpeech;
+				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, badPartOfSpeechOwner);
+				badPartOfSpeechOwner.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
 			}
 			replacementPos.MergeObject(badPartOfSpeech);
 		}

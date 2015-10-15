@@ -11,6 +11,7 @@ DistFiles/Icu40/data/
 DistFiles/Icu40/icudt40l/
 DistFiles/Icu50/
 DistFiles/Languages/
+DistFiles/Installers/
 DistFiles/Helps/
 DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
@@ -112,6 +113,7 @@ Src/Language/libLanguage
 Lib/src/HermitCrab.NET/HermitCrabExe/bin
 Lib/src/HermitCrab.NET/HermitCrab/bin
 Downloads/*
+xulrunner/*
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks
@@ -127,8 +129,8 @@ Lib/debug/graphite2.lib
 Lib/release/graphite2.lib
 Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
-DistFiles/Windows/gennorm2.exe
-DistFiles/Windows/icutu*.dll
+Lib/icu*.lib
 DistFiles/Icu*.zip
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
+Bin/NUnit/

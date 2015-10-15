@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -24,28 +21,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private Inventory m_layouts;
 
 		private ILexEntry m_entry; // test object.
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private DataTree m_dtree;
 		private Form m_parent;
 
-		private SIL.Utils.StringTable m_stringTable;  // for "LabelAbbreviations"
-
 		#region Fixture Setup and Teardown
-		internal static StringTable GenerateStringTable()
-		{
-			string configurationDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
-				@"Language Explorer/Configuration");
-			var stringTable = new SIL.Utils.StringTable(configurationDir);
-
-			return stringTable;
-		}
-
 		internal static Inventory GenerateParts()
 		{
 			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				@"Common/Controls/DetailControls/DetailControlsTests");
 
 			var keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["part"] = new string[] {"id"};
+			keyAttrs["part"] = new[] {"id"};
 
 			var parts = new Inventory(new string[] {partDirectory},
 				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", "ProjectPath");
@@ -59,11 +47,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				@"Common/Controls/DetailControls/DetailControlsTests");
 
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new string[] {"class", "type", "name" };
-			keyAttrs["group"] = new string[] {"label"};
-			keyAttrs["part"] = new string[] {"ref"};
+			keyAttrs["layout"] = new[] {"class", "type", "name" };
+			keyAttrs["group"] = new[] {"label"};
+			keyAttrs["part"] = new[] {"ref"};
 
-			var layouts = new Inventory(new string[] {partDirectory},
+			var layouts = new Inventory(new[] {partDirectory},
 				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", "ProjectPath");
 
 			return layouts;
@@ -80,7 +68,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
-			m_stringTable = GenerateStringTable();
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
@@ -104,6 +91,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.TestSetup();
 			m_dtree = new DataTree();
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
 		}
@@ -122,6 +112,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_parent.Close();
 				m_parent.Dispose();
 			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+
 			base.TestTearDown();
 		}
 		#endregion
@@ -156,19 +157,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void LabelAbbreviations()
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
-			m_dtree.StringTbl = m_stringTable;
 			m_dtree.ShowObject(m_entry, "Abbrs", null, m_entry, false);
 
 			Assert.AreEqual(3, m_dtree.Controls.Count);
 			// 1) Test that labels that are not in "LabelAbbreviations" stringTable
 			//		are abbreviated by being truncated to 4 characters.
 			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			string abbr1 = m_stringTable.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
+			string abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
 			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");	// verify it's not in the table.
 			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);		// verify truncation took place.
 			// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
 			Assert.AreEqual("Citation Form", (m_dtree.Controls[1] as Slice).Label);
-			string abbr2 = m_stringTable.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
+			string abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
 			Assert.IsFalse(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*"); // verify it IS in the table
 			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);		// should be identical
 			// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
@@ -261,8 +261,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				LexSenseTags.kflidScientificName,
 				TsStringUtils.MakeTss("blah blah", Cache.DefaultAnalWs));
 
+			m_mediator.Dispose();
+			m_mediator = new Mediator();
+			m_propertyTable.Dispose();
+			m_propertyTable = new PropertyTable(m_mediator);
 			m_parent = new Form();
 			m_dtree = new DataTree();
+			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -281,8 +286,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			ILexEtymology lm = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOA = lm;
 
+			m_mediator.Dispose();
+			m_mediator = new Mediator();
+			m_propertyTable.Dispose();
+			m_propertyTable = new PropertyTable(m_mediator);
 			m_parent = new Form();
 			m_dtree = new DataTree();
+			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -300,8 +310,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			lm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
 			lm.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultAnalWs);
 
+			m_mediator.Dispose();
+			m_mediator = new Mediator();
+			m_propertyTable.Dispose();
+			m_propertyTable = new PropertyTable(m_mediator);
 			m_parent = new Form();
 			m_dtree = new DataTree();
+			m_dtree.Init(m_mediator, m_propertyTable, null);
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);

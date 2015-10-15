@@ -1,3 +1,6 @@
+// Copyright c 2002, Joe Walnes, Chris Stevenson, Owen Rogers
+// See LICENSE.txt for details.
+
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;

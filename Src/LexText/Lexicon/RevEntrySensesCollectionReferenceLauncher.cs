@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
@@ -41,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Dispose( disposing );
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			return new RevEntrySensesCollectionReferenceView();
 		}
@@ -56,7 +60,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new LinkEntryOrSenseDlg())
 			{
 				var wp = new WindowParams {m_title = LexEdStrings.ksIdentifySense, m_btnText = LexEdStrings.ksSetReversal};
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SelectSensesOnly = true;
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

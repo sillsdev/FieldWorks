@@ -9,11 +9,9 @@
 // <remarks>
 // Implements the an XDE editor which displays a combobox of labels, but underlyingly based on integers.
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Collections;
 using System.Drawing;
 using System.Xml;
 using SIL.FieldWorks.FDO;
@@ -39,23 +37,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="stringTable"></param>
 		/// <param name="parameters"></param>
-		public EnumComboSlice(FdoCache cache, ICmObject obj, int flid, SIL.Utils.StringTable stringTable, XmlNode parameters)
+		public EnumComboSlice(FdoCache cache, ICmObject obj, int flid, XmlNode parameters)
 			: base(new FwOverrideComboBox(), cache, obj, flid)
 		{
-			m_combo = (ComboBox)this.Control;
+			m_combo = (ComboBox)Control;
 			m_combo.DropDownStyle = ComboBoxStyle.DropDownList;
 			//note: no exception is thrown if it can't find it.
-			m_combo.Font = new System.Drawing.Font(MiscUtils.StandardSansSerif, 10);
+			m_combo.Font = new Font(MiscUtils.StandardSansSerif, 10);
 			SetForeColor(parameters);
-			m_combo.SelectedValueChanged += new EventHandler(this.SelectionChanged);
-			m_combo.GotFocus += new EventHandler(m_combo_GotFocus);
-			m_combo.DropDownClosed += new EventHandler(m_combo_DropDownClosed);
+			m_combo.SelectedValueChanged += this.SelectionChanged;
+			m_combo.GotFocus += m_combo_GotFocus;
+			m_combo.DropDownClosed += m_combo_DropDownClosed;
 #if __MonoCS__	// FWNX-545
 			m_combo.Parent.SizeChanged += new EventHandler(OnComboParentSizeChanged);
 #endif
-			StringTbl = stringTable;
 			PopulateCombo(parameters);
 			// We need to watch the cache for changes to our property.
 			cache.DomainDataByFlid.AddNotification(this);
@@ -129,13 +125,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected void PopulateCombo(XmlNode parameters)
 		{
-			Debug.Assert(StringTbl != null, "A StringTable must be provided for the enum combo slice.");
 			m_combo.Items.Clear();
 			XmlNode node =  parameters.SelectSingleNode("stringList");
 			if (node == null)
 				throw new ApplicationException ("The Enum editor requires a <stringList> element in the <deParams>");
 
-			string[] labels = StringTbl.GetStringsFromStringListNode(node);
+			string[] labels = StringTable.Table.GetStringsFromStringListNode(node);
 			int width = 0;
 			using (Graphics g = m_combo.CreateGraphics())
 			{

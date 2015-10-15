@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using NUnit.Framework;
+using SIL.IO;
 #if __MonoCS__
 using Mono.Unix.Native;
 #endif
@@ -115,6 +117,58 @@ namespace SIL.Utils
 
 			// Absolute path on Linux
 			Assert.IsTrue(FileUtils.IsFilePathValid("/foo"));
+		}
+		#endregion
+
+		#region AreFilesIdentical tests
+		[Test]
+		public void AreFilesIdentical_DifferentFilesOfDifferentSizeAreDifferent()
+		{
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			{
+				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3, 0x4 }), Encoding.UTF8);
+				Assert.IsFalse(FileUtils.AreFilesIdentical(file1.Path, file2.Path));
+			}
+		}
+
+		[Test]
+		public void AreFilesIdentical_DifferentFilesOfSameSizeAreDifferent()
+		{
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			{
+				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x4 }), Encoding.UTF8);
+				Assert.IsFalse(FileUtils.AreFilesIdentical(file1.Path, file2.Path));
+			}
+		}
+
+		[Test]
+		public void AreFilesIdentical_TwoFilesWithSameContentAreIdentical()
+		{
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			{
+				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				Thread.Sleep(1001);
+				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				Assert.IsTrue(FileUtils.AreFilesIdentical(file1.Path, file2.Path));
+			}
+		}
+
+		[Test]
+		public void AreFilesIdentical_SameFilesWithDifferentCreationTimeAreIdentical()
+		{
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			{
+				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				Thread.Sleep(1001);
+				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
+				Assert.IsTrue(FileUtils.AreFilesIdentical(file1.Path, file2.Path));
+			}
 		}
 		#endregion
 

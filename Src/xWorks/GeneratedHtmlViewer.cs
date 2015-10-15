@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -58,6 +57,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Mediator that passes off messages.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 
 		protected string m_outputDirectory;
 
@@ -195,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				return m_propertyTable.GetValue<FdoCache>("cache");
 			}
 		}
 
@@ -511,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 		private void InitSaveAsWebpageDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			dlg.FileName =  m_mediator.StringTbl.GetString(m_sFileNameKey, m_sStringsPath);
+			dlg.FileName = StringTable.Table.GetString(m_sFileNameKey, m_sStringsPath);
 			dlg.AddExtension = true;
 			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.HTM);
 			dlg.Title = m_sSaveAsWebpageDialogTitle;
@@ -557,7 +560,7 @@ namespace SIL.FieldWorks.XWorks
 				ShowGeneratingPage();
 				PerformRetrieval(out sFxtOutputPath, dlg);
 				PerformTransformations(sFxtOutputPath, dlg);
-				UpdateProgress(m_mediator.StringTbl.GetString("Complete", "DocumentGeneration"), dlg);//m_stringResMan.GetString("stidCompleted"), dlg);
+				UpdateProgress(StringTable.Table.GetString("Complete", "DocumentGeneration"), dlg);
 				dlg.Close();
 			}
 		}
@@ -669,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GetNormalStyleFontSize(int ws)
 		{
 			ILgWritingSystemFactory wsf = Cache.WritingSystemFactory;
-			using (Font myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, m_mediator, wsf))
+			using (Font myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, wsf, m_propertyTable))
 				return myFont.Size + "pt";
 		}
 
@@ -734,21 +737,23 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_previousShowTreeBarValue = m_mediator.PropertyTable.GetBoolProperty("ShowRecordList", true);
+			m_propertyTable = propertyTable;
+			m_previousShowTreeBarValue = m_propertyTable.GetBoolProperty("ShowRecordList", true);
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", false);
+			m_propertyTable.SetProperty("ShowRecordList", false, true);
 
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 
-			m_mediator.PropertyTable.SetProperty("StatusPanelRecordNumber", "");
-			m_mediator.PropertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
+			m_propertyTable.SetProperty("StatusPanelRecordNumber", "", true);
+			m_propertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
 
 #if notnow
 			m_htmlControl.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);
@@ -763,8 +768,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowSketch();
 
 			//add our current state to the history system
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl","");
-			FdoCache cache = Cache;
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 #if notnow
@@ -777,9 +781,9 @@ namespace SIL.FieldWorks.XWorks
 		private void SetStrings()
 		{
 			const string ksPath = "Linguistics/Morphology/MorphSketch";
-			m_sSaveAsWebpageDialogTitle = m_mediator.StringTbl.GetString("SaveAsWebpageDialogTitle", ksPath);
-			toolTip1.SetToolTip(m_BackBtn, m_mediator.StringTbl.GetString("BackButtonToolTip", ksPath));
-			toolTip1.SetToolTip(m_ForwardBtn, m_mediator.StringTbl.GetString("ForwardButtonToolTip", ksPath));
+			m_sSaveAsWebpageDialogTitle = StringTable.Table.GetString("SaveAsWebpageDialogTitle", ksPath);
+			toolTip1.SetToolTip(m_BackBtn, StringTable.Table.GetString("BackButtonToolTip", ksPath));
+			toolTip1.SetToolTip(m_ForwardBtn, StringTable.Table.GetString("ForwardButtonToolTip", ksPath));
 		}
 
 		private void SetAlsoSaveInfo()
@@ -840,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue);
+			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true);
 			return true;
 		}
 
@@ -1006,7 +1010,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-				using (var dlg = new ExportDialog(m_mediator))
+				using (var dlg = new ExportDialog(m_mediator, m_propertyTable))
 				{
 					dlg.ShowDialog();
 				}

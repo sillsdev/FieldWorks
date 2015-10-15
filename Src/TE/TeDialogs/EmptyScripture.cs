@@ -7,17 +7,13 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
+using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FDO;
@@ -270,14 +266,16 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region IxCoreColleague Members
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Not used
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 		}

@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error exporting LIFT data could not complete Send/Receive.
+        ///   Looks up a localized string similar to Error exporting LIFT data; could not complete Send/Receive.
         /// </summary>
         internal static string FLExBridgeListener_UndoExport_Error_exporting_LIFT {
             get {
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Guids changed..
+        ///   Looks up a localized string similar to GUIDs changed.
         /// </summary>
         internal static string GoldEticGuidFixer_Guids_changed_Title {
             get {
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some guids for parts of speech that did not match the GOLD standard were found and replaced..
+        ///   Looks up a localized string similar to Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced..
         /// </summary>
         internal static string GoldEticGuidFixer_GuidsChangedContent {
             get {
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use standard part of speech guids.
+        ///   Looks up a localized string similar to Use standard Part of Speech GUIDs.
         /// </summary>
         internal static string GoldEticGuidFixer_Label {
             get {
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Guids changed..
+        ///   Looks up a localized string similar to No GUIDs changed.
         /// </summary>
         internal static string GoldEticGuidFixer_NoChangeTitle {
             get {
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This project has already been linked to a Lexicon (LIFT) repository. It is not possible to use Get and Merge with another Lexicon repository..
+        ///   Looks up a localized string similar to This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository..
         /// </summary>
         internal static string kProjectAlreadyHasLiftRepo {
             get {
@@ -255,17 +255,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksAddParticipants {
             get {
                 return ResourceManager.GetString("ksAddParticipants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The current Project name contains non-ASCII characters. This currently prevents use of the Send/Receive project function.
-        ///Please use a name that only contains ASCII characters.
-        ///You may choose a different project name in FieldWorks Project Properties..
-        /// </summary>
-        internal static string ksAllNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksAllNonAsciiProjectNameWarning", resourceCulture);
             }
         }
         
@@ -567,7 +556,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That project already exists. You&apos;ll need to choose a different name in Project Properties..
+        ///   Looks up a localized string similar to That project already exists. Please choose a different name in Project Properties..
         /// </summary>
         internal static string ksExistingProjectName {
             get {
@@ -725,19 +714,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksMustSelectOne {
             get {
                 return ResourceManager.GetString("ksMustSelectOne", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
-        ///{0} is a name that will work.
-        ///You may choose a different project name in FieldWorks Project Properties.
-        ///Click &apos;OK&apos; to change the name of your project and continue with Send/Receive.
-        ///Click &apos;Cancel&apos; to cancel Send/Receive..
-        /// </summary>
-        internal static string ksNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksNonAsciiProjectNameWarning", resourceCulture);
             }
         }
         
@@ -1435,7 +1411,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This utility will make the part of speech guids for the project match the GOLD standard..
+        ///   Looks up a localized string similar to This utility will make the Part of Speech GUIDs for the project match the GOLD standard..
         /// </summary>
         internal static string ksWhatIsSetPartOfSpeechGUIDsToGold {
             get {
@@ -1471,7 +1447,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query you should use this utility..
+        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs)..
         /// </summary>
         internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
             get {

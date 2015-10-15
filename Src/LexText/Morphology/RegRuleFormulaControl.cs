@@ -60,13 +60,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, string displayNameProperty, string displayWs)
+			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, obj, this, new RegRuleFormulaVc(cache, mediator), RegRuleFormulaVc.kfragRHS);
+			m_view.Init(mediator, propertyTable, obj, this, new RegRuleFormulaVc(mediator, propertyTable), RegRuleFormulaVc.kfragRHS);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -688,7 +688,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
 			featChooser.ShowFeatureConstraintValues = true;
-			featChooser.SetDlgInfo(m_cache, m_mediator, Rhs.OwningRule);
+			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable, Rhs.OwningRule);
 		}
 
 		/// <summary>
@@ -844,8 +844,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(FdoCache cache, Mediator mediator)
-			: base(cache, mediator)
+		public RegRuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
+			: base(mediator, propertyTable)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);

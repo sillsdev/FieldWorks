@@ -28,12 +28,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// Handle the context menu for inserting an FsFeatDefn.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static FsFeatDefnUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
+		public new static FsFeatDefnUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			FsFeatDefnUi ffdUi = null;
 			string className = "FsClosedFeature";
@@ -41,10 +42,9 @@ namespace SIL.FieldWorks.FdoUi
 				className = "FsComplexFeature";
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
-				FdoCache cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-				Debug.Assert(cache != null);
-				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, mediator, true);
-				switch (dlg.ShowDialog((Form)mediator.PropertyTable.GetValue("window")))
+				FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
+				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, mediator, propertyTable, true);
+				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

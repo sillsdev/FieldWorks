@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_fdoCache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = m_mediator.PropertyTable.GetBoolProperty("ShowMorphBundles", true);
+			m_vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 
@@ -130,7 +129,7 @@ namespace SIL.FieldWorks.IText
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(m_mediator, objRoot, m_vc, bookImporter))
+			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc, bookImporter))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -819,7 +818,7 @@ namespace SIL.FieldWorks.IText
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
-			var persist = m_mediator.PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, m_fdoCache.LanguageWritingSystemFactoryAccessor,
@@ -834,7 +833,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, m_mediator.HelpTopicProvider,
+			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				m_vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -861,9 +860,10 @@ namespace SIL.FieldWorks.IText
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			m_mediator.PropertyTable.SetProperty(ConfigPropName,
+			m_propertyTable.SetProperty(ConfigPropName,
 				m_vc.LineChoices.Persist(m_fdoCache.LanguageWritingSystemFactoryAccessor),
-				PropertyTable.SettingsGroup.LocalSettings);
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
 			UpdateDisplayForNewLineChoices();
 		}
 

@@ -113,9 +113,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
@@ -192,9 +196,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -356,11 +364,11 @@
     <Compile Include="MoveOrCopyFilesDlg.Designer.cs">
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.cs">
+    <Compile Include="ProjectLocationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.Designer.cs">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
+    <Compile Include="ProjectLocationDlg.Designer.cs">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="FwApplyStyleDlg.cs">
       <SubType>Form</SubType>
@@ -544,8 +552,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectLocationSharingDlg.resx">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
+    <EmbeddedResource Include="ProjectLocationDlg.resx">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>

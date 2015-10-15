@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -662,8 +660,7 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="hvoDomain">database id of the semantic domain</param>
 		/// <param name="columns"></param>
 		/// <param name="rgtss"></param>
-		/// <param name="stringTbl"></param>
-		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, StringTable stringTbl);
+		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss);
 	}
 
 	/// <summary>

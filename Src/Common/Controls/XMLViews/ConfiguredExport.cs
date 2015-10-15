@@ -9,7 +9,6 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -39,7 +38,6 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		private TextWriter m_writer = null;
 		private FdoCache m_cache = null;
-		private Mediator m_mediator;
 		private FwStyleSheet m_stylesheet;
 		private TextWriterStream m_strm = null;
 		private string m_sFormat = null;
@@ -113,14 +111,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// element start tag to the output.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, Mediator mediator, TextWriter w, string sDataType,
+		public void Initialize(FdoCache cache, PropertyTable propertyTable, TextWriter w, string sDataType,
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
 			m_strm = new TextWriterStream(w);
 			m_cache = cache;
-			m_mediator = mediator;
-			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_mdc = cache.MetaDataCacheAccessor;
 			m_sFormat = sFormat.ToLowerInvariant();
 			if (m_sFormat == "xhtml")
@@ -579,10 +576,28 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Get the lead character, either a single character or a composite matching something
 		/// in the sort rules.  (We need to support multi-graph letters.  See LT-9244.)
 		/// </summary>
+		public string GetLeadChar(string sEntryNFD, string sWs)
+		{
+			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables,
+									 m_cache);
+		}
+
+		/// <summary>
+		/// Get the lead character, either a single character or a composite matching something
+		/// in the sort rules.  (We need to support multi-graph letters.  See LT-9244.)
+		/// </summary>
 		/// <param name="sEntryNFD">The headword to be written next</param>
 		/// <param name="sWs">Name of the writing system</param>
+		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
+		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
+		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
+		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		private string GetLeadChar(string sEntryNFD, string sWs)
+		public static string GetLeadChar(string sEntryNFD, string sWs,
+													Dictionary<string, Set<string>> wsDigraphMap,
+													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+													Dictionary<string, Set<string>> wsIgnorableCharMap,
+													FdoCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
 				return "";
@@ -590,7 +605,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
 			Set<string> chIgnoreList;
-			Set<string> sortChars = GetDigraphs(sWs, out mapChars, out chIgnoreList);
+			Set<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
 			string sEntry = String.Empty;
 			if (chIgnoreList != null) // this list was built in GetDigraphs()
 			{
@@ -657,7 +672,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					string sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs);
+					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache);
 				}
 			}
 			finally
@@ -676,22 +691,46 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
 		internal Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
-			out Set<string> chIgnoreSet)
+													out Set<string> chIgnoreSet)
+		{
+			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars,
+									 out chIgnoreSet);
+		}
+
+		/// <summary>
+		/// Get the set of significant digraphs (multigraphs) for the writing system. At the
+		/// moment, these are derived from ICU sorting rules associated with the writing system.
+		/// </summary>
+		/// <param name="sWs">Name of writing system</param>
+		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
+		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
+		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
+		/// <param name="cache"></param>
+		/// <param name="mapChars">Set of character equivalences</param>
+		/// <param name="chIgnoreSet">Set of characters to ignore</param>
+		/// <returns></returns>
+		internal static Set<string> GetDigraphs(string sWs,
+															 Dictionary<string, Set<string>> wsDigraphMap,
+															 Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+															 Dictionary<string, Set<string>> wsIgnorableCharMap,
+															 FdoCache cache,
+															 out Dictionary<string, string> mapChars,
+															 out Set<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
 			Set<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
-			if (m_mapWsDigraphs.TryGetValue(sWs, out digraphs))
+			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
-				mapChars    = m_mapWsMapChars[sWs];
-				chIgnoreSet = m_mapWsIgnorables[sWs];
+				mapChars = wsCharEquivalentMap[sWs];
+				chIgnoreSet = wsIgnorableCharMap[sWs];
 				return digraphs;
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
 			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
 			if (simpleCollation != null)
@@ -702,8 +741,8 @@ namespace SIL.FieldWorks.Common.Controls
 					string[] primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 					foreach (var part in primaryParts)
 					{
-						BuildDigraphSet(part, sWs, m_mapWsDigraphs);
-						MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+						BuildDigraphSet(part, sWs, wsDigraphMap);
+						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 					}
 				}
 			}
@@ -714,8 +753,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
 				{
 					// prime with empty ws in case all the rules affect only the ignore set
-					m_mapWsMapChars[sWs] = mapChars;
-					m_mapWsDigraphs[sWs] = digraphs;
+				wsCharEquivalentMap[sWs] = mapChars;
+				wsDigraphMap[sWs] = digraphs;
 					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
@@ -727,23 +766,7 @@ namespace SIL.FieldWorks.Common.Controls
 						// will be confused for digraphs with following characters.)))
 						if (rule.Contains("["))
 						{
-							const string endMarker = "ignorable] = ";
-							// parse out the ignorables and add them to the ignore list
-							int bracketEnd = rule.IndexOf(endMarker);
-							if (bracketEnd > -1)
-							{
-								bracketEnd += endMarker.Length; // skip over the search target
-								string[] chars = rule.Substring(bracketEnd).Split(new[] { " = " },
-																				   StringSplitOptions.RemoveEmptyEntries);
-								if (chars.Length > 0)
-								{
-									foreach (var ch in chars)
-									{
-										chIgnoreSet.Add(ch);
-									}
-								}
-							}
-							rule = rule.Substring(0, rule.IndexOf("["));
+							rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
 						}
 						if (String.IsNullOrEmpty(rule.Trim()))
 							continue;
@@ -756,8 +779,8 @@ namespace SIL.FieldWorks.Common.Controls
 						var primaryParts = rule.Split('<');
 						foreach (var part in primaryParts)
 						{
-							BuildDigraphSet(part, sWs, m_mapWsDigraphs);
-							MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+							BuildDigraphSet(part, sWs, wsDigraphMap);
+							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 						}
 					}
 				}
@@ -766,13 +789,51 @@ namespace SIL.FieldWorks.Common.Controls
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
 			Set<string> temp;
-			if (!m_mapWsDigraphs.TryGetValue(sWs, out temp))
-				m_mapWsDigraphs[sWs] = digraphs;
-			if (!m_mapWsMapChars.TryGetValue(sWs, out mapChars))
-				m_mapWsMapChars[sWs] = mapChars = new Dictionary<string, string>();
+			if (!wsDigraphMap.TryGetValue(sWs, out temp))
+				wsDigraphMap[sWs] = digraphs;
+			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
+				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 
-			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
+			wsIgnorableCharMap.Add(sWs, chIgnoreSet);
 			return digraphs;
+		}
+
+		private static string ProcessAdvancedSyntacticalElements(Set<string> chIgnoreSet, string rule)
+		{
+			const string ignorableEndMarker = "ignorable] = ";
+			const string beforeBegin = "[before ";
+			// parse out the ignorables and add them to the ignore list
+			int ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
+			if(ignorableBracketEnd > -1)
+			{
+				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
+				string[] chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " },
+																				  StringSplitOptions.RemoveEmptyEntries);
+				if(chars.Length > 0)
+				{
+					foreach(var ch in chars)
+						chIgnoreSet.Add(ch);
+				}
+				// the ignorable section could be at the end of other parts of a rule so strip it off the end
+				rule = rule.Substring(0, rule.IndexOf("["));
+			}
+			// check for before rules
+			var beforeBeginLoc = rule.IndexOf(beforeBegin);
+			if(beforeBeginLoc != -1)
+			{
+				const string primaryBeforeEnd = "1]";
+				// [before 1] is for handling of primary characters which this code is concerned with
+				// so we just strip it off and let the rest of the rule get processed.
+				var beforeEndLoc = rule.IndexOf(primaryBeforeEnd, beforeBeginLoc);
+				if(beforeEndLoc == -1)
+				{
+					// Either [before 2|3] which don't affect primary charactors or it's an invalid rule.
+					// In each case we should ignore this rule
+					return string.Empty;
+				}
+				rule = rule.Substring(0, beforeBeginLoc) + rule.Substring(beforeEndLoc + primaryBeforeEnd.Length);
+			}
+			return rule;
 		}
 
 		private static void MapRuleCharsToPrimary(string part, string ws, Dictionary<string, Dictionary<string, string>> wsToCharMap)

@@ -44,6 +44,7 @@ namespace XCore
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IXCoreUserControl itself.
 		private IContainer components;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.
 		private Size m_parentSizeHint;
 		private bool m_showingFirstPane;
@@ -222,17 +223,18 @@ namespace XCore
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			this.SuspendLayout();
+			SuspendLayout();
 			Panel1.SuspendLayout();
 			Panel2.SuspendLayout();
-			this.IsInitializing = true;
+			IsInitializing = true;
 
 			m_configurationParameters = configurationParameters;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			var toolNode = configurationParameters.SelectSingleNode("ancestor::tool");
 			toolName = toolNode == null ? "" : toolNode.Attributes["value"].Value;
 //			m_fDontCollapseFillPane = XmlUtils.GetOptionalBooleanAttributeValue(
@@ -254,10 +256,9 @@ namespace XCore
 			{
 				m_showingFirstPane = true; // default
 				// NOTE: we don't actually want to create and persist this property if it's not already loaded.
-				object propertyValue;
-				if (mediator.PropertyTable.PropertyExists(m_propertyControllingVisibilityOfFirstPane, out propertyValue, PropertyTable.SettingsGroup.LocalSettings))
+				if (m_propertyTable.PropertyExists(m_propertyControllingVisibilityOfFirstPane, PropertyTable.SettingsGroup.LocalSettings))
 				{
-					m_showingFirstPane = (bool)propertyValue;
+					m_showingFirstPane = m_propertyTable.GetValue<bool>(m_propertyControllingVisibilityOfFirstPane, PropertyTable.SettingsGroup.LocalSettings);
 				}
 			}
 
@@ -410,7 +411,7 @@ namespace XCore
 				XmlNode parameters = null;
 				if (configuration != null)
 					parameters = configuration.SelectSingleNode("parameters");
-				((IxCoreColleague)subControl).Init(m_mediator, parameters);
+				((IxCoreColleague)subControl).Init(m_mediator, m_propertyTable, parameters);
 
 				// in normal situations, colleagues add themselves to the mediator when
 				// initialized.  in this case, we don't want this colleague to add itself
@@ -436,9 +437,9 @@ namespace XCore
 			catch (Exception error)
 			{
 				string s = "Something went wrong trying to create a " + contentClass + ".";
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
 				ErrorReporter.ReportException(new ApplicationException(s, error),
-					window.ApplicationRegistryKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress);
+					window.ApplicationRegistryKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 			}
 		}
 
@@ -518,7 +519,7 @@ namespace XCore
 			{
 				return String.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
 					m_configurationParameters.Attributes["area"].Value,
-					m_mediator.PropertyTable.GetStringProperty("currentContentControl", ""),
+					m_propertyTable.GetStringProperty("currentContentControl", ""),
 					m_configurationParameters.Attributes["id"].Value);
 			}
 		}
@@ -535,7 +536,9 @@ namespace XCore
 
 			// Persist new position.
 			if (m_mediator != null && m_fOkToPersistSplit)
-				m_mediator.PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, false);
+			{
+				m_propertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, false);
+			}
 		}
 
 		private void SetSplitterDistance()
@@ -579,11 +582,13 @@ namespace XCore
 				// This behavior is disastrous here, where if we haven't truly persisted something,
 				// we want to stick to computing the percent whenever the parent resizes.
 				// So, first see whether there is a value in the property table at all.
-				if (m_mediator.PropertyTable.GetValue(SplitterDistancePropertyName) != null)
-					defaultLocation = m_mediator.PropertyTable.GetIntProperty(SplitterDistancePropertyName, defaultLocation);
+				if (m_propertyTable.PropertyExists(SplitterDistancePropertyName))
+				{
+					defaultLocation = m_propertyTable.GetIntProperty(SplitterDistancePropertyName, defaultLocation);
+				}
 			}
-			if (defaultLocation < CollapsingSplitContainer.kCollapsedSize)
-				defaultLocation = CollapsingSplitContainer.kCollapsedSize;
+			if (defaultLocation < kCollapsedSize)
+				defaultLocation = kCollapsedSize;
 
 			if (SplitterDistance != defaultLocation)
 			{
@@ -620,7 +625,7 @@ namespace XCore
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
-			if (m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) != toolName)
+			if (m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) != toolName)
 			{
 				return;
 			}
@@ -630,7 +635,7 @@ namespace XCore
 			}
 			if (name == m_propertyControllingVisibilityOfFirstPane)
 			{
-				bool fShowFirstPane = m_mediator.PropertyTable.GetBoolProperty(m_propertyControllingVisibilityOfFirstPane, true);
+				bool fShowFirstPane = m_propertyTable.GetBoolProperty(m_propertyControllingVisibilityOfFirstPane, true);
 				if (fShowFirstPane == m_showingFirstPane)
 					return; // just in case it didn't really change
 

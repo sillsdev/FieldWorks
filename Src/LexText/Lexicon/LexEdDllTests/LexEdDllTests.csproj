@@ -99,11 +99,20 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReversalEntryBulkEditTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Controls\XMLViews\XMLViews.csproj">
+      <Project>{BC490547-D278-4442-BD34-3580DBEFC405}</Project>
+      <Name>XMLViews</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
       <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
       <Name>FwCoreDlgs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\xWorks\xWorks.csproj">
+      <Project>{86B57733-A74B-43F1-863F-31A39E60F120}</Project>
+      <Name>xWorks</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

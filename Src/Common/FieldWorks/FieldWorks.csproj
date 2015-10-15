@@ -107,6 +107,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <Package>Geckofx-Core</Package>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <Package>Geckofx-WinForms</Package>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -142,6 +152,10 @@
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.Keyboarding, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -190,13 +204,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
-      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
-      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
-    </Reference>
-    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
+    <None Condition="'$(OS)'=='Windows_NT'" Include="..\..\..\Downloads\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -248,12 +256,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RemoteRequest.cs" />
-    <Compile Include="ShareProjectsFolderDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ShareProjectsFolderDlg.Designer.cs">
-      <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="WelcomeToFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,10 +300,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ShareProjectsFolderDlg.resx">
-      <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">

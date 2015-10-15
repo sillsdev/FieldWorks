@@ -106,13 +106,10 @@ namespace SIL.CoreImpl
 			get { return Language.Name; }
 		}
 
-		private IRenderEngine CreateRenderEngine(Func<IRenderEngine> createFunc)
+		private void SetupRenderEngine(IRenderEngine renderEngine)
 		{
-			IRenderEngine renderEngine = createFunc();
 			renderEngine.WritingSystemFactory = WritingSystemManager;
-			if (WritingSystemManager != null)
-				WritingSystemManager.RegisterRenderEngine(renderEngine);
-			return renderEngine;
+			WritingSystemManager.RegisterRenderEngine(renderEngine);
 		}
 
 		/// <summary>
@@ -130,7 +127,7 @@ namespace SIL.CoreImpl
 				LgCharRenderProps chrp = vg.FontCharProperties;
 				string fontName = MarshalEx.UShortToString(chrp.szFaceName);
 				Tuple<string, bool, bool> key = Tuple.Create(fontName, chrp.ttvBold == (int) FwTextToggleVal.kttvForceOn,
-					chrp.ttvItalic == (int) FwTextToggleVal.kttvForceOn);
+															 chrp.ttvItalic == (int) FwTextToggleVal.kttvForceOn);
 				IRenderEngine renderEngine;
 				if (m_renderEngines.TryGetValue(key, out renderEngine))
 					return renderEngine;
@@ -153,21 +150,19 @@ namespace SIL.CoreImpl
 				}
 
 				bool graphiteFont = false;
-				if (IsGraphiteEnabled && FontHasGraphiteTables(vg))
+				if (IsGraphiteEnabled)
 				{
-					renderEngine = CreateRenderEngine(GraphiteEngineClass.Create);
+					renderEngine = GraphiteEngineClass.Create();
 
 					string fontFeatures = null;
-					if (realFontName == DefaultFont.Name)
-						fontFeatures = DefaultFont.Features;
-					try
+					if (realFontName == DefaultFontName)
+						fontFeatures = DefaultFontFeatures;
+					renderEngine.InitRenderer(vg, fontFeatures);
+					// check if the font is a valid Graphite font
+					if (renderEngine.FontIsValid)
 					{
-						renderEngine.InitRenderer(vg, fontFeatures);
+						SetupRenderEngine(renderEngine);
 						graphiteFont = true;
-					}
-					catch
-					{
-						graphiteFont = false;
 					}
 				}
 
@@ -176,16 +171,22 @@ namespace SIL.CoreImpl
 					if (!MiscUtils.IsUnix)
 					{
 						if (m_uniscribeEngine == null)
-							m_uniscribeEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+						{
+							m_uniscribeEngine = UniscribeEngineClass.Create();
+							m_uniscribeEngine.InitRenderer(vg, null);
+							SetupRenderEngine(m_uniscribeEngine);
+						}
 						renderEngine = m_uniscribeEngine;
 					}
 					else
 					{
 						// default to the UniscribeEngine unless ROMAN environment variable is set.
 						if (Environment.GetEnvironmentVariable("ROMAN") == null)
-							renderEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+							renderEngine = UniscribeEngineClass.Create();
 						else
-							renderEngine = CreateRenderEngine(RomRenderEngineClass.Create);
+							renderEngine = RomRenderEngineClass.Create();
+						renderEngine.InitRenderer(vg, null);
+						SetupRenderEngine(renderEngine);
 					}
 				}
 
@@ -408,14 +409,6 @@ namespace SIL.CoreImpl
 		{
 			ClearRenderers();
 			base.UpdateLanguageTag();
-		}
-
-		private static bool FontHasGraphiteTables(IVwGraphics vg)
-		{
-			const int tagSilf = 0x53696c66;
-			int tblSize = 0;
-			vg.GetFontData(tagSilf, ref tblSize, null);
-			return tblSize > 0;
 		}
 
 		private bool TryGetRealFontName(string fontName, out string realFontName)

@@ -32,11 +32,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="flid"></param>
 		/// <param name="node"></param>
 		/// <param name="obj"></param>
-		/// <param name="stringTbl"></param>
 		/// <param name="persistenceProvider"></param>
 		/// <param name="ws"></param>
 		public BasicIPASymbolSlice(FdoCache cache, string editor, int flid,
-						System.Xml.XmlNode node, ICmObject obj, StringTable stringTbl,
+						System.Xml.XmlNode node, ICmObject obj,
 						IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, ws)
 		{

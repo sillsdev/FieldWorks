@@ -1,3 +1,7 @@
+// This distribution contains software written by
+// Malcolm Crowe at the University of Paisley.
+// See Copyright.txt for details.
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 

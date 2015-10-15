@@ -45,8 +45,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public NotebookExportDialog(Mediator mediator)
-			: base(mediator)
+		public NotebookExportDialog(Mediator mediator, PropertyTable propertyTable)
+			: base(mediator, propertyTable)
 		{
 			m_helpTopic = "khtpExportNotebook";
 		}

@@ -6,7 +6,6 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
 using System.Xml;
-using System.Collections;
 
 namespace XMLViewsTests
 {
@@ -135,6 +134,7 @@ namespace XMLViewsTests
 			string max = XmlViewsUtils.AlphaCompNumberString(Int32.MaxValue);
 			string min = XmlViewsUtils.AlphaCompNumberString(Int32.MinValue);
 			IcuComparer comp = new IcuComparer("en");
+			comp.OpenCollatingEngine();
 			Assert.IsTrue(comp.Compare(zero, one) < 0);
 			Assert.IsTrue(comp.Compare(one, two) < 0);
 			Assert.IsTrue(comp.Compare(two, ten) < 0);
@@ -152,6 +152,7 @@ namespace XMLViewsTests
 			Assert.IsTrue(comp.Compare(one, one) == 0);
 			Assert.IsTrue(comp.Compare(ten, ten) == 0);
 			Assert.IsTrue(comp.Compare(minus1, minus1) == 0);
+			comp.CloseCollatingEngine();
 		}
 
 		[Test]
@@ -162,8 +163,8 @@ namespace XMLViewsTests
 			var doc = new XmlDocument();
 			doc.LoadXml(@"<string class='LexEntry' field='CitationForm'/>");
 			var node = doc.DocumentElement;
-			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null, null,
-				(int) WritingSystemServices.kwsVern);
+			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null,
+				WritingSystemServices.kwsVern);
 			Assert.That(strings, Has.Length.EqualTo(1));
 			Assert.That(strings, Has.Member("kick"));
 		}

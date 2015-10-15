@@ -13,19 +13,19 @@ T: SIL.FieldWorks.Common.Controls.ManyOnePathSortItemReadWriter
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # added to control and disposed there
-M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,XCore.PropertyTable,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::HandleConfigIconClick(SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::InsertColumn(System.Xml.XmlNode,System.Int32)
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::MakeItems()
 M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)
-M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeListChoiceFilterItem(SIL.FieldWorks.Common.Controls.FilterSortItem,SIL.FieldWorks.Common.Widgets.FwComboBox,System.String,XCore.Mediator)
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeListChoiceFilterItem(SIL.FieldWorks.Common.Controls.FilterSortItem,SIL.FieldWorks.Common.Widgets.FwComboBox,System.String,XCore.Mediator,XCore.PropertyTable)
 M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeIntCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowFuncButtons()
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowAnyAllNoneButtons(SIL.FieldWorks.Common.Controls.ListMatchOptions,System.Boolean)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::InitHelpBrowser()
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontForDialog(System.Int32[],SIL.FieldWorks.Common.COMInterfaces.IVwStylesheet,SIL.FieldWorks.Common.COMInterfaces.ILgWritingSystemFactory)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ReplaceTreeView(System.String)
-M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFromWritingSystem(System.Int32,XCore.Mediator)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFromWritingSystem(System.Int32)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::AddChooserCommand(SIL.FieldWorks.Common.Controls.ChooserCommand)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::CheckIconClick(System.Object,SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::populateListChoiceTargetCombo()

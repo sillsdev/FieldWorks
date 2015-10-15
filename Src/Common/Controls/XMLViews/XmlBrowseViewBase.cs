@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -73,8 +72,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_hvoOldSel = 0;
 		/// <summary></summary>
-		protected StringTable m_stringTable;
-		/// <summary></summary>
 		protected bool m_wantScrollIntoView = true;
 		/// <summary></summary>
 		protected string m_id;
@@ -98,23 +95,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Data members
 
 		#region Properties
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-				m_stringTable = value;
-			}
-		}
 
 		class LineCollector : StringCollectorEnv
 		{
@@ -1022,7 +1002,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						IRecordListUpdater x = Mediator.PropertyTable.GetValue("ActiveClerk") as IRecordListUpdater;
+						IRecordListUpdater x = m_propertyTable.GetValue<IRecordListUpdater>("ActiveClerk");
 						if (x != null)
 						{
 							using (new WaitCursor(this))
@@ -1100,7 +1080,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_nodeSpec == null)
 				m_nodeSpec = nodeSpec;
 			m_bv = bv;
-			StringTbl = mediator.StringTbl;
 			m_mediator = mediator;
 			m_fdoCache = cache;
 			m_sda = m_bv.SpecialCache;
@@ -1179,7 +1158,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			m_xbvvc = null;
 			m_nodeSpec = null;
-			m_stringTable = null;
 			m_bv = null;
 		}
 
@@ -1196,12 +1174,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		internal string[] GetStringList(XmlNode spec)
 		{
-			if (StringTbl == null)
-				return null;
 			XmlNode stringList = XmlUtils.GetFirstNonCommentChild(spec);
 			if (stringList == null || stringList.Name != "stringList")
 				return null;
-			return StringTbl.GetStringsFromStringListNode(stringList);
+			return StringTable.Table.GetStringsFromStringListNode(stringList);
 		}
 
 		/// <summary>
@@ -2040,21 +2016,18 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			object tool = m_mediator.PropertyTable.GetValue("currentContentControlObject", null);
-			if (tool != null && tool is MultiPane)
+			var tool = m_propertyTable.GetValue<MultiPane>("currentContentControlObject", null);
+			if (tool != null)
 			{
 				// We want to print only if this tool is selected for printing, or if nothing has been selected.
 				// or if no default has been specified.
-				if ((tool as MultiPane).PrintPane == m_id ||
-					(tool as MultiPane).PrintPane == "")
+				if ((tool).PrintPane == m_id ||
+					(tool).PrintPane == "")
 				{
 					return base.OnPrint(args);
 				}
-				else
-				{
-					// allow the specified default RootSite to Print.
-					return false;
-				}
+				// allow the specified default RootSite to Print.
+				return false;
 			}
 			else
 			{
@@ -2119,15 +2092,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Allows xCore-specific initialization. We don't need any.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(XCore.Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			// Do this early...we need the ID to restore the columns when the VC is created.
 			m_id = XmlUtils.GetOptionalAttributeValue(configurationParameters, "id", "NeedsId");
 
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 			// The call to the superclass method ignores "configurationParameters",
 			// so set it here if it hasn't already been done.
 			if (m_nodeSpec == null)

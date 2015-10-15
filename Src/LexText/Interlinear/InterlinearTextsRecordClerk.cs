@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -163,13 +162,13 @@ namespace SIL.FieldWorks.IText
 			{
 				if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
 				{
-					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_mediator.HelpTopicProvider, this);
+					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this);
 				}
 				else
 				{
-					dlg = new FilterTextsDialog(Cache, interestingTexts, m_mediator.HelpTopicProvider);
+					dlg = new FilterTextsDialog(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				}
-				if (dlg.ShowDialog(((IApp)m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
@@ -186,7 +185,7 @@ namespace SIL.FieldWorks.IText
 
 		private InterestingTextList GetInterestingTextList()
 		{
-			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, Cache.ServiceLocator);
+			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
 		}
 
 		/// <summary>
@@ -205,7 +204,7 @@ namespace SIL.FieldWorks.IText
 				return true; // or should we just say, we don't know? But this command definitely should only be possible when this IS active.
 			}
 
-			RecordClerk clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+			RecordClerk clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (clrk != null && clrk.Id == "interlinearTexts")
 			{
 				display.Enabled = true;
@@ -266,7 +265,7 @@ namespace SIL.FieldWorks.IText
 			// Check to if a genre was assigned to this text
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
-			var genreList = m_mediator.PropertyTable.GetValue(property, null) as List<TreeNode>;
+			var genreList = m_propertyTable.GetValue<List<TreeNode>>(property, null);
 			var ownerText = newText.Owner as FDO.IText;
 			if (genreList != null && genreList.Count > 0 && ownerText != null)
 			{
@@ -274,7 +273,7 @@ namespace SIL.FieldWorks.IText
 				{
 					ownerText.GenresRC.Add((ICmPossibility)node.Tag);
 				}
-				m_mediator.PropertyTable.RemoveProperty(property);
+				m_propertyTable.RemoveProperty(property);
 			}
 
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
@@ -384,7 +383,7 @@ namespace SIL.FieldWorks.IText
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
-						dlg.Initialize(Cache, m_mediator.HelpTopicProvider, wsText);
+						dlg.Initialize(Cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
 						dlg.ShowDialog(Form.ActiveForm);
 						wsText = dlg.TextWs;
 					}
@@ -468,7 +467,7 @@ namespace SIL.FieldWorks.IText
 
 			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
 				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				(FwApp)m_mediator.PropertyTable.GetValue("App")))
+				m_propertyTable.GetValue<FwApp>("App")))
 			{
 				return scr.FindBook(bookNum);
 			}

@@ -380,4 +380,8 @@
     <value>User_Interface/Menus/File/Archive_with_RAMP.htm</value>
     <comment>help topic ID for Archive with Ramp dialog</comment>
   </data>
+  <data name="khtpPublishToWebonary" xml:space="preserve">
+    <value>User_Interface/Menus/File/Publish_to_Webonary.htm</value>
+    <comment>help topic for Publish to Webonary dialog</comment>
+  </data>
 </root>

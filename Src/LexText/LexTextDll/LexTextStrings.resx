@@ -236,14 +236,6 @@ Would you like to do this now?</value>
   <data name="ksDb4oProjectNotShareableTextLine2" xml:space="preserve">
     <value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
   </data>
-  <data name="ksNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The current project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
-{0} is a name that will work.
-You may choose a different project name in FieldWorks Project Properties.
-Click 'OK' to change the name of your project and continue with Send/Receive.
-Click 'Cancel' to cancel Send/Receive.</value>
-    <comment>Used when non-ASCII characters are found in the project name</comment>
-  </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
     <comment>used for dialog caption when project name has non-Ascii characters</comment>

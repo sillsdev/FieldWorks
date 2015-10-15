@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -47,8 +46,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, Form parent)
-			: base(treeCombo, cache, mediator, list, ws, useAbbr, parent)
+			int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
 		}
@@ -57,8 +56,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, Form parent)
-			: base(popupTree, cache, mediator, list, ws, useAbbr, parent)
+			int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
 		}
@@ -107,49 +106,45 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void LoadStrings()
 		{
-			// Load the special strings from the string table if possible.  If not, use the
-			// default (English) values.
-			if (m_mediator.StringTbl != null)
-			{
-				m_sUnknown = m_mediator.StringTbl.GetString("NullItemLabel",
-					"DetailControls/MSAReferenceComboBox");
-				m_sSpecifyGramFunc = m_mediator.StringTbl.GetString("AddNewGramFunc",
-					"DetailControls/MSAReferenceComboBox");
-				m_sModifyGramFunc = m_mediator.StringTbl.GetString("ModifyGramFunc",
-					"DetailControls/MSAReferenceComboBox");
-				m_sSpecifyDifferent = m_mediator.StringTbl.GetString("SpecifyDifferentGramFunc",
-					"DetailControls/MSAReferenceComboBox");
-				m_sCreateGramFunc = m_mediator.StringTbl.GetString("CreateGramFunc",
-					"DetailControls/MSAReferenceComboBox");
-				m_sEditGramFunc = m_mediator.StringTbl.GetString("EditGramFunc",
-					"DetailControls/MSAReferenceComboBox");
-			}
-			if (m_sUnknown == null || m_sUnknown.Length == 0 ||
+			// Load the special strings from the string table.
+			m_sUnknown = StringTable.Table.GetString("NullItemLabel",
+				"DetailControls/MSAReferenceComboBox");
+			m_sSpecifyGramFunc = StringTable.Table.GetString("AddNewGramFunc",
+				"DetailControls/MSAReferenceComboBox");
+			m_sModifyGramFunc = StringTable.Table.GetString("ModifyGramFunc",
+				"DetailControls/MSAReferenceComboBox");
+			m_sSpecifyDifferent = StringTable.Table.GetString("SpecifyDifferentGramFunc",
+				"DetailControls/MSAReferenceComboBox");
+			m_sCreateGramFunc = StringTable.Table.GetString("CreateGramFunc",
+				"DetailControls/MSAReferenceComboBox");
+			m_sEditGramFunc = StringTable.Table.GetString("EditGramFunc",
+				"DetailControls/MSAReferenceComboBox");
+			if (string.IsNullOrEmpty(m_sUnknown) ||
 				m_sUnknown == "*NullItemLabel*")
 			{
 				m_sUnknown = LexTextControls.ks_NotSure_;
 			}
-			if (m_sSpecifyGramFunc == null || m_sSpecifyGramFunc.Length == 0 ||
+			if (string.IsNullOrEmpty(m_sSpecifyGramFunc) ||
 				m_sSpecifyGramFunc == "*AddNewGramFunc*")
 			{
 				m_sSpecifyGramFunc = LexTextControls.ksSpecifyGrammaticalInfo_;
 			}
-			if (m_sModifyGramFunc == null || m_sModifyGramFunc.Length == 0 ||
+			if (string.IsNullOrEmpty(m_sModifyGramFunc) ||
 				m_sModifyGramFunc == "*ModifyGramFunc*")
 			{
 				m_sModifyGramFunc = LexTextControls.ksModifyThisGrammaticalInfo_;
 			}
-			if (m_sSpecifyDifferent == null || m_sSpecifyDifferent.Length == 0 ||
+			if (string.IsNullOrEmpty(m_sSpecifyDifferent) ||
 				m_sSpecifyDifferent == "*SpecifyDifferentGramFunc*")
 			{
 				m_sSpecifyDifferent = LexTextControls.ksSpecifyDifferentGrammaticalInfo_;
 			}
-			if (m_sCreateGramFunc == null || m_sCreateGramFunc.Length == 0 ||
+			if (string.IsNullOrEmpty(m_sCreateGramFunc) ||
 				m_sCreateGramFunc == "*CreateGramFuncGramFunc*")
 			{
 				m_sCreateGramFunc = LexTextControls.ksCreateNewGrammaticalInfo;
 			}
-			if (m_sEditGramFunc == null || m_sEditGramFunc.Length == 0 ||
+			if (string.IsNullOrEmpty(m_sEditGramFunc) ||
 				m_sEditGramFunc == "*EditGramFuncGramFunc*")
 			{
 				m_sEditGramFunc = LexTextControls.ksEditGrammaticalInfo;
@@ -360,7 +355,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// for the dialog we're about to show below.
 			pt.HideForm();
 
-			new MasterCategoryListChooserLauncher(ParentForm, m_mediator, List, FieldName, m_sense);
+			new MasterCategoryListChooserLauncher(ParentForm, m_mediator, m_propertyTable, List, FieldName, m_sense);
 		}
 
 		private bool AddNewMsa()
@@ -381,7 +376,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				SandboxGenericMSA dummyMsa = new SandboxGenericMSA();
 				dummyMsa.MsaType = m_sense.GetDesiredMsaType();
-				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_sense.Entry, dummyMsa, 0, false, null);
+				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa, 0, false, null);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
 					Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
@@ -412,7 +407,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			SandboxGenericMSA dummyMsa = SandboxGenericMSA.Create(m_sense.MorphoSyntaxAnalysisRA);
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
-				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_sense.Entry, dummyMsa,
+				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa,
 					m_sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
@@ -439,13 +434,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly ILexSense m_sense;
 		private readonly Form m_parentOfPopupMgr;
 		private readonly Mediator m_mediator;
+		private readonly PropertyTable m_propertyTable;
 		private readonly string m_field;
 
-		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator,
+		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator, PropertyTable propertyTable,
 			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
 		{
 			m_parentOfPopupMgr = popupMgrParent;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			CategoryList = possibilityList;
 			m_sense = sense;
 			FieldName = fieldName;
@@ -465,7 +462,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// now launch the dialog
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 			{
-				dlg.SetDlginfo(CategoryList, m_mediator, false, null);
+				dlg.SetDlginfo(CategoryList, m_mediator, m_propertyTable, false, null);
 				switch (dlg.ShowDialog(m_parentOfPopupMgr))
 				{
 					case DialogResult.OK:

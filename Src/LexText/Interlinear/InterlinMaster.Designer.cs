@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -45,9 +46,12 @@ namespace SIL.FieldWorks.IText
 				// remove it when the view changes.  This will have to be expanded
 				// when the dlg can search and operate on more than one view in Flex
 				// as it does in TE.
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				if (app != null)
-				   app.RemoveFindReplaceDialog();
+				if (m_propertyTable != null)
+				{
+					IApp app = m_propertyTable.GetValue<IApp>("App");
+					if (app != null)
+						app.RemoveFindReplaceDialog();
+				}
 			}
 
 			m_tcPane = null;

@@ -9,11 +9,10 @@
 // <remarks>
 // Implements the "referenceComboBox" XDE editor.
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-
+using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -64,23 +63,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Inits the specified mediator.
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">The configuration parameters.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(XCore.Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 
 			// Load the special strings from the string table if possible.  If not, use the
 			// default (English) values.
-			if (mediator != null && mediator.HasStringTable)
-			{
-				StringTbl = mediator.StringTbl;
-				if (StringTbl != null)
-				{
-					m_sNullItemLabel = StringTbl.GetString("NullItemLabel",
-						"DetailControls/ReferenceComboBox");
-				}
-			}
+			m_sNullItemLabel = StringTable.Table.GetString("NullItemLabel",
+				"DetailControls/ReferenceComboBox");
 
 			if (string.IsNullOrEmpty(m_sNullItemLabel) || m_sNullItemLabel == "*NullItemLabel*")
 				m_sNullItemLabel = DetailControlsStrings.ksNullLabel;
@@ -210,14 +203,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void RegisterWithContextHelper()
 		{
 			CheckDisposed();
-			if (this.Control != null)
+
+			if (Control != null)
 			{
-				Mediator mediator = this.Mediator;
-				StringTable tbl = null;
-				if (mediator.HasStringTable)
-					tbl = mediator.StringTbl;
-				string caption = XmlUtils.GetLocalizedAttributeValue(tbl, ConfigurationNode, "label", "");
-				mediator.SendMessage("RegisterHelpTargetWithId",
+				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+				Mediator.SendMessage("RegisterHelpTargetWithId",
 					new object[]{m_combo.Controls[0], caption, HelpId}, false);
 				//balloon was making it hard to actually click this
 				//Mediator.SendMessage("RegisterHelpTargetWithId",

@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -1131,14 +1130,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// addition to all the Insert X" items.
 				int hvo = m_realEnvs[hvoDummy].Hvo;
 				using (ReferenceCollectionUi ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
-					return ui.HandleRightClick(Mediator, this, true);
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
 			}
 			else
 			{
 				// We need a CmObjectUi in order to call HandleRightClick().  This won't
 				// display the "Show in Environments list" item in the popup menu.
 				using (CmObjectUi ui = new CmObjectUi(m_rootObj))
-					return ui.HandleRightClick(Mediator, this, true, "mnuEnvReferenceChoices");
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvReferenceChoices");
 			}
 		}
 		#endregion

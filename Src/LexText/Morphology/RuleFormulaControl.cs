@@ -252,11 +252,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, string displayNameProperty, string displayWs)
+			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
 			m_mainControl = m_view;
 
@@ -527,12 +527,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, m_mediator.HelpTopicProvider))
+				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID(Slice.HelpTopicID));
-				chooser.InitializeExtras(m_configurationNode, m_mediator);
+				chooser.InitializeExtras(m_configurationNode, m_mediator, m_propertyTable);
 
 				DialogResult res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)
@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected virtual void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
-			featChooser.SetDlgInfo(m_cache, m_mediator);
+			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable);
 		}
 
 		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
@@ -686,14 +686,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
 
-			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, m_mediator.HelpTopicProvider))
+			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				Guid guidTextParam = m_cache.LangProject.PhonologicalDataOA.Guid;
 				chooser.AddLink(linkText, ReallySimpleListChooser.LinkType.kGotoLink,
 					new FwLinkArgs(toolName, guidTextParam));
-				chooser.ReplaceTreeView(m_mediator, guiControl);
+				chooser.ReplaceTreeView(m_mediator, m_propertyTable, guiControl);
 				chooser.SetHelpTopic(FeatureChooserHelpTopic);
 
 				DialogResult res = chooser.ShowDialog();
@@ -973,17 +973,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					if (natClass.FeaturesOA != null)
 					{
 						var rule = m_obj as IPhSegRuleRHS;
-						featChooser.SetDlgInfo(m_cache, Mediator, rule.OwningRule, ctxt);
+						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, rule.OwningRule, ctxt);
 					}
 					else
-						featChooser.SetDlgInfo(m_cache, Mediator, natClass, PhNCFeaturesTags.kflidFeatures);
+						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, natClass, PhNCFeaturesTags.kflidFeatures);
 				}
 				else
 				{
 					if (natClass.FeaturesOA != null)
-						featChooser.SetDlgInfo(m_cache, Mediator, natClass.FeaturesOA);
+						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable, natClass.FeaturesOA);
 					else
-						featChooser.SetDlgInfo(m_cache, Mediator);
+						featChooser.SetDlgInfo(m_cache, Mediator, m_propertyTable);
 				}
 				// FWR-2405: Setting the Help topic requires that the Mediator be already set!
 				featChooser.SetHelpTopic("khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures");
@@ -1010,7 +1010,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// we only bother to display the context menu if an item is selected
 				using (var ui = new CmObjectUi(obj))
-					return ui.HandleRightClick(Mediator, this, true, ContextMenuID);
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, ContextMenuID);
 			}
 			return false;
 		}

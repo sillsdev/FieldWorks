@@ -4,7 +4,6 @@
 //
 // File: RespellerDlg.cs
 // Responsibility: FW Team
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,10 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
-using System.IO;
-
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText;
 using XCore;
@@ -35,6 +31,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public partial class RespellerDlg : Form
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private bool m_fDisposeMediator;
 		private FdoCache m_cache;
 		private XMLViewsDataCache m_specialSda;
@@ -90,131 +87,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Despite being public where the other SetDlgInfo is internal, this is a "special-case"
-		/// initialization method not used in Flex, but in TE, where there is not a pre-existing mediator
-		/// for each main window. This initializer obtains the configuration parameters and sets up a
-		/// suitable mediator. In doing so it duplicates knowledge from various places:
-		/// 1. Along with the code that initializes xWindow and various other places, it 'knows' where
-		/// to find the configuration node for the respeller dialog.
-		/// 2. It duplicates some of the logic in FwXWindow.InitMediatorValues and RestoreProperties,
-		/// knowing the LocalSettingsId and how to use it to restore mediator properties, and what items
-		/// must be in the mediator. Also logic in xWindow for restoring global settings.
-		/// 3. It knows how to initialize a number of virtual properties normally created as part of
-		/// FLEx's startup code.
-		/// 4. It knows how to set up the string table that Flex uses.
-		/// 5. It knows how to initialize the Flex part inventories.
-		/// </summary>
-		public bool SetDlgInfo(IWfiWordform wf, Form parent, IApp app)
-		{
-			if (wf == null)
-				throw new ArgumentNullException("wf");
-			if (parent == null)
-				throw new ArgumentNullException("parent");
-			if (app == null)
-				throw new ArgumentNullException("app");
-
-			using (var dlg = new ProgressDialogWorkingOn())
-			{
-				dlg.Owner = parent;
-				dlg.Text = MEStrings.ksFindingOccurrences;
-				dlg.WorkingOnText = MEStrings.ksSearchingOccurrences;
-				dlg.ProgressLabel = MEStrings.ksProgress;
-				dlg.Show(ActiveForm);
-				dlg.Update();
-				dlg.BringToFront();
-				//var progressState = new MilestoneProgressState(dlg.ProgressDisplayer);
-				try
-				{
-					m_cache = wf.Cache;
-					m_srcwfiWordform = wf;
-					// Get the parameter node.
-					var path = Path.Combine(FwDirectoryFinder.GetCodeSubDirectory(
-						Path.Combine(FwUtils.ksFlexAppName, Path.Combine("Configuration", "Words"))), "areaConfiguration.xml");
-					var doc = XWindow.LoadConfigurationWithIncludes(path, true);
-					var paramNode = doc.DocumentElement.SelectSingleNode("listeners/listener[@class=\"SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener\"]/parameters");
-					Debug.Assert(paramNode != null);
-					// Initialize a mediator.
-					var mediator = new Mediator();
-					m_fDisposeMediator = true;
-					// Copied from FwXWindow.InitMediatorValues
-					mediator.PropertyTable.LocalSettingsId = "local";
-					mediator.PropertyTable.SetProperty("cache", m_cache);
-					mediator.PropertyTable.SetPropertyPersistence("cache", false);
-
-					string userPath = DirectoryFinder.UserAppDataFolder(app.ApplicationName);
-					Directory.CreateDirectory(userPath);
-					mediator.PropertyTable.UserSettingDirectory = userPath;
-
-					//// Enhance JohnT: possibly these three lines (also copied) are not needed.
-					//mediator.PropertyTable.SetProperty("DocumentName", GetMainWindowCaption(cache));
-					//mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
-					mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
-					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.GlobalSettingsId);
-					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.LocalSettingsId);
-					//progressState.SetMilestone();
-					// Set this AFTER the restore! Otherwise it goes away!
-					mediator.PropertyTable.SetProperty("window", dlg.Owner);
-					mediator.PropertyTable.SetPropertyPersistence("window", false);
-
-					string directoryContainingConfiguration = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
-					StringTable table = new StringTable(directoryContainingConfiguration);
-					mediator.StringTbl = table;
-					mediator.FeedbackInfoProvider = (IFeedbackInfoProvider)app;
-					//progressState.SetMilestone();
-					//progressState.SetMilestone();
-
-					LayoutCache.InitializePartInventories(m_cache.ProjectId.Name, app, m_cache.ProjectId.ProjectFolder);
-					//progressState.SetMilestone();
-
-					// Get all the scripture texts.
-					// Review: should we include IText ones too?
-					// NB: The ownership check is designed to exclude archived drafts.
-					// The second half collects footnotes and the title of the book.
-					var stTextRepos = m_cache.ServiceLocator.GetInstance<IStTextRepository>();
-					var unarchivedScriptureTexts = m_cache.LangProject.TranslatedScriptureOA.StTexts.ToList();
-					//progressState.SetMilestone();
-
-					// Build concordance info, including the occurrence list for our wordform.
-					ProgressState state = new ProgressState(dlg.ProgressDisplayer);
-					// This is an ugly way of getting the state to the RespellingSda method
-					mediator.PropertyTable.SetProperty("SpellingPrepState", state);
-					mediator.PropertyTable.SetPropertyPersistence("SpellingPrepState", false);
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-						() =>
-							{
-								int done = 0;
-								int total = unarchivedScriptureTexts.Count;
-								foreach (var txt in unarchivedScriptureTexts)
-								{
-									done++;
-									foreach (IStTxtPara para in txt.ParagraphsOS)
-									{
-										if (para.ParseIsCurrent)
-											continue;
-										ParagraphParser.ParseParagraph(para, true);
-									}
-									state.PercentDone = 50*done/total;
-									state.Breath();
-								}
-							});
-					// Make sure we will include all of Scripture in the occurrences list.
-					InterestingTextList.SetScriptureTextsInPropertyTable(mediator.PropertyTable, unarchivedScriptureTexts);
-
-					return SetDlgInfoPrivate(mediator, paramNode);
-				}
-				finally
-				{
-					dlg.Close();
-				}
-			}
-		}
-
-		/// <summary>
 		/// This version is used inside FLEx when the friendly tool is not active. So, we need to
 		/// build the concordance, but on FLEx's list, and we can assume all the parts and layouts
 		/// are loaded.
 		/// </summary>
-		public bool SetDlgInfo(IWfiWordform wf, Mediator mediator, XmlNode configurationParams)
+		internal bool SetDlgInfo(IWfiWordform wf, Mediator mediator, PropertyTable propertyTable, XmlNode configurationParams)
 		{
 			using (var dlg = new ProgressDialogWorkingOn())
 			{
@@ -236,7 +113,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						m_mediator.Dispose();
 
 					m_fDisposeMediator = false;
-					return SetDlgInfoPrivate(mediator, configurationParams);
+					return SetDlgInfoPrivate(mediator, propertyTable, configurationParams);
 				}
 				finally
 				{
@@ -245,19 +122,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		/// <summary>
-		/// Save the settings currently set in the mediator. Note that this is needed only
-		/// when the dialog is initialized (typically from TE) using the FdoCache SetDlgInfo().
-		/// </summary>
-		public void SaveSettings()
+		internal bool SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			m_mediator.PropertyTable.SaveGlobalSettings();
-			m_mediator.PropertyTable.SaveLocalSettings();
-		}
-
-		internal bool SetDlgInfo(Mediator mediator, XmlNode configurationParameters)
-		{
-			m_wfClerk = (RecordClerk)mediator.PropertyTable.GetValue("RecordClerk-concordanceWords");
+			m_wfClerk = propertyTable.GetValue<RecordClerk>("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
@@ -273,28 +140,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_mediator.Dispose();
 
 			m_fDisposeMediator = false;
-			return SetDlgInfoPrivate(mediator, configurationParameters);
+			return SetDlgInfoPrivate(mediator, propertyTable, configurationParameters);
 		}
 
-		private bool SetDlgInfoPrivate(Mediator mediator, XmlNode configurationParameters)
+		private bool SetDlgInfoPrivate(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			using (new WaitCursor(this))
 			{
 				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 
 				m_btnRefresh.Image = ResourceHelper.RefreshIcon;
 
-				m_rbDiscardAnalyses.Checked = m_mediator.PropertyTable.GetBoolProperty("RemoveAnalyses", true);
+				m_rbDiscardAnalyses.Checked = m_propertyTable.GetBoolProperty("RemoveAnalyses", true);
 				m_rbKeepAnalyses.Checked = !m_rbDiscardAnalyses.Checked;
 				m_rbDiscardAnalyses.Click += m_rbDiscardAnalyses_Click;
 				m_rbKeepAnalyses.Click += m_rbDiscardAnalyses_Click;
 
-				m_cbUpdateLexicon.Checked = m_mediator.PropertyTable.GetBoolProperty("UpdateLexiconIfPossible", true);
-				m_cbCopyAnalyses.Checked = m_mediator.PropertyTable.GetBoolProperty("CopyAnalysesToNewSpelling", true);
+				m_cbUpdateLexicon.Checked = m_propertyTable.GetBoolProperty("UpdateLexiconIfPossible", true);
+				m_cbCopyAnalyses.Checked = m_propertyTable.GetBoolProperty("CopyAnalysesToNewSpelling", true);
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
-				m_cbMaintainCase.Checked = m_mediator.PropertyTable.GetBoolProperty("MaintainCaseOnChangeSpelling", true);
+				m_cbMaintainCase.Checked = m_propertyTable.GetBoolProperty("MaintainCaseOnChangeSpelling", true);
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
@@ -317,7 +185,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				m_cbNewSpelling.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 				m_cbNewSpelling.WritingSystemCode = m_vernWs;
-				m_cbNewSpelling.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				m_cbNewSpelling.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				Debug.Assert(m_cbNewSpelling.StyleSheet != null); // if it is we get a HUGE default font (and can't get the correct size)
 				if (m_cbNewSpelling.WritingSystemFactory.get_EngineOrNull(m_vernWs).RightToLeftScript)
 				{
@@ -335,9 +203,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// Setup source browse view.
 				var toolNode = configurationParameters.SelectSingleNode("controls/control[@id='srcSentences']/parameters");
-				m_srcClerk = RecordClerkFactory.CreateClerk(m_mediator, toolNode, true);
+				m_srcClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, toolNode, true);
 				m_srcClerk.OwningObject = m_srcwfiWordform;
-				m_sourceSentences.Init(m_mediator, toolNode);
+				m_sourceSentences.Init(m_mediator, m_propertyTable, toolNode);
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
 				m_specialSda = m_sourceSentences.BrowseViewer.SpecialCache;
 				m_moreMinSize = Size;
@@ -612,26 +480,26 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void m_cbUpdateLexicon_Click(object sender, EventArgs e)
 		{
-			m_mediator.PropertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, false);
-			m_mediator.PropertyTable.SetPropertyPersistence("UpdateLexiconIfPossible", true);
+			m_propertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, false);
+			m_propertyTable.SetPropertyPersistence("UpdateLexiconIfPossible", true);
 		}
 
 		void m_rbDiscardAnalyses_Click(object sender, EventArgs e)
 		{
-			m_mediator.PropertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, false);
-			m_mediator.PropertyTable.SetPropertyPersistence("RemoveAnalyses", true);
+			m_propertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, false);
+			m_propertyTable.SetPropertyPersistence("RemoveAnalyses", true);
 		}
 
 		void m_cbCopyAnalyses_Click(object sender, EventArgs e)
 		{
-			m_mediator.PropertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, false);
-			m_mediator.PropertyTable.SetPropertyPersistence("CopyAnalysesToNewSpelling", true);
+			m_propertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, false);
+			m_propertyTable.SetPropertyPersistence("CopyAnalysesToNewSpelling", true);
 		}
 
 		void m_cbMaintainCase_Click(object sender, EventArgs e)
 		{
-			m_mediator.PropertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, false);
-			m_mediator.PropertyTable.SetPropertyPersistence("MaintainCaseOnChangeSpelling", true);
+			m_propertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, false);
+			m_propertyTable.SetPropertyPersistence("MaintainCaseOnChangeSpelling", true);
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -656,7 +524,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
 		}
 
 		private void m_dstWordform_TextChanged(object sender, EventArgs e)
@@ -2217,7 +2085,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var cmObjRepos = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			ProgressState state = null;
 			if (Mediator != null)
-				state = Mediator.PropertyTable.GetValue("SpellingPrepState") as ProgressState;
+			{
+				state = PropTable.GetValue<ProgressState>("SpellingPrepState");
+			}
 			int done = 0;
 			int total = InterestingTexts.Count();
 			foreach (var text in InterestingTexts)

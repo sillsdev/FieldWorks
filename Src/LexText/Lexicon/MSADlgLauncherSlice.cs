@@ -73,16 +73,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
 			this.Size = new System.Drawing.Size(208, 32);
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
 				Object,
 				1, // Maybe need a real flid?
 				"InterlinearName",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"InterlinearName",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			MSADlglauncherView view = ctrl.MainControl as MSADlglauncherView;
-			view.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
+			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
 		/// <summary>

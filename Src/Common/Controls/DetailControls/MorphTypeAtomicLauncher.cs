@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -39,9 +39,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>The SimpleListChooser.</returns>
 		protected new MorphTypeChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			string sShowAllTypes = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
+			string sShowAllTypes = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
 			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
-				m_flid, sShowAllTypes, m_mediator.HelpTopicProvider);
+				m_flid, sShowAllTypes, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.Cache = m_cache;
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				bool fMadeMorphTypeChange = false;
 				var entry = (ILexEntry) m_obj.Owner;
-				chooser.InitializeExtras(m_configurationNode, Mediator);
+				chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
@@ -94,8 +94,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					var selected = (IMoMorphType) chooser.ChosenOne.Object;
 					var original = Target as IMoMorphType;
-					string sUndo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
-					string sRedo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
+					string sUndo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
+					string sRedo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
 
 					bool fRemoveComponents = false;
 					if (selected.Guid == MoMorphTypeTags.kguidMorphRoot
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 									// TODO-Linux: Help is not implemented in Mono
 									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_mediator.HelpTopicProvider.HelpFile,
+										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
 										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 									{
 										return;
@@ -270,26 +270,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				string sMsg;
 				if (fLoseInflCls && fLoseInfixLoc && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLocGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLocGramInfo", m_ksPath);
 				else if (fLoseRule && fLoseInflCls && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRuleInflClsGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRuleInflClsGramInfo", m_ksPath);
 				else if (fLoseInflCls && fLoseInfixLoc)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLoc", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLoc", m_ksPath);
 				else if (fLoseInflCls && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsGramInfo", m_ksPath);
 				else if (fLoseInfixLoc && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInfixLocGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInfixLocGramInfo", m_ksPath);
 				else if (fLoseRule && fLoseInflCls)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRuleInflCls", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRuleInflCls", m_ksPath);
 				else if (fLoseRule)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRule", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRule", m_ksPath);
 				else if (fLoseInflCls)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflCls", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflCls", m_ksPath);
 				else if (fLoseInfixLoc)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInfixLoc", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInfixLoc", m_ksPath);
 				else
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
+				string sCaption = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
 				DialogResult result = MessageBox.Show(sMsg, sCaption,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (result == DialogResult.No)
@@ -344,12 +344,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				string sMsg;
 				if (fLoseStemName && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseStemNameGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseStemNameGramInfo", m_ksPath);
 				else if (fLoseStemName)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseStemName", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseStemName", m_ksPath);
 				else
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
+				string sCaption = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
 				DialogResult result = MessageBox.Show(sMsg, sCaption,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (result == DialogResult.No)

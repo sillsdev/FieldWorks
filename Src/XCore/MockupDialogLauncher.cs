@@ -8,11 +8,8 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Diagnostics;
 using System.Xml;
-
 using SIL.Utils;
 
 namespace XCore
@@ -24,6 +21,7 @@ namespace XCore
 	public class MockupDialogLauncher : IxCoreColleague, IFWDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -136,12 +134,14 @@ namespace XCore
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 		}
 

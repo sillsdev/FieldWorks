@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -125,27 +126,32 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			SetDlgInfo(obj, cache, mediator, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
+			SetDlgInfo(obj, cache, mediator, propertyTable, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();
 
 			if (obj.Mediator == null)
+			{
 				obj.Mediator = mediator;
-			StringTable strings = mediator.StringTbl;
+			}
+			if (obj.PropTable == null)
+			{
+				obj.PropTable = propertyTable;
+			}
 			m_cache = cache;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
@@ -163,10 +169,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				this.helpProvider = new HelpProvider();
-				this.helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-				this.helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				helpProvider = new HelpProvider();
+				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			else
 			{
@@ -246,6 +252,91 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				CheckDisposed();
 				this.label2.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the top area of the body.
+		/// </summary>
+		public string TopBodyText
+		{
+			get
+			{
+				CheckDisposed();
+				return this.m_descriptionBox3.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.m_descriptionBox3.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the bottom area of the body.
+		/// </summary>
+		public string BottomBodyText
+		{
+			get
+			{
+				CheckDisposed();
+				return this.m_descriptionBox4.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.m_descriptionBox4.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Allow customizing the dialog window title.
+		/// </summary>
+		public string WindowTitle
+		{
+			get
+			{
+				CheckDisposed();
+				return this.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				this.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// The text shown on the delete/confirm button.
+		/// </summary>
+		public string DeleteButtonText
+		{
+			get
+			{
+				CheckDisposed();
+				return m_deleteButton.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				m_deleteButton.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// The text shown on the cancel/reject button.
+		/// </summary>
+		public string CancelButtonText
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cancelButton.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				m_cancelButton.Text = value;
 			}
 		}
 

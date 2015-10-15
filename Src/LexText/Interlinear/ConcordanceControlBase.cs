@@ -16,6 +16,7 @@ namespace SIL.FieldWorks.IText
 	public class ConcordanceControlBase : UserControl, IxCoreContentControl, IFWDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected XmlNode m_configurationParameters;
 		protected FdoCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
@@ -38,15 +39,16 @@ namespace SIL.FieldWorks.IText
 			return ContainsFocus ? this : null;
 		}
 
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_propertyTable = propertyTable;
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_configurationParameters = configurationParameters;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
 			string name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
-			m_clerk = (OccurrencesOfSelectedUnit) m_mediator.PropertyTable.GetValue(name) ?? (OccurrencesOfSelectedUnit) RecordClerkFactory.CreateClerk(m_mediator, m_configurationParameters, true);
+			m_clerk = m_propertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, true);
 			m_clerk.ConcordanceControl = this;
 		}
 

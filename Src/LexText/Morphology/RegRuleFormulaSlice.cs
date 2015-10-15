@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -50,16 +51,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				int min, max;
 				RegRuleFormulaControl.GetContextOccurrence(out min, out max);
-				using (var dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, false))
+				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, false))
 				{
-					if (dlg.ShowDialog((XCore.XWindow)Mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 						RegRuleFormulaControl.SetContextOccurrence(dlg.Minimum, dlg.Maximum);
 				}
 			}
 			return true;
 		}
 
-		public bool OnDisplayContextSetVariables(object commandObject, ref XCore.UIItemDisplayProperties display)
+		public bool OnDisplayContextSetVariables(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;

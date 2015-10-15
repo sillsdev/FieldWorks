@@ -4,5 +4,6 @@
 #
 # Source this file in a shell and then run make
 
-export PATH=/usr/lib/fieldworks/mono/bin:$PATH
-export LD_LIBRARY_PATH=/usr/lib/fieldworks/mono/lib:$LD_LIBRARY_PATH
+export PATH=/opt/mono-sil/bin:$PATH
+export LD_LIBRARY_PATH=/opt/mono-sil/lib:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=/opt/mono-sil/lib/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH

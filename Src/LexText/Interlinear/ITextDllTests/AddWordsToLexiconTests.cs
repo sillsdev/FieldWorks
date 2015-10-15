@@ -8,6 +8,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.CoreImpl;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -19,6 +20,8 @@ namespace SIL.FieldWorks.IText
 	{
 		private FDO.IText m_text1;
 		private SandboxForTests m_sandbox;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		/// <summary>
 		///
@@ -67,7 +70,20 @@ namespace SIL.FieldWorks.IText
 		{
 			// Dispose managed resources here.
 			if (m_sandbox != null)
+			{
 				m_sandbox.Dispose();
+				m_sandbox = null;
+			}
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
 			base.TestTearDown();
 		}
 
@@ -80,14 +96,16 @@ namespace SIL.FieldWorks.IText
 																				 Cache.DefaultAnalWs,
 																				 InterlinLineChoices.InterlinMode.
 																					 GlossAddWordsToLexicon);
-			m_sandbox = new SandboxForTests(Cache, lineChoices);
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_sandbox = new SandboxForTests(Cache, m_mediator, m_propertyTable, lineChoices);
 		}
 
 
 		internal class SandboxForTests : Sandbox
 		{
-			internal SandboxForTests(FdoCache cache, InterlinLineChoices lineChoices)
-				: base(cache, null, null, lineChoices)
+			internal SandboxForTests(FdoCache cache, Mediator mediator, PropertyTable propertyTable, InterlinLineChoices lineChoices)
+				: base(cache, mediator, propertyTable, null, lineChoices)
 			{
 			}
 
@@ -237,7 +255,7 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 				return InterlinComboHandler.MakeCombo(
-					m_mediator != null ? m_mediator.HelpTopicProvider : null, tagIcon,
+					m_propertyTable != null ? m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, tagIcon,
 					this, morphIndex) as InterlinComboHandler;
 			}
 

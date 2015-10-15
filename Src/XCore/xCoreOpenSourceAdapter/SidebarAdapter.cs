@@ -11,17 +11,11 @@
 //	Since posting this on an open source site, he has retracted it is now sells the package
 //	commercially as "SharpLib" (is that it? sharp something).
 // </remarks>
-
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-
-//for outlookbar
 using SidebarLibrary.WinControls;
-using SidebarLibrary.Menus;
-using SidebarLibrary.General;
-using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
 
 namespace XCore
@@ -35,6 +29,7 @@ namespace XCore
 		protected IImageCollection m_largeImages;
 		protected OutlookBar m_bar;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -134,9 +129,10 @@ namespace XCore
 			}
 		}
 
-		public System.Windows.Forms.Control Init(System.Windows.Forms.Form window, IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
+		public Control Init(Form window, IImageCollection smallImages, IImageCollection largeImages, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_smallImages= smallImages;
 			m_largeImages= largeImages;
 
@@ -146,8 +142,8 @@ namespace XCore
 			m_bar.Width = 140;
 
 			//m_bar.ItemDropped +=(new SidebarLibrary.WinControls.OutlookBarItemDroppedHandler(TabOpened));
-			m_bar.ItemClicked +=(new SidebarLibrary.WinControls.OutlookBarItemClickedHandler(OnItemClicked));
-			m_bar.PropertyChanged +=(new SidebarLibrary.WinControls.OutlookBarPropertyChangedHandler(PropertyChanged));
+			m_bar.ItemClicked +=(OnItemClicked);
+			m_bar.PropertyChanged +=(PropertyChanged);
 			return m_bar;
 		}
 
@@ -179,11 +175,15 @@ namespace XCore
 				band.SmallImageList =  m_smallImages.ImageList;
 				band.LargeImageList =  m_largeImages.ImageList;
 
-				object s = m_mediator.PropertyTable.GetValue("SidebarSize");
-				if (s ==null || (string)s=="small")
-					band.IconView= SidebarLibrary.WinControls.IconView.Small;
+				if (!m_propertyTable.PropertyExists("SidebarSize") ||
+					m_propertyTable.GetValue<string>("SidebarSize") == "small")
+				{
+					band.IconView = IconView.Small;
+				}
 				else
-					band.IconView= SidebarLibrary.WinControls.IconView.Large;
+				{
+					band.IconView= IconView.Large;
+				}
 
 				band.Background = SystemColors.AppWorkspace;
 				band.TextColor = Color.White;

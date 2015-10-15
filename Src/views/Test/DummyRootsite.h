@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,8 @@ File: DummyRootSite.h
 Responsibility:
 Last reviewed:
 
-	For now this is just enough of a root site to allow views code to GetGraphics.
-	Other methods trivially succeed (but don't return any useful information if
-	they are supposed to).
+	For now this is just enough of a root site to allow views code to GetGraphics and perform other functions necessary for unit tests.
+	Other methods trivially succeed, but don't return any useful information.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #ifndef DummyRootSite_H_INCLUDED
 #define DummyRootSite_H_INCLUDED
@@ -254,6 +253,14 @@ namespace TestViews
 		}
 		STDMETHOD(SelectionChanged)(IVwRootBox * prootb, IVwSelection * pvwselNew)
 		{
+			IVwSelection * pvwselFromRootb;
+			CheckHr(prootb->get_Selection(&pvwselFromRootb));
+			unitpp::assert_eq("pvwselNew == pvwselFromRootb", pvwselNew, pvwselFromRootb); // copied from SimpleRootSite.SelectionChanged
+			// These calls to TextSelInfo are needed for more-complete coverage in TestVwTextStore.testOnSelectionChange:
+			// They will cause a crash if the Selection is out of bounds.
+			ITsString * ptss; int ich; ComBool fAssocPrev; HVO hvoObj; PropTag tag; int ws; // dummy output vars
+			pvwselNew->TextSelInfo(true, &ptss, &ich, &fAssocPrev, &hvoObj, &tag, &ws);
+			pvwselNew->TextSelInfo(false, &ptss, &ich, &fAssocPrev, &hvoObj, &tag, &ws);
 			return S_OK;
 		}
 		STDMETHOD(OverlayChanged)(IVwRootBox * prootb, IVwOverlay * pvo)

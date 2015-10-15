@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -49,8 +47,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Instead of the parameter being a layout name, it is literal text which will be
 				// the whole contents of the slice, with standard properties.
 				string text = XmlUtils.GetManditoryAttributeValue(m_callerNode, "label");
-				if (m_stringTable != null)
-					text = m_stringTable.LocalizeAttributeValue(text);
+				text = StringTable.Table.LocalizeAttributeValue(text);
 				m_view = new LiteralLabelView(text, this);
 			}
 			else
@@ -59,7 +56,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					?? XmlUtils.GetManditoryAttributeValue(m_configurationNode, "layout");
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
-				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, m_stringTable, this);
+				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
 				m_view.Mediator = Mediator;
 			}
 
@@ -792,7 +789,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		SummarySlice m_slice;
 
-		public SummaryXmlView(int hvo, string label, StringTable stringTbl, SummarySlice slice) : base( hvo, label, stringTbl, false)
+		public SummaryXmlView(int hvo, string label, SummarySlice slice) : base( hvo, label, false)
 		{
 			m_slice = slice;
 		}

@@ -29,6 +29,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public class RespellingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const int kObjectListFlid = 89999956;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		public override void FixtureSetup()
 		{
@@ -39,18 +41,47 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 		}
 
+		#region Overrides of FdoTestBase
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Done before each test.
+		/// Overriders should call base method.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Done after each test.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void  TestTearDown()
+		public override void TestTearDown()
 		{
 			while (m_actionHandler.CanUndo())
 				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 			Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
+
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+
 			base.TestTearDown();
 		}
+
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -351,7 +382,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
@@ -435,7 +466,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);

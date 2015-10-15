@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			e.EventHandled = true;
 			e.Selection.Install();
-			var xwind = (XWindow) Mediator.PropertyTable.GetValue("window");
+			var xwind = m_propertyTable.GetValue<XWindow>("window");
 			xwind.ShowContextMenu(sMenu, new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
 		}
 
@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			ReloadWssToDisplayForPart();
 			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay,
-				m_mediator.HelpTopicProvider))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = String.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, Label);
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			display.List.Clear();
-			Mediator.PropertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), false);
+			m_propertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), false);
 			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			switch (name)
 			{
 				case "SelectedWritingSystemHvosForCurrentContextMenu":
-					string singlePropertySequenceValue = Mediator.PropertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
+					string singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
 					PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
 					break;
 				default:

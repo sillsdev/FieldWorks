@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2014 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -957,6 +957,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Convenience accessor for the owned sequence of Senses
+		/// </summary>
+		public IFdoOwningSequence<ILexSense> Senses { get { return SensesOS; } }
+
+		/// <summary>
 		/// Initialize the DateCreated and DateModified values in the constructor.
 		/// </summary>
 		partial void SetDefaultValuesInConstruction()
@@ -967,9 +972,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexEntry in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.
@@ -2508,7 +2512,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this entry.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -2627,7 +2631,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// The name of a lexical entry as used in cross-refs in the reversls view.  This includes
+		/// The name of a lexical entry as used in cross-refs in the reversals view.  This includes
 		/// CitationFormWithAffixType (in this implementation) with the homograph number
 		/// (if non-zero)appended as a subscript (or superscript, or prepended, or not at all...see HomographConfiguration)
 		/// </summary>
@@ -4458,9 +4462,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexSense in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.
@@ -5189,17 +5192,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
-					(int) FwTextPropVar.ktpvEnum,
-					(int) FwTextToggleVal.kttvForceOn);
-				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
-					(int) FwTextPropVar.ktpvEnum,
-					(int) FwTextToggleVal.kttvOff);
-				var wsAnal = Cache.DefaultAnalWs;
-				var msa = MorphoSyntaxAnalysisRA;
 				var tsf = Cache.TsStrFactory;
+				var wsAnal = Cache.DefaultAnalWs;
+
+				// Add sense number, if there is more than one sense
+				var owner = Owner;
+				var isSingleSense = ((owner is ILexEntry && ((ILexEntry)owner).SensesOS.Count == 1)
+									|| (owner is ILexSense && ((ILexSense)owner).SensesOS.Count == 1));
+				if (!isSingleSense)
+				{
+					tisb.AppendTsString(tsf.MakeString(SenseNumber, wsAnal));
+				}
+
+				// Add grammatical info
+				var msa = MorphoSyntaxAnalysisRA;
 				if (msa != null)
 				{
+					if (!string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
 						(int) FwTextPropVar.ktpvEnum,
 						(int) FwTextToggleVal.kttvForceOn);
@@ -5209,28 +5219,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						(int) FwTextToggleVal.kttvOff);
 				}
 
-				if (Gloss.AnalysisDefaultWritingSystem != null)
+				// Add gloss or definition
+				if (Gloss.AnalysisDefaultWritingSystem != null && Gloss.AnalysisDefaultWritingSystem.Length > 0)
 				{
-					if (Gloss.AnalysisDefaultWritingSystem.Length > 0)
-					{
-						tisb.AppendTsString(
-							tsf.MakeString((string.IsNullOrEmpty(tisb.Text) ? "" : " ") + Gloss.AnalysisDefaultWritingSystem.Text,
-								wsAnal));
-					}
+					if (!string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					tisb.AppendTsString(Gloss.AnalysisDefaultWritingSystem);
 				}
-				else if (Definition.AnalysisDefaultWritingSystem != null
-						&& Definition.AnalysisDefaultWritingSystem.Length > 0)
+				else if (Definition.AnalysisDefaultWritingSystem != null && Definition.AnalysisDefaultWritingSystem.Length > 0)
 				{
 					if (!string.IsNullOrEmpty(tisb.Text))
 						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Definition.AnalysisDefaultWritingSystem);
 				}
+
 				if (string.IsNullOrEmpty(tisb.Text))
 				{
 					// This is not just to prevent a blank item in a combo, but an actual crash (FWR-3224):
 					// If nothing has been put in the builder it currently has no WS, and that is not allowed.
-					return tsf.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs);
+					tisb.AppendTsString(tsf.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs));
 				}
+
 				return tisb.GetString();
 			}
 		}
@@ -5423,7 +5432,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this sense.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -5783,6 +5792,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return;
 
 			LexEntry.SafelyReplaceSequenceReferences(objOld, this, sequenceRefs);
+		}
+
+		public IMultiStringAccessor DefinitionOrGloss
+		{
+			get
+			{
+				if(Definition.StringCount != 0)
+				{
+					if(Definition.BestAnalysisAlternative.Text != Strings.ksStars)
+						return Definition;
+				}
+				return Gloss;
+			}
 		}
 	}
 
@@ -8056,6 +8078,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used for dictionary configuration.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexRefType")]
+		public ILexRefType OwnerType
+		{
+			// using 'as LexRefType' to enforce consistancy with MetaData from the VirtualProperty
+			// also there will always ever only be one.
+			get { return Owner as LexRefType; }
+		}
+
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "SenseOrEntry")]
+		public IEnumerable<ISenseOrEntry> ConfigTargets
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(TargetsRS.Count > 0)
+				{
+					wrappedTargets.AddRange(TargetsRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
+
 		/// <summary>
 		/// This supports a virtual property for displaying lexical references in a browse column.
 		/// See LT-4859 for justification.
@@ -8442,6 +8491,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ITsString HeadWord
 		{
 			get { return ((ILexEntry) Owner).HeadWord; }
+		}
+
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		public IEnumerable<ILexEntryType> EntryTypes {
+			get
+			{
+				var allEntryTypes = new List<ILexEntryType>();
+				allEntryTypes.AddRange(VariantEntryTypesRS);
+				allEntryTypes.AddRange(ComplexEntryTypesRS);
+				return allEntryTypes;
+			}
 		}
 
 		/// <summary>
@@ -8952,7 +9012,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a virtual property.  It returns the list of ids for all the example
+		/// This is a virtual property.  It returns the list all the example
 		/// sentences owned by top-level senses owned by the owner of this LexEntryRef.
 		/// Enhance JohnT: implement automatic update when senses or examples change.
 		/// </summary>
@@ -8963,6 +9023,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return from sense in ((ILexEntry) Owner).SensesOS from example in sense.ExamplesOS select example;
+			}
+		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> ConfigReferencedEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(ComponentLexemesRS.Count > 0)
+				{
+					wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
 			}
 		}
 	}
@@ -9275,6 +9352,99 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					return this.Form.BestVernacularAnalysisAlternative;
 				}
+			}
+		}
+	}
+
+	internal class SenseOrEntry : ISenseOrEntry
+	{
+		public SenseOrEntry(ICmObject target)
+		{
+			Item = target;
+		}
+		private ICmObject Item { get; set; }
+
+		public int EntryHvo
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				return entry != null ? entry.Hvo : ((ILexSense)Item).Entry.Hvo;
+			}
+		}
+
+		public ITsString HeadWord
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.HeadWord;
+				}
+				return ((LexSense)Item).OwnerOutlineName;
+			}
+		}
+
+		public IMultiAccessorBase HeadWordReversalName
+		{
+			get
+			{
+				var entry = Item as LexEntry;
+				if(entry != null)
+				{
+					return entry.HeadWordReversal;
+				}
+				var sense = Item as LexSense;
+				if(sense != null)
+				{
+					return sense.ReversalName;
+				}
+				return null;
+			}
+		}
+
+		public IMultiString SummaryDefinition
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
+				return null;
+			}
+		}
+
+		public IMultiUnicode Gloss
+		{
+			get
+			{
+				var sense = Item as ILexSense;
+				if(sense != null)
+				{
+					return sense.Gloss;
+				}
+				return null;
+			}
+		}
+
+		public IMultiAccessorBase DefinitionOrGloss
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
+				var sense = Item as ILexSense;
+				if(sense != null)
+				{
+					return sense.Gloss;
+				}
+				return null;
 			}
 		}
 	}

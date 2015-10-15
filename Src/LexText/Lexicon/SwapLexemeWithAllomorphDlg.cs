@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using XCore;
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private IMoForm m_allomorph;
 		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
-
+		private PropertyTable m_propertyTable;
 		private Label label2;
 		private PictureBox pictureBox1;
 		private Button btnOK;
@@ -95,20 +94,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="entry">LexEntry</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry entry)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry entry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(cache != null);
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_entry = entry;
 			m_tsf = m_cache.TsStrFactory;
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			//m_fwTextBoxBottomMsg.WritingSystemCode = 1; // What!? Why? No longer makes ANY sense!
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			// We want to do this BEFORE the text gets set, to avoid overriding its height properties.
 			// However, because of putting multiple lines in the box, we also need to do it AFTER we set the text
 			// (in SetBottomMessage) so it adjusts to the resulting even greater height.
@@ -124,11 +125,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			m_lvAlloOptions.Font = f;
 			// Get location to the stored values, if any.
-			object locWnd = m_mediator.PropertyTable.GetValue("swapDlgLocation");
+			//object locWnd = m_mediator.PropertyTable.GetValue("swapDlgLocation");
 			// And when I do this, it works the first time, but later times the window is
 			// too small and doesn't show all the controls. Give up on smart location for now.
 			//object szWnd = this.Size;
-			object szWnd = null; // suppresses the smart location stuff.
+			//object szWnd = null; // suppresses the smart location stuff.
 			//if (locWnd != null && szWnd != null)
 			//{
 			//    Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
@@ -143,11 +144,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Determine the help file to use, if any
 			m_helpTopic = "khtpSwapLexemeWithAllomorph";
 
-			if(m_mediator.HelpTopicProvider != null)
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null)
 			{
 				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopic));
+				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
@@ -306,7 +308,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 		#endregion
 
-		private void m_lvAlloOptions_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_lvAlloOptions_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SetSelectedObject();
 		}
@@ -324,23 +326,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			btnOK.Enabled = true;
 		}
 
-		private void m_lvAlloOptions_DoubleClick(object sender, System.EventArgs e)
+		private void m_lvAlloOptions_DoubleClick(object sender, EventArgs e)
 		{
 			SetSelectedObject();
 			btnOK.PerformClick();
 		}
 
-		private void SwapLexemeWithAllomorphDlg_Closed(object sender, System.EventArgs e)
+		private void SwapLexemeWithAllomorphDlg_Closed(object sender, EventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("swapDlgLocation", Location);
+				m_propertyTable.SetProperty("swapDlgLocation", Location, true);
 			}
 		}
 
-		private void buttonHelp_Click(object sender, System.EventArgs e)
+		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 	}
 }

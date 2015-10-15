@@ -1,7 +1,6 @@
 // Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -69,6 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public event TreeNodeEventHandler ShowContextMenu;
 
+		protected PropertyTable m_propertyTable;
 		// These two variables allow us to save the parameters passed in IxCoreColleage.Init
 		// so we can pass them on when our control is set.
 		protected Mediator m_mediator;
@@ -92,7 +91,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// what things can be inserted here.
 		protected object[] m_key; // Key indicates path of nodes and objects used to construct this.
 		protected FdoCache m_cache;
-		protected StringTable m_stringTable;
 		// Indicates the 'weight' of object that starts at the top of this slice.
 		// By default a slice is just considered to be a field (of the same object as the one before).
 		protected ObjectWeight m_weight = ObjectWeight.field;
@@ -171,7 +169,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var rs = Control as SimpleRootSite;
 				if (rs != null)
 				{
-					rs.Init(Mediator, m_configurationNode); // Init it as xCoreColleague.
+					rs.Init(Mediator, m_propertyTable, m_configurationNode); // Init it as xCoreColleague.
 				}
 				else if (Control != null)
 				{
@@ -180,10 +178,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						rs = Control.Controls[i] as SimpleRootSite;
 						if (rs != null)
-							rs.Init(Mediator, m_configurationNode);
+							rs.Init(Mediator, m_propertyTable, m_configurationNode);
 					}
 				}
 			}
+		}
+
+		public PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
+			set { m_propertyTable = value; }
 		}
 
 		/// <summary></summary>
@@ -332,7 +336,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					SplitCont.Panel2.Controls.Add(value);
 					// mediator was set first; pass it to colleague.
 					if (m_mediator != null && value is IxCoreColleague)
-						(value as IxCoreColleague).Init(m_mediator, m_configurationParameters);
+						(value as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
 				}
 			}
 		}
@@ -454,25 +458,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_stringTable = value;
-			}
-		}
-
 		#endregion Properties
 
 		#region Construction and initialization
@@ -547,11 +532,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//It's OK to send null as an id
 				if (m_mediator != null) // helpful for robustness and testing.
 				{
-					StringTable tbl = null;
-					if (m_mediator.HasStringTable)
-						tbl = m_mediator.StringTbl;
-					string caption = XmlUtils.GetLocalizedAttributeValue(tbl,
-						ConfigurationNode, "label", "");
+					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 					m_mediator.SendMessage("RegisterHelpTargetWithId",
 						new object[] { Control, caption, HelpId }, false);
 				}
@@ -1065,7 +1046,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_fontLabel = null;
 			m_smallImages = null; // Owned by the property table or XWindow, so just make it null;
-			m_stringTable = null;
 			m_cache = null;
 			m_key = null;
 			m_obj = null;
@@ -1155,7 +1135,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (fUsePersistentExpansion && m_mediator != null) // mediator null only in testing?
 				{
 					Expansion = DataTree.TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.
-					fExpand = m_mediator.PropertyTable.GetBoolProperty(ExpansionStateKey, fExpand);
+					fExpand = m_propertyTable.GetBoolProperty(ExpansionStateKey, fExpand);
 				}
 				if (fExpand)
 				{
@@ -1302,10 +1282,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				StringTable tbl = null;
-				if (m_mediator != null && m_mediator.HasStringTable)
-					tbl = m_mediator.StringTbl;
-				return XmlUtils.GetLocalizedAttributeValue(tbl, m_configurationNode, "tooltip", Label);
+				return XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "tooltip", Label);
 			}
 		}
 
@@ -1374,9 +1351,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			int parentHvo = System.Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
+			String areaName = m_propertyTable.GetStringProperty("areaChoice", null);
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
 				// Ceoss Reference (entry level) or lexical relation (sense level) subitems
@@ -1431,7 +1408,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
 		{
 			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 
 			String generatedHelpTopicID;
 
@@ -1495,8 +1472,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (m_mediator == null)
 				return false;
-			return (m_mediator.HelpTopicProvider != null && !String.IsNullOrEmpty(helpStr))
-				&& (m_mediator.HelpTopicProvider.GetHelpString(helpStr) != null);
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			return (helpTopicProvider != null && !String.IsNullOrEmpty(helpStr))
+				&& (helpTopicProvider.GetHelpString(helpStr) != null);
 		}
 
 		/// <summary></summary>
@@ -1609,7 +1587,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
 
 				Expansion = DataTree.TreeItemState.ktisExpanded;
-				m_mediator.PropertyTable.SetProperty(ExpansionStateKey, true);
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty(ExpansionStateKey, true, true);
+				}
 			}
 			finally
 			{
@@ -1664,7 +1645,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					count--;
 				}
 				Expansion = DataTree.TreeItemState.ktisCollapsed;
-				m_mediator.PropertyTable.SetProperty(ExpansionStateKey, false);
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty(ExpansionStateKey, false, true);
+				}
 			}
 			finally
 			{
@@ -2005,7 +1989,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int insertionPosition;		// causes return false if not changed.
 				if (m_cache.IsReferenceProperty(flid))
 				{
-					insertionPosition = InsertObjectIntoVirtualBackref(Cache, m_mediator, slice.Object.Hvo,
+					insertionPosition = InsertObjectIntoVirtualBackref(Cache, m_mediator, m_propertyTable, slice.Object.Hvo,
 						newObjectClassId, flid);
 				}
 				else
@@ -2029,7 +2013,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator,
+		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -2046,7 +2030,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							var entOld = (ILexEntry) sliceObj;
 							dlg.SetHelpTopic("khtpInsertVariantDlg");
-							dlg.SetDlgInfo(cache, mediator, entOld);
+							dlg.SetDlgInfo(cache, mediator, propertyTable, entOld);
 							if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
 							{
 								return entOld.VariantFormEntryBackRefs.Count();
@@ -2161,7 +2145,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						insertionPosition = -2;
 						break;
 				}
-				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(m_mediator, newObjectClassId, hvoOwner, flid, insertionPosition))
+				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(m_mediator, m_propertyTable, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
 					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
@@ -2728,15 +2712,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region IxCoreColleague implementation
 
 		/// <summary></summary>
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 			m_configurationParameters = configurationParameters;
 			if (Control != null && Control is IxCoreColleague)
 			{
-				(Control as IxCoreColleague).Init(mediator, configurationParameters);
+				(Control as IxCoreColleague).Init(mediator, propertyTable, configurationParameters);
 				////				Control.AccessibilityObject.Name = this.Label;
 			}
 		}

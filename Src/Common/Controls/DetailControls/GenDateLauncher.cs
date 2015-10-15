@@ -9,6 +9,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override void HandleChooser()
 		{
-			using (var dlg = new GenDateChooserDlg(m_mediator.HelpTopicProvider))
+			using (var dlg = new GenDateChooserDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = string.Format(DetailControlsStrings.ksFieldChooserDlgTitle, m_fieldName);
 				GenDate x = (m_cache.DomainDataByFlid as ISilDataAccessManaged).get_GenDateProp(m_obj.Hvo, m_flid);
@@ -43,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					x = new GenDate(GenDate.PrecisionType.Exact, now.Month, now.Day, now.Year, true);
 				}
 				dlg.GenericDate = x;
-				if (dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window) == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<IWin32Window>("window")) == DialogResult.OK)
 				{
 					var genDate = dlg.GenericDate;
 					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),

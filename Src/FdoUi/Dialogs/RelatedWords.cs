@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// ------------------------------------------------------------------------------------
 		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet, Mediator mediator)
 		{
-			XmlView xv = new XmlView(hvoEntry, "publishStem", null, false);
+			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
 			xv.Cache = cache;
 			xv.StyleSheet = styleSheet;
 			xv.Mediator = mediator;

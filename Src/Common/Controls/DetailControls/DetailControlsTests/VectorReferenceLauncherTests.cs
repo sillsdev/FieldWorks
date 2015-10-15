@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -497,7 +497,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		#region overrides
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			return new MockVectorReferenceView();
 		}
@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
 			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, null, "", analysisWs);
+			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
 		}
 	}
 

@@ -9,18 +9,20 @@
 						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 						<parameters id="reversalIndexEntryList" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
-								<parameters area="lexicon" clerk="AllReversalEntries" id="reversalIndexEntryList" altTitleId="ReversalIndexEntry-DocList" ShowOwnerShortname="true" treeBarAvailability="NotAllowed" persistContext="Reversal" backColor="White" layout="publishReversal" editable="false" configureObjectName="Reversal Index" layoutProperty="ReversalIndexPublicationLayout" viewTypeLabelKey="ksReversalIndexView">
-									<configureLayouts>
-										<layoutType label="All Reversal Indexes" layout="publishReversal">
-											<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry"/>
-										</layoutType>
-										<layoutType label="$wsName" layout="publishReversal-$ws">
-											<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry-$ws"/>
-										</layoutType>
-									</configureLayouts>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlDocView"/>
+								<parameters area="lexicon" clerk="AllReversalEntries" altTitleId="ReversalEntry-Plural-TODO-Remove" persistContext="Reversal" backColor="White" layout="" layoutProperty="ReversalIndexPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="ReversalIndex">
+									<!--decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ReversalEntryPublicationDecorator"/-->
 								</parameters>
 							</control>
+							<!-- The following configureLayouts node is required only to help migrate old configurations to the new format -->
+							<configureLayouts>
+								<layoutType label="All Reversal Indexes" layout="publishReversal">
+									<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry"/>
+								</layoutType>
+								<layoutType label="$wsName" layout="publishReversal-$ws">
+									<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry-$ws"/>
+								</layoutType>
+							</configureLayouts>
 						</parameters>
 					</control>
 					<control>

@@ -139,8 +139,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="hvoDomain">database id of the semantic domain</param>
 		/// <param name="columns"></param>
 		/// <param name="rgtss"></param>
-		/// <param name="stringTbl"></param>
-		public int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, StringTable stringTbl)
+		public int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss)
 		{
 			Debug.Assert(hvoDomain != 0);
 			Debug.Assert(rgtss.Length == columns.Count);

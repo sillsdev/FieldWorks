@@ -168,4 +168,10 @@
   <data name="ksRestoreLinkedFilesInProjectFolderText" xml:space="preserve">
     <value>The Linked Files folder was not previously stored in the project folder. Would you like ParaTExt to restore the linked files within the project folder?</value>
   </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ksProjectOpen" xml:space="preserve">
+    <value>The selected project is currently open in FieldWorks Language Explorer. The project must be closed in order to associate it with a ParaTExt project.</value>
+  </data>
 </root>

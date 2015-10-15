@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -23,6 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnOk;
@@ -75,10 +75,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize the dialog before showing it.
 		/// </summary>
 		/// <param name="cache"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="entry"></param>
+		/// <param name="useForEdit"></param>
 		/// <param name="titleForEdit">Edit title appropriate to the button's context.</param>
+		/// <param name="persistProvider"></param>
+		/// <param name="sandboxMsa"></param>
+		/// <param name="hvoOriginalMsa"></param>
 		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
-			Mediator mediator, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+			Mediator mediator, PropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			CheckDisposed();
@@ -88,6 +94,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
 			if (useForEdit)
 			{
@@ -96,8 +103,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				s_helpTopic = "khtpEditGrammaticalFunction";
 				btnOk.Text = LexText.Controls.LexTextControls.ks_OK;
 			}
-			helpProvider.HelpNamespace = mediator.HelpTopicProvider.HelpFile;
-			helpProvider.SetHelpKeyword(this, mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// Set font, writing system factory, and code for the edit box.
@@ -106,7 +114,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;
-			m_fwtbCitationForm.AdjustForStyleSheet(this, null, mediator);
+			m_fwtbCitationForm.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbCitationForm.AdjustStringHeight = false;
 			m_fwtbCitationForm.Tss = entry.HeadWord;
 			m_fwtbCitationForm.HasBorder = false;
@@ -114,7 +122,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbSenses.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbSenses.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbSenses.WritingSystemCode = defVernWs.Handle;
-			m_fwtbSenses.AdjustForStyleSheet(this, null, mediator);
+			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
 
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
@@ -138,7 +146,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbSenses.Tss = tisb.GetString();
 			m_fwtbSenses.HasBorder = false;
 
-			m_msaGroupBox.Initialize(m_cache, m_mediator, this, sandboxMsa);
+			m_msaGroupBox.Initialize(m_cache, m_mediator, m_propertyTable, this, sandboxMsa);
 			int oldHeight = m_msaGroupBox.Height;
 			int newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
 			int delta = newHeight - oldHeight;
@@ -149,25 +157,21 @@ namespace SIL.FieldWorks.LexText.Controls
 				FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_msaGroupBox);
 			}
 
-			if (mediator != null)
+			// Reset window location.
+			// Get location to the stored values, if any.
+			if (m_propertyTable.PropertyExists("msaCreatorDlgLocation"))
 			{
-				// Reset window location.
-				// Get location to the stored values, if any.
-				object locWnd = m_mediator.PropertyTable.GetValue("msaCreatorDlgLocation");
+				var locWnd = m_propertyTable.GetValue<Point>("msaCreatorDlgLocation");
 				// JohnT: this dialog can't be resized. So it doesn't make sense to
 				// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 				// to prevent the dialog growing every time at 120 dpi. But such an override
 				// makes it too small to show all the controls at the default size.
 				// It's better just to use the default size until it's resizeable for some reason.
 				//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
-				object szWnd = this.Size;
-				if (locWnd != null && szWnd != null)
-				{
-					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
+				Rectangle rect = new Rectangle(locWnd, Size);
+				ScreenUtils.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
 			}
 		}
 
@@ -312,16 +316,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MsaCreatorDlg_Closed(object sender, System.EventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("msaCreatorDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
+				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true);
+				//No need, since the dlg isnt; resizable. m_mediator.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
 			}
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
 		#endregion Event handlers

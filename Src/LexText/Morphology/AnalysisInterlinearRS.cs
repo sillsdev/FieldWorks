@@ -54,9 +54,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="cache"></param>
 		/// <param name="analysis"></param>
 		/// <param name="configurationNode"></param>
-		/// <param name="stringTable"></param>
 		public AnalysisInterlinearRs(FdoCache cache, IWfiAnalysis analysis,
-			XmlNode configurationNode, StringTable stringTable) : base(cache)
+			XmlNode configurationNode) : base(cache)
 		{
 			if (analysis == null)
 				throw new ArgumentNullException("analysis");
@@ -167,6 +166,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_oneAnalSandbox = new OneAnalysisSandbox(m_fdoCache,
 													  Mediator,
+													  m_propertyTable,
 													  StyleSheet,
 													  m_vc.LineChoices,
 													  m_wfiAnalysis.Hvo)

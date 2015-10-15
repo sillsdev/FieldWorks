@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -23,7 +23,10 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Gecko;
 using Microsoft.Win32;
+using SIL.IO;
+using SIL.Windows.Forms.HtmlBrowser;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -42,6 +45,7 @@ using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.Reporting;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.Windows.Forms.Keyboarding;
@@ -50,8 +54,8 @@ using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
+using FileUtils = SIL.Utils.FileUtils;
 #if __MonoCS__
-using Gecko;
 using SIL.Keyboarding;
 #else
 using NetSparkle;
@@ -131,6 +135,10 @@ namespace SIL.FieldWorks
 		public extern static IntPtr LoadLibrary(string fileName);
 #endif
 
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool SetDllDirectory(string lpPathName);
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -152,17 +160,31 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-#if __MonoCS__
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
-				if (String.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-				if (!librarySearchPath.Contains(xulRunnerLocation))
-					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser)
+				string xulRunnerLocation;
+				if (MiscUtils.IsUnix)
+				{
+					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
+					if (String.IsNullOrEmpty(xulRunnerLocation))
+						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+					string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
+					if (!librarySearchPath.Contains(xulRunnerLocation))
+						throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+				}
+				else
+				{
+					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "xulrunner");
+					if (!Directory.Exists(xulRunnerLocation))
+						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
+					if (!SetDllDirectory(xulRunnerLocation))
+						throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
+				}
+
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-#endif
+				//Set default browser for XWebBrowser to use GeckoFX.
+				//This can still be changed per instance by passing a parameter to the constructor.
+				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
@@ -357,7 +379,6 @@ namespace SIL.FieldWorks
 			finally
 			{
 				StaticDispose();
-#if __MonoCS__
 				if (Xpcom.IsInitialized)
 				{
 					// The following line appears to be necessary to keep Xpcom.Shutdown()
@@ -369,7 +390,6 @@ namespace SIL.FieldWorks
 					var foo = new GeckoWebBrowser();
 					Xpcom.Shutdown();
 				}
-#endif
 			}
 			return 0;
 		}
@@ -824,6 +844,14 @@ namespace SIL.FieldWorks
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
 		private static void EnsureValidLinkedFilesFolder(FdoCache cache)
 		{
+			// If the location of the LinkedFilesRootDir was changed when this project was restored just now;
+			// overwrite the location that was restored from the fwdata file.
+			if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
+			{
+				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor,
+					() => cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+			}
+
 			if (MiscUtils.RunningTests)
 				return;
 
@@ -833,18 +861,18 @@ namespace SIL.FieldWorks
 
 			if (!Directory.Exists(linkedFilesFolder))
 			{
-				if (!Directory.Exists(defaultFolder))
-					defaultFolder = cache.ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-				while (!Directory.Exists(linkedFilesFolder))
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					else
 					{
-						folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
 					}
 				}
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
@@ -853,8 +881,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Just make the directory if it's the default.
-		/// See FWNX-1092, LT-14491.
+		/// Create the specified Linked Files directory only if it's the default Linked Files directory. See FWNX-1092, LT-14491.
 		/// </summary>
 		internal static void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
 		{
@@ -1653,9 +1680,12 @@ namespace SIL.FieldWorks
 								var activeWindow = startingApp.ActiveMainWindow;
 								if (activeWindow != null)
 								{
-									((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+									var activeWindowInterface = (IFwMainWnd)activeWindow;
+									var activeWindowMediator = activeWindowInterface.Mediator;
+									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings);
+										PropertyTable.SettingsGroup.LocalSettings,
+										true);
 								}
 							}
 							break;
@@ -1729,9 +1759,12 @@ namespace SIL.FieldWorks
 					var activeWindow = app.ActiveMainWindow;
 					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 					{
-						((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+						var activeWindowInterface = (IFwMainWnd)activeWindow;
+						var activeWindowMediator = activeWindowInterface.Mediator;
+						activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-							PropertyTable.SettingsGroup.LocalSettings);
+							PropertyTable.SettingsGroup.LocalSettings,
+							true);
 					}
 				}
 
@@ -1897,18 +1930,18 @@ namespace SIL.FieldWorks
 		}
 		#endregion
 
-		#region Project sharing and location methods
+		#region Project location methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Displays the Project Location Sharing dialog box
+		/// Displays the Project Location dialog box
 		/// </summary>
 		/// <param name="dialogOwner">The form that should be used as the dialog owner.</param>
 		/// <param name="fwApp">The FieldWorks application from with this command was initiated.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		internal static void FileProjectSharingLocation(Form dialogOwner, FwApp fwApp)
+		internal static void FileProjectLocation(Form dialogOwner, FwApp fwApp)
 		{
-			using (ProjectLocationSharingDlg dlg = new ProjectLocationSharingDlg(fwApp, fwApp.Cache))
+			using (ProjectLocationDlg dlg = new ProjectLocationDlg(fwApp, fwApp.Cache))
 			{
 			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				return;
@@ -2726,6 +2759,11 @@ namespace SIL.FieldWorks
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
+				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
+				{
+					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.PropTable, s_activeMainWnd.Mediator);
+					configMigrator.MigrateOldConfigurationsIfNeeded();
+				}
 			}
 			catch (StartupException ex)
 			{
@@ -3575,14 +3613,6 @@ namespace SIL.FieldWorks
 				if (!InitializeFirstApp(app, projId))
 					return;
 
-				//A restore from backup was done and there was a change to the location of the LinkedFilesRootDir
-				//When the fwdata file is restored, it still has the old LinkedFiledRootDir stored in it so this needs to
-				//be changed to the new location.
-				if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !s_cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
-				{
-					NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-						() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-				}
 				s_projectId = projId; // Process needs to know its project
 			}
 			finally

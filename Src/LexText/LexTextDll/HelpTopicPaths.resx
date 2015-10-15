@@ -2825,7 +2825,7 @@
     <comment>Choose Participants help button for empty texts in the Info tab</comment>
   </data>
   <data name="khtpChoose-Researchers" xml:space="preserve">
-    <value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_researchers.htm</value>
+    <value>Using_Tools/Lists_tools/choose_item_for_list_field.htm</value>
     <comment>Choose Researchers help button for empty texts in the Info tab</comment>
   </data>
   <data name="khtpChoose-Sources" xml:space="preserve">

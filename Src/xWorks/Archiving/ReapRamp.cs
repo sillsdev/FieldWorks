@@ -48,13 +48,13 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// <param name="dialogFont">RAMP dialog font (for localization and consistency)</param>
 		/// <param name="localizationDialogIcon"></param>
 		/// <param name="filesToArchive"></param>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="thisapp"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
-			IEnumerable<string> filesToArchive, Mediator mediator, FwApp thisapp, FdoCache cache)
+			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			WritingSystemManager wsMgr = cache.ServiceLocator.WritingSystemManager;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			// create the dialog
 			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
-			using (var reportingAdapter = new SilErrorReportingAdapter(dlg, mediator))
+			using (var reportingAdapter = new SilErrorReportingAdapter(dlg, propertyTable))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
 				dlg.ShowDialog(owner);
@@ -243,27 +243,6 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			if (datasetExtent.Length > 0)
 				model.SetDatasetExtent(datasetExtent + ".");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called by the Archiving Dialog to retrieve the lists of the files and description
-		/// to be included in the RAMP package.
-		/// </summary>
-		/// <param name="filesToArchive">The files to include</param>
-		/// <returns>Groups of files to archive and descriptive progress messages</returns>
-		/// ------------------------------------------------------------------------------------
-		private IDictionary<string, Tuple<IEnumerable<string>, string>> GetFilesToArchive(IEnumerable<string> filesToArchive)
-		{
-			// Explanation:
-			//   IDictionary<string1, Tuple<IEnumerable<string2>, string3>>
-			//     string1 = group name or key (used for normalizing file names in the zip file)
-			//     string2 = file name (a list of the files in this group)
-			//     string3 = progress message (a progress message for this group)
-			var files = new Dictionary<string, Tuple<IEnumerable<string>, string>>();
-			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
-				ResourceHelper.GetResourceString("kstidAddingFwProject"));
-			return files;
 		}
 
 		/// ------------------------------------------------------------------------------------

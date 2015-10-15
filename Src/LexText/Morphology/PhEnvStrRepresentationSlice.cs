@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
@@ -33,11 +32,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="flid"></param>
 		/// <param name="node"></param>
 		/// <param name="obj"></param>
-		/// <param name="stringTbl"></param>
 		/// <param name="persistenceProvider"></param>
 		/// <param name="ws"></param>
 		public PhEnvStrRepresentationSlice(FdoCache cache, string editor, int flid,
-			System.Xml.XmlNode node, ICmObject obj, StringTable stringTbl,
+			System.Xml.XmlNode node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, int ws)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
@@ -57,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			StringRepSliceView ctrl = Control as StringRepSliceView; //new StringRepSliceView(m_hvoContext);
-			ctrl.Cache = (FdoCache)Mediator.PropertyTable.GetValue("cache");
+			ctrl.Cache = m_propertyTable.GetValue<FdoCache>("cache");
 			ctrl.ResetValidator();
 
 			if (ctrl.RootBox == null)
@@ -168,7 +166,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			StringRepSliceView view = Control as StringRepSliceView;
 			m_cache.DomainDataByFlid.BeginUndoTask(MEStrings.ksInsertNaturalClass, MEStrings.ksInsertNaturalClass);
 			bool fOk = SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator);
+				m_persistenceProvider, Mediator, m_propertyTable);
 			m_cache.DomainDataByFlid.EndUndoTask();
 			return fOk;
 		}
@@ -467,7 +465,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return false;
 				// We need a CmObjectUi in order to call HandleRightClick().
 				using (SIL.FieldWorks.FdoUi.CmObjectUi ui = new SIL.FieldWorks.FdoUi.CmObjectUi(m_env))
-					return ui.HandleRightClick(Mediator, this, true, "mnuEnvChoices");
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvChoices");
 			}
 			#endregion
 		}
