@@ -186,40 +186,48 @@ namespace SIL.CoreImpl.Impls
 		#region getting and setting
 
 		/// <summary>
-		/// If the specified settingsGroup is "BestSettings", find the best setting,
-		/// otherwise return the provided settingsGroup.
-		///
-		/// Also, return the property name as the key into the property table dictionary.
+		/// Get the property key/name, based on 'settingsGroup'.
 		/// It may be the original property name or one adjusted for local settings.
+		/// Caller then uses the returned value as the property dictionary key.
 		///
-		/// Prefer local over global, if both exist.
+		/// For SettingsGroup.BestSettings:
+		///	Prefer local over global, if both exist.
+		///	Prefer global if neither exists.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <param name="adjustedPropertyKey"></param>
-		/// <returns></returns>
-		private SettingsGroup GetBestSettingsGroupAndKey(string name, SettingsGroup settingsGroup, out string adjustedPropertyKey)
+		/// <returns>The original property name or one adjusted for local settings</returns>
+		private string GetPropertyKeyFromSettingsGroup(string name, SettingsGroup settingsGroup)
 		{
-			adjustedPropertyKey = name;
-			if (settingsGroup == SettingsGroup.BestSettings)
+			switch (settingsGroup)
 			{
-				// Prefer local over global.
-				var key = FormatPropertyNameForLocalSettings(name);
-				if (GetProperty(key) != null)
+				default:
+					throw new NotImplementedException(string.Format("{0} is not yet supported. Developers need to add support it it.", settingsGroup));
+				case SettingsGroup.BestSettings:
 				{
-					adjustedPropertyKey = key;
-					return SettingsGroup.LocalSettings;
+					// Prefer local over global, if both exist.
+					var key = FormatPropertyNameForLocalSettings(name);
+					var localProperty = GetProperty(key);
+					var globalProperty = GetProperty(name);
+					if (localProperty != null && globalProperty != null)
+					{
+						// Both exist, so pick local.
+						return key;
+					}
+					if (localProperty != null)
+					{
+						return key;
+					}
+					if (globalProperty != null)
+					{
+						return name;
+					}
+					// Neither exists, so pick global.
+					return name; // Prefer global.
 				}
-				if (GetProperty(name) != null)
-				{
-					return SettingsGroup.GlobalSettings;
-				}
+				case SettingsGroup.LocalSettings:
+					return FormatPropertyNameForLocalSettings(name);
+				case SettingsGroup.GlobalSettings:
+					return name;
 			}
-			else if (settingsGroup == SettingsGroup.LocalSettings)
-			{
-				adjustedPropertyKey = FormatPropertyNameForLocalSettings(name);
-			}
-			return settingsGroup;
 		}
 
 		/// <summary>
@@ -244,10 +252,7 @@ namespace SIL.CoreImpl.Impls
 		{
 			CheckDisposed();
 
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-
-			return GetProperty(key) != null;
+			return GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup)) != null;
 		}
 
 		/// <summary>
@@ -275,9 +280,7 @@ namespace SIL.CoreImpl.Impls
 			CheckDisposed();
 
 			propertyValue = default(T);
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			var prop = GetProperty(key);
+			var prop = GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
 			if (prop == null)
 			{
 				return false;
@@ -334,9 +337,7 @@ namespace SIL.CoreImpl.Impls
 		{
 			CheckDisposed();
 
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			return GetValueInternal<T>(key);
+			return GetValueInternal<T>(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
 		}
 
 		/// <summary>
@@ -365,9 +366,7 @@ namespace SIL.CoreImpl.Impls
 		{
 			CheckDisposed();
 
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			return GetValueInternal(key, defaultValue);
+			return GetValueInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue);
 		}
 
 		/// <summary>
@@ -473,9 +472,8 @@ namespace SIL.CoreImpl.Impls
 		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetDefaultInternal(key, defaultValue, doBroadcastIfChanged);
+
+			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -518,9 +516,8 @@ namespace SIL.CoreImpl.Impls
 		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetPropertyInternal(key, newValue, persistProperty, doBroadcastIfChanged);
+
+			SetPropertyInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), newValue, persistProperty, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -562,7 +559,9 @@ namespace SIL.CoreImpl.Impls
 			}
 			if (m_properties.ContainsKey(key))
 			{
-				Property property = m_properties[key];
+				var property = m_properties[key];
+				// May update the persistance, as in when a default was created which persists, but now we want to not persist it.
+				property.doPersist = persistProperty;
 				object oldValue = property.value;
 				bool bothNull = (oldValue == null && newValue == null);
 				bool oldExists = (oldValue != null);
@@ -626,9 +625,7 @@ namespace SIL.CoreImpl.Impls
 		{
 			CheckDisposed();
 
-			string key;
-			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetPropertyDisposeInternal(key, doDispose);
+			SetPropertyDisposeInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), doDispose);
 		}
 
 		private void SetPropertyDisposeInternal(string key, bool doDispose)
@@ -893,6 +890,11 @@ namespace SIL.CoreImpl.Impls
 			{
 				Property property = kvp.Value;
 				if (!property.doPersist)
+					continue;
+				if (property.value == null)
+					continue;
+				var valueAsString = property.value as string;
+				if (string.IsNullOrWhiteSpace(valueAsString))
 					continue;
 				if (!property.name.StartsWith(GetPathPrefixForSettingsId(settingsId)))
 					continue;

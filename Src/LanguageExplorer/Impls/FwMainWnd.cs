@@ -143,7 +143,7 @@ namespace LanguageExplorer.Impls
 				SkipMissingFiles = false
 			};
 			includer.ProcessDom(configFilePath, mergedConfigDoc);
-			mergedConfigDoc.Save(@"C:\Users\Randy\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\xWindowFullConfig.xml");
+			mergedConfigDoc.Save(@"C:\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\xWindowFullConfig.xml");
 #endif
 		}
 #if RANDYTODOMERGEFILES
@@ -544,7 +544,7 @@ namespace LanguageExplorer.Impls
 				_currentTool.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentTool = clickedTool;
-			PropertyTable.SetProperty("ToolForAreaNamed_" + _currentArea.MachineName, _currentTool.MachineName, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetProperty(string.Format("ToolForAreaNamed_{0}", _currentArea.MachineName), _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
 			_currentTool.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 
@@ -560,7 +560,7 @@ namespace LanguageExplorer.Impls
 				_currentArea.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentArea = clickedArea;
-			PropertyTable.SetProperty("currentArea", _currentArea, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetProperty("areaChoice", _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
 			_currentArea.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 
@@ -624,13 +624,14 @@ namespace LanguageExplorer.Impls
 		public void SaveSettings()
 		{
 			// Have current IArea put any needed properties into the table.
-#if RANDYTODO
-			// Note: This covers what was done using: GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
-			// RR TODO: Delete GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
-#endif
 			_currentArea.EnsurePropertiesAreCurrent();
+
+			// Have current ITool put any needed properties into the table.
+			_currentTool.EnsurePropertiesAreCurrent();
+
 			// first save global settings, ignoring database specific ones.
 			PropertyTable.SaveGlobalSettings();
+
 			// now save database specific settings.
 			PropertyTable.SaveLocalSettings();
 		}

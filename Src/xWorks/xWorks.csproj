@@ -315,7 +315,6 @@
     <Compile Include="DictionaryDetailsView\SpecialCharacterHandling.cs" />
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
-    <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />

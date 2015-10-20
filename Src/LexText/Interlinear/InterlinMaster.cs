@@ -651,14 +651,13 @@ namespace SIL.FieldWorks.IText
 
 		private void RefreshPaneBar()
 		{
-#if RANDYTODO
-			// TODO: Block while PaneBarContainer is being moved to LanguageExplorer.
-			// TODO: Re-enable when this code gets moved, so this project has no dependency on LanguageExplorer.
 			// if we're in the context of a PaneBar, refresh the bar so the menu items will
 			// reflect the current tab.
-			if (MainPaneBar != null && MainPaneBar is UserControl && (MainPaneBar as UserControl).Parent is PaneBarContainer)
-				((MainPaneBar as UserControl).Parent as PaneBarContainer).RefreshPaneBar();
-#endif
+			var paneBarAsControl = MainPaneBar as UserControl;
+			if (paneBarAsControl == null) return;
+			var parentAsPaneBarContainer = paneBarAsControl.Parent as IPaneBarContainer;
+			if (parentAsPaneBarContainer == null) return;
+			parentAsPaneBarContainer.RefreshPaneBar();
 		}
 
 		/// <summary>

@@ -440,6 +440,7 @@ Old Mediator methods/commands
 						wnd.Closed -= OnWindowClosed;
 						wnd.Activated -= fwMainWindow_Activated;
 						wnd.HandleDestroyed -= fwMainWindow_HandleDestroyed;
+						wnd.FormClosing -= FwMainWindowOnFormClosing;
 						wnd.Dispose();
 					}
 					else
@@ -1079,6 +1080,7 @@ Old Mediator methods/commands
 			if (fwMainWindow == Form.ActiveForm)
 				m_activeMainWindow = fwMainWindow;
 			fwMainWindow.HandleDestroyed += fwMainWindow_HandleDestroyed;
+			fwMainWindow.FormClosing += FwMainWindowOnFormClosing;
 			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
 			fwMainWindow.Activate(); // This makes main window come to front after splash screen closes
 
@@ -1104,6 +1106,14 @@ Old Mediator methods/commands
 			fwMainWnd.InitAndShowClient();
 
 			m_fInitialized = true;
+		}
+
+		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
+		{
+			if (m_activeMainWindow == sender && sender is IFwMainWnd)
+			{
+				((IFwMainWnd)sender).SaveSettings();
+			}
 		}
 
 		/// <summary>
@@ -1244,6 +1254,7 @@ Old Mediator methods/commands
 			var form = (Form)fwMainWindow;
 			form.Activated -= fwMainWindow_Activated;
 			form.HandleDestroyed -= fwMainWindow_HandleDestroyed;
+			form.FormClosing -= FwMainWindowOnFormClosing;
 
 			if (m_activeMainWindow == fwMainWindow)
 				m_activeMainWindow = null; // Just in case
@@ -1314,6 +1325,7 @@ Old Mediator methods/commands
 		/// ------------------------------------------------------------------------------------
 		public void SaveSettings()
 		{
+			// NB: Don't try to save window settings here, because the windwos are gone by this call.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2214,6 +2226,11 @@ Old Mediator methods/commands
 					if (dlg.ShowDialog((Form)wndActive) != DialogResult.OK)
 						return true;
 					dlg.GetResults(hc);
+					// Make sure "hc" is in PropertyTable, so new stuff is persisted.
+					if (!PropertyTable.PropertyExists("HomographConfiguration"))
+					{
+						PropertyTable.SetProperty("HomographConfiguration", hc.PersistData, true, false);
+					}
 					// If called from config dlg, it will do its own refresh when it closes.
 					if (configDlg == null)
 						OnMasterRefresh(null);

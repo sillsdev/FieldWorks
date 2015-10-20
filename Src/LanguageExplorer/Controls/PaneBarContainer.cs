@@ -27,12 +27,10 @@ namespace LanguageExplorer.Controls
 	/// Most of the methods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	internal sealed partial class PaneBarContainer : UserControl, IMainContentControl, IFWDisposable, IPostLayoutInit
+	internal sealed partial class PaneBarContainer : UserControl, IPaneBarContainer, IFWDisposable, IPostLayoutInit
 	{
 		#region Data Members
 
-		/// <summary />
-		private IPaneBar m_paneBar;
 		private XmlNode m_configurationParameters;
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
@@ -62,11 +60,7 @@ namespace LanguageExplorer.Controls
 			// since we know that is a UserControl,
 			// so we know it has 'AccessibleName' and can be put into 'Controls'.
 			var paneBar = new PaneBar.PaneBar();
-			m_paneBar = paneBar;
-			if (paneBar.AccessibleName == null)
-			{
-				paneBar.AccessibleName = @"LanguageExplorer.Controls.PaneBar";
-			}
+			PaneBar = paneBar;
 
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
@@ -167,8 +161,8 @@ namespace LanguageExplorer.Controls
 				ImageList.ImageCollection small = m_propertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 				paneBar.Init(small, (IUIMenuAdapter)window.MenuAdapter, m_mediator);
 			}
-			ReloadPaneBar(paneBar);
-			m_paneBar = paneBar;
+			PaneBar = paneBar;
+			ReloadPaneBar();
 			Controls.Add(paneBar as Control);
 
 			// Make the main control.
@@ -217,13 +211,17 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public void RefreshPaneBar()
 		{
-			if (m_paneBar != null)
-				ReloadPaneBar(m_paneBar);
+			ReloadPaneBar();
 		}
 
-		private void ReloadPaneBar(IPaneBar paneBar)
+		private void ReloadPaneBar()
 		{
+			if (PaneBar == null)
+			{
+				return;
+			}
 #if RANDYTODO
+			// TODO: Can I get by simply defining the paner bar's contents, or must I use xml?
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
@@ -343,7 +341,7 @@ namespace LanguageExplorer.Controls
 			Publisher = publisher;
 			Subscriber = subscriber;
 
-			m_paneBar.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			PaneBar.InitializeFlexComponent(propertyTable, publisher, subscriber);
 		}
 
 		#endregion
@@ -354,6 +352,12 @@ namespace LanguageExplorer.Controls
 		/// Get or set the name to be used by the accessibility object.
 		/// </summary>
 		string IMainUserControl.AccName { get; set; }
+
+		#endregion
+
+		#region Implementation of IPaneBarContainer
+
+		public IPaneBar PaneBar { get; private set; }
 
 		#endregion
 	}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -46,6 +47,17 @@ namespace SIL.FieldWorks.XWorks
 		#region Construction and disposal
 
 		public RecordBrowseView()
+		{
+			Init();
+		}
+
+		public RecordBrowseView(XElement browseViewDefinitions)
+			: base(browseViewDefinitions)
+		{
+			Init();
+		}
+
+		private void Init()
 		{
 			InitializeComponent();
 			AccNameDefault = "RecordBrowseView";	// default accessibility name

@@ -11,15 +11,6 @@ namespace SIL.CoreImpl
 #if RANDYTODO
 		// TODO: Are there other setting types to add, such as to support minimal UI for select users?
 #endif
-#if RANDYTODO
-		// TODO: Remove "Undecided", as client better know what they are doing with properties.
-#endif
-		/// <summary>
-		/// Undecided -- indicating that we haven't yet determined
-		///	(from configuration file or otherwise) where the property should be stored.
-		/// </summary>
-		Undecided,
-
 		/// <summary>
 		/// GlobalSettings -- typically application wide settings.
 		/// This is the default group to store a setting, without further specification.

@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -59,6 +60,11 @@ namespace SIL.FieldWorks.XWorks
 		/// -----------------------------------------------------------------------------------
 		public RecordView()
 		{
+			Init();
+		}
+
+		private void Init()
+		{
 			//it is up to the subclass to change this when it is finished Initializing.
 			m_fullyInitialized = false;
 
@@ -67,7 +73,13 @@ namespace SIL.FieldWorks.XWorks
 
 			//MakePaneBar();
 
-			base.AccNameDefault = "RecordView";		// default accessibility name
+			AccNameDefault = "RecordView"; // default accessibility name
+		}
+
+		public RecordView(XElement browseViewDefinitions)
+			: base(browseViewDefinitions)
+		{
+			Init();
 		}
 
 		/// -----------------------------------------------------------------------------------

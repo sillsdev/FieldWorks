@@ -97,6 +97,7 @@ M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayI
 M: System.Void LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncher::HandleChooser()
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
 M: System.Boolean LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetSuggestions()
 
 # added to collection and disposed there
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()
@@ -126,9 +127,6 @@ M: System.Boolean LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetDlgInfo(
 # GetEnumerator() returns an object
 M: System.Collections.IEnumerator LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalEntryGoDlg.ReversalEntrySearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator LanguageExplorer.Areas.TextsAndWords.WordformGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
-
-# REVIEW: not sure about this one
-M: System.Void LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetSuggestions()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

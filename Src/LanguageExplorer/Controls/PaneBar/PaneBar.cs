@@ -24,6 +24,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			InitializeComponent();
 			Dock = DockStyle.Top;
+			AccessibleName = @"LanguageExplorer.Controls.PaneBar";
 		}
 
 		#region Implementation of IPaneBar

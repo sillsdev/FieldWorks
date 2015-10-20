@@ -53,8 +53,8 @@ namespace SIL.FieldWorks.XWorks
 		static string InterestingTextKey = "InterestingTexts";
 		static public InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, IFdoServiceLocator services)
 		{
-			var interestingTextList = propertyTable.GetValue<InterestingTextList>(InterestingTextKey, null);
-			if (interestingTextList == null)
+			InterestingTextList interestingTextList;
+			if (!propertyTable.TryGetValue(InterestingTextKey, out interestingTextList))
 			{
 				interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
 					services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());

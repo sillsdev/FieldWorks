@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -14,6 +16,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// </summary>
 	internal sealed class LexiconArea : IArea
 	{
+		private const string khomographconfiguration = "HomographConfiguration";
 		private readonly IToolRepository m_toolRepository;
 
 		/// <summary>
@@ -68,6 +71,14 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				m_toolRepository.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			}
+
+			// Restore HomographConfiguration settings.
+			string hcSettings;
+			if (!PropertyTable.TryGetValue(khomographconfiguration, out hcSettings)) return;
+
+			var serviceLocator = PropertyTable.GetValue<FdoCache>("cache").ServiceLocator;
+			var hc = serviceLocator.GetInstance<HomographConfiguration>();
+			hc.PersistData = hcSettings;
 		}
 
 		#endregion
@@ -146,9 +157,15 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
+			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+
+			var serviceLocator = PropertyTable.GetValue<FdoCache>("cache").ServiceLocator;
+			var hc = serviceLocator.GetInstance<HomographConfiguration>();
+			PropertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
+
 #if RANDYTODO
-			// Implement and call EnsurePropertiesAreCurrent() on current tool in area.
-			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area EnsurePropertiesAreCurrent method.", "Need to implement", MessageBoxButtons.OK);
+	// Implement and call EnsurePropertiesAreCurrent() on current tool in area.
+	//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area EnsurePropertiesAreCurrent method.", "Need to implement", MessageBoxButtons.OK);
 #endif
 		}
 

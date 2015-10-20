@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -51,6 +52,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected XmlNode m_configurationParameters;
 #endif
+		/// <summary>
+		/// The configuration element for the browser view.
+		/// </summary>
+		protected XElement m_configurationElement;
 		/// <summary>
 		/// Optional information bar above the main control.
 		/// </summary>
@@ -163,6 +168,15 @@ namespace SIL.FieldWorks.XWorks
 
 
 			AccNameDefault = "XWorksViewBase";		// default accessibility name
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
+		/// </summary>
+		protected XWorksViewBase(XElement browseViewDefinitions)
+			: this()
+		{
+			m_configurationElement = browseViewDefinitions;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -283,14 +297,8 @@ namespace SIL.FieldWorks.XWorks
 
 				if (m_informationBar != null)
 					return m_informationBar as IPaneBar;
-#if RANDYTODO
-			// TODO: Block while PaneBarContainer is being moved to LanguageExplorer.
-			// TODO: Re-enable when this code gets moved, so this project has no dependency on LanguageExplorer.
-				if (Parent is PaneBarContainer)
-					return (Parent as PaneBarContainer).PaneBar;
-#endif
 
-				return null;
+				return (Parent is IPaneBarContainer) ? ((IPaneBarContainer)Parent).PaneBar : null;
 			}
 			set
 			{

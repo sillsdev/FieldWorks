@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Create a pair of PaneBarContainer instacnes for <paramref name="parentMultiPane"/>.
+		/// Create a pair of PaneBarContainer instances for <paramref name="parentMultiPane"/>.
 		/// </summary>
 		/// <param name="propertyTable">The property table</param>
 		/// <param name="publisher">The Publisher</param>

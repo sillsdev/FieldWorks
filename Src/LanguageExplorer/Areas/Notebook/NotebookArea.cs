@@ -143,6 +143,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
+			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
