@@ -346,6 +346,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw new NotImplementedException();
 			}
 
+			public bool UseNfcContext
+			{
+				get { throw new NotImplementedException(); }
+			}
+
 			#endregion
 		}
 

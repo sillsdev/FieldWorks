@@ -361,7 +361,7 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the keyboard.
+		/// Gets or sets the keyboard. DON'T USE - THIS IS OBSOLETE
 		/// </summary>
 		/// <value>The keyboard.</value>
 		public override string Keyboard
@@ -411,6 +411,20 @@ namespace SIL.CoreImpl
 			{
 				lock (m_syncRoot)
 					base.SpellCheckingId = value;
+			}
+		}
+
+		/// <summary>
+		/// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		/// </summary>
+		public bool UseNfcContext
+		{
+			get
+			{
+				// Currently we use NFD only for Keyman keyboards. If the LocalKeyboard
+				// property is null than for sure we don't have a keyman keyboard either,
+				// so we simply return true (ie. use NFC) in that case.
+				return LocalKeyboard == null || LocalKeyboard.UseNfcContext;
 			}
 		}
 
@@ -1289,6 +1303,7 @@ namespace SIL.CoreImpl
 		{
 			return DisplayLabel;
 		}
+
 	}
 
 	/// <summary>

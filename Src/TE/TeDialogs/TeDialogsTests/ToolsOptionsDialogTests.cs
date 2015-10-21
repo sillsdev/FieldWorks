@@ -592,11 +592,19 @@ namespace SIL.FieldWorks.TE
 		}
 
 		/// <summary></summary>
-		public SIL.FieldWorks.Common.COMInterfaces.IRenderEngine get_Renderer(SIL.FieldWorks.Common.COMInterfaces.IVwGraphics _vg)
+		public IRenderEngine get_Renderer(IVwGraphics vg)
 		{
 			throw new NotImplementedException();
 		}
+
+		/// <summary></summary>
+		public bool UseNfcContext
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		#endregion
+
 	}
 	#endregion
 

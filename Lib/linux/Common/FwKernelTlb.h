@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Apr 22 10:36:13 2015
+/* at Tue Oct 20 13:06:58 2015
  */
-/* Compiler settings for c:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1452,7 +1452,7 @@ enum LgXMLTag
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystem
 ,
-9F74A170-E8BB-466d-8848-5FDB28AC5AF8
+FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB
 );
 typedef /* [v1_enum] */ 
 enum LgCollatingOptions
@@ -9464,7 +9464,7 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("9F74A170-E8BB-466d-8848-5FDB28AC5AF8")
+    MIDL_INTERFACE("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB")
     ILgWritingSystem : public IUnknown
     {
     public:
@@ -9514,17 +9514,14 @@ GraphiteEngine;
         virtual HRESULT STDMETHODCALLTYPE InterpretChrp( 
             /* [out][in] */ LgCharRenderProps *pchrp) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Keyboard( 
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Keyboard( 
-            /* [in] */ BSTR bstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CurrentLCID( 
             /* [retval][out] */ int *pnLangId) = 0;
         
         virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_CurrentLCID( 
             /* [in] */ int nLangId) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UseNfcContext( 
+            /* [retval][out] */ ComBool *pUseNfc) = 0;
         
     };
     
@@ -9608,14 +9605,6 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [out][in] */ LgCharRenderProps *pchrp);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Keyboard )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Keyboard )( 
-            ILgWritingSystem * This,
-            /* [in] */ BSTR bstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CurrentLCID )( 
             ILgWritingSystem * This,
             /* [retval][out] */ int *pnLangId);
@@ -9623,6 +9612,10 @@ GraphiteEngine;
         /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_CurrentLCID )( 
             ILgWritingSystem * This,
             /* [in] */ int nLangId);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UseNfcContext )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ ComBool *pUseNfc);
         
         END_INTERFACE
     } ILgWritingSystemVtbl;
@@ -9692,17 +9685,14 @@ GraphiteEngine;
 #define ILgWritingSystem_InterpretChrp(This,pchrp)	\
     ( (This)->lpVtbl -> InterpretChrp(This,pchrp) ) 
 
-#define ILgWritingSystem_get_Keyboard(This,pbstr)	\
-    ( (This)->lpVtbl -> get_Keyboard(This,pbstr) ) 
-
-#define ILgWritingSystem_put_Keyboard(This,bstr)	\
-    ( (This)->lpVtbl -> put_Keyboard(This,bstr) ) 
-
 #define ILgWritingSystem_get_CurrentLCID(This,pnLangId)	\
     ( (This)->lpVtbl -> get_CurrentLCID(This,pnLangId) ) 
 
 #define ILgWritingSystem_put_CurrentLCID(This,nLangId)	\
     ( (This)->lpVtbl -> put_CurrentLCID(This,nLangId) ) 
+
+#define ILgWritingSystem_get_UseNfcContext(This,pUseNfc)	\
+    ( (This)->lpVtbl -> get_UseNfcContext(This,pUseNfc) ) 
 
 #endif /* COBJMACROS */
 

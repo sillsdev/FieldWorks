@@ -196,23 +196,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(get_Keyboard)(BSTR * pbstr)
-	{
-		if (m_stuKeymanKbdName.Length())
-			m_stuKeymanKbdName.GetBstr(pbstr);
-		else
-			*pbstr = NULL;
-		return S_OK;
-	}
-
-	STDMETHOD(put_Keyboard)(BSTR bstr)
-	{
-		StrUni stu(bstr, BstrLen(bstr));
-		if (m_stuKeymanKbdName != stu)
-			m_stuKeymanKbdName.Assign(stu);
-		return S_OK;
-	}
-
 	STDMETHOD(get_ISO3)(BSTR * pbstr)
 	{
 		return E_NOTIMPL;
@@ -227,6 +210,12 @@ public:
 	STDMETHOD(put_CurrentLCID)(int nLangId)
 	{
 		return E_NOTIMPL;
+	}
+
+	STDMETHOD(get_UseNfcContext)(ComBool * pUseNfc)
+	{
+		*pUseNfc = true;
+		return S_OK;
 	}
 
 private:

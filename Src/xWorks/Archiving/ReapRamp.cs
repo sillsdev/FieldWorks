@@ -192,7 +192,17 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
 
-				fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+				// TODO (EberhardB): This code no longer works. We used to have a property
+				// Keyboard in FW that only got set if we had a Keyman keyboard. This is no
+				// longer true, the property is obsolete (see
+				// ILegacyWritingSystemDefinition.Keyboard in Palaso). There is still a
+				// property WritingSystemDefinition.Keyboard in Palaso. The property will
+				// be set for writing systems that were created with older FW versions, but
+				// not when creating a new writing system. However the usage of the Keyboard
+				// property is as unclear as its name, and it definitely does NOT tell if
+				// it's a Keyman keyboard.
+				// It might be better to add KnownKeyboards as requirements
+				//fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
 			}
 
 			if (fWsUsesKeyman)
