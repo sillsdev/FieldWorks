@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
+using Rhino.Mocks;
 using X11.XKlavier;
 using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.UI.WindowsForms.Keyboarding.InternalInterfaces;
@@ -16,7 +17,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils.Attributes;
-using NMock;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -97,8 +97,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
 			var ibusKeyboardRetrievingAdaptor = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
-			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
-			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
+			var xklEngineMock = MockRepository.GenerateStub<IXklEngine>();
+			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble(xklEngineMock);
 			KeyboardController.Manager.SetKeyboardRetrievers(new IKeyboardRetrievingAdaptor[] { xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor});
 			KeyboardController.Register(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}

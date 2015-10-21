@@ -171,6 +171,9 @@
     <Reference Include="PalasoUIWindowsForms">
       <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
