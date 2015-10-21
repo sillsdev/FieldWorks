@@ -16,6 +16,7 @@ using L10NSharp;
 using Palaso.UI.WindowsForms.PortableSettingsProvider;
 using System.Collections.Generic;
 using System;
+using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using XCore;
@@ -191,18 +192,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
-
-				// TODO (EberhardB): This code no longer works. We used to have a property
-				// Keyboard in FW that only got set if we had a Keyman keyboard. This is no
-				// longer true, the property is obsolete (see
-				// ILegacyWritingSystemDefinition.Keyboard in Palaso). There is still a
-				// property WritingSystemDefinition.Keyboard in Palaso. The property will
-				// be set for writing systems that were created with older FW versions, but
-				// not when creating a new writing system. However the usage of the Keyboard
-				// property is as unclear as its name, and it definitely does NOT tell if
-				// it's a Keyman keyboard.
-				// It might be better to add KnownKeyboards as requirements
-				//fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+				fWsUsesKeyman |= DoesWritingSystemUseKeyman(ws);
 			}
 
 			if (fWsUsesKeyman)
@@ -257,6 +247,32 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			if (datasetExtent.Length > 0)
 				model.SetDatasetExtent(datasetExtent + ".");
+		}
+
+		/// <summary>
+		/// Returns true if the writing system has an active keyman keyboard
+		/// </summary>
+		/// <remarks>Internal for testing, uses reflection to identify a keyboard as keyman</remarks>
+		internal static bool DoesWritingSystemUseKeyman(IWritingSystem ws)
+		{
+			if(Palaso.PlatformUtilities.Platform.IsLinux) // Keyman is not required on linux
+				return false;
+			var palasoWs = ws as PalasoWritingSystem;
+			if(palasoWs != null && palasoWs.KnownKeyboards.Any())
+			{
+				var keyboardingAssembly = Assembly.GetAssembly(typeof(KeyboardDescription));
+				var keymanType = keyboardingAssembly.GetType("Palaso.UI.WindowsForms.Keyboarding.Windows.KeymanKeyboardDescription");
+				foreach(var keyboard in palasoWs.KnownKeyboards)
+				{
+					if(!keyboard.IsAvailable)
+						continue;
+					if(keymanType.IsInstanceOfType(keyboard))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------

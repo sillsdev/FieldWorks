@@ -4,12 +4,15 @@
 
 using System.Text;
 using NUnit.Framework;
+using Palaso.WritingSystems;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.Archiving;
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	public class ArchivingTests
+	public class ArchivingTests : MemoryOnlyBackendProviderTestBase
 	{
 		[Test]
 		public void StringBuilder_AppendLineFormat()
@@ -27,6 +30,23 @@ namespace SIL.FieldWorks.XWorks
 			sb.AppendLineFormat(format, new object[] { B, C, A }, delimiter);
 
 			Assert.AreEqual(expected, sb.ToString());
+		}
+
+		/// <summary>
+		/// This test verifies that a non-keyman keyboard returns false, it also serves to test the reflection which the current implementation
+		/// uses to test if a keyboard is keyman.
+		/// </summary>
+		[Test]
+		public void DoesWritingSystemUseKeyman_NonKeymanKeyboardReturnsFalse()
+		{
+			var ws = Cache.LangProject.DefaultAnalysisWritingSystem;
+			var palasoWs = ws as PalasoWritingSystem;
+			var testKeyboard = new DefaultKeyboardDefinition { IsAvailable = true };
+			// ReSharper disable once PossibleNullReferenceException
+			palasoWs.AddKnownKeyboard(testKeyboard);
+
+			Assert.That(ReapRamp.DoesWritingSystemUseKeyman(ws), Is.False,
+				"Unable to determine if a writing system is keyman, the location or name of the class in Palaso probably changed");
 		}
 	}
 }
