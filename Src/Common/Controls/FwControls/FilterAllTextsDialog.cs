@@ -238,8 +238,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// Add all of the Scripture book names to the book list
 			m_treeTexts.BeginUpdate();
 			LoadTexts();
-			m_treeTexts.EndUpdate();
 			m_treeTexts.ExpandToBooks();
+			m_treeTexts.EndUpdate();
 
 			if (m_btnOK == null || m_objList == null)
 				return;
