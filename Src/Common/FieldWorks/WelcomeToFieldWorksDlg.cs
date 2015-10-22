@@ -338,7 +338,8 @@ namespace SIL.FieldWorks
 			m_sampleOrLastProjectLinkLabel.Visible = false;
 			m_openSampleOrLastProjectLink.Visible = false;
 			m_lblProjectLoadError.Visible = true;
-			Icon = SystemIcons.Exclamation;
+			if(!string.IsNullOrEmpty(m_lblProjectLoadError.Text))
+				Icon = SystemIcons.Exclamation;
 		}
 
 		internal void ShowLinkHideErrorLabel()
