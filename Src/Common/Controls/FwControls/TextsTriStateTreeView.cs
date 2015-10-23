@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IScripture m_scr;
 		private IBookImporter m_bookImporter;
 		private ScrText m_associatedPtText;
-		private const string ksDummmyName = "dummy"; // used for Name of dummy nodes.
+		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
 		/// <summary>
 		/// Make one.
@@ -89,8 +89,7 @@ namespace SIL.FieldWorks.Common.Controls
 			List<TreeNode> ntBooks = new List<TreeNode>();
 			for (int bookNum = 1; bookNum <= BCVRef.LastBook; bookNum++)
 			{
-				string bookName =
-				cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
+				var bookName = cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
 				object book = m_scr.FindBook(bookNum);
 				if (book == null)
 				{
@@ -199,7 +198,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private void LoadTextsFromGenres(TreeNode parent, IFdoOwningSequence<ICmPossibility> genreList, IEnumerable<FDO.IText> allTexts)
+		private void LoadTextsFromGenres(TreeNode parent, IFdoOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
 		{
 			if (parent == null) return;
 			var sortedGenreList = new List<ICmPossibility>();
@@ -223,28 +222,23 @@ namespace SIL.FieldWorks.Common.Controls
 
 				foreach (IText tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
-					foreach (var tgen in tex.GenresRC)
+					if (Enumerable.Contains(tex.GenresRC, gen))
 					{
-						if (tgen.Equals(gen))
+						var texItem = new TreeNode(tex.ChooserNameTS.Text);
+						texItem.Tag = tex.ContentsOA;
+						texItem.Name = "Text";
+
+						// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
+						sortedNodes.Add(texItem);
+
+						// LT-12179: If this is the first tex we've added, establish the collator's details
+						// according to the writing system at the start of the tex:
+						if (!foundFirstText)
 						{
-							// The current tex is valid, so create a TreeNode with its details:
-							var texItem = new TreeNode(tex.ChooserNameTS.Text);
-							texItem.Tag = tex.ContentsOA;
-							texItem.Name = "Text";
-
-							// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
-							sortedNodes.Add(texItem);
-
-							// LT-12179: If this is the first tex we've added, establish the collator's details
-							// according to the writing system at the start of the tex:
-							if (!foundFirstText)
-							{
-								foundFirstText = true;
-								var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-								var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-								collator.Open(wsEngine.Id);
-							}
-							break;
+							foundFirstText = true;
+							var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+							var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
+							collator.Open(wsEngine.Id);
 						}
 					}
 				}
@@ -343,8 +337,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// method won't do anything. Caller needs to be able to deal with that possibility.
 		/// See FWR-3498 for details.</param>
 		/// <param name="checkChildren">if set to <c>true</c> all child nodes will be selected.</param>
-		/// <returns><c>true</c> if the given node has real child node(s) (after filling them
-		/// in).</returns>
+		/// <returns><c>true</c> if the given node has real child node(s) (after filling them in).</returns>
 		/// ------------------------------------------------------------------------------------
 		private bool FillInChildren(TreeNode bookNode, bool checkChildren)
 		{
@@ -352,7 +345,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			bool retval = true;
 			if ((bookNode.Tag is IScrBook || bookNode.Tag is int) &&
-				bookNode.Nodes.Count == 1 && bookNode.Nodes[0].Name == ksDummmyName)
+				bookNode.Nodes.Count == 1 && bookNode.Nodes[0].Name == ksDummyName)
 			{
 				BeforeExpand -= ScriptureTriStateTreeView_BeforeExpand; // prevent recursion
 				retval = FillInBookChildren(bookNode);
@@ -426,8 +419,8 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Put a dummy node into each book so the computer thinks it can be expanded.
 					// When it is, we will replace this with the real children.
-					TreeNode node = new TreeNode(ksDummmyName);
-					node.Name = ksDummmyName;
+					TreeNode node = new TreeNode(ksDummyName);
+					node.Name = ksDummyName;
 					bookNode.Nodes.Add(node);
 				}
 			}
@@ -441,10 +434,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="bookNode">The book node.</param>
 		/// <returns><c>true</c> if the dummy node was replaced by real child node(s)</returns>
+		/// <remarks>protected virtual for unit tests</remarks>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
-		private bool FillInBookChildren(TreeNode bookNode)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification="FindForm() returns a reference")]
+		protected virtual bool FillInBookChildren(TreeNode bookNode)
 		{
 			IScrBook book = bookNode.Tag as IScrBook;
 			int bookNum = (book == null) ? (int)bookNode.Tag : book.CanonicalNum;
@@ -550,11 +543,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void ExpandToBooks()
 		{
+			BeforeExpand -= ScriptureTriStateTreeView_BeforeExpand; // Prevent loading Books before the user expands them
 			ExpandAll();
+			BeforeExpand += ScriptureTriStateTreeView_BeforeExpand;
 			// Collapse anything below book level
-			foreach (TreeNode node in Nodes.Find("Book", true))
+			foreach (var node in Nodes.Find("Book", true))
 				node.Collapse();
-			foreach (TreeNode node in Nodes.Find("Genre", true))
+			foreach (var node in Nodes.Find("Genre", true))
 				node.Collapse();
 		}
 	}
