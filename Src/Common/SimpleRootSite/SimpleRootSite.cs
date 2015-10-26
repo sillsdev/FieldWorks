@@ -30,133 +30,6 @@ using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region SuspendDrawing class
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Suspends drawing the parent object
-	/// </summary>
-	/// <example>
-	/// REQUIRED usage:
-	/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
-	/// {
-	///		doStuff();
-	/// } // this resumes drawing the parent object
-	/// </example>
-	/// ------------------------------------------------------------------------------------
-	public class SuspendDrawing : IFWDisposable
-	{
-		private IRootSite m_parent;
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Suspend drawing of the parent.
-		/// </summary>
-		/// <param name="parent">Containing rootsite</param>
-		/// --------------------------------------------------------------------------------
-		public SuspendDrawing(IRootSite parent)
-		{
-			m_parent = parent;
-			m_parent.AllowPainting = false;
-		}
-
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~SuspendDrawing()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				if (m_parent != null)
-					m_parent.AllowPainting = true;
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_parent = null;
-
-			m_isDisposed = true;
-		}
-
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("SuspendDrawing", "This object is being used after it has been disposed: this is an Error.");
-		}
-
-		#endregion IDisposable & Co. implementation
-	}
-	#endregion
-
 	#region SimpleRootSite class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -475,12 +348,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_orientationManager = CreateOrientationManager();
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
+
+			if (KeyboardController.IsInitialized)
+			{
 #if __MonoCS__
-			var eventHandler = new IbusRootSiteEventHandler(this);
+				var eventHandler = new IbusRootSiteEventHandler(this);
 #else
-			var eventHandler = new WindowsLanguageProfileSink(this);
+				var eventHandler = new WindowsLanguageProfileSink(this);
 #endif
-			KeyboardController.RegisterControl(this, eventHandler);
+				KeyboardController.RegisterControl(this, eventHandler);
+			}
 		}
 
 #if DEBUG
@@ -952,16 +829,19 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
+				if (KeyboardController.IsInitialized)
+				{
 #if __MonoCS__
-				var eventHandler = new IbusRootSiteEventHandler(this);
+					var eventHandler = new IbusRootSiteEventHandler(this);
 #else
-				var eventHandler = new WindowsLanguageProfileSink(this);
+					var eventHandler = new WindowsLanguageProfileSink(this);
 #endif
-				// If this is read-only, it should not try to handle keyboard input in general.
-				if (EditingHelper.Editable && value)
-					KeyboardController.UnregisterControl(this);
-				else if (!EditingHelper.Editable && !value)
-					KeyboardController.RegisterControl(this, eventHandler);
+					// If this is read-only, it should not try to handle keyboard input in general.
+					if (EditingHelper.Editable && value)
+						KeyboardController.UnregisterControl(this);
+					else if (!EditingHelper.Editable && !value)
+						KeyboardController.RegisterControl(this, eventHandler);
+				}
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an
 				// editable insertion point when moving the cursor with the cursor movement
@@ -3298,7 +3178,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			base.OnHandleCreated(e);
 
-			if (DesignMode && !AllowPaintingInDesigner)
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime && !AllowPaintingInDesigner)
 				return;
 
 			// If it is the second pane of a split window, it may have been given a copy of the
@@ -6347,6 +6227,133 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
+	}
+	#endregion
+
+	#region SuspendDrawing class
+	/// ------------------------------------------------------------------------------------
+	/// <summary>
+	/// Suspends drawing the parent object
+	/// </summary>
+	/// <example>
+	/// REQUIRED usage:
+	/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
+	/// {
+	///		doStuff();
+	/// } // this resumes drawing the parent object
+	/// </example>
+	/// ------------------------------------------------------------------------------------
+	public class SuspendDrawing : IFWDisposable
+	{
+		private IRootSite m_parent;
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Suspend drawing of the parent.
+		/// </summary>
+		/// <param name="parent">Containing rootsite</param>
+		/// --------------------------------------------------------------------------------
+		public SuspendDrawing(IRootSite parent)
+		{
+			m_parent = parent;
+			m_parent.AllowPainting = false;
+		}
+
+		#region IDisposable & Co. implementation
+		// Region last reviewed: never
+
+		/// <summary>
+		/// True, if the object has been disposed.
+		/// </summary>
+		private bool m_isDisposed;
+
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return m_isDisposed; }
+		}
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~SuspendDrawing()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			// Must not be run more than once.
+			if (m_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+				if (m_parent != null)
+					m_parent.AllowPainting = true;
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_parent = null;
+
+			m_isDisposed = true;
+		}
+
+		/// <summary>
+		/// Throw if the IsDisposed property is true
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException("SuspendDrawing", "This object is being used after it has been disposed: this is an Error.");
+		}
+
+		#endregion IDisposable & Co. implementation
 	}
 	#endregion
 }
