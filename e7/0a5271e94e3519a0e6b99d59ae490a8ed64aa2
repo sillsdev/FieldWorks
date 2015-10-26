@@ -1,0 +1,8 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Mon, 26 Oct 2015 16:42:02 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3424
+Project: FieldWorks
+Branch: refs/heads/release/8.2
