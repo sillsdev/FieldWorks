@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 using System.Xml;
@@ -91,7 +95,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else
 					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetClassId(dstClass);
 
-				// And the one property of that imaginary obejct we are displaying.
+				// And the one property of that imaginary object we are displaying.
 				string stringProp = XmlUtils.GetManditoryAttributeValue(nodeObjProp, "ghost");
 				// Special case for making a Text
 				if (m_flidEmptyProp == RnGenericRecTags.kflidText)
@@ -280,7 +284,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string sRedo = String.Format(DetailControlsStrings.ksRedoCreate0, sClass);
 				int hvoNewObj = 0;
 				int hvoStringObj = 0;
-				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents
 					// of an StTxtPara, make the intermediate objects

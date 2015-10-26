@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +16,7 @@ using L10NSharp;
 using Palaso.UI.WindowsForms.PortableSettingsProvider;
 using System.Collections.Generic;
 using System;
+using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using XCore;
@@ -187,8 +192,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
-
-				fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+				fWsUsesKeyman |= DoesWritingSystemUseKeyman(ws);
 			}
 
 			if (fWsUsesKeyman)
@@ -243,6 +247,32 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			if (datasetExtent.Length > 0)
 				model.SetDatasetExtent(datasetExtent + ".");
+		}
+
+		/// <summary>
+		/// Returns true if the writing system has an active keyman keyboard
+		/// </summary>
+		/// <remarks>Internal for testing, uses reflection to identify a keyboard as keyman</remarks>
+		internal static bool DoesWritingSystemUseKeyman(IWritingSystem ws)
+		{
+			if(Palaso.PlatformUtilities.Platform.IsLinux) // Keyman is not required on linux
+				return false;
+			var palasoWs = ws as PalasoWritingSystem;
+			if(palasoWs != null && palasoWs.KnownKeyboards.Any())
+			{
+				var keyboardingAssembly = Assembly.GetAssembly(typeof(KeyboardDescription));
+				var keymanType = keyboardingAssembly.GetType("Palaso.UI.WindowsForms.Keyboarding.Windows.KeymanKeyboardDescription");
+				foreach(var keyboard in palasoWs.KnownKeyboards)
+				{
+					if(!keyboard.IsAvailable)
+						continue;
+					if(keymanType.IsInstanceOfType(keyboard))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------

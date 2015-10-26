@@ -223,7 +223,7 @@ Description:
 		(Note: use wseng when you need to distinguish the interface/object from the writing
 		system's integer code, which uses ws as its Hungarian.)
 	*******************************************************************************************/
-	DeclareInterface(LgWritingSystem, Unknown, 9F74A170-E8BB-466d-8848-5FDB28AC5AF8)
+	DeclareInterface(LgWritingSystem, Unknown, FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB)
 	{
 		// The identifier for this writing system.
 		[propget] HRESULT Id(
@@ -295,14 +295,6 @@ Description:
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
 
-		// A Keyman keyboard name that should be used to invoke the appropriate
-		// Keyman keyboard if the writing sytem requires it. Leave as empty string
-		// for non-Keyman IMs.
-		[propget] HRESULT Keyboard(
-			[out, retval] BSTR * pbstr);
-		[propput] HRESULT Keyboard(
-			[in] BSTR bstr);
-
 		// The current input language. By default this is derived from LCID, but it can be
 		// overridden temporarily (for one session). Note that this is not persisted.
 		[propget] HRESULT CurrentLCID(
@@ -310,6 +302,10 @@ Description:
 		// Set the current (temporary) LangId for this writing system.
 		[propput] HRESULT CurrentLCID(
 			[in] int nLangId);
+
+		// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		[propget] HRESULT UseNfcContext(
+			[out, retval] ComBool * pUseNfc);
 	};
 
 	//:>****************************************************************************************

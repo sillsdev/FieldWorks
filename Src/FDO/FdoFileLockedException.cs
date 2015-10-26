@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO
@@ -28,12 +27,11 @@ namespace SIL.FieldWorks.FDO
 		/// Initializes a new instance of the <see cref="FdoFileLockedException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
-		/// <param name="innerException">The inner exception.</param>
 		/// <param name="fReportToUser">True to report this error to the user, false otherwise
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public FdoFileLockedException(string message, Exception innerException, bool fReportToUser) :
-			base(message, innerException, fReportToUser)
+		public FdoFileLockedException(string message, bool fReportToUser) :
+			base(message, fReportToUser)
 		{
 		}
 	}

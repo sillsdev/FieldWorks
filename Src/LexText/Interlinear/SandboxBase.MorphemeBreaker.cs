@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -636,6 +640,11 @@ namespace SIL.FieldWorks.IText
 				rgsli[clev - 1].tag = ktagSbWordMorphs;
 				if (clev > 1)
 					rgsli[0].tag = ktagSbMorphForm; // leave other slots zero
+
+				// Set writing system of the selection (LT-16593).
+				var propsBuilder = TsPropsBldrClass.Create();
+				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, m_wsVern);
 				try
 				{
 					m_sandbox.RootBox.MakeTextSelection(
@@ -647,7 +656,7 @@ namespace SIL.FieldWorks.IText
 						false, // needs to be false here to associate with trailing character
 						// esp. for when the cursor is at the beginning of the morpheme (LT-7773)
 						-1, // end not in different object
-						null, // no special props to use for typing
+						propsBuilder.GetTextProps(),
 						true); // install it.
 				}
 				catch (Exception)
@@ -1005,6 +1014,11 @@ namespace SIL.FieldWorks.IText
 		internal void StopMonitoring()
 		{
 			m_monitorPropChanges = false;
+		}
+
+		internal bool IsMonitoring
+		{
+			get { return m_monitorPropChanges; }
 		}
 
 		#region FwDisposableBase

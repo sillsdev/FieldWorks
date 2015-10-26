@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Palaso.IO.FileLock;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
@@ -110,7 +111,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		#region Member variables
 		private DateTime m_lastWriteTime;
-		private FileStream m_lockFile;
+		private IFileLock m_fileLock;
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
 		private int m_startupVersionNumber;
 		private IList<string> m_listOfDuplicateGuids = new List<string>();
@@ -129,11 +130,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public IList<string> ListOfDuplicateGuids
 		{
 			get { return m_listOfDuplicateGuids; }
-		}
-
-		protected bool HasLockFile
-		{
-			get { return m_lockFile != null; }
 		}
 
 		protected int StartupVersionNumber
@@ -365,45 +361,29 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal virtual void LockProject()
 		{
-			try
-			{
-				m_lockFile = LockProject(ProjectId.Path);
-			}
-			catch (IOException e)
-			{
-				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
-			}
+			m_fileLock = SimpleFileLock.CreateFromFilePath(ProjectId.Path + ".lock");
+			if (!m_fileLock.TryAcquireLock())
+				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), true);
 			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 		}
 
-		public static bool IsFileLocked(string projectPath)
+		public static bool IsProjectLocked(string projectPath)
 		{
-			try
+			var fileLock = SimpleFileLock.CreateFromFilePath(projectPath + ".lock");
+			if (fileLock.TryAcquireLock())
 			{
-				using (var lockFile = LockProject(projectPath))
-				{
-					lockFile.Close();
-					return false;
-				}
+				fileLock.ReleaseLock();
+				return false;
 			}
-			catch (IOException)
-			{
-				return true;
-			}
-		}
-
-		internal static FileStream LockProject(string projectPath)
-		{
-			return File.Open(projectPath + ".lock", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+			return true;
 		}
 
 		internal virtual void UnlockProject()
 		{
-			if (m_lockFile != null)
+			if (m_fileLock != null)
 			{
-				m_lockFile.Close();
-				File.Delete(ProjectId.Path + ".lock");
-				m_lockFile = null;
+				m_fileLock.ReleaseLock();
+				m_fileLock = null;
 			}
 		}
 

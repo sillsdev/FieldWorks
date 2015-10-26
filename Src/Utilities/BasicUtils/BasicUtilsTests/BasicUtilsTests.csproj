@@ -98,6 +98,7 @@
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ColorUtilTests.cs" />
     <Compile Include="FileUtilsTest.cs" />
+    <Compile Include="GlobalMutexTests.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />
     <Compile Include="MiscUtilsTests.cs" />

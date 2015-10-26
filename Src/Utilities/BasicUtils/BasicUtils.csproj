@@ -85,6 +85,8 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
+    <Compile Include="NativeException.cs" />
+    <Compile Include="GlobalMutex.cs" />
     <Compile Include="IProgress.cs" />
     <Compile Include="IServiceLocatorBootstrapper.cs" />
     <Compile Include="IThreadedProgress.cs" />

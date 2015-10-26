@@ -151,22 +151,28 @@
     <value>3</value>
   </data>
   <data name="radEmail.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
+    <value>Bottom, Left</value>
+  </data>
+  <data name="radEmail.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="radEmail.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="radEmail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>32, 436</value>
+    <value>32, 435</value>
   </data>
   <data name="radEmail.Size" type="System.Drawing.Size, System.Drawing">
-    <value>504, 16</value>
+    <value>345, 17</value>
   </data>
   <data name="radEmail.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="radEmail.Text" xml:space="preserve">
     <value>&amp;Open an email containing this message using the default email client</value>
+  </data>
+  <data name="radEmail.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
   </data>
   <data name="&gt;&gt;radEmail.Name" xml:space="preserve">
     <value>radEmail</value>
@@ -244,7 +250,10 @@
     <value>8</value>
   </data>
   <data name="radSelf.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
+    <value>Bottom, Left</value>
+  </data>
+  <data name="radSelf.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="radSelf.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>TopLeft</value>
@@ -253,10 +262,10 @@
     <value>NoControl</value>
   </data>
   <data name="radSelf.Location" type="System.Drawing.Point, System.Drawing">
-    <value>32, 460</value>
+    <value>32, 463</value>
   </data>
   <data name="radSelf.Size" type="System.Drawing.Size, System.Drawing">
-    <value>508, 20</value>
+    <value>421, 17</value>
   </data>
   <data name="radSelf.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>

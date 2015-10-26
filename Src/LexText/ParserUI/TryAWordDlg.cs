@@ -111,9 +111,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Mediator, m_cache, m_wordformTextBox);
-#if !__MonoCS__
-			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
-#endif
 
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			var helpTopicProvider = PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
@@ -172,7 +169,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			// So, set the location and size of the HTML control, and anchor it to all four sides of the
 			// panel.
 			m_resultsPanel.Controls.Add(m_htmlControl);
-			m_htmlControl.URL = Path.Combine(TransformPath, "InitialDocument.htm");
+			var uri = new Uri(Path.Combine(TransformPath, "InitialDocument.htm"));
+			m_htmlControl.URL = uri.AbsoluteUri;
 		}
 
 		private void SetFontInfo()
@@ -418,7 +416,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (GetSelectedTraceMorphs(out selectedTraceMorphs))
 				{
 					// Display a "processing" message (and include info on how to improve the results)
-					m_htmlControl.URL = Path.Combine(TransformPath, "WhileTracing.htm");
+					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
+					m_htmlControl.URL = uri.AbsoluteUri;
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
@@ -463,7 +462,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				sOutput = trace.CreateResultPage(PropTable, result, DoTrace);
 			}
-			m_htmlControl.URL = sOutput;
+			var uri = new Uri(sOutput);
+			m_htmlControl.URL = uri.AbsoluteUri;
 		}
 
 		private string CleanUpWord()

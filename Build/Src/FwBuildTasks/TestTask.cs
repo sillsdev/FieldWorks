@@ -104,7 +104,20 @@ namespace FwBuildTasks
 				{
 					try
 					{
-						process.Kill();
+						bool testLooksToHaveFinished;
+						lock(LockObject)
+						{
+							testLooksToHaveFinished = !string.IsNullOrEmpty(m_TestLog.FindLast(line => line.Contains(GetTestsCompletedString())));
+						}
+						if(testLooksToHaveFinished)
+						{
+							Log.LogMessage(MessageImportance.Normal, "Tests for {0} timed out, but appear to have finished. Giving 2 seconds for log to be written.", TestProgramName);
+							Thread.Sleep(2000);
+							// If the tests completed, don't fail with a timeout; if missing Dispose calls caused NUnit to hang, that should be caught as a different failure.
+							fTimedOut = false;
+						}
+						if(!process.HasExited) // If the tests looked to have finished the process might have exited normally by now
+							process.Kill(); // This will set the exit code to -1 and the suite will be added as a failed suite below
 					}
 					catch
 					{
@@ -167,6 +180,8 @@ namespace FwBuildTasks
 			// test or if we get a timeout we want to fail the build.
 			return retVal;
 		}
+
+		protected abstract string GetTestsCompletedString();
 
 		/// <summary>
 		/// Starts the process and handles errors.

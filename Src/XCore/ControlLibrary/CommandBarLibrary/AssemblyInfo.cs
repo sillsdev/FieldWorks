@@ -1,5 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
-// This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html)
+// ---------------------------------------------------------
+// Windows Forms CommandBar Control
+// Copyright (C) 2001-2003 Lutz Roeder. All rights reserved.
+// http://www.aisto.com/roeder
+// roeder@aisto.com
+// ---------------------------------------------------------
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]

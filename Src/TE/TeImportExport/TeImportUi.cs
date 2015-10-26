@@ -181,6 +181,23 @@ namespace SIL.FieldWorks.TE
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the user is allowed to cancel the current operation.
+		/// </summary>
+		public virtual bool AllowCancel
+		{
+			get
+			{
+				CheckDisposed();
+				return m_progressDialog.AllowCancel;
+			}
+			set
+			{
+				CheckDisposed();
+				m_progressDialog.AllowCancel = value;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a message indicating progress status.
@@ -314,6 +331,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void OnCancelPressed(object sender, CancelEventArgs e)
 		{
+			CheckDisposed();
 			Debug.Assert(!m_ctrl.InvokeRequired);
 
 			try

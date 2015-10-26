@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -239,6 +243,8 @@ namespace SIL.FieldWorks.IText
 			static internal IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider,
 				IVwSelection vwselNew, SandboxBase sandbox, bool fMouseDown)
 			{
+				if (!vwselNew.IsValid)
+					throw new ArgumentException("The selection is invalid.", "vwselNew");
 				// Figure what property is selected and create a suitable class if appropriate.
 				int cvsli = vwselNew.CLevels(false);
 				// CLevels includes the string property itself, but AllTextSelInfo doesn't need
@@ -1595,17 +1601,24 @@ namespace SIL.FieldWorks.IText
 				IMoForm mf = null;
 				if (hvoMorphEntry != 0)
 				{
-					realEntry =
-						m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
-					mf = realEntry.LexemeFormOA;
+					var realHvo = m_caches.RealHvo(hvoMorphEntry);
+					if(m_caches.MainCache.ServiceLocator.IsValidObjectId(realHvo))
+					{
+						realEntry = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(realHvo);
+						mf = realEntry.LexemeFormOA;
+					}
 				}
 				ILexSense realSense = null;
 				ILexEntryRef ler = null;
 				if (hvoMorphSense != 0)
 				{
-					realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(m_caches.RealHvo(hvoMorphSense));
-					if (realEntry != null)
-						realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					var realHvo = m_caches.RealHvo(hvoMorphSense);
+					if(m_caches.MainCache.ServiceLocator.IsValidObjectId(realHvo))
+					{
+						realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(realHvo);
+						if (realEntry != null)
+							realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					}
 				}
 
 				//var mi = new MorphItem(options);

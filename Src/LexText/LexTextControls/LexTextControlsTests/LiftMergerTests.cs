@@ -3886,6 +3886,41 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void ImportRangeWithNoId_DoesNotDuplicateGuids_AnthroCode()
+		{
+			SetWritingSystems("fr");
+			var antFactory = Cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>();
+			var antItem = antFactory.Create();
+			Cache.LangProject.AnthroListOA.PossibilitiesOS.Add(antItem);
+			var noNameRangeData1 = new[]
+			{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift-ranges>",
+			"<range id='anthro-code'>",
+			string.Format(@"<range-element id=""***"" guid=""{0}"">", antItem.Guid.ToString()),
+			"<trait  name='referenceType' value=''/>",
+			"<description>",
+			"<form lang='en'><text>Test for Duplicate Anthropology Guid</text></form>",
+			"</description>",
+			"</range-element>",
+			"</range>",
+			"</lift-ranges>"
+			};
+
+			Assert.That(Cache.LangProject.AnthroListOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one ANT");
+
+			//Create the LIFT data file
+			var sOrigFile = CreateInputFile(_minimalLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData1);
+
+			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+			Assert.That(Cache.LangProject.AnthroListOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should have merged import with ICmAnthroItem from input");
+		}
+
+		[Test]
 		public void ImportRangeWithExistingObject_DoesNotDuplicate_UnifiesData()
 		{
 			SetWritingSystems("fr");

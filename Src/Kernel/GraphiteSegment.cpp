@@ -868,7 +868,7 @@ STDMETHODIMP GraphiteSegment::PointToChar(int ichBase, IVwGraphics* pvg,
 			ich = it->ichBase;
 		}
 		int distance = srcRect.MapXTo(x, dstRect) - ptdClickPosition.x;
-		if (it == m_clusters.begin() || abs(distance) < abs(minDistance))
+		if (it == m_clusters.begin() || abs(distance) <= abs(minDistance))
 		{
 			minIch = ich;
 			minDistance = distance;
@@ -1075,7 +1075,11 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	int dpiY;
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
 
-	gr_font* font = gr_make_font((float) MulDiv(chrp.dympHeight, dpiY, kdzmpInch), m_qgre->Face());
+	gr_font_ops fontOps;
+	fontOps.size = sizeof(gr_font_ops);
+	fontOps.glyph_advance_x = &GraphiteEngine::GetAdvanceX;
+	fontOps.glyph_advance_y = &GraphiteEngine::GetAdvanceY;
+	gr_font* font = gr_make_font_with_ops((float) MulDiv(chrp.dympHeight, dpiY, kdzmpInch), pvg, &fontOps, m_qgre->Face());
 
 	int segmentLen = m_ichLim - m_ichMin;
 	StrUni segStr;
@@ -1084,12 +1088,12 @@ void GraphiteSegment::Compute(int ichBase, IVwGraphics* pvg)
 	CheckHr(m_qts->Fetch(m_ichMin, m_ichLim, pchNfd));
 	pchNfd[segmentLen] = '\0';
 
-	gr_segment* segment = gr_make_seg(font, m_qgre->Face(), 0, m_qgre->FeatureValues(), gr_utf16, segStr, segmentLen, m_paraRtl ? gr_rtl : 0);
+	gr_segment* segment = gr_make_seg(font, m_qgre->Face(), 0, m_qgre->FeatureValues(), gr_utf16, segStr, segmentLen, IsRtl() ? gr_rtl : 0);
 	if (m_stretch > 0)
 	{
 		int width = 0;
 		for (const gr_slot* s = gr_seg_first_slot(segment); s != NULL; s = gr_slot_next_in_segment(s))
-			width += Round(gr_slot_advance_X(s, m_qgre->Face(), font));
+			width = Max(width, Round(gr_slot_origin_X(s) + gr_slot_advance_X(s, m_qgre->Face(), font)));
 		gr_seg_justify(segment, gr_seg_first_slot(segment), font, width + m_stretch, gr_justCompleteLine, NULL, NULL);
 	}
 	InitializeGlyphs(segment, font);
@@ -1117,21 +1121,21 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 		return;
 
 	// Graphite2 slots are returned in logical order. We want them in visual order.
-	const gr_slot* s = m_paraRtl ? gr_seg_last_slot(segment) : gr_seg_first_slot(segment);
+	const gr_slot* s = IsRtl() ? gr_seg_last_slot(segment) : gr_seg_first_slot(segment);
 	while (s != NULL)
 	{
 		GlyphInfo g;
 		g.glyphIndex = gr_slot_gid(s);
-		g.x = m_width;
+		g.x = Round(gr_slot_origin_X(s));
 		g.y = Round(gr_slot_origin_Y(s));
-		m_width += Round(gr_slot_advance_X(s, m_qgre->Face(), font));
+		m_width = Max(m_width, Round(gr_slot_origin_X(s) + gr_slot_advance_X(s, m_qgre->Face(), font)));
 		m_glyphs.push_back(g);
-		s = m_paraRtl ? gr_slot_prev_in_segment(s) : gr_slot_next_in_segment(s);
+		s = IsRtl() ? gr_slot_prev_in_segment(s) : gr_slot_next_in_segment(s);
 	}
 
 	unsigned int gi;
 	int beforeX;
-	if (m_paraRtl)
+	if (IsRtl())
 	{
 		gi = m_glyphs.size() - 1;
 		beforeX = m_width;
@@ -1162,7 +1166,7 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 			Cluster& last = m_clusters.back();
 			int ichBase = last.ichBase + last.length;
 			int x;
-			if (!m_paraRtl)
+			if (!IsRtl())
 			{
 				x = m_glyphs[gi].x;
 			}
@@ -1181,7 +1185,7 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 		if (m_clusters.back().ichBase + m_clusters.back().length < after + 1)
 			m_clusters.back().length = after + 1 - m_clusters.back().ichBase;
 
-		if (m_paraRtl)
+		if (IsRtl())
 			gi--;
 		else
 			gi++;

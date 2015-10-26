@@ -1,3 +1,5 @@
+// Original author or copyright holder unknown.
+
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;

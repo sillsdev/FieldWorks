@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -357,7 +361,7 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the keyboard.
+		/// Gets or sets the keyboard. DON'T USE - THIS IS OBSOLETE
 		/// </summary>
 		/// <value>The keyboard.</value>
 		public override string Keyboard
@@ -407,6 +411,20 @@ namespace SIL.CoreImpl
 			{
 				lock (m_syncRoot)
 					base.SpellCheckingId = value;
+			}
+		}
+
+		/// <summary>
+		/// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		/// </summary>
+		public bool UseNfcContext
+		{
+			get
+			{
+				// Currently we use NFD only for Keyman keyboards. If the LocalKeyboard
+				// property is null than for sure we don't have a keyman keyboard either,
+				// so we simply return true (ie. use NFC) in that case.
+				return LocalKeyboard == null || LocalKeyboard.UseNfcContext;
 			}
 		}
 
@@ -1285,6 +1303,7 @@ namespace SIL.CoreImpl
 		{
 			return DisplayLabel;
 		}
+
 	}
 
 	/// <summary>

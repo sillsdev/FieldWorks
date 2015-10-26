@@ -1860,6 +1860,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
+		{
+			switch(e.Flid)
+			{
+				case FsClosedFeatureTags.kflidValues:
+					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(this, "ValuesSorted", ValuesSorted);
+					break;
+			}
+			base.AddObjectSideEffectsInternal(e);
+		}
+
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			switch(e.Flid)
+			{
+				case FsClosedFeatureTags.kflidValues:
+					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(this, "ValuesSorted", ValuesSorted);
+					break;
+			}
+			base.RemoveObjectSideEffectsInternal(e);
+		}
 	}
 	#endregion
 

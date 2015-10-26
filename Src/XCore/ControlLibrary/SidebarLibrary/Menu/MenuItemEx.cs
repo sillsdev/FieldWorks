@@ -1,3 +1,5 @@
+// Original author or copyright holder unknown.
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;

@@ -955,6 +955,7 @@ namespace SIL.FieldWorks.TE
 				importCallbacks))
 			{
 				importer.Import();
+				importCallbacks.AllowCancel = false; // LT-16647: Disallow canceling import after it is complete (before disposing importer).
 				return importer.m_firstImportedRef;
 			}	// Dispose() releases any hold on ICU character properties.
 		}

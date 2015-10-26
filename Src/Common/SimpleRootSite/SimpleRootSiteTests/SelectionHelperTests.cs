@@ -733,6 +733,35 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.AreEqual(yScrollOri, m_basicView.ScrollPosition.Y);
 		}
 		#endregion
+
+		[Test]
+		[TestCase(0, 1, 2, 3, TestName="Initial forward selection; set forward selection")]
+		[TestCase(1, 0, 2, 3, TestName="Initial backwards selection; set forward selection")]
+		[TestCase(0, 1, 3, 2, TestName="Initial forward selection; set backwards selection")]
+		[TestCase(1, 0, 3, 2, TestName="Initial backwards selection; set backwards selection")]
+		public void GetSetIch(int anchor, int end, int newAnchor, int newEnd)
+		{
+			// Setup
+			ShowForm(Lng.English | Lng.Empty, SimpleViewVc.DisplayType.kAll);
+			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			SetSelection(0, 1, 1, 0, 0, anchor, end, true);
+			m_SelectionHelper.SetSelection(true);
+			var selHelper = SelectionHelper.Create(m_basicView);
+			selHelper.GetIch(SelectionHelper.SelLimitType.Top);
+
+			// Exercise
+			selHelper.IchAnchor = newAnchor;
+			selHelper.IchEnd = newEnd;
+			selHelper.SetSelection(true, true);
+
+			// Verify
+			Assert.That(selHelper.GetIch(SelectionHelper.SelLimitType.Anchor), Is.EqualTo(newAnchor));
+			Assert.That(selHelper.GetIch(SelectionHelper.SelLimitType.End), Is.EqualTo(newEnd));
+			Assert.That(selHelper.GetIch(SelectionHelper.SelLimitType.Top),
+				Is.EqualTo(newAnchor < newEnd ? newAnchor : newEnd));
+			Assert.That(selHelper.GetIch(SelectionHelper.SelLimitType.Bottom),
+				Is.EqualTo(newAnchor < newEnd ? newEnd : newAnchor));
+		}
 	}
 	#endregion
 
