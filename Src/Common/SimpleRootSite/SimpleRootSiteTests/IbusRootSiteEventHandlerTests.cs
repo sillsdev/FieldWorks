@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var ibusKeyboardRetrievingAdaptor = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
 			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
-			KeyboardController.Initialize(xkbKeyboardRetrievingAdapter, ibusKeyboardRetrievingAdapter);
+			KeyboardController.Initialize(xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor);
 			KeyboardController.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
 

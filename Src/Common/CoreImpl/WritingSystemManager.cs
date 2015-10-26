@@ -217,7 +217,8 @@ namespace SIL.CoreImpl
 			{
 				VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
 				string langTag = IetfLanguageTag.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
-				CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
+				CoreWritingSystemDefinition ws;
+				m_repo.WritingSystemFactory.Create(langTag, out ws);
 				if (ws.Language != null && languageSubtag != null && ws.Language.Name != languageSubtag.Name)
 					ws.Language = new LanguageSubtag(ws.Language, languageSubtag.Name);
 				if (ws.Script != null && scriptSubtag != null && ws.Script.Name != scriptSubtag.Name)
