@@ -32,11 +32,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (Directory.Exists(DirectoryFinder.OldGlobalWritingSystemStoreDirectory))
 				{
 					// copy over all FW global writing systems from the old directory to the new directory and migrate
-					CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory,
-						GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath));
-					globalMigrator.Migrate();
-					// delete old global writing systems, so they aren't migrated again
-					Directory.Delete(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, true);
+					if (CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory,
+						GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath)))
+					{
+						globalMigrator.Migrate();
+						// delete old global writing systems, so they aren't migrated again
+						var oldWSStoreDir = new DirectoryInfo(DirectoryFinder.OldGlobalWritingSystemStoreDirectory);
+						foreach (FileInfo file in oldWSStoreDir.GetFiles())
+							file.Delete();
+					}
 				}
 			}
 
@@ -81,18 +85,20 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			DataMigrationServices.IncrementVersionNumber(repoDto);
 		}
 
-		private static void CopyDirectoryContents(string sourcePath, string destinationPath)
+		private static bool CopyDirectoryContents(string sourcePath, string destinationPath)
 		{
 			if (!Directory.Exists(destinationPath))
 				Directory.CreateDirectory(destinationPath);
 
+			string[] files = Directory.GetFiles(sourcePath);
 			// Copy all the files.
-			foreach (string filepath in Directory.GetFiles(sourcePath))
+			foreach (string filepath in files)
 			{
 				string filename = Path.GetFileName(filepath);
 				Debug.Assert(filename != null);
 				File.Copy(filepath, Path.Combine(destinationPath, filename), true);
 			}
+			return files.Length > 0;
 		}
 
 		private void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
