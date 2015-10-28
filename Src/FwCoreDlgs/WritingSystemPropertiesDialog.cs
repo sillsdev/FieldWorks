@@ -1762,7 +1762,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected void SaveChanges()
 		{
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			// when this dialog is called from the new language project dialog, there is no FDO cache,
+			// but we still need to update the WS manager, so we have to execute the save even if m_cache is null
+			NonUndoableUnitOfWorkHelper uowHelper = null;
+			if (m_cache != null)
+				uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor);
+			try
 			{
 				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
 				{
@@ -1782,13 +1787,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						{
 							// update the ID
 							m_wsManager.Set(origWS);
-							WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
+							if (uowHelper != null)
+								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
 						}
 						m_fChanged = true;
 					}
 				}
 				m_wsManager.Save();
-			});
+				if (uowHelper != null)
+					uowHelper.RollBack = false;
+			}
+			finally
+			{
+				if (uowHelper != null)
+					uowHelper.Dispose();
+			}
 		}
 
 		/// <summary>

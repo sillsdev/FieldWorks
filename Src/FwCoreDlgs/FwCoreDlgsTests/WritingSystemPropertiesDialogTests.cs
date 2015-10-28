@@ -15,6 +15,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.Utils.Attributes;
@@ -35,6 +36,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public DummyWritingSystemPropertiesDialog(FdoCache cache)
 			: base(cache, cache.ServiceLocator.WritingSystemManager, cache.ServiceLocator.WritingSystems, null, null, null)
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyWritingSystemPropertiesDialog"/> class.
+		/// </summary>
+		public DummyWritingSystemPropertiesDialog(WritingSystemManager wsManager, IWritingSystemContainer wsContainer)
+			: base(null, wsManager, wsContainer, null, null, null)
+		{
+
 		}
 
 		#region Internal methods and properties
@@ -868,6 +878,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			VerifyWsNames(
 				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" },
 				new[] { "qaa-x-kal", "qaa-fonipa-x-kal", "qaa-QM-x-kal-MI" });
+		}
+
+		/// <summary>
+		/// Test using the writing system properties dialog with no cache
+		/// </summary>
+		[Test]
+		public void NoCache_DoesNotThrow()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition ws = wsManager.Set("qaa-x-kal");
+			ws.Language = new LanguageSubtag(ws.Language, "Kalaba");
+			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(wsManager.WritingSystems, wsManager.WritingSystems,
+				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
+			using (var dlg = new DummyWritingSystemPropertiesDialog(wsManager, wsContainer))
+			{
+				dlg.ShowDialog(ws);
+				dlg.LanguageNameTextBox.Text = "Kalab";
+				Assert.DoesNotThrow(() => dlg.PressOk());
+				Assert.That(ws.DisplayLabel, Is.EqualTo("Kalab"));
+			}
 		}
 
 		#endregion

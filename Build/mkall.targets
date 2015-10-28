@@ -356,7 +356,7 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.TestUtilities.dll" LocalFilename="$(fwrt)/Downloads/SIL.TestUtilities.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, and Spart."/>
+		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Commons.Xml.Relaxng.dll" LocalFilename="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -370,6 +370,7 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Spart.dll" LocalFilename="$(fwrt)/Downloads/Spart.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Newtonsoft.Json.dll" LocalFilename="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
@@ -514,7 +515,7 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Spart.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>

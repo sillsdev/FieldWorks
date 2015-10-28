@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public void FixtureInit()
+		public virtual void FixtureInit()
 		{
 			FwRegistrySettings.Init();
 			SetupEverythingButBase();

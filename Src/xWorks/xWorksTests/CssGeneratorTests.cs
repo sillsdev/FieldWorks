@@ -1151,8 +1151,8 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
+			m_window.Dispose();
 			m_application.Dispose();
-			m_propertyTable.Dispose();
 			FwRegistrySettings.Release();
 		}
 		[Test]

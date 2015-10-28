@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		[TestFixtureSetUp]
-		public new void FixtureSetup()
+		public override void FixtureInit()
 		{
 			Init();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
