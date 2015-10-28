@@ -119,7 +119,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (cancel)
 				{
-					if (m_ActionHandler != null && m_ActionHandler.get_TasksSinceMark(true))
+					if (m_ActionHandler != null &&
+						(m_ActionHandler.get_TasksSinceMark(true) || m_Depth != m_ActionHandler.CurrentDepth))
 					{
 						m_ActionHandler.Rollback(m_Depth);
 						retVal = true;
