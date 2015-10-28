@@ -32,15 +32,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (Directory.Exists(DirectoryFinder.OldGlobalWritingSystemStoreDirectory))
 				{
 					// copy over all FW global writing systems from the old directory to the new directory and migrate
-					if (CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory,
-						GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath)))
-					{
-						globalMigrator.Migrate();
-						// delete old global writing systems, so they aren't migrated again
-						var oldWSStoreDir = new DirectoryInfo(DirectoryFinder.OldGlobalWritingSystemStoreDirectory);
-						foreach (FileInfo file in oldWSStoreDir.GetFiles())
-							file.Delete();
-					}
+					string globalRepoPath = Path.Combine(GlobalWritingSystemRepository.DefaultBasePath, "3");
+					if (!Directory.Exists(globalRepoPath))
+						GlobalWritingSystemRepository.CreateGlobalWritingSystemRepositoryDirectory(globalRepoPath);
+					CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, globalRepoPath);
+					globalMigrator.Migrate();
+					// delete old global writing systems, so they aren't migrated again
+					Directory.Delete(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, true);
 				}
 			}
 
@@ -85,20 +83,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			DataMigrationServices.IncrementVersionNumber(repoDto);
 		}
 
-		private static bool CopyDirectoryContents(string sourcePath, string destinationPath)
+		private static void CopyDirectoryContents(string sourcePath, string destinationPath)
 		{
-			if (!Directory.Exists(destinationPath))
-				Directory.CreateDirectory(destinationPath);
-
-			string[] files = Directory.GetFiles(sourcePath);
 			// Copy all the files.
-			foreach (string filepath in files)
+			foreach (string filepath in Directory.GetFiles(sourcePath))
 			{
 				string filename = Path.GetFileName(filepath);
 				Debug.Assert(filename != null);
 				File.Copy(filepath, Path.Combine(destinationPath, filename), true);
 			}
-			return files.Length > 0;
 		}
 
 		private void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
