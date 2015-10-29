@@ -180,6 +180,9 @@
   <data name="ksExportInterlinear" xml:space="preserve">
     <value>Export Interlinear</value>
   </data>
+  <data name="ksExporting_" xml:space="preserve">
+    <value>Exporting...</value>
+  </data>
   <data name="ksExtension" xml:space="preserve">
     <value>Extension</value>
   </data>
