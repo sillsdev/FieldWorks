@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   xmlns:user="urn:my-scripts">
@@ -632,9 +632,9 @@ DoEntry
 			</xsl:when>
 			</xsl:choose>
 			<xsl:call-template name="DoEntryResidue"/>
-			<!-- Custom fields in this Sense -->
-			<xsl:call-template name="JoinCustomOnFwid"/>
 		  </LexEntryRef>
+		  <!-- Custom fields in this Sense -->
+		  <xsl:call-template name="JoinCustomOnFwid"/>
 		</LexEntry>
 	  </xsl:for-each>
 	</xsl:if>
@@ -842,10 +842,11 @@ DoScientificName
 -->
   <xsl:template name="DoScientificName">
 	<xsl:if test="sci">
-	  <ScientificName ws="{sci/@ws}"><xsl:value-of select="sci"/></ScientificName>
+	  <ScientificName ws="{sci/@ws}"><xsl:copy-of select="sci/* | sci/text()"/></ScientificName>
 	</xsl:if>
   </xsl:template>
 <!--
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 DoSource
 	process Source
@@ -854,7 +855,7 @@ DoSource
 -->
   <xsl:template name="DoSource">
 	<xsl:if test="src">
-	  <Source ws="{src/@ws}"><xsl:value-of select="src"/></Source>
+	  <Source ws="{src/@ws}"><xsl:copy-of select="src/* | src/text()"/></Source>
 	</xsl:if>
   </xsl:template>
 <!--
@@ -1471,6 +1472,10 @@ getNumSuffix(text)
 <xsl:param name="text"/>
    <xsl:variable name="len" select="string-length($text)"/>
    <xsl:choose>
+   <!-- Don't strip digits from .mp3 audio names -->
+   <xsl:when test="'.mp3'=substring($text,$len - 3,4)">
+	  <xsl:value-of select="$text"/>
+   </xsl:when>
    <xsl:when test="'0' = translate(substring($text,$len,1),'0123456789','0000000000')">
 	  <!-- the last character is a number: ignore it -->
 	  <xsl:call-template name="getPreText">

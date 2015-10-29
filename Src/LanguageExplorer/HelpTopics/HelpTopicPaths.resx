@@ -192,7 +192,7 @@
   <data name="khtpImportSFMStep1" xml:space="preserve">
     <value>Beginning_Tasks/Importing_Data/step_1_of_8_overview_and_backup.htm</value>
   </data>
-  <data name="khtpImportSFMStep2" mimetype="">
+  <data name="khtpImportSFMStep2" xml:space="preserve">
     <value>Beginning_Tasks/Importing_Data/Step_2_of_8_File_and_Setting.htm</value>
   </data>
   <data name="khtpImportSFMStep3" xml:space="preserve">
@@ -2987,5 +2987,8 @@
   </data>
   <data name="khtpGetStartedWithSendReceive" xml:space="preserve">
     <value>Basic_Tasks/Collaborating_with_Others/Get_Started_with_Send_Receive.htm</value>
+  </data>
+  <data name="khtpField-MoAffixProcess-Form" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Lexeme_Form_field.htm</value>
   </data>
 </root>

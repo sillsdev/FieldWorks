@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -30,6 +35,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[SetUp]
 		public void SetUp()
 		{
+			Icu.InitIcuDataDir();
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
 			using (m_activationContext.Activate())
 			{
@@ -40,6 +46,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
+						m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
 						m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
 					});
 			}
@@ -554,6 +561,93 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			lexeme = m_lexicon.Lexemes.Single();
 			Assert.That(lexeme.LexicalForm, Is.EqualTo("form"));
 			Assert.That(lexeme.Type, Is.EqualTo(LexemeType.Stem));
+		}
+
+		/// <summary>
+		/// Test when an entry has a lexeme form with an empty default vernacular.
+		/// </summary>
+		[Test]
+		public void EmptyDefaultVernLexemeForm()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+			});
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
+			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
+		}
+
+		/// <summary>
+		/// Test that the name for entry tree lexical relations are correct.
+		/// </summary>
+		[Test]
+		public void EntryTreeLexicalRelationName()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+
+				ILexRefType entryLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(entryLexRefType);
+				entryLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtEntryTree;
+				entryLexRefType.Name.SetAnalysisDefaultWritingSystem("Part");
+				entryLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("Whole");
+
+				ILexReference entryLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				entryLexRefType.MembersOC.Add(entryLexRef);
+				entryLexRef.TargetsRS.Add(entry1);
+				entryLexRef.TargetsRS.Add(entry2);
+				entryLexRef.TargetsRS.Add(entry3);
+			});
+
+			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form1").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Part", "Part"}));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
+		}
+
+		/// <summary>
+		/// Test that the name for sense tree lexical relations are correct.
+		/// </summary>
+		[Test]
+		public void SenseTreeLexicalRelationName()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+
+				ILexRefType senseLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(senseLexRefType);
+				senseLexRefType.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseTree;
+				senseLexRefType.Name.SetAnalysisDefaultWritingSystem("Part");
+				senseLexRefType.ReverseName.SetAnalysisDefaultWritingSystem("Whole");
+
+				ILexReference senseLexRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				senseLexRefType.MembersOC.Add(senseLexRef);
+				senseLexRef.TargetsRS.Add(entry1.SensesOS[0]);
+				senseLexRef.TargetsRS.Add(entry2.SensesOS[0]);
+				senseLexRef.TargetsRS.Add(entry3.SensesOS[0]);
+			});
+
+			Lexeme lexeme = m_lexicon.FindMatchingLexemes("form1").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Part", "Part"}));
+
+			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
+			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
 		}
 
 		#endregion

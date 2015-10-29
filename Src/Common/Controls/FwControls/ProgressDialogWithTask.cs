@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null);
-				return m_progressDialog.Maximum;
+				return m_progressDialog.Minimum;
 			}
 			set
 			{
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] {value});
 				else
-					m_progressDialog.Maximum = value;
+					m_progressDialog.Minimum = value;
 			}
 		}
 

@@ -148,9 +148,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
-#if !__MonoCS__
-			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
-#endif
 
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null) // trying this
@@ -212,7 +209,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// So, set the location and size of the HTML control, and anchor it to all four sides of the
 			// panel.
 			m_resultsPanel.Controls.Add(m_htmlControl);
-			m_htmlControl.URL = Path.Combine(TransformPath, "InitialDocument.htm");
+			var uri = new Uri(Path.Combine(TransformPath, "InitialDocument.htm"));
+			m_htmlControl.URL = uri.AbsoluteUri;
 		}
 
 		private void SetFontInfo()
@@ -459,7 +457,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				if (GetSelectedTraceMorphs(out selectedTraceMorphs))
 				{
 					// Display a "processing" message (and include info on how to improve the results)
-					m_htmlControl.URL = Path.Combine(TransformPath, "WhileTracing.htm");
+					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
+					m_htmlControl.URL = uri.AbsoluteUri;
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
@@ -504,7 +503,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				sOutput = trace.CreateResultPage(PropertyTable, result, DoTrace);
 			}
-			m_htmlControl.URL = sOutput;
+			var uri = new Uri(sOutput);
+			m_htmlControl.URL = uri.AbsoluteUri;
 		}
 
 		private string CleanUpWord()

@@ -239,11 +239,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				// this save. (FWR-2991)
 				if (m_undoStacks.Any(stack => stack.TopMarkHandle != 0))
 					return;
+				var now = DateTime.Now;
 				// Don't autosave less than 10s from the last save.
-				if (DateTime.Now - m_lastSave < TimeSpan.FromSeconds(10.0))
+				if (now - m_lastSave < TimeSpan.FromSeconds(10.0))
 					return;
-				// Nor if it's been less than 2s since the user did something. We don't want to interrupt continuous activity.
-				if (DateTime.Now - m_ui.LastActivityTime < TimeSpan.FromSeconds(2.0))
+				// If it is less than 2s since the user did something don't save to smooth performance (unless the user has been busy as a beaver for more than 5 minutes)
+				if (now - m_ui.LastActivityTime < TimeSpan.FromSeconds(2.0) && now < (m_lastSave + TimeSpan.FromMinutes(5)))
 					return;
 
 				SaveInternal();

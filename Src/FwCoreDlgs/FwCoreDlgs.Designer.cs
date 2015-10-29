@@ -386,15 +386,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Copy File.
-        /// </summary>
-        public static string ksCopyFile {
-            get {
-                return ResourceManager.GetString("ksCopyFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}.
         /// </summary>
         public static string ksCouldNotBackupSomeFiles {
@@ -594,15 +585,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Leave File.
-        /// </summary>
-        public static string ksLeaveFile {
-            get {
-                return ResourceManager.GetString("ksLeaveFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (Linked Files folder: {0}).
         /// </summary>
         public static string ksLinkedFilesFolder {
@@ -667,29 +649,11 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Move File.
+        ///   Looks up a localized string similar to The file(s) you have selected are not in the Linked Files folder for this project. Would you like to move or copy the file(s) to that folder to make it easier to share and back up, along with your other project data?.
         /// </summary>
-        public static string ksMoveFile {
+        public static string ksMoveOrCopyFilesToLinkedFilesDir {
             get {
-                return ResourceManager.GetString("ksMoveFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move or Copy File?.
-        /// </summary>
-        public static string ksMoveOrCopyFile {
-            get {
-                return ResourceManager.GetString("ksMoveOrCopyFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The file you have selected is not in the Linked Files folder for this project. Would you like to move or copy the file to that folder to make it easier to share and back up, along with your other project data?.
-        /// </summary>
-        public static string ksMoveOrCopyFileToLinkedFilesDir {
-            get {
-                return ResourceManager.GetString("ksMoveOrCopyFileToLinkedFilesDir", resourceCulture);
+                return ResourceManager.GetString("ksMoveOrCopyFilesToLinkedFilesDir", resourceCulture);
             }
         }
         

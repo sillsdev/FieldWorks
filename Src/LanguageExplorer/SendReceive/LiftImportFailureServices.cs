@@ -50,7 +50,7 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <summary>
-		/// Show the Lift ikport failure status message, if needed.
+		/// Show the Lift import failure status message, if needed.
 		/// </summary>
 		internal static void DisplayLiftFailureNoticeIfNecessary(Form parentWindow, string baseLiftFolderDirectory)
 		{
@@ -71,7 +71,7 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <summary>
-		/// Registry a basic import failure.
+		/// Register a basic import failure.
 		/// </summary>
 		internal static void RegisterBasicImportFailure(string baseLiftFolderDirectoryName)
 		{
@@ -88,7 +88,7 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <summary>
-		/// Clear the previopus import failure status.
+		/// Clear the previous import failure status.
 		/// </summary>
 		internal static void ClearImportFailure(string baseLiftFolderDirectoryName)
 		{

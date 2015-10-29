@@ -1,26 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: .cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Drawing;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -30,6 +21,7 @@ using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Widgets;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
@@ -51,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		protected DataTree m_dataEntryForm;
 
 		/// <summary>
-		/// COnfiguration information.
+		/// Configuration information.
 		/// </summary>
 		protected XmlNode m_configuration;
 
@@ -265,7 +257,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				dlg.InitialDirectory = Cache.LangProject.LinkedFilesRootDir;
+				dlg.InitialDirectory = PropertyTable.GetValue("InsertMediaFile-LastDirectory", Cache.LangProject.LinkedFilesRootDir);
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
 				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
@@ -275,6 +267,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
+				dlg.Multiselect = true;
 
 				DialogResult dialogResult = DialogResult.None;
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
@@ -282,10 +275,8 @@ namespace SIL.FieldWorks.XWorks
 					dialogResult = dlg.ShowDialog();
 					if (dialogResult == DialogResult.OK)
 					{
-						string file = MoveOrCopyFilesDlg.MoveCopyOrLeaveMediaFile(dlg.FileName,
+						string[] fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames,
 							Cache.LangProject.LinkedFilesRootDir, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-						if (String.IsNullOrEmpty(file))
-							return true;
 						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
 						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
 						{
@@ -293,16 +284,30 @@ namespace SIL.FieldWorks.XWorks
 						}
 						if (!obj.IsValidObject)
 							return true; // Probably some other client deleted it while we were choosing the file.
+
 						int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 							xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia,
 							Cache.ActionHandlerAccessor, () =>
 							{
+								foreach (string fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
+								{
 								int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
-								var media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
-								var folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
-								media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, file);
+									ICmMedia media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
+									ICmFolder folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
+									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, fileName);
+								}
 							});
+
+						if (PropertyTable != null)
+						{
+							string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
+							if (fileName != null)
+							{
+								string directory = Path.GetDirectoryName(fileName);
+								PropertyTable.SetProperty("InsertMediaFile-LastDirectory", directory, false, false);
+							}
+						}
 					}
 				}
 			}

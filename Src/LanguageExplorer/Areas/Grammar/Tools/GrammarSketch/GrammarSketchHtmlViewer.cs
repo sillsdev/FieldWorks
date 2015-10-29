@@ -269,7 +269,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		private void ShowSketch()
 		{
-			m_htmlControl.URL = m_sHtmlFileName;
+			var uri = new Uri(m_sHtmlFileName);
+			m_htmlControl.URL = uri.AbsoluteUri;
 			//m_htmlControl.Invalidate();
 		}
 

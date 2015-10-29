@@ -198,7 +198,7 @@ namespace LanguageExplorer.Dumpster
 			else if (bridgeLastUsed == "LiftBridge")
 			{
 				OnLiftBridge(commandObject);
-			}
+		}
 		}
 		#endregion FLExLiftBridge Toolbar messages
 
@@ -269,7 +269,8 @@ namespace LanguageExplorer.Dumpster
 
 			StopParser();
 			bool dummy;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
+				FDOBackendProvider.ModelVersion, "0.13", null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -365,7 +366,8 @@ namespace LanguageExplorer.Dumpster
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+																  null, FDOBackendProvider.ModelVersion, "0.13",
+																  Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -608,7 +610,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -643,7 +645,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -686,7 +688,7 @@ namespace LanguageExplorer.Dumpster
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null,
+								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -733,7 +735,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -741,6 +743,14 @@ namespace LanguageExplorer.Dumpster
 				ReportDuplicateBridge();
 			}
 			return true;
+		}
+
+		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
+		private void BroadcastMasterRefresh()
+		{
+#if RANDYTODO
+			_mediator.BroadcastMessage("MasterRefresh", null);
+#endif
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
@@ -827,7 +837,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -935,14 +945,14 @@ namespace LanguageExplorer.Dumpster
 				Directory.CreateDirectory(liftProjectDir);
 			}
 			_liftPathname = GetLiftPathname(liftProjectDir);
-			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
+			PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
 			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1390,7 +1400,7 @@ namespace LanguageExplorer.Dumpster
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
+				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dataChanged, out dummy);
 		}
 

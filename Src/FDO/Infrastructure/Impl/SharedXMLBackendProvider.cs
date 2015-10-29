@@ -5,13 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Threading;
-using System.Diagnostics.CodeAnalysis;
 using ProtoBuf;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -30,11 +30,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// This mutex synchronizes access to the commit log, its metadata, and the XML file.
 		/// </summary>
-		private Mutex m_commitLogMutex;
+		private GlobalMutex m_commitLogMutex;
 		private MemoryMappedFile m_commitLogMetadata;
 		private MemoryMappedFile m_commitLog;
 		private readonly Guid m_peerID;
 		private readonly Dictionary<int, Process> m_peerProcesses;
+#if __MonoCS__
+		private string m_commitLogDir;
+#endif
 
 		internal SharedXMLBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
@@ -42,14 +45,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			m_peerProcesses = new Dictionary<int, Process>();
 			m_peerID = Guid.NewGuid();
+#if __MonoCS__
+			// /dev/shm is not guaranteed to be available on all systems, so fall back to temp
+			m_commitLogDir = Directory.Exists("/dev/shm") ? "/dev/shm" : Path.GetTempPath();
+#endif
 		}
 
 		internal int OtherApplicationsConnectedCount
 		{
 			get
 			{
-				m_commitLogMutex.WaitOne();
-				try
+				using (m_commitLogMutex.Lock())
 				{
 					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 					{
@@ -59,28 +65,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						return metadata.Peers.Count - 1;
 					}
 				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
-				}
 			}
 		}
 
 		protected override int StartupInternal(int currentModelVersion)
 		{
+			m_commitLogMutex = new GlobalMutex(MutexName);
 			bool createdNew;
-			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
-			if (!createdNew)
-				m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.InitializeAndLock(out createdNew))
 			{
 				CreateSharedMemory(createdNew);
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
-					CommitLogMetadata metadata;
-					if (!createdNew && TryGetMetadata(stream, out metadata))
-						CheckExitedPeerProcesses(metadata);
-					else
+					CommitLogMetadata metadata = null;
+					if (!createdNew)
+					{
+						if (TryGetMetadata(stream, out metadata))
+						{
+							CheckExitedPeerProcesses(metadata);
+							if (m_peerProcesses.Count == 0)
+								createdNew = true;
+						}
+						else
+						{
+							createdNew = true;
+						}
+					}
+
+					if (createdNew)
 						metadata = new CommitLogMetadata();
 
 					using (Process curProcess = Process.GetCurrentProcess())
@@ -102,10 +114,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					return startupModelVersion;
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
 		}
 
 		protected override void OnCacheDisposing(object sender, EventArgs e)
@@ -120,8 +128,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (m_commitLogMutex != null && m_commitLogMetadata != null)
 			{
 				CompleteAllCommits();
-				m_commitLogMutex.WaitOne();
-				try
+				using (m_commitLogMutex.Lock())
 				{
 #if __MonoCS__
 					bool delete = false;
@@ -169,14 +176,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 #if __MonoCS__
 					if (delete)
 					{
-						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogMetadataName));
-						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogName));
+						File.Delete(Path.Combine(m_commitLogDir, CommitLogMetadataName));
+						File.Delete(Path.Combine(m_commitLogDir, CommitLogName));
+						m_commitLogMutex.Unlink();
 					}
 #endif
-				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
 				}
 			}
 
@@ -200,19 +204,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override void CreateInternal()
 		{
-			bool createdNew;
-			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
-			if (!createdNew)
-			{
-				// Mono does not close the named mutex handle until the process exits, this can cause problems
-				// for some unit tests, so we disable the following check for Mono
-#if !__MonoCS__
-				throw new InvalidOperationException("Cannot create shared XML backend.");
-#else
-				m_commitLogMutex.WaitOne();
-#endif
-			}
-			try
+			m_commitLogMutex = new GlobalMutex(MutexName);
+
+			using (m_commitLogMutex.InitializeAndLock())
 			{
 				CreateSharedMemory(true);
 				var metadata = new CommitLogMetadata { Master = m_peerID };
@@ -224,10 +218,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 
 				base.CreateInternal();
-			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
 			}
 		}
 
@@ -258,6 +248,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 		}
 
+		private void SaveMetadata(CommitLogMetadata metadata)
+		{
+			using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
+				SaveMetadata(stream, metadata);
+		}
+
 		private string MutexName
 		{
 			get { return ProjectId.Name + "_Mutex"; }
@@ -284,7 +280,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private MemoryMappedFile CreateOrOpen(string name, long capacity, bool createdNew)
 		{
 #if __MonoCS__
-			name = Path.Combine(Path.GetTempPath(), name);
+			name = Path.Combine(m_commitLogDir, name);
 			// delete old file that could be left after a crash
 			if (createdNew && File.Exists(name))
 				File.Delete(name);
@@ -358,8 +354,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal override void LockProject()
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.LockProject();
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
@@ -372,16 +367,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
 		}
 
 		internal override void UnlockProject()
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.UnlockProject();
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
@@ -397,18 +387,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
 		}
 
 		public override bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
 		{
-			CommitLogMetadata metadata = null;
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
+				CommitLogMetadata metadata;
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					metadata = GetMetadata(stream);
@@ -441,6 +426,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					else
 					{
 						uowService.ConflictingChanges(reconciler);
+						SaveMetadata(metadata);
 						return true;
 					}
 				}
@@ -457,7 +443,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 				IEnumerable<CustomFieldInfo> cfiList;
 				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (StartupVersionNumber == ModelVersion))
+				{
+					SaveMetadata(metadata);
 					return true;
+				}
 
 				var commitRec = new CommitLogRecord
 					{
@@ -508,31 +497,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				// we've seen our own change
 				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
 
+				SaveMetadata(metadata);
 				return true;
-			}
-			finally
-			{
-				try
-				{
-					if (metadata != null)
-					{
-						using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
-						{
-							SaveMetadata(stream, metadata);
-						}
-					}
-				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
-				}
 			}
 		}
 
 		protected override void WriteCommitWork(CommitWork workItem)
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.WriteCommitWork(workItem);
 
@@ -542,10 +514,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					metadata.FileGeneration = metadata.Peers[m_peerID].Generation;
 					SaveMetadata(stream, metadata);
 				}
-			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
 			}
 		}
 

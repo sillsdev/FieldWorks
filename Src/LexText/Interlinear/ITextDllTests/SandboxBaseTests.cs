@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -8,6 +12,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -48,7 +53,7 @@ namespace SIL.FieldWorks.IText
 			{
 				m_propertyTable.Dispose();
 			}
-			m_propertyTable = null;
+				m_propertyTable = null;
 			m_publisher = null;
 			m_subscriber = null;
 			base.TestTearDown();
@@ -661,6 +666,56 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[Test]
+		public void ComboHandler_CreateCoreMorphItemBasedOnSandboxCurrentState_DeletedSense_DoesNotThrow()
+		{
+			// Make an entry with a morph and a sense with no MSA.
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = morph;
+			morph.Form.SetVernacularDefaultWritingSystem("kick");
+			morph.MorphTypeRA =
+				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
+			// Set up first sense
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.SetAnalysisDefaultWritingSystem("silly");
+
+			// Make an analysis from that MSA.
+			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
+			wf.Form.SetVernacularDefaultWritingSystem("kick");
+			var wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
+			wf.AnalysesOC.Add(wa);
+			var mb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+			wa.MorphBundlesOS.Add(mb);
+			mb.SenseRA = sense;
+			mb.MorphRA = morph;
+			// Set up second sense
+			var sense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense2);
+			sense2.Gloss.SetAnalysisDefaultWritingSystem("problem");
+
+			// Make a sandbox and sut
+			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
+				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
+			using(var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
+			{
+				var mockList = new MockComboHandler();
+				sandbox.m_ComboHandler = mockList;
+				// Merge the first sense into the second (invalidating analysis and sandbox cache)
+				using(var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0))
+				{
+					// wipe out the sense that the morph bundle was based on.
+					sense2.MergeObject(sense, true);
+					Assert.AreEqual(entry.SensesOS[0], sense2);
+					Assert.DoesNotThrow(()=>
+					{
+						// ReSharper disable once UnusedVariable - Assignment is SUT
+						var i = handler.IndexOfCurrentItem;
+					});
+				}
+			}
+		}
 
 		private SandboxBase.InterlinComboHandler GetComboHandler(SandboxBase sandbox, int flid, int morphIndex)
 		{
@@ -668,7 +723,8 @@ namespace SIL.FieldWorks.IText
 			int tagIcon = 0;
 			switch (flid)
 			{
-				default:
+				case InterlinLineChoices.kflidMorphemes:
+					tagIcon = SandboxBase.ktagMorphFormIcon;
 					break;
 				case InterlinLineChoices.kflidLexEntries:
 					tagIcon = SandboxBase.ktagMorphEntryIcon;
@@ -681,6 +737,26 @@ namespace SIL.FieldWorks.IText
 					break;
 			}
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+			Justification = "Nothing to dispose here, just needed to avoid a crash on TearDown.")]
+		public class MockComboHandler : IComboHandler, IDisposable
+		{
+			public void SetupCombo() { }
+
+			public void Hide() { }
+
+			public bool HandleReturnKey()
+			{
+				return true;
+			}
+
+			public void Activate(Rect loc) { }
+
+			public int SelectedMorphHvo { get; private set; }
+			public void HandleSelectIfActive() { }
+			public void Dispose() { }
 		}
 
 		/// <summary>

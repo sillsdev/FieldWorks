@@ -3,9 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace LanguageExplorer.SendReceive
 {
@@ -24,6 +26,14 @@ namespace LanguageExplorer.SendReceive
 			m_helpTopicProvider = helpTopicProvider;
 
 			InitializeComponent();
+
+			// Strip mailto: links until a proper solution can be implemented for LT-16594.
+			if (!MiscUtils.IsUnix)
+				return;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FLExBridgeFirstSendReceiveInstructionsDlg));
+			var documentText = resources.GetString("htmlControl_Instructions.DocumentText");
+			var documentTextWithNoMailtoLinks = Regex.Replace(documentText, "<a href='mailto:.*'>(.*)</a>", "$1");
+			htmlControl_Instructions.DocumentText = documentTextWithNoMailtoLinks;
 		}
 
 		private void HelpBtn_Click(object sender, EventArgs e)

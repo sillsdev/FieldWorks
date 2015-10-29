@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -190,10 +190,10 @@ Old Mediator methods/commands
 					return activeForm;
 				}
 				foreach (Form wnd in m_rgMainWindows)
-				{
+								{
 					if (wnd.ContainsFocus)
 						return wnd;
-				}
+							}
 				if (m_rgMainWindows.Count > 0)
 					return (Form)m_rgMainWindows[0];
 				return null;
@@ -209,7 +209,7 @@ Old Mediator methods/commands
 		private IVwPattern FindPattern
 		{
 			get
-			{
+		{
 				CheckDisposed();
 				if (m_findPattern == null)
 					m_findPattern = VwPatternClass.Create();
@@ -234,7 +234,7 @@ Old Mediator methods/commands
 			{
 				Debug.Assert(Cache != null, "The app's cache has not been created yet.");
 				using (var regKey = SettingsKey)
-				{
+		{
 					return regKey.CreateSubKey(Cache.ProjectId.Name);
 				}
 			}
@@ -254,7 +254,7 @@ Old Mediator methods/commands
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "c is a reference")]
 		public bool PreFilterMessage(ref Message m)
-		{
+			{
 			if (m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYUP)
 				return false;
 
@@ -272,7 +272,7 @@ Old Mediator methods/commands
 			}
 
 			return false;
-		}
+			}
 		#endregion IMessageFilter interface implementation
 
 		#region ISettings interface implementation
@@ -328,9 +328,9 @@ Old Mediator methods/commands
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string FeedbackEmailAddress
-		{
+			{
 			get { return "FLEXUsage@sil.org"; }
-		}
+			}
 		#endregion IFeedbackInfoProvider interface implementation
 
 		#region IHelpTopicProvider interface implementation
@@ -423,7 +423,7 @@ Old Mediator methods/commands
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				UpdateAppRuntimeCounter();
+			UpdateAppRuntimeCounter();
 
 				Logger.WriteEvent("Disposing app: " + GetType().Name);
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
@@ -539,9 +539,9 @@ Old Mediator methods/commands
 				return (stid == null ? "NullStringID" : LanguageExplorerResources.ResourceManager.GetString(stid));
 			}
 			catch (Exception e)
-			{
+		{
 				if (!m_fResourceFailed)
-				{
+			{
 					MessageBox.Show(null,
 						String.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message),
 						LanguageExplorerResources.ksError);
@@ -573,9 +573,9 @@ Old Mediator methods/commands
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public Form ActiveMainWindow
-		{
-			get
 			{
+			get
+				{
 				CheckDisposed();
 				return m_activeMainWindow;
 			}
@@ -608,7 +608,7 @@ Old Mediator methods/commands
 			if (m_refreshView != null)
 				m_refreshView = true;
 			else
-			{
+		{
 				foreach (var wnd in MainWindows)
 					wnd.RefreshAllViews();
 			}
@@ -620,7 +620,7 @@ Old Mediator methods/commands
 		public void RestartSpellChecking()
 		{
 			foreach (Control wnd in MainWindows)
-			{
+		{
 				RestartSpellChecking(wnd);
 			}
 		}
@@ -707,7 +707,7 @@ Old Mediator methods/commands
 			}
 
 			if (MainWindows.All(wnd => wnd.Synchronize(sync)))
-			{
+		{
 				return true;
 			}
 			RefreshAllViews();
@@ -720,7 +720,7 @@ Old Mediator methods/commands
 		public Guid SyncGuid
 		{
 			get
-			{
+		{
 				CheckDisposed();
 				return AppGuid;
 			}
@@ -830,7 +830,7 @@ Old Mediator methods/commands
 			// Get window that uses the given DB.
 			var fwxwnd = m_rgMainWindows.Count > 0 ? m_rgMainWindows[0] : null;
 			if (fwxwnd == null)
-			{
+		{
 				return;
 			}
 			var commands = new List<string>
@@ -914,7 +914,7 @@ Old Mediator methods/commands
 				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 						() =>
-						{
+		{
 							foreach (ICmFolder cf in lp.MediaOC)
 								ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 							foreach (ICmFolder cf in lp.PicturesOC)
@@ -948,7 +948,7 @@ Old Mediator methods/commands
 							File.Copy(sOldPathname, sNewPathname);
 					}
 					catch (Exception ex)
-					{
+			{
 						Debug.WriteLine(string.Format("{0}: {1}", ex.Message, sOldPathname));
 						rgLockedFiles.Add(sFile);
 					}
@@ -1046,7 +1046,7 @@ Old Mediator methods/commands
 			m_activeMainWindow = form;
 
 			if (isNewCache)
-			{
+		{
 				InitializePartInventories(progressDlg, true);
 			}
 
@@ -1111,7 +1111,7 @@ Old Mediator methods/commands
 		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
 		{
 			if (m_activeMainWindow == sender && sender is IFwMainWnd)
-			{
+		{
 				((IFwMainWnd)sender).SaveSettings();
 			}
 		}
@@ -1156,28 +1156,28 @@ Old Mediator methods/commands
 			try
 			{
 				using (var engineKey = Registry.CurrentUser.OpenSubKey(@"Software\Tavultesoft\Keyman Engine", false))
-				{
+		{
 					if (engineKey == null)
-					{
+			{
 						return;
-					}
+			}
 					foreach (var version in engineKey.GetSubKeyNames())
 					{
 						using (var keyVersion = engineKey.OpenSubKey(version, true))
-						{
+		{
 							if (keyVersion == null)
-							{
+			{
 								continue;
 							}
 							var value = keyVersion.GetValue("switch language with keyboard");
 							if (value == null || (int)value != 0)
-							{
+				{
 								keyVersion.SetValue("switch language with keyboard", 0);
 							}
 						}
 					}
 				}
-			}
+				}
 			catch (SecurityException)
 			{
 				// User doesn't have access to the registry key, so just hope the user is fine
@@ -1198,7 +1198,7 @@ Old Mediator methods/commands
 			// The try-catch block is modeled after that used by TeScrInitializer.Initialize(),
 			// as the suggestion for fixing LT-8797.
 			try
-			{
+		{
 				// Make sure this DB uses the current stylesheet version.
 				FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
 			}
@@ -1336,9 +1336,9 @@ Old Mediator methods/commands
 		public string SampleDatabase
 		{
 			get
-			{
+		{
 				return Path.Combine(FwDirectoryFinder.FdoDirectories.ProjectsDirectory, "Sena 3", "Sena 3" + FdoFileHelper.ksFwDataXmlFileExtension);
-			}
+		}
 		}
 
 		#endregion IFlexApp interface implementation
@@ -1426,10 +1426,10 @@ Old Mediator methods/commands
 		private void AddDefaultWordformingOverridesIfNeeded()
 		{
 			foreach (var wsObj in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-			{
+		{
 				var validCharsSrc = wsObj.ValidChars;
 				if (ValidCharacters.IsNewValidCharsString(validCharsSrc))
-				{
+			{
 					continue;
 				}
 				var valChars = ValidCharacters.Load(wsObj, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -1485,8 +1485,8 @@ Old Mediator methods/commands
 					{
 					}
 				}
-				else
-				{
+			else
+			{
 					using (Process.Start(path))
 					{
 					}
@@ -1515,7 +1515,7 @@ Old Mediator methods/commands
 			// However, desktopBounds are not useful when window is maximized; in that case
 			// get the info from Persistence instead... NormalStateDesktopBounds
 			if (wndCopyFrom.WindowState == FormWindowState.Maximized)
-			{
+		{
 				// Here we subtract twice the caption height, which with the offset below insets it all around.
 				rcNewWnd.Width -= SystemInformation.CaptionHeight * 2;
 				rcNewWnd.Height -= SystemInformation.CaptionHeight * 2;
@@ -1554,9 +1554,9 @@ Old Mediator methods/commands
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void Application_EnterThreadModal(object sender, EventArgs e)
-		{
+			{
 			IsModalDialogOpen = true;
-		}
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1597,7 +1597,7 @@ Old Mediator methods/commands
 		private static void CloseRootBoxes(Control ctrl)
 		{
 			if (ctrl != null)
-			{
+		{
 				if (ctrl is ISettings)
 					((ISettings)ctrl).SaveSettingsNow();
 
@@ -1653,9 +1653,9 @@ Old Mediator methods/commands
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void fwMainWindow_Activated(object sender, EventArgs e)
-		{
+			{
 			m_activeMainWindow = (Form)sender;
-		}
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1804,9 +1804,9 @@ Old Mediator methods/commands
 			}
 			double overlap = (minWindowDimension * windowCount - screenDimension) / (windowCount - 1);
 
-			windowSpacing = minWindowDimension - (int)Math.Round(overlap + 0.5);
-			desiredWindowDimension = minWindowDimension;
-		}
+				windowSpacing = minWindowDimension - (int)Math.Round(overlap + 0.5);
+				desiredWindowDimension = minWindowDimension;
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2017,33 +2017,33 @@ Old Mediator methods/commands
 			ICollection<string> rgFilesToMove, string sOldRootDir, string sNewRootDir)
 		{
 			foreach (var file in folder.FilesOC)
-			{
+		{
 				var sFilepath = file.InternalPath;
 				//only select files which have relative paths so they are in the LinkedFilesRootDir
 				if (Path.IsPathRooted(sFilepath))
-				{
+			{
 					continue;
-				}
+			}
 				// Don't put the same file in more than once!
 				if (rgFilesToMove.Contains(sFilepath))
 					continue;
 				var sOldFilePath = Path.Combine(sOldRootDir, sFilepath);
 				if (!FileUtils.TrySimilarFileExists(sOldFilePath, out sOldFilePath))
-				{
+			{
 					continue;
-				}
+			}
 				var sNewFilePath = Path.Combine(sNewRootDir, sFilepath);
 				if (FileUtils.TrySimilarFileExists(sNewFilePath, out sNewFilePath))
-				{
+			{
 					//if the file exists in the destination LinkedFiles location, then only copy/move it if
 					//file in the source location is newer.
 					var dateTimeOfFileSourceFile = File.GetLastWriteTime(sOldFilePath);
 					var dateTimeOfFileDestinationFile = File.GetLastWriteTime(sNewFilePath);
 					if (dateTimeOfFileSourceFile > dateTimeOfFileDestinationFile)
 						rgFilesToMove.Add(sFilepath);
-				}
+			}
 				else
-				{
+			{
 					//if the file does not exist in the destination LinkeFiles location then copy/move it.
 					rgFilesToMove.Add(sFilepath);
 				}
@@ -2066,17 +2066,17 @@ Old Mediator methods/commands
 			{
 				var sFilepath = file.InternalPath;
 				if (Path.IsPathRooted(sFilepath))
-				{
+		{
 					continue;
 				}
 				if (FileUtils.SimilarFileExists(Path.Combine(sOldRootDir, sFilepath)) &&
 					!FileUtils.SimilarFileExists(Path.Combine(sNewRootDir, sFilepath)))
-				{
-					file.InternalPath = Path.Combine(sOldRootDir, sFilepath);
-				}
-			}
-			foreach (var sub in folder.SubFoldersOC)
 			{
+					file.InternalPath = Path.Combine(sOldRootDir, sFilepath);
+			}
+		}
+			foreach (var sub in folder.SubFoldersOC)
+		{
 				ExpandToFullPath(sub, sOldRootDir, sNewRootDir);
 			}
 		}
@@ -2121,7 +2121,7 @@ Old Mediator methods/commands
 			string area = wndActive.PropTable.GetValue<string>("areaChoice");
 			bool fEnabled = true;
 			switch (command.Id)
-			{
+		{
 				case "CmdImportSFMLexicon": // Fall through
 				case "CmdImportLinguaLinksData": // Fall through
 				case "CmdImportLiftData":
@@ -2132,11 +2132,11 @@ Old Mediator methods/commands
 				case "CmdImportInterlinearData":
 					if (wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance" || wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance")
 
-					{
+		{
 						fEnabled = false;
-					}
+		}
 					else
-					{
+		{
 						fEnabled = area == "textsWords";
 					}
 					break;
@@ -2146,8 +2146,8 @@ Old Mediator methods/commands
 			}
 			display.Enabled = fEnabled;
 			display.Visible = fEnabled;
-			return true;
-		}
+					return true;
+			}
 
 		/// <summary>
 		/// Used to launch various import dialogs, but could do other things
@@ -2167,11 +2167,11 @@ Old Mediator methods/commands
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			IFwExtension dlg = null;
 			try
-			{
-				try
 				{
+				try
+					{
 					dlg = (IFwExtension)DynamicLoader.CreateObject(classInfo);
-				}
+					}
 				catch (Exception error)
 				{
 					string message = XmlUtils.GetOptionalAttributeValue(classInfo, "notFoundMessage", null);
@@ -2184,7 +2184,8 @@ Old Mediator methods/commands
 				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
 				if (dr == DialogResult.OK)
 				{
-					if (dlg is LexOptionsDlg)
+					FileLocationChoice action;
+					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
 					{
 						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
 						if ((oldWsUser != Cache.WritingSystemFactory.UserWs) || loDlg.PluginsUpdated)
@@ -2199,15 +2200,15 @@ Old Mediator methods/commands
 				}
 			}
 			finally
-			{
+								{
 				if (dlg != null && dlg is IDisposable)
 					(dlg as IDisposable).Dispose();
 			}
 			return true;
-		}
+					}
 
 		public bool OnConfigureHomographs(object commandObject)
-		{
+					{
 			CheckDisposed();
 
 			var configDlg = commandObject as XmlDocConfigureDlg;
@@ -2220,7 +2221,7 @@ Old Mediator methods/commands
 			{
 				var hc = wndActive.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 				using (var dlg = new ConfigureHomographDlg())
-				{
+						{
 					dlg.SetupDialog(hc, wndActive.Cache, wndActive.ActiveStyleSheet, this, this);
 					dlg.StartPosition = FormStartPosition.CenterScreen;
 					if (dlg.ShowDialog((Form)wndActive) != DialogResult.OK)
@@ -2228,38 +2229,38 @@ Old Mediator methods/commands
 					dlg.GetResults(hc);
 					// Make sure "hc" is in PropertyTable, so new stuff is persisted.
 					if (!PropertyTable.PropertyExists("HomographConfiguration"))
-					{
+							{
 						PropertyTable.SetProperty("HomographConfiguration", hc.PersistData, true, false);
-					}
+							}
 					// If called from config dlg, it will do its own refresh when it closes.
 					if (configDlg == null)
 						OnMasterRefresh(null);
-					else
+							else
 						configDlg.MasterRefreshRequired = true;
-				}
-			}
+						}
+						}
 			return true;
-		}
+					}
 
 		public bool OnRestoreDefaultLayouts(object commandObject)
-		{
+					{
 			CheckDisposed();
 
 			Form formActive = ActiveForm;
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive != null)
-			{
+						{
 				bool fRestore;
 				using (RestoreDefaultsDlg dlg = new RestoreDefaultsDlg(this))
 					fRestore = (dlg.ShowDialog(formActive) == DialogResult.Yes);
 				if (fRestore)
-				{
+							{
 					InitializePartInventories(null, false);
 					ReplaceMainWindow(wndActive);
+						}
+					}
+					return true;
 				}
-			}
-			return true;
-		}
 
 		/// <summary>
 		/// On Refresh, we want to reload the XML configuration files.  This greatly facilitates developing
@@ -2276,7 +2277,7 @@ Old Mediator methods/commands
 			{
 				string sDatabase = wnd.Cache.ProjectId.Name;
 				if (setDatabases.Contains(sDatabase))
-					continue;
+						continue;
 				setDatabases.Add(sDatabase);
 				Inventory.GetInventory("layouts", sDatabase).ReloadIfChanges();
 				Inventory.GetInventory("parts", sDatabase).ReloadIfChanges();
@@ -2285,7 +2286,7 @@ Old Mediator methods/commands
 		}
 
 		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
-		{
+					{
 			CheckDisposed();
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
@@ -2300,7 +2301,7 @@ Old Mediator methods/commands
 		}
 
 		public bool OnHelpNotesInterlinearImport(object sender)
-		{
+						{
 			CheckDisposed();
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
@@ -2312,10 +2313,10 @@ Old Mediator methods/commands
 					LanguageExplorerResources.ksError);
 			});
 			return true;
-		}
+						}
 
 		public bool OnHelpNotesSFMDatabaseImport(object sender)
-		{
+						{
 			CheckDisposed();
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
@@ -2349,7 +2350,7 @@ Old Mediator methods/commands
 					LexTextStrings.ksError);
 			});
 			return true;
-		}
+				}
 
 		/// <summary>
 		/// Display a file given a path relative to the FieldWorks/Helps directory.

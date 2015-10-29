@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -153,7 +157,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							var commands = new List<string>
+							var commands = new List<string>()
 									{
 										"AboutToFollowLink",
 										"FollowLink"

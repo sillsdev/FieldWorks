@@ -11,4 +11,5 @@
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexEntryInflTypeConverter"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexEntryTypeConverter"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.GoldEticGuidFixer"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.SortReversalSubEntries"/>
 </utilityCatalog>

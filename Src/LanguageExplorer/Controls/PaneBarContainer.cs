@@ -217,7 +217,7 @@ namespace LanguageExplorer.Controls
 		private void ReloadPaneBar()
 		{
 			if (PaneBar == null)
-			{
+		{
 				return;
 			}
 #if RANDYTODO

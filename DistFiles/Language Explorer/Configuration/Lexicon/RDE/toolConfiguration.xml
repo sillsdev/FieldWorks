@@ -102,7 +102,7 @@
 												</editrow>
 											</obj>
 										</column>
-										<column label="Meaning (Gloss)" width="144000" ws="$ws=analysis" visibility="menu">
+										<column label="Meaning (Gloss)" width="144000" ws="$ws=analysis" visibility="always">
 											<editrow suppressNoForColumn="Meaning (Definition)">
 												<no>
 													<choice>
@@ -128,7 +128,7 @@
 												</yes>
 											</editrow>
 										</column>
-										<column label="Meaning (Definition)" width="144000" ws="$ws=analysis" visibility="always">
+										<column label="Meaning (Definition)" width="144000" ws="$ws=analysis" visibility="menu">
 											<editrow suppressNoForColumn="Meaning (Gloss)">
 												<no>
 													<choice>

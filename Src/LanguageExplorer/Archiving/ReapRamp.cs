@@ -2,23 +2,24 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
-using L10NSharp;
 using Palaso.Reporting;
-using Palaso.UI.WindowsForms.PortableSettingsProvider;
 using SIL.Archiving;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.Framework;
+using L10NSharp;
+using Palaso.UI.WindowsForms.PortableSettingsProvider;
+using System.Collections.Generic;
+using System;
+using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.CoreImpl;
 
 namespace LanguageExplorer.Archiving
 {
@@ -66,12 +67,11 @@ namespace LanguageExplorer.Archiving
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
 			var projectId = cache.LanguageProject.ShortName;
 
-			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, /*appSpecificArchivalProcessInfo:*/
-				string.Empty, SetFilesToArchive(filesToArchive), GetFileDescription)
+			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, /*appSpecificArchivalProcessInfo:*/ string.Empty,SetFilesToArchive(filesToArchive), GetFileDescription)
 			{
-				// image files should be labeled as Graphic rather than Photograph (the default).
+			// image files should be labeled as Graphic rather than Photograph (the default).
 				ImagesArePhotographs = false,
-				// show the count of media files, not the duration
+			// show the count of media files, not the duration
 				ShowRecordingCountNotLength = true
 			};
 
@@ -191,8 +191,7 @@ namespace LanguageExplorer.Archiving
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
-
-				fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+				fWsUsesKeyman |= DoesWritingSystemUseKeyman(ws);
 			}
 
 			if (fWsUsesKeyman)
@@ -237,37 +236,42 @@ namespace LanguageExplorer.Archiving
 			const string delimiter = "; ";
 
 			if (cNotebookRecords > 0)
-				ArchivingExtensions.AppendLineFormat(datasetExtent, "{0} Notebook record{1}", new object[] { cNotebookRecords, (cNotebookRecords == 1) ? "" : "s" }, delimiter);
+				datasetExtent.AppendLineFormat("{0} Notebook record{1}", new object[] { cNotebookRecords, (cNotebookRecords == 1) ? "" : "s" }, delimiter);
 
 			if (cLexicalEntries > 0)
-				ArchivingExtensions.AppendLineFormat(datasetExtent, "{0} Lexical entr{1}", new object[] { cLexicalEntries, (cLexicalEntries == 1) ? "y" : "ies" }, delimiter);
+				datasetExtent.AppendLineFormat("{0} Lexical entr{1}", new object[] { cLexicalEntries, (cLexicalEntries == 1) ? "y" : "ies" }, delimiter);
 
 			if (cTexts > 0)
-				ArchivingExtensions.AppendLineFormat(datasetExtent, "{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
+				datasetExtent.AppendLineFormat("{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
 
 			if (datasetExtent.Length > 0)
 				model.SetDatasetExtent(datasetExtent + ".");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called by the Archiving Dialog to retrieve the lists of the files and description
-		/// to be included in the RAMP package.
+		/// Returns true if the writing system has an active keyman keyboard
 		/// </summary>
-		/// <param name="filesToArchive">The files to include</param>
-		/// <returns>Groups of files to archive and descriptive progress messages</returns>
-		/// ------------------------------------------------------------------------------------
-		private IDictionary<string, Tuple<IEnumerable<string>, string>> GetFilesToArchive(IEnumerable<string> filesToArchive)
+		/// <remarks>Internal for testing, uses reflection to identify a keyboard as keyman</remarks>
+		internal static bool DoesWritingSystemUseKeyman(IWritingSystem ws)
 		{
-			// Explanation:
-			//   IDictionary<string1, Tuple<IEnumerable<string2>, string3>>
-			//     string1 = group name or key (used for normalizing file names in the zip file)
-			//     string2 = file name (a list of the files in this group)
-			//     string3 = progress message (a progress message for this group)
-			var files = new Dictionary<string, Tuple<IEnumerable<string>, string>>();
-			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
-				ResourceHelper.GetResourceString("kstidAddingFwProject"));
-			return files;
+			if(Palaso.PlatformUtilities.Platform.IsLinux) // Keyman is not required on linux
+				return false;
+			var palasoWs = ws as PalasoWritingSystem;
+			if(palasoWs != null && palasoWs.KnownKeyboards.Any())
+			{
+				var keyboardingAssembly = Assembly.GetAssembly(typeof(KeyboardDescription));
+				var keymanType = keyboardingAssembly.GetType("Palaso.UI.WindowsForms.Keyboarding.Windows.KeymanKeyboardDescription");
+				foreach(var keyboard in palasoWs.KnownKeyboards)
+				{
+					if(!keyboard.IsAvailable)
+						continue;
+					if(keymanType.IsInstanceOfType(keyboard))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------

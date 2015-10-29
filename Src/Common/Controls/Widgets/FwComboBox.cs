@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -2055,7 +2059,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_listForm.Deactivate -= m_ListForm_Deactivate;
 					m_listForm.Controls.Remove(this);
-					m_listForm.Close();
+					if (m_listForm.Visible)
+						m_listForm.Close();
 					m_listForm.Dispose();
 				}
 				if (m_comboMessageFilter != null)

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -9,14 +10,12 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 #if __MonoCS__
-using System;
 using System.Windows.Forms;
-using Gecko;
 #endif
+using Gecko;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	[System.Runtime.InteropServices.ComVisible(true)]
 	internal sealed class WebPageInteractor
 	{
 		private readonly HtmlControl m_htmlControl;
@@ -30,49 +29,29 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_publisher = publisher;
 			m_cache = cache;
 			m_tbWordForm = tbWordForm;
-#if __MonoCS__
 			m_htmlControl.Browser.DomClick += HandleDomClick;
-			m_htmlControl.Browser.DomMouseMove += HandleHtmlControlBrowserDomMouseMove;
-#endif
 		}
 
-#if __MonoCS__
-		private GeckoElement GetParentTable(GeckoElement element)
+		private bool TryGetHvo(GeckoElement element, out int hvo)
 		{
-			while (element != null && element.TagName.ToLowerInvariant() != "table".ToLowerInvariant())
-				element = element.ParentElement as GeckoElement;
-
-			return element;
+			while (element != null)
+			{
+				switch (element.TagName.ToLowerInvariant())
+		{
+					case "table":
+					case "span":
+					case "th":
+					case "td":
+						string id = element.GetAttribute("id");
+						if (!string.IsNullOrEmpty(id))
+							return int.TryParse(id, out hvo);
+						break;
+		}
+				element = element.ParentElement;
 		}
 
-		private string GetParameterFromJavaScriptFunctionCall(string javascript)
-		{
-			int start = javascript.IndexOf('(');
-			int end = javascript.IndexOf(')');
-			// omit any enclosing quotation marks
-			if (javascript[start + 1] == '"')
-				++start;
-			if (javascript[end - 1] == '"')
-				--end;
-			return javascript.Substring(start + 1, end - start - 1);
-		}
-
-		private void HandleHtmlControlBrowserDomMouseMove(object sender, DomMouseEventArgs e)
-		{
-			if (sender == null || e == null || e.Target == null)
-				return;
-
-			GeckoElement parentTable = GetParentTable(e.Target.CastToGeckoElement());
-
-			if (parentTable == null)
-				return;
-
-			GeckoNode onMouseMove = parentTable.Attributes["onmousemove"];
-
-			if (onMouseMove == null)
-				return;
-
-			MouseMove();
+			hvo = 0;
+			return false;
 		}
 
 		private void HandleDomClick(object sender, DomMouseEventArgs e)
@@ -80,34 +59,30 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (sender == null || e == null || e.Target == null)
 				return;
 
-			GeckoNode onClick = null;
-			GeckoElement parentTable = GetParentTable(e.Target.CastToGeckoElement());
-			if (parentTable != null)
-				onClick = parentTable.Attributes["onclick"];
-			if (onClick == null)
-				onClick = e.Target.CastToGeckoElement().Attributes["onclick"];
-			if (onClick == null)
-				return;
+			GeckoElement elem = e.Target.CastToGeckoElement();
+			int hvo;
+			if (TryGetHvo(elem, out hvo))
+				JumpToToolBasedOnHvo(hvo);
 
-			var js = onClick.TextContent;
-			if (js.Contains("JumpToToolBasedOnHvo"))
+			if (elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase)
+				&& elem.GetAttribute("type").Equals("button", StringComparison.InvariantCultureIgnoreCase))
 			{
-				JumpToToolBasedOnHvo(Int32.Parse(GetParameterFromJavaScriptFunctionCall(js)));
+				switch (elem.GetAttribute("name"))
+			{
+					case "ShowWordGrammarDetail":
+						ShowWordGrammarDetail(elem.GetAttribute("id"));
+						break;
+
+					case "TryWordGrammarAgain":
+						TryWordGrammarAgain(elem.GetAttribute("id"));
+						break;
+
+					case "GoToPreviousWordGrammarPage":
+						GoToPreviousWordGrammarPage();
+						break;
 			}
-			if (js.Contains("ShowWordGrammarDetail") || js.Contains("ButtonShowWGDetails"))
-			{
-				ShowWordGrammarDetail(GetParameterFromJavaScriptFunctionCall(js));
-			}
-			if (js.Contains("TryWordGrammarAgain") || js.Contains("ButtonTryNextPass"))
-			{
-				TryWordGrammarAgain(GetParameterFromJavaScriptFunctionCall(js));
-			}
-			if (js.Contains("GoToPreviousWordGrammarPage") || js.Contains("ButtonGoBack()"))
-			{
-				GoToPreviousWordGrammarPage();
 			}
 		}
-#endif
 
 		/// <summary>
 		/// Set the current parser to use when tracing
@@ -176,15 +151,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_publisher.Publish(commands, parms);
 		}
 
-		/// <summary>
-		/// Change mouse cursor to a hand when the mouse is moved over an object
-		/// </summary>
-		public void MouseMove()
-		{
-#if __MonoCS__ // Setting WinForm Cursor has no affect on GeckoFx.
-			Cursor.Current = Cursors.Hand;
-#endif
-		}
 		/// <summary>
 		/// Show the first pass of the Word Grammar Debugger
 		/// </summary>

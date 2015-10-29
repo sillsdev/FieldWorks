@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas
 	/// phonological/morphological rule slices.
 	/// </summary>
 	internal class RuleFormulaSlice : ViewSlice
-	{
+		{
 		public override RootSite RootSite
 		{
 			get

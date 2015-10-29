@@ -1,6 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.IO;
-using System.Reflection;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -51,7 +54,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get { return GetDirectory(RootCodeDir, DirectoryUtils.DirectoryOfExecutingAssembly()); }
+			get
+			{
+				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
+					: DirectoryUtils.DirectoryOfExecutingAssembly());
+			}
 		}
 
 		private static string GetDirectory(string registryValue, string defaultDir)

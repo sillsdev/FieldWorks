@@ -214,9 +214,15 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="ImportComponentsTests\CharacterMappingSettingsTests.cs" />
-    <Compile Include="ImportComponentsTests\ImportWizardTests.cs" />
-    <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs" />
-    <Compile Include="ImportTests\ImportDialogTests.cs" />
+    <Compile Include="ImportComponentsTests\ImportWizardTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportTests\ImportDialogTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ImportTests\ImportStyleProxyTests.cs" />
     <Compile Include="ImportTests\ScrNoteImportManagerTests.cs" />
     <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
@@ -228,7 +234,9 @@
     <Compile Include="ImportTests\TeImportTests.cs" />
     <Compile Include="ImportTests\TeImportTestsBase.cs" />
     <Compile Include="SCTextEnumTests.cs" />
-    <Compile Include="SFFileListBuilderTests.cs" />
+    <Compile Include="SFFileListBuilderTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="TeImportExportExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

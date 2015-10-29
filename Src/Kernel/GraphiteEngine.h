@@ -76,6 +76,9 @@ public:
 		return m_featureValues;
 	}
 
+	static float GetAdvanceX(const void* appFontHandle, gr_uint16 glyphid);
+	static float GetAdvanceY(const void* appFontHandle, gr_uint16 glyphid);
+
 protected:
 	static int Round(const float n)
 	{

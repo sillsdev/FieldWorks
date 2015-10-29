@@ -2,11 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 
 namespace LanguageExplorerTests.Lexicon
 {

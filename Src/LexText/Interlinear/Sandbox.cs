@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -40,7 +44,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="focusBox"></param>
 		public Sandbox(FdoCache cache, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
-			: base(cache,ss, choices)
+			: this(cache, ss, choices)
 		{
 			FocusBox = focusBox;
 			m_interlinDoc = focusBox.InterlinDoc;

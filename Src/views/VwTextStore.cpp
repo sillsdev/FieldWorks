@@ -2715,15 +2715,16 @@ int VwTextStore::LogToAcp(int ichReq)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Determines if the current IME requires NFD or NFC. Returns true for NFD, false for NFC. Currently returns only false (NFC)
+	Determines if the current IME requires NFD or NFC. Returns true for NFD, false for NFC.
 ----------------------------------------------------------------------------------------------*/
 bool VwTextStore::IsNfdIMEActive()
 {
-	// Historically, we tried to give Keyman NFD, since normal operation requires Keyman keyboards
-	// for FLEx to be NFD-based. With the 2013 approach to keyboarding, we are not using TSF
-	// with Keyman 7 or 8. Marc promises that Keyman 9 will handle NFC context. Keeping the method
-	// in case we find we need NFD context for something...
-	return false;
+	if (!m_qws)
+		return false;
+
+	ComBool useNfc;
+	CheckHr(m_qws->get_UseNfcContext(&useNfc));
+	return !useNfc;
 }
 
 void VwTextStore::GetCurrentWritingSystem()

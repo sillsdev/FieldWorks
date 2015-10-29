@@ -738,7 +738,7 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to relation..
+        ///   Looks up a localized string similar to  relation..
         /// </summary>
         internal static string ksDeleteSequenceCollectionB {
             get {
@@ -2514,6 +2514,25 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data by the ICU sort rules for your reversal language.
+        /// </summary>
+        internal static string ksWhatIsSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.
+        /// </summary>
+        internal static string ksWarningSortReversalSubentries
+        {
+            get
+            {
+                return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
+        /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
         internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
@@ -2546,6 +2565,15 @@ namespace LanguageExplorer {
         internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
             get {
                 return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically.
+        /// </summary>
+        internal static string ksWhenToSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhenToSortReversalSubentries", resourceCulture);
             }
         }
         
@@ -2604,6 +2632,33 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All reversal subentries are now sorted..
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedContent {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal subentry sorting is completed.
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedTitle {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort Reversal Subentries.
+        /// </summary>
+        internal static string SortReversalSubentries_Label {
+            get {
+                return ResourceManager.GetString("SortReversalSubentries_Label", resourceCulture);
             }
         }
     }

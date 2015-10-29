@@ -34,6 +34,16 @@ namespace SIL.CoreImpl.Impls
 			m_contextString = context;
 		}
 
+		/// <summary>
+		/// create a PersistenceProvider which uses the IPropertyTable.
+		/// </summary>
+		/// <param name="propertyTable"></param>
+		public PersistenceProvider(IPropertyTable propertyTable)
+			: this(propertyTable, "Default")
+
+		{
+		}
+
 		public void RestoreWindowSettings(string id, Form form)
 		{
 			var state = Get(id,"windowState");

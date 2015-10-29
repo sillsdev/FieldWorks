@@ -22,6 +22,7 @@
 		<Project name="DiscourseTests"/>
 		<Project name="FdoUiTests"/>
 		<Project name="FiltersTests"/>
+		<Project name="FieldWorksTests"/>
 		<Project name="FrameworkTests"/>
 		<Project name="FwControlsTests"/>
 		<Project name="FwCoreDlgControlsTests"/>
