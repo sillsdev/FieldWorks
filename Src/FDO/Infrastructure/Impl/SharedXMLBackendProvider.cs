@@ -11,7 +11,7 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using ProtoBuf;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
+using SIL.Threading;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
