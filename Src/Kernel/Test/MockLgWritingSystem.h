@@ -185,6 +185,12 @@ public:
 		return S_OK;
 	}
 
+	STDMETHOD(get_UseNfcContext)(ComBool * pUseNfc)
+	{
+		*pUseNfc = true;
+		return S_OK;
+	}
+
 private:
 	bool ReplaceChrpFontName(LgCharRenderProps * pchrp)
 	{

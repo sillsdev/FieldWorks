@@ -1,29 +1,26 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFindReplaceDlg.cs
-// Responsibility: TE Team
 using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -63,13 +60,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>no match found in whole document</summary>
 			NoMatchFound,
 			/// <summary>A replace all is done and it made replacements</summary>
-			ReplaceAllFinished,
+			ReplaceAllFinished
 		}
 		#endregion
 
 		#region Data members
 		/// <summary>all the search settings</summary>
-		protected IVwPattern m_vwPattern;
+		protected IVwPattern m_vwFindPattern;
 		/// <summary>Environment that keeps track of where we're finding</summary>
 		protected FindCollectorEnv m_findEnvironment;
 		/// <summary>The rootsite where the find operation will be performed</summary>
@@ -79,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IApp m_app;
 		private bool m_cacheMadeLocally = false;
 		/// <summary></summary>
-		protected IVwSelection m_vwselPattern;
+		protected IVwSelection m_vwSelectionForPattern;
 		private ITsString m_resultReplaceText; // saves replace text for reading after dlg closes.
 		/// <summary></summary>
 		protected ITsString m_prevSearchText = null;
@@ -268,7 +265,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw new ArgumentNullException("vwPattern");
 			if (cache == null)
 				throw new ArgumentNullException("cache");
-			m_vwPattern = vwPattern;
+			m_vwFindPattern = vwPattern;
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -377,7 +374,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// If the current selection is an IP AND we have a previous find text, we want to use that
 				// instead of the current selection (TE-5127 and TE-5126).
 				int nVar; //dummy for out params
-				if (bldr.Length == 0 && vwPattern != null && vwPattern.Pattern != null)
+				if (bldr.Length == 0 && vwPattern.Pattern != null)
 				{
 					FindText = vwPattern.Pattern;
 				}
@@ -552,7 +549,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_searchKiller = null;
 			m_prevSearchText = null;
 			m_vwRootsite = null;
-			m_vwPattern = null;
+			m_vwFindPattern = null;
 			m_cache = null;
 			regexContextMenuReplace = null;
 			regexContextMenuFind = null;
@@ -678,8 +675,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="rootSite">view</param>
 		/// <param name="newOwner">The main window that owns the rootsite</param>
-		/// <param name="findPattern">The find/replace pattern of the new owner.</param>
-		/// <param name="wsEdit">writing system for the find and replace edit boxes</param>
+		/// <param name="findPattern">The find/replace pattern of the new owner. TODO Review (Hasso) 2015.08: unused</param>
+		/// <param name="wsEdit">writing system for the find and replace edit boxes TODO Review (Hasso) 2015.08: unused</param>
 		/// ------------------------------------------------------------------------------------
 		public void SetOwner(IVwRootSite rootSite, Form newOwner, IVwPattern findPattern, int wsEdit)
 		{
@@ -692,7 +689,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (newOwner != null && Owner != newOwner)
 			{
 				Owner = newOwner;
-				m_vwselPattern = null;
+				m_vwSelectionForPattern = null;
 				m_findEnvironment = null;
 			}
 		}
@@ -1170,7 +1167,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// replace and then go on to find the next match.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void OnReplace(object sender, System.EventArgs e)
+		protected void OnReplace(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return;  // discard event
@@ -1197,7 +1194,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Handle the Replace All button click event.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void OnReplaceAll(object sender, System.EventArgs e)
+		protected void OnReplaceAll(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return;  // discard event
@@ -1224,7 +1221,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void DoReplaceAll()
 		{
-			int replaceCount = 0;
+			var replaceCount = 0;
 			if (m_app != null)
 				m_app.EnableMainWindows(false);
 			var rootSite = ActiveView;
@@ -1234,28 +1231,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			PrepareToFind();
 			m_inReplace = true;
 
+			// suppress the standard message; ReplaceAll shows its own based on how many matches we find (although the text is the same for 0 found)
 			if (MatchNotFound == null)
-				MatchNotFound += NoMatchFound;
+				MatchNotFound += SuppressAllMatchNotFoundMessages;
 			try
 			{
-				DateTime start = DateTime.Now;
+				var start = DateTime.Now;
 				// Do the replace all
 				SetupFindPattern();
-				SaveDialogValues();
 				if (PatternIsValid())
 				{
 					m_searchKiller.AbortRequest = false;
 					m_searchKiller.Control = this;	// used for redrawing
 					m_searchKiller.StopControl = btnClose;	// need to know the stop button
-					m_vwPattern.ReplaceWith = ReplaceText;
+					m_vwFindPattern.ReplaceWith = ReplaceText;
 
-					int hvoRoot, frag;
-					IVwViewConstructor vc;
-					IVwStylesheet styleSheet;
-					rootSite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out styleSheet);
-					ReplaceAllCollectorEnv replaceAll = new ReplaceAllCollectorEnv(vc, DataAccess,
-						hvoRoot, frag, m_vwPattern, m_searchKiller);
-					replaceCount = replaceAll.ReplaceAll();
+					var initialSelection = CurrentSelection;
+
+					InitializeFindEnvironment(rootSite);
+
+					// TODO Enhance (Hasso) 2015.08: place CurrentSelection in a variable?
+					// Starting at the beginning is a workaround for LT-16537 (starting position is not adjusted after each replacement).
+					for (FindFromAndWrap(SelectAtBeginning(), true); IsReplacePossible(CurrentSelection); FindFromAndWrap(CurrentSelection, false))
+					{
+						DoReplacement(CurrentSelection, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, (FindText.Length == 0));
+						replaceCount++;
+					}
+
+					// Reset the selection to what the user had selected before the ReplaceAll.
+					// TODO Enhance (Hasso) 2015.08: adjust the selection to reflect length changes in the text (easier once LT-16537 is fixed)
+					SelectionHelper.Create(initialSelection, rootSite).SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
 
 					Debug.WriteLine("Replace all took " + (DateTime.Now - start));
 				}
@@ -1309,18 +1314,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determine if no match was found during a find operation.
+		/// Suppress any messages about matches not found.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="defaultMsg"></param>
-		/// <param name="type">status of the match</param>
-		/// <returns>true if no match was found; otherwise false</returns>
+		/// <returns>false</returns>
 		/// ------------------------------------------------------------------------------------
-		private bool NoMatchFound(object sender, string defaultMsg, MatchType type)
+		private static bool SuppressAllMatchNotFoundMessages(object sender, string defaultMsg, MatchType type)
 		{
-			if (type != MatchType.NoMatchFound)
-				return false;
-			return true;
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1358,7 +1358,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			SaveDialogValues(); // This needs to be done before the Regex is checked because it sets up m_vwPattern
+			SaveDialogValues(); // This needs to be done before the Regex is checked because it sets up m_vwFindPattern
 
 			// LT-3310 - make sure if it's a regular expression that it is valid.
 			// The following technique is what was added to the filtering code, so
@@ -1383,7 +1383,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (chkUseRegularExpressions.Checked)
 			{
-				IMatcher testMatcher = new RegExpMatcher(m_vwPattern);
+				IMatcher testMatcher = new RegExpMatcher(m_vwFindPattern);
 				if (!testMatcher.IsValid())
 				{
 					DisplayInvalidRegExMessage(testMatcher.ErrorMessage());
@@ -1632,21 +1632,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// mode, since that mode can't actually perform a Find!)
 			if (!m_inGetSpecs && e.KeyCode == Keys.F3)
 				OnFindNext(null, EventArgs.Empty);
-
-			// When the Find or Replace edit boxes are focused, Enter is not handled
-			// by them so handle here. Make it activate the FindNext button which is the
-			// default button for the dialog.
-			// NOTE (TimS): This seems to be handled correctly by setting the "accept" button
-			// on the dialog so it was taken out.
-			//else if (e.KeyCode == Keys.Enter)
-			//{
-			//    if (m_inGetSpecs)
-			//        m_okButton_Click(this, EventArgs.Empty);
-			//    else
-			//    {
-			//        FindNext();
-			//    }
-			//}
 			else
 				base.OnKeyDown(e);
 		}
@@ -1810,7 +1795,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Replace the existing selection with the string in the replace box.
+		/// Replace the existing selection with the string in the replace box, then find the next occurrance, if any.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected void DoReplace(IVwSelection sel)
@@ -1820,10 +1805,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// See if we are just trying to replace formatting.
 				bool fEmptySearchPattern = (FindText.Length == 0);
-				m_vwPattern.ReplaceWith = ReplaceText;
+				m_vwFindPattern.ReplaceWith = ReplaceText;
 
-				DoReplacement(sel, m_vwPattern.ReplacementText, m_vwPattern.MatchOldWritingSystem,
-					fEmptySearchPattern);
+				DoReplacement(sel, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, fEmptySearchPattern);
 			}
 			else
 			{
@@ -1834,21 +1818,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			btnClose.Text = FwCoreDlgs.kstidClose;
 
 			FindNext();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Setup the find pattern and clear out the selection for the pattern.  This is done
-		/// at the start of a NEW search only.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void SetupFindPattern()
-		{
-			if (m_prevSearchText == null || !m_prevSearchText.Equals(FindText))
-			{
-				m_vwselPattern = null;
-				m_prevSearchText = FindText;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1885,52 +1854,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 
 			OnReplace(null, new EventArgs());
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Attempts to find a pattern match in the view starting from the specified selection.
-		/// </summary>
-		/// <param name="sel">Starting position</param>
-		/// <param name="forward">indicates whether to search forward or backward</param>
-		/// ------------------------------------------------------------------------------------
-		private void FindFrom(IVwSelection sel, bool forward)
-		{
-			FindCollectorEnv.LocationInfo startLocation = null;
-			var rootSite = ActiveView;
-			if (rootSite == null)
-				return;
-
-			if (sel != null)
-			{
-				SelectionHelper helper = SelectionHelper.Create(sel, rootSite);
-				startLocation = new FindCollectorEnv.LocationInfo(helper);
-			}
-			FindCollectorEnv.LocationInfo locationInfo = m_findEnvironment.FindNext(startLocation);
-			if (locationInfo != null)
-			{
-				SelectionHelper selHelper = SelectionHelper.Create(rootSite);
-				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.Anchor,
-					locationInfo.m_location);
-				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End,
-					locationInfo.m_location);
-				selHelper.IchAnchor = locationInfo.m_ichMin;
-				selHelper.IchEnd = locationInfo.m_ichLim;
-				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor,
-					locationInfo.m_cpropPrev);
-				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End,
-					locationInfo.m_cpropPrev);
-				selHelper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, locationInfo.m_tag);
-				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End, locationInfo.m_tag);
-				m_vwselPattern = selHelper.SetSelection(rootSite, true, true,
-					VwScrollSelOpts.kssoDefault);
-				Debug.Assert(m_vwselPattern != null, "We need a selection after a find!");
-				//if (Owner != null)
-				//    Owner.Activate();
-				//if (rootSite is Control)
-				//    ((Control) rootSite).Focus();
-				rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
-			}
 		}
 
 		IVwRootSite ActiveView
@@ -1993,7 +1916,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_fLastDirectionForward != fSearchForward)
 			{
 				// Changing search direction. Reset current selection (resets the search limit)
-				m_vwselPattern = null;
+				m_vwSelectionForPattern = null;
 				m_fLastDirectionForward = fSearchForward;
 			}
 
@@ -2006,23 +1929,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// If the pattern's selection is different from the current selection in the
 			// rootbox or if a new search has been started then set things up to begin
 			// searching at the current selection.
-			bool fFirstTry = (m_vwselPattern == null || m_vwselPattern != vwselRootb);
+			bool fFirstTry = (m_vwSelectionForPattern == null || m_vwSelectionForPattern != vwselRootb);
 			if (fFirstTry)
 			{
-				int hvoRoot, frag;
-				IVwViewConstructor vc;
-				IVwStylesheet styleSheet;
-				rootSite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out styleSheet);
-				if (fSearchForward)
-				{
-					m_findEnvironment = new FindCollectorEnv(vc, DataAccess, hvoRoot, frag,
-						m_vwPattern, m_searchKiller);
-				}
-				else
-				{
-					m_findEnvironment = new ReverseFindCollectorEnv(vc, DataAccess, hvoRoot, frag,
-						m_vwPattern, m_searchKiller);
-				}
+				InitializeFindEnvironment(rootSite, fSearchForward);
 			}
 			Debug.Assert(m_findEnvironment != null);
 
@@ -2043,13 +1953,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					try
 					{
-						SaveDialogValues();
 						if (PatternIsValid())
 						{
 							m_searchKiller.AbortRequest = false;
-							FindFrom(vwselRootb, fSearchForward);
-							if (!m_findEnvironment.FoundMatch)
-								AttemptWrap(fFirstTry, fSearchForward);
+							FindFromAndWrap(vwselRootb, fFirstTry);
 						}
 					}
 					finally
@@ -2061,9 +1968,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		private void InitializeFindEnvironment(IVwRootSite rootSite, bool fSearchForward = true)
+		{
+			int hvoRoot, frag;
+			IVwViewConstructor vc;
+			IVwStylesheet styleSheet;
+			rootSite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out styleSheet);
+			m_findEnvironment = fSearchForward
+				? new FindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller)
+				: new ReverseFindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Prepares to find.
+		/// Prepares to find: change the Close button to a Stop button; disable all other controls.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void PrepareToFind()
@@ -2081,10 +1999,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Postpares to find.
+		/// Postpares to find: reset controls to how they were before the find; remove NoMatchFound from the MatchNotFound handler
 		/// </summary>
-		/// <param name="fMakeCloseBtnSayClose">True to change the the close button to say
-		/// "close", otherwise it will go back to whatever it was"</param>
+		/// <param name="fMakeCloseBtnSayClose">True to change the the close button to say "Close";
+		/// otherwise it will go back to whatever it was"</param>
 		/// ------------------------------------------------------------------------------------
 		private void PostpareToFind(bool fMakeCloseBtnSayClose)
 		{
@@ -2092,9 +2010,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			EnableControls(true);
 			// Restore the close button
 			btnClose.Text = (fMakeCloseBtnSayClose) ? FwCoreDlgs.kstidClose : (string)btnClose.Tag;
-			btnClose.Click += new EventHandler(btnClose_Click);
-			btnClose.Click -= new EventHandler(OnStop);
-			MatchNotFound -= new MatchNotFoundHandler(NoMatchFound);
+			btnClose.Click += btnClose_Click;
+			btnClose.Click -= OnStop;
+			MatchNotFound -= SuppressAllMatchNotFoundMessages;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Setup and save the find pattern, clear the selection for the pattern.  This is done at the start of a NEW search only.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected void SetupFindPattern()
+		{
+			if (m_prevSearchText == null || !m_prevSearchText.Equals(FindText))
+			{
+				m_vwSelectionForPattern = null;
+				m_prevSearchText = FindText;
+				SaveDialogValues(); // set up m_vwFindPattern
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2104,24 +2037,70 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void SaveDialogValues()
 		{
-			m_vwPattern.Pattern = FindText;
-			m_vwPattern.MatchOldWritingSystem = chkMatchWS.Checked;
-			m_vwPattern.MatchDiacritics = chkMatchDiacritics.Checked;
-			m_vwPattern.MatchWholeWord = chkMatchWholeWord.Checked;
-			m_vwPattern.MatchCase = chkMatchCase.Checked;
-			m_vwPattern.UseRegularExpressions = chkUseRegularExpressions.Checked;
-			m_vwPattern.ReplaceWith = ReplaceText;
+			m_vwFindPattern.Pattern = FindText;
+			m_vwFindPattern.MatchOldWritingSystem = chkMatchWS.Checked;
+			m_vwFindPattern.MatchDiacritics = chkMatchDiacritics.Checked;
+			m_vwFindPattern.MatchWholeWord = chkMatchWholeWord.Checked;
+			m_vwFindPattern.MatchCase = chkMatchCase.Checked;
+			m_vwFindPattern.UseRegularExpressions = chkUseRegularExpressions.Checked;
+			m_vwFindPattern.ReplaceWith = ReplaceText;
 			m_resultReplaceText = ReplaceText;
-			SimpleStringMatcher.SetupPatternCollating(m_vwPattern, m_cache);
+			SimpleStringMatcher.SetupPatternCollating(m_vwFindPattern, m_cache);
+		}
+
+		/// <summary>
+		/// Attempts to find a pattern match in the view starting from the specified selection, wrapping around if we reach the end of the view.
+		/// </summary>
+		/// <param name="sel">Starting point for the search</param>
+		/// <param name="fFirstTry">true if this is the first try finding this pattern</param>
+		private void FindFromAndWrap(IVwSelection sel, bool fFirstTry)
+		{
+			FindFrom(sel);
+			if (!m_findEnvironment.FoundMatch)
+				AttemptWrap(fFirstTry);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempts to find a pattern match in the view starting from the specified selection.
+		/// </summary>
+		/// <param name="sel">Starting position</param>
+		/// ------------------------------------------------------------------------------------
+		private void FindFrom(IVwSelection sel)
+		{
+			CollectorEnv.LocationInfo startLocation = null;
+			var rootSite = ActiveView;
+			if (rootSite == null)
+				return;
+
+			if (sel != null)
+			{
+				startLocation = new CollectorEnv.LocationInfo(SelectionHelper.Create(sel, rootSite));
+			}
+			var locationInfo = m_findEnvironment.FindNext(startLocation);
+			if (locationInfo != null)
+			{
+				var selHelper = SelectionHelper.Create(rootSite);
+				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.Anchor, locationInfo.m_location);
+				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, locationInfo.m_location);
+				selHelper.IchAnchor = locationInfo.m_ichMin;
+				selHelper.IchEnd = locationInfo.m_ichLim;
+				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, locationInfo.m_cpropPrev);
+				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, locationInfo.m_cpropPrev);
+				selHelper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, locationInfo.m_tag);
+				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End, locationInfo.m_tag);
+				m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
+				Debug.Assert(m_vwSelectionForPattern != null, "We need a selection after a find!");
+				rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Attempts to wrap and continue searching if we hit the bottom of the view.
 		/// </summary>
-		/// <returns>True if a match was found. Otherwise, false.</returns>
 		/// ------------------------------------------------------------------------------------
-		private void AttemptWrap(bool fFirstTry, bool fSearchForward)
+		private void AttemptWrap(bool fFirstTry)
 		{
 			Debug.Assert(m_findEnvironment != null);
 			m_findEnvironment.HasWrapped = true;
@@ -2132,7 +2111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else
 			{
 				// Wrap around to start searching at the top or bottom of the view.
-				FindFrom(null, fSearchForward);
+				FindFrom(null);
 
 				// If, after wrapping around to begin searching from the top, we hit the
 				// starting point, then display the same message as if we went full circle.
@@ -2150,7 +2129,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void InternalMatchNotFound(bool fFirstTry)
 		{
-			m_vwselPattern = null;
+			m_vwSelectionForPattern = null;
 			bool fShowMsg = true;
 
 			string defaultMsg = fFirstTry ? FwCoreDlgs.kstidNoMatchMsg :
@@ -2164,12 +2143,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (fShowMsg && !m_searchKiller.AbortRequest)
 			{
-				// Only show message that entire document was searched if the search was
-				// not aborted (TE-3567).
+				// Show message that entire document was searched only if the search was not aborted (TE-3567).
 				Enabled = false;
 				MessageBox.Show(Owner, defaultMsg, m_app.ApplicationName);
 				Enabled = true;
 			}
+		}
+
+		/// <summary>
+		/// Moves the selection to the beginning of the root site and returns the selection information.
+		/// </summary>
+		private IVwSelection SelectAtBeginning()
+		{
+			var rootSite = ActiveView;
+			if (rootSite == null)
+				return null;
+
+			rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
+			var selHelper = SelectionHelper.Create(rootSite);
+			selHelper.IchAnchor = 0;
+			selHelper.IchEnd = 0;
+			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, 0);
+			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, 0);
+			m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
+
+			var rootBox = rootSite.RootBox;
+			return rootBox == null ? null : rootBox.Selection;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2185,11 +2184,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (rootSite == null)
 					return null;
 
-				IVwRootBox rootBox = rootSite.RootBox;
-				if (rootBox == null)
-					return null;
-
-				return rootBox.Selection;
+				var rootBox = rootSite.RootBox;
+				return rootBox == null ? null : rootBox.Selection;
 			}
 		}
 
@@ -2207,7 +2203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return false;
 
 			// Is the current selection the same as what is in the find box?
-			if (!m_vwPattern.MatchWhole(vwsel))
+			if (!m_vwFindPattern.MatchWhole(vwsel))
 				return false;
 
 			// Is the selection editable?
@@ -2226,8 +2222,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="fEmptySearch"></param>
 		/// <remarks>TODO TE-973: searching for writing systems.</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected void DoReplacement(IVwSelection sel, ITsString tssReplace, bool fUseWS,
-			bool fEmptySearch)
+		protected void DoReplacement(IVwSelection sel, ITsString tssReplace, bool fUseWS, bool fEmptySearch)
 		{
 			// Get the properties we will apply, except for the writing system/ows and/or sStyleName.
 			ITsString tssSel;
@@ -2238,12 +2233,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Get ORCs from selection so that they can be appended after the text has been replaced.
 			ITsStrBldr stringBldr = tssSel.GetBldr();
-			ReplaceAllCollectorEnv.ReplaceString(stringBldr, tssSel, 0, tssSel.Length,
-				tssReplace, 0, fEmptySearch, fUseWS);
+			ReplaceAllCollectorEnv.ReplaceString(stringBldr, tssSel, 0, tssSel.Length, tssReplace, 0, fEmptySearch, fUseWS);
 
 			// finally - do the replacement
-			sel.ReplaceWithTsString(
-				stringBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD));
+			sel.ReplaceWithTsString(stringBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD));
 		}
 
 		#endregion
@@ -2507,7 +2500,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (multipleStyles)
 				{
 					// only one writing system or multiple writing systems (not displayed)
-					if (!multipleWs || (multipleWs && !chkMatchWS.Checked))
+					if (!multipleWs || !chkMatchWS.Checked)
 					{
 						if (!chkMatchWS.Checked) // don't show writing system info
 							formatText.Text = FwCoreDlgs.kstidMultipleStyles;
@@ -2518,7 +2511,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 					}
 					// multiple writing systems (displayed)
-					else if (multipleWs && chkMatchWS.Checked)
+					else
 						formatText.Text = FwCoreDlgs.kstidMultipleStylesMultipleWS;
 				}
 				// Multiple writing systems and no more than 1 style
@@ -2982,15 +2975,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_stopControl != null && msg.hwnd == m_stopControl.Handle && stopButtonDown)
 					{
-						(m_stopControl as Button).PerformClick();
+						((Button)m_stopControl).PerformClick();
 						stopButtonDown = false;
 					}
 				}
 				else if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN &&
-					msg.wParam == (System.IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
+					msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
 					m_stopControl != null && msg.hwnd == m_stopControl.Handle)
 				{
-					(m_stopControl as Button).PerformClick();
+					((Button)m_stopControl).PerformClick();
 				}
 
 				if (!Win32.IsDialogMessage(m_ownerControl.Handle, ref msg))

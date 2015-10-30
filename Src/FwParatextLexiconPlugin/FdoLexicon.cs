@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
@@ -317,7 +322,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				string url = string.Format("silfw://localhost/link?app=flex&database={0}&tool={1}&guid={2}",
 					HttpUtility.UrlEncode(m_cache.ProjectId.Name), HttpUtility.UrlEncode(toolName), HttpUtility.UrlEncode(guid));
-				using (Process.Start(url)) {}
+				// TODO: this would probably be faster if we directly called the RPC socket if FW is already open
+				if (MiscUtils.IsUnix)
+				{
+					string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					using (Process.Start(Path.Combine(libPath, "run-app"), string.Format("FieldWorks.exe {0}", url))) {}
+				}
+				else
+				{
+					using (Process.Start(url)) {}
+				}
 			}
 		}
 
@@ -627,8 +641,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
 				LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
-				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize();
-				var key = new LexemeKey(type, form);
+				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+				var key = new LexemeKey(type, form.Normalize());
 
 				SortedSet<ILexEntry> entries;
 				if (!m_entryIndex.TryGetValue(key, out entries))
@@ -699,7 +713,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			CreateEntryIndexIfNeeded();
 			LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
 			HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
-			return new FdoLexEntryLexeme(this, new LexemeKey(type, entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize(), hn.Number));
+			string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			return new FdoLexEntryLexeme(this, new LexemeKey(type, form.Normalize(), hn.Number));
 		}
 
 		internal void OnLexemeAdded(Lexeme lexeme)

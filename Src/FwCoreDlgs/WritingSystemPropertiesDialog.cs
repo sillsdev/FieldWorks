@@ -1,42 +1,35 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WritingSystemProperties.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Text;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using SilEncConverters40;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using SilEncConverters40;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.CoreImpl;
 using XCore;
 using MatchedPair = SIL.WritingSystems.MatchedPair;
 
@@ -329,8 +322,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Sorting Tab
 
 		private Panel m_sortRulesPanel;
-		private ComboBox m_sortUsingComboBox;
-		/// <summary></summary>
+		/// <remarks>protected for tests</remarks>
+		protected ComboBox m_sortUsingComboBox;
+		/// <remarks>protected for tests</remarks>
 		protected FwTextBox m_sortRulesTextBox;
 		private Label m_sortingHelpLabel;
 		private Label m_sortUsingLabel;
@@ -341,7 +335,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_sortRulesLoadLabel;
 		private LocaleMenuButton m_similarWsButton;
 		private Label m_sortLanguageLabel;
-		private ComboBox m_sortLanguageComboBox;
+		/// <remarks>protected for tests</remarks>
+		protected ComboBox m_sortLanguageComboBox;
 		private Panel m_sortLanguagePanel;
 
 		private CollationRulesType m_currentCollationRulesType;

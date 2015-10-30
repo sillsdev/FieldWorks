@@ -1467,6 +1467,40 @@ HRESULT VwGraphicsCairo::GetFontData(int nTableId, int* pcbTableSz, BYTE* prgb)
  END_COM_METHOD(g_fact, IID_IVwGraphics);
 }
 
+HRESULT VwGraphicsCairo::GetGlyphMetrics(int chw,
+	int * pxBoundingWidth, int * pyBoundingHeight,
+	int * pxBoundingX, int * pyBoundingY, int * pxAdvanceX, int * pyAdvanceY)
+{
+#if DEBUG
+	if (m_loggingFile != NULL)
+	{
+		fprintf(m_loggingFile, "GetGlyphMetrics %p %d %d %d %d %d %d %d\n", this, chw, *pxBoundingWidth, *pyBoundingHeight, *pxBoundingX, *pyBoundingY, *pxAdvanceX, *pyAdvanceY);
+		fflush(m_loggingFile);
+	}
+#endif
+ BEGIN_COM_METHOD;
+	if (m_fontMapForFontContext == NULL)
+		m_fontMapForFontContext = pango_cairo_font_map_get_default();
+
+	if (m_fontContext == NULL)
+		m_fontContext = pango_font_map_create_context (m_fontMapForFontContext);
+
+	PangoFont * font = pango_context_load_font(m_fontContext, m_pangoFontDescription);
+
+	PangoRectangle logical, ink;
+	pango_font_get_glyph_extents(font, chw, &ink, &logical);
+	pango_extents_to_pixels(NULL, &ink);
+	pango_extents_to_pixels(NULL, &logical);
+
+	*pxBoundingWidth = ink.width;
+	*pyBoundingHeight = ink.height;
+	*pxBoundingX = ink.x;
+	*pyBoundingY = ink.y;
+	*pxAdvanceX = logical.width;
+	*pyAdvanceY = logical.height;
+ END_COM_METHOD(g_fact, IID_IVwGraphics);
+}
+
 /***********************************************************************************************
 	Utility methods
 ***********************************************************************************************/
@@ -1555,14 +1589,6 @@ bool VwGraphicsCairo::rectIntersect(RECT* a, RECT* b) {
 
 // Unused in FieldWorks
 HRESULT VwGraphicsCairo::GetFontEmSquare(int * pxyFontEmSquare)
-{
- BEGIN_COM_METHOD;
-	ThrowHr(E_NOTIMPL);
- END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-HRESULT VwGraphicsCairo::GetGlyphMetrics(int chw,
-	int * psBoundingWidth, int * pyBoundingHeight,
-	int * pxBoundingX, int * pyBoundingY, int * pxAdvanceX, int * pyAdvanceY)
 {
  BEGIN_COM_METHOD;
 	ThrowHr(E_NOTIMPL);

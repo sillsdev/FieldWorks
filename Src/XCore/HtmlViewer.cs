@@ -9,12 +9,13 @@
 // <remarks>
 // </remarks>
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Xml;
-using System.Windows.Forms;
-using System.Reflection;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.Utils;
 
 namespace XCore
@@ -45,14 +46,14 @@ namespace XCore
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		#endregion // Data Members
 
 		#region Construction and disposal
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="HtmlViewer2"/> class.
+		/// Initializes a new instance of the <see cref="HtmlViewer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public HtmlViewer()
@@ -61,10 +62,10 @@ namespace XCore
 			InitializeComponent();
 
 			m_htmlControl = new HtmlControl();
-			m_htmlControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			m_htmlControl.Dock = DockStyle.Fill;
 			Controls.Add(m_htmlControl);
 
-			base.AccNameDefault = "HtmlViewer";	// default accessibility name
+			AccNameDefault = "HtmlViewer";	// default accessibility name
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -112,7 +113,8 @@ namespace XCore
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 			string urlAttr = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "URL");
-			m_htmlControl.URL = GetInstallSubDirectory(urlAttr);
+			var uri = new Uri(GetInstallSubDirectory(urlAttr));
+			m_htmlControl.URL = uri.AbsoluteUri;
 
 		}
 
@@ -177,7 +179,7 @@ namespace XCore
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
-				throw new ArgumentNullException("'targetCandidates' is null.");
+				throw new ArgumentNullException("targetCandidates");
 
 			targetCandidates.Add(this);
 
@@ -195,7 +197,7 @@ namespace XCore
 				retval = retval.Remove(0, 1);
 			string asmPathname = Assembly.GetExecutingAssembly().CodeBase;
 			asmPathname = FileUtils.StripFilePrefix(asmPathname);
-			string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/") + 1);
+			string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/", StringComparison.Ordinal) + 1);
 			string possiblePath = Path.Combine(asmPath, retval);
 			if (File.Exists(possiblePath))
 				retval = possiblePath;

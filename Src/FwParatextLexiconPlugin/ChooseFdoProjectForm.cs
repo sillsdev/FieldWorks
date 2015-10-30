@@ -1,4 +1,9 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,6 +21,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private string m_restoreFileFullPath;
 		private RestoreProjectSettings m_restoreSettings;
 		private readonly ParatextLexiconPluginFdoUI m_ui;
+		private readonly KeyedCollection<string, FdoCache> m_fdoCacheCache;
 
 		public string SelectedProject
 		{
@@ -34,7 +40,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			else
 			{
 				m_selectedItem = (LanguageProjectInfo) listBox.SelectedItem;
-				if (ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
+				if (!m_fdoCacheCache.Contains(m_selectedItem.ToString()) && ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
 				{
 					MessageBox.Show(this, Strings.ksProjectOpen, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
@@ -110,11 +116,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 		#endregion
 
-		public ChooseFdoProjectForm(ParatextLexiconPluginFdoUI ui)
+		public ChooseFdoProjectForm(ParatextLexiconPluginFdoUI ui, KeyedCollection<string, FdoCache> fdoCacheCache)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			m_ui = ui;
+			m_fdoCacheCache = fdoCacheCache;
 			PopulateLanguageProjectsList(Dns.GetHostName());
 		}
 

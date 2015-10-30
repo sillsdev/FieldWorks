@@ -176,6 +176,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\LibChorus.dll</HintPath>
     </Reference>
+    <Reference Include="ManagedLgIcuCollator, Version=8.2.0.13232, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+    </Reference>
     <Reference Include="MessageBoxExLib">
       <Name>MessageBoxExLib</Name>
       <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
@@ -388,6 +392,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RoledParticipantsSlice.cs" />
+    <Compile Include="SortReversalSubEntries.cs" />
     <Compile Include="SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>

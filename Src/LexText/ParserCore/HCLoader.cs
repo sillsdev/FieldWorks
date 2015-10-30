@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -81,8 +85,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (IPartOfSpeech pos in m_cache.LanguageProject.AllPartsOfSpeech)
 			{
 				posSymbols.Add(new FeatureSymbol(pos.Guid.ToString()) {Description = pos.Name.BestAnalysisAlternative.Text});
-				foreach (IMoInflClass inflClass in pos.AllInflectionClasses)
-					LoadMprFeature(inflClass, inflClassesGroup);
+				foreach (IMoInflClass inflClass in pos.InflectionClassesOC)
+					LoadInflClassMprFeature(inflClass, inflClassesGroup);
 			}
 
 			var prodRestrictsGroup = new MprFeatureGroup { Name = "exceptionFeatures", MatchType = MprFeatureGroupMatchType.All };
@@ -240,6 +244,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			m_loadErrorsWriter.WriteEndElement();
+		}
+
+		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
+		{
+			LoadMprFeature(inflClass, inflClassesGroup);
+			foreach (IMoInflClass subclass in inflClass.SubclassesOC)
+				LoadInflClassMprFeature(subclass, inflClassesGroup);
 		}
 
 		private bool HasValidRuleForm(ILexEntry entry)
@@ -1933,7 +1944,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (closedValue != null)
 					{
 						var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
-						hcFS.AddValue(hcFeature, hcFeature.PossibleSymbols[closedValue.ValueRA.Guid.ToString()]);
+						// TODO: should we display something to the user if a FS has an invalid value?
+						FeatureSymbol symbol;
+						if (hcFeature.PossibleSymbols.TryGetValue(closedValue.ValueRA.Guid.ToString(), out symbol))
+							hcFS.AddValue(hcFeature, symbol);
 					}
 					else
 					{

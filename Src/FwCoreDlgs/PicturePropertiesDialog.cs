@@ -1,9 +1,6 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PicturePropertiesDialog.cs
-// Responsibility: TeTeam
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -43,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly ICmPicture m_initialPicture;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
-		private readonly HelpProvider helpProvider;
+		private readonly HelpProvider m_helpProvider;
 		private readonly int m_captionWs;
 
 		private Button m_btnHelp;
@@ -120,11 +117,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_helpTopicProvider != null) // Could be null during tests
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
+				m_helpProvider = new HelpProvider();
+				m_helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
 					m_helpTopicProvider.GetHelpString("UserHelpFile");
-				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
 
@@ -236,7 +233,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				else
 				{
 					// use an image that indicates the image file could not be opened.
-					m_currentImage = Common.RootSites.SimpleRootSite.ImageNotFoundX;
+					m_currentImage = SimpleRootSite.ImageNotFoundX;
 				}
 				UpdatePicInformation();
 				m_rbLeave.Checked = true;
@@ -252,7 +249,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// use an image that indicates the we don't have an image
 				Debug.Assert(m_currentImage == null);
-				m_currentImage = SIL.FieldWorks.Common.RootSites.SimpleRootSite.ImageNotFoundX;
+				m_currentImage = SimpleRootSite.ImageNotFoundX;
 				UpdatePicInformation();
 			}
 			ApplyDefaultFileLocationChoice();
@@ -282,7 +279,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -294,6 +291,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (m_currentImage != null)
 					m_currentImage.Dispose();
+
+				if (m_helpProvider != null)
+					m_helpProvider.Dispose();
 			}
 			m_currentImage = null;
 			base.Dispose( disposing );
@@ -753,9 +753,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_currentImage.Dispose();
 			m_currentImage = null;
 
-			m_filePath = MoveOrCopyFilesDlg.PerformMoveCopyOrLeaveFile(m_filePath,
-				m_txtDestination.Text, fileLocChoice);
-			if (MoveOrCopyFilesDlg.FileIsInExternalLinksFolder(m_filePath, m_txtDestination.Text))
+			m_filePath = MoveOrCopyFilesController.PerformMoveCopyOrLeaveFile(m_filePath, m_txtDestination.Text, fileLocChoice);
+			if (MoveOrCopyFilesController.FileIsInExternalLinksFolder(m_filePath, m_txtDestination.Text))
 				s_sExternalLinkDestinationDir = m_txtDestination.Text;
 		}
 
@@ -925,8 +924,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private bool FileIsInLinkedFilesFolder(string sFilePath)
 		{
-			return MoveOrCopyFilesDlg.FileIsInExternalLinksFolder(sFilePath,
-				s_defaultPicturesFolder);
+			return MoveOrCopyFilesController.FileIsInExternalLinksFolder(sFilePath, s_defaultPicturesFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------

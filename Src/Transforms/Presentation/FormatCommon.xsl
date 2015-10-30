@@ -72,11 +72,9 @@
 			<xsl:text> -- that is, in the part of the form "</xsl:text>
 			<xsl:value-of select="$sFormPart"/>
 			<xsl:text>". Please make sure all phonemes in the form have been defined. The Hermit Crab parser will ignore this entry until it is fixed. </xsl:text>
-			<span style="cursor:hand; text-decoration:underline">
-				<xsl:attribute name="onclick">
-					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+			<span style="cursor:pointer; text-decoration:underline">
+				<xsl:attribute name="id">
 					<xsl:value-of select="$sHvo"/>
-					<xsl:text>)</xsl:text>
 				</xsl:attribute>
 				<xsl:text>(Click here to see the lexical entry.)</xsl:text>
 			</span>

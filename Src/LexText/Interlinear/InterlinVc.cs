@@ -1,17 +1,20 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FdoUi;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl;
-
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -133,8 +136,7 @@ namespace SIL.FieldWorks.IText
 		ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		int m_mpBundleHeight = 0; // millipoint height of interlinear bundle.
 		bool m_fShowMorphBundles = true;
-		bool m_fRtl = false;
-		ITsString m_tssDir;
+		bool m_fRtl;
 		IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
 		int m_hvoAnnDefNote;
@@ -232,21 +234,10 @@ namespace SIL.FieldWorks.IText
 				return;	// already setup
 			m_wsVernForDisplay = wsVern;
 			TsStringUtils.ReassignTss(ref m_tssEmptyVern, m_tsf.MakeString("", wsVern));
-			SetupRightToLeft(wsVern);
+			m_fRtl = m_wsManager.Get(wsVern).RightToLeftScript;
 			TsStringUtils.ReassignTss(ref m_tssMissingAnalysis, m_tsf.MakeString(ITextStrings.ksStars, wsVern));
 			m_tssMissingMorph = m_tssMissingAnalysis;
 			m_tssMissingEntry = m_tssMissingAnalysis;
-		}
-
-		private void SetupRightToLeft(int wsVern)
-		{
-			CoreWritingSystemDefinition wsObj = m_wsManager.Get(wsVern);
-			if (wsObj != null)
-				m_fRtl = wsObj.RightToLeftScript;
-			if (m_fRtl)
-				m_tssDir = m_tsf.MakeString("\x200F", wsVern);	// RTL Mark.
-			else
-				m_tssDir = m_tsf.MakeString("\x200E", wsVern);	// LTR Mark.
 		}
 
 		/// <summary>
@@ -310,7 +301,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -605,9 +596,9 @@ namespace SIL.FieldWorks.IText
 			if (Decorator.get_IsPropInCache(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid,
 				(int)CellarPropertyType.ReferenceAtomic, 0))
 			{
-				int hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
-				if (hvoResult != 0)
-					return hvoResult;  // may have been cleared by setting to zero.
+				var hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
+					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
 			}
 			return analysis.Hvo;
 		}
@@ -1003,43 +994,43 @@ namespace SIL.FieldWorks.IText
 				bldr.Replace(bldr.Length - 1, bldr.Length, null, null);
 				ITsString tssLabelNoSpace = bldr.GetString();
 				// (First) analysis language is upstream; insert label at end.
-				vwenv.AddString(GetTssDirForWs(wssAnalysis[0]));
+				AddTssDirForWs(vwenv, wssAnalysis[0]);
 				AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
-				vwenv.AddString(GetTssDirForWs(wssAnalysis[0]));
+				AddTssDirForWs(vwenv, wssAnalysis[0]);
 				if (wssAnalysis.Length != 1)
 				{
 					// Insert WS label for first line
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
 				}
-				vwenv.AddString(m_tssDir);
+				AddTssDirForVernWs(vwenv);
 				vwenv.AddString(m_tssSpace);
-				vwenv.AddString(m_tssDir);
+				AddTssDirForVernWs(vwenv);
 				vwenv.AddString(tssLabelNoSpace);
-				vwenv.AddString(m_tssDir);
+				AddTssDirForVernWs(vwenv);
 			}
 			else
 			{
-				vwenv.AddString(m_tssDir);
+				AddTssDirForVernWs(vwenv);
 				vwenv.AddString(tssLabel);
-				vwenv.AddString(m_tssDir);
+				AddTssDirForVernWs(vwenv);
 				if (wssAnalysis.Length == 1)
 				{
-					vwenv.AddString(GetTssDirForWs(wssAnalysis[0]));
+					AddTssDirForWs(vwenv, wssAnalysis[0]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
 				}
 				else
 				{
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
-					vwenv.AddString(m_tssDir);
-					vwenv.AddString(GetTssDirForWs(wssAnalysis[0]));
+					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wssAnalysis[0]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
 				}
 			}
@@ -1063,30 +1054,30 @@ namespace SIL.FieldWorks.IText
 				if (IsWsRtl(wssAnalysis[i]) != m_fRtl)
 				{
 					// upstream...reverse everything.
-					vwenv.AddString(GetTssDirForWs(wssAnalysis[i]));
+					AddTssDirForWs(vwenv, wssAnalysis[i]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[i], flid);
-					vwenv.AddString(GetTssDirForWs(wssAnalysis[i]));
-					vwenv.AddString(m_tssDir);
+					AddTssDirForWs(vwenv, wssAnalysis[i]);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
-					vwenv.AddString(m_tssDir);
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
+					AddTssDirForVernWs(vwenv);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 				}
 				else
 				{
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
-					vwenv.AddString(m_tssDir);
+					AddTssDirForVernWs(vwenv);
 					vwenv.AddString(m_tssSpace);
-					vwenv.AddString(m_tssDir);
-					vwenv.AddString(GetTssDirForWs(wssAnalysis[i]));
+					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wssAnalysis[i]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[i], flid);
 				}
 			}
@@ -1126,7 +1117,7 @@ namespace SIL.FieldWorks.IText
 
 		private bool IsWsRtl(int wsAnalysis)
 		{
-			return GetTssDirForWs(wsAnalysis).GetChars(0, 1) == "\x200F";
+			return m_wsManager.Get(wsAnalysis).RightToLeftScript;
 		}
 
 		private void DisplaySingleInterlinearAnalysisWithLabels(IVwEnv vwenv, int hvo)
@@ -1182,11 +1173,13 @@ namespace SIL.FieldWorks.IText
 		/// bidirectional algorithm not to jerk the insertion point around at every space.
 		/// See LT-7738.
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <returns></returns>
-		private ITsString GetTssDirForWs(int ws)
+		private void AddTssDirForWs(IVwEnv vwenv, int ws)
 		{
 			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
+			// Graphite doesn't handle bidi markers
+			if (wsObj.IsGraphiteEnabled)
+				return;
+
 			ITsString tssDirWs;
 			if (!m_mapWsDirTss.TryGetValue(wsObj, out tssDirWs))
 			{
@@ -1197,7 +1190,12 @@ namespace SIL.FieldWorks.IText
 					tssDirWs = m_tsf.MakeString("\x200E", ws);	// LTR Marker
 				m_mapWsDirTss.Add(wsObj, tssDirWs);
 			}
-			return tssDirWs;
+			vwenv.AddString(tssDirWs);
+		}
+
+		private void AddTssDirForVernWs(IVwEnv vwenv)
+		{
+			AddTssDirForWs(vwenv, m_wsVernForDisplay);
 		}
 
 		/// <summary>

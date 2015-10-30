@@ -167,7 +167,7 @@ namespace SIL.FieldWorks
 					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 					if (String.IsNullOrEmpty(xulRunnerLocation))
 						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-					string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
+				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 					if (!librarySearchPath.Contains(xulRunnerLocation))
 						throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				}
@@ -237,13 +237,6 @@ namespace SIL.FieldWorks
 				// by a bug in XP.
 				Application.EnableVisualStyles();
 
-#if !__MonoCS__
-				// JohnT: this allows us to use Graphite in all in-process controls, even those
-				// we don't have custom versions of.
-				LoadLibrary("multiscribe.dll");
-#else
-				// TODO-Linux: review this - what is this used for?
-#endif
 				// initialize ICU
 				Icu.InitIcuDataDir();
 
@@ -715,12 +708,18 @@ namespace SIL.FieldWorks
 				{
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					string thisSid = BasicUtils.GetUserForProcess(thisProcess);
-					foreach (Process procCurr in Process.GetProcessesByName(thisProcessName))
+					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
+					if (MiscUtils.IsUnix)
+					{
+						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
+							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
+					}
+					foreach (Process procCurr in processes)
 					{
 						if (procCurr.Id != thisProcess.Id && thisSid == BasicUtils.GetUserForProcess(procCurr))
 							existingProcesses.Add(procCurr);
-						}
 					}
+				}
 				catch (Exception ex)
 				{
 					Debug.Fail("Got exception in FieldWorks.ExisitingProcess", ex.Message);

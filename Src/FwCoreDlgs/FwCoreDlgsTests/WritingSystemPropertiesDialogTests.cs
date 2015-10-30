@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WritingSystemPropertiesDialogTests.cs
-// Responsibility:
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +16,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.Utils.Attributes;
 using SIL.WritingSystems;
-
+// ReSharper disable InconsistentNaming
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	#region Dummy WritingSystemPropertiesDlg
@@ -70,6 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 
 			SetupDialog(ws, true);
+			SwitchTab(kWsSorting); // force setup of the Sorting tab
 			return (int)DialogResult.OK;
 		}
 
@@ -236,9 +233,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		internal void ValidateSortingTab()
 		{
-			var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleRulesCollationDefinition;
-			string sortRules = simpleCollation != null ? simpleCollation.SimpleRules : ((IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation).IcuRules;
-			Assert.AreEqual(sortRules, m_sortRulesTextBox.Text);
+			switch (m_sortUsingComboBox.SelectedValue.ToString())
+			{
+				case "CustomSimple":
+					var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleRulesCollationDefinition;
+					Assert.That(simpleCollation, Is.Not.Null);
+					Assert.That(simpleCollation.SimpleRules, Is.EqualTo(m_sortRulesTextBox.Text));
+					break;
+
+				case "DefaultOrdering":
+				case "CustomIcu":
+					var icuRulesCollation = CurrentWritingSystem.DefaultCollation as IcuRulesCollationDefinition;
+					Assert.That(icuRulesCollation, Is.Not.Null);
+					Assert.That(icuRulesCollation.IcuRules, Is.EqualTo(m_sortRulesTextBox.Text));
+					break;
+
+				case "OtherLanguage":
+					var sysCollation = CurrentWritingSystem.DefaultCollation as SystemCollationDefinition;
+					Assert.That(sysCollation, Is.Not.Null);
+					Assert.That(sysCollation.LanguageTag, Is.EqualTo(m_sortLanguageComboBox.SelectedValue));
+					break;
+			}
 		}
 		#endregion
 
@@ -878,6 +893,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			VerifyWsNames(
 				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" },
 				new[] { "qaa-x-kal", "qaa-fonipa-x-kal", "qaa-QM-x-kal-MI" });
+		}
+
+		///<summary>Tests that Sort Rules are set for WritingSystems with available CultureInfo in the OS repository</summary>
+		[Test]
+		public void RealWritingSystemHasSortRules()
+		{
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("th-TH");
+			// Ensure the English WS has the correct SortRules
+			var sysCollation = ws.DefaultCollation as SystemCollationDefinition;
+			Assert.That(sysCollation, Is.Not.Null);
+			Assert.That(sysCollation.LanguageTag, Is.EqualTo("th-TH"));
+
+			// Show the dialog and ensure the SortRules are displayed correctly in the dialog
+			m_dlg.ShowDialog(ws);
+			m_dlg.VerifyListBox(new[] { "Thai (Thailand)" });
+			m_dlg.VerifyLoadedForListBoxSelection("Thai (Thailand)");
 		}
 
 		/// <summary>

@@ -107,22 +107,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			return BackupProjectWithFullPaths(progressDlg, filesToZip);
 		}
 
-		#region Get Current Project Fonts and Keyboards
-		//Keep these methods around. There could be a use for them if we want to list all Fonts and Keyboards
-		//of a project that the user would need to manually copy to the Fonts and Keyboards project folders
+		#region Get Current Project Fonts
+		//Keep these methods around. There could be a use for them if we want to list all Fonts
+		//of a project that the user would need to manually copy to the Fonts project folders
 		//for backup.  FWR-1647
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Collects Keyman keyboard names used in the current project.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private HashSet<String> GetCurrentProjectKeyboards()
-		{
-			return new HashSet<string>(from ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems
-									   where !string.IsNullOrEmpty(ws.Keyboard)
-									   select ws.Keyboard);
-		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Collects font names used in the current project.

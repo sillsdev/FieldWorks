@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿// Copyright (c) 2009-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SIL.Utils.Attributes;
@@ -9,9 +13,9 @@ using SIL.Utils.Attributes;
 [assembly: AssemblyTitle("EthnologueTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jaars, Inc.")]
+[assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("EthnologueTests")]
-[assembly: AssemblyCopyright("Copyright © Jaars, Inc. 2009")]
+[assembly: AssemblyCopyright("Copyright © 2009-$YEAR SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

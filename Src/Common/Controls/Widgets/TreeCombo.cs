@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -10,13 +10,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO; // for Win32 message defns.
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -64,10 +64,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override IDropDownBox CreateDropDownBox()
 		{
 			// Create the list.
-			var popupTree = new PopupTree();
-			popupTree.TabStopControl = m_comboTextBox;
-			//m_tree.SelectedIndexChanged += new EventHandler(m_listBox_SelectedIndexChanged);
-			//m_listBox.SameItemSelected += new EventHandler(m_listBox_SameItemSelected);
+			var popupTree = new PopupTree { TabStopControl = m_comboTextBox };
 			popupTree.AfterSelect += m_tree_AfterSelect;
 			popupTree.BeforeSelect += m_popupTree_BeforeSelect;
 			popupTree.Load += m_tree_Load;
@@ -181,6 +178,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		[BrowsableAttribute(false),
 			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Font is a reference")]
 		public override IVwStylesheet StyleSheet
 		{
 			get
@@ -219,13 +217,11 @@ namespace SIL.FieldWorks.Common.Widgets
 					int nFontSizeTree = (int)(Tree.Font.SizeInPoints * 1000);
 					if (nFontSize > nFontSizeTree)
 					{
-						using (Font fntOld = Tree.Font)
-						{
-							float fntSize = nFontSize;
-							fntSize /= 1000.0F;
-							Tree.Font = new Font(fntOld.FontFamily, fntSize, fntOld.Style,
-								GraphicsUnit.Point, fntOld.GdiCharSet, fntOld.GdiVerticalFont);
-						}
+						var fntOld = Tree.Font;
+						float fntSize = nFontSize;
+						fntSize /= 1000.0F;
+						Tree.Font = new Font(fntOld.FontFamily, fntSize, fntOld.Style,
+							GraphicsUnit.Point, fntOld.GdiCharSet, fntOld.GdiVerticalFont);
 					}
 				}
 			}

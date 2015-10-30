@@ -9,6 +9,8 @@ using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;
 
+#if __MonoCS__
+
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
@@ -19,6 +21,16 @@ namespace SIL.FieldWorks.Common.RootSites
 	public class ViewInputManager: IViewInputMgr
 	{
 		private IVwRootBox m_rootb;
+
+		private IbusRootSiteEventHandler RootSiteEventHandler
+		{
+			get
+			{
+				var simpleRootSite = m_rootb.Site as SimpleRootSite;
+				return simpleRootSite == null ? null :
+					simpleRootSite.RootSiteEventHandler as IbusRootSiteEventHandler;
+			}
+		}
 
 		#region IViewInputMgr methods
 		/// <summary>
@@ -60,7 +72,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsCompositionActive
 		{
-			get { return false; }
+			get { return RootSiteEventHandler != null && RootSiteEventHandler.IsPreeditActive; }
 		}
 
 		/// <summary>
@@ -154,3 +166,4 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 	}
 }
+#endif

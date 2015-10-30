@@ -1,6 +1,6 @@
 /*  GRAPHITE2 LICENSING
 
-    Copyright 2011, SIL International
+    Copyright 2015, SIL International
     All rights reserved.
 
     This library is free software; you can redistribute it and/or modify
@@ -25,7 +25,16 @@ License, as published by the Free Software Foundation, either version 2
 of the License or (at your option) any later version.
 */
 
-#include "inc/Rule.h"
-#include "inc/Segment.h"
+#pragma once
 
-using namespace graphite2;
+#include <cstddef>
+
+namespace lz4
+{
+
+// return value is either decompressed size of -1
+int decompress(void const *in, size_t in_size, void *out, size_t out_size);
+
+} // end of namespace shrinker
+
+

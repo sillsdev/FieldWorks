@@ -3,12 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -26,6 +23,11 @@ namespace FwBuildTasks
 		/// </summary>
 		[Required]
 		public string FixturePath { get; set; }
+
+		protected override string GetTestsCompletedString()
+		{
+			return "Tests [Ok-Fail-Error]:";
+		}
 
 		protected override string ProgramName()
 		{

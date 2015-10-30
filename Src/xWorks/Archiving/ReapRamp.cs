@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +20,8 @@ using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using XCore;
 using SIL.CoreImpl;
+using SIL.Keyboarding;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.XWorks.Archiving
 {
@@ -187,8 +193,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
-
-				fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+				fWsUsesKeyman |= DoesWritingSystemUseKeyman(ws);
 			}
 
 			if (fWsUsesKeyman)
@@ -243,6 +248,29 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			if (datasetExtent.Length > 0)
 				model.SetDatasetExtent(datasetExtent + ".");
+		}
+
+		/// <summary>
+		/// Returns true if the writing system has an active keyman keyboard
+		/// </summary>
+		/// <remarks>Internal for testing, uses reflection to identify a keyboard as keyman</remarks>
+		internal static bool DoesWritingSystemUseKeyman(CoreWritingSystemDefinition ws)
+		{
+			if (Platform.IsLinux) // Keyman is not required on linux
+				return false;
+			if (ws.KnownKeyboards.Any())
+			{
+				foreach (IKeyboardDefinition keyboard in ws.KnownKeyboards)
+				{
+					if (!keyboard.IsAvailable)
+						continue;
+					if (keyboard.Format == KeyboardFormat.CompiledKeyman || keyboard.Format == KeyboardFormat.Keyman)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------

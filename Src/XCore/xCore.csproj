@@ -151,11 +151,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
+    <Reference Include="Geckofx-Core">
       <Package>Geckofx-Core</Package>
       <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
+    <Reference Include="Geckofx-Winforms">
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>

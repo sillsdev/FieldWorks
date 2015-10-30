@@ -216,6 +216,20 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		/// </summary>
+		public bool UseNfcContext
+		{
+			get
+			{
+				// Currently we use NFD only for Keyman keyboards. If the LocalKeyboard
+				// property is null than for sure we don't have a keyman keyboard either,
+				// so we simply return true (ie. use NFC) in that case.
+				return LocalKeyboard == null || LocalKeyboard.UseNfcContext;
+			}
+		}
+
+		/// <summary>
 		/// Apply any changes to the chrp before it is used for real: currently,
 		/// interpret the magic font names.
 		/// </summary>

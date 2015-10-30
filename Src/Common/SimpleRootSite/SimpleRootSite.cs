@@ -310,6 +310,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private OrientationManager m_orientationManager;
 
+		/// <summary>
+		/// The keyboarding rootsite event handler
+		/// </summary>
+		protected object m_rootSiteEventHandler;
+
 		/// <summary/>
 		protected bool IsVertical
 		{
@@ -348,16 +353,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_orientationManager = CreateOrientationManager();
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-
-			if (KeyboardController.IsInitialized)
-			{
-#if __MonoCS__
-				var eventHandler = new IbusRootSiteEventHandler(this);
-#else
-				var eventHandler = new WindowsLanguageProfileSink(this);
-#endif
-				KeyboardController.RegisterControl(this, eventHandler);
-			}
+			SubscribeToRootSiteEventHandlerEvents();
 		}
 
 #if DEBUG
@@ -371,6 +367,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			// The base class finalizer is called automatically.
 		}
 #endif
+
+		/// <summary>
+		/// Creates the root site event handler.
+		/// </summary>
+		private void SubscribeToRootSiteEventHandlerEvents()
+		{
+			if (!KeyboardController.IsInitialized)
+				return;
+#if __MonoCS__
+			m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
+#else
+			m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
+#endif
+			KeyboardController.RegisterControl(this, m_rootSiteEventHandler);
+		}
+
+		/// <summary>
+		/// Gets the root site event handler.
+		/// </summary>
+		internal object RootSiteEventHandler { get { return m_rootSiteEventHandler; }}
 
 		/// <summary>
 		/// The default creates a normal horizontal orientation manager. Override to create one of the other
@@ -829,18 +845,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
-				if (KeyboardController.IsInitialized)
+				// If this is read-only, it should not try to handle keyboard input in general.
+				if (EditingHelper.Editable && value)
+					KeyboardController.UnregisterControl(this);
+				else if (!EditingHelper.Editable && !value)
 				{
-#if __MonoCS__
-					var eventHandler = new IbusRootSiteEventHandler(this);
-#else
-					var eventHandler = new WindowsLanguageProfileSink(this);
-#endif
-					// If this is read-only, it should not try to handle keyboard input in general.
-					if (EditingHelper.Editable && value)
-						KeyboardController.UnregisterControl(this);
-					else if (!EditingHelper.Editable && !value)
-						KeyboardController.RegisterControl(this, eventHandler);
+					SubscribeToRootSiteEventHandlerEvents();
 				}
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an

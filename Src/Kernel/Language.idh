@@ -223,7 +223,7 @@ Description:
 		(Note: use wseng when you need to distinguish the interface/object from the writing
 		system's integer code, which uses ws as its Hungarian.)
 	*******************************************************************************************/
-	DeclareInterface(LgWritingSystem, Unknown, 9F74A170-E8BB-466d-8848-5FDB28AC5AF8)
+	DeclareInterface(LgWritingSystem, Unknown, FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB)
 	{
 		// The identifier for this writing system.
 		[propget] HRESULT Id(
@@ -275,6 +275,10 @@ Description:
 		// interpret the magic font names.
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
+
+		// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		[propget] HRESULT UseNfcContext(
+			[out, retval] ComBool * pUseNfc);
 	};
 
 	//:>****************************************************************************************

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -41,35 +45,36 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
+			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
+			RegistryHelper.ProductName = "FieldWorks";
+
 			// setup necessary environment variables on Linux
 			if (MiscUtils.IsUnix)
 			{
 				// update ICU_DATA to location of ICU data files
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 				{
+					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
 #if DEBUG
-					string icuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
-					if (Directory.Exists(icuDataPath))
-						icuDataPath = Icu.DefaultDataDirectory;
+					string icuDataPath = codeIcuDataPath;
 #else
-					string icuDataPath = Icu.DefaultDataDirectory;
+					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + Icu.Version);
+					if (!Directory.Exists(icuDataPath))
+						icuDataPath = codeIcuDataPath;
 #endif
 					Environment.SetEnvironmentVariable("ICU_DATA", icuDataPath);
 				}
 				// update COMPONENTS_MAP_PATH to point to code directory so that COM objects can be loaded properly
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COMPONENTS_MAP_PATH")))
 				{
-#if DEBUG
 					string compMapPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-#else
-					string compMapPath = ParatextLexiconPluginDirectoryFinder.CodeDirectory;
-#endif
 					Environment.SetEnvironmentVariable("COMPONENTS_MAP_PATH", compMapPath);
 				}
 				// update FW_ROOTCODE so that strings-en.txt file can be found
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
 					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
 			}
+			Icu.InitIcuDataDir();
 
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
@@ -106,7 +111,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public bool ChooseLexicalProject(out string projectId)
 		{
 			using (m_activationContext.Activate())
-			using (var dialog = new ChooseFdoProjectForm(m_ui))
+			using (var dialog = new ChooseFdoProjectForm(m_ui, m_fdoCacheCache))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{
@@ -203,9 +208,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				var settings = new FdoSettings {DisableDataMigration = true};
 				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 				{
-					var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
-					if (sharedXMLBackendCommitLogSize > 0)
-						settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+					if (fwKey != null)
+					{
+						var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+						if (sharedXMLBackendCommitLogSize > 0)
+							settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+					}
 				}
 
 				try

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Oct 15 13:08:57 2015
+/* at Thu Oct 29 18:13:53 2015
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -1452,7 +1452,7 @@ enum LgXMLTag
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystem
 ,
-9F74A170-E8BB-466d-8848-5FDB28AC5AF8
+FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB
 );
 typedef /* [v1_enum] */ 
 enum LgCollatingOptions
@@ -9464,7 +9464,7 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("9F74A170-E8BB-466d-8848-5FDB28AC5AF8")
+    MIDL_INTERFACE("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB")
     ILgWritingSystem : public IUnknown
     {
     public:
@@ -9498,6 +9498,9 @@ GraphiteEngine;
         
         virtual HRESULT STDMETHODCALLTYPE InterpretChrp( 
             /* [out][in] */ LgCharRenderProps *pchrp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UseNfcContext( 
+            /* [retval][out] */ ComBool *pUseNfc) = 0;
         
     };
     
@@ -9561,6 +9564,10 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [out][in] */ LgCharRenderProps *pchrp);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UseNfcContext )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ ComBool *pUseNfc);
+        
         END_INTERFACE
     } ILgWritingSystemVtbl;
 
@@ -9613,6 +9620,9 @@ GraphiteEngine;
 
 #define ILgWritingSystem_InterpretChrp(This,pchrp)	\
     ( (This)->lpVtbl -> InterpretChrp(This,pchrp) ) 
+
+#define ILgWritingSystem_get_UseNfcContext(This,pUseNfc)	\
+    ( (This)->lpVtbl -> get_UseNfcContext(This,pUseNfc) ) 
 
 #endif /* COBJMACROS */
 

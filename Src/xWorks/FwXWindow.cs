@@ -721,7 +721,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (string.IsNullOrEmpty(pathname))
 				return false;
-			pathname = MoveOrCopyFilesDlg.MoveCopyOrLeaveExternalFile(pathname,
+			pathname = MoveOrCopyFilesController.MoveCopyOrLeaveExternalFile(pathname,
 				Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			if (String.IsNullOrEmpty(pathname))
 				return false;
