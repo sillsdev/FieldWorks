@@ -63,6 +63,12 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
+		public RecordView(XElement browseViewDefinitions)
+			: base(browseViewDefinitions)
+		{
+			Init();
+		}
+
 		private void Init()
 		{
 			//it is up to the subclass to change this when it is finished Initializing.
@@ -74,12 +80,6 @@ namespace SIL.FieldWorks.XWorks
 			//MakePaneBar();
 
 			AccNameDefault = "RecordView"; // default accessibility name
-		}
-
-		public RecordView(XElement browseViewDefinitions)
-			: base(browseViewDefinitions)
-		{
-			Init();
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 					m_treebarAvailability = DefaultTreeBarAvailability;
 
-				//m_previousShowTreeBarValue= m_mediator.PropertyTable.GetBoolProperty("ShowRecordList", true);
+				//m_previousShowTreeBarValue= PropertyTable.GetValue<bool>("ShowRecordList", SettingsGroup.GlobalSettings);
 
 				//				string e = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "treeBarAvailability", DefaultTreeBarAvailability);
 				//				m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), e, true);
@@ -333,11 +333,11 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						PropertyTable.SetProperty("ShowRecordList", false, true, true);
+						PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 						break;
 
 					case TreebarAvailability.Required:
-						PropertyTable.SetProperty("ShowRecordList", true, true, true);
+						PropertyTable.SetProperty("ShowRecordList", true, SettingsGroup.GlobalSettings, true, true);
 						break;
 
 					case TreebarAvailability.Optional:

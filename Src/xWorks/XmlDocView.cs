@@ -1251,7 +1251,7 @@ namespace SIL.FieldWorks.XWorks
 
 			ReadParameters();
 
-			PropertyTable.SetProperty("ShowRecordList", false, true, true);
+			PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 
 			SetupDataContext();
 			ShowRecord();

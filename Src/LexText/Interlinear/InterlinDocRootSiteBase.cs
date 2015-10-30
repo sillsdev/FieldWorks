@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_fdoCache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = PropertyTable.GetValue("ShowMorphBundles", true);
+			m_vc.ShowMorphBundles = true;
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 

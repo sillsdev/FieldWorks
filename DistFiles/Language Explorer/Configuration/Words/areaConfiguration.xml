@@ -74,7 +74,6 @@
 		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
-		<!--		<command id="CmdShowMorphBundles" label="Show Morphology" message="ShowMorphBundles" boolProperty="ShowMorphBundles"/> -->
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -588,24 +587,6 @@
 			</parameters>
 		</listener>
 	</listeners>
-	<!-- ********************************************************** -->
-	<!-- ************************ defaultProperties *********************** -->
-	<!-- ********************************************************** -->
-	<defaultProperties>
-		<!--This next line specifies which tool in this area is the default tool which Flex starts off in
-			  when the user switches to this area.-->
-		<property name="ToolForAreaNamed_textsWords" value="interlinearEdit" settingsGroup="local"/>
-		<!--
-			Set to 'true' to remove multi-morpheme analyses on simple typo fix.
-			Otherwise, set it to false to keep them.
-			The user will get to decide in the UI.
-		-->
-		<property name="RemoveAnalyses" bool="true" persist="true"/>
-		<property name="UpdateLexiconIfPossible" bool="true" persist="true"/>
-		<property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local"/>
-		<property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local"/>
-		<property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local"/>
-	</defaultProperties>
 	<!-- ********************************************************** -->
 	<!-- *********************** Area Item *********************************** -->
 	<!-- ********************************************************** -->

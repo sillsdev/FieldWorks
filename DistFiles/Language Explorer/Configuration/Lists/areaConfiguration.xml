@@ -240,12 +240,6 @@
 		</toolbar>
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
-	<!-- ************************ defaultProperties ********************* -->
-	<!-- ********************************************************** -->
-	<defaultProperties>
-		<property name="ToolForAreaNamed_lists" value="domainTypeEdit" settingsGroup="local"/>
-	</defaultProperties>
-	<!-- ********************************************************** -->
 	<!-- ************************ Area Item *********************** -->
 	<!-- ********************************************************** -->
 	<item label="Lists" value="lists" icon="folder-lists">

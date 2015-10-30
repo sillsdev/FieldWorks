@@ -164,13 +164,6 @@
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertRecordDlgListener"/>
 	</listeners>
 	<!-- ********************************************************** -->
-	<!-- ************************ defaultProperties ********************* -->
-	<!-- ********************************************************** -->
-	<defaultProperties>
-		<property name="ToolForAreaNamed_notebook" value="notebookEdit" settingsGroup="local"/>
-		<property name="ShowHiddenFields" bool="false" persist="false" settingsGroup="local"/>
-	</defaultProperties>
-	<!-- ********************************************************** -->
 	<!-- ************************ Area Item *********************** -->
 	<!-- ********************************************************** -->
 	<item label="Notebook" value="notebook" icon="folder-texts">

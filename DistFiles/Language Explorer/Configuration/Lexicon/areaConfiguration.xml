@@ -316,11 +316,8 @@
 	<!-- ************************ defaultProperties ********************* -->
 	<!-- ********************************************************** -->
 	<defaultProperties>
-		<property name="ToolForAreaNamed_lexicon" value="lexiconEdit" settingsGroup="local"/>
 		<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local"/>
 		<property name="Show_reversalIndexEntryList" bool="true" persist="false" settingsGroup="local"/>
-		<property name="ShowHiddenFields" bool="false" persist="false" settingsGroup="local"/>
-		<property name="SelectedPublication" value="Main Dictionary" settingsGroup="local"/>
 	</defaultProperties>
 	<!-- ********************************************************** -->
 	<!-- ************************ Area Item *********************** -->

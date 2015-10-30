@@ -9,6 +9,9 @@ using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 {
+#if RANDYTODO
+	// TODO: treeBarAvailability="NotAllowed"
+#endif
 	/// <summary>
 	/// ITool implementation for the "wordListConcordance" tool in the "textsWords" area.
 	/// </summary>
@@ -40,6 +43,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

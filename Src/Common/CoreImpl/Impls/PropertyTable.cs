@@ -48,6 +48,25 @@ namespace SIL.CoreImpl.Impls
 			Publisher = publisher;
 		}
 
+#if RANDYTODO
+		// TODO: Put these in the right places.
+<!-- global persist -->
+<defaultProperties>
+	<!-- increment this to make toolbar layouts revert to default -->
+	<property name="CurrentToolbarVersion" value="1" />
+</defaultProperties>
+<!-- local persist -->
+<defaultProperties>
+	<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local" />
+	<property name="PartsOfSpeech.posEdit.DataTree-Splitter" intValue="200" settingsGroup="local" />
+	<property name="PartsOfSpeech.posAdvancedEdit.DataTree-Splitter" intValue="200" settingsGroup="local" />
+</defaultProperties>
+<!-- local do not persist -->
+<defaultProperties>
+	<property name="Show_reversalIndexEntryList" bool="true" persist="false" settingsGroup="local" />
+</defaultProperties>
+#endif
+
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
@@ -169,16 +188,28 @@ namespace SIL.CoreImpl.Impls
 		/// <summary>
 		/// Remove a property from the table.
 		/// </summary>
-		/// <param name="name"></param>
-		public void RemoveProperty(string name)
+		/// <param name="name">Name of the property to remove.</param>
+		/// <param name="settingsGroup">The group to remove the property from.</param>
+		public void RemoveProperty(string name, SettingsGroup settingsGroup)
 		{
 			CheckDisposed();
+
+			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
 			Property goner;
-			if (m_properties.TryGetValue(name, out goner))
+			if (m_properties.TryGetValue(key, out goner))
 			{
-				m_properties.Remove(name);
+				m_properties.Remove(key);
 				goner.value = null;
 			}
+		}
+
+		/// <summary>
+		/// Remove a property from the table.
+		/// </summary>
+		/// <param name="name">Name of the property to remove.</param>
+		public void RemoveProperty(string name)
+		{
+			RemoveProperty(name, SettingsGroup.BestSettings);
 		}
 
 		#endregion Removing
@@ -200,28 +231,13 @@ namespace SIL.CoreImpl.Impls
 			switch (settingsGroup)
 			{
 				default:
-					throw new NotImplementedException(string.Format("{0} is not yet supported. Developers need to add support it it.", settingsGroup));
+					throw new NotImplementedException(string.Format("{0} is not yet supported. Developers need to add support for it.", settingsGroup));
 				case SettingsGroup.BestSettings:
 				{
-					// Prefer local over global, if both exist.
 					var key = FormatPropertyNameForLocalSettings(name);
-					var localProperty = GetProperty(key);
-					var globalProperty = GetProperty(name);
-					if (localProperty != null && globalProperty != null)
-					{
-						// Both exist, so pick local.
-						return key;
-					}
-					if (localProperty != null)
-					{
-						return key;
-					}
-					if (globalProperty != null)
-					{
-						return name;
-					}
-					// Neither exists, so pick global.
-					return name; // Prefer global.
+					return GetProperty(key) != null ?
+						key // local exists. We don't care if global exists, or not, since we prefer local over global.
+						: name; // Whether a global property exists, or not, go with the global internal property name.
 				}
 				case SettingsGroup.LocalSettings:
 					return FormatPropertyNameForLocalSettings(name);
@@ -419,15 +435,15 @@ namespace SIL.CoreImpl.Impls
 			if (prop == null)
 			{
 				result = defaultValue;
-				SetDefaultInternal(key, defaultValue, true);
+				SetPropertyInternal(key, defaultValue, false, false);
 			}
 			else
 			{
 				if (prop.value == null)
 				{
+					// Gutless wonder (prop exists, but has no value).
 					prop.value = defaultValue;
 					result = defaultValue;
-					SetDefaultInternal(key, defaultValue, true);
 				}
 				else
 				{
@@ -445,35 +461,23 @@ namespace SIL.CoreImpl.Impls
 		}
 
 		/// <summary>
-		/// set the default; does nothing if this value is already in the PropertyTable (local or global).
+		/// Set the default value of a property, but *only* if property is not in the table.
+		/// Do nothing, if the property is alreeady in the table.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
+		/// <param name="name">Name of the property to set</param>
+		/// <param name="defaultValue">Default value of the new property</param>
+		/// <param name="settingsGroup">Group the property is expected to be in.</param>
+		/// <param name="persistProperty">
+		/// "true" if the property is to be persisted, otherwise "false".</param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		public void SetDefault(string name, object defaultValue, bool doBroadcastIfChanged)
-		{
-			CheckDisposed();
-			SetDefault(name, defaultValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
-		}
-
-		/// <summary>
-		/// set the default; does nothing if this value is already in the specified settingsGroup.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="settingsGroup"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
+		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 
-			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, doBroadcastIfChanged);
+			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, persistProperty, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -481,11 +485,12 @@ namespace SIL.CoreImpl.Impls
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="defaultValue"></param>
+		/// <param name="persistProperty"></param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		private void SetDefaultInternal(string key, object defaultValue, bool doBroadcastIfChanged)
+		private void SetDefaultInternal(string key, object defaultValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
 			if(!Monitor.TryEnter(m_properties))
 			{
@@ -494,7 +499,7 @@ namespace SIL.CoreImpl.Impls
 			}
 			if (!m_properties.ContainsKey(key))
 			{
-				SetPropertyInternal(key, defaultValue, true, doBroadcastIfChanged);
+				SetPropertyInternal(key, defaultValue, persistProperty, doBroadcastIfChanged);
 			}
 
 			Monitor.Exit(m_properties);
@@ -892,9 +897,6 @@ namespace SIL.CoreImpl.Impls
 				if (!property.doPersist)
 					continue;
 				if (property.value == null)
-					continue;
-				var valueAsString = property.value as string;
-				if (string.IsNullOrWhiteSpace(valueAsString))
 					continue;
 				if (!property.name.StartsWith(GetPathPrefixForSettingsId(settingsId)))
 					continue;

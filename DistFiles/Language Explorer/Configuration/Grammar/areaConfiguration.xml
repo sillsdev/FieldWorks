@@ -392,7 +392,6 @@
 	<!--  **********************************************************   -->
 	<!-- set the value of some simple properties to the defaults we want in the case that this is the first time the user has run the program, or the settings file is missing, or the program was launched with the shift key down  -->
 	<defaultProperties>
-		<property name="ToolForAreaNamed_grammar" value="posEdit" settingsGroup="local"/>
 		<!--  Default splitter values   -->
 		<property name="PartsOfSpeech.posEdit.DataTree-Splitter" intValue="200" settingsGroup="local"/>
 		<property name="PartsOfSpeech.posAdvancedEdit.DataTree-Splitter" intValue="200" settingsGroup="local"/>

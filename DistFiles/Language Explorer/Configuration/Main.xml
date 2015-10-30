@@ -777,37 +777,12 @@ InterlinMaster user:
 		<include path="Lexicon/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Words/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Notebook/areaConfiguration.xml" query="root/defaultProperties/*"/>
-		<include path="Lists/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Grammar/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="CommonDataTreeInclude.xml" query="root/defaultProperties/*"/>
-		<!-- This is the splitter distance for the sidebar/secondary splitter pair of controls. -->
-		<property name="SidebarWidthGlobal" intValue="140" persist="true"/>
-		<!-- Label when collapsed to icon. -->
-		<property name="SidebarLabel" value="Sidebar" persist="true"/>
-		<!-- This property is driven by the needs of the current main control, not the user. -->
-		<property name="ShowRecordList" bool="false" persist="true"/>
-		<!-- This is the splitter distance for the record list/main content pair of controls. -->
-		<property name="RecordListWidthGlobal" intValue="200" persist="true"/>
-		<!-- Label when collapsed to icon. -->
-
-		<property name="RecordListLabel" value="Record List" persist="true"/>
-		<property name="MainContentLabel" value="Main Content" persist="true"/>
-		<property name="AllButSidebarLabel" value="Record List &amp; MainContent" persist="true"/>
-
-		<property name="DoLog" bool="true" persist="false"/>
-		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
-		So, add a default value here in order to prevent it from persisting -->
-		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
 		<!-- set this property to the item with the id "pos" of the list "AreasList". will also set the "areaChoiceParameters" property to the contents of the corresponding <parameters> node.
 		note that this currently should match the tool chosen below, under <contentClass> -->
 		<!-- simple string properties can be set like this: <property name ="UserName" value="Leroy"/> -->
 		<!-- increment this to make toolbar layouts revert to default -->
 		<property name="CurrentToolbarVersion" value="1"/>
-		<!-- set these properties so they don't get set the first time they're accessed in a menu. (cf. LT-2789) -->
-		<property name="SortedFromEnd" bool="false" persist="true" settingsGroup="local"/>
-		<property name="SortedByLength" bool="false" persist="true" settingsGroup="local"/>
-		<!-- Properties that should never persist -->
-		<property name="SuspendLoadListUntilOnChangeFilter" value="" persist="false" settingsGroup="local"/>
-		<property name="SuspendLoadingRecordUntilOnJumpToRecord" value="" persist="false" settingsGroup="local"/>
 	</defaultProperties>
 </window>

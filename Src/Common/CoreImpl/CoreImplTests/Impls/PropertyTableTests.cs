@@ -735,22 +735,22 @@ namespace SIL.CoreImpl.Impls
 		public void SetDefault()
 		{
 			// Try changing existing Global & Local values, check that they don't overwrite existing ones.
-			m_propertyTable.SetDefault("BooleanPropertyA", false, SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("BooleanPropertyA", true, SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("BooleanPropertyA", false, SettingsGroup.LocalSettings, false, false);
+			m_propertyTable.SetDefault("BooleanPropertyA", true, SettingsGroup.GlobalSettings, false, false);
 			bool gpba = m_propertyTable.GetValue<bool>("BooleanPropertyA", SettingsGroup.GlobalSettings);
 			Assert.IsFalse(gpba, String.Format("Invalid value for {0} {1}.", "global", "BooleanPropertyA"));
 			bool lpba = m_propertyTable.GetValue<bool>("BooleanPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsTrue(lpba, String.Format("Invalid value for {0} {1}.", "local", "BooleanPropertyA"));
 
-			m_propertyTable.SetDefault("IntegerPropertyA", 253, SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("IntegerPropertyA", -253, SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("IntegerPropertyA", 253, SettingsGroup.LocalSettings, false, false);
+			m_propertyTable.SetDefault("IntegerPropertyA", -253, SettingsGroup.GlobalSettings, false, false);
 			int gpia = m_propertyTable.GetValue<int>("IntegerPropertyA", SettingsGroup.GlobalSettings);
 			Assert.AreEqual(253, gpia, String.Format("Invalid value for {0} {1}.", "global", "IntegerPropertyA"));
 			int lpia = m_propertyTable.GetValue<int>("IntegerPropertyA", SettingsGroup.LocalSettings);
 			Assert.AreEqual(333, lpia, String.Format("Invalid value for {0} {1}.", "local", "IntegerPropertyA"));
 
-			m_propertyTable.SetDefault("StringPropertyA", "local_StringPropertyC_value", SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("StringPropertyA", "global_StringPropertyC_value", SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("StringPropertyA", "local_StringPropertyC_value", SettingsGroup.LocalSettings, false, false);
+			m_propertyTable.SetDefault("StringPropertyA", "global_StringPropertyC_value", SettingsGroup.GlobalSettings, false, false);
 			string gpsa = m_propertyTable.GetValue("StringPropertyA", SettingsGroup.GlobalSettings, "local_StringPropertyC_value");
 			Assert.AreEqual("global_StringPropertyA_value", gpsa, String.Format("Invalid value for {0} {1}.", "global", "StringPropertyA"));
 			string lpsa = m_propertyTable.GetValue<string>("StringPropertyA", SettingsGroup.LocalSettings);
@@ -758,34 +758,34 @@ namespace SIL.CoreImpl.Impls
 
 			// Make new properties. ------------------
 			//---- Global Settings
-			m_propertyTable.SetDefault("BooleanPropertyC", true, SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("BooleanPropertyC", true, SettingsGroup.GlobalSettings, false, true);
 			bool gpbc = m_propertyTable.GetValue("BooleanPropertyC", SettingsGroup.GlobalSettings, false);
 			Assert.IsTrue(gpbc, String.Format("Invalid value for {0} {1}.", "global", "BooleanPropertyC"));
 
-			m_propertyTable.SetDefault("IntegerPropertyC", 352, SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("IntegerPropertyC", 352, SettingsGroup.GlobalSettings, false, true);
 			int gpic = m_propertyTable.GetValue("IntegerPropertyC", SettingsGroup.GlobalSettings, -352);
 			Assert.AreEqual(352, gpic, String.Format("Invalid value for {0} {1}.", "global", "IntegerPropertyC"));
 
-			m_propertyTable.SetDefault("StringPropertyC", "global_StringPropertyC_value", SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("StringPropertyC", "global_StringPropertyC_value", SettingsGroup.GlobalSettings, false, true);
 			string gpsc = m_propertyTable.GetValue("StringPropertyC", SettingsGroup.GlobalSettings, "local_StringPropertyC_value");
 			Assert.AreEqual("global_StringPropertyC_value", gpsc, String.Format("Invalid value for {0} {1}.", "global", "StringPropertyC"));
 
 			//---- Local Settings
-			m_propertyTable.SetDefault("BooleanPropertyC", false, SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("BooleanPropertyC", false, SettingsGroup.LocalSettings, false, false);
 			bool lpbc = m_propertyTable.GetValue("BooleanPropertyC", SettingsGroup.LocalSettings, true);
 			Assert.IsFalse(lpbc, String.Format("Invalid value for {0} {1}.", "local", "BooleanPropertyC"));
 
-			m_propertyTable.SetDefault("IntegerPropertyC", 111, SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("IntegerPropertyC", 111, SettingsGroup.LocalSettings, false, false);
 			int lpic = m_propertyTable.GetValue("IntegerPropertyC", SettingsGroup.LocalSettings, -111);
 			Assert.AreEqual(111, lpic, String.Format("Invalid value for {0} {1}.", "local", "IntegerPropertyC"));
 
-			m_propertyTable.SetDefault("StringPropertyC", "local_StringPropertyC_value", SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("StringPropertyC", "local_StringPropertyC_value", SettingsGroup.LocalSettings, false, false);
 			string lpsc = m_propertyTable.GetValue("StringPropertyC", SettingsGroup.LocalSettings, "local_StringPropertyC_value");
 			Assert.AreEqual("local_StringPropertyC_value", lpsc, String.Format("Invalid value for {0} {1}.", "local", "StringPropertyC"));
 
 			object nullObject;
 			// Set best setting on unique globals.
-			m_propertyTable.SetDefault("BestBooleanPropertyA", false, SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyA", false, SettingsGroup.BestSettings, false, false);
 			bool ubpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyA", SettingsGroup.BestSettings);
 			Assert.IsTrue(ubpba, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyA"));
 			bool ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyA", SettingsGroup.GlobalSettings);
@@ -793,7 +793,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyA"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyA", 101, SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyA", 101, SettingsGroup.BestSettings, false, false);
 			int ubpia = m_propertyTable.GetValue<int>("BestIntegerPropertyA", SettingsGroup.BestSettings);
 			Assert.AreEqual(-101, ubpia, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyA"));
 			int ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyA", SettingsGroup.GlobalSettings);
@@ -801,7 +801,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyA"));
 
-			m_propertyTable.SetDefault("BestStringPropertyA", "best_BestStringPropertyA_value", SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestStringPropertyA", "best_BestStringPropertyA_value", SettingsGroup.BestSettings, false, false);
 			string ubpsa = m_propertyTable.GetValue<string>("BestStringPropertyA", SettingsGroup.BestSettings);
 			Assert.AreEqual("global_BestStringPropertyA_value", ubpsa, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyA"));
 			string ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyA", SettingsGroup.GlobalSettings);
@@ -810,7 +810,7 @@ namespace SIL.CoreImpl.Impls
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyA"));
 
 			// Set best setting on unique locals
-			m_propertyTable.SetDefault("BestBooleanPropertyB", true, SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyB", true, SettingsGroup.BestSettings, false, false);
 			ubpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyB", SettingsGroup.BestSettings);
 			Assert.IsFalse(ubpba, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyB"));
 			bool ulpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyB", SettingsGroup.LocalSettings);
@@ -818,7 +818,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyB", SettingsGroup.GlobalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyB"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyB", 586, SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyB", 586, SettingsGroup.BestSettings, false, false);
 			ubpia = m_propertyTable.GetValue<int>("BestIntegerPropertyB", SettingsGroup.BestSettings);
 			Assert.AreEqual(-586, ubpia, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyB"));
 			int ulpia = m_propertyTable.GetValue<int>("BestIntegerPropertyB", SettingsGroup.LocalSettings);
@@ -826,7 +826,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyB", SettingsGroup.GlobalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyB"));
 
-			m_propertyTable.SetDefault("BestStringPropertyB", "best_BestStringPropertyB_value", SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestStringPropertyB", "best_BestStringPropertyB_value", SettingsGroup.BestSettings, false, false);
 			ubpsa = m_propertyTable.GetValue<string>("BestStringPropertyB", SettingsGroup.BestSettings);
 			Assert.AreEqual("local_BestStringPropertyB_value", ubpsa, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyB"));
 			string ulpsa = m_propertyTable.GetValue<string>("BestStringPropertyB", SettingsGroup.LocalSettings);
@@ -835,7 +835,7 @@ namespace SIL.CoreImpl.Impls
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyB"));
 
 			// Make new best (global) properties
-			m_propertyTable.SetDefault("BestBooleanPropertyC", false, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyC", false, SettingsGroup.GlobalSettings, false, false);
 			ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyC");
 			Assert.IsFalse(ugpba, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyC"));
 			ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyC", SettingsGroup.GlobalSettings);
@@ -843,7 +843,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyC", SettingsGroup.LocalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "local", "BestBooleanPropertyC"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyC", -818, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyC", -818, SettingsGroup.GlobalSettings, false, false);
 			ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyC");
 			Assert.AreEqual(-818, ugpia, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyC"));
 			ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyC", SettingsGroup.GlobalSettings);
@@ -851,7 +851,7 @@ namespace SIL.CoreImpl.Impls
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyC", SettingsGroup.LocalSettings);
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "local", "BestIntegerPropertyC"));
 
-			m_propertyTable.SetDefault("BestStringPropertyC", "global_BestStringPropertyC_value", false);
+			m_propertyTable.SetDefault("BestStringPropertyC", "global_BestStringPropertyC_value", SettingsGroup.GlobalSettings, false, false);
 			ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyC");
 			Assert.AreEqual("global_BestStringPropertyC_value", ugpsa, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyC"));
 			ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyC", SettingsGroup.GlobalSettings);

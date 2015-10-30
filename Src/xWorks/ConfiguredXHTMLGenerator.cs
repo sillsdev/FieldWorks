@@ -1692,12 +1692,12 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			if (cache == null)
 			{
-				throw new ArgumentException(@"PropertyTable had no cache", "mediator");
+				throw new ArgumentException(@"PropertyTable had no cache", "propertyTable");
 			}
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			if (clerk == null)
 			{
-				throw new ArgumentException(@"PropertyTable had no clerk", "mediator");
+				throw new ArgumentException(@"PropertyTable had no clerk", "propertyTable");
 			}
 
 			ICmPossibility currentPublication;

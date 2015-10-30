@@ -51,7 +51,7 @@ namespace LanguageExplorer.Impls
 			// The persisted tool could be obsolete or simply not present,
 			// so we'll use the default tool of the given area, if the stored one cannot be found.
 			// That default tool must be available, even if there are no other tools.
-			var storedOrDefaultToolName = PropertyTable.GetValue(BasePersistedToolName + area.MachineName,
+			var storedOrDefaultToolName = PropertyTable.GetValue(string.Format("{0}{1}", BasePersistedToolName, area.MachineName),
 				SettingsGroup.LocalSettings, area.DefaultToolMachineName);
 			return GetTool(storedOrDefaultToolName);
 		}

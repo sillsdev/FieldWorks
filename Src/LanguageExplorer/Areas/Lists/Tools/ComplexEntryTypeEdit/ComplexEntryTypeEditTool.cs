@@ -42,6 +42,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>

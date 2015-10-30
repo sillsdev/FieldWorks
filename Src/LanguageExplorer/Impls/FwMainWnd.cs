@@ -45,12 +45,24 @@ namespace LanguageExplorer.Impls
 	/// Main window class for FW/FLEx.
 	/// </summary>
 #if RANDYTODO
+	// TODO: These comments come from the original xWindow class
 	/// <remarks>
 	/// Main CollapsingSplitContainer control for XWindow.
 	/// It holds the Sidebar (m_sidebar) in its Panel1 (left side).
+#if RANDYTODO
+	// TODO: Not true. The main CollapsingSplitContainer always had another CollapsingSplitContainer
+	// TODO: instance in its Panel2. The RecordBar (m_recordBar) was always present in that secondary
+	// TODO: CollapsingSplitContainer instance. The visibily of m_recordBar was set by software, as the user had no control over it.
+	// TODO: The Panel2 of that secondary CollapsingSplitContainer (not the main one) was then that m_mainContentControl control.
+	// TODO: My goal is add that secondary CollapsingSplitContainer instance with its RecordBar, *only* for tools that show the record bar.
+	// TODO: That will let me not have to mess with that "ShowRecordList" property.
+	// TODO: Adding a second CollapsingSplitContainer instance as Panel2 of the main one needs these:
+	// TODO: secondOne.FirstLabel = "Record List" (was now defunct <property name="RecordListLabel" value="Record List" persist="true" />)
+	// TODO: secondOne.SecondLabel = "Main Content" (was now defunct <property name="MainContentLabel" value="Main Content" persist="true"/>)
 	/// It holds m_mainContentControl in Panel2, when m_recordBar is not showing.
 	/// It holds another CollapsingSplitContainer (m_secondarySplitContainer) in Panel2,
 	/// when the record list and the main control are both showing.
+#endif
 	///
 	/// Controlling properties are:
 	/// This is the splitter distance for the sidebar/secondary splitter pair of controls.
@@ -113,11 +125,10 @@ namespace LanguageExplorer.Impls
 
 			_viewHelper = new ActiveViewHelper(this);
 
-			SetupPropertyTable();
-
 			_stylesheet = new FwStyleSheet();
 			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, true);
+
+			SetupPropertyTable();
 
 			_toolRepository = new ToolRepository();
 			_areaRepository = new AreaRepository(_toolRepository);
@@ -496,13 +507,13 @@ namespace LanguageExplorer.Impls
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
 			mainContainer.Panel1Collapsed = false;
 			mainContainer.Panel2Collapsed = false;
-			var sd = PropertyTable.GetValue("SidebarWidthGlobal", 140);
+			var sd = PropertyTable.GetValue<int>("SidebarWidthGlobal", SettingsGroup.GlobalSettings);
 			if (!mainContainer.Panel1Collapsed)
 			{
 				SetSplitContainerDistance(mainContainer, sd);
 			}
-			mainContainer.FirstLabel = PropertyTable.GetValue<string>("SidebarLabel");
-			mainContainer.SecondLabel = PropertyTable.GetValue<string>("AllButSidebarLabel");
+			mainContainer.FirstLabel = "Sidebar";
+			mainContainer.SecondLabel = "All Content";
 			// Add areas and tools to "_sidePane";
 			foreach (var area in _areaRepository.AllAreasInOrder())
 			{
@@ -581,10 +592,41 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
 
+			// Just in case some expected property hasn't been reloaded,
+			// see that they are loaded. "SetDefault" doesn't mess with them if they are restored.
+			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
+			PropertyTable.SetDefault("SidebarWidthGlobal", 140, SettingsGroup.GlobalSettings, true, false);
+#if RANDYTODO
+			// This property is driven by the needs of the current main control, not the user.
+			// <property name="ShowRecordList" bool="false" persist="true" />
+			// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
+			// TODO: Cf. my comment in the class comment.
+			PropertyTable.SetDefault("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
+#endif
+			// This is the splitter distance for the record list/main content pair of controls.
+			PropertyTable.SetDefault("RecordListWidthGlobal", 200, SettingsGroup.GlobalSettings, true, false);
+
+			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
+			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("SelectedWritingSystemHvosForCurrentContextMenu", string.Empty, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("ShowHiddenFields", false, SettingsGroup.LocalSettings, false, false);
+
+			// not stored, but needed.
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
+			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, true);
 
+			// Get rid of obsolete properties, if they were restored.
+#if RANDYTODO
+			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
+#endif
+			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);
+			PropertyTable.RemoveProperty("DoingAutomatedTest", SettingsGroup.GlobalSettings);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

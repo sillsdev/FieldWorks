@@ -17,9 +17,10 @@ using SIL.Utils;
 namespace LanguageExplorer.Areas
 {
 #if RANDYTODO
-	// TODO: Why do we need the "CollapsingSplitContainer"? Can they be collapsed into one?
-	// TODO: "CollapsingSplitContainer" is used by the main window as its top level splitter.
-	// TODO: "MultiPane" is then used by numerous tools in the right half of the "CollapsingSplitContainer".
+	// TODO: Why do we need "CollapsingSplitContainer" & "MultiPane"? Can they be collapsed into one?
+	// TODO: "CollapsingSplitContainer" is used by the main window as its top level splitter,
+	// TODO: and it is the right pane of main CollapsingSplitContainer instance for tools with a RecordBar.
+	// TODO: "MultiPane" is then used by numerous tools in the right half of that main or second "CollapsingSplitContainer".
 #endif
 	/// <summary>
 	/// A MultiPane (actually currently more a DualPane) displays two child controls,
@@ -44,18 +45,9 @@ namespace LanguageExplorer.Areas
 		private readonly string m_id;
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
-		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.
 		private Size m_parentSizeHint;
 		private bool m_showingFirstPane;
 		private string m_propertyControllingVisibilityOfFirstPane;
-		// true to suppress collapsing fill pane below minimum
-		// It doesn't go on the superclass,
-		// because we will use its builtin Panel2MinSize property to actually control this,
-		// and rumor has it that the min can't be known for some controls, until after a layout.
-		// So, we have to 'remember' what to do in this data member.
-		// Technically, we could just look it up in the config file,
-		// but this will be faster.
-//		private bool m_fDontCollapseFillPane = false;
 		private string m_defaultPrintPaneId = string.Empty;
 		private string m_defaultFocusControl = string.Empty;
 		private XmlNode m_configurationParameters;
@@ -140,6 +132,10 @@ namespace LanguageExplorer.Areas
 			{
 				if(components != null)
 					components.Dispose();
+				if (!string.IsNullOrWhiteSpace(m_propertyControllingVisibilityOfFirstPane))
+				{
+					Subscriber.Unsubscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
+				}
 			}
 
 			base.Dispose(disposing);
@@ -331,8 +327,6 @@ namespace LanguageExplorer.Areas
 			else if (Orientation != Orientation.Vertical)
 				Orientation = Orientation.Vertical;
 
-			m_prioritySecond = XmlUtils.GetOptionalBooleanAttributeValue(configurationParameters,
-				"prioritySecond", false);
 			string defaultPrintPaneId = XmlUtils.GetOptionalAttributeValue(configurationParameters,
 				"defaultPrintPane", "");
 			string defaultFocusControl = XmlUtils.GetOptionalAttributeValue(configurationParameters,

@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
 							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							PropertyTable.SetProperty(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
+							PropertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
 							fSetFilterMenu = true;
 							break;
 						}

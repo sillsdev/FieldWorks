@@ -41,6 +41,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -54,6 +58,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			PropertyTable = propertyTable;
 			Publisher = publisher;
 			Subscriber = subscriber;
+
+			PropertyTable.SetDefault(string.Format("ToolForAreaNamed_{0}", AreaMachineName), MachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion

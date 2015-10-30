@@ -196,9 +196,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			Subscriber = subscriber;
 
 			Subscriber.Subscribe("SaveAsWebpage", SaveAsWebpage);
-			m_previousShowTreeBarValue = PropertyTable.GetValue("ShowRecordList", true);
+			m_previousShowTreeBarValue = PropertyTable.GetValue<bool>("ShowRecordList");
 
-			PropertyTable.SetProperty("ShowRecordList", false, true, true);
+			PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 
 			PropertyTable.SetProperty("StatusPanelRecordNumber", "", false, true);
 
@@ -643,7 +643,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			CheckDisposed();
 
-			PropertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true, true);
+			PropertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, SettingsGroup.GlobalSettings, true, true);
 			return true;
 		}
 

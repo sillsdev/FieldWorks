@@ -959,12 +959,12 @@ namespace SIL.FieldWorks.Common.Controls
 					m_lvHeader.Columns.Add(ch);
 				}
 			}
-			// set default property, so it doesn't accidentally get set
+			// set default property, IFF it does not exist, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetProperty("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
-			// set default property, so it doesn't accidentally get set
+			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
+			// set default property, IFF it does not exist, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetProperty("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
 
 			//
 			// FilterBar

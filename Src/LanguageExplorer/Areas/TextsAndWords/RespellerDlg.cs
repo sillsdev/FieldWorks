@@ -182,15 +182,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				m_btnRefresh.Image = ResourceHelper.RefreshIcon;
 
-				m_rbDiscardAnalyses.Checked = PropertyTable.GetValue("RemoveAnalyses", true);
+				m_rbDiscardAnalyses.Checked = PropertyTable.GetValue<bool>("RemoveAnalyses");
 				m_rbKeepAnalyses.Checked = !m_rbDiscardAnalyses.Checked;
 				m_rbDiscardAnalyses.Click += m_rbDiscardAnalyses_Click;
 				m_rbKeepAnalyses.Click += m_rbDiscardAnalyses_Click;
 
-				m_cbUpdateLexicon.Checked = PropertyTable.GetValue("UpdateLexiconIfPossible", true);
-				m_cbCopyAnalyses.Checked = PropertyTable.GetValue("CopyAnalysesToNewSpelling", true);
+				m_cbUpdateLexicon.Checked = PropertyTable.GetValue<bool>("UpdateLexiconIfPossible");
+				m_cbCopyAnalyses.Checked = PropertyTable.GetValue<bool>("CopyAnalysesToNewSpelling");
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
-				m_cbMaintainCase.Checked = PropertyTable.GetValue("MaintainCaseOnChangeSpelling", true);
+				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
 				m_cache = PropertyTable.GetValue<FdoCache>("cache");
 
@@ -512,22 +512,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_cbUpdateLexicon_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, true, false);
+			PropertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, SettingsGroup.GlobalSettings, true, false);
 		}
 
 		void m_rbDiscardAnalyses_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, true, false);
+			PropertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, SettingsGroup.GlobalSettings, true, false);
 		}
 
 		void m_cbCopyAnalyses_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, true, false);
+			PropertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, SettingsGroup.GlobalSettings, true, false);
 		}
 
 		void m_cbMaintainCase_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, true, false);
+			PropertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, SettingsGroup.GlobalSettings, true, false);
 		}
 
 		protected override void OnClosed(EventArgs e)

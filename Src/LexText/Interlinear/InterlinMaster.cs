@@ -480,10 +480,6 @@ namespace SIL.FieldWorks.IText
 					if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 						ShowTabView();
 					break;
-				case "ShowMorphBundles":
-					// This helps make sure the notification gets through even if the pane isn't
-					// in focus (maybe the Sandbox or TC pane is) and so isn't an xCore target.
-					break;
 			}
 		}
 

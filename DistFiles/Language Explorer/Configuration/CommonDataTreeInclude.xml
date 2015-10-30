@@ -170,7 +170,5 @@
 	<defaultProperties>
 		<!-- These properties can be used to set the settingsGroup for context dependent properties. no need to persist these. -->
 		<property name="SliceSplitterBaseDistance" intValue="-1"  persist="false" settingsGroup="local"/>
-		<property name="ShowHiddenFields-" bool="false" persist="false" settingsGroup="local"/>
-		<property name="SelectedWritingSystemHvosForCurrentContextMenu" value="" persist="false" settingsGroup="local"/>
 	</defaultProperties>
 </root>

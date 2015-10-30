@@ -898,7 +898,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string toolName = PropertyTable.GetValue<string>("currentContentControl");
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
-			PropertyTable.SetProperty("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
 			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);

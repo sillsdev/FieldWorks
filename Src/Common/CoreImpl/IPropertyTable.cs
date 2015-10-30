@@ -124,9 +124,31 @@ namespace SIL.CoreImpl
 		/// </param>
 		void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged);
 
+		/// <summary>
+		/// Set the default value of a property, but *only* if property is not in the table.
+		/// Do nothing, if the property is alreeady in the table.
+		/// </summary>
+		/// <param name="name">Name of the property to set</param>
+		/// <param name="defaultValue">Default value of the new property</param>
+		/// <param name="settingsGroup">Group the property is expected to be in.</param>
+		/// <param name="persistProperty">
+		/// "true" if the property is to be persisted, otherwise "false".</param>
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged);
+
 		#endregion Set property values
 
 		#region Remove properties
+
+		/// <summary>
+		/// Remove a property from the table.
+		/// </summary>
+		/// <param name="name">Name of the property to remove.</param>
+		/// <param name="settingsGroup">The group to remove the property from.</param>
+		void RemoveProperty(string name, SettingsGroup settingsGroup);
 
 		/// <summary>
 		/// Remove a property from the table.

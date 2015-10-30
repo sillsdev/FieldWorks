@@ -53,6 +53,10 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -79,6 +83,8 @@ namespace LanguageExplorer.Areas.Lexicon
 			var serviceLocator = PropertyTable.GetValue<FdoCache>("cache").ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			hc.PersistData = hcSettings;
+
+			PropertyTable.SetProperty("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
 		}
 
 		#endregion
@@ -163,10 +169,8 @@ namespace LanguageExplorer.Areas.Lexicon
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			PropertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
 
-#if RANDYTODO
-	// Implement and call EnsurePropertiesAreCurrent() on current tool in area.
-	//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area EnsurePropertiesAreCurrent method.", "Need to implement", MessageBoxButtons.OK);
-#endif
+			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion

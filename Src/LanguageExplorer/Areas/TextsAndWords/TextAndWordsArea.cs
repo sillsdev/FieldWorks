@@ -50,6 +50,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -63,6 +67,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = propertyTable;
 			Publisher = publisher;
 			Subscriber = subscriber;
+
+			// Respeller dlg uses these.
+			PropertyTable.SetDefault("RemoveAnalyses", true, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("UpdateLexiconIfPossible", true, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
+
+			// <property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
+			PropertyTable.RemoveProperty("ShowMorphBundles", SettingsGroup.LocalSettings);
+
+			// <property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local" />
+			// <property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local" />
+			// <property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local" />
+			PropertyTable.SetDefault("ITexts_AddWordsToLexicon", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
@@ -116,6 +136,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void EnsurePropertiesAreCurrent()
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+
+			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion

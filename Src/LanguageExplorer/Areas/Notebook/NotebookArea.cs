@@ -69,6 +69,10 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -144,6 +148,9 @@ namespace LanguageExplorer.Areas.Notebook
 		public void EnsurePropertiesAreCurrent()
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+
+			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
