@@ -1615,7 +1615,11 @@ namespace SIL.FieldWorks.XWorks
 				// (See LT-13397)
 				var actionHandler = Cache.ActionHandlerAccessor;
 				if (actionHandler.CurrentDepth > 0)
-					actionHandler.EndOuterUndoTask();
+				{
+					// EndOuterUndoTask() is not implemented, so we better call EndUndoTask().
+					// (This fixes LT-16673)
+					actionHandler.EndUndoTask();
+				}
 			}
 		}
 
