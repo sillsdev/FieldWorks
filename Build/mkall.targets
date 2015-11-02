@@ -284,14 +284,14 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt453 is the SILWritingSystems branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt453/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt454 is the SILWritingSystems branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt454/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt440 is the SILWritingSystems branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt440/.lastSuccessful</PalasoDownloadUrl>
-		<!-- bt441 is the SILWritingSystems branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt441/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
 		<!-- bt399 is the GeckoFX 29 build for Windows -->
 		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/.lastSuccessful</GeckoDownloadUrl>
 		<!-- bt400 is the XULRunner 29 build for Windows -->
