@@ -4,7 +4,6 @@
 
 using System.IO;
 using System.Xml;
-using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using NUnit.Framework;

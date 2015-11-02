@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		protected override void LoadWritingSystemCombo()
 		{
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 				m_cbWritingSystems.Items.Add(ws);
 		}
 
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				searchEngine);
 
 			// start building index
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
 				ITsString tssForm = m_tsf.MakeString(string.Empty, wsObj.Handle);
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			int wsSelHvo = wsObj != null ? wsObj.Handle : 0;
 
 			string form;

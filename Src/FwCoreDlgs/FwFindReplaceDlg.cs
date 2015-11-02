@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			fweditFindText.WritingSystemFactory = fweditReplaceText.WritingSystemFactory = wsf;
 			ITsStrFactory strFact = m_cache.TsStrFactory;
-			IWritingSystem defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			FindText = strFact.MakeString(string.Empty, defVernWs.Handle);
 			ReplaceText = strFact.MakeString(string.Empty, defVernWs.Handle);
 			// Make sure each of the edit boxes has a reasonable writing system assigned.
@@ -2270,7 +2270,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// selection or if the TsString doesn't have a writing system property (if that's
 		/// even possible). Otherwise, the UI name of the writing system.</returns>
 		/// ------------------------------------------------------------------------------------
-		protected virtual IWritingSystem GetCurrentWS(FwTextBox fwtextbox)
+		protected virtual CoreWritingSystemDefinition GetCurrentWS(FwTextBox fwtextbox)
 		{
 			int hvoWs = SelectionHelper.GetWsOfEntireSelection(fwtextbox.Selection);
 			if (hvoWs == 0)
@@ -2292,10 +2292,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			EventHandler clickEvent = WritingSystemMenu_Click;
 
 			// Convert from Set to List, since the Set can't sort.
-			List<IWritingSystem> writingSystems = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
+			List<CoreWritingSystemDefinition> writingSystems = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 			writingSystems.Sort((x, y) => x.DisplayLabel.CompareTo(y.DisplayLabel));
-			IWritingSystem sCurrentWs = GetCurrentWS(LastTextBoxInFocus);
-			foreach (IWritingSystem ws in writingSystems)
+			CoreWritingSystemDefinition sCurrentWs = GetCurrentWS(LastTextBoxInFocus);
+			foreach (CoreWritingSystemDefinition ws in writingSystems)
 				mnuWritingSystem.MenuItems.Add(new MenuItem(ws.DisplayLabel, clickEvent) {Checked = sCurrentWs == ws, Tag = ws.Handle});
 		}
 
@@ -2436,7 +2436,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void SetFormatLabels(FwTextBox textBox, Label format, Label formatText)
 		{
 			ITsString tss = textBox.Tss;
-			IWritingSystem currentWs = GetCurrentWS(textBox);
+			CoreWritingSystemDefinition currentWs = GetCurrentWS(textBox);
 			// Check for writing systems and styles that are applied to the tss
 			bool fShowLabels = false;
 			int prevWs = -1;

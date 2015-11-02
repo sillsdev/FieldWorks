@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Test.TestUtils;
@@ -171,10 +170,10 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <returns></returns>
-		private PalasoWritingSystemManager GetWsf()
+		private WritingSystemManager GetWsf()
 		{
-			var wsf = new PalasoWritingSystemManager();
-			IWritingSystem wsObj;
+			var wsf = new WritingSystemManager();
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -184,10 +183,9 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <param name="wsObj"></param>
-		private void EnsureQuoteAndHyphenWordForming(IWritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -203,7 +201,7 @@ namespace LexTextControlsTests
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		/// <summary>

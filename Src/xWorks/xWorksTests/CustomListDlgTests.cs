@@ -31,15 +31,9 @@ namespace SIL.FieldWorks.XWorks
 
 		void SetUserWs(string wsStr)
 		{
-			var wsMgr = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
-			IWritingSystem userWs;
-			if (!wsMgr.TryGetOrSet(wsStr, out userWs))
-			{
-				var wsFact = Cache.WritingSystemFactory;
-				wsFact.get_Engine(wsStr); // this installs it if it wasn't found.
-				if (!wsMgr.TryGetOrSet(wsStr, out userWs))
-					Assert.Fail("Totally Unknown Writing System: " + wsStr);
-			}
+			WritingSystemManager wsMgr = Cache.ServiceLocator.WritingSystemManager;
+			CoreWritingSystemDefinition userWs;
+			wsMgr.GetOrSet(wsStr, out userWs);
 			wsMgr.UserWritingSystem = userWs;
 		}
 
@@ -380,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Protected methods made Internal
 
-		internal List<IWritingSystem> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
+		internal List<CoreWritingSystemDefinition> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
 		{
 			return GetUiWritingSystemAndEnglish();
 		}

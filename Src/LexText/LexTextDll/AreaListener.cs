@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
-using Palaso.Reporting;
+using SIL.Reporting;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;

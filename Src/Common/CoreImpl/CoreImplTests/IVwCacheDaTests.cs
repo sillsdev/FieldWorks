@@ -45,7 +45,7 @@ namespace SIL.CoreImpl
 		{
 			RegistryHelper.CompanyName = "SIL";
 			m_ISilDataAccess = VwCacheDaClass.Create();
-			ILgWritingSystemFactory wsf = new PalasoWritingSystemManager();
+			ILgWritingSystemFactory wsf = new WritingSystemManager();
 			m_ISilDataAccess.WritingSystemFactory = wsf;
 			m_IVwCacheDa = (IVwCacheDa)m_ISilDataAccess;
 		}

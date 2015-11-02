@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				using (new DummyFileMaker(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "Gumby", FdoFileHelper.GetXmlDataFileName("Gumby"))))
 				{
 					using (var threadHelper = new ThreadHelper())
-						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", FwDirectoryFinder.FdoDirectories, threadHelper);
+						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", FwDirectoryFinder.FdoDirectories, threadHelper,  null, null, null, null, null, null, true);
 				}
 			}
 			finally
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, true);
 
 				currentDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
 				if (currentDirs.Contains(writingSystemsCommonDir) && !expectedDirs.Contains(writingSystemsCommonDir))
@@ -126,9 +126,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				// create project
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, true);
 
-				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), new DummyProgressDlg()))
+				var projectId = new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, dbFileName);
+				using (var cache = FdoCache.CreateCacheFromExistingData(projectId, "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), new DummyProgressDlg()))
 				{
 					Assert.AreEqual(Strings.ksAnthropologyCategories, cache.LangProject.AnthroListOA.Name.UiString,
 						"Anthropology Categories list was not properly initialized.");
@@ -202,7 +203,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
-				IWritingSystem wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
@@ -235,7 +236,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
-				IWritingSystem wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
@@ -269,8 +270,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
-				IWritingSystem wsObjGerman = null;
-				IWritingSystem wsObjSpanish = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjSpanish = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{

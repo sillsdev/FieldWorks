@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets all writing systems.
 		/// </summary>
 		/// <value>All writing systems.</value>
-		public IEnumerable<IWritingSystem> AllWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> AllWritingSystems
 		{
 			get
 			{
@@ -656,7 +656,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the analysis writing systems.
 		/// </summary>
 		/// <value>The analysis writing systems.</value>
-		public ICollection<IWritingSystem> AnalysisWritingSystems
+		public ICollection<CoreWritingSystemDefinition> AnalysisWritingSystems
 		{
 			get
 			{
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the vernacular writing systems.
 		/// </summary>
 		/// <value>The vernacular writing systems.</value>
-		public ICollection<IWritingSystem> VernacularWritingSystems
+		public ICollection<CoreWritingSystemDefinition> VernacularWritingSystems
 		{
 			get
 			{
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the current analysis writing systems.
 		/// </summary>
 		/// <value>The current analysis writing systems.</value>
-		public IList<IWritingSystem> CurrentAnalysisWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentAnalysisWritingSystems
 		{
 			get
 			{
@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the current vernacular writing systems.
 		/// </summary>
 		/// <value>The current vernacular writing systems.</value>
-		public IList<IWritingSystem> CurrentVernacularWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentVernacularWritingSystems
 		{
 			get
 			{
@@ -704,7 +704,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the current pronunciation writing systems.
 		/// </summary>
 		/// <value>The current pronunciation writing systems.</value>
-		public IList<IWritingSystem> CurrentPronunciationWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentPronunciationWritingSystems
 		{
 			get
 			{
@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddToCurrentAnalysisWritingSystems(IWritingSystem ws)
+		public void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws)
 		{
 			m_analysisWritingSystems.Add(ws);
 			m_currentAnalysisWritingSystems.Add(ws);
@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddToCurrentVernacularWritingSystems(IWritingSystem ws)
+		public void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws)
 		{
 			m_vernacularWritingSystems.Add(ws);
 			m_currentVernacularWritingSystems.Add(ws);
@@ -756,7 +756,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the default analysis writing system.
 		/// </summary>
 		/// <value>The default analysis writing system.</value>
-		public IWritingSystem DefaultAnalysisWritingSystem
+		public CoreWritingSystemDefinition DefaultAnalysisWritingSystem
 		{
 			get
 			{
@@ -811,7 +811,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the default vernacular writing system.
 		/// </summary>
 		/// <value>The default vernacular writing system.</value>
-		public IWritingSystem DefaultVernacularWritingSystem
+		public CoreWritingSystemDefinition DefaultVernacularWritingSystem
 		{
 			get
 			{
@@ -848,7 +848,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Gets the default pronunciation writing system.
 		/// </summary>
 		/// <value>The default pronunciation writing system.</value>
-		public IWritingSystem DefaultPronunciationWritingSystem
+		public CoreWritingSystemDefinition DefaultPronunciationWritingSystem
 		{
 			get
 			{

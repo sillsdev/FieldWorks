@@ -142,5 +142,16 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_CHARACTER, "en", "word"), Is.EqualTo(new[] {"w", "o", "r", "d"}));
 			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_LINE, "en", "This is some hyphenated-text."), Is.EqualTo(new[] {"This ", "is ", "some ", "hyphenated-", "text."}));
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests GetExemplarCharacters for en.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetExemplarCharacters_English()
+		{
+			Assert.That(Icu.GetExemplarCharacters("en"), Is.EqualTo("[a b c d e f g h i j k l m n o p q r s t u v w x y z]"));
+		}
 	}
 }

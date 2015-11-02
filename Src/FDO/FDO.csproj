@@ -94,6 +94,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\protobuf-net.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Lexicon.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
@@ -143,9 +155,6 @@
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
@@ -168,6 +177,8 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000069.cs" />
+    <Compile Include="DomainServices\DataMigration\WritingSystemIdMigrator.cs" />
     <Compile Include="DomainServices\SharedBackendServices.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />
@@ -299,9 +310,6 @@
     <Compile Include="DomainServices\ProjectLockingService.cs" />
     <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
     <Compile Include="DomainServices\ReferenceTargetServices.cs" />
-    <Compile Include="DomainServices\ScrCheckingToken.cs" />
-    <Compile Include="DomainServices\ScrCheckingTokenizer.cs" />
-    <Compile Include="DomainServices\ScrChecksDataSource.cs" />
     <Compile Include="DomainServices\ScrFdoResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

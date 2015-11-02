@@ -182,6 +182,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
@@ -210,7 +218,7 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=3.3.0.9, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
@@ -269,7 +277,9 @@
     <Compile Include="MorphemeBreakerTests.cs" />
     <Compile Include="SandboxBaseTests.cs" />
     <Compile Include="ShowSpaceDecoratorTests.cs" />
-    <Compile Include="TestTaggingChild.cs" />
+    <Compile Include="TestTaggingChild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WordBreakGuesserTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,19 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
-using Palaso.Progress;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.Progress;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -57,10 +54,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_notesBar.SetTargetObject(m_obj);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.Id, vernWs.DefaultFontName, 12);
 			m_notesBar.LabelWritingSystem = labelWs;
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
 			this.Control = m_notesBar;
 		}

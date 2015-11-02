@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		protected LabeledMultiStringControl m_lmscListName;
 		protected LabeledMultiStringControl m_lmscDescription;
 		private IVwStylesheet m_stylesheet;
-		protected List<IWritingSystem> m_uiWss;
+		protected List<CoreWritingSystemDefinition> m_uiWss;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -114,18 +114,18 @@ namespace SIL.FieldWorks.XWorks
 		/// also gets the English Writing System.
 		/// </summary>
 		/// <returns></returns>
-		protected List<IWritingSystem> GetUiWritingSystemAndEnglish()
+		protected List<CoreWritingSystemDefinition> GetUiWritingSystemAndEnglish()
 		{
 			// Protected for testing
 			Debug.Assert(Cache != null, "Can't install languages without a cache!");
 			var wsMgr = Cache.ServiceLocator.WritingSystemManager;
 			var userWs = wsMgr.UserWritingSystem;
-			var result = new List<IWritingSystem> {userWs};
-			if (userWs.LanguageSubtag.Code == "en")
+			var result = new List<CoreWritingSystemDefinition> {userWs};
+			if (userWs.Language.Code == "en")
 				return result;
 
 			// If English is not the DefaultUserWs, add it to the list.
-			IWritingSystem engWs;
+			CoreWritingSystemDefinition engWs;
 			if (wsMgr.TryGet("en", out engWs))
 				result.Add(engWs);
 			return result;

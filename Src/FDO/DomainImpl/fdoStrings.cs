@@ -603,7 +603,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (source == null)
 				return; // Nothing to do.
 
-			foreach (var lws in m_object.Services.WritingSystemManager.LocalWritingSystems)
+			foreach (var lws in m_object.Services.WritingSystemManager.WritingSystems)
 			{
 				var ws = lws.Handle;
 				var myAlt = get_String(ws);

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
-using Palaso.Linq;
+using SIL.Linq;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks

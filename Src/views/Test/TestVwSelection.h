@@ -3170,8 +3170,9 @@ namespace TestViews
 			// Set the default font for French to Charis SIL
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsFrn, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			// Set up a simple stylesheet
 			StrUni stuChapterStyleName(L"Chapter Number");
@@ -3238,8 +3239,9 @@ namespace TestViews
 			// Set the default font for French to Charis SIL
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsFrn, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			// Set up a simple stylesheet
 			StrUni stuChapterStyleName(L"Chapter Number");
@@ -3360,8 +3362,9 @@ namespace TestViews
 			// <default font> for French (Times New Roman).
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsEng, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			m_qrootb.Clear();
 			m_qvc.Clear();

@@ -66,6 +66,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=7.2.0.29041, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -85,8 +89,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
-    <Compile Include="NativeException.cs" />
-    <Compile Include="GlobalMutex.cs" />
     <Compile Include="IProgress.cs" />
     <Compile Include="IServiceLocatorBootstrapper.cs" />
     <Compile Include="IThreadedProgress.cs" />

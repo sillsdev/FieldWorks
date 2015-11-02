@@ -129,6 +129,18 @@
       <Name>NMock</Name>
       <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -168,9 +180,6 @@
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms">
-      <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
-    </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
@@ -189,6 +198,7 @@
     <Compile Include="SimpleRootSiteDataProviderView.Designer.cs">
       <DependentUpon>SimpleRootSiteDataProviderView.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleRootSiteTests.cs" />
     <Compile Include="SimpleViewVc.cs" />
     <Compile Include="EditingHelperTests.cs">
       <SubType>Code</SubType>

@@ -249,7 +249,7 @@ namespace LexTextControlsTests
 
 				var uiLangsNew = new Hashtable();
 				var infoEn = new LanguageInfoUI("English", "English", "", "en");
-				var vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
+				string vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
 				var infoV = new LanguageInfoUI("Vernacular", "Vern", "", vernId);
 				uiLangsNew[infoEn.Key] = infoEn;
 				uiLangsNew["Vernacular"] = infoV;
@@ -313,7 +313,7 @@ namespace LexTextControlsTests
 			variantInfo.RefFuncWS = "fr";
 			var subentryInfo = new FieldHierarchyInfo("se", "sub", "Vernacular", true, "SubEntry");
 			sfmInfo.Add(subentryInfo);
-			subentryInfo.RefFuncWS = "Derivative";
+			subentryInfo.RefFuncWS = "en";
 			subentryInfo.RefFunc = "en";
 			return sfmInfo;
 		}

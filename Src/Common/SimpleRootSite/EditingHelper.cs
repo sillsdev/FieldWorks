@@ -9,13 +9,13 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
+using SIL.Keyboarding;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
-using Palaso.PlatformUtilities;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -2922,11 +2922,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Set the keyboard to match the writing system.
 		/// </summary>
-		/// <param name="palasoWs">writing system object</param>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(IWritingSystemDefinition palasoWs)
+		protected void SetKeyboardForWs(CoreWritingSystemDefinition ws)
 		{
-			if (Callbacks == null || palasoWs == null)
+			if (Callbacks == null || ws == null)
 			{
 				ActivateDefaultKeyboard();
 				return;
@@ -2938,8 +2937,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				if (palasoWs.LocalKeyboard != null)
-					palasoWs.LocalKeyboard.Activate();
+				if (ws.LocalKeyboard != null)
+					ws.LocalKeyboard.Activate();
 			}
 			catch
 			{
@@ -2967,7 +2966,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
 				return; // Can't do anything useful, so let's not do anything at all.
 
-			var ws = ((IWritingSystemManager)WritingSystemFactory).Get(newWs) as IWritingSystemDefinition;
+			CoreWritingSystemDefinition ws = ((WritingSystemManager) WritingSystemFactory).Get(newWs);
 			SetKeyboardForWs(ws);
 		}
 
@@ -2988,11 +2987,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			//JohnT: was, LgWritingSystemFactoryClass.Create();
-			IWritingSystemDefinition ws = null;
+			CoreWritingSystemDefinition ws = null;
 
-			var writingSystemManager = WritingSystemFactory as IWritingSystemManager;
+			var writingSystemManager = WritingSystemFactory as WritingSystemManager;
 			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
-				ws = writingSystemManager.Get(nWs) as IWritingSystemDefinition;
+				ws = writingSystemManager.Get(nWs);
 
 			SetKeyboardForWs(ws);
 

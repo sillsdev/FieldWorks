@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// -------------------------------------------------------------------------------------
 		private void CreateTempWritingSystemFactory()
 		{
-			m_wsf = new PalasoWritingSystemManager();
+			m_wsf = new WritingSystemManager();
 			m_fUsingTempWsFactory = true;
 		}
 

@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Palaso.IO;
-using Palaso.Linq;
-using Palaso.TestUtilities;
+using SIL.IO;
+using SIL.Linq;
+using SIL.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+			m_owningTable = new StyleInfoTable("AbbySomebody", (WritingSystemManager) Cache.WritingSystemFactory);
 
 			m_migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_window.Mediator);
 

@@ -39,6 +39,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using SIL.IO;
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -403,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void DiscardProperties()
 		{
 			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
-			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
+			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
 		}
 
 		public void ClearInvalidatedStoredData()

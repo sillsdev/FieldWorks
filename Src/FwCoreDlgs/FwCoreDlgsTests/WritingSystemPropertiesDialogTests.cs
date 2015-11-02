@@ -8,13 +8,14 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using Palaso.WritingSystems;
-using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-
+using SIL.Utils.Attributes;
+using SIL.WritingSystems;
 // ReSharper disable InconsistentNaming
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -31,6 +32,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public DummyWritingSystemPropertiesDialog(FdoCache cache)
 			: base(cache, cache.ServiceLocator.WritingSystemManager, cache.ServiceLocator.WritingSystems, null, null, null)
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyWritingSystemPropertiesDialog"/> class.
+		/// </summary>
+		public DummyWritingSystemPropertiesDialog(WritingSystemManager wsManager, IWritingSystemContainer wsContainer)
+			: base(null, wsManager, wsContainer, null, null, null)
+		{
+
 		}
 
 		#region Internal methods and properties
@@ -51,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="ws">The writing system which properties will be displayed</param>
 		/// <returns>A DialogResult value</returns>
-		public int ShowDialog(IWritingSystem ws)
+		public int ShowDialog(CoreWritingSystemDefinition ws)
 		{
 			CheckDisposed();
 
@@ -119,8 +129,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(LangTagUtils.ToLangTag(CurrentWritingSystem.LanguageSubtag, m_regionVariantControl.ScriptSubtag,
-				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtag), wsId);
+			Assert.AreEqual(IetfLanguageTag.Create(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
 		}
 
 		/// <summary>
@@ -129,8 +139,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="langAbbr"></param>
 		internal void VerifyRelatedWritingSystem(string langAbbr)
 		{
-			foreach (IWritingSystem ws in WsList.Items)
-				Assert.AreEqual(langAbbr, ws.LanguageSubtag.Code);
+			foreach (CoreWritingSystemDefinition ws in WsList.Items)
+				Assert.AreEqual(langAbbr, ws.Language.Code);
 		}
 
 
@@ -157,14 +167,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Assert.Less(indexA, WsList.Items.Count);
 			Assert.Less(indexB, WsList.Items.Count);
-			Assert.AreEqual(((IWritingSystem) WsList.Items[indexA]).Id, ((IWritingSystem) WsList.Items[indexB]).Id);
+			Assert.AreEqual(((CoreWritingSystemDefinition) WsList.Items[indexA]).Id, ((CoreWritingSystemDefinition) WsList.Items[indexB]).Id);
 		}
 
 		private ContextMenuStrip PopulateAddWsContextMenu()
 		{
 			var cms = new ContextMenuStrip();
-			FwProjPropertiesDlg.PopulateWsContextMenu(cms, WritingSystemUtils.GetAllDistinctWritingSystems(m_wsManager),
-				m_listBoxRelatedWSs, btnAddWsItemClicked, null, btnNewWsItemClicked, (IWritingSystem)m_listBoxRelatedWSs.Items[0]);
+			FwProjPropertiesDlg.PopulateWsContextMenu(cms, m_wsManager.AllDistinctWritingSystems,
+				m_listBoxRelatedWSs, btnAddWsItemClicked, null, btnNewWsItemClicked, (CoreWritingSystemDefinition) m_listBoxRelatedWSs.Items[0]);
 			return cms;
 		}
 
@@ -193,10 +203,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void ValidateGeneralInfo()
 		{
 			// Check Language Name & EthnologueCode
-			Assert.AreEqual(CurrentWritingSystem.LanguageSubtag.Name, m_tbLanguageName.Text);
+			Assert.AreEqual(CurrentWritingSystem.Language.Name, m_tbLanguageName.Text);
 			// make sure LocaleName is properly setup as Language name, not as DisplayName.
-			Assert.IsTrue(CurrentWritingSystem.LanguageSubtag.Name.IndexOf("(", StringComparison.Ordinal) == -1);
-			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.ISO3) ? CurrentWritingSystem.ISO3 : "<None>", m_LanguageCode.Text);
+			Assert.IsTrue(CurrentWritingSystem.Language.Name.IndexOf("(", StringComparison.Ordinal) == -1);
+			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.Language.Iso3Code) ? CurrentWritingSystem.Language.Iso3Code : "<None>", m_LanguageCode.Text);
 		}
 
 		internal void ValidateGeneralTab()
@@ -214,31 +224,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(((IWritingSystemDefinition)CurrentWritingSystem).Bcp47Tag, m_modelForKeyboard.CurrentRFC4646);
+			Assert.AreEqual(CurrentWritingSystem.LanguageTag, m_modelForKeyboard.CurrentLanguageTag);
 		}
 
 		internal void ValidateConvertersTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.LegacyMapping ?? "<None>", cbEncodingConverter.SelectedItem.ToString());
+			Assert.AreEqual(string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? "<None>" : CurrentWritingSystem.LegacyMapping, cbEncodingConverter.SelectedItem.ToString());
 		}
 		internal void ValidateSortingTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.SortUsing.ToString(), m_sortUsingComboBox.SelectedValue.ToString());
-			switch (CurrentWritingSystem.SortUsing)
+			switch (m_sortUsingComboBox.SelectedValue.ToString())
 			{
-				case WritingSystemDefinition.SortRulesType.DefaultOrdering:
-					Assert.IsNullOrEmpty(m_sortRulesTextBox.Text);
-					Assert.AreEqual(0, m_sortLanguageComboBox.SelectedIndex);
+				case "CustomSimple":
+					var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleRulesCollationDefinition;
+					Assert.That(simpleCollation, Is.Not.Null);
+					Assert.That(simpleCollation.SimpleRules, Is.EqualTo(m_sortRulesTextBox.Text));
 					break;
-				case WritingSystemDefinition.SortRulesType.CustomICU:
-				case WritingSystemDefinition.SortRulesType.CustomSimple:
-					Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortRulesTextBox.Text);
+
+				case "DefaultOrdering":
+				case "CustomIcu":
+					var icuRulesCollation = CurrentWritingSystem.DefaultCollation as IcuRulesCollationDefinition;
+					Assert.That(icuRulesCollation, Is.Not.Null);
+					Assert.That(icuRulesCollation.IcuRules, Is.EqualTo(m_sortRulesTextBox.Text));
 					break;
-				case WritingSystemDefinition.SortRulesType.OtherLanguage:
-					Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortLanguageComboBox.SelectedValue);
-					break;
-				default:
-					Assert.Fail("Unknown SortUsing: " + CurrentWritingSystem.SortUsing);
+
+				case "OtherLanguage":
+					var sysCollation = CurrentWritingSystem.DefaultCollation as SystemCollationDefinition;
+					Assert.That(sysCollation, Is.Not.Null);
+					Assert.That(sysCollation.LanguageTag, Is.EqualTo(m_sortLanguageComboBox.SelectedValue));
 					break;
 			}
 		}
@@ -316,17 +329,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// simulate choosing settings with those specified in SelectEthnologueCodeDlg().
 		/// </summary>
-		/// <param name="dlg"></param>
-		/// <returns></returns>
-		protected override DialogResult CallShowDialog(LanguageSelectionDlg dlg)
+		protected override bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
 		{
-			if (m_ethnologueDlgResultToEnforce == DialogResult.OK)
+			if (m_ethnologueDlgResultToEnforce != DialogResult.OK)
 			{
-				// overwrite
-				dlg.LanguageName = m_selectedLanguageName;
-				dlg.EthnologueCode = m_selectedEthnologueCode;
+				selectedLanguageTag = null;
+				desiredLanguageName = null;
+				return false;
 			}
-			return DialogResult = m_ethnologueDlgResultToEnforce;
+
+			selectedLanguageTag = m_selectedEthnologueCode;
+			desiredLanguageName = m_selectedLanguageName;
+			return true;
 		}
 
 		/// <summary>
@@ -342,17 +356,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		///
 		/// </summary>
-		protected override void ShowMsgBoxCantCreateDuplicateWs(IWritingSystem tempWs, IWritingSystem origWs)
+		protected override void ShowMsgBoxCantCreateDuplicateWs(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
 		{
-			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantCreateDuplicateWs, origWs == null ? null : origWs.Id);
+			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantCreateDuplicateWs, origWS == null ? null : origWS.Id);
 		}
 
 		/// <summary>
 		///
 		/// </summary>
-		protected override void ShowMsgCantChangeUserWs(IWritingSystem tempWs, IWritingSystem origWs)
+		protected override void ShowMsgCantChangeUserWS(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
 		{
-			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantChangeUserWs, origWs == null ? null : origWs.Id);
+			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantChangeUserWs, origWS == null ? null : origWS.Id);
 		}
 
 		/// <summary>
@@ -451,7 +465,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void SetCustomRegionName(string newRegionName)
 		{
 			var code = newRegionName.Substring(0, 2).ToUpperInvariant();
-			m_regionVariantControl.RegionSubtag = new RegionSubtag(code, newRegionName, true);
+			m_regionVariantControl.RegionSubtag = new RegionSubtag(code, newRegionName);
 		}
 
 		#endregion General Tab
@@ -473,15 +487,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for TestFwProjPropertiesDlg.
 	/// </summary>
 	[TestFixture]
+	[InitializeRealKeyboardController]
 	[SetCulture("en-US")]
-	public class WritingSystemPropertiesDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class WritingSystemPropertiesDialogTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private DummyWritingSystemPropertiesDialog m_dlg;
-		private IWritingSystem m_wsKalabaIpa;
-		private IWritingSystem m_wsKalaba;
-		private IWritingSystem m_wsTestIpa;
-		private readonly HashSet<IWritingSystem> m_origLocalWss = new HashSet<IWritingSystem>();
-		private readonly HashSet<IWritingSystem> m_origGlobalWss = new HashSet<IWritingSystem>();
+		private CoreWritingSystemDefinition m_wsKalabaIpa;
+		private CoreWritingSystemDefinition m_wsKalaba;
+		private CoreWritingSystemDefinition m_wsTestIpa;
+		private readonly HashSet<CoreWritingSystemDefinition> m_origLocalWss = new HashSet<CoreWritingSystemDefinition>();
+		private readonly HashSet<CoreWritingSystemDefinition> m_origGlobalWss = new HashSet<CoreWritingSystemDefinition>();
 
 		#region Test Setup and Tear-Down
 
@@ -490,17 +505,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_origLocalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
-			m_origGlobalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems);
+			m_origLocalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.WritingSystems);
+			m_origGlobalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.OtherWritingSystems);
 			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
-			KeyboardController.Initialize();
-		}
-
-		/// <summary/>
-		public override void FixtureTeardown()
-		{
-			KeyboardController.Shutdown();
-			base.FixtureTeardown();
 		}
 
 		/// <summary>
@@ -509,24 +516,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
-			m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
-			CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
-			CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
-			IWritingSystem wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
-			m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
-			Cache.ServiceLocator.WritingSystemManager.Save();
-			// this will remove it from the local store, but not from the global store
-			wsTest.MarkedForDeletion = true;
-			Cache.ServiceLocator.WritingSystemManager.Save();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
+				m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
+				CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
+				CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
+				CoreWritingSystemDefinition wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
+				m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
+				Cache.ServiceLocator.WritingSystemManager.Save();
+				// this will remove it from the local store, but not from the global store
+				wsTest.MarkedForDeletion = true;
+				Cache.ServiceLocator.WritingSystemManager.Save();
+			});
 			m_dlg = new DummyWritingSystemPropertiesDialog(Cache);
 		}
 
-		private IWritingSystem CreateWritingSystem(string wsId, string name, bool addVern)
+		private CoreWritingSystemDefinition CreateWritingSystem(string wsId, string name, bool addVern)
 		{
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set(wsId);
-			LanguageSubtag subtag = ws.LanguageSubtag;
-			ws.LanguageSubtag = new LanguageSubtag(subtag, name);
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set(wsId);
+			ws.Language = new LanguageSubtag(ws.Language, name);
 			if (addVern)
 				Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(ws);
 			return ws;
@@ -541,20 +550,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg = null;
 
 			base.TestTearDown();
-
-			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
-			{
-				if (!m_origLocalWss.Contains(ws))
-					ws.MarkedForDeletion = true;
-			}
-
-			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems)
-			{
-				if (!m_origGlobalWss.Contains(ws))
-					ws.MarkedForDeletion = true;
-			}
-
-			Cache.ServiceLocator.WritingSystemManager.Save();
 		}
 		#endregion
 
@@ -562,7 +557,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void VerifyNewlyAddedWritingSystems(string[] newExpectedWsIds)
 		{
-			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.Id).ToList();
+			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.LanguageTag).ToList();
 			Assert.AreEqual(newExpectedWsIds.Length, actualWsIds.Count);
 			foreach (string expectedWsId in newExpectedWsIds)
 				Assert.Contains(expectedWsId, actualWsIds);
@@ -573,7 +568,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int i = 0;
 			foreach (int hvoWs in hvoWss)
 			{
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
 				Assert.AreEqual(wsIds[i], ws.Id);
 				i++;
@@ -585,7 +580,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int i = 0;
 			foreach (string wsId in wsIds)
 			{
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
+				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
 				Assert.AreEqual(wsIds[i], ws.Id);
 				i++;
@@ -607,7 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyRelatedWritingSystem("kal");
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// Select Kalaba (IPA) and verify dialog is setup for that one.
-			m_dlg.WsList.SelectedItem = m_dlg.WsList.Items.Cast<IWritingSystem>().Single(ws => ws.DisplayLabel == "Kalaba (International Phonetic Alphabet)");
+			m_dlg.WsList.SelectedItem = m_dlg.WsList.Items.Cast<CoreWritingSystemDefinition>().Single(ws => ws.DisplayLabel == "Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 		}
 
@@ -666,14 +661,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Phonetic)" });
 			// Now update the Ethnologue code, and cancel msg box to check we restored the expected newly added language defns.
-			m_dlg.SelectEthnologueCodeDlg("WSDialog", "wsd", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("WSDialog", "qaa-x-wsd", "", DialogResult.OK,
 				new[] { DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs },
 				new[] { "qaa-x-kal" },
 				new[] { DialogResult.OK});
 			// Verify dialog indicates a list to add to current (vernacular) ws list
 			VerifyNewlyAddedWritingSystems(new[] { "qaa-fonipa-x-kal-etic" });
 			// Now update the Ethnologue code, check we still have expected newly added language defns.
-			m_dlg.SelectEthnologueCodeDlg("Kala", "", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Kala", "qaa-x-kal", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { }, new string[] { }, new DialogResult[] { });
 			// Verify dialog indicates a list to add to current (vernacular) ws list
 			VerifyNewlyAddedWritingSystems(new[] { "qaa-fonipa-x-kal-etic" });
@@ -778,7 +773,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ShowDialog(m_wsKalaba);
 			// change to nonconflicting ethnologue code
-			m_dlg.SelectEthnologueCodeDlg("Silly", "xxx", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Silly", "qaa-x-xxx", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { },
 				new string[] { },
 				new DialogResult[] { });
@@ -799,12 +794,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void General_EthnologueCodeChanged_ModifyWsId_Ok()
 		{
-			// End the UOW, because we are going to do a nonundoable UOW when we press OK
-			m_actionHandler.EndUndoTask();
-
 			m_dlg.ShowDialog(m_wsKalaba);
 			// change to nonconflicting ethnologue code
-			m_dlg.SelectEthnologueCodeDlg("Silly", "xxx", "", DialogResult.OK,
+			m_dlg.SelectEthnologueCodeDlg("Silly", "qaa-x-xxx", "", DialogResult.OK,
 				new DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus[] { },
 				new string[] { },
 				new DialogResult[] { });
@@ -907,15 +899,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void RealWritingSystemHasSortRules()
 		{
-			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("th-TH");
 			// Ensure the English WS has the correct SortRules
-			Assert.AreEqual(WritingSystemDefinition.SortRulesType.OtherLanguage, wsEn.SortUsing);
-			Assert.AreEqual("en", wsEn.SortRules);
+			var sysCollation = ws.DefaultCollation as SystemCollationDefinition;
+			Assert.That(sysCollation, Is.Not.Null);
+			Assert.That(sysCollation.LanguageTag, Is.EqualTo("th-TH"));
 
 			// Show the dialog and ensure the SortRules are displayed correctly in the dialog
-			m_dlg.ShowDialog(wsEn);
-			m_dlg.VerifyListBox(new[] { "English" });
-			m_dlg.VerifyLoadedForListBoxSelection("English");
+			m_dlg.ShowDialog(ws);
+			m_dlg.VerifyListBox(new[] { "Thai (Thailand)" });
+			m_dlg.VerifyLoadedForListBoxSelection("Thai (Thailand)");
+		}
+
+		/// <summary>
+		/// Test using the writing system properties dialog with no cache
+		/// </summary>
+		[Test]
+		public void NoCache_DoesNotThrow()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition ws = wsManager.Set("qaa-x-kal");
+			ws.Language = new LanguageSubtag(ws.Language, "Kalaba");
+			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(wsManager.WritingSystems, wsManager.WritingSystems,
+				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
+			using (var dlg = new DummyWritingSystemPropertiesDialog(wsManager, wsContainer))
+			{
+				dlg.ShowDialog(ws);
+				dlg.LanguageNameTextBox.Text = "Kalab";
+				Assert.DoesNotThrow(() => dlg.PressOk());
+				Assert.That(ws.DisplayLabel, Is.EqualTo("Kalab"));
+			}
 		}
 
 		#endregion

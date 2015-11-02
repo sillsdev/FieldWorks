@@ -32,8 +32,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ICmPictureFactory m_pictureFactory;
 		private ICmPicture m_pict;
 		private string m_internalPath = Path.DirectorySeparatorChar + Path.GetRandomFileName();
-		private IWritingSystem m_wsGerman;
-		private IWritingSystem m_wsSpanish;
+		private CoreWritingSystemDefinition m_wsGerman;
+		private CoreWritingSystemDefinition m_wsSpanish;
 		#endregion
 
 		/// ------------------------------------------------------------------------------------

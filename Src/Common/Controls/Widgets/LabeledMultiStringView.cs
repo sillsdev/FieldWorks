@@ -3,26 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
-using System.Windows.Forms.VisualStyles;
 using System.Xml;
-using Palaso.Media;
-using Palaso.WritingSystems;
+using SIL.Media;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using System.Text;
 using XCore;
 
@@ -37,7 +29,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class LabeledMultiStringView : UserControl, IxCoreColleague
 	{
 		private InnerLabeledMultiStringView m_innerView;
-		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
+		private List<ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
 
 		/// <summary>
 		/// Constructor.
@@ -185,7 +177,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// This is the list of writing systems that can be enabled for this control. It should be either the Vernacular list
 		/// or Analysis list shown in the WritingSystemPropertiesDialog which are checked and unchecked.
 		/// </summary>
-		public List<IWritingSystem> WritingSystemOptions
+		public List<CoreWritingSystemDefinition> WritingSystemOptions
 		{
 			get
 			{
@@ -199,7 +191,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="fIncludeUncheckedActiveWss">if false, include only current wss,
 		/// if true, includes unchecked active wss.</param>
-		public List<IWritingSystem> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
+		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
 			CheckDisposed();
 			return m_innerView.GetWritingSystemOptions(fIncludeUncheckedActiveWss);
@@ -210,7 +202,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// are the writing systems the user has checked in the WritingSystemPropertiesDialog.
 		/// if null, we'll display every writing system option.
 		/// </summary>
-		public List<IWritingSystem> WritingSystemsToDisplay
+		public List<CoreWritingSystemDefinition> WritingSystemsToDisplay
 		{
 			get { return m_innerView.WritingSystemsToDisplay; }
 			set { m_innerView.WritingSystemsToDisplay = value; }
@@ -236,15 +228,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// If we're shutting down, this might return null
 		/// </summary>
-		IWritingSystem WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
+		CoreWritingSystemDefinition WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
 		{
 			int index = m_soundControls.IndexOf(sc);
 			wsIndex = -1;
-			foreach (var ws in m_innerView.WritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_innerView.WritingSystems)
 			{
 				wsIndex++;
-				var pws = ws as WritingSystemDefinition;
-				if (pws == null || !pws.IsVoice)
+				if (!ws.IsVoice)
 					continue;
 				if (index == 0)
 					return ws;
@@ -317,8 +308,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			foreach (var ws in m_innerView.WritingSystemsToDisplay)
 			{
 				index++;
-				var pws = ws as WritingSystemDefinition;
-				if (pws == null || !pws.IsVoice ||
+				if (!ws.IsVoice ||
 					MultiStringSelectionUtils.GetSelAtStartOfWs(m_innerView.RootBox, m_innerView.Flid, index, ws) == null)
 				{
 					continue;

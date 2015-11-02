@@ -11,25 +11,20 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
+using SIL.WritingSystems.Migration;
 
 // we can't use an exit code < -1 on Linux. However, this app won't work on Linux anyways
 // since we don't have MS SQL Server there.
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
 		Justification="Not intended to be run on Linux")]
-
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	/// ----------------------------------------------------------------------------------------
@@ -77,8 +72,9 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.
-			string globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
-			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration);
+			// TODO (WS_FIX): should we migrate all the way to version 3?
+			string globalWsFolder = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
+			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, 2);
 			globalMigrator.Migrate();
 
 			using (var threadHelper = new ThreadHelper())
@@ -165,12 +161,9 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			return projects;
 		}
 
-		internal static void NoteMigration(IEnumerable<LdmlVersion0MigrationStrategy.MigrationInfo> migrationInfo)
+		internal static void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
 		{
-			foreach (var info in migrationInfo)
-			{
-				// Do nothing here.
-			}
+			// Do nothing here.
 		}
 
 	}

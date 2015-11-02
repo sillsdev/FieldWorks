@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,11 +12,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.WritingSystems;
-using Palaso.WritingSystems.Collation;
-using Palaso.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.WritingSystems;
+using SIL.WritingSystems.Migration;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -145,7 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						string localPath = Path.Combine(localStoreFolder, ldmlFileName);
 						if (File.Exists(localPath))
 							continue; // already have one.
-						string globalPath = Path.Combine(DirectoryFinder.GlobalWritingSystemStoreDirectory, ldmlFileName);
+						string globalPath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ldmlFileName);
 						if (File.Exists(globalPath))
 							continue; // already have one.
 						// Need to make one.
@@ -477,7 +478,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					string sortRules = GetUnicode(collElem, "ICURules");
 					if (!string.IsNullOrEmpty(sortRules))
 					{
-						ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+						ws.SortUsing = Version19WritingSystemDefn.SortRulesType.CustomICU;
 						ws.SortRules = sortRules;
 					}
 				}
@@ -505,6 +506,29 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 	class Version19WritingSystemDefn
 	{
+		public enum SortRulesType
+		{
+			/// <summary>
+			/// Default Unicode ordering rules (actually CustomICU without any rules)
+			/// </summary>
+			[Description("Default Ordering")]
+			DefaultOrdering,
+			/// <summary>
+			/// Custom Simple (Shoebox/Toolbox) style rules
+			/// </summary>
+			[Description("Custom Simple (Shoebox style) rules")]
+			CustomSimple,
+			/// <summary>
+			/// Custom ICU rules
+			/// </summary>
+			[Description("Custom ICU rules")]
+			CustomICU,
+			/// <summary>
+			/// Use the sort rules from another language. When this is set, the SortRules are interpreted as a cultureId for the language to sort like.
+			/// </summary>
+			[Description("Same as another language")]
+			OtherLanguage
+		}
 
 		private XmlNamespaceManager _nameSpaceManager;
 
@@ -527,10 +551,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			set
 			{
 				m_langTag = value;
-				LanguageSubtag languageSubtag;
-				ScriptSubtag scriptSubtag;
-				RegionSubtag regionSubtag;
-				VariantSubtag variantSubtag;
+				Version19LanguageSubtag languageSubtag;
+				Version19ScriptSubtag scriptSubtag;
+				Version19RegionSubtag regionSubtag;
+				Version19VariantSubtag variantSubtag;
 				Version19LangTagUtils.GetSubtags(m_langTag, out languageSubtag, out scriptSubtag, out regionSubtag,
 					out variantSubtag);
 				ISO = (languageSubtag.IsPrivateUse? "x-" : "") + languageSubtag.Code;
@@ -544,7 +568,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		}
 		public string LanguageName;
 		public string Abbreviation;
-		public WritingSystemDefinition.SortRulesType SortUsing;
+		public SortRulesType SortUsing;
 		public string SortRules;
 		public string DefaultFontName;
 		public string ISO;
@@ -606,7 +630,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		private void WriteCollationsElement(XmlWriter writer)
 		{
-			if (SortUsing == WritingSystemDefinition.SortRulesType.DefaultOrdering)
+			if (SortUsing == SortRulesType.DefaultOrdering)
 			{
 				return;
 			}
@@ -614,13 +638,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			writer.WriteStartElement("collation");
 			switch (SortUsing)
 			{
-				case WritingSystemDefinition.SortRulesType.OtherLanguage:
+				case SortRulesType.OtherLanguage:
 					WriteCollationRulesFromOtherLanguage(writer);
 					break;
-				case WritingSystemDefinition.SortRulesType.CustomSimple:
+				case SortRulesType.CustomSimple:
 					WriteCollationRulesFromCustomSimple(writer);
 					break;
-				case WritingSystemDefinition.SortRulesType.CustomICU:
+				case SortRulesType.CustomICU:
 					WriteCollationRulesFromCustomICU(writer);
 					break;
 				default:
@@ -645,7 +669,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		private void WriteCollationRulesFromCustomSimple(XmlWriter writer)
 		{
-			string icu = SimpleRulesCollator.ConvertToIcuRules(SortRules ?? string.Empty);
+			var parser = new SimpleRulesParser();
+			string icu = parser.ConvertToIcuRules(SortRules ?? string.Empty);
 			WriteCollationRulesFromICUString(writer, icu);
 		}
 
@@ -658,7 +683,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			icu = icu ?? string.Empty;
 
-			IcuRulesParser parser = new IcuRulesParser(false);
+			var parser = new IcuRulesParser(false);
 			string message;
 			// avoid throwing exception, just don't save invalid data
 			if (!parser.ValidateIcuRules(icu, out message))
@@ -715,11 +740,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			writer.WriteEndElement();
 			WriteElementWithAttribute(writer, "generation", "date", String.Format("{0:s}", DateTime.Now));
 
-			bool copyFlexFormat = false;
-			string language = String.Empty;
-			string script = String.Empty;
-			string territory = String.Empty;
-			string variant = String.Empty;
 			WriteElementWithAttribute(writer, "language", "type", ISO);
 			if (!String.IsNullOrEmpty(Script))
 			{
@@ -736,6 +756,274 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			writer.WriteEndElement();
 		}
 	}
+
+	#region Subtag base class
+	/// <summary>
+	/// This class represents a subtag from the IANA language subtag registry.
+	/// </summary>
+	abstract class Version19Subtag
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Subtag"/> class.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="name">The name.</param>
+		/// <param name="isPrivateUse">if set to <c>true</c> this is a private use subtag.</param>
+		protected Version19Subtag(string code, string name, bool isPrivateUse)
+		{
+			Code = code;
+			Name = name;
+			IsPrivateUse = isPrivateUse;
+		}
+
+		/// <summary>
+		/// Gets the code.
+		/// </summary>
+		/// <value>The code.</value>
+		public string Code
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// Gets the name.
+		/// </summary>
+		/// <value>The name.</value>
+		public string Name
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is private use.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if this instance is private use; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsPrivateUse
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+		/// </summary>
+		/// <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+		/// </returns>
+		/// <exception cref="T:System.NullReferenceException">
+		/// The <paramref name="obj"/> parameter is null.
+		/// </exception>
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as Version19Subtag);
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="T:Subtag"/> is equal to this instance.
+		/// </summary>
+		/// <param name="other">The other.</param>
+		/// <returns></returns>
+		public bool Equals(Version19Subtag other)
+		{
+			if (other == null)
+				throw new NullReferenceException();
+
+			return other.Code == Code;
+		}
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+		/// </returns>
+		public override int GetHashCode()
+		{
+			return Code.GetHashCode();
+		}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents this instance.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.String"/> that represents this instance.
+		/// </returns>
+		public override string ToString()
+		{
+			if (!string.IsNullOrEmpty(Name))
+				return Name;
+			return Code;
+		}
+
+		/// <summary>
+		/// Compares the language subtags by name.
+		/// </summary>
+		/// <param name="x">The x.</param>
+		/// <param name="y">The y.</param>
+		/// <returns></returns>
+		public static int CompareByName(Version19Subtag x, Version19Subtag y)
+		{
+			if (x == null)
+			{
+				if (y == null)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+			}
+			else
+			{
+				if (y == null)
+				{
+					return 1;
+				}
+				else
+				{
+					return x.Name.CompareTo(y.Name);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="x">The x.</param>
+		/// <param name="y">The y.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator ==(Version19Subtag x, Version19Subtag y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+			if ((object)x == null || (object)y == null)
+				return false;
+			return x.Equals(y);
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="x">The x.</param>
+		/// <param name="y">The y.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(Version19Subtag x, Version19Subtag y)
+		{
+			return !(x == y);
+		}
+	}
+	#endregion
+
+	#region LanguageSubtag class
+	/// <summary>
+	/// This class represents a language from the IANA language subtag registry.
+	/// </summary>
+	class Version19LanguageSubtag : Version19Subtag
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:LanguageSubtag"/> class.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="name">The name.</param>
+		/// <param name="isPrivateUse">if set to <c>true</c> this is a private use subtag.</param>
+		/// <param name="iso3Code">The ISO 639-3 language code.</param>
+		public Version19LanguageSubtag(string code, string name, bool isPrivateUse, string iso3Code)
+			: base(code, name, isPrivateUse)
+		{
+			ISO3Code = iso3Code;
+		}
+
+		/// <summary>
+		/// Gets the ISO 639-3 language code.
+		/// </summary>
+		/// <value>The ISO 639-3 language code.</value>
+		public string ISO3Code
+		{
+			get;
+			private set;
+		}
+	}
+	#endregion
+
+	#region ScriptSubtag class
+	/// <summary>
+	/// This class represents a script from the IANA language subtag registry.
+	/// </summary>
+	class Version19ScriptSubtag : Version19Subtag
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ScriptSubtag"/> class.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="name">The name.</param>
+		/// <param name="isPrivateUse">if set to <c>true</c> this is a private use subtag.</param>
+		public Version19ScriptSubtag(string code, string name, bool isPrivateUse)
+			: base(code, name, isPrivateUse)
+		{
+		}
+	}
+	#endregion
+
+	#region RegionSubtag class
+	/// <summary>
+	/// This class represents a region from the IANA language subtag registry.
+	/// </summary>
+	class Version19RegionSubtag : Version19Subtag
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:RegionSubtag"/> class.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="name">The name.</param>
+		/// <param name="isPrivateUse">if set to <c>true</c> this is a private use subtag.</param>
+		public Version19RegionSubtag(string code, string name, bool isPrivateUse)
+			: base(code, name, isPrivateUse)
+		{
+		}
+	}
+	#endregion
+
+	#region VariantSubtag class
+	/// <summary>
+	/// This class represents a variant from the IANA language subtag registry.
+	/// </summary>
+	class Version19VariantSubtag : Version19Subtag
+	{
+		private readonly HashSet<string> m_prefixes = new HashSet<string>();
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:VariantSubtag"/> class.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="name">The name.</param>
+		/// <param name="isPrivateUse">if set to <c>true</c> this is a private use subtag.</param>
+		/// <param name="prefixes">The prefixes.</param>
+		public Version19VariantSubtag(string code, string name, bool isPrivateUse, IEnumerable<string> prefixes)
+			: base(code, name, isPrivateUse)
+		{
+			if (prefixes != null)
+				m_prefixes.UnionWith(prefixes);
+		}
+
+		/// <summary>
+		/// Gets the prefixes.
+		/// </summary>
+		/// <value>The prefixes.</value>
+		public IEnumerable<string> Prefixes
+		{
+			get
+			{
+				return m_prefixes;
+			}
+		}
+	}
+	#endregion
 
 	/// <summary>
 	/// Fragments we need of LangTagUtils, compatible with expectations for version 19.
@@ -845,7 +1133,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				languageCode = languageCode.Replace('8', 'i');
 			if (languageCode.Contains('9'))
 				languageCode = languageCode.Replace('9', 'j');
-			LanguageSubtag languageSubtag;
+			Version19LanguageSubtag languageSubtag;
 			if (languageCode == icuLanguageCode)
 			{
 				languageSubtag = GetLanguageSubtag(
@@ -854,26 +1142,26 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 			else
 			{
-				languageSubtag = new LanguageSubtag(languageCode, null, true, null);
+				languageSubtag = new Version19LanguageSubtag(languageCode, null, true, null);
 			}
 			if (icuLanguageCode == icuLocale)
 				return ToLangTag(languageSubtag, null, null, null);
 
 			string scriptCode;
 			Icu.GetScriptCode(icuLocale, out scriptCode, out err);
-			ScriptSubtag scriptSubtag = null;
+			Version19ScriptSubtag scriptSubtag = null;
 			if (!string.IsNullOrEmpty(scriptCode))
 				scriptSubtag = GetScriptSubtag(scriptCode);
 
 			string regionCode;
 			Icu.GetCountryCode(icuLocale, out regionCode, out err);
-			RegionSubtag regionSubtag = null;
+			Version19RegionSubtag regionSubtag = null;
 			if (!string.IsNullOrEmpty(regionCode))
 				regionSubtag = GetRegionSubtag(regionCode);
 
 			string variantCode;
 			Icu.GetVariantCode(icuLocale, out variantCode, out err);
-			VariantSubtag variantSubtag = null;
+			Version19VariantSubtag variantSubtag = null;
 			if (!string.IsNullOrEmpty(variantCode))
 			{
 				variantCode = TranslateVariantCode(variantCode, code =>
@@ -894,7 +1182,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <param name="regionSubtag">The region subtag.</param>
 		/// <param name="variantSubtag">The variant subtag.</param>
 		/// <returns></returns>
-		public static string ToLangTag(LanguageSubtag languageSubtag, ScriptSubtag scriptSubtag, RegionSubtag regionSubtag, VariantSubtag variantSubtag)
+		public static string ToLangTag(Version19LanguageSubtag languageSubtag, Version19ScriptSubtag scriptSubtag, Version19RegionSubtag regionSubtag, Version19VariantSubtag variantSubtag)
 		{
 			if (languageSubtag == null)
 				throw new ArgumentNullException("languageSubtag");
@@ -979,12 +1267,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// </summary>
 		/// <param name="code">The code.</param>
 		/// <returns></returns>
-		public static LanguageSubtag GetLanguageSubtag(string code)
+		public static Version19LanguageSubtag GetLanguageSubtag(string code)
 		{
 			if (string.IsNullOrEmpty(code))
 				throw new ArgumentNullException("code");
 
-			return new LanguageSubtag(code, null, !StandardTags.IsValidIso639LanguageCode(code), null);
+			return new Version19LanguageSubtag(code, null, !StandardSubtags.IsValidIso639LanguageCode(code), null);
 		}
 
 		/// <summary>
@@ -992,13 +1280,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// </summary>
 		/// <param name="code">The code.</param>
 		/// <returns></returns>
-		public static ScriptSubtag GetScriptSubtag(string code)
+		public static Version19ScriptSubtag GetScriptSubtag(string code)
 		{
 			if (string.IsNullOrEmpty(code))
 				throw new ArgumentNullException("code");
 
-			ScriptSubtag subtag;
-			return new ScriptSubtag(code, null, !StandardTags.IsStandardIso15924ScriptCode(code));
+			Version19ScriptSubtag subtag;
+			return new Version19ScriptSubtag(code, null, !StandardSubtags.RegisteredScripts.Contains(code));
 		}
 
 		/// <summary>
@@ -1006,13 +1294,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// </summary>
 		/// <param name="code">The code.</param>
 		/// <returns></returns>
-		public static RegionSubtag GetRegionSubtag(string code)
+		public static Version19RegionSubtag GetRegionSubtag(string code)
 		{
 			if (string.IsNullOrEmpty(code))
 				throw new ArgumentNullException("code");
 
-			RegionSubtag subtag;
-			return new RegionSubtag(code, null, !StandardTags.IsStandardIso3166Region(code));
+			Version19RegionSubtag subtag;
+			return new Version19RegionSubtag(code, null, !StandardSubtags.RegisteredRegions.Contains(code));
 		}
 
 		/// <summary>
@@ -1020,14 +1308,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// </summary>
 		/// <param name="code">The code.</param>
 		/// <returns></returns>
-		public static VariantSubtag GetVariantSubtag(string code)
+		public static Version19VariantSubtag GetVariantSubtag(string code)
 		{
 			if (string.IsNullOrEmpty(code))
 				throw new ArgumentNullException("code");
 
-			VariantSubtag subtag;
-			return new VariantSubtag(code, null,
-				!StandardTags.IsValidRegisteredVariant(code) && !s_specialNonPrivateVariants.Contains(code), null);
+			Version19VariantSubtag subtag;
+			return new Version19VariantSubtag(code, null,
+				!StandardSubtags.IsValidRegisteredVariantCode(code) && !s_specialNonPrivateVariants.Contains(code), null);
 		}
 
 		/// <summary>
@@ -1039,8 +1327,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <param name="regionSubtag">The region subtag.</param>
 		/// <param name="variantSubtag">The variant subtag.</param>
 		/// <returns></returns>
-		public static bool GetSubtags(string langTag, out LanguageSubtag languageSubtag, out ScriptSubtag scriptSubtag,
-			out RegionSubtag regionSubtag, out VariantSubtag variantSubtag)
+		public static bool GetSubtags(string langTag, out Version19LanguageSubtag languageSubtag, out Version19ScriptSubtag scriptSubtag,
+			out Version19RegionSubtag regionSubtag, out Version19VariantSubtag variantSubtag)
 		{
 			if (string.IsNullOrEmpty(langTag))
 				throw new ArgumentNullException("langTag");
@@ -1079,7 +1367,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 			else if (privateUseSubTag != null && part <= 0)
 			{
-				languageSubtag = new LanguageSubtag(privateUseSubTag, null, true, null);
+				languageSubtag = new Version19LanguageSubtag(privateUseSubTag, null, true, null);
 				privateUseSubTag = NextSubTag(privateUseSubTags, ref privateUseSubTagIndex, out privateUsePrefix);
 			}
 
@@ -1090,7 +1378,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 			else if (privateUseSubTag != null && part <= 1 && s_scriptPattern.IsMatch(privateUseSubTag))
 			{
-				scriptSubtag = privateUsePrefix ? new ScriptSubtag(privateUseSubTag, null, true) : GetScriptSubtag(privateUseSubTag);
+				scriptSubtag = privateUsePrefix ? new Version19ScriptSubtag(privateUseSubTag, null, true) : GetScriptSubtag(privateUseSubTag);
 				privateUseSubTag = NextSubTag(privateUseSubTags, ref privateUseSubTagIndex, out privateUsePrefix);
 			}
 
@@ -1136,7 +1424,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			variantCode = variantSb.ToString();
 			if (!string.IsNullOrEmpty(variantCode))
 			{
-				variantSubtag = variantPrivateUsePrefix ? new VariantSubtag(variantCode, null, true, null)
+				variantSubtag = variantPrivateUsePrefix ? new Version19VariantSubtag(variantCode, null, true, null)
 					: GetVariantSubtag(variantCode);
 			}
 			return true;

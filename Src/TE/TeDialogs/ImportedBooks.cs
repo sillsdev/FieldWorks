@@ -815,7 +815,7 @@ namespace SIL.FieldWorks.TE
 			StringBuilder strBldr = new StringBuilder();
 			foreach (int wsHvo in wsList)
 			{
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				try
 				{
 					ws = cache.ServiceLocator.WritingSystemManager.Get(wsHvo);

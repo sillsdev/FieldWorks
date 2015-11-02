@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
+using SIL.WritingSystems;
 using XCore;
 using SIL.CoreImpl;
 
@@ -52,8 +53,8 @@ namespace SIL.FieldWorks.IText
 		private void DoSetupFixture()
 		{
 			// setup default vernacular ws.
-			IWritingSystem wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
-			wsXkal.DefaultFontName = "Times New Roman";
+			CoreWritingSystemDefinition wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
+			wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(wsXkal);
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, wsXkal);
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();

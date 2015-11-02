@@ -8,14 +8,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Lexicon;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -538,14 +539,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (string.IsNullOrEmpty(wssStr))
 				return;
 
-			IWritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			foreach (string wsId in wssStr.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries))
 			{
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				wsManager.GetOrSet(wsId, out ws);
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "globalRepo disposed by SingletonsContainer")]
 		private void InitializeWritingSystemManager()
 		{
 			// if there is no project path specified, then just use the default memory-based manager.
@@ -553,16 +556,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.ProjectFolder))
 				return;
 
-			var globalStore = new GlobalFileWritingSystemStore();
+			var globalRepo = SingletonsContainer.Get<CoreGlobalWritingSystemRepository>();
 			string storePath = Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
-			var wsManager = (PalasoWritingSystemManager) m_cache.ServiceLocator.WritingSystemManager;
-			wsManager.GlobalWritingSystemStore = globalStore;
-			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
-			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
+			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
+
+			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, ProjectSettingsStore, UserSettingsStore, globalRepo);
 
 			// Writing systems are not "modified" when the system is freshly-initialized
-			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)
-				ws.Modified = false;
+			foreach (CoreWritingSystemDefinition ws in wsManager.WritingSystemStore.AllWritingSystems)
+				ws.AcceptChanges();
 		}
 
 		#region IDataSetup implementation
@@ -941,6 +943,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		// MySQL in particular gets confused if you monkey directly with file names,
 		// because each table is a separate file, and the database name is a directory.
 		public abstract bool RenameDatabase(string sNewBasename);
+
+		public abstract ISettingsStore ProjectSettingsStore { get; }
+		public abstract ISettingsStore UserSettingsStore { get; }
 
 		#endregion IDataSetup implementation
 

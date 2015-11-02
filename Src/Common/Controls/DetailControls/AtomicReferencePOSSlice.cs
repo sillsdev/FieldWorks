@@ -56,16 +56,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Constructor.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		/// // cache, obj, flid, node, persistenceProvider, stringTbl
 		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tree.WritingSystemCode = defAnalWs.Handle;
@@ -287,11 +284,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Constructor.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		/// // cache, obj, flid, node, persistenceProvider, stringTbl
 		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
 			: base(cache, obj, flid, mediator, propertyTable)
 		{

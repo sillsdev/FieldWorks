@@ -176,7 +176,7 @@
     <value>Writing System Properties</value>
     <comment>Message box header for error messages.</comment>
   </data>
-  <data name="kstidCantChangeUserWs" xml:space="preserve">
+  <data name="kstidCantChangeUserWS" xml:space="preserve">
     <value>You cannot change the full code "{0}" of the default user writing system.</value>
   </data>
   <data name="kstidNwsCaption" xml:space="preserve">
@@ -641,7 +641,7 @@ Do you want to remove English now?</value>
   <data name="ksWSPropGeneralWSname" xml:space="preserve">
     <value>This writing system for {0} is for:</value>
   </data>
-  <data name="kstidCantCreateDuplicateWs" xml:space="preserve">
+  <data name="kstidCantCreateDuplicateWS" xml:space="preserve">
     <value>The "{0}" writing system already exists. To distinguish the new writing system you are creating from "{0}", add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, "{0}", if it meets your needs.</value>
   </data>
   <data name="ksWsDefineNew" xml:space="preserve">

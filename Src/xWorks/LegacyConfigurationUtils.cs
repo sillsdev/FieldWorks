@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 					foreach(IReversalIndex ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
-						IWritingSystem ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+						CoreWritingSystemDefinition ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 						string sWsTag = ws.Id;
 						converter.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
 						// Create a copy of the layoutType node for the specific writing system.

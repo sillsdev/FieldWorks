@@ -15,10 +15,10 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private FontFeaturesButton m_defaultFontFeaturesButton;
 		private HelpProvider m_helpProvider;
 
-		private IWritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private CheckBox m_enableGraphiteCheckBox;
 		private GroupBox m_graphiteGroupBox;
 		#endregion
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// from which they will be initialized.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IWritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
 			{
@@ -292,13 +292,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (oldFont != m_defaultFontComboBox.Text)
 			{
 				// Finding a font missing should not result in persisting a font name change
-				if(String.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
+				if (string.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
 				{
-					m_ws.DefaultFontName = m_defaultFontComboBox.Text;
+					FontDefinition font;
+					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out font))
+						font = new FontDefinition(m_defaultFontComboBox.Text);
+					m_ws.DefaultFont = font;
 				}
-				m_ws.DefaultFontFeatures = "";
 				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
-				m_defaultFontFeaturesButton.FontFeatures = "";
+				m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
 
 				bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 				m_graphiteGroupBox.Enabled = isGraphiteFont;
@@ -319,7 +321,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (m_ws == null)
 				return;
-			m_ws.DefaultFontFeatures = m_defaultFontFeaturesButton.FontFeatures;
+			m_ws.DefaultFont.Features = m_defaultFontFeaturesButton.FontFeatures;
 		}
 
 		private void m_enableGraphiteCheckBox_Click(object sender, EventArgs e)

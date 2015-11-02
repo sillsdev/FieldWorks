@@ -10,7 +10,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
@@ -21,7 +20,6 @@ using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using System.Diagnostics.CodeAnalysis;
@@ -806,7 +804,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
-			AddDefaultWordformingOverridesIfNeeded();
 
 			// The try-catch block is modeled after that used by TeScrInitializer.Initialize(),
 			// as the suggestion for fixing LT-8797.
@@ -823,37 +820,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		/// Adds the default word-forming character overrides to the list of valid
-		/// characters for each vernacular writing system that is using the old
-		/// valid characters representation.
-		/// </summary>
-		private void AddDefaultWordformingOverridesIfNeeded()
-		{
-			foreach (IWritingSystem wsObj in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-			{
-				string validCharsSrc = wsObj.ValidChars;
-				if (!ValidCharacters.IsNewValidCharsString(validCharsSrc))
-				{
-					ValidCharacters valChars = ValidCharacters.Load(wsObj, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-					valChars.AddDefaultWordformingCharOverrides();
-					wsObj.ValidChars = valChars.XmlString;
-				}
-			}
-			Cache.ServiceLocator.WritingSystemManager.Save();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a ValidCharacters load exception.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, SettingsKey, SupportEmailAddress);
 		}
 
 		/// <summary>

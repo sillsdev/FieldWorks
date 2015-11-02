@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var window = m_propertyTable.GetValue<FwXWindow>("window");
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
-			IWritingSystem wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;
 		}

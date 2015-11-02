@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected RealDataCache m_cache;
 
 		/// <summary>Writing System Manager (reset for each test)</summary>
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		/// <summary>Id of English Writing System (reset for each test)</summary>
 		internal protected int m_wsEng;
 
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (m_wsManager != null)
 				throw new ApplicationException("m_wsManager was not null");
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 			m_cache.WritingSystemFactory = m_wsManager;
 			m_wsEng = m_wsManager.Set("en").Handle;
 			m_wsFr = m_wsManager.Set("fr").Handle;

@@ -17,6 +17,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -776,7 +777,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (collection.Flid == LexSenseTags.kflidSemanticDomains)
 						senses.Add(collection.MainObject as ILexSense);
 				}
-				var collator = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs).Collator;
+				ICollator collator = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs).DefaultCollation.Collator;
 				// they need to be sorted, at least for the classified dictionary view.
 				senses.Sort((x, y) => collator.Compare(((LexSense)x).OwnerOutlineName.Text ?? "", ((LexSense)y).OwnerOutlineName.Text ?? ""));
 				return senses;
@@ -1525,7 +1526,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			switch (multiAltFlid)
@@ -2684,7 +2685,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (parentFsType == null)
 				{
 					// do not have any real values for abbrev, name, or description.  Just use the abbreviation
-					foreach (IWritingSystem ws in Services.WritingSystems.AnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 					{
 						var tss = m_cache.TsStrFactory.MakeString(type, ws.Handle);
 						fst.Abbreviation.set_String(ws.Handle, tss);
@@ -3437,7 +3438,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="sName"></param>
 		public void SimpleInit(string sAbbrev, string sName)
 		{
-			foreach (IWritingSystem ws in Services.WritingSystems.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 			{
 				Abbreviation.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sAbbrev, ws.Handle));
 				if (ws.Id == "en")
@@ -4343,7 +4344,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="originalValue"></param>
 		/// <param name="newValue"></param>
 		/// ------------------------------------------------------------------------------------
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == SegmentTags.kflidFreeTranslation)

@@ -3,15 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -47,9 +40,9 @@ namespace SIL.FieldWorks.XWorks
 			m_writingSystemsListBox.SelectedIndex = 0;
 		}
 
-		private object CreateItemForWs(CoreImpl.IWritingSystem xws)
+		private object CreateItemForWs(CoreImpl.CoreWritingSystemDefinition xws)
 		{
-			return new Item() {Label = xws.DisplayLabel, Ws = xws.Handle};
+			return new Item {Label = xws.DisplayLabel, Ws = xws.Handle};
 		}
 
 		public int SelectedWs

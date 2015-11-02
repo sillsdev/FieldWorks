@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Palaso.Linq;
+using SIL.Linq;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 using SIL.FieldWorks.FDO;

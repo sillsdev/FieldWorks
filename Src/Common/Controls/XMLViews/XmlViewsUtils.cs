@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// REVIEW (EberhardB/TimS): this probably won't work with different databases that have
 		/// different default ws!
 		/// </summary>
-		static protected IWritingSystem s_qwsCurrent = null;
+		static protected CoreWritingSystemDefinition s_qwsCurrent = null;
 		/// <summary></summary>
 		static protected int s_cwsMulti = 0;	// count of current ws alternatives.
 		/// <summary></summary>
@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return items.Length;
 		}
 
-		internal static string DisplayWsLabel(IWritingSystem ws, FdoCache cache)
+		internal static string DisplayWsLabel(CoreWritingSystemDefinition ws, FdoCache cache)
 		{
 			if (ws == null)
 				return "";
@@ -673,7 +673,7 @@ namespace SIL.FieldWorks.Common.Controls
 					continue; // doesn't even count as 'first'
 				if (fLabel)
 				{
-					IWritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+					CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 					result += DisplayWsLabel(wsObj, cache);
 				}
 				if (fFirst)

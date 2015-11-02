@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Ionic.Zip;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			// setup style sheet and style to allow the css to generate during the PublishToWebonaryController driven export
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+			m_owningTable = new StyleInfoTable("AbbySomebody", (WritingSystemManager) Cache.WritingSystemFactory);
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = CssGenerator.LetterHeadingStyleName, IsParagraphStyle = false };
 			m_styleSheet.Styles.Add(style);

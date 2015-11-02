@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
+				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.LanguageTag) };
 				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, propertyTable));
 				styleSheet.Rules.Add(wsRule);
 			}
@@ -77,15 +77,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (aws.RFC5646.Contains("audio"))
+				if (aws.LanguageTag.Contains("audio"))
 				{
-					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.RFC5646)};
+					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.LanguageTag)};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
 						Term = new PrimitiveTerm(UnitType.String, "\uD83D\uDD0A")
 					});
 					styleSheet.Rules.Add(wsaudioRule);
-					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.RFC5646)};
+					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.LanguageTag)};
 					wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
 					{
 						Term = new PrimitiveTerm(UnitType.Attribute, "none")

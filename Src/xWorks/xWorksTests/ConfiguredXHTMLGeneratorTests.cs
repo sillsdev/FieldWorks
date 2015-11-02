@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.TestUtilities;
+using SIL.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.IO;
 using SIL.Utils;
 using XCore;
 
@@ -2520,7 +2521,7 @@ namespace SIL.FieldWorks.XWorks
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
 				Assert.IsTrue(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
-				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
 			}
 			File.Delete(filePath);
 		}
@@ -2556,7 +2557,7 @@ namespace SIL.FieldWorks.XWorks
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
 				Assert.IsFalse(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
-				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
 			}
 		}
 
@@ -2623,7 +2624,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
 				File.Delete(filePath1);
 				File.Delete(filePath2);
 			}
@@ -2674,7 +2675,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
 				File.Delete(fileName);
 			}
 		}
@@ -3120,7 +3121,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_WsAudiowithHyperlink()
 		{
-			IWritingSystem wsEnAudio;
+			CoreWritingSystemDefinition wsEnAudio;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
 			var headwordNode = new ConfigurableDictionaryNode
@@ -3251,9 +3252,9 @@ namespace SIL.FieldWorks.XWorks
 			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
+				cache.WritingSystemFactory.get_Engine("en") as CoreWritingSystemDefinition);
 			cache.LangProject.AddToCurrentVernacularWritingSystems(
-				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
+				cache.WritingSystemFactory.get_Engine("fr") as CoreWritingSystemDefinition);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = cache.WritingSystemFactory.GetWsFromStr("Fr");
 			AddHeadwordToEntry(entry, "Citation", wsFr, cache);

@@ -25,10 +25,8 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
-using Palaso.IO;
-using Palaso.Reporting;
-using Palaso.UI.WindowsForms.HtmlBrowser;
-using Palaso.UI.WindowsForms.Keyboarding;
+using SIL.IO;
+using SIL.Windows.Forms.HtmlBrowser;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -46,17 +44,20 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
+using SIL.Reporting;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using SIL.Windows.Forms.Keyboarding;
 using XCore;
 using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
-using SIL.CoreImpl.Properties;
 using FileUtils = SIL.Utils.FileUtils;
-#if !__MonoCS__
+#if __MonoCS__
+using SIL.Keyboarding;
+#else
 using NetSparkle;
 #endif
 
@@ -248,12 +249,12 @@ namespace SIL.FieldWorks
 
 				s_ui = new FwFdoUI(GetHelpTopicProvider(), s_threadHelper);
 
-				if (Settings.Default.CallUpgrade)
+				if (CoreImpl.Properties.Settings.Default.CallUpgrade)
 				{
-					Settings.Default.Upgrade();
-					Settings.Default.CallUpgrade = false;
+					CoreImpl.Properties.Settings.Default.Upgrade();
+					CoreImpl.Properties.Settings.Default.CallUpgrade = false;
 				}
-				var reportingSettings = Settings.Default.Reporting;
+				var reportingSettings = CoreImpl.Properties.Settings.Default.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -261,7 +262,7 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					CoreImpl.Properties.Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
@@ -284,7 +285,7 @@ namespace SIL.FieldWorks
 						);
 					// Init updates various things in the ReportingSettings, such as the number of times
 					// the application has been launched and the 'previous' version.
-					Settings.Default.Save();
+					CoreImpl.Properties.Settings.Default.Save();
 				}
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
@@ -403,15 +404,15 @@ namespace SIL.FieldWorks
 		/// </remarks>
 		private static void UglyHackForXkbIndicator()
 		{
-			foreach (var ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				SetKeyboardForWs(ws.Handle);
-			Palaso.WritingSystems.Keyboard.Controller.ActivateDefaultKeyboard();
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 		private static void SetKeyboardForWs(int ws)
 		{
-			var palasoWs = ((IWritingSystemManager)s_cache.WritingSystemFactory).Get(ws) as Palaso.WritingSystems.IWritingSystemDefinition;
-			if (palasoWs != null && palasoWs.LocalKeyboard != null)
-				palasoWs.LocalKeyboard.Activate();
+			CoreWritingSystemDefinition wsObj = s_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			if (wsObj != null && wsObj.LocalKeyboard != null)
+				wsObj.LocalKeyboard.Activate();
 		}
 #endif
 
@@ -1534,7 +1535,7 @@ namespace SIL.FieldWorks
 			s_projectId.Path = s_cache.ProjectId.Path;
 			// Update the path in the writing system manager so that it won't crash trying to
 			// write to a nonexistent folder.
-			var manager = s_cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager manager = s_cache.ServiceLocator.WritingSystemManager;
 			manager.LocalStoreFolder = Path.Combine(s_projectId.ProjectFolder, "WritingSystemStore");
 		}
 		#endregion
@@ -2925,13 +2926,13 @@ namespace SIL.FieldWorks
 						return true;
 
 					// Initialize NetSparkle to check for updates:
-					Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
+					CoreImpl.Properties.Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
 
-					var appCastUrl = Settings.Default.IsBTE
-						? (Settings.Default.CheckForBetaUpdates
+					var appCastUrl = CoreImpl.Properties.Settings.Default.IsBTE
+						? (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-						: (Settings.Default.CheckForBetaUpdates
+						: (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
 
@@ -2944,7 +2945,7 @@ namespace SIL.FieldWorks
 								args.Cancel = true;
 							}
 						};
-					if (Settings.Default.AutoCheckForUpdates)
+					if (CoreImpl.Properties.Settings.Default.AutoCheckForUpdates)
 						sparkle.CheckOnFirstApplicationIdle();
 #endif
 					return true;
@@ -3450,7 +3451,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
-			ErrorReporter.AddProperty("OSRelease", Palaso.Reporting.ErrorReport.GetOperatingSystemLabel());
+			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
 			if (MiscUtils.IsUnix)
 			{
 				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");

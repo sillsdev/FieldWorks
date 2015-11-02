@@ -8,12 +8,11 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using IBusDotNet;
-using Palaso.UI.WindowsForms.Extensions;
-using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
+using SIL.Windows.Forms.Keyboarding.Linux;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="AssociatedSimpleRootSite is a reference")]
-	public class IbusRootSiteEventHandler: IIbusEventHandler
+	public class IbusRootSiteEventHandler : IIbusEventHandler
 	{
 		/// <summary>
 		/// Initializes a new instance of the
@@ -414,7 +413,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnCommitText(ibusText));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnCommitText(ibusText));
 				return;
 			}
 
@@ -435,7 +434,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnUpdatePreeditText(obj, cursorPos));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnUpdatePreeditText(obj, cursorPos));
 				return;
 			}
 
@@ -539,7 +538,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnDeleteSurroundingText(offset, nChars));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnDeleteSurroundingText(offset, nChars));
 				return;
 			}
 
@@ -592,7 +591,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(OnHidePreeditText);
+				AssociatedSimpleRootSite.InvokeAsync(OnHidePreeditText);
 				return;
 			}
 
@@ -617,7 +616,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnIbusKeyPress(keySym, scanCode, index));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnIbusKeyPress(keySym, scanCode, index));
 				return;
 			}
 			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)

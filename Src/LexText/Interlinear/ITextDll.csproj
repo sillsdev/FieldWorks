@@ -163,9 +163,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Machine.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -370,7 +382,9 @@
     <Compile Include="InterlinDocChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="InterlinearExportDialog.cs" />
+    <Compile Include="InterlinearExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InterlinearExporter.cs" />
     <Compile Include="InterlinearImportDlg.cs">
       <SubType>Form</SubType>
@@ -400,9 +414,15 @@
     <Compile Include="InterlinDocRootSiteBase.Designer.cs">
       <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMaster.cs" />
-    <Compile Include="InterlinMasterNoTitleBar.cs" />
-    <Compile Include="InterlinMasterNoTitleContent.cs" />
+    <Compile Include="InterlinMaster.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterlinMasterNoTitleBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterlinMasterNoTitleContent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InterlinPrintView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -421,7 +441,9 @@
     <Compile Include="InterlinMaster.Designer.cs">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMasterBase.cs" />
+    <Compile Include="InterlinMasterBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InterlinViewDataCache.cs" />
     <Compile Include="ITextStrings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -11,9 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using ECInterfaces;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using Sfm2Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -354,10 +350,10 @@ namespace SIL.FieldWorks.IText
 			Assert.That(output[1], Is.EqualTo("unterminated"));
 		}
 
-		private PalasoWritingSystemManager GetWsf()
+		private WritingSystemManager GetWsf()
 		{
-			var wsf = new PalasoWritingSystemManager();
-			IWritingSystem wsObj;
+			var wsf = new WritingSystemManager();
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -378,10 +374,9 @@ namespace SIL.FieldWorks.IText
 			return mappings;
 		}
 
-		private void EnsureQuoteAndHyphenWordForming(IWritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -397,7 +392,7 @@ namespace SIL.FieldWorks.IText
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		private void VerifyText(XElement phrase, string[] items, HashSet<string> punctItems, string lang)

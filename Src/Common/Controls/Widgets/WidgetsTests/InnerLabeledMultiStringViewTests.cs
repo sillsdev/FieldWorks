@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		public void Setup()
 		{
 			m_tss = TsStringSerializer.DeserializeTsStringFromXml("<AStr ws='en-US'><Run ws='en-US'>English</Run><Run ws='fr'>french</Run><Run ws='en-US'>English</Run></AStr>",
-				Cache.ServiceLocator.GetInstance<IWritingSystemManager>());
+				Cache.ServiceLocator.GetInstance<WritingSystemManager>());
 		}
 
 		[Test]

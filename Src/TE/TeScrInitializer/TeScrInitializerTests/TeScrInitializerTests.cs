@@ -10,15 +10,12 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -175,7 +172,6 @@ namespace SIL.FieldWorks.TE
 			TeScrInitializer scrInit = new TestTeScrInitializer(Cache);
 			Assert.IsNull(ReflectionHelper.GetResult(scrInit, "FixOrcsWithoutProps"));
 
-			VerifyNoOrphanedFootnotes();
 			VerifyResourceForFixedOrphans();
 			Assert.AreEqual(0, exodus.FootnotesOS.Count);
 		}
@@ -196,7 +192,6 @@ namespace SIL.FieldWorks.TE
 			TeScrInitializer scrInit = new TestTeScrInitializer(Cache);
 			Assert.IsNull(ReflectionHelper.GetResult(scrInit, "FixOrcsWithoutProps"));
 
-			VerifyNoOrphanedFootnotes();
 			VerifyResourceForFixedOrphans();
 			Assert.AreEqual(2, exodus.FootnotesOS.Count);
 		}
@@ -298,7 +293,6 @@ namespace SIL.FieldWorks.TE
 			TeScrInitializer scrInit = new TestTeScrInitializer(Cache);
 			List<string> report = (List<string>)ReflectionHelper.GetResult(scrInit, "FixOrcsWithoutProps");
 
-			VerifyNoOrphanedFootnotes();
 			VerifyResourceForFixedOrphans();
 
 			Assert.AreEqual(1, report.Count);
@@ -334,7 +328,6 @@ namespace SIL.FieldWorks.TE
 			TeScrInitializer scrInit = new TestTeScrInitializer(Cache);
 			List<string> report = (List<string>)ReflectionHelper.GetResult(scrInit, "FixOrcsWithoutProps");
 
-			VerifyNoOrphanedFootnotes();
 			VerifyResourceForFixedOrphans();
 
 			Assert.AreEqual(1, report.Count);
@@ -452,10 +445,10 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fMakeOrphan">Flag indicating whether to make this footnote into an
 		/// "orphan" be clearing the properties of the ORC.</param>
 		/// ------------------------------------------------------------------------------------
-		private IStFootnote CreateFootnote(IScrBook book, int iSection, int iPara, int iFootnote,
+		private void CreateFootnote(IScrBook book, int iSection, int iPara, int iFootnote,
 			int ichOrc, string sStyle, bool fMakeOrphan)
 		{
-			return CreateFootnote(book, book.SectionsOS[iSection].ContentOA, iPara, iFootnote,
+			CreateFootnote(book, book.SectionsOS[iSection].ContentOA, iPara, iFootnote,
 				ichOrc, sStyle, fMakeOrphan);
 		}
 
@@ -475,7 +468,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fMakeOrphan">Flag indicating whether to make this footnote into an
 		/// "orphan" by clearing the properties of the ORC.</param>
 		/// ------------------------------------------------------------------------------------
-		private IStFootnote CreateFootnote(IScrBook book, IStText text, int iPara, int iFootnote,
+		private void CreateFootnote(IScrBook book, IStText text, int iPara, int iFootnote,
 			int ichOrc, string sStyle, bool fMakeOrphan)
 		{
 			IScrTxtPara scrPara = (IScrTxtPara)text.ParagraphsOS[iPara];
@@ -489,7 +482,6 @@ namespace SIL.FieldWorks.TE
 				bldr.SetProperties(ichOrc, ichOrc + 1, TsStringUtils.PropsForWs(Cache.DefaultVernWs));
 				scrPara.Contents = bldr.GetString();
 			}
-			return footnote;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -507,46 +499,6 @@ namespace SIL.FieldWorks.TE
 				resource.Version == CmResourceTags.kguidFixedOrphanedFootnotes);
 			}
 			Assert.IsTrue(fResourceWasInserted);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Verifies that all footnotes correspond to exactly one ORC in the vernacular
-		/// Scripture and that they are in the same order as they occur in Scripture.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void VerifyNoOrphanedFootnotes()
-		{
-			ScrChecksDataSource scrData = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			foreach (IScrBook book in m_scr.ScriptureBooksOS)
-			{
-				using (IEnumerator<IScrFootnote> footnotes = book.FootnotesOS.GetEnumerator())
-				{
-					IStFootnote currentFootnote = (footnotes.MoveNext() ? footnotes.Current : null);
-
-					scrData.GetText(book.CanonicalNum, 0);
-					foreach (ITextToken tok in scrData.TextTokens())
-					{
-						if (tok.TextType == TextType.Note)
-						{
-							if (tok.IsNoteStart)
-							{
-								Assert.IsNotNull(currentFootnote, "No more footnotes were expected in " + book.BestUIName);
-								Assert.IsTrue(((IStTxtPara)currentFootnote.ParagraphsOS[0]).Contents.Text.StartsWith(tok.Text),
-									"Footnote ORC does not match next footnote in sequence (mismatched text)");
-								Assert.AreEqual(currentFootnote.ParagraphsOS[0].StyleName, tok.ParaStyleName,
-									"Footnote ORC does not match next footnote in sequence (mismatched style)");
-								currentFootnote = (footnotes.MoveNext() ? footnotes.Current : null);
-							}
-						}
-						else
-						{
-							Assert.IsFalse(tok.Text.Contains(StringUtils.kszObject));
-						}
-					}
-					Assert.IsNull(currentFootnote);
-				}
-			}
 		}
 		#endregion
 		#endregion

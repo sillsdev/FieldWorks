@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
+using SIL.IO;
 #if __MonoCS__
 using Mono.Unix.Native;
 #endif
@@ -123,8 +124,8 @@ namespace SIL.Utils
 		[Test]
 		public void AreFilesIdentical_DifferentFilesOfDifferentSizeAreDifferent()
 		{
-			using(var file1 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
-			using(var file2 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
 			{
 				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
 				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3, 0x4 }), Encoding.UTF8);
@@ -135,8 +136,8 @@ namespace SIL.Utils
 		[Test]
 		public void AreFilesIdentical_DifferentFilesOfSameSizeAreDifferent()
 		{
-			using(var file1 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
-			using(var file2 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
 			{
 				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
 				m_fileOs.AddFile(file2.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x4 }), Encoding.UTF8);
@@ -147,8 +148,8 @@ namespace SIL.Utils
 		[Test]
 		public void AreFilesIdentical_TwoFilesWithSameContentAreIdentical()
 		{
-			using(var file1 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
-			using(var file2 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
 			{
 				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
 				Thread.Sleep(1001);
@@ -160,8 +161,8 @@ namespace SIL.Utils
 		[Test]
 		public void AreFilesIdentical_SameFilesWithDifferentCreationTimeAreIdentical()
 		{
-			using(var file1 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
-			using(var file2 = Palaso.IO.TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
+			using(var file1 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file1"))
+			using(var file2 = TempFile.WithFilenameInTempFolder("AreFilesIdentical.file2"))
 			{
 				m_fileOs.AddFile(file1.Path, Encoding.UTF8.GetString(new byte[] { 0x1, 0x2, 0x3 }), Encoding.UTF8);
 				Thread.Sleep(1001);

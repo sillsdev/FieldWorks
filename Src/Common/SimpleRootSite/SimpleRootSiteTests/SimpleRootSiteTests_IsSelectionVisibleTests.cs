@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
+	[InitializeRealKeyboardController]
 	public class IsSelectionVisibleTests: ScrollTestsBase
 	{
 		/// ------------------------------------------------------------------------------------

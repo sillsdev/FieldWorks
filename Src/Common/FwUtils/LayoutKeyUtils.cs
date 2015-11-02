@@ -4,7 +4,7 @@
 
 using System.Text.RegularExpressions;
 using System.Xml;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

@@ -7,20 +7,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Palaso.Reporting;
 using SIL.Archiving;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using L10NSharp;
-using Palaso.UI.WindowsForms.PortableSettingsProvider;
 using System.Collections.Generic;
 using System;
-using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.Reporting;
+using SIL.Windows.Forms.PortableSettingsProvider;
 using XCore;
 using SIL.CoreImpl;
+using SIL.Keyboarding;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.XWorks.Archiving
 {
@@ -62,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
-			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager wsMgr = cache.ServiceLocator.WritingSystemManager;
 			var appName = thisapp.ApplicationName;
 			var title = cache.LanguageProject.ShortName;
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
@@ -109,7 +110,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			// create the dialog
 			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
-			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, propertyTable))
+			using (var reportingAdapter = new SilErrorReportingAdapter(dlg, propertyTable))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
 				dlg.ShowDialog(owner);
@@ -154,7 +155,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// ------------------------------------------------------------------------------------
 		private void AddMetsPairs(RampArchivingDlgViewModel model, string fieldWorksVersion, FdoCache cache)
 		{
-			IWritingSystemManager wsManager = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager wsManager = cache.ServiceLocator.WritingSystemManager;
 			var wsDefaultVern = wsManager.Get(cache.DefaultVernWs);
 			var vernIso3Code = wsDefaultVern.GetIso3Code();
 
@@ -188,7 +189,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				var iso3Code = ws.GetIso3Code();
 
 				if (!string.IsNullOrEmpty(iso3Code))
-					contentLanguages.Add(new ArchivingLanguage(iso3Code, ws.LanguageSubtag.Name));
+					contentLanguages.Add(new ArchivingLanguage(iso3Code, ws.Language.Name));
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);
@@ -253,20 +254,17 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// Returns true if the writing system has an active keyman keyboard
 		/// </summary>
 		/// <remarks>Internal for testing, uses reflection to identify a keyboard as keyman</remarks>
-		internal static bool DoesWritingSystemUseKeyman(IWritingSystem ws)
+		internal static bool DoesWritingSystemUseKeyman(CoreWritingSystemDefinition ws)
 		{
-			if(Palaso.PlatformUtilities.Platform.IsLinux) // Keyman is not required on linux
+			if (Platform.IsLinux) // Keyman is not required on linux
 				return false;
-			var palasoWs = ws as PalasoWritingSystem;
-			if(palasoWs != null && palasoWs.KnownKeyboards.Any())
+			if (ws.KnownKeyboards.Any())
 			{
-				var keyboardingAssembly = Assembly.GetAssembly(typeof(KeyboardDescription));
-				var keymanType = keyboardingAssembly.GetType("Palaso.UI.WindowsForms.Keyboarding.Windows.KeymanKeyboardDescription");
-				foreach(var keyboard in palasoWs.KnownKeyboards)
+				foreach (IKeyboardDefinition keyboard in ws.KnownKeyboards)
 				{
-					if(!keyboard.IsAvailable)
+					if (!keyboard.IsAvailable)
 						continue;
-					if(keymanType.IsInstanceOfType(keyboard))
+					if (keyboard.Format == KeyboardFormat.CompiledKeyman || keyboard.Format == KeyboardFormat.Keyman)
 					{
 						return true;
 					}

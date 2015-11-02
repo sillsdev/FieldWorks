@@ -4,8 +4,8 @@
 
 using System;
 using NUnit.Framework;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {
@@ -27,12 +27,12 @@ namespace SIL.Utils.Attributes
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
-
 			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
 			if (Keyboard.Controller != null)
 				Keyboard.Controller.Dispose();
 
-			Keyboard.Controller = new NoOpKeyboardController();
+			KeyboardController.Initialize(new DummyKeyboardAdaptor());
+
 		}
 
 		/// <summary>
@@ -41,9 +41,10 @@ namespace SIL.Utils.Attributes
 		public override void AfterTest(TestDetails testDetails)
 		{
 			// Shut down (and implicitly dispose) the keyboard controller we created.
-			KeyboardController.Shutdown();
 
 			base.AfterTest(testDetails);
+			KeyboardController.Shutdown();
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 	}
 }

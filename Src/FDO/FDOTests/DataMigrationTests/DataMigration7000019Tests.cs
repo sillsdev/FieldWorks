@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		{
 			string storePath = Path.Combine(Path.GetTempPath(), FdoFileHelper.ksWritingSystemsDir);
 			PrepareStore(storePath);
-			string globalStorePath = DirectoryFinder.GlobalWritingSystemStoreDirectory;
+			string globalStorePath = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
 			PrepareStore(globalStorePath);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000019Tests.xml");
@@ -108,33 +108,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			DomainObjectDTO styleDto = dtoRepos.AllInstancesWithSubclasses("StStyle").First();
 			XElement styleElem = XElement.Parse(styleDto.Xml);
 			Assert.AreEqual("<default font>", (string)styleElem.Element("Rules").Element("Prop").Attribute("fontFamily"));
-		}
-
-		private static void CheckWsProperty(IEnumerable<DomainObjectDTO> dtos, IWritingSystemManager wsManager)
-		{
-			foreach (DomainObjectDTO dto in dtos)
-			{
-				XElement elem = XElement.Parse(dto.Xml);
-				Assert.IsTrue(wsManager.Exists((string) elem.Element("WritingSystem")));
-			}
-		}
-
-		private static void CheckStringWsIds(IWritingSystemManager wsManager, DomainObjectDTO dto)
-		{
-			XElement objElem = XElement.Parse(dto.Xml);
-			foreach (XElement elem in objElem.Descendants())
-			{
-				switch (elem.Name.LocalName)
-				{
-					case "Run":
-					case "AStr":
-					case "AUni":
-						XAttribute wsAttr = elem.Attribute("ws");
-						if (wsAttr != null)
-							Assert.IsTrue(wsManager.Exists(wsAttr.Value));
-						break;
-				}
-			}
 		}
 
 		private static MockMDCForDataMigration SetupMdc()

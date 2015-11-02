@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 
 			// start building index
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
 				ITsString tss = m_tsf.MakeString(string.Empty, wsObj.Handle);
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
 				return;
 

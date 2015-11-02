@@ -669,37 +669,36 @@ namespace SIL.FieldWorks.IText
 			get { return true; }
 		}
 
-	} // end class InterlinTaggingChild
-
-	/// <summary>
-	/// Used for Text Tagging possibility menu items
-	/// </summary>
-	public class TagPossibilityMenuItem : ToolStripMenuItem
-	{
-		readonly ICmPossibility m_tagPoss;
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TagPossibilityMenuItem"/> class
-		/// used for context (right-click) menus.
+		/// Used for Text Tagging possibility menu items
 		/// </summary>
-		/// <param name="poss">
-		/// 	The possibility item.
-		/// </param>
-		public TagPossibilityMenuItem(ICmPossibility poss)
+		private class TagPossibilityMenuItem : ToolStripMenuItem
 		{
-			m_tagPoss = poss;
-		}
+			readonly ICmPossibility m_tagPoss;
 
-		public ICmPossibility Possibility
-		{
-			get { return m_tagPoss; }
-		}
+			/// <summary>
+			/// Initializes a new instance of the <see cref="TagPossibilityMenuItem"/> class
+			/// used for context (right-click) menus.
+			/// </summary>
+			/// <param name="poss">
+			/// 	The possibility item.
+			/// </param>
+			public TagPossibilityMenuItem(ICmPossibility poss)
+			{
+				m_tagPoss = poss;
+			}
 
-		public int HvoPoss
-		{
-			get { return m_tagPoss.Hvo; }
+			public ICmPossibility Possibility
+			{
+				get { return m_tagPoss; }
+			}
+
+			public int HvoPoss
+			{
+				get { return m_tagPoss.Hvo; }
+			}
 		}
-	}
+	} // end class InterlinTaggingChild
 
 	/// <summary>
 	/// Modifications of InterlinVc for showing TextTag possibilities.
@@ -737,7 +736,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetAnalysisRightToLeft()
 		{
-			IWritingSystem wsAnal = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition wsAnal = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			if (wsAnal != null)
 				m_fAnalRtl = wsAnal.RightToLeftScript;
 		}

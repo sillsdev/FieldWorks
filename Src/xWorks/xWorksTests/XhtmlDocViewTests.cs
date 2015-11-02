@@ -8,8 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using Palaso.IO;
+using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		[TestFixtureSetUp]
-		public new void FixtureSetup()
+		public override void FixtureInit()
 		{
 			Init();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");

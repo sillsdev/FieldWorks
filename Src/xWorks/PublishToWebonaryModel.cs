@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using SIL.CoreImpl.Properties;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -96,12 +95,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadFromSettings()
 		{
-			if(!string.IsNullOrEmpty(Settings.Default.WebonaryPass))
+			if(!string.IsNullOrEmpty(CoreImpl.Properties.Settings.Default.WebonaryPass))
 			{
 				RememberPassword = true;
-				Password = DecryptPassword(Settings.Default.WebonaryPass);
+				Password = DecryptPassword(CoreImpl.Properties.Settings.Default.WebonaryPass);
 			}
-			UserName = Settings.Default.WebonaryUser;
+			UserName = CoreImpl.Properties.Settings.Default.WebonaryUser;
 			if(PropertyTable != null)
 			{
 				SiteName = PropertyTable.GetStringProperty(WebonarySite, null);
@@ -113,8 +112,8 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void SaveToSettings()
 		{
-			Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
-			Settings.Default.WebonaryUser = UserName;
+			CoreImpl.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
+			CoreImpl.Properties.Settings.Default.WebonaryUser = UserName;
 
 			PropertyTable.SetProperty(WebonarySite, SiteName, false);
 			PropertyTable.SetPropertyPersistence(WebonarySite, true);
@@ -131,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 				PropertyTable.SetPropertyPersistence(WebonaryPublication, true);
 			}
 			PropertyTable.SaveGlobalSettings();
-			Settings.Default.Save();
+			CoreImpl.Properties.Settings.Default.Save();
 		}
 
 		/// <summary>

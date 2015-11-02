@@ -58,6 +58,14 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -76,12 +84,6 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms">
-      <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
@@ -97,8 +99,8 @@
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ColorUtilTests.cs" />
+    <Compile Include="DummyKeyboardAdaptor.cs" />
     <Compile Include="FileUtilsTest.cs" />
-    <Compile Include="GlobalMutexTests.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />
     <Compile Include="MiscUtilsTests.cs" />
@@ -116,7 +118,6 @@
     <Compile Include="DisposableObjectsSetTests.cs" />
     <None Include="App.config" />
     <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
-    <Compile Include="NoOpKeyboardController.cs" />
     <Compile Include="Attributes\InitializeNoOpKeyboardControllerAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

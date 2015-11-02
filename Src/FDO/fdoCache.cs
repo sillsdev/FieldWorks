@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.FDO
 			if (!string.IsNullOrEmpty(userWsIcuLocale))
 			{
 				IFdoServiceLocator servLoc = createdCache.ServiceLocator;
-				IWritingSystem wsUser;
+				CoreWritingSystemDefinition wsUser;
 				servLoc.WritingSystemManager.GetOrSet(userWsIcuLocale, out wsUser);
 				servLoc.WritingSystemManager.UserWritingSystem = wsUser;
 			}
@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.FDO
 				DataStoreInitializationServices.PrepareCache(this));
 		}
 
-		private static string WsNamesToString(IEnumerable<IWritingSystem> writingSystems)
+		private static string WsNamesToString(IEnumerable<CoreWritingSystemDefinition> writingSystems)
 		{
 			var result = new StringBuilder();
 			foreach (var ws in writingSystems)
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.FDO
 			return result.ToString();
 		}
 
-		private static void SaveOnlyLocalWritingSystems(IWritingSystemManager writingSystemManager, IEnumerable<IWritingSystem> writingSystems)
+		private static void SaveOnlyLocalWritingSystems(WritingSystemManager writingSystemManager, IEnumerable<CoreWritingSystemDefinition> writingSystems)
 		{
 			foreach (var ws in writingSystems)
 			{
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.FDO
 				// Setting Modified to false prevents bumping the date on the global WS.
 				// Running Replace ensures the local ldml will be saved regardless of the Modified flag.
 				writingSystemManager.Replace(ws);
-				ws.Modified = false;
+				ws.AcceptChanges();
 			}
 			writingSystemManager.Save();
 		}
@@ -354,7 +354,9 @@ namespace SIL.FieldWorks.FDO
 		///  5. A string with the ICU locale of the UI writing system (default: "en").
 		///  6. A set of IWritingSystem to provide additional analysis writing systems (default: no more)
 		///  7. A set of IWritingSystem to provide additional vernacular writing systems (default: no more)
-		///  8. OCM Data filename. (default: OCM-Frame.xml if available; else, null)</param>
+		///  8. OCM Data filename. (default: OCM-Frame.xml if available; else, null)
+		///  9. Indicates whether or not to use a memory-only writing system manager (default: false)
+		/// </param>
 		/// <returns>Path of the newly created project file.</returns>
 		/// <remarks>Override DisplayUi to prevent progress dialog from showing.</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -367,8 +369,8 @@ namespace SIL.FieldWorks.FDO
 				throw new ArgumentNullException("parameters", "Cannot be null or empty");
 			var dirs = (IFdoDirectories) parameters[1];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[2];
-			IWritingSystem analWrtSys = (parameters.Length > 3) ? (IWritingSystem) parameters[3] : null;
-			IWritingSystem vernWrtSys = (parameters.Length > 4) ? (IWritingSystem) parameters[4] : null;
+			CoreWritingSystemDefinition analWrtSys = (parameters.Length > 3) ? (CoreWritingSystemDefinition) parameters[3] : null;
+			CoreWritingSystemDefinition vernWrtSys = (parameters.Length > 4) ? (CoreWritingSystemDefinition) parameters[4] : null;
 			var userIcuLocale = (parameters.Length > 5 && parameters[5] != null) ? (string) parameters[5] : "en";
 			const int nMax = 10;
 			if (progressDlg != null)
@@ -386,7 +388,8 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Message = Properties.Resources.kstidInitializingDB;
 			}
 
-			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
+			bool useMemoryOnlyWsManager = parameters.Length > 9 && (bool) parameters[9];
+			var projectId = new SimpleProjectId(useMemoryOnlyWsManager ? FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr : FDOBackendProviderType.kXML, dbFileName);
 			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs, new FdoSettings(),
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{
@@ -411,14 +414,14 @@ namespace SIL.FieldWorks.FDO
 					progressDlg.Step(0);
 
 				var additionalAnalysisWss = (parameters.Length > 6 && parameters[6] != null)
-												? (HashSet<IWritingSystem>) parameters[6]
-												: new HashSet<IWritingSystem>();
-				foreach (var additionalWs in additionalAnalysisWss)
+												? (HashSet<CoreWritingSystemDefinition>) parameters[6]
+												: new HashSet<CoreWritingSystemDefinition>();
+				foreach (CoreWritingSystemDefinition additionalWs in additionalAnalysisWss)
 					CreateAnalysisWritingSystem(cache, additionalWs, false);
 				var additionalVernWss = (parameters.Length > 7 && parameters[7] != null)
-											? (HashSet<IWritingSystem>) parameters[7]
-											: new HashSet<IWritingSystem>();
-				foreach (var additionalWs in additionalVernWss)
+											? (HashSet<CoreWritingSystemDefinition>) parameters[7]
+											: new HashSet<CoreWritingSystemDefinition>();
+				foreach (CoreWritingSystemDefinition additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
 
 				// Create a reversal index for the original default analysis writing system. (LT-4480)
@@ -582,11 +585,11 @@ namespace SIL.FieldWorks.FDO
 			}
 		}
 
-		private static bool IsWritingSystemInProject(string wsId, FdoCache cache)
+		private static bool IsWritingSystemInProject(string wsID, FdoCache cache)
 		{
-			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws.RFC5646.ToLowerInvariant() == wsId.ToLowerInvariant())
+				if (ws.Id.Equals(wsID, StringComparison.InvariantCultureIgnoreCase))
 					return true;
 			}
 			return false;
@@ -634,11 +637,10 @@ namespace SIL.FieldWorks.FDO
 		/// Scan the (XML) file for writing systems that are not already in the local store, and
 		/// add them.  A very quick and dirty scan is made.
 		/// </summary>
-		private static void AddMissingWritingSystems(string fileName,
-			IWritingSystemManager wsm)
+		private static void AddMissingWritingSystems(string fileName, WritingSystemManager wsm)
 		{
-			var mapLocalWs = new Dictionary<string, IWritingSystem>();
-			foreach (var wsT in wsm.LocalWritingSystems)
+			var mapLocalWs = new Dictionary<string, CoreWritingSystemDefinition>();
+			foreach (var wsT in wsm.WritingSystems)
 				mapLocalWs.Add(wsT.Id, wsT);
 			using (var rdr = new StreamReader(fileName, Encoding.UTF8))
 			{
@@ -655,7 +657,7 @@ namespace SIL.FieldWorks.FDO
 				var sWs = sLine.Substring(idx, idxLim - idx);
 				if (mapLocalWs.ContainsKey(sWs))
 					continue;
-				IWritingSystem wsNew;
+				CoreWritingSystemDefinition wsNew;
 				wsm.GetOrSet(sWs, out wsNew);
 				mapLocalWs.Add(sWs, wsNew);
 			}
@@ -738,10 +740,10 @@ namespace SIL.FieldWorks.FDO
 		/// Set an analysis writing system in the database and create one if needed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void CreateAnalysisWritingSystem(FdoCache cache, IWritingSystem analWrtSys, bool fDefault)
+		private static void CreateAnalysisWritingSystem(FdoCache cache, CoreWritingSystemDefinition analWrtSys, bool fDefault)
 		{
 			string wsId = (analWrtSys == null) ? "en" : analWrtSys.Id;
-			IWritingSystem wsAnalysis;
+			CoreWritingSystemDefinition wsAnalysis;
 			cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out wsAnalysis);
 
 			// Add the writing system to the list of Analysis writing systems and make it the
@@ -756,7 +758,7 @@ namespace SIL.FieldWorks.FDO
 			{
 				// Add the "en" writing system to the list of Analysis writing systems and
 				// append it to the the list of current Analysis writing systems.
-				IWritingSystem wsEN;
+				CoreWritingSystemDefinition wsEN;
 				cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out wsEN);
 				if (!cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(wsEN))
 					cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(wsEN);
@@ -768,10 +770,10 @@ namespace SIL.FieldWorks.FDO
 		/// Create a new Vernacular writing system based on the name given.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void CreateVernacularWritingSystem(FdoCache cache, IWritingSystem vernWrtSys, bool fDefault)
+		private static void CreateVernacularWritingSystem(FdoCache cache, CoreWritingSystemDefinition vernWrtSys, bool fDefault)
 		{
 			string wsId = (vernWrtSys == null) ? "fr" : vernWrtSys.Id;
-			IWritingSystem wsVern;
+			CoreWritingSystemDefinition wsVern;
 			cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out wsVern);
 
 			// Add the writing system to the list of Vernacular writing systems and make it the
@@ -988,7 +990,7 @@ namespace SIL.FieldWorks.FDO
 				if (m_wsDefaultAnalysis == 0)
 				{
 					CheckDisposed();
-					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+					CoreWritingSystemDefinition ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 					m_wsDefaultAnalysis = (ws == null ? 0 : ws.Handle);
 				}
 				return m_wsDefaultAnalysis;
@@ -1006,7 +1008,7 @@ namespace SIL.FieldWorks.FDO
 				if (m_wsDefaultPron == 0)
 				{
 					CheckDisposed();
-					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
+					CoreWritingSystemDefinition ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
 					m_wsDefaultPron = (ws == null ? 0 : ws.Handle);
 				}
 				return m_wsDefaultPron;
@@ -1026,7 +1028,7 @@ namespace SIL.FieldWorks.FDO
 				if (m_wsDefaultVern == 0)
 				{
 					CheckDisposed();
-					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
+					CoreWritingSystemDefinition ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
 					m_wsDefaultVern = (ws == null ? 0 : ws.Handle);
 				}
 				return m_wsDefaultVern;

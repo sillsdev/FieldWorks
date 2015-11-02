@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private void PersistBackupFileSettings()
 		{
 			string backupSettingsFile = Path.Combine(FdoFileHelper.GetBackupSettingsDir(
-				m_settings.ProjectPath), FdoFileHelper.kBackupSettingsFilename);
+				m_settings.ProjectPath), FdoFileHelper.ksBackupSettingsFilename);
 
 			string settingsDir = Path.GetDirectoryName(backupSettingsFile);
 			if (!Directory.Exists(settingsDir))
@@ -206,15 +206,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			var wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
-			foreach (IWritingSystem ws in wsManager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in wsManager.WritingSystems)
 			{
-				var spellCheckingDictionary = ws.SpellCheckingId;
+				string spellCheckingDictionary = ws.SpellCheckingId;
 				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
 					continue; // no spelling dictionary for WS
 
 				if (SpellingHelper.DictionaryExists(spellCheckingDictionary))
 				{
-					foreach (var path in SpellingHelper.PathsToBackup(spellCheckingDictionary))
+					foreach (string path in SpellingHelper.PathsToBackup(spellCheckingDictionary))
 						dictionaryFiles.Add(path);
 				}
 			}

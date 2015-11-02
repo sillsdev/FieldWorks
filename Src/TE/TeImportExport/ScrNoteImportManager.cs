@@ -10,9 +10,10 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using System.Diagnostics;
 using System.Globalization;
@@ -27,12 +28,10 @@ namespace SIL.FieldWorks.TE
 	public static class ScrNoteImportManager
 	{
 		private static Dictionary<ScrNoteKey, IScrScriptureNote> s_existingAnnotations;
-		private static Dictionary<string, Guid> s_checkNamesToGuids = null;
+		private static Dictionary<string, Guid> s_checkNamesToGuids;
 		private static IScrBookAnnotations s_annotationList;
 		private static IScripture s_scr;
 		private static int s_prevBookNum = 0;
-		// TODO WS: how should this be used in the new world?
-		private static string s_alternateRfcWsDir;
 
 		#region Initialization and cleanup
 		/// ------------------------------------------------------------------------------------
@@ -42,20 +41,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static void Initialize(IScripture scr, int bookNum)
 		{
-			Initialize(scr, bookNum, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the scripture note import manager.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static void Initialize(IScripture scr, int bookNum, string alternateRfcWsDir)
-		{
 			s_scr = scr;
-
-			if (!string.IsNullOrEmpty(alternateRfcWsDir))
-				s_alternateRfcWsDir = alternateRfcWsDir;
 
 			if (bookNum != s_prevBookNum)
 			{
@@ -183,23 +169,25 @@ namespace SIL.FieldWorks.TE
 		#region Misc. methods
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Find or create the writing system code for the given RFC4646 language tag. If it's
+		/// Find or create the writing system code for the given IETF language tag. If it's
 		/// not in either the list of vernacular writing systems or the list of analysis
 		/// writing systems, add it to the list of analysis writing systems.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public static int GetWsForLocale(string locale)
 		{
-			string identifier = LangTagUtils.ToLangTag(locale);
-			IWritingSystem ws;
-			if (s_scr.Cache.ServiceLocator.WritingSystemManager.TryGetOrSet(identifier, out ws))
+			string identifier = IetfLanguageTag.ToLanguageTag(locale);
+			if (s_scr.Cache.ServiceLocator.WritingSystemManager.Exists(identifier)
+				|| s_scr.Cache.ServiceLocator.WritingSystemManager.OtherWritingSystems.Any(ws => ws.LanguageTag == identifier))
 			{
+				CoreWritingSystemDefinition ws;
+				s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);
 				if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
 					s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
 				return ws.Handle;
 			}
 
-			throw new UnknownPalasoWsException(identifier + " is an unknown RFC5646 language tag.",
+			throw new UnknownWritingSystemException(identifier + " is an unknown IETF language tag.",
 				locale, identifier);
 		}
 

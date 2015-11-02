@@ -37,6 +37,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
+  16 March 2015 (7000069): Migrate LDML files to version 3.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -190,7 +191,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000068" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000069" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

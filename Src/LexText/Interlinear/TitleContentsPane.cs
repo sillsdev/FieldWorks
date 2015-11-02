@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.IText
 		int m_dxWsLabWidth = 0; // width of writing system labels.
 		ITsTextProps m_ttpBold;
 		ITsTextProps m_ttpDataCellProps;
-		IWritingSystem[] m_writingSystems;
+		CoreWritingSystemDefinition[] m_writingSystems;
 		ITsString[] m_WsLabels;
 		ITsTextProps m_ttpWsLabel;
 		int m_editBackColor = (int)SIL.Utils.ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.IText
 		internal void SetupWritingSystemsForTitle(FdoCache cache)
 		{
 			m_ttpWsLabel = WritingSystemServices.AbbreviationTextProperties;
-			m_writingSystems = new IWritingSystem[2];
+			m_writingSystems = new CoreWritingSystemDefinition[2];
 			m_writingSystems[0] = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_writingSystems[1] = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_WsLabels = new ITsString[m_writingSystems.Length];

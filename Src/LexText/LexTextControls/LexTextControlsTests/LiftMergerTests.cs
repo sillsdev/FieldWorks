@@ -13,23 +13,23 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.Lift.Parsing;
-using Palaso.TestUtilities;
-using Palaso.WritingSystems;
+using SIL.Lift.Parsing;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using System.IO;
 using SIL.FieldWorks.FDO.FDOTests;
-using Palaso.Lift.Migration;
+using SIL.Lift.Migration;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -58,29 +58,27 @@ namespace LexTextControlsTests
 			Cache.LangProject.LexDbOA.ReferencesOA =
 				Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().
 					Create();
-			var mockProjectName = "xxyyzProjectFolderForLIFTImport";
+			const string mockProjectName = "xxyyzProjectFolderForLIFTImport";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
-			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			if (Directory.Exists(MockLinkedFilesFolder))
 				Directory.Delete(MockLinkedFilesFolder, true);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			Cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder;
 
-			var writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
-			var languageSubtag =
-				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageSubtag;
+			WritingSystemManager writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
+			LanguageSubtag languageSubtag =
+				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			var audioWs = writingSystemManager.Create(languageSubtag,
-				LangTagUtils.GetScriptSubtag("Zxxx"), null, LangTagUtils.GetVariantSubtag("audio"));
-			IWritingSystem existingAudioWs;
-			if (writingSystemManager.TryGet(audioWs.Id, out existingAudioWs))
+			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			CoreWritingSystemDefinition existingAudioWs;
+			if (writingSystemManager.TryGet(audioWs.LanguageTag, out existingAudioWs))
 			{
 				m_audioWsCode = existingAudioWs.Handle;
 			}
 			else
 			{
-				((WritingSystemDefinition) audioWs).IsVoice = true;
+				audioWs.IsVoice = true;
 				// should already be so? Make sure.
 				writingSystemManager.Set(audioWs); // gives it a handle
 				m_audioWsCode = audioWs.Handle;
@@ -177,7 +175,7 @@ namespace LexTextControlsTests
 			return path;
 		}
 
-		static private readonly string[] s_LiftData1 = new[]
+		static private readonly string[] s_LiftData1 =
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
@@ -2984,24 +2982,23 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void TestLDMLMigration()
+		public void TestLdmlMigration()
 		{
-			var projectFolder = Path.GetTempPath();
-			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory,
+			string testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												  "LexText/LexTextControls/LexTextControlsTests/LDML-11723");
-			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
+			string testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												"LexText/LexTextControls/LexTextControlsTests/LDML-11723-test");
 
-			var sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
-			var sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
-			var sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
-			var enLdml = Path.Combine(sWSfilesPath, "en.ldml");
-			var sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
-			var esLdml = Path.Combine(sWSfilesPath, "es.ldml");
-			var xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
-			var qaaxkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
-			var qaaIPAxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
-			var qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
+			string sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
+			string sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
+			string sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
+			string enLdml = Path.Combine(sWSfilesPath, "en.ldml");
+			string sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
+			string esLdml = Path.Combine(sWSfilesPath, "es.ldml");
+			string xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
+			string qaaXkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
+			string qaaIpaXkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
+			string qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
 
 			LdmlFileBackup.CopyDirectory(testLiftDataSource, testLiftDataPath);
 
@@ -3013,11 +3010,10 @@ namespace LexTextControlsTests
 			File.SetAttributes(sehLdml, FileAttributes.Normal);
 			File.SetAttributes(esLdml, FileAttributes.Normal);
 			File.SetAttributes(xkalLdml, FileAttributes.Normal);
-			File.SetAttributes(qaaIPAxkalLdml, FileAttributes.Normal);
+			File.SetAttributes(qaaIpaXkalLdml, FileAttributes.Normal);
 			File.SetAttributes(qaaPhonemicxkalLdml, FileAttributes.Normal);
 
 			var flexImporter = new FlexLiftMerger(Cache, FlexLiftMerger.MergeStyle.MsKeepBoth, true);
-			var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 
 			//Mirgrate the LDML files and lang names
 			flexImporter.LdmlFilesMigration(testLiftDataPath, sLiftDataFile, sLiftRangesFile);
@@ -3035,17 +3031,17 @@ namespace LexTextControlsTests
 			// Verify that es.ldml is unchanged.
 			Assert.That(File.Exists(esLdml));
 			// Verify that qaa-fonipa-x-kal.ldml is unchanged.
-			Assert.That(File.Exists(qaaIPAxkalLdml));
+			Assert.That(File.Exists(qaaIpaXkalLdml));
 			// Verify that qaa-fonipa-x-kal-emic.ldml is unchanged.
 			Assert.That(File.Exists(qaaPhonemicxkalLdml));
 
 			// Verify that x-kal.ldml no longer exists
 			Assert.That(!File.Exists(xkalLdml));
 			// Verify that x-kal.ldml is renamed to qaa-x-kal and content changed
-			Assert.That(File.Exists(qaaxkalLdml));
+			Assert.That(File.Exists(qaaXkalLdml));
 
 			//Verify qaa-x-kal.ldml file has correct changes in it.
-			VerifyKalabaLdmlFile(qaaxkalLdml);
+			VerifyKalabaLdmlFile(qaaXkalLdml);
 
 			//Verify LDML 11723.lift file has correct changes in it.
 			VerifyLiftDataFile(sLiftDataFile);

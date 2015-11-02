@@ -12,11 +12,11 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
+using SIL.Xml;
 using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
-using Palaso.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
 		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
-			SearchEngine searchEngine, IWritingSystem reversalWs)
+			SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Other methods
 
-		private void CreateBrowseViewer(XmlNode configNode, IWritingSystem reversalWs)
+		private void CreateBrowseViewer(XmlNode configNode, CoreWritingSystemDefinition reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
 			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache, m_mediator,

@@ -947,7 +947,7 @@ namespace SIL.FieldWorks.IText
 		internal void SetupVernWsForText(int wsVern)
 		{
 			m_wsDefault = wsVern;
-			IWritingSystem defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
+			CoreWritingSystemDefinition defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
 			RightToLeft = defWs.RightToLeftScript;
 		}
 

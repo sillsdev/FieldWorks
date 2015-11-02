@@ -9,11 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks

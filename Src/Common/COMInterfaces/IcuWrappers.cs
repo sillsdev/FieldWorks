@@ -758,6 +758,44 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			return null;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the exemplar characters for the given ICU locale.
+		/// </summary>
+		/// <param name="icuLocale">Code for the ICU locale.</param>
+		/// <returns>
+		/// string containing all the exemplar characters (typically only lowercase
+		/// word-forming characters)
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public static string GetExemplarCharacters(string icuLocale)
+		{
+			ILgIcuResourceBundle rbExemplarCharacters = null;
+			ILgIcuResourceBundle rbLangDef = null;
+			try
+			{
+				rbLangDef = LgIcuResourceBundleClass.Create();
+				rbLangDef.Init(null, icuLocale);
+
+				// if the name of the resource bundle doesn't match the LocaleAbbr
+				// it loaded something else as a default (e.g. "en").
+				// in that case we don't want to use the resource bundle so release it.
+				if (rbLangDef.Name != icuLocale)
+					return string.Empty;
+
+				rbExemplarCharacters = rbLangDef.get_GetSubsection("ExemplarCharacters");
+				return rbExemplarCharacters.String;
+			}
+			finally
+			{
+				if (rbExemplarCharacters != null)
+					Marshal.FinalReleaseComObject(rbExemplarCharacters);
+
+				if (rbLangDef != null)
+					Marshal.FinalReleaseComObject(rbLangDef);
+			}
+		}
+
 		#region Locale related
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the ICU LCID for a locale</summary>

@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinMasterTests : MemoryOnlyBackendProviderTestBase, IDisposable
 	{
-		private IWritingSystem m_wsDefaultVern, m_wsOtherVern, m_wsEn;
+		private CoreWritingSystemDefinition m_wsDefaultVern, m_wsOtherVern, m_wsEn;
 		private IStText m_sttNoExplicitWs, m_sttEmptyButWithWs;
 		private IStText m_stText;
 

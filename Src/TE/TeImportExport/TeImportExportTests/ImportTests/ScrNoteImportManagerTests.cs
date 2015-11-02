@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.FixtureSetup();
 
-			IWritingSystem wsEs;
+			CoreWritingSystemDefinition wsEs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
 			m_wsSpanish = wsEs.Handle;
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Tests the Create method with a bogus identifier. We expect an InvalidPalasoWsException.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(UnknownPalasoWsException))]
+		[ExpectedException(typeof(UnknownWritingSystemException))]
 		public void CreateBogusWs()
 		{
 			int ws = ScrNoteImportManager.GetWsForLocale("x-unknown-ws");

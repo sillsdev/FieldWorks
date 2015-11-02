@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,6 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
@@ -195,19 +193,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			{
 				Directory.CreateDirectory(path);
 			}
-		}
-
-		/// <summary>
-		/// Test it.
-		/// </summary>
-		[Test]
-		public void GetNextDuplPart()
-		{
-			Assert.That(DataMigration7000044.GetNextDuplPart(null), Is.EqualTo("dupl1"));
-			Assert.That(DataMigration7000044.GetNextDuplPart(""), Is.EqualTo("dupl1"));
-			Assert.That(DataMigration7000044.GetNextDuplPart("abc"), Is.EqualTo("abc-dupl1"));
-			Assert.That(DataMigration7000044.GetNextDuplPart("dupl1"), Is.EqualTo("dupl2"));
-			Assert.That(DataMigration7000044.GetNextDuplPart("abc-def-dupl12"), Is.EqualTo("abc-def-dupl13"));
 		}
 	}
 }

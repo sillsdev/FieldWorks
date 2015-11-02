@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if editing the custom fields should proceed</returns>
 		public bool ShowCustomFieldWarning(IWin32Window owner)
 		{
-			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId.ProjectFolder))
+			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId))
 				return true;
 			return MessageBox.Show(owner, xWorksStrings.kstCustomFieldSendReceive, xWorksStrings.ksWarning,
 				MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static CustomFieldType GetCustomFieldType(FieldDescription fd)
 		{
-			switch ((CellarPropertyType)fd.Type)
+			switch (fd.Type)
 			{
 				case CellarPropertyType.MultiUnicode:
 				case CellarPropertyType.String:

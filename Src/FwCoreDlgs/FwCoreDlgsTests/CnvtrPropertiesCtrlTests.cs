@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 
 using ECInterfaces;
+using SIL.Utils.Attributes;
 using SilEncConverters40;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Test.TestUtils;

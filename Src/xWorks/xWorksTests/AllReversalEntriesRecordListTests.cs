@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
@@ -13,7 +12,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase, IDisposable
+	public class AllReversalEntriesRecordListTestBase : XWorksAppTestBase
 	{
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
@@ -24,67 +23,8 @@ namespace SIL.FieldWorks.XWorks
 		private IReversalIndexFactory m_revIndexFactory;
 		private IReversalIndexRepository m_revIndexRepo;
 
-		protected AllReversalEntriesRecordList m_allReversalEntriesRecordList;
 		protected IReversalIndexEntry m_revEntry;
 		protected IReversalIndex m_revIndex;
-
-
-		#region IDisposable Section (pass Gendarme rules)
-		~AllReversalEntriesRecordListTestBase()
-		{
-			Dispose(false);
-		}
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-		protected virtual void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (!IsDisposed)
-			{
-				if (disposing)
-				{
-					if (m_mediator != null)
-						m_mediator.RemoveColleague(m_window);
-
-
-					if (m_window != null && !m_window.IsDisposed)
-					{
-						m_window.Dispose();
-						m_window = null;
-					}
-
-					if (m_mediator != null && !m_mediator.IsDisposed)
-					{
-						m_mediator.Dispose();
-						m_mediator = null;
-					}
-					if (m_propertyTable != null && !m_propertyTable.IsDisposed)
-					{
-						m_propertyTable.Dispose();
-						m_propertyTable = null;
-					}
-
-					if (m_allReversalEntriesRecordList != null && !m_allReversalEntriesRecordList.IsDisposed)
-					{
-						m_allReversalEntriesRecordList.Dispose();
-						m_allReversalEntriesRecordList = null;
-					}
-				}
-				IsDisposed = true;
-			}
-		}
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		protected bool IsDisposed
-		{
-			get;
-			private set;
-		}
-		#endregion IDisposable Section (pass Gendarme rules)
 
 		#region Setup and Teardown
 		/// <summary>
@@ -94,15 +34,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = this.Cache }, null, null);
 			m_createdObjectList = new List<ICmObject>();
-		}
-
-		/// <summary>
-		/// This is done after the entire set of tests is run.
-		/// </summary>
-		[TestFixtureTearDown]
-		public void ReveralEntriesFixtureTearDown()
-		{
-			Dispose();
 		}
 
 		/// <summary>
@@ -186,6 +117,11 @@ namespace SIL.FieldWorks.XWorks
 			UndoAllActions();
 			// delete property table settings.
 			m_propertyTable.RemoveLocalAndGlobalSettings();
+			if (m_window != null)
+			{
+				m_window.Dispose();
+				m_window = null;
+			}
 		}
 
 		private void UndoAllActions()

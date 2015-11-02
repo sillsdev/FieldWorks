@@ -863,7 +863,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// The default case ("owner") is handled by the caller setting TextParamHvo.
 					if (sTextParam == "vernws")
 					{
-						IWritingSystem co = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+						CoreWritingSystemDefinition co = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 						m_sTextParam = co.DisplayLabel;
 					}
 				}
@@ -1263,7 +1263,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void GenerateDefaultPage(ITsString tssTitle, ITsString tssDesc)
 		{
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			string userFont = ws.DefaultFontName;
 
 			string title, titleFont;
@@ -2425,7 +2425,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			var node = new ChooserCommandNode(cmd);
-			IWritingSystem defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			string sFontName = defAnalWS.DefaultFontName;
 
 			// TODO: need to get analysis font's size
@@ -2580,7 +2580,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
-				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.Cast<ICmObject>(), "",
+				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
 			using (var chooser = new ReallySimpleListChooser(persistenceProvider,

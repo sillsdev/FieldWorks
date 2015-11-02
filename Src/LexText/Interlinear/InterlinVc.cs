@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.IText
 
 		protected bool m_fShowDefaultSense = false; // Use false to not change prior behavior.
 		protected bool m_fHaveOpenedParagraph = false; // Use false to not change prior behavior.
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		protected ISegmentRepository m_segRepository;
 		protected ICmObjectRepository m_coRepository;
 		protected IWfiMorphBundleRepository m_wmbRepository;
@@ -1175,7 +1175,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private void AddTssDirForWs(IVwEnv vwenv, int ws)
 		{
-			IWritingSystem wsObj = m_wsManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
 			// Graphite doesn't handle bidi markers
 			if (wsObj.IsGraphiteEnabled)
 				return;
@@ -1297,7 +1297,7 @@ namespace SIL.FieldWorks.IText
 				case WritingSystemServices.kwsReversalIndex:
 					return false;
 			}
-			IWritingSystem wsObj = m_wsManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
 			if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 				return !m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj);
 			else
