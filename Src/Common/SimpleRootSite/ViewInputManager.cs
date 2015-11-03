@@ -2,14 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Keyboarding;
 using SIL.Utils;
+using SIL.Windows.Forms.Keyboarding;
 
 #if __MonoCS__
 
@@ -104,11 +102,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// processing of the mouse event should happen.</returns>
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
-			var mouseEvent = (MouseEvent) me;
-			if (mouseEvent == MouseEvent.kmeDown)
-			{
+			if (me == VwMouseEvent.kmeDown)
 				Keyboard.Activate();
-			}
 			return false;
 		}
 
@@ -134,7 +129,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion /* IViewInputMgr */
 
-		private IWritingSystem CurrentWritingSystem
+		private CoreWritingSystemDefinition CurrentWritingSystem
 		{
 			get
 			{
@@ -147,7 +142,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (wsf == null)
 					return null;
 
-				return wsf.get_EngineOrNull(nWs) as IWritingSystem;
+				return (CoreWritingSystemDefinition) wsf.get_EngineOrNull(nWs);
 			}
 		}
 
@@ -160,12 +155,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				var manager = m_rootb.DataAccess.WritingSystemFactory as PalasoWritingSystemManager;
-				var ws = CurrentWritingSystem;
+				var manager = (WritingSystemManager) m_rootb.DataAccess.WritingSystemFactory;
+				CoreWritingSystemDefinition ws = CurrentWritingSystem;
 				if (ws == null)
-					return KeyboardDescription.Zero;
+					return KeyboardController.NullKeyboard;
 
-				var wsd = manager.Get(ws.Handle) as IWritingSystemDefinition;
+				CoreWritingSystemDefinition wsd = manager.Get(ws.Handle);
 				return wsd.LocalKeyboard;
 			}
 		}

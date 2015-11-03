@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Oct 20 13:06:58 2015
+/* at Thu Oct 29 18:13:53 2015
  */
-/* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -9477,20 +9477,11 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LanguageName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ISO3( 
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SpellCheckingId( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_SpellCheckingId( 
-            /* [in] */ BSTR bstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RightToLeftScript( 
             /* [retval][out] */ ComBool *pfRightToLeft) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_RightToLeftScript( 
-            /* [in] */ ComBool fRightToLeft) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Renderer( 
             /* [in] */ IVwGraphics *pvg,
@@ -9499,26 +9490,14 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontFeatures( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_DefaultFontFeatures( 
-            /* [in] */ BSTR bstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_DefaultFontName( 
-            /* [in] */ BSTR bstr) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
             /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE InterpretChrp( 
             /* [out][in] */ LgCharRenderProps *pchrp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CurrentLCID( 
-            /* [retval][out] */ int *pnLangId) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_CurrentLCID( 
-            /* [in] */ int nLangId) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UseNfcContext( 
             /* [retval][out] */ ComBool *pUseNfc) = 0;
@@ -9556,25 +9535,13 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ISO3 )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ BSTR *pbstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SpellCheckingId )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_SpellCheckingId )( 
-            ILgWritingSystem * This,
-            /* [in] */ BSTR bstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RightToLeftScript )( 
             ILgWritingSystem * This,
             /* [retval][out] */ ComBool *pfRightToLeft);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_RightToLeftScript )( 
-            ILgWritingSystem * This,
-            /* [in] */ ComBool fRightToLeft);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Renderer )( 
             ILgWritingSystem * This,
@@ -9585,17 +9552,9 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_DefaultFontFeatures )( 
-            ILgWritingSystem * This,
-            /* [in] */ BSTR bstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DefaultFontName )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_DefaultFontName )( 
-            ILgWritingSystem * This,
-            /* [in] */ BSTR bstr);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
             ILgWritingSystem * This,
@@ -9604,14 +9563,6 @@ GraphiteEngine;
         HRESULT ( STDMETHODCALLTYPE *InterpretChrp )( 
             ILgWritingSystem * This,
             /* [out][in] */ LgCharRenderProps *pchrp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CurrentLCID )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ int *pnLangId);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_CurrentLCID )( 
-            ILgWritingSystem * This,
-            /* [in] */ int nLangId);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UseNfcContext )( 
             ILgWritingSystem * This,
@@ -9649,20 +9600,11 @@ GraphiteEngine;
 #define ILgWritingSystem_get_LanguageName(This,pbstr)	\
     ( (This)->lpVtbl -> get_LanguageName(This,pbstr) ) 
 
-#define ILgWritingSystem_get_ISO3(This,pbstr)	\
-    ( (This)->lpVtbl -> get_ISO3(This,pbstr) ) 
-
 #define ILgWritingSystem_get_SpellCheckingId(This,pbstr)	\
     ( (This)->lpVtbl -> get_SpellCheckingId(This,pbstr) ) 
 
-#define ILgWritingSystem_put_SpellCheckingId(This,bstr)	\
-    ( (This)->lpVtbl -> put_SpellCheckingId(This,bstr) ) 
-
 #define ILgWritingSystem_get_RightToLeftScript(This,pfRightToLeft)	\
     ( (This)->lpVtbl -> get_RightToLeftScript(This,pfRightToLeft) ) 
-
-#define ILgWritingSystem_put_RightToLeftScript(This,fRightToLeft)	\
-    ( (This)->lpVtbl -> put_RightToLeftScript(This,fRightToLeft) ) 
 
 #define ILgWritingSystem_get_Renderer(This,pvg,ppreneng)	\
     ( (This)->lpVtbl -> get_Renderer(This,pvg,ppreneng) ) 
@@ -9670,26 +9612,14 @@ GraphiteEngine;
 #define ILgWritingSystem_get_DefaultFontFeatures(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontFeatures(This,pbstr) ) 
 
-#define ILgWritingSystem_put_DefaultFontFeatures(This,bstr)	\
-    ( (This)->lpVtbl -> put_DefaultFontFeatures(This,bstr) ) 
-
 #define ILgWritingSystem_get_DefaultFontName(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontName(This,pbstr) ) 
-
-#define ILgWritingSystem_put_DefaultFontName(This,bstr)	\
-    ( (This)->lpVtbl -> put_DefaultFontName(This,bstr) ) 
 
 #define ILgWritingSystem_get_CharPropEngine(This,pppropeng)	\
     ( (This)->lpVtbl -> get_CharPropEngine(This,pppropeng) ) 
 
 #define ILgWritingSystem_InterpretChrp(This,pchrp)	\
     ( (This)->lpVtbl -> InterpretChrp(This,pchrp) ) 
-
-#define ILgWritingSystem_get_CurrentLCID(This,pnLangId)	\
-    ( (This)->lpVtbl -> get_CurrentLCID(This,pnLangId) ) 
-
-#define ILgWritingSystem_put_CurrentLCID(This,nLangId)	\
-    ( (This)->lpVtbl -> put_CurrentLCID(This,nLangId) ) 
 
 #define ILgWritingSystem_get_UseNfcContext(This,pUseNfc)	\
     ( (This)->lpVtbl -> get_UseNfcContext(This,pUseNfc) ) 

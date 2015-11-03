@@ -18,7 +18,6 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -65,9 +64,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			m_okToPingCheckBox.Checked = Settings.Default.Reporting.OkToPingBasicUsageData;
-			checkForUpdatesBox.Checked = Settings.Default.AutoCheckForUpdates;
-			includeBetasBox.Checked = Settings.Default.CheckForBetaUpdates;
+			m_okToPingCheckBox.Checked = CoreImpl.Properties.Settings.Default.Reporting.OkToPingBasicUsageData;
+			checkForUpdatesBox.Checked = CoreImpl.Properties.Settings.Default.AutoCheckForUpdates;
+			includeBetasBox.Checked = CoreImpl.Properties.Settings.Default.CheckForBetaUpdates;
 			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 
@@ -75,23 +74,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var reportingSettings = Settings.Default.Reporting;
+			var reportingSettings = CoreImpl.Properties.Settings.Default.Reporting;
 			reportingSettings.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
-			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
-			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+			CoreImpl.Properties.Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
+			CoreImpl.Properties.Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
 
-			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
-			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+			CoreImpl.Properties.Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
+			CoreImpl.Properties.Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
 
 #if !__MonoCS__
 			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
 			if (sparkle != null)
 			{
-				var appCastUrl = Settings.Default.IsBTE
-									? (Settings.Default.CheckForBetaUpdates
+				var appCastUrl = CoreImpl.Properties.Settings.Default.IsBTE
+									? (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
 										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-									: (Settings.Default.CheckForBetaUpdates
+									: (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
 										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
 				sparkle.AppcastUrl = appCastUrl;
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.LexText.Controls
 #endif
 
 
-			Settings.Default.Save();
+			CoreImpl.Properties.Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{
@@ -117,7 +116,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, m_sNewUserWs);
 				//The writing system the user selects for the user interface may not be loaded yet into the project
 				//database. Therefore we need to check this first and if it is not we need to load it.
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out ws);
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the mediator's string table with the appropriate language data.
@@ -246,7 +245,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			updateGlobalWS.Checked = !Settings.Default.UpdateGlobalWSStore;
+			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_cache = cache;

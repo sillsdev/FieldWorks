@@ -37,7 +37,7 @@ namespace XMLViewsTests
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
 		private LayoutCache m_layouts;
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private IVwCacheDa m_cda;
 
 		/// <summary>
@@ -77,7 +77,7 @@ namespace XMLViewsTests
 			// - MoDerivationalMsa (10)
 			m_cda = VwCacheDaClass.Create();
 			m_sda = m_cda as ISilDataAccess;
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 			m_sda.WritingSystemFactory = m_wsManager;
 			var parser = new SimpleDataParser(m_mdc, m_cda);
 

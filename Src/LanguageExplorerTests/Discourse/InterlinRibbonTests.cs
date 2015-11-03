@@ -21,7 +21,7 @@ namespace LanguageExplorerTests.Discourse
 	/// Tests for the Constituent chart.
 	/// </summary>
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
+	[InitializeRealKeyboardController]
 	public class InterlinRibbonTests : InMemoryDiscourseTestBase
 	{
 		private TestInterlinRibbon m_ribbon;

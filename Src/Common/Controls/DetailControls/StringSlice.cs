@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_wsLabel = ws;
 				var sWs = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				IWritingSystem wsys;
+				CoreWritingSystemDefinition wsys;
 				WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out wsys);
 				var result = wsys.Abbreviation;
 				if (string.IsNullOrEmpty(result))
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (m_cache == null)
 					return;
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (wsObj != null && wsObj.RightToLeftScript)
 				{
 					vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,

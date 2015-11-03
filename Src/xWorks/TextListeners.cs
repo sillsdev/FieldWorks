@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
@@ -266,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					throw new NotImplementedException("That writing system set needs to be implemented");
 				case WritingSystemSet.All:
-					AddWritingSystemList(display, cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
+					AddWritingSystemList(display, cache.ServiceLocator.WritingSystemManager.WritingSystems);
 					break;
 				case WritingSystemSet.AllCurrent:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.AllWritingSystems);
@@ -286,11 +287,11 @@ namespace SIL.FieldWorks.XWorks
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<IWritingSystem> list)
+		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
 		{
-			foreach (IWritingSystem ws in list)
+			foreach (CoreWritingSystemDefinition ws in list)
 			{
-				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(), null, null);
+				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(CultureInfo.InvariantCulture), null, null);
 			}
 		}
 #endif

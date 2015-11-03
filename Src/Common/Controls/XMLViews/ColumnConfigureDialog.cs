@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -239,7 +240,7 @@ namespace SIL.FieldWorks.Common.Controls
 			wsCombo.Items.Clear();
 			using (var ie = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.GetEnumerator())
 			{
-				var rgWs = new IWritingSystem[m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count];
+				var rgWs = new CoreWritingSystemDefinition[m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count];
 				for (int i = 0; i < rgWs.Length; ++i)
 				{
 					if (!ie.MoveNext())
@@ -279,11 +280,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 			wsCombo.Items.Clear();
 			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
-			LanguageSubtag sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).LanguageSubtag;
+			LanguageSubtag sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Language;
 			bool fSort = wsCombo.Sorted;
-			foreach (IWritingSystem ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
+			foreach (CoreWritingSystemDefinition ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
 			{
-				if (ws.LanguageSubtag == sLang)
+				if (ws.Language == sLang)
 				{
 					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 				}
@@ -521,9 +522,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="items">The items.</param>
 		/// <param name="wss">The ws array.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(FdoCache cache, ComboBox.ObjectCollection items, IEnumerable<IWritingSystem> wss)
+		public static void AddWritingSystemsToCombo(FdoCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
-			foreach(IWritingSystem ws in wss)
+			foreach (CoreWritingSystemDefinition ws in wss)
 				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 		}
 
@@ -565,7 +566,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (String.IsNullOrEmpty(dispCategory) && !String.IsNullOrEmpty(wsParam))
 			{
 				// Display the language name, not its ICU locale.
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsParam, out ws))
 					cols[1] = ws.DisplayLabel;
 				else
@@ -728,7 +729,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (ri != null)
 			{
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 				return ws.DisplayLabel;
 			}
 			return null;
@@ -1484,7 +1485,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Try to use the abbreviation of the language name, not its ICU locale
 					// name.
-					IWritingSystem ws;
+					CoreWritingSystemDefinition ws;
 					if (cache.ServiceLocator.WritingSystemManager.TryGet(newWs, out ws))
 						extra = ws.Abbreviation;
 					if (string.IsNullOrEmpty(extra))

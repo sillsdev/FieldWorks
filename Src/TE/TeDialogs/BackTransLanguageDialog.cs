@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.TE
 
 			m_chkBxApplyToAllBtWs.Checked = false;
 
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
 				m_olbWritingSystems.Items.Add(ws);
 				if (ws.Handle == defaultWs)
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-				return ((IWritingSystem)m_olbWritingSystems.SelectedItem).Handle;
+				return ((CoreWritingSystemDefinition) m_olbWritingSystems.SelectedItem).Handle;
 			}
 		}
 

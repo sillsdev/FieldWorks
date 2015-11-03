@@ -12,7 +12,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
-using Palaso.Linq;
+using SIL.Linq;
 using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks

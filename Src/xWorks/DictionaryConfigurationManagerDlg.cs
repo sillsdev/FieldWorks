@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Palaso.Linq;
+using SIL.Linq;
 
 namespace SIL.FieldWorks.XWorks
 {

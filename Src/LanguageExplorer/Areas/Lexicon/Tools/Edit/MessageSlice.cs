@@ -10,9 +10,9 @@ using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
 using LanguageExplorer.Dumpster;
-using Palaso.Progress;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
+using SIL.Progress;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -56,10 +56,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_notesBar.SetTargetObject(m_obj);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.Id, vernWs.DefaultFontName, 12);
 			m_notesBar.LabelWritingSystem = labelWs;
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
 			this.Control = m_notesBar;
 		}

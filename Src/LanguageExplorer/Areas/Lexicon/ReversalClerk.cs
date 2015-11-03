@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if(ri == null)
 				return false;
-			var writingSystem = (IWritingSystem)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+			var writingSystem = (CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 			m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
 				PropertyTable.GetValue<IApp>("App")),
 				new WritingSystemComparer(writingSystem)));

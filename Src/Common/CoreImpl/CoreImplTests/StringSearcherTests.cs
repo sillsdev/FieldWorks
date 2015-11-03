@@ -14,7 +14,7 @@ namespace SIL.CoreImpl
 	[TestFixture]
 	public class StringSearcherTests
 	{
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private int m_enWs;
 		private int m_frWs;
 		private ITsStrFactory m_tsf;
@@ -25,11 +25,11 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs;
+			m_wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_enWs = enWs.Handle;
-			IWritingSystem frWs;
+			CoreWritingSystemDefinition frWs;
 			m_wsManager.GetOrSet("fr", out frWs);
 			m_frWs = frWs.Handle;
 			m_tsf = TsStrFactoryClass.Create();

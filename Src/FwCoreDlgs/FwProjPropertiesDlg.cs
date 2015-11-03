@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Lexicon;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -82,8 +83,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// title bars.</summary>
 		protected bool m_fProjNameChanged;
 
-		private readonly HashSet<IWritingSystem> m_deletedWritingSystems = new HashSet<IWritingSystem>();
-		private readonly Dictionary<IWritingSystem, IWritingSystem> m_mergedWritingSystems = new Dictionary<IWritingSystem, IWritingSystem>();
+		private readonly HashSet<CoreWritingSystemDefinition> m_deletedWritingSystems = new HashSet<CoreWritingSystemDefinition>();
+		private readonly Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition> m_mergedWritingSystems = new Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition>();
 
 		private HelpProvider helpProvider1;
 		private TabControl m_tabControl;
@@ -121,9 +122,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>The project description when we entered the dialog.</summary>
 		protected string m_sOrigDescription;
 		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
-		private IWritingSystem m_topVernWs;
+		private CoreWritingSystemDefinition m_topVernWs;
 		private LinkLabel linkLbl_useDefaultFolder;
+		private CheckBox m_addWSsToSldrCheckBox;
 		private String m_defaultLinkedFilesFolder;
+		private readonly ProjectLexiconSettings m_projectLexiconSettings;
+		private readonly ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
 		#endregion
 
 		#region Construction and initialization
@@ -163,6 +167,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_stylesheet = stylesheet;
+			m_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
+			m_projectLexiconSettings = new ProjectLexiconSettings();
+			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
 
 			m_langProj = m_cache.LanguageProject;
 			InitializeWsTab();
@@ -197,22 +204,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (new WaitCursor(this))
 			{
 				// Add writing system names to the vernacular list.
-				foreach (IWritingSystem ws in m_langProj.CurrentVernacularWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_langProj.CurrentVernacularWritingSystems)
 					m_lstVernWs.Items.Add(ws, true);
 
 				// Add writing system names to the analysis list.
-				foreach (IWritingSystem ws in m_langProj.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_langProj.CurrentAnalysisWritingSystems)
 					m_lstAnalWs.Items.Add(ws, true);
 
 				// Now add the unchecked (or not current) writing systems to the vern. list.
-				foreach (IWritingSystem ws in m_langProj.VernacularWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_langProj.VernacularWritingSystems)
 				{
 					if (!m_lstVernWs.Items.Contains(ws))
 						m_lstVernWs.Items.Add(ws, false);
 				}
 
 				// Now add the unchecked (or not current) writing systems to the anal. list.
-				foreach (IWritingSystem ws in m_langProj.AnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_langProj.AnalysisWritingSystems)
 				{
 					if (!m_lstAnalWs.Items.Contains(ws))
 						m_lstAnalWs.Items.Add(ws, false);
@@ -222,12 +229,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_lstVernWs.Items.Count > 0)
 				{
 					m_lstVernWs.SelectedIndex = 0;
-					m_topVernWs = (IWritingSystem) m_lstVernWs.CheckedItems[0];
+					m_topVernWs = (CoreWritingSystemDefinition) m_lstVernWs.CheckedItems[0];
 				}
 
 				// Select the first item in the analysis writing system list.
 				if (m_lstAnalWs.Items.Count > 0)
 					m_lstAnalWs.SelectedIndex = 0;
+
+				m_addWSsToSldrCheckBox.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
+				if (m_addWSsToSldrCheckBox.Enabled)
+					m_addWSsToSldrCheckBox.Checked = m_projectLexiconSettings.AddWritingSystemsToSldr;
 				UpdateOKButton();
 			}
 		}
@@ -335,6 +346,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lblProjCreatedDate = new System.Windows.Forms.Label();
 			this.m_lblProjName = new System.Windows.Forms.Label();
 			this.m_txtProjName = new System.Windows.Forms.TextBox();
+			this.m_addWSsToSldrCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_btnAnalMoveUp = new System.Windows.Forms.Button();
 			this.m_btnAnalMoveDown = new System.Windows.Forms.Button();
 			this.m_btnDelAnalWs = new System.Windows.Forms.Button();
@@ -347,6 +359,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_btnAddVernWs = new System.Windows.Forms.Button();
 			this.m_lstAnalWs = new System.Windows.Forms.CheckedListBox();
 			this.m_lstVernWs = new System.Windows.Forms.CheckedListBox();
+			this.linkLbl_useDefaultFolder = new System.Windows.Forms.LinkLabel();
 			this.btnLinkedFilesBrowse = new System.Windows.Forms.Button();
 			this.txtExtLnkEdit = new System.Windows.Forms.TextBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -360,7 +373,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_hideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mergeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.linkLbl_useDefaultFolder = new System.Windows.Forms.LinkLabel();
 			m_btnHelp = new System.Windows.Forms.Button();
 			m_btnCancel = new System.Windows.Forms.Button();
 			m_tpGeneral = new System.Windows.Forms.TabPage();
@@ -431,7 +443,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_tbLocation
 			//
-			this.m_tbLocation.AccessibleDescription = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			resources.ApplyResources(this.m_tbLocation, "m_tbLocation");
 			this.m_tbLocation.BackColor = System.Drawing.SystemColors.Window;
 			this.m_tbLocation.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -539,6 +550,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_tpWritingSystems
 			//
+			m_tpWritingSystems.Controls.Add(this.m_addWSsToSldrCheckBox);
 			m_tpWritingSystems.Controls.Add(this.m_btnAnalMoveUp);
 			m_tpWritingSystems.Controls.Add(this.m_btnAnalMoveDown);
 			m_tpWritingSystems.Controls.Add(this.m_btnDelAnalWs);
@@ -558,6 +570,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tpWritingSystems.Name = "m_tpWritingSystems";
 			this.helpProvider1.SetShowHelp(m_tpWritingSystems, ((bool)(resources.GetObject("m_tpWritingSystems.ShowHelp"))));
 			m_tpWritingSystems.UseVisualStyleBackColor = true;
+			//
+			// m_addWSsToSldrCheckBox
+			//
+			resources.ApplyResources(this.m_addWSsToSldrCheckBox, "m_addWSsToSldrCheckBox");
+			this.m_addWSsToSldrCheckBox.Name = "m_addWSsToSldrCheckBox";
+			this.m_addWSsToSldrCheckBox.UseVisualStyleBackColor = true;
+			this.m_addWSsToSldrCheckBox.CheckedChanged += new System.EventHandler(this.m_addWSsToSldrCheckBox_CheckedChanged);
 			//
 			// m_btnAnalMoveUp
 			//
@@ -613,7 +632,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// m_btnVernMoveDown
 			//
 			resources.ApplyResources(this.m_btnVernMoveDown, "m_btnVernMoveDown");
-			this.helpProvider1.SetHelpKeyword(this.m_btnVernMoveDown, global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen);
+			this.helpProvider1.SetHelpKeyword(this.m_btnVernMoveDown, resources.GetString("m_btnVernMoveDown.HelpKeyword"));
 			this.helpProvider1.SetHelpString(this.m_btnVernMoveDown, resources.GetString("m_btnVernMoveDown.HelpString"));
 			this.m_btnVernMoveDown.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.arrowdown;
 			this.m_btnVernMoveDown.Name = "m_btnVernMoveDown";
@@ -698,6 +717,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.helpProvider1.SetShowHelp(m_tpExternalLinks, ((bool)(resources.GetObject("m_tpExternalLinks.ShowHelp"))));
 			m_tpExternalLinks.UseVisualStyleBackColor = true;
 			//
+			// linkLbl_useDefaultFolder
+			//
+			resources.ApplyResources(this.linkLbl_useDefaultFolder, "linkLbl_useDefaultFolder");
+			this.linkLbl_useDefaultFolder.Name = "linkLbl_useDefaultFolder";
+			this.linkLbl_useDefaultFolder.TabStop = true;
+			this.linkLbl_useDefaultFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_useDefaultFolder_LinkClicked);
+			//
 			// label13
 			//
 			resources.ApplyResources(label13, "label13");
@@ -768,13 +794,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_wsMenuStrip
 			//
-			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-				{
-					this.m_modifyMenuItem,
-					this.m_hideMenuItem,
-					this.m_mergeMenuItem,
-					this.m_deleteMenuItem
-				});
+			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+				this.m_modifyMenuItem,
+				this.m_hideMenuItem,
+				this.m_mergeMenuItem,
+				this.m_deleteMenuItem
+			});
 			this.m_wsMenuStrip.Name = "m_wsMenuStrip";
 			resources.ApplyResources(this.m_wsMenuStrip, "m_wsMenuStrip");
 			//
@@ -802,13 +827,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_deleteMenuItem, "m_deleteMenuItem");
 			this.m_deleteMenuItem.Click += new System.EventHandler(this.m_deleteMenuItem_Click);
 			//
-			// linkLbl_useDefaultFolder
-			//
-			resources.ApplyResources(this.linkLbl_useDefaultFolder, "linkLbl_useDefaultFolder");
-			this.linkLbl_useDefaultFolder.Name = "linkLbl_useDefaultFolder";
-			this.linkLbl_useDefaultFolder.TabStop = true;
-			this.linkLbl_useDefaultFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_useDefaultFolder_LinkClicked);
-			//
 			// FwProjPropertiesDlg
 			//
 			resources.ApplyResources(this, "$this");
@@ -819,7 +837,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.Controls.Add(m_btnHelp);
 			this.Controls.Add(this.m_btnOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.helpProvider1.SetHelpString(this, global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen);
+			this.helpProvider1.SetHelpString(this, resources.GetString("$this.HelpString"));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FwProjPropertiesDlg";
@@ -969,7 +987,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			// if needed put up "should the homograph ws change?" dialog
 			var changeHgWs = DialogResult.No;
-			var topVernWs = (IWritingSystem)m_lstVernWs.CheckedItems[0];
+			var topVernWs = (CoreWritingSystemDefinition)m_lstVernWs.CheckedItems[0];
 			Debug.Assert(m_topVernWs != null, "There was no checked top vernacular ws when this dialog loaded");
 			// if the top vern ws changed and it is not the current hg ws, ask
 			if (m_topVernWs.Id != topVernWs.Id && topVernWs.Id != m_cache.LanguageProject.HomographWs)
@@ -1042,6 +1060,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
 			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
+
+			m_projectLexiconSettingsDataMapper.Write(m_projectLexiconSettings);
 		}
 
 		private void SaveLinkedFilesChanges(string sNewLinkedFilesRootDir)
@@ -1068,7 +1088,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void DeleteWritingSystems()
 		{
-			foreach (IWritingSystem ws in m_deletedWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_deletedWritingSystems)
 			{
 				WritingSystemServices.DeleteWritingSystem(m_cache, ws);
 				m_fWsChanged = true;
@@ -1077,7 +1097,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void MergeWritingSystems()
 		{
-			foreach (KeyValuePair<IWritingSystem, IWritingSystem> mergedWs in m_mergedWritingSystems)
+			foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> mergedWs in m_mergedWritingSystems)
 			{
 				WritingSystemServices.MergeWritingSystems(m_cache, mergedWs.Key, mergedWs.Value);
 				// Update our internal lists so that they won't overwrite the updated real lists
@@ -1088,13 +1108,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private static void MergeOnLocalList(KeyValuePair<IWritingSystem, IWritingSystem> mergedWs,
+		private static void MergeOnLocalList(KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> mergedWs,
 			IList items)
 		{
 			var indices = new List<int>();	// records multiple occurrences.
 			for (var i = 0; i < items.Count; ++i)
 			{
-				var wsT = items[i] as IWritingSystem;
+				var wsT = items[i] as CoreWritingSystemDefinition;
 				if (wsT == null)
 					continue;
 				if (wsT == mergedWs.Key)
@@ -1196,16 +1216,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (new WaitCursor(this))
 			{
 				ShowAddWsContextMenu(m_cmnuAddWs,
-					WritingSystemUtils.GetAllDistinctWritingSystems(m_cache.ServiceLocator.WritingSystemManager),
+					m_cache.ServiceLocator.WritingSystemManager.AllDistinctWritingSystems,
 					listToAddTo, button, m_cmnuAddWs_Click, m_cmnuAddWs_Click,
 					clickHandlerNewWsFromSelected, GetCurrentSelectedWs(listToAddTo));
 			}
 		}
 
 		static internal void ShowAddWsContextMenu(ContextMenuStrip cmnuAddWs,
-			IEnumerable<IWritingSystem> wssToAdd, ListBox listToAddTo, Button button,
+			IEnumerable<CoreWritingSystemDefinition> wssToAdd, ListBox listToAddTo, Button button,
 			EventHandler clickHandlerExistingWs, EventHandler clickHandlerNewWs,
-			EventHandler clickHandlerNewWsFromSelected, IWritingSystem selectedWs)
+			EventHandler clickHandlerNewWsFromSelected, CoreWritingSystemDefinition selectedWs)
 		{
 			try
 			{
@@ -1216,29 +1236,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			catch (Exception e)
 			{
 				Form form = cmnuAddWs.FindForm();
-				Control owner = null;
-				if (form != null)
-					owner = form.Owner;
-				MessageBoxUtils.Show(owner,
+				MessageBoxUtils.Show(form == null ? null : form.Owner,
 					string.Format(ResourceHelper.GetResourceString("kstidMiscErrorWithMessage"), e.Message),
 					ResourceHelper.GetResourceString("kstidMiscError"));
 			}
 		}
 
-		static internal void PopulateWsContextMenu(ContextMenuStrip cmnuAddWs, IEnumerable<IWritingSystem> wssToAdd,
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Caller is responsible for diposing tool strip items that get added to context menu.")]
+		static internal void PopulateWsContextMenu(ContextMenuStrip cmnuAddWs, IEnumerable<CoreWritingSystemDefinition> wssToAdd,
 			ListBox listToAddTo, EventHandler clickHandlerExistingWs, EventHandler clickHandlerNewWs,
-			EventHandler clickHandlerNewWsFromSelected, IWritingSystem selectedWs)
+			EventHandler clickHandlerNewWsFromSelected, CoreWritingSystemDefinition selectedWs)
 		{
 			cmnuAddWs.Items.Clear();
 			cmnuAddWs.Tag = listToAddTo;
 			// Add the "Writing system for <language>..." menu item.
-			IEnumerable<IWritingSystem> relatedWss = Enumerable.Empty<IWritingSystem>();
+			IEnumerable<CoreWritingSystemDefinition> relatedWss = Enumerable.Empty<CoreWritingSystemDefinition>();
 			if (clickHandlerNewWsFromSelected != null && selectedWs != null)
 			{
 				// Populate Context Menu with related wss.
 				relatedWss = wssToAdd.Related(selectedWs).ToArray();
 				AddExistingWssToContextMenu(cmnuAddWs, relatedWss, listToAddTo, clickHandlerExistingWs);
-				ToolStripItem tsiNewWs = new ToolStripMenuItem(string.Format(FwCoreDlgs.ksWsNewFromExisting, selectedWs.LanguageSubtag.Name),
+				ToolStripItem tsiNewWs = new ToolStripMenuItem(string.Format(FwCoreDlgs.ksWsNewFromExisting, selectedWs.Language.Name),
 					null, clickHandlerNewWsFromSelected);
 				cmnuAddWs.Items.Add(tsiNewWs);
 			}
@@ -1255,15 +1274,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Caller is responsible for diposing tool strip items that get added to context menu.")]
 		private static void AddExistingWssToContextMenu(ContextMenuStrip cmnuAddWs,
-			IEnumerable<IWritingSystem> wssToAdd, ListBox listToAddExistingTo, EventHandler clickHandlerExistingWs)
+			IEnumerable<CoreWritingSystemDefinition> wssToAdd, ListBox listToAddExistingTo, EventHandler clickHandlerExistingWs)
 		{
 			bool fAddDivider = cmnuAddWs.Items.Count > 0;
-			IEnumerable<IWritingSystem> q = from ws in wssToAdd
-											where !listToAddExistingTo.Items.Cast<IWritingSystem>().Contains(ws, new WsIdEqualityComparer())
+			IEnumerable<CoreWritingSystemDefinition> q = from ws in wssToAdd
+											where !listToAddExistingTo.Items.Cast<CoreWritingSystemDefinition>().Contains(ws, new WritingSystemLanguageTagEqualityComparer())
 											orderby ws.DisplayLabel
 											select ws;
-			foreach (IWritingSystem ws in q)
+			foreach (CoreWritingSystemDefinition ws in q)
 			{
 				if (fAddDivider)
 				{
@@ -1299,9 +1320,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			HideListItem(m_lstAnalWs);
 		}
 
-		private static IWritingSystem GetCurrentSelectedWs(ListBox selectedList)
+		private static CoreWritingSystemDefinition GetCurrentSelectedWs(ListBox selectedList)
 		{
-			return (IWritingSystem) selectedList.SelectedItem;
+			return (CoreWritingSystemDefinition) selectedList.SelectedItem;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1332,24 +1353,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				return new MemoryWritingSystemContainer(m_lstAnalWs.Items.Cast<IWritingSystem>(),
-					m_lstVernWs.Items.Cast<IWritingSystem>(), m_lstAnalWs.SelectedItems.Cast<IWritingSystem>(),
-					m_lstVernWs.SelectedItems.Cast<IWritingSystem>(), m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
+				return new MemoryWritingSystemContainer(m_lstAnalWs.Items.Cast<CoreWritingSystemDefinition>(),
+					m_lstVernWs.Items.Cast<CoreWritingSystemDefinition>(), m_lstAnalWs.SelectedItems.Cast<CoreWritingSystemDefinition>(),
+					m_lstVernWs.SelectedItems.Cast<CoreWritingSystemDefinition>(), m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 			}
 		}
 
 		private void DisplayModifyWritingSystemProperties(CheckedListBox list, bool addNewForLangOfSelectedWs)
 		{
-			IWritingSystem selectedWs = GetCurrentSelectedWs(list);
+			CoreWritingSystemDefinition selectedWs = GetCurrentSelectedWs(list);
 
-			IEnumerable<IWritingSystem> newWritingSystems;
+			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowModifyDialog(this, selectedWs, addNewForLangOfSelectedWs, m_cache, CurrentWritingSystemContainer,
 				m_helpTopicProvider, m_app, m_stylesheet, out newWritingSystems))
 			{
 				m_fWsChanged = true;
-				foreach (IWritingSystem newWs in newWritingSystems)
+				foreach (CoreWritingSystemDefinition newWs in newWritingSystems)
 				{
-					if (!list.Items.Cast<IWritingSystem>().Any(ws => ws.Id == newWs.Id))
+					if (!list.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws.Id == newWs.Id))
 						list.Items.Add(newWs, true);
 				}
 				list.Invalidate();
@@ -1410,44 +1431,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						SetLinkedFilesToDefault();
 					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// If the LinkedFilesRootDir needs to exist when launching the Browse dialog for selecting LinkedFiles.
-		/// </summary>
-		private string HandleLinkedFilesPathDoesNotExist(string linkedFilesPath)
-		{
-
-			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
-			if (!Directory.Exists(linkedFilesPath) && linkedFilesPath.Equals(defaultLinkedFilesPath))
-			{
-				//if the path points to the default location but does not exist then create it.
-				Directory.CreateDirectory(defaultLinkedFilesPath);
-				return defaultLinkedFilesPath;
-			}
-			while (true)
-			{
-				if (!Directory.Exists(linkedFilesPath))
-				{
-					var message =
-						String.Format(
-							FwCoreDlgs.ksLinkedFilesFolderDoesNotExist,
-							linkedFilesPath);
-					var result = MessageBox.Show(message, FwCoreDlgs.ksLinkedFilesPathNotAccessible, MessageBoxButtons.YesNo,
-												 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-					if (result == DialogResult.No)
-					{
-						//if the path points to the default location but does not exist then create it.
-						Directory.CreateDirectory(defaultLinkedFilesPath);
-						m_fLinkedFilesChanged = true;
-						return defaultLinkedFilesPath;
-					}
-				}
-				else
-				{
-					return linkedFilesPath;
 				}
 			}
 		}
@@ -1519,7 +1502,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var mnuItem = sender as WsMenuItem;
 			if (mnuItem != null)
 			{
-				IWritingSystem ws = mnuItem.WritingSystem;
+				CoreWritingSystemDefinition ws = mnuItem.WritingSystem;
 				if (ws.Handle == 0)
 					// the writing system is global so create a new writing system based on it
 					ws = m_cache.ServiceLocator.WritingSystemManager.CreateFrom(ws);
@@ -1540,11 +1523,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void DisplayNewWritingSystemProperties(CheckedListBox list)
 		{
-			IEnumerable<IWritingSystem> newWritingSystems;
+			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowNewDialog(this, m_cache, m_cache.ServiceLocator.WritingSystemManager, CurrentWritingSystemContainer,
 				m_helpTopicProvider, m_app, m_stylesheet, true, null, out newWritingSystems))
 			{
-				foreach (IWritingSystem ws in newWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in newWritingSystems)
 					list.Items.Add(ws, true);
 				list.Invalidate();
 			}
@@ -1570,7 +1553,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					listBox.Select();
 					listBox.SelectedIndex = index;
-					IWritingSystem ws = GetCurrentSelectedWs(listBox);
+					CoreWritingSystemDefinition ws = GetCurrentSelectedWs(listBox);
 					bool isUserOrEnWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem == ws || ws.Id == "en";
 					m_mergeMenuItem.Enabled = !isUserOrEnWs;
 					m_deleteMenuItem.Enabled = !isUserOrEnWs;
@@ -1617,7 +1600,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="ws"></param>
 		/// <param name="list"></param>
 		/// ------------------------------------------------------------------------------------
-		protected static void AddWsToList(IWritingSystem ws, CheckedListBox list)
+		protected static void AddWsToList(CoreWritingSystemDefinition ws, CheckedListBox list)
 		{
 			list.Items.Add(ws, true);
 			list.SelectedItem = ws;
@@ -1632,7 +1615,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			(list == m_lstAnalWs ? m_btnDelAnalWs : m_btnDelVernWs).Enabled = true;
 			(list == m_lstAnalWs ? m_btnAnalMoveUp : m_btnVernMoveUp).Enabled = true;
 			(list == m_lstAnalWs ? m_btnAnalMoveDown : m_btnVernMoveDown).Enabled = true;
-			IWritingSystem ws = GetCurrentSelectedWs(list);
+			CoreWritingSystemDefinition ws = GetCurrentSelectedWs(list);
 			(list == m_lstAnalWs ? m_btnModifyAnalWs : m_btnModifyVernWs).Enabled = (ws != null);
 
 			UpdateOKButton();
@@ -1650,7 +1633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (list == m_lstAnalWs )//&& list.SelectedItem.ToString() == m_cache.DefaultUserWs)
 			{
-				var ws = (IWritingSystem) list.SelectedItem;
+				var ws = (CoreWritingSystemDefinition) list.SelectedItem;
 				if ("en" == ws.Id && BringUpEnglishWarningMsg() != DialogResult.Yes)
 					return;
 			}
@@ -1752,10 +1735,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void MergeListItem(CheckedListBox list)
 		{
-			IWritingSystem ws = GetCurrentSelectedWs(list);
+			CoreWritingSystemDefinition ws = GetCurrentSelectedWs(list);
 			if (DialogResult.No == MessageBox.Show(FwCoreDlgs.ksWSWarnWhenMergingWritingSystems, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo))
 				return;
-			using (var dlg = new MergeWritingSystemDlg(m_cache, ws, m_lstVernWs.Items.Cast<IWritingSystem>().Union(m_lstAnalWs.Items.Cast<IWritingSystem>()),
+			using (var dlg = new MergeWritingSystemDlg(m_cache, ws, m_lstVernWs.Items.Cast<CoreWritingSystemDefinition>().Union(m_lstAnalWs.Items.Cast<CoreWritingSystemDefinition>()),
 				m_helpTopicProvider))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1771,6 +1754,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// This is used before SaveInternal, which sets m_fWsChanged for these (and the modify) cases.
 		bool DidWsTabChange()
 		{
+			if (m_projectLexiconSettings.IsChanged)
+				return true;
 			if (m_deletedWritingSystems.Count > 0)
 				return true;
 			if (m_mergedWritingSystems.Count > 0)
@@ -1786,14 +1771,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Save the new list of writing systems to the database
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool WsListChanged(CheckedListBox lstBox, IList<IWritingSystem> currList, ICollection<IWritingSystem> allSet)
+		protected bool WsListChanged(CheckedListBox lstBox, IList<CoreWritingSystemDefinition> currList, ICollection<CoreWritingSystemDefinition> allSet)
 		{
-			if (allSet.Count != lstBox.Items.Count || allSet.Intersect(lstBox.Items.Cast<IWritingSystem>()).Count() != allSet.Count)
+			if (allSet.Count != lstBox.Items.Count || allSet.Intersect(lstBox.Items.Cast<CoreWritingSystemDefinition>()).Count() != allSet.Count)
 			{
 				return true;
 			}
 
-			if (!currList.SequenceEqual(lstBox.CheckedItems.Cast<IWritingSystem>()))
+			if (!currList.SequenceEqual(lstBox.CheckedItems.Cast<CoreWritingSystemDefinition>()))
 			{
 				return true;
 			}
@@ -1805,36 +1790,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Save the new list of writing systems to the database
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void SaveWs(CheckedListBox lstBox, IList<IWritingSystem> currList, ICollection<IWritingSystem> allSet)
+		protected void SaveWs(CheckedListBox lstBox, IList<CoreWritingSystemDefinition> currList, ICollection<CoreWritingSystemDefinition> allSet)
 		{
-			if (allSet.Count != lstBox.Items.Count || allSet.Intersect(lstBox.Items.Cast<IWritingSystem>()).Count() != allSet.Count)
+			if (allSet.Count != lstBox.Items.Count || allSet.Intersect(lstBox.Items.Cast<CoreWritingSystemDefinition>()).Count() != allSet.Count)
 			{
 				var newWsIds = new List<string>();
-				foreach (IWritingSystem ws in lstBox.Items)
+				foreach (CoreWritingSystemDefinition ws in lstBox.Items)
 				{
 					string id = ws.IcuLocale;
 					if (allSet.FirstOrDefault(existing => existing.IcuLocale == id) == null)
 						newWsIds.Add(id);
 				}
 				allSet.Clear();
-				foreach (IWritingSystem ws in lstBox.Items)
+				foreach (CoreWritingSystemDefinition ws in lstBox.Items)
 				{
 					if (ws.Handle == 0)
 						m_cache.ServiceLocator.WritingSystemManager.Replace(ws);
 					allSet.Add(ws);
 				}
 				m_fWsChanged = true;
-				foreach (var newWs in newWsIds)
+				foreach (string newWs in newWsIds)
 				{
 					// IcuLocale uses _ to separate, RFC5646 uses -.  We need the latter (see FWNX-1165).
 					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs.Replace("_","-"));
 				}
 			}
 
-			if (!currList.SequenceEqual(lstBox.CheckedItems.Cast<IWritingSystem>()))
+			if (!currList.SequenceEqual(lstBox.CheckedItems.Cast<CoreWritingSystemDefinition>()))
 			{
 				currList.Clear();
-				foreach (IWritingSystem ws in lstBox.CheckedItems)
+				foreach (CoreWritingSystemDefinition ws in lstBox.CheckedItems)
 					currList.Add(ws);
 				m_fWsChanged = true;
 			}
@@ -1864,7 +1849,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		internal class WsMenuItem : ToolStripMenuItem
 		{
-			private readonly IWritingSystem m_ws;
+			private readonly CoreWritingSystemDefinition m_ws;
 			private readonly ListBox m_list;
 
 			/// --------------------------------------------------------------------------------
@@ -1875,7 +1860,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <param name="list"></param>
 			/// <param name="handler">OnClick event handler</param>
 			/// --------------------------------------------------------------------------------
-			public WsMenuItem(IWritingSystem ws, ListBox list, EventHandler handler)
+			public WsMenuItem(CoreWritingSystemDefinition ws, ListBox list, EventHandler handler)
 				: base(ws.DisplayLabel, null, handler)
 			{
 				m_ws = ws;
@@ -1887,7 +1872,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			///
 			/// </summary>
 			/// --------------------------------------------------------------------------------
-			public IWritingSystem WritingSystem
+			public CoreWritingSystemDefinition WritingSystem
 			{
 				get
 				{
@@ -1920,6 +1905,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			txtExtLnkEdit.Text = m_defaultLinkedFilesFolder;
 			if (!Directory.Exists(m_defaultLinkedFilesFolder))
 				Directory.CreateDirectory(m_defaultLinkedFilesFolder);
+		}
+
+		private void m_addWSsToSldrCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			m_projectLexiconSettings.AddWritingSystemsToSldr = m_addWSsToSldrCheckBox.Checked;
 		}
 	}
 	#endregion //FwProjPropertiesDlg dialog

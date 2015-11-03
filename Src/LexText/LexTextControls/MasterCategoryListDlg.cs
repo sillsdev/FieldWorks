@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				XmlNode nd = node.SelectSingleNode(sNodeName + "[@ws='" + sDefaultWS + "']");
 				if (nd == null || nd.InnerText.Length == 0)
 				{
-					foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
 						sWS = ws.Id;
 						if (sWS == sDefaultWS)
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int iWS;
 				XmlNode nd;
 				bool fContentFound = false; // be pessimistic
-				foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				{
 					string sWS = ws.Id;
 					nd = m_node.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");

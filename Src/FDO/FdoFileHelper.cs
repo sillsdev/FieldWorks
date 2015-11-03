@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.FDO
 		public const string OtherRepositories = @"OtherRepositories";
 
 		/// <summary>The filename of the backup settings file</summary>
-		public const string kBackupSettingsFilename = "BackupSettings.xml";
+		public const string ksBackupSettingsFilename = "BackupSettings.xml";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

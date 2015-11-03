@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 
 			// start building index
-			var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (selectedWs != null)
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
 		}
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				m_btnInsert.Enabled = false;
 			}
-			var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			int wsSelHvo = selectedWs != null ? selectedWs.Handle : 0;
 
 			if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))

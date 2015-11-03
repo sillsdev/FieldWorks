@@ -8,18 +8,16 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Palaso.Lift;
-using Palaso.Lift.Parsing;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.Lift;
+using SIL.Lift.Parsing;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems.Migration;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -721,14 +719,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ListNewWritingSystems(System.IO.StreamWriter writer, string sMsg,
-			List<IWritingSystem> list)
+		private void ListNewWritingSystems(StreamWriter writer, string sMsg,
+			List<CoreWritingSystemDefinition> list)
 		{
 			if (list.Count > 0)
 			{
 				writer.WriteLine("<p><h3>{0}</h3></p>", sMsg);
 				writer.WriteLine("<ul>");
-				foreach (IWritingSystem ws in list)
+				foreach (CoreWritingSystemDefinition ws in list)
 					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.Id);
 				writer.WriteLine("</ul>");
 			}
@@ -1468,6 +1466,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var ldmlFolder = Path.Combine(sLIFTfilesPath, "WritingSystems");
 
+			// TODO (WS_FIX): do we need settings data mappers here?
 			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration);
 			migrator.Migrate();
 
@@ -1511,13 +1510,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		internal void NoteMigration(IEnumerable<LdmlVersion0MigrationStrategy.MigrationInfo> migrationInfo)
+		internal void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
 		{
-			foreach (var info in migrationInfo)
+			foreach (LdmlMigrationInfo info in migrationInfo)
 			{
 				// Not sure if it ever reports unchanged ones, but we don't care about them.
-				if (info.RfcTagBeforeMigration != info.RfcTagAfterMigration)
-					m_writingsytemChangeMap[RemoveMultipleX(info.RfcTagBeforeMigration.ToLowerInvariant())] = info.RfcTagAfterMigration;
+				if (info.LanguageTagBeforeMigration != info.LanguageTagAfterMigration)
+					m_writingsytemChangeMap[RemoveMultipleX(info.LanguageTagBeforeMigration.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				// Due to earlier bugs, FieldWorks projects sometimes contain cmn* writing systems in zh* files,
 				// and the fwdata incorrectly labels this data using a tag based on the file name rather than the
 				// language tag indicated by the internal properties. We attempt to correct this by also converting the
@@ -1525,8 +1524,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (info.FileName.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
 				{
 					var fileNameTag = Path.GetFileNameWithoutExtension(info.FileName);
-					if (fileNameTag != info.RfcTagBeforeMigration)
-						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.RfcTagAfterMigration;
+					if (fileNameTag != info.LanguageTagBeforeMigration)
+						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				}
 			}
 		}
@@ -1554,7 +1553,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var key = RemoveMultipleX(oldTag.ToLowerInvariant());
 			if (m_writingsytemChangeMap.TryGetValue(key, out newTag))
 				return !newTag.Equals(oldTag, StringComparison.OrdinalIgnoreCase);
-			var cleaner = new Rfc5646TagCleaner(oldTag);
+			var cleaner = new IetfLanguageTagCleaner(oldTag);
 			cleaner.Clean();
 			// FieldWorks needs to handle this special case.
 			if (cleaner.Language.ToLowerInvariant() == "cmn")
@@ -1562,13 +1561,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				var region = cleaner.Region;
 				if (string.IsNullOrEmpty(region))
 					region = "CN";
-				cleaner = new Rfc5646TagCleaner("zh", cleaner.Script, region, cleaner.Variant, cleaner.PrivateUse);
+				cleaner = new IetfLanguageTagCleaner("zh", cleaner.Script, region, cleaner.Variant, cleaner.PrivateUse);
 			}
 			newTag = cleaner.GetCompleteTag();
 			while (m_writingsytemChangeMap.Values.Contains(newTag, StringComparer.OrdinalIgnoreCase))
 			{
 				// We can't use this tag because it would conflict with what we are mapping something else to.
-				cleaner = new Rfc5646TagCleaner(cleaner.Language, cleaner.Script, cleaner.Region, cleaner.Variant,
+				cleaner = new IetfLanguageTagCleaner(cleaner.Language, cleaner.Script, cleaner.Region, cleaner.Variant,
 					GetNextDuplPart(cleaner.PrivateUse));
 				newTag = cleaner.GetCompleteTag();
 			}

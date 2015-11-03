@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
-		IWritingSystemManager m_wsManager;
+		WritingSystemManager m_wsManager;
 		int m_hvoGermanWs;
 		int m_hvoEnglishWs;
 		#endregion
@@ -46,15 +46,15 @@ namespace SIL.FieldWorks.Common.Widgets
 			base.FixtureSetup();
 
 			m_stylesheet = new TestFwStylesheet();
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 
 			// English
-			IWritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 			Assert.IsTrue(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS");
 			// German
-			IWritingSystem deWs;
+			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_hvoGermanWs = deWs.Handle;
 			Assert.IsTrue(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS");

@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.IText
 
 		private int CurrentSelectedWs()
 		{
-			var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+			var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 			// Could have nothing selected.  See LT-8041.
 			if (ws == null)
 				return m_cache.DefaultVernWs;
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.IText
 				SettingsGroup.LocalSettings, true, false);
 
 			PropertyTable.SetProperty("ConcordanceWs",
-				((IWritingSystem) m_cbWritingSystem.SelectedItem).Id,
+				((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id,
 				SettingsGroup.LocalSettings, true, false);
 
 			PropertyTable.SetProperty("ConcordanceText",
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.IText
 
 		private void m_cbWritingSystem_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+			var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 			if (ws == null)
 			{
 				Debug.Assert(m_cbWritingSystem.SelectedIndex == -1);
@@ -597,9 +597,9 @@ namespace SIL.FieldWorks.IText
 					MessageBox.Show(ITextStrings.ksMatchStringTooLong, ITextStrings.ksWarning);
 					m_tbSearchText.Text = sMatch;
 				}
-				int ws = ((IWritingSystem) m_cbWritingSystem.SelectedItem).Handle;
+				int ws = ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Handle;
 
-				ConcordLine conc = (ConcordLine)m_cbLine.SelectedItem;
+				var conc = (ConcordLine) m_cbLine.SelectedItem;
 				switch (conc.Line)
 				{
 					case ConcordanceLines.kBaseline:
@@ -908,12 +908,12 @@ namespace SIL.FieldWorks.IText
 			switch (wsMagic)
 			{
 				case WritingSystemServices.kwsVerns:
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						m_cbWritingSystem.Items.Add(ws);
 					wsSet = m_cache.DefaultVernWs;
 					break;
 				case WritingSystemServices.kwsAnals:
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_cbWritingSystem.Items.Add(ws);
 					wsSet = m_cache.DefaultAnalWs;
 					break;
@@ -930,7 +930,7 @@ namespace SIL.FieldWorks.IText
 			int idx = -1;
 			for (int i = 0; i < m_cbWritingSystem.Items.Count; ++i)
 			{
-				if (((IWritingSystem) m_cbWritingSystem.Items[i]).Handle == ws)
+				if (((CoreWritingSystemDefinition) m_cbWritingSystem.Items[i]).Handle == ws)
 				{
 					idx = i;
 					break;
@@ -938,7 +938,7 @@ namespace SIL.FieldWorks.IText
 			}
 			if (idx == -1)
 			{
-				foreach (IWritingSystem wsObj in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				foreach (CoreWritingSystemDefinition wsObj in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				{
 					if (wsObj.Handle == ws)
 					{

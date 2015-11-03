@@ -4,9 +4,9 @@
 
 using System;
 using NUnit.Framework;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
 using System.Diagnostics.CodeAnalysis;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {
@@ -23,18 +23,13 @@ namespace SIL.Utils.Attributes
 	public class InitializeRealKeyboardControllerAttribute: TestActionAttribute
 	{
 		/// <summary>
-		/// Gets or sets a value indicating whether a dummy keyboard controller should be
-		/// initialized after this test/suite run.
-		/// </summary>
-		public bool InitDummyAfterTests { get; set; }
-
-		/// <summary>
 		/// Initialize keyboard controller
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "Keyboard.Controller gets disposed")]
 		public override void BeforeTest(TestDetails testDetails)
 		{
+			base.BeforeTest(testDetails);
 			if (Keyboard.Controller != null)
 				Keyboard.Controller.Dispose();
 
@@ -49,9 +44,7 @@ namespace SIL.Utils.Attributes
 		{
 			base.AfterTest(testDetails);
 			KeyboardController.Shutdown();
-
-			if (InitDummyAfterTests)
-				Keyboard.Controller = new NoOpKeyboardController();
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 	}
 }

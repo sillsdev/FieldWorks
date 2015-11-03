@@ -13,11 +13,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.WritingSystems;
+using Icu;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -28,6 +29,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SILUBS.SharedScrUtils;
@@ -59,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			private IApp m_app;
 			private ValidCharacters m_validChars;
-			private IWritingSystem m_ws;
+			private CoreWritingSystemDefinition m_ws;
 			private readonly ContextMenuStrip m_cmnu;
 			private readonly ToolStripMenuItem m_cmnuTreatAsWrdForming;
 			private readonly ToolStripMenuItem m_cmnuTreatAsNotWrdForming;
@@ -95,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
 			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CharacterGrid gridNum,
-				IWritingSystem ws, IApp app)
+				CoreWritingSystemDefinition ws, IApp app)
 			{
 				m_ws = ws;
 				m_app = app;
@@ -134,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_gridWordForming = gridWf;
 				m_gridNumbers = gridNum;
 				m_gridOther = gridOther;
-				m_validChars = ValidCharacters.Load(ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+				m_validChars = ValidCharacters.Load(ws, LoadException);
 
 				RefreshCharacterGrids(ValidCharacterType.All);
 			}
@@ -144,7 +146,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			~ValidCharGridsManager()
 			{
-				System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLine("****** Missing Dispose() call for " + GetType() + " *******");
 				Dispose(false);
 			}
 			#endif
@@ -168,7 +170,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
@@ -321,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// ---------------------------------------------------------------------------------
 			internal void Save()
 			{
-				m_ws.ValidChars = m_validChars.XmlString;
+				m_validChars.SaveTo(m_ws);
 			}
 
 			/// ---------------------------------------------------------------------------------
@@ -364,7 +366,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Adds the list of characters to the list of valid characters.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
-			internal void AddCharacters(List<string> chrs)
+			internal void AddCharacters(IEnumerable<string> chrs)
 			{
 				RefreshCharacterGrids(m_validChars.AddCharacters(chrs));
 
@@ -401,19 +403,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if ((type & ValidCharacterType.WordForming) != 0)
 				{
 					m_gridWordForming.RemoveAllCharacters();
-					m_gridWordForming.AddCharacters(m_validChars.WordFormingCharacters, m_ws);
+					m_gridWordForming.AddCharacters(m_validChars.WordFormingCharacters);
 				}
 
 				if ((type & ValidCharacterType.Numeric) != 0)
 				{
 					m_gridNumbers.RemoveAllCharacters();
-					m_gridNumbers.AddCharacters(m_validChars.NumericCharacters, m_ws);
+					m_gridNumbers.AddCharacters(m_validChars.NumericCharacters);
 				}
 
 				if ((type & ValidCharacterType.Other) != 0)
 				{
 					m_gridOther.RemoveAllCharacters();
-					m_gridOther.AddCharacters(m_validChars.OtherCharacters, m_ws);
+					m_gridOther.AddCharacters(m_validChars.OtherCharacters);
 				}
 			}
 			#endregion
@@ -599,7 +601,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					selChars.Add(CurrentGrid.GetCharacterAt(cell.ColumnIndex, cell.RowIndex));
 
 				m_validChars.MoveBetweenWordFormingAndOther(selChars, gridFrom == m_gridOther);
-				gridTo.AddCharacters(gridFrom.RemoveSelectedCharacters(), m_ws);
+				gridTo.AddCharacters(gridFrom.RemoveSelectedCharacters());
 				return gridTo;
 			}
 
@@ -624,7 +626,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Data members
-		private readonly IWritingSystem m_ws;
+		private readonly CoreWritingSystemDefinition m_ws;
 		private ILgCharacterPropertyEngine m_chrPropEng;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -650,16 +652,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, int> m_characterCount;
 
 		private List<CharacterInventoryRow> m_inventoryRows;
-		private TsStringComparer m_inventoryCharComparer = null;
+		private TsStringComparer m_inventoryCharComparer;
 		/// <summary>Protected to facilitate testing</summary>
 		protected ValidCharGridsManager m_validCharsGridMngr;
 
 		/// <summary>Hold a reference to the writing system manager</summary>
-		private IWritingSystemManager m_wsManager;
-
-		/// <summary>True if we created a temporary writing system manager that we have to
-		/// dispose</summary>
-		private bool m_fDisposeWsManager;
+		private WritingSystemManager m_wsManager;
 
 		private OpenFileDialogAdapter m_openFileDialog;
 		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
@@ -717,7 +715,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "gridcol is a reference")]
 		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, IWritingSystem ws, string wsName) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app, CoreWritingSystemDefinition ws, string wsName) : this()
 		{
 			m_ws = ws;
 			m_helpTopicProvider = helpTopicProvider;
@@ -767,7 +765,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			contextCtrl.Initialize(cache, wsContainer, m_ws, m_app, fnt, gridCharInventory);
 			contextCtrl.Dock = DockStyle.Fill;
 			contextCtrl.CheckToRun = CharContextCtrl.CheckType.Characters;
-			contextCtrl.ListValidator = RemoveInvalidCharacters;
 
 			colChar.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
 			gridCharInventory.AutoGenerateColumns = false;
@@ -793,13 +790,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_openFileDialog != null)
 					m_openFileDialog.Dispose();
 
-				if (m_fDisposeWsManager)
-				{
-					var disposable = m_wsManager as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-					m_wsManager = null;
-				}
 				if (m_fntForSpecialChar != null)
 				{
 					m_fntForSpecialChar.Dispose();
@@ -848,7 +838,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider)
 		{
-			IWritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (var dlg = new ValidCharactersDlg(cache, cache.ServiceLocator.WritingSystems,
 				helpTopicProvider, app, ws, ws.DisplayLabel))
@@ -889,7 +879,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// disposed later on.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private IWritingSystemManager WsManager
+		private WritingSystemManager WsManager
 		{
 			get
 			{
@@ -897,7 +887,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					Debug.Assert(m_ws != null);
 					m_wsManager = FwUtils.CreateWritingSystemManager();
-					m_fDisposeWsManager = true;
 					m_wsManager.Set(m_ws);
 				}
 				return m_wsManager;
@@ -929,7 +918,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			//Set btnSililarWs to the language of m_langDef if it is one that LocaleMenuButton
 			//displays in it's list.
-			string code = m_ws.LanguageSubtag.Code;
+			string code = m_ws.Language.Code;
 			if (!btnSimilarWs.IsCustomLocale(code))
 				btnSimilarWs.SelectedLocaleId = code;
 
@@ -1081,7 +1070,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					int codepoint;
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
-						chr = ((char) codepoint).ToString();
+						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
 						if (m_chrPropEng.get_IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
@@ -1135,7 +1124,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var undefinedChars = new List<string>();
 				for (int i = first; i <= last; i++)
 				{
-					string chr = ((char)i).ToString();
+					string chr = ((char)i).ToString(CultureInfo.InvariantCulture);
 
 					try
 					{
@@ -1339,19 +1328,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Try to retrieve a set of ValidChars (ExemplarCharacters) from ICU for the language
 		/// associated with the IcuLocale parameter and add those to the valid characters grids.
 		/// </summary>
-		/// <param name="IcuLocale"></param>
+		/// <param name="icuLocale"></param>
 		/// <returns>Space-delimited set of characters</returns>
 		/// ------------------------------------------------------------------------------------
-		internal void AddExemplarChars(string IcuLocale)
+		internal void AddExemplarChars(string icuLocale)
 		{
-			string chrs = ExemplarCharactersHelper.GetValidCharsForLocale(IcuLocale, m_chrPropEng);
-			if (!string.IsNullOrEmpty(chrs))
+			if (icuLocale == null)
+				return;
+
+			var chars = new List<string>();
+			foreach (string c in UnicodeSet.ToCharacters(Common.COMInterfaces.Icu.GetExemplarCharacters(icuLocale)))
 			{
-				// Normalize and attempt to parse the space-delimited string into individual
-				// characters and add them to the character grids.
-				chrs = m_chrPropEng.NormalizeD(chrs);
-				m_validCharsGridMngr.AddCharacters(TsStringUtils.ParseCharString(chrs, " ", m_chrPropEng));
+				chars.Add(c.Normalize(NormalizationForm.FormD));
+				chars.Add(Common.COMInterfaces.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
+			m_validCharsGridMngr.AddCharacters(chars);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1392,7 +1383,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 			}
 			if (fUseWsKeyboard)
-				((IWritingSystemDefinition)m_ws).LocalKeyboard.Activate();
+				m_ws.LocalKeyboard.Activate();
 			else
 				Keyboard.Controller.ActivateDefaultKeyboard();
 		}
@@ -1584,7 +1575,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						string chr = m_inventoryRows[i].Character;
-						if (!Icu.IsSpace(chr[0]) && !Icu.IsControl(chr[0]))
+						if (!Common.COMInterfaces.Icu.IsSpace(chr[0]) && !Common.COMInterfaces.Icu.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;
@@ -1734,25 +1725,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			base.OnClosed(e);
 			Keyboard.Controller.ActivateDefaultKeyboard();
-		}
-		#endregion
-
-		#region Delegates
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Removes the invalid characters.
-		/// </summary>
-		/// <param name="list">The list.</param>
-		/// ------------------------------------------------------------------------------------
-		private void RemoveInvalidCharacters(List<TextTokenSubstring> list)
-		{
-			// Getting one cpe and properly disposing it instead of creating a new cpe for every
-			// character in the Bible solves TE-8420, plus it is many, many times faster.
-			for (int i = list.Count - 1; i >= 0; i--)
-			{
-				if (!TsStringUtils.IsValidChar(list[i].InventoryText, m_chrPropEng))
-					list.RemoveAt(i);
-			}
 		}
 		#endregion
 

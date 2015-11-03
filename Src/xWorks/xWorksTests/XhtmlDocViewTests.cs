@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		private IPropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		[TestFixtureSetUp]
-		public new void FixtureSetup()
+		public override void FixtureInit()
 		{
 			Init();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 		}
 
-	#region IDisposable Section (aka keep Gendarme happy)
+		#region IDisposable Section (aka keep Gendarme happy)
 		~XhtmlDocViewTests()
 		{
 			Dispose(false);
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 			if(m_mediator != null)
 				m_mediator.Dispose();
 		}
-	#endregion
+		#endregion
 	}
 #endif
 }

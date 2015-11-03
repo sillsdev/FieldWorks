@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 							{
 								// Change to 'unknown'. Will no longer be able to use the morph property to get
 								// at the actual form, so reinstate it in the bundle.
-								foreach (IWritingSystem ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+								foreach (CoreWritingSystemDefinition ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 									mb.Form.set_String(ws.Handle, mb.Cache.MainCacheAccessor.get_MultiStringAlt(oldHvo, MoFormTags.kflidForm, ws.Handle));
 								mb.MorphRA = null; // See LT-13878 for 'unrelated' crash reported by Santhosh
 							}

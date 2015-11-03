@@ -4439,7 +4439,7 @@ namespace SIL.FieldWorks.TE
 			// add the new style proxy to the hash table
 			if (mapping.WsId != null)
 			{
-				IWritingSystem wsObj;
+				CoreWritingSystemDefinition wsObj;
 				if (m_cache.ServiceLocator.WritingSystemManager.TryGet(mapping.WsId, out wsObj))
 					ws = wsObj.Handle;
 			}

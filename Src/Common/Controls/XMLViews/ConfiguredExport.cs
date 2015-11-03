@@ -18,7 +18,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -27,6 +26,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			Set<string> digraphs = null;
+			Set<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
 			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
@@ -729,17 +729,33 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
-			var sortRules = ws.SortRules;
-			var sortType = ws.SortUsing;
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
-			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
+			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
+			if (simpleCollation != null)
+			{
+				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
+				{
+					string rules = simpleCollation.SimpleRules.Replace(" ", "=");
+					string[] primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+					foreach (var part in primaryParts)
+					{
+						BuildDigraphSet(part, sWs, wsDigraphMap);
+						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
+					}
+				}
+			}
+			else
+			{
+				// is this a custom ICU collation?
+				var icuCollation = ws.DefaultCollation as IcuRulesCollationDefinition;
+				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
 			{
 				// prime with empty ws in case all the rules affect only the ignore set
 				wsCharEquivalentMap[sWs] = mapChars;
 				wsDigraphMap[sWs] = digraphs;
-				var individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-				for (var i = 0; i < individualRules.Length; ++i)
+					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+					for (int i = 0; i < individualRules.Length; ++i)
 				{
 					var rule = individualRules[i];
 					RemoveICUEscapeChars(ref rule);
@@ -767,15 +783,6 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 			}
-			else if(!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomSimple)
-			{
-				var rules = sortRules.Replace(" ", "=");
-				var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (var part in primaryParts)
-				{
-					BuildDigraphSet(part, sWs, wsDigraphMap);
-					MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
-				}
 			}
 
 			// This at least prevents null reference and key not found exceptions.
@@ -908,7 +915,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			var entry = (IReversalIndexEntry) obj;
 			var idx = (IReversalIndex) objOwner;
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
 			string sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 				return;

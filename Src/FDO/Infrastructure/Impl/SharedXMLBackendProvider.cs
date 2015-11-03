@@ -11,7 +11,7 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using ProtoBuf;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
+using SIL.Threading;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -70,6 +70,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override int StartupInternal(int currentModelVersion)
 		{
+			CreateSettingsStores();
 			m_commitLogMutex = new GlobalMutex(MutexName);
 			bool createdNew;
 			using (m_commitLogMutex.InitializeAndLock(out createdNew))

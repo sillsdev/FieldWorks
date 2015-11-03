@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						ITsIncStrBldr sbGlossPrepend;
 						ITsIncStrBldr sbGlossAppend;
 						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-						IWritingSystem glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
+						CoreWritingSystemDefinition glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
 						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
 							glossWs, out sbGlossPrepend, out sbGlossAppend);
 						ITsIncStrBldr sbGloss = sbGlossPrepend;

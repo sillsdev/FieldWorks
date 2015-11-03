@@ -6,7 +6,6 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -159,25 +158,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		#endregion
 
-		#region Constants
-		/// <summary>Query to find the list of back translations used in this book.</summary>
-		private const string kSqlFindBtWSs =
-			"select DISTINCT ctt.ws " +
-				"from ScrBook book " +
-				"join CmObject sec on sec.Owner$ = book.id " +
-				"join CmObject txt on txt.Owner$ = sec.id or txt.Owner$ = book.id " +
-				"join StTxtPara_ para on para.Owner$ = txt.id " +
-				"join CmTranslation_ ct on ct.Owner$ = para.id and ct.type = {0} " +
-				"join CmTranslation_Translation ctt on ctt.Obj = ct.id " +
-				"where book.id = {1}";
-		#endregion
-
-		#region Data Members
-		private static readonly uint s_intSize =
-			(uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(int));
-		ScrBookTokenEnumerable m_tokenizer;
-		#endregion
-
 		#region ScrBook Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -186,7 +166,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		public string BookId
 		{
-			get { return ScrReference.NumberToBookCode(CanonicalNum); }
+			get { return BCVRef.NumberToBookCode(CanonicalNum); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -325,7 +305,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		public IScrSection this[int i]
 		{
-			get	{ return (i < 0 || i >= SectionsOS.Count ? null : (ScrSection)SectionsOS[i]); }
+			get	{ return (i < 0 || i >= SectionsOS.Count ? null : SectionsOS[i]); }
 		}
 
 		#endregion
@@ -365,7 +345,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (FootnotesOS.Count == 0)
 				return null;
 
-			IStTxtPara para = null;
+			IStTxtPara para;
 			if (tag == ScrBookTags.kflidTitle)
 				para = TitleOA[iParagraph];
 			else
@@ -544,7 +524,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (tagTmp == ScrSectionTags.kflidContent)
 			{
-				footnote = (IScrFootnote)section.ContentOA.FindPreviousFootnote(ref iParagraphTmp,
+				footnote = section.ContentOA.FindPreviousFootnote(ref iParagraphTmp,
 					ref ichTmp, fSkipFirstRun);
 				if (footnote == null)
 				{
@@ -557,13 +537,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (tagTmp == ScrSectionTags.kflidHeading)
 			{
-				footnote = (IScrFootnote)section.HeadingOA.FindPreviousFootnote(ref iParagraphTmp,
+				footnote = section.HeadingOA.FindPreviousFootnote(ref iParagraphTmp,
 					ref ichTmp, fSkipFirstRun);
 				while (footnote == null && iSectionTmp > 0)
 				{
 					iSectionTmp--;
 					section = SectionsOS[iSectionTmp];
-					footnote = (IScrFootnote)section.FindLastFootnote(out iParagraphTmp,
+					footnote = section.FindLastFootnote(out iParagraphTmp,
 						out ichTmp, out tagTmp);
 				}
 
@@ -913,7 +893,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return true;
 			}
 
-			section = section.NextSection ?? (ScrSection)SectionsOS[0];
+			section = section.NextSection ?? SectionsOS[0];
 
 			while (section != startingSection)
 			{
@@ -923,7 +903,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return true;
 				}
 				// if the next section is null, wrap around to the beginning
-				section = section.NextSection ?? (ScrSection)SectionsOS[0];
+				section = section.NextSection ?? SectionsOS[0];
 			}
 
 			// We've wrapped all the way back around to the first section we tried. Now
@@ -1252,77 +1232,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		#endregion
 
-		#region Checking stuff
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Prepare to return tokens for Scripture checking.
-		/// ENHANCE: For our initial implementation, we'll see how it performs if we don't
-		/// do the parsing ahead of time. We'll just set up the enumerators...Parse into Tokens.
-		/// The tokens are accessed via the TextTokens() method.
-		/// We split this operation into two parts since we often want to create
-		/// the tokens list once and then present them to several different checks.
-		/// </summary>
-		/// <param name="chapterNum">0=read whole book, else specified chapter number</param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool GetTextToCheck(int chapterNum)
-		{
-			lock (SyncRoot)
-				m_tokenizer = new ScrBookTokenEnumerable(this, chapterNum);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Enumerate all the ITextToken's from the most recent GetText call.
-		/// </summary>
-		/// <returns>An IEnumerable implementation that allows the caller to retrieve each
-		/// text token in sequence.</returns>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerable<ITextToken> TextTokens()
-		{
-			lock (SyncRoot)
-			{
-				if (m_tokenizer == null)
-					throw new InvalidOperationException("GetTextToCheck must be called before TextTokens");
-				return m_tokenizer;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the index of the section where the given chapter begins.
-		/// </summary>
-		/// <param name="chapterNum">The chapter number (assumed to be in same versification as
-		/// that of the Scripture object).</param>
-		/// <returns>the index of the section or -1 if not found</returns>
-		/// ------------------------------------------------------------------------------------
-		public int FindSectionForChapter(int chapterNum)
-		{
-			// Getting the Versification is probably not very efficient, so do it once outside
-			// the loop.
-			ScrVers versification = m_cache.LangProject.TranslatedScriptureOA.Versification;
-			for (int iSection = 0; iSection < SectionsOS.Count; iSection++)
-			{
-				IScrSection section = SectionsOS[iSection];
-				if (!section.IsIntro)
-				{
-					ScrReference startRef = new ScrReference(section.VerseRefStart, versification);
-					if (startRef.Chapter == chapterNum)
-						return iSection;
-					if (startRef.Chapter < chapterNum)
-					{
-						ScrReference endRef = new ScrReference(section.VerseRefEnd, versification);
-						if (endRef.Chapter >= chapterNum)
-							return iSection;
-					}
-				}
-			}
-			return -1;
-		}
-
-		#endregion
-
 		#region DetermineOverwritability and helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1559,7 +1468,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							IScrTxtPara para = (IScrTxtPara)TitleOA.ParagraphsOS[iPara];
 							if (para.StyleName == targetStyle.Name)
-								return para as IScrTxtPara;
+								return para;
 						}
 						return null;
 					}
@@ -1573,7 +1482,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							{
 								IScrTxtPara para = (IScrTxtPara)section.HeadingOA.ParagraphsOS[iPara];
 								if (para.StyleName == targetStyle.Name)
-									return para as IScrTxtPara;
+									return para;
 							}
 						}
 						else
@@ -1584,7 +1493,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							{
 								IScrTxtPara para = (IScrTxtPara)section.ContentOA.ParagraphsOS[iPara];
 								if (para.StyleName == targetStyle.Name)
-									return para as IScrTxtPara;
+									return para;
 							}
 						}
 					}
@@ -1893,62 +1802,4 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		#endregion
 	}
-
-	#region ScrBookTokenEnumerable class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Class that provides an enumerator for parsing Scripture text into tokens that can be
-	/// checked.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	class ScrBookTokenEnumerable : IEnumerable<ITextToken>
-	{
-		#region Data members
-		private ScrBook m_book;
-		private int m_chapterNum;
-		#endregion
-
-		#region Constructor
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrBookTokenEnumerable"/> class.
-		/// </summary>
-		/// <param name="book">The book being parsed.</param>
-		/// <param name="chapterNum">The 1-basede canonical chapter number being parse, or 0 to
-		/// parse the whole book</param>
-		/// ------------------------------------------------------------------------------------
-		public ScrBookTokenEnumerable(ScrBook book, int chapterNum)
-		{
-			m_book = book;
-			m_chapterNum = chapterNum;
-		}
-		#endregion
-
-		#region IEnumerable<ITextToken> Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns an enumerator that iterates through the tokens.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerator<ITextToken> GetEnumerator()
-		{
-			return new ScrCheckingTokenizer(m_book, m_chapterNum);
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns an enumerator that iterates through the tokens.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-		#endregion
-	}
-
-	#endregion
 }

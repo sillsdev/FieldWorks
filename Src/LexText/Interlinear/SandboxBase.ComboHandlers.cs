@@ -1811,7 +1811,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			private void AddMorphItemToList(IMoForm mf, ILexEntryRef ler, ITsString tssSense, ILexSense sense,
-											IWritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
+											CoreWritingSystemDefinition wsAnalysis, ITsString tssName, int hvoLexEntry)
 			{
 				MorphItem mi;
 				if (tssSense.Length == 0)

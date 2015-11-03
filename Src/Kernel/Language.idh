@@ -238,29 +238,16 @@ Description:
 		[propget] HRESULT LanguageName(
 			[out, retval] BSTR * pbstr);
 
-		// Get the ISO 639-3 language code (Ethnologue code).
-		[propget] HRESULT ISO3(
-			[out, retval] BSTR * pbstr);
-
 		// Get the name of the spelling dictionary to use for this writing system.
 		// Currently returns a generally-useful default, unless explicitly set to empty
 		// to prevent this.
 		[propget] HRESULT SpellCheckingId(
 			[out, retval] BSTR *pbstr);
-		// Set the name of the spelling dictionary to use for this writing system.
-		// Eventually we plan to persist this fully; for now, it is useful only for setting
-		// to null to disable it for this session.
-		[propput] HRESULT SpellCheckingId(
-			[in] BSTR bstr);
 
 		// Get the primary direction, used for complex embedding; may have fragments like
 		// numbers that go the other way internally.
 		[propget] HRESULT RightToLeftScript(
 			[out, retval] ComBool * pfRightToLeft);
-		// Set the primary direction, used for complex embedding; may have fragments like
-		// numbers that go the other way internally.
-		[propput] HRESULT RightToLeftScript(
-			[in] ComBool fRightToLeft);
 
 		// Get the engine used to render text with the specified properties. At present only
 		// font, bold, and italic properties are significant.
@@ -274,34 +261,20 @@ Description:
 		// Graphite features.
 		[propget] HRESULT DefaultFontFeatures(
 			[out, retval] BSTR * pbstr);
-		// Set the "serif font variation" string which is used, for instance, to specify
-		// Graphite features.
-		[propput] HRESULT DefaultFontFeatures(
-			[in] BSTR bstr);
 
 		// Get the default serif font; usually used for the main body of text in a document.
 		[propget] HRESULT DefaultFontName(
 			[out, retval] BSTR * pbstr);
-		// Set the default serif font; usually used for the main body of text in a document.
-		[propput] HRESULT DefaultFontName(
-			[in] BSTR bstr);
 
 		// Get the engine used to find character properties, including figuring out where line
 		// breaks are allowed.
 		[propget] HRESULT CharPropEngine(
 			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
+
 		// Apply any changes to the chrp before it is used for real: currently,
 		// interpret the magic font names.
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
-
-		// The current input language. By default this is derived from LCID, but it can be
-		// overridden temporarily (for one session). Note that this is not persisted.
-		[propget] HRESULT CurrentLCID(
-			[out, retval] int * pnLangId);
-		// Set the current (temporary) LangId for this writing system.
-		[propput] HRESULT CurrentLCID(
-			[in] int nLangId);
 
 		// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
 		[propget] HRESULT UseNfcContext(

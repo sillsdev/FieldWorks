@@ -372,8 +372,8 @@ namespace SIL.FieldWorks.IText
 			}
 			else if(CurrentStepNumber == 1)
 			{
-				ICollection<IWritingSystem> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
-				ICollection<IWritingSystem> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
+				ICollection<CoreWritingSystemDefinition> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
+				ICollection<CoreWritingSystemDefinition> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
 				var vernToAdd = new ArrayList();
 				var analysToAdd = new ArrayList();
 				int textCount = CalculateTextCount(m_mappings, followedBy);
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.IText
 					if (mapping.Destination == InterlinDestination.Ignored)
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
-					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
+					var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
 					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{
 						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
@@ -422,11 +422,11 @@ namespace SIL.FieldWorks.IText
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
 					() => //Add all the collected new languages into the project in their proper section.
 					{
-						foreach (IWritingSystem analysLang in analysToAdd)
+						foreach (CoreWritingSystemDefinition analysLang in analysToAdd)
 						{
 							m_cache.LanguageProject.AddToCurrentAnalysisWritingSystems(analysLang);
 						}
-						foreach (IWritingSystem vernLang in vernToAdd)
+						foreach (CoreWritingSystemDefinition vernLang in vernToAdd)
 						{
 							m_cache.LanguageProject.AddToCurrentVernacularWritingSystems(vernLang);
 						}

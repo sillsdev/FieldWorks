@@ -4,10 +4,10 @@
 
 using System.Text;
 using NUnit.Framework;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using LanguageExplorer.Archiving;
+using SIL.Keyboarding;
 
 namespace LanguageExplorerTests
 {
@@ -45,11 +45,9 @@ namespace LanguageExplorerTests
 		[Test]
 		public void DoesWritingSystemUseKeyman_NonKeymanKeyboardReturnsFalse()
 		{
-			var ws = Cache.LangProject.DefaultAnalysisWritingSystem;
-			var palasoWs = ws as PalasoWritingSystem;
-			var testKeyboard = new DefaultKeyboardDefinition { IsAvailable = true };
-			// ReSharper disable once PossibleNullReferenceException
-			palasoWs.AddKnownKeyboard(testKeyboard);
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultAnalysisWritingSystem;
+			var testKeyboard = new DefaultKeyboardDefinition("test", "keyboard", "layout", "locale", true);
+			ws.KnownKeyboards.Add(testKeyboard);
 
 			Assert.That(ReapRamp.DoesWritingSystemUseKeyman(ws), Is.False,
 				"Unable to determine if a writing system is keyman, the location or name of the class in Palaso probably changed");

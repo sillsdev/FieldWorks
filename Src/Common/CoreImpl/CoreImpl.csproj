@@ -83,9 +83,17 @@
       <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Lexicon.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=7.0.1.23997, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -112,8 +120,12 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CoreLdmlInFolderWritingSystemFactory.cs" />
+    <Compile Include="CoreSldrWritingSystemFactory.cs" />
+    <Compile Include="CoreWritingSystemFactory.cs" />
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
+    <Compile Include="MemoryWritingSystemRepository.cs" />
     <Compile Include="FlexComponentCheckingService.cs" />
     <Compile Include="FwAccessibleObject.cs" />
     <Compile Include="HtmlControl.cs">
@@ -179,14 +191,11 @@
     <Compile Include="CmObjectFields.cs" />
     <Compile Include="CellarPropertyType.cs" />
     <Compile Include="CellarPropertyTypeFilter.cs" />
-    <Compile Include="IWritingSystem.cs" />
-    <Compile Include="IWritingSystemManager.cs" />
     <Compile Include="KeyboardHelper.cs" />
-    <Compile Include="LangTagUtils.cs" />
-    <Compile Include="PalasoWritingSystem.cs" />
-    <Compile Include="PalasoWritingSystemManager.cs" />
-    <Compile Include="GlobalFileWritingSystemStore.cs" />
-    <Compile Include="LocalFileWritingSystemStore.cs" />
+    <Compile Include="CoreWritingSystemDefinition.cs" />
+    <Compile Include="WritingSystemManager.cs" />
+    <Compile Include="CoreGlobalWritingSystemRepository.cs" />
+    <Compile Include="CoreLdmlInFolderWritingSystemRepository.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

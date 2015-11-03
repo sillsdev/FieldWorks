@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			get
 			{
-				var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 				if (ws != null)
 					return ws.Id;
 				else
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			IWritingSystem ws = m_btnAddWritingSystem.NewWritingSystem;
+			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
 					m_cbWritingSystem);

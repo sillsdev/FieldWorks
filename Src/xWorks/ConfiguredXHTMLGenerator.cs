@@ -117,11 +117,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xhtmlWriter.WriteStartElement("meta");
 				xhtmlWriter.WriteAttributeString("name", "DC.language");
-				xhtmlWriter.WriteAttributeString("content", String.Format("{0}:{1}", ws.RFC5646, ws.LanguageName));
+				xhtmlWriter.WriteAttributeString("content", String.Format("{0}:{1}", ws.LanguageTag, ws.LanguageName));
 				xhtmlWriter.WriteAttributeString("scheme", "DCTERMS.RFC5646");
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteStartElement("meta");
-				xhtmlWriter.WriteAttributeString("name", ws.RFC5646);
+				xhtmlWriter.WriteAttributeString("name", ws.LanguageTag);
 				xhtmlWriter.WriteAttributeString("content", ws.DefaultFontName);
 				xhtmlWriter.WriteAttributeString("scheme", "language to font");
 				xhtmlWriter.WriteEndElement();
@@ -1520,8 +1520,8 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
-					wsId = WritingSystemServices.InterpretWsLabel(owningObject.Cache, option.Id, (IWritingSystem)defaultWs,
-																					owningObject.Hvo, multiStringAccessor.Flid, (IWritingSystem)defaultWs);
+					wsId = WritingSystemServices.InterpretWsLabel(owningObject.Cache, option.Id, (CoreWritingSystemDefinition) defaultWs,
+																					owningObject.Hvo, multiStringAccessor.Flid, (CoreWritingSystemDefinition) defaultWs);
 				}
 				var requestedString = multiStringAccessor.get_String(wsId);
 				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, hvo);
@@ -1544,7 +1544,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.WriteStartElement("span");
 				writer.WriteAttributeString("class", "writingsystemprefix");
-				var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				var prefix = ((CoreWritingSystemDefinition) cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 				writer.WriteString(prefix);
 				writer.WriteEndElement();
 			}

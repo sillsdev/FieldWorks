@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
 #endif
-			IWritingSystem wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;
 		}
@@ -286,8 +286,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			//Debug.Assert(m_tryAWordSandbox == null);
 			m_tryAWordSandbox = new TryAWordSandbox(m_fdoCache,
-				StyleSheet,
-				m_vc.LineChoices,
+													StyleSheet,
+													m_vc.LineChoices,
 				analysis)
 			{
 				Visible = false

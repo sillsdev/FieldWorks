@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				cboShowBtWritingSystem.Items.Clear();
 				cboShowNotesWritingSystem.Items.Clear();
-				foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				{
 					cboShowBtWritingSystem.Items.Add(ws);
 					cboShowNotesWritingSystem.Items.Add(ws);
@@ -868,9 +868,9 @@ namespace SIL.FieldWorks.Common.Controls
 			// Populate all three file lists from ScrImportSet
 			AddFilesToListView(scrFileList, m_ImportSettings.GetImportFiles(ImportDomain.Main), null, null);
 			AddFilesToListView(btFileList, m_ImportSettings.GetImportFiles(ImportDomain.BackTrans),
-				((IWritingSystem)cboShowBtWritingSystem.SelectedItem).Id, null);
+				((CoreWritingSystemDefinition) cboShowBtWritingSystem.SelectedItem).Id, null);
 			AddFilesToListView(notesFileList, m_ImportSettings.GetImportFiles(ImportDomain.Annotations),
-				((IWritingSystem)cboShowBtWritingSystem.SelectedItem).Id,
+				((CoreWritingSystemDefinition) cboShowBtWritingSystem.SelectedItem).Id,
 				((DisplayAnnotationDefn)cboShowNoteTypes.SelectedItem).Definition);
 		}
 
@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_currentListView = btFileList;
 					m_currentRemoveButton = btnRemoveBT;
 					m_domain = ImportDomain.BackTrans;
-					m_wsId = ((IWritingSystem)cboShowBtWritingSystem.SelectedItem).Id;
+					m_wsId = ((CoreWritingSystemDefinition) cboShowBtWritingSystem.SelectedItem).Id;
 					m_noteType = null;
 					break;
 
@@ -1106,7 +1106,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_currentListView = notesFileList;
 					m_currentRemoveButton = btnRemoveNotes;
 					m_domain = ImportDomain.Annotations;
-					m_wsId = ((IWritingSystem)cboShowNotesWritingSystem.SelectedItem).Id;
+					m_wsId = ((CoreWritingSystemDefinition) cboShowNotesWritingSystem.SelectedItem).Id;
 					m_noteType = ((DisplayAnnotationDefn)cboShowNoteTypes.SelectedItem).Definition;
 					break;
 			}
@@ -1124,7 +1124,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void cboShowWritingSystem_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			ComboBox combo = (ComboBox)sender;
-			m_wsId = ((IWritingSystem)combo.SelectedItem).Id;
+			m_wsId = ((CoreWritingSystemDefinition) combo.SelectedItem).Id;
 			if (m_ImportSettings != null)
 			{
 				m_currentListView.Items.Clear();

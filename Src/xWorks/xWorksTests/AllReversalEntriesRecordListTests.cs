@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
@@ -49,23 +48,24 @@ namespace SIL.FieldWorks.XWorks
 			if (IsDisposed)
 				return;
 
-			if (disposing)
-			{
+				if (disposing)
+				{
 				if (m_window != null)
-				{
-					m_window.Dispose();
-				}
+					{
+						m_window.Dispose();
+					}
 				if (m_propertyTable != null)
-				{
-					m_propertyTable.Dispose();
-				}
+					{
+						m_propertyTable.Dispose();
+					}
 
 				if (m_allReversalEntriesRecordList != null)
-				{
-					m_allReversalEntriesRecordList.Dispose();
+					{
+						m_allReversalEntriesRecordList.Dispose();
+						m_allReversalEntriesRecordList = null;
+					}
 				}
-			}
-			IsDisposed = true;
+				IsDisposed = true;
 
 			m_propertyTable = null;
 			m_publisher = null;

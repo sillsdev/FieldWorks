@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Diagnostics;
@@ -330,9 +329,7 @@ namespace SIL.FieldWorks.IText
 				// Last ditch effort
 				if (wsName == "")
 				{
-					ILgWritingSystemFactory wsf = m_cache.LanguageWritingSystemFactoryAccessor;
-					int wsui = m_cache.DefaultUserWs;
-					IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
 					if (wsObj != null)
 						wsName = wsObj.DisplayLabel;
 				}

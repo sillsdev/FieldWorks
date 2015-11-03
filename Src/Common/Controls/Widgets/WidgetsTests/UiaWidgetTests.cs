@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		public TestFwList()
 		{
 			DataAccess = m_cacheDa;
-			DataAccess.WritingSystemFactory = new PalasoWritingSystemManager();
+			DataAccess.WritingSystemFactory = new WritingSystemManager();
 		}
 
 		public ITsString TextOfItem(object item)

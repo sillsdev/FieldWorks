@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				searchEngine);
 
 			// start building index
-			var selectedWs = (IWritingSystem)m_cbWritingSystems.SelectedItem;
+			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if(selectedWs != null)
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
 		}

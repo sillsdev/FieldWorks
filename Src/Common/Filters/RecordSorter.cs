@@ -19,12 +19,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-using Palaso.WritingSystems.Collation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Language;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public void OpenCollatingEngine(string sWs)
 			{
-				m_collater = m_cache.ServiceLocator.WritingSystemManager.Get(sWs).Collator;
+				m_collater = m_cache.ServiceLocator.WritingSystemManager.Get(sWs).DefaultCollation.Collator;
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -2166,14 +2166,14 @@ namespace SIL.FieldWorks.Filters
 	{
 		private string m_wsId;
 		private FdoCache m_cache;
-		private IWritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 
 		#region Constructors, etc.
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
-		public WritingSystemComparer(IWritingSystem ws)
+		public WritingSystemComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;
 			m_wsId = ws.Id;
@@ -2215,7 +2215,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			if (m_ws == null)
 				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsId);
-			return m_ws.Collator.Compare(x, y);
+			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}
 		#endregion
 

@@ -9,12 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)
-			{
+		{
 				Dock = DockStyle.Fill,
 				Location = new Point(0, 0),
 				IsWebBrowserContextMenuEnabled = false

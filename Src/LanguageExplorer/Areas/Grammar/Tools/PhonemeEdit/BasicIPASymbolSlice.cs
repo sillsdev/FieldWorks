@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				return;
 
 			bool fADescriptionChanged = false;
-			foreach (IWritingSystem writingSystem in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition writingSystem in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
 				int ws = writingSystem.Handle;
 				ITsString tssDesc = phoneme.Description.get_String(ws);

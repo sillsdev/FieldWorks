@@ -72,17 +72,6 @@ public:
 		return E_NOTIMPL;
 	}
 
-	STDMETHOD(get_LCID)(int * pnLcid)
-	{
-		*pnLcid = 0;
-		return S_OK;
-	}
-
-	STDMETHOD(put_LCID)(int nLcid)
-	{
-		return E_NOTIMPL;
-	}
-
 	STDMETHOD(get_SpellCheckingId)(BSTR * pbstr)
 	{
 		if (m_stuSpellCheckDictionary.Length())
@@ -196,22 +185,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(get_ISO3)(BSTR * pbstr)
-	{
-		return E_NOTIMPL;
-	}
-
-	STDMETHOD(get_CurrentLCID)(int * pnLangId)
-	{
-		*pnLangId = 0;
-		return S_OK;
-	}
-
-	STDMETHOD(put_CurrentLCID)(int nLangId)
-	{
-		return E_NOTIMPL;
-	}
-
 	STDMETHOD(get_UseNfcContext)(ComBool * pUseNfc)
 	{
 		*pUseNfc = true;
@@ -246,7 +219,6 @@ private:
 	StrUni m_stuDefPubFontFeats;
 	bool m_fRightToLeft;
 	StrUni m_stuSpellCheckDictionary;
-	StrUni m_stuKeymanKbdName;
 };
 
 DEFINE_COM_PTR(MockLgWritingSystem);

@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
 using LanguageExplorer.Controls;
-using Palaso.Code;
+using SIL.Code;
 using SIL.CoreImpl;
 using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.Controls;

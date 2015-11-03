@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {

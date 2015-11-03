@@ -658,7 +658,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				foreach (IReversalIndexEntry ide in m_sense.ReversalEntriesRC)
 					entries.Add(ide);
 
-				foreach (IWritingSystem ws in m_fdoCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_fdoCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				{
 					IReversalIndex idx = null;
 					foreach (IReversalIndex idxInner in m_fdoCache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -1035,7 +1035,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						vwenv.OpenTableCell(1,1);
 						// This displays the field flush right for RTL data, but gets arrow keys to
 						// behave reasonably.  See comments on LT-5287.
-						IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(DefaultWs);
+						CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(DefaultWs);
 						if (wsObj != null && wsObj.RightToLeftScript)
 						{
 							vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
@@ -1059,7 +1059,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							IReversalIndexEntry rie =
 								m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(hvoCurrent);
 							Debug.Assert(rie != null);
-							List<IWritingSystem> rgWs = WritingSystemServices.GetReversalIndexWritingSystems(m_cache, rie.Hvo, false);
+							List<CoreWritingSystemDefinition> rgWs = WritingSystemServices.GetReversalIndexWritingSystems(m_cache, rie.Hvo, false);
 							int wsAnal = m_cache.DefaultAnalWs;
 							ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs,

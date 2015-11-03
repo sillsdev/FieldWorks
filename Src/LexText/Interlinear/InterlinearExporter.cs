@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.IText
 		Guid m_guidMorphType = Guid.Empty;
 		IMoMorphType m_mmtEnclitic;
 		IMoMorphType m_mmtProclitic;
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 
 		public static InterlinearExporter Create(string mode, FdoCache cache, XmlWriter writer, ICmObject objRoot,
@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.IText
 						// information we may encounter in the word bundles.
 						string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 						m_writer.WriteAttributeString("lang", icuCode);
-						IWritingSystem ws = m_wsManager.Get(wsActual);
+						CoreWritingSystemDefinition ws = m_wsManager.Get(wsActual);
 						string fontName = ws.DefaultFontName;
 						m_writer.WriteAttributeString("font", fontName);
 						if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws))

@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="allWss">All writing systems to display.</param>
 		/// <param name="selectedWss">The selected writing systems.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public ConfigureWritingSystemsDlg(IEnumerable<IWritingSystem> allWss, IEnumerable<IWritingSystem> selectedWss,
+		public ConfigureWritingSystemsDlg(IEnumerable<CoreWritingSystemDefinition> allWss, IEnumerable<CoreWritingSystemDefinition> selectedWss,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			//
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//
 			InitializeComponent();
 
-			foreach (IWritingSystem curWs in allWss)
+			foreach (CoreWritingSystemDefinition curWs in allWss)
 				m_wsListBox.Items.Add(curWs, selectedWss.Contains(curWs));
 			m_wsListBox.SelectedIndex = 0;
 
@@ -62,11 +62,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Gets the selected writing system.
 		/// </summary>
 		/// <value>The selected writing system.</value>
-		public IEnumerable<IWritingSystem> SelectedWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> SelectedWritingSystems
 		{
 			get
 			{
-				return m_wsListBox.CheckedItems.Cast<IWritingSystem>();
+				return m_wsListBox.CheckedItems.Cast<CoreWritingSystemDefinition>();
 			}
 		}
 

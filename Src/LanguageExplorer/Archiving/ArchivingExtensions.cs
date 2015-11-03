@@ -34,13 +34,13 @@ namespace LanguageExplorer.Archiving
 		/// </summary>
 		/// <param name="ws"></param>
 		/// <returns>The ISO3 code, or <value>mis</value> if the code is not found.</returns>
-		internal static string GetIso3Code(this IWritingSystem ws)
+		internal static string GetIso3Code(this CoreWritingSystemDefinition ws)
 		{
-			var iso3Code = ws.LanguageSubtag.ISO3Code;
+			string iso3Code = ws.Language.Iso3Code;
 			if (!string.IsNullOrEmpty(iso3Code))
 				return iso3Code;
 
-			iso3Code = ((PalasoWritingSystem)ws).RFC5646;
+			iso3Code = ws.Id;
 
 			// split the result, the iso3 code is in the first segment
 			var segments = iso3Code.Split(new[] { '-' });

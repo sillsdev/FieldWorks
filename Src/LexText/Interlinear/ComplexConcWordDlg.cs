@@ -71,10 +71,10 @@ namespace SIL.FieldWorks.IText
 
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 				m_formWsComboBox.Items.Add(ws);
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_glossWsComboBox.Items.Add(ws);
 
 			m_inflModel = new InflFeatureTreeModel(m_cache.LangProject.MsFeatureSystemOA, m_node.InflFeatures, m_imageList.Images[0], m_imageList.Images[1]);
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.IText
 
 		private void UpdateTextBoxWs(ComboBox wsComboBox, FwTextBox textBox)
 		{
-			var ws = wsComboBox.SelectedItem as IWritingSystem;
+			var ws = wsComboBox.SelectedItem as CoreWritingSystemDefinition;
 			if (ws == null)
 			{
 				Debug.Assert(wsComboBox.SelectedIndex == -1);

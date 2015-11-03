@@ -232,9 +232,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		private static void BootstrapWritingSystems(ILangProject lp)
 		{
-			IWritingSystemManager wsManager = lp.Services.WritingSystemManager;
+			WritingSystemManager wsManager = lp.Services.WritingSystemManager;
 			// English WS.
-			IWritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			wsManager.GetOrSet("en", out ws);
 			lp.AddToCurrentAnalysisWritingSystems(ws);
 

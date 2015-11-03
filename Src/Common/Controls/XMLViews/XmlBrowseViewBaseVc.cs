@@ -17,7 +17,6 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Reflection; // for check-box icons.
-using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -963,12 +962,11 @@ namespace SIL.FieldWorks.Common.Controls
 			m_wsBest = GetBestWsForNode(node, hvo);
 			if (m_wsBest != 0)
 			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
 				if (ws != null)
 				{
 					fRightToLeft = ws.RightToLeftScript;
-					var wsDef = ws as WritingSystemDefinition;
-					fVoice = wsDef == null ? false : wsDef.IsVoice;
+					fVoice = ws.IsVoice;
 				}
 			}
 			bool fSortedFromEnd = m_xbv.ColumnSortedFromEnd(icol - cAdjCol);
@@ -1381,7 +1379,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (ws != 0)
 			{
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				return wsObj.RightToLeftScript;
 			}
 			return false;
@@ -1504,12 +1502,9 @@ namespace SIL.FieldWorks.Common.Controls
 			var bestWsHandle = GetBestWsForNode(node, hvo);
 			if (bestWsHandle != 0)
 			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
 				if (ws != null)
-				{
-					var wsDef = ws as WritingSystemDefinition;
-					fVoice = wsDef == null ? false : wsDef.IsVoice;
-				}
+					fVoice = ws.IsVoice;
 			}
 			return fVoice;
 		}

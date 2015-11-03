@@ -964,7 +964,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string ConvertNameFromIdtoFW(string wsId)
 		{
 			//getting name for a writing system given the identifier.
-			IWritingSystem ws;
+			CoreWritingSystemDefinition ws;
 
 			if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsId, out ws))
 				return ws.DisplayLabel;

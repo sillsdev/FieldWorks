@@ -121,10 +121,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -159,16 +155,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\icu.net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -186,6 +179,22 @@
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Lexicon.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -358,12 +367,6 @@
     <Compile Include="ProjectLocationDlg.Designer.cs">
       <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="PunctuationDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PunctuationDlg.Designer.cs">
-      <DependentUpon>PunctuationDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="FwApplyStyleDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -427,9 +430,6 @@
     </Compile>
     <Compile Include="IUtility.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LanguageSelectionDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="MorphBreakHelperMenu.cs">
       <SubType>Component</SubType>
@@ -552,10 +552,6 @@
     <EmbeddedResource Include="ProjectLocationDlg.resx">
       <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PunctuationDlg.resx">
-      <DependentUpon>PunctuationDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -608,10 +604,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwUserProperties.resx">
       <DependentUpon>FwUserProperties.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSelectionDlg.resx">
-      <DependentUpon>LanguageSelectionDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PicturePropertiesDialog.resx">

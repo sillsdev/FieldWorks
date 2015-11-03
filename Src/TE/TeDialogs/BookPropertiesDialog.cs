@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.TE
 				ScrBookTags.kflidAbbrev, TeResourceHelper.GetResourceString("kstidBookAbbrevColHeader"), 40));
 			m_listBookInfo.RootObject = book.Hvo;
 
-			foreach (IWritingSystem ws in book.Cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in book.Cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				m_listBookInfo.WritingSystemsToDisplay.Add(ws.Handle);
 
 			// Initialize the ID textbox.

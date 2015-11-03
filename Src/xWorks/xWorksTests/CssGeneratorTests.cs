@@ -12,8 +12,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using ExCSS;
 using NUnit.Framework;
-using Palaso.TestUtilities;
 using SIL.CoreImpl;
+using SIL.TestUtilities;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -1145,14 +1145,14 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+			m_owningTable = new StyleInfoTable("AbbySomebody", (WritingSystemManager) Cache.WritingSystemFactory);
 		}
 
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
+			m_window.Dispose();
 			m_application.Dispose();
-			m_propertyTable.Dispose();
 			FwRegistrySettings.Release();
 		}
 		[Test]

@@ -13,7 +13,7 @@ using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
-	[TestFixture()]
+	[TestFixture]
 	public class FwMultilingualPropViewTests
 	{
 		/// <summary>
@@ -23,12 +23,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			Justification="Unit tests - Cache and Grid are never assigned to, so there is no need to call Dispose()")]
 		internal class DummyFwMultilingualPropViewDataSource : IFwMultilingualPropViewDataSource
 		{
-			protected PalasoWritingSystemManager m_writingSystemManager = new PalasoWritingSystemManager();
+			protected WritingSystemManager m_writingSystemManager = new WritingSystemManager();
 			protected List<int> m_list = new List<int>();
 
 			public DummyFwMultilingualPropViewDataSource()
 			{
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				m_writingSystemManager.GetOrSet("en", out ws);
 				m_list.Add(ws.Handle);
 				m_writingSystemManager.GetOrSet("fr", out ws);
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				get { return m_list; }
 			}
 
-			public CoreImpl.IWritingSystemManager WritingSystemManager {
+			public WritingSystemManager WritingSystemManager {
 				get { return m_writingSystemManager; }
 			}
 
