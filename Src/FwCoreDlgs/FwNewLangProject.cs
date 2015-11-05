@@ -872,12 +872,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Make sure our manager knows about any writing systems in the template folder.
 			// In pathological cases where no projects have been installed these might not be in the global store.
-			foreach (var templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
+			foreach (string templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
 			{
 				var id = Path.GetFileNameWithoutExtension(templateLangFile);
 				CoreWritingSystemDefinition dummy;
 				m_wsManager.GetOrSet(id, out dummy);
 			}
+			m_wsManager.Save();
 
 			foreach (CoreWritingSystemDefinition ws in m_wsManager.WritingSystems)
 			{

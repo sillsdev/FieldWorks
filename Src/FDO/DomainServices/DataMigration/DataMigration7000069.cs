@@ -29,7 +29,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				// first migrate any existing global writing systems in the new global writing system directory
 				if (globalMigrator.NeedsMigration())
 					globalMigrator.Migrate();
-				if (Directory.Exists(DirectoryFinder.OldGlobalWritingSystemStoreDirectory))
+				string migratedFilePath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ".migrated");
+				if (!File.Exists(migratedFilePath))
 				{
 					// copy over all FW global writing systems from the old directory to the new directory and migrate
 					string globalRepoPath = Path.Combine(GlobalWritingSystemRepository.DefaultBasePath, "3");
@@ -37,8 +38,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						GlobalWritingSystemRepository.CreateGlobalWritingSystemRepositoryDirectory(globalRepoPath);
 					CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, globalRepoPath);
 					globalMigrator.Migrate();
-					// delete old global writing systems, so they aren't migrated again
-					Directory.Delete(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, true);
+					// add ".migrated" file to indicate that this folder has been migrated already
+					File.WriteAllText(migratedFilePath, string.Format("The writing systems in this directory have been migrated to {0}.", globalRepoPath));
 				}
 			}
 
