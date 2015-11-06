@@ -245,7 +245,14 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					Settings.Default.Reporting = reportingSettings; // to avoid a defect in Settings, rely on the Save in the code below
+				}
+
+				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				if (feedbackEnvVar != null)
+				{
+					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
