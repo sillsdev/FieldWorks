@@ -30,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx);
 			m_mainView.Dock = DockStyle.Fill;
