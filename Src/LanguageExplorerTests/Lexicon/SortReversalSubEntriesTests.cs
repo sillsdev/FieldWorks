@@ -5,11 +5,11 @@
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.XWorks.LexEd;
+using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
 
-namespace LexEdDllTests
+namespace LanguageExplorerTests.Lexicon
 {
-	class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;

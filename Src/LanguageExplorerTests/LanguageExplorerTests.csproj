@@ -160,6 +160,7 @@
     <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
+    <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />
