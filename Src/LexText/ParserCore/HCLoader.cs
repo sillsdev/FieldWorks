@@ -313,6 +313,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private bool IsValidLexEntryForm(IMoForm form)
 		{
+			if (!(form is IMoStemAllomorph))
+				return false;
+
 			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
