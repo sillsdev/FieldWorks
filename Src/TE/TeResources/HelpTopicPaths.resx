@@ -451,7 +451,7 @@
 	<comment>help topic ID for project properties dialog-Linked Files tab</comment>
   </data>
   <data name="khtpProjectLocationSharingDlg" xml:space="preserve">
-	<value>User_Interface/Menus/File/Project_Locations_and_Sharing.htm</value>
+	<value>User_Interface/Menus/File/Project_Locations.htm</value>
 	<comment>help topic ID for Project Location and Sharing dialog</comment>
   </data>
 </root>
