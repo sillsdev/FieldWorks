@@ -282,23 +282,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
-			switch (form.MorphTypeRA.Guid.ToString())
+			if (form.MorphTypeRA != null)
 			{
-				case MoMorphTypeTags.kMorphProclitic:
-				case MoMorphTypeTags.kMorphEnclitic:
-					return true;
+				switch (form.MorphTypeRA.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphProclitic:
+					case MoMorphTypeTags.kMorphEnclitic:
+						return true;
 
-				case MoMorphTypeTags.kMorphPrefix:
-				case MoMorphTypeTags.kMorphPrefixingInterfix:
-				case MoMorphTypeTags.kMorphSuffix:
-				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					if (formStr.Contains("[") && !formStr.Contains("[...]"))
-						return ((IMoAffixAllomorph) form).PhoneEnvRC.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
-					return true;
+					case MoMorphTypeTags.kMorphPrefix:
+					case MoMorphTypeTags.kMorphPrefixingInterfix:
+					case MoMorphTypeTags.kMorphSuffix:
+					case MoMorphTypeTags.kMorphSuffixingInterfix:
+						if (formStr.Contains("[") && !formStr.Contains("[...]"))
+							return ((IMoAffixAllomorph) form).PhoneEnvRC.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+						return true;
 
-				case MoMorphTypeTags.kMorphInfix:
-				case MoMorphTypeTags.kMorphInfixingInterfix:
-					return ((IMoAffixAllomorph) form).PositionRS.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+					case MoMorphTypeTags.kMorphInfix:
+					case MoMorphTypeTags.kMorphInfixingInterfix:
+						return ((IMoAffixAllomorph) form).PositionRS.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+				}
 			}
 
 			return false;
@@ -344,6 +347,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static bool IsStemType(IMoMorphType type)
 		{
+			if (type == null)
+				return false;
+
 			switch (type.Guid.ToString())
 			{
 				case MoMorphTypeTags.kMorphRoot:
@@ -359,6 +365,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static bool IsCliticType(IMoMorphType type)
 		{
+			if (type == null)
+				return false;
+
 			switch (type.Guid.ToString())
 			{
 				case MoMorphTypeTags.kMorphClitic:
@@ -948,15 +957,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			switch (allo.MorphTypeRA.Guid.ToString())
+			if (allo.MorphTypeRA != null)
 			{
-				case MoMorphTypeTags.kMorphPrefix:
-					hcAllo.ReduplicationHint = ReduplicationHint.Prefix;
-					break;
+				switch (allo.MorphTypeRA.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphPrefix:
+						hcAllo.ReduplicationHint = ReduplicationHint.Prefix;
+						break;
 
-				case MoMorphTypeTags.kMorphSuffix:
-					hcAllo.ReduplicationHint = ReduplicationHint.Suffix;
-					break;
+					case MoMorphTypeTags.kMorphSuffix:
+						hcAllo.ReduplicationHint = ReduplicationHint.Suffix;
+						break;
+				}
 			}
 
 			hcAllo.Properties["ID"] = allo.Hvo;
