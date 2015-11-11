@@ -23,6 +23,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.Lexicon;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -727,6 +728,7 @@ namespace SIL.FieldWorks.FDO
 				Directory.CreateDirectory(FdoFileHelper.GetDefaultOtherExternalFilesDir(dbDirName));
 				Directory.CreateDirectory(Path.Combine(dbDirName, FdoFileHelper.ksSortSequenceTempDir));
 				Directory.CreateDirectory(FdoFileHelper.GetWritingSystemDir(dbDirName));
+				Directory.CreateDirectory(LexiconSettingsFileHelper.GetSharedSettingsPath(dbDirName));
 			}
 			catch (Exception e)
 			{
