@@ -1,3 +1,7 @@
+// Copyright (c) Julijan Sribar 2004-2007
+// Used by permission of the author. See License file for details.
+// (http://www.codeproject.com/csharp/formlanguageswitch.asp)
+
 using System;
 using System.Collections;
 using System.Diagnostics;

@@ -11,6 +11,7 @@
 // --------------------------------------------------------------------------------------------
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -22,6 +23,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EntrySequenceReferenceSlice"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "EntrySequenceReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public EntrySequenceReferenceSlice()
 			: base(new EntrySequenceReferenceLauncher())
 		{

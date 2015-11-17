@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
-		private IComparer m_comp;
+		protected IComparer m_comp;
 
 		/// <summary>
 		/// Normal constructor.
@@ -1408,7 +1408,7 @@ namespace SIL.FieldWorks.Filters
 			m_subComp = ReverseComparer.Reverse(m_subComp);
 		}
 
-		string[] GetValue(object key, bool sortedFromEnd)
+		protected internal string[] GetValue(object key, bool sortedFromEnd)
 		{
 			try
 			{

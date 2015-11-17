@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Diagnostics;
 
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -30,6 +31,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="distFilesPath">the path to the distfiles Directory</param>
 		/// <param name="relativeImagePath">they path to the image, relative to the distfiles Directory</param>
 		/// <remarks>Will throw an exception if the image is not found.</remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "PictureBox gets added to the Controls collection in the base class and disposed there")]
 		public ImageSlice(string distFilesPath, string relativeImagePath) : base(new PictureBox())
 		{
 			string sPathname = System.IO.Path.Combine(distFilesPath, relativeImagePath);

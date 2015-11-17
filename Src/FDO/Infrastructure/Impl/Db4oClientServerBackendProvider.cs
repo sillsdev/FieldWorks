@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="dataMigrationManager"></param>
 		/// <param name="ui"></param>
 		/// <param name="dirs"></param>
+		/// <param name="settings"></param>
 		public Db4oClientServerBackendProvider(
 			FdoCache cache,
 			IdentityMap identityMap,
@@ -93,8 +94,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager,
 			IFdoUI ui,
-			IFdoDirectories dirs)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
+			IFdoDirectories dirs,
+			FdoSettings settings)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs, settings)
 		{
 		}
 

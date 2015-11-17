@@ -1837,7 +1837,7 @@ namespace SIL.FieldWorks.Common.Framework
 				if (rgFilesToMove.Count > 0)
 				{
 					FileLocationChoice action;
-					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg())
+					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
 					{
 						dlg.Initialize(rgFilesToMove.Count, sOldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
 						DialogResult res = dlg.ShowDialog();

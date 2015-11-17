@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -83,6 +84,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool RenameEnabled { set { rename.Enabled = value; } }
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItems disposed in Dispose method")]
 		public DictionaryConfigurationTreeControl()
 		{
 			InitializeComponent();

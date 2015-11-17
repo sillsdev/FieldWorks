@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,6 +20,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.IText;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -260,6 +265,8 @@ namespace SIL.FieldWorks.Discourse
 		// padding (pixels) to autoresize column width to prevent wrapping
 		private const int kColPadding = 4;
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "changingColHdr is a reference")]
 		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
 		{
 			var maxWidth = MaxUseableWidth();
@@ -504,6 +511,8 @@ namespace SIL.FieldWorks.Discourse
 			ComputeButtonWidths();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "c and c2 are references")]
 		private void ComputeButtonWidths()
 		{
 			//GetColumnWidths();

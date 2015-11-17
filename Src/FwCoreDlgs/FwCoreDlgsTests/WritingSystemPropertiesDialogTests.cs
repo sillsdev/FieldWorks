@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WritingSystemPropertiesDialogTests.cs
-// Responsibility:
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +15,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
 using SIL.Utils;
 
-
+// ReSharper disable InconsistentNaming
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	#region Dummy WritingSystemPropertiesDlg
@@ -60,6 +56,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 
 			SetupDialog(ws, true);
+			SwitchTab(kWsSorting); // force setup of the Sorting tab
 			return (int)DialogResult.OK;
 		}
 
@@ -198,7 +195,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Check Language Name & EthnologueCode
 			Assert.AreEqual(CurrentWritingSystem.LanguageSubtag.Name, m_tbLanguageName.Text);
 			// make sure LocaleName is properly setup as Language name, not as DisplayName.
-			Assert.IsTrue(CurrentWritingSystem.LanguageSubtag.Name.IndexOf("(") == -1);
+			Assert.IsTrue(CurrentWritingSystem.LanguageSubtag.Name.IndexOf("(", StringComparison.Ordinal) == -1);
 			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.ISO3) ? CurrentWritingSystem.ISO3 : "<None>", m_LanguageCode.Text);
 		}
 
@@ -226,7 +223,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		internal void ValidateSortingTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortRulesTextBox.Text);
+			Assert.AreEqual(CurrentWritingSystem.SortUsing.ToString(), m_sortUsingComboBox.SelectedValue.ToString());
+			switch (CurrentWritingSystem.SortUsing)
+			{
+				case WritingSystemDefinition.SortRulesType.DefaultOrdering:
+					Assert.IsNullOrEmpty(m_sortRulesTextBox.Text);
+					Assert.AreEqual(0, m_sortLanguageComboBox.SelectedIndex);
+					break;
+				case WritingSystemDefinition.SortRulesType.CustomICU:
+				case WritingSystemDefinition.SortRulesType.CustomSimple:
+					Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortRulesTextBox.Text);
+					break;
+				case WritingSystemDefinition.SortRulesType.OtherLanguage:
+					Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortLanguageComboBox.SelectedValue);
+					break;
+				default:
+					Assert.Fail("Unknown SortUsing: " + CurrentWritingSystem.SortUsing);
+					break;
+			}
 		}
 		#endregion
 
@@ -635,7 +649,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
 			// Verify Switching context is not OK (force user to make unique Ws)
@@ -666,7 +680,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Now try adding a second/duplicate ws.
 			m_dlg.PressBtnAdd("&Writing System for Kala...");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kala", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kala");
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)", "Kala (Phonetic)" });
 			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
@@ -733,7 +747,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnCopy();
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)", 1);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyWritingSystemsAreEqual(1, 2);
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
@@ -819,7 +833,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 
 			//note: changes to the dialog have broken this behavior, but this test was catching more than it's advertised purpose,
 			//so rather than making a new way to set the script through the dialog I hacked out the following test code for now -naylor 2011-8-11
@@ -871,7 +885,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
 			// Change Region info.
@@ -887,6 +901,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			VerifyWsNames(
 				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" },
 				new[] { "qaa-x-kal", "qaa-fonipa-x-kal", "qaa-QM-x-kal-MI" });
+		}
+
+		///<summary>Tests that Sort Rules are set for WritingSystems with available CultureInfo in the OS repository</summary>
+		[Test]
+		public void RealWritingSystemHasSortRules()
+		{
+			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
+			// Ensure the English WS has the correct SortRules
+			Assert.AreEqual(WritingSystemDefinition.SortRulesType.OtherLanguage, wsEn.SortUsing);
+			Assert.AreEqual("en", wsEn.SortRules);
+
+			// Show the dialog and ensure the SortRules are displayed correctly in the dialog
+			m_dlg.ShowDialog(wsEn);
+			m_dlg.VerifyListBox(new[] { "English" });
+			m_dlg.VerifyLoadedForListBoxSelection("English");
 		}
 
 		#endregion

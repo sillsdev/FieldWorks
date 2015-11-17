@@ -1,2 +1,5 @@
-Gendarme and Mono.Cecil assemblies are for Mono 2.10 downloaded from
-https://github.com/downloads/spouliot/gendarme/gendarme-2.10-bin.zip
+The Gendarme assemblies are built from master branch of
+https://github.com/mono/mono-tools.git.
+
+The Mono.Cecil assemblies are built from master branch of
+https://github.com/mono/cecil (net_4_0_Release configuration).

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Controls.SplitGridView
 {
@@ -35,6 +36,8 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 		/// Initializes a new instance of the <see cref="T:DataGridViewControlColumn"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "DataGridViewControlCell gets disposed in base class")]
 		public DataGridViewControlColumn()
 			: base(new DataGridViewControlCell())
 		{
@@ -54,6 +57,22 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 			: this()
 		{
 			Resizable = fLastColumn ? DataGridViewTriState.False : DataGridViewTriState.True;
+		}
+
+		/// <summary>
+		/// Dispose the object
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				if (CellTemplate != null)
+					CellTemplate.Dispose();
+				CellTemplate = null;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

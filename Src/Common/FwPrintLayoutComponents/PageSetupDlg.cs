@@ -20,6 +20,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {
@@ -1722,6 +1723,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// <param name="e">The <see cref="T:System.Windows.Forms.PaintEventArgs"/> instance
 		/// containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		private void panelPreview_Paint(object sender, PaintEventArgs e)
 		{
 			Panel panel = (Panel)sender;

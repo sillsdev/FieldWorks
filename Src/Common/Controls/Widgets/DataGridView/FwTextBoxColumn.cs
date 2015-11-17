@@ -19,6 +19,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected Dictionary<string, Font> m_fontCache = new Dictionary<string,Font>();
 		/// <summary></summary>
 		private FwStyleSheet m_styleSheet;
+		private bool m_DisposeCellTemplate;
 
 		private float m_szOfFontAt100Pcnt = 10f;
 		private readonly bool m_rowsAreMultiLing;
@@ -47,7 +49,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		#region Constructor and Dispose
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxColumn"/> class.
+		/// Initializes a new instance of the <see cref="FwTextBoxColumn"/> class.
 		/// </summary>
 		/// <remarks>Used by Designer</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -57,18 +59,21 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxColumn"/> class.
+		/// Initializes a new instance of the <see cref="FwTextBoxColumn"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "FwTextBoxCell gets disposed in Dispose()")]
 		public FwTextBoxColumn(FdoCache cache) : base(new FwTextBoxCell())
 		{
+			m_DisposeCellTemplate = true;
 			m_cache = cache;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxColumn"/> class.
+		/// Initializes a new instance of the <see cref="FwTextBoxColumn"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public FwTextBoxColumn(FdoCache cache, bool rowsAreMultiLing) : this(cache)
@@ -100,6 +105,12 @@ namespace SIL.FieldWorks.Common.Widgets
 						fnt.Dispose();
 
 					m_fontCache.Clear();
+				}
+				if (m_DisposeCellTemplate && CellTemplate != null)
+				{
+					CellTemplate.Dispose();
+					CellTemplate = null;
+					m_DisposeCellTemplate = false;
 				}
 			}
 
@@ -557,6 +568,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fnt and family are references")]
 		public void SetZoomFactor(float factor)
 		{
 			if (DefaultCellStyle != null)

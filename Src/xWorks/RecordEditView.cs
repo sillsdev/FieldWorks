@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -78,6 +79,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "DataTree gets disposed in Dispose()")]
 		public RecordEditView()
 			: this(new DataTree())
 		{
@@ -593,9 +596,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_printLayout == null)
+			if (m_printLayout == null || Clerk.CurrentObject == null)
 				return false;
-			// Don't bother; this edit view does not specify a print layout.
+			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
 			var area = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			string toolId;

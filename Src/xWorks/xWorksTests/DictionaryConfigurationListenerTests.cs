@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureSetUp]
 		public new void FixtureSetup()
 		{
-			Init();
+			// We won't call Init since XWorksAppTestBase's TestFixtureSetUp calls it.
 		}
 		#endregion
 

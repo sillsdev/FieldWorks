@@ -1,5 +1,10 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
@@ -300,6 +305,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			XmlNode partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;

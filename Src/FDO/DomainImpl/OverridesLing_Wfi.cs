@@ -586,6 +586,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_occurrencesInTexts.Add(seg);
 		}
 
+		internal override void RegisterVirtualsModifiedForObjectCreation(IUnitOfWorkService uow)
+		{
+			base.RegisterVirtualsModifiedForObjectCreation(uow);
+			var cache = Cache; // need to make the Func use this local variable, because on Undo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms,
+				() => cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(),
+				new[] { this }, new IWfiWordform[0]);
+		}
+
 		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			if (multiAltFlid == WfiWordformTags.kflidForm)
@@ -607,11 +617,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		internal override void RegisterVirtualsModifiedForObjectDeletion(IUnitOfWorkService uow)
 		{
-			var repo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			var guids = (from wf in repo.AllInstances() select wf.Guid).ToArray();
-			var newGuids = (from item in guids where item != this.Guid select item).ToArray();
-			uow.RegisterVirtualAsModified(Cache.LangProject,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms, guids, newGuids);
+			var cache = Cache; // need to make the Func use this local variable, because on Redo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms,
+				() => cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(),
+				new IWfiWordform[0], new[] { this });
 			base.RegisterVirtualsModifiedForObjectDeletion(uow);
 		}
 		/// <summary>

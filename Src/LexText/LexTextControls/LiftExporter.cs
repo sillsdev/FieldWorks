@@ -290,6 +290,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				switch (type)
 				{
 					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
 						//<field type=\"CustomField2\">
 						//    <form lang=\"en\"><text>MultiString Analysis ws string</text></form>
 						//    <form lang=\"fr\"><text>MultiString Vernacular ws string</text></form>
@@ -316,8 +317,6 @@ namespace SIL.FieldWorks.LexText.Controls
 							}
 							w.WriteLine("</field>");
 						}
-						break;
-					case CellarPropertyType.MultiString:
 						break;
 					case CellarPropertyType.ReferenceAtomic:
 						{
@@ -509,7 +508,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			w.WriteLine("<form lang=\"{0}\"><text>{1}</text></form>",
-						MakeSafeAndNormalizedAttribute(sLang), MakeSafeAndNormalizedXml(tss.Text));
+						MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tss, ws));
 		}
 
 		private void WritePronunciation(TextWriter w, ILexPronunciation pron)

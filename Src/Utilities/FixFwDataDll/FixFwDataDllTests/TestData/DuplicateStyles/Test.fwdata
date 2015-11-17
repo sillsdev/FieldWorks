@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+	<rt class="LangProject" guid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<TranslatedScripture>
+			<objsur guid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec" t="o" />
+		</TranslatedScripture>
+		<Styles>
+			<objsur guid="be765e3e-ea5e-11de-9d42-0013722f8dec" t="o" />
+			<objsur guid="d37394b7-d47c-4e3d-9f2a-d023fd6fef24" t="o" />
+			<objsur guid="cea17237-b704-4bee-9a9b-1779d3108831" t="o" />
+			<objsur guid="d778dff3-36fb-4ddf-aa08-91827f2c22dc" t="o" />
+		</Styles>
+	</rt>
+
+	<rt class="Scripture" guid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<Styles>
+			<objsur guid="a89670f5-8d59-42ec-bfb5-10c63642b1dc" t="o" />
+			<objsur guid="ac48acc9-12f2-42c6-89dc-7d48870b7758" t="o" />
+			<objsur guid="ba7ffa0b-1beb-45fe-976a-c849cceb3026" t="o" />
+		</Styles>
+	</rt>
+
+	<!-- owned by LangProject-->
+
+	<rt class="StStyle" guid="be765e3e-ea5e-11de-9d42-0013722f8dec" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<Name>
+			<Uni>Bob</Uni>
+		</Name>
+	</rt>
+
+	<rt class="StStyle" guid="d37394b7-d47c-4e3d-9f2a-d023fd6fef24" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<Name>
+			<Uni>Bob</Uni>
+		</Name>
+	</rt>
+
+	<rt class="StStyle" guid="cea17237-b704-4bee-9a9b-1779d3108831" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<Name>
+			<Uni>Fred</Uni>
+		</Name>
+		<Next>
+			<objsur guid ="d778dff3-36fb-4ddf-aa08-91827f2c22dc" t="r"/>
+		</Next>
+	</rt>
+
+	<rt class="StStyle" guid="d778dff3-36fb-4ddf-aa08-91827f2c22dc" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+		<Name>
+			<Uni>Bob</Uni>
+		</Name>
+	</rt>
+
+	<!-- owned by Scripture-->
+
+	<rt class="StStyle" guid="a89670f5-8d59-42ec-bfb5-10c63642b1dc" ownerguid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec">
+		<Name>
+			<Uni>Bob</Uni>
+		</Name>
+	</rt>
+
+	<rt class="StStyle" guid="ac48acc9-12f2-42c6-89dc-7d48870b7758" ownerguid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec">
+		<Name>
+			<Uni>Joe</Uni>
+		</Name>
+	</rt>
+
+	<rt class="StStyle" guid="ba7ffa0b-1beb-45fe-976a-c849cceb3026" ownerguid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec">
+		<Name>
+			<Uni>Joe</Uni>
+		</Name>
+	</rt>
+
+</languageproject>

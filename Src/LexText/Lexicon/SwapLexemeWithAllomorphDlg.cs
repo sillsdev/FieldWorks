@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +13,7 @@ using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -48,6 +53,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "infoIcon is a reference")]
 		public SwapLexemeWithAllomorphDlg()
 		{
 			//

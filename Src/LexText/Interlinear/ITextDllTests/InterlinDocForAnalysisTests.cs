@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,7 +25,7 @@ namespace SIL.FieldWorks.IText
 	/// todo: Probably should move these into FocusBoxControllerTests.cs
 	/// </summary>
 	[TestFixture]
-	public class FocusBoxControllerTests : MemoryOnlyBackendProviderBasicTestBase
+	public class FocusBoxControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		FDO.IText m_text0;
 		private IStText m_stText0;

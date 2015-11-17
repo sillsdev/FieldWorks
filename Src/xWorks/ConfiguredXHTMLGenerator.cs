@@ -79,6 +79,8 @@ namespace SIL.FieldWorks.XWorks
 			return stringBuilder.ToString();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "xhtmlWriter is a reference")]
 		private static void GenerateOpeningHtml(string cssPath, GeneratorSettings exportSettings)
 		{
 			var xhtmlWriter = exportSettings.Writer;
@@ -488,6 +490,8 @@ namespace SIL.FieldWorks.XWorks
 			return parentNodeType.Name;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForPossibility(object propertyValue, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
@@ -507,6 +511,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
@@ -524,6 +530,8 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteEndElement();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
@@ -882,6 +890,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a collection and its contents
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object collectionOwner, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
@@ -1000,6 +1010,8 @@ namespace SIL.FieldWorks.XWorks
 			return isSameGrammaticalInfo && !string.IsNullOrEmpty(lastGrammaticalInfo);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo)
 		{
@@ -1034,6 +1046,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, object collectionOwner, GeneratorSettings settings)
 		{
@@ -1178,6 +1192,8 @@ namespace SIL.FieldWorks.XWorks
 			return roman;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
@@ -1514,6 +1530,8 @@ namespace SIL.FieldWorks.XWorks
 			settings.Writer.WriteEndElement();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference. cache is a reference.")]
 		private static void GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
 			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, int hvo)
 		{
@@ -1535,6 +1553,8 @@ namespace SIL.FieldWorks.XWorks
 			GenerateXHTMLForString(requestedString, config, settings, wsName, hvo);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "writer is a reference")]
 		private static void GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
 													GeneratorSettings settings, string writingSystem = null, int hvo = 0)
 		{

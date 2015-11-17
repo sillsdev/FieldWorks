@@ -50,6 +50,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "TeImportNoUi gets disposed in Dispose")]
 		public DummyTeImporter(IScrImportSet settings, FdoTestBase testBase,
 			FwStyleSheet styleSheet) :
 			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),

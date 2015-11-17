@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
-		}
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -368,22 +368,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-				var v7exists = RegistryHelper.KeyExists(FieldWorksVersionlessRegistryKey,
-					OldFieldWorksRegistryKeyNameVersion7);
-				if (!v7exists)
-					return; // We'll assume this already got done!
-
-				// If v8 key exists, we will go ahead and do the copy, but not overwrite any existing values.
-				using (var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
-				using (var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+				using (var fieldWorksVersionlessRegistryKey = FieldWorksVersionlessRegistryKey)
 				{
-					// Copy over almost everything from 7.0 to 8
-					// Don't copy the "launches" key or keys starting with "NumberOf"
-					CopySubKeyTree(version7Key, version8Key);
-				}
+					var v7exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
+						OldFieldWorksRegistryKeyNameVersion7);
+					if (!v7exists)
+						return; // We'll assume this already got done!
 
-				// After copying everything delete the old key
-				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+					// If v8 key exists, we will go ahead and do the copy, but not overwrite any existing values.
+					using (var version7Key = fieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
+					using (var version8Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+					{
+						// Copy over almost everything from 7.0 to 8
+						// Don't copy the "launches" key or keys starting with "NumberOf"
+						CopySubKeyTree(version7Key, version8Key);
+					}
+
+					// After copying everything delete the old key
+					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+				}
 			}
 			catch (SecurityException se)
 			{
@@ -395,6 +398,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "LocalMachineHive is a reference")]
 		public static void MigrateVersion7ValueIfNeeded()
 		{
 			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).

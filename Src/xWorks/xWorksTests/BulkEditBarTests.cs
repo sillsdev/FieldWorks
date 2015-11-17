@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -247,6 +248,8 @@ namespace SIL.FieldWorks.XWorks
 				return items;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "matches is a reference")]
 			internal Control GetTabControlChild(string controlName)
 			{
 				Control[] matches = m_operationsTabControl.SelectedTab.Controls.Find(controlName, true);
@@ -381,6 +384,8 @@ namespace SIL.FieldWorks.XWorks
 				return fsiTarget;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "FiltersortItem[] is a reference")]
 			private FilterSortItem FindColumnInfo(string columnName)
 			{
 				FilterSortItem fsiTarget = null;
@@ -1380,6 +1385,8 @@ namespace SIL.FieldWorks.XWorks
 		/// queries the lexical database to find an entry with multiple descendents
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "clerk is a reference")]
 		private ILexEntry CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList()
 		{
 			ILexPronunciation dummy;

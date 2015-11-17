@@ -10,18 +10,13 @@
 // </remarks>
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Xml;
-using System.Windows.Forms;
-using System.Reflection;
+using System.Diagnostics;
 using System.IO;
-using System.Resources;
-using System.Runtime.InteropServices;
-
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.Utils;
 
 namespace XCore
@@ -44,18 +39,18 @@ namespace XCore
 		/// <summary>
 		/// Mediator that passes off messages.
 		/// </summary>
-		protected XCore.Mediator m_mediator;
+		protected Mediator m_mediator;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		#endregion // Data Members
 
 		#region Construction and disposal
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="HtmlViewer2"/> class.
+		/// Initializes a new instance of the <see cref="HtmlViewer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public HtmlViewer()
@@ -64,10 +59,10 @@ namespace XCore
 			InitializeComponent();
 
 			m_htmlControl = new HtmlControl();
-			m_htmlControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			m_htmlControl.Dock = DockStyle.Fill;
 			Controls.Add(m_htmlControl);
 
-			base.AccNameDefault = "HtmlViewer";	// default accessibility name
+			AccNameDefault = "HtmlViewer";	// default accessibility name
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -110,10 +105,11 @@ namespace XCore
 			CheckDisposed();
 
 			m_mediator = mediator;
-			base.m_configurationParameters = configurationParameters;
+			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 			string urlAttr = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "URL");
-			m_htmlControl.URL = GetInstallSubDirectory(urlAttr);
+			var uri = new Uri(GetInstallSubDirectory(urlAttr));
+			m_htmlControl.URL = uri.AbsoluteUri;
 
 		}
 
@@ -178,7 +174,7 @@ namespace XCore
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
-				throw new ArgumentNullException("'targetCandidates' is null.");
+				throw new ArgumentNullException("targetCandidates");
 
 			targetCandidates.Add(this);
 
@@ -196,8 +192,8 @@ namespace XCore
 				retval = retval.Remove(0, 1);
 			string asmPathname = Assembly.GetExecutingAssembly().CodeBase;
 			asmPathname = FileUtils.StripFilePrefix(asmPathname);
-			string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/") + 1);
-			string possiblePath = System.IO.Path.Combine(asmPath, retval);
+			string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/", StringComparison.Ordinal) + 1);
+			string possiblePath = Path.Combine(asmPath, retval);
 			if (File.Exists(possiblePath))
 				retval = possiblePath;
 			// Implicit 'else' assumes it to be a full path,

@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -211,6 +215,8 @@ namespace SIL.CoreImpl
 			return GetSpellChecker(dictId);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		private static SpellEngine RawGetSpellChecker(string dictId)
 		{
 			SpellEngine result = null;

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -37,6 +42,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "infoIcon is a reference")]
 		public MergeWritingSystemDlg(FdoCache cache, IWritingSystem ws, IEnumerable<IWritingSystem> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;

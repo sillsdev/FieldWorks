@@ -167,12 +167,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		protected override void OnPrint(PaintEventArgs e)
-		{
-			var temp = e.Graphics;
-			base.OnPrint(e);
-		}
-
 		/// <summary>
 		/// Note: currently called in the context of ListUpdateHelper, which suspends the clerk from reloading its list
 		/// until it is disposed. So, don't do anything here (eg. Clerk.SelectedRecordChanged())

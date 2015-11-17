@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -160,6 +160,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool m_isDefaultSort = false;
 
 		#region Event Handling
+		public event EventHandler SorterChangedByClerk;
 		public event FilterChangeHandler FilterChangedByClerk;
 		#endregion Event Handling
 
@@ -584,7 +585,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and re-establishes them from the property table if they have changed.
 		/// </summary>
 		/// <returns>true if we restored either a sorter or a filter.</returns>
-		internal bool UpdateFiltersAndSortersIfNeeded()
+		internal protected bool UpdateFiltersAndSortersIfNeeded()
 		{
 			bool fRestoredSorter = TryRestoreSorter(m_mediator, m_clerkConfiguration, Cache);
 			bool fRestoredFilter = TryRestoreFilter(m_mediator, m_clerkConfiguration, Cache);
@@ -1614,7 +1615,11 @@ namespace SIL.FieldWorks.XWorks
 				// (See LT-13397)
 				var actionHandler = Cache.ActionHandlerAccessor;
 				if (actionHandler.CurrentDepth > 0)
-					actionHandler.EndOuterUndoTask();
+				{
+					// EndOuterUndoTask() is not implemented, so we better call EndUndoTask().
+					// (This fixes LT-16673)
+					actionHandler.EndUndoTask();
+				}
 			}
 		}
 
@@ -2169,7 +2174,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public int CurrentObjectHvo
+		/// <remarks>virtual for tests</remarks>
+		public virtual int CurrentObjectHvo
 		{
 			get
 			{
@@ -2600,6 +2606,19 @@ namespace SIL.FieldWorks.XWorks
 			return "RecordClerk-" + vectorName;
 		}
 
+		public void OnChangeSorter()
+		{
+			CheckDisposed();
+
+			var window = (Form) m_mediator.PropertyTable.GetValue("window");
+			using (new WaitCursor(window))
+			{
+				Logger.WriteEvent(String.Format("Sorter changed: {0}", m_list.Sorter == null ? "(no sorter)" : m_list.Sorter.ToString()));
+				if (SorterChangedByClerk != null)
+					SorterChangedByClerk(this, EventArgs.Empty);
+			}
+		}
+
 		/// <summary>
 		/// If a filter becomes invalid, it has to be reset somehow.  This resets it to the default filter
 		/// for this clerk (possibly null).
@@ -3017,6 +3036,8 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="fWasAlreadySuppressed">Usually, clerk.ListLoadingSuppressed. When we know we just
 			/// created the clerk, already in a suppressed state, and want to treat it as if this
 			/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "parentClerk is a reference")]
 			public ListUpdateHelper(RecordClerk clerk, bool fWasAlreadySuppressed)
 			{
 				m_clerk = clerk;

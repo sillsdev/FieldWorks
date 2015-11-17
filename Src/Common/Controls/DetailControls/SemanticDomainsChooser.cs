@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -12,6 +16,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -396,6 +401,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			domainList.EndUpdate();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
 		{
 			var cache = labelList.First().Object.Cache;

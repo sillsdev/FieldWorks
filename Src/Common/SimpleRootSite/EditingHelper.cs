@@ -16,6 +16,8 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
+using Palaso.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -2857,6 +2859,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootbox"></param>
 		/// <param name="selection"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		private void SetWritingSystemPropertyFromSelection(IVwRootBox rootbox,
 			IVwSelection selection)
 		{
@@ -2882,6 +2886,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void WritingSystemHvoChanged()
 		{
 			if (m_fSuppressNextWritingSystemHvoChanged)
@@ -3002,6 +3008,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Activates the default keyboard.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Keyboard controller needs to be initialized/disposed elsewhere")]
 		private void ActivateDefaultKeyboard()
 		{
 			Keyboard.Controller.ActivateDefaultKeyboard();
@@ -3016,6 +3024,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			set { m_fSuppressNextBestStyleNameChanged = value; }
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void BestStyleNameChanged()
 		{
 			if (m_fSuppressNextBestStyleNameChanged)
@@ -3066,24 +3076,28 @@ namespace SIL.FieldWorks.Common.RootSites
 			//    newFocusedControl != null ? newFocusedControl.Handle.ToInt32() : -1,
 			//    newFocusedControl != null ? newFocusedControl.Name : "<empty>",
 			//    m_control, m_control.Handle, m_control.Name));
+
 			// Switch back to the UI keyboard so edit boxes in dialogs, toolbar controls, etc.
 			// won't be using the UI of the current run in this view. But only if the current
 			// focus pane is not another view...switching the input language AFTER another view
 			// has received focus behaves like the user selecting the input language of this
 			// view in the context of the other one, with bad consequences.
-			// We don't want to do this if we're switching to a different application. Windows
-			// will take care of switching the keyboard.
-			if ((ShouldRestoreKeyboardSwitchingTo(newFocusedControl)) && fIsChildWindow)
+			if (ShouldRestoreKeyboardSwitchingTo(newFocusedControl, fIsChildWindow))
 				ActivateDefaultKeyboard();
 		}
 
-		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl)
+		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
 		{
+			// On Linux we want to restore the default keyboard if we're switching to another
+			// application. On Windows the OS will take care of switching the keyboard.
+			if (Platform.IsUnix && newFocusedControl == null)
+				return true;
+
 			if (newFocusedControl is IRootSite)
 				return false;
 			if (newFocusedControl is SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus)
 				return false;
-			return true;
+			return fIsChildWindow;
 		}
 
 		/// <summary>
@@ -3612,6 +3626,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns>Returns <c>true</c> if copying is possible.</returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ArrayPtr.Null is a reference")]
 		public virtual bool CanCopy()
 		{
 			CheckDisposed();

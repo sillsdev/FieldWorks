@@ -529,7 +529,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (!m_validator.Recognize(env.StringRepresentation.Text) &&
 					!env.StringRepresentation.Equals(tss))
 				{
-					env.StringRepresentation = tss;
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoChange, DetailControlsStrings.ksRedoChange,
+						env, () => { env.StringRepresentation = tss; });
 					ConstraintFailure failure;
 					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure,
 						/* adjust the squiggly line */ true );

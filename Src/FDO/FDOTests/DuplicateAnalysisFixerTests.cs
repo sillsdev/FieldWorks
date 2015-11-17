@@ -1,10 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FdoUi;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -17,7 +20,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	public class DuplicateAnalysisFixerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IWfiWordformFactory m_wfiFactory;
-		private ProgressBarWrapper m_progress;
+		private IProgress m_progress;
 
 		/// <summary>
 		/// Set up some common data
@@ -26,13 +29,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.TestSetup();
 			m_wfiFactory = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
-			m_progress = new ProgressBarWrapper(new ProgressBar());
+			m_progress = new DummyProgressDlg();
 		}
 
 		/// <summary/>
 		public override void TestTearDown()
 		{
-			m_progress.ProgressBar.Dispose();
 			m_progress = null;
 			base.TestTearDown();
 		}

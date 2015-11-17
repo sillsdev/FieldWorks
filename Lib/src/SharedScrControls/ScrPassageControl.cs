@@ -1,12 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2011-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: ScrPassageControl.cs
 // --------------------------------------------------------------------------------------------
@@ -477,6 +472,8 @@ namespace SILUBS.SharedScrControls
 		/// Determine whether or not this control has been placed on a toolstrip control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent and txtTmp.Font are references")]
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
@@ -515,6 +512,8 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cboTmp.Font is a reference")]
 		void HandleSizeChanged(object sender, EventArgs e)
 		{
 			if (m_fParentIsToolstrip)
@@ -1079,6 +1078,8 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		private void btnScrPsgDropDown_PaintOnToolstrip(PaintEventArgs e)
 		{
 			Color clr1 = (Application.RenderWithVisualStyles ?

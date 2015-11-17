@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -360,6 +364,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "dtree is a reference")]
 		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{

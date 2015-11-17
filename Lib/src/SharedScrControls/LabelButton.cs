@@ -1,17 +1,14 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2011-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 //
 // File: LabelButton.cs
 // Responsibility: DavidO
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 using System.Windows.Forms;
@@ -219,6 +216,8 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		protected new virtual void OnPaintBackground(PaintEventArgs e)
 		{
 			DeterminePaintState();

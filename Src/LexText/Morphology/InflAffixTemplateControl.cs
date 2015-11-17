@@ -28,6 +28,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -191,6 +192,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// The slice is no longer a direct parent, so hunt for it up the Parent chain.
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ctl is a reference")]
 		private Slice FindParentSlice()
 		{
 			Control ctl = this.Parent;

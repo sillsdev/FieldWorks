@@ -1,3 +1,5 @@
+// Original author or copyright holder unknown.
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -8,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using SidebarLibrary.Win32;
 using SidebarLibrary.General;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {
@@ -427,7 +430,8 @@ namespace SidebarLibrary.WinControls
 			Invalidate();
 		}
 
-
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);

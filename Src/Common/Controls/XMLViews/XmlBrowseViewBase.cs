@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1868,6 +1869,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "scrollBar is a reference")]
 		private bool DoMouseWheelVScroll(MouseEventArgs e)
 		{
 			if (m_bv == null)

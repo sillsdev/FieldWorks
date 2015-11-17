@@ -385,6 +385,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// Handles the ColumnHeaderMouseClick event of the m_dataGridView control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "column is a reference")]
 		private void m_dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left)

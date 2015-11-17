@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -14,6 +18,7 @@ using SIL.Utils;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -122,7 +127,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_fdoCache == null || DesignMode || m_wfiAnalysis == null)
 				return;
 
 			m_rootb = VwRootBoxClass.Create();
@@ -134,6 +139,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var isEditable = IsEditable;
 			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
+			if ((m_wfiAnalysis.GetAgentOpinion(m_fdoCache.LanguageProject.DefaultParserAgent) == Opinions.approves)
+				&& (m_wfiAnalysis.GetAgentOpinion(m_fdoCache.LanguageProject.DefaultUserAgent) != Opinions.approves))
+			{
+				m_vc.UsingGuess = true;
+			}
+
 			// JohnT: kwsVernInParagraph is rather weird here, where we don't have a paragraph, but it allows the
 			// VC to deduce the WS of the wordform, not from the paragraph, but from the best vern WS of the wordform itself.
 			if (isEditable)
@@ -151,8 +162,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			FixWs(); // AFTER setting DA!
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
-			if (m_wfiAnalysis != null)
-				m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
+			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
 
 			base.MakeRoot();
 
@@ -176,6 +186,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				TurnOnSandbox();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		InterlinearSlice MySlice
 		{
 			get

@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -1191,6 +1192,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>The hvo of the picture.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "resImage is a reference")]
 		private ICmPicture CreateAndInsertPicture(int index, out string fileNameString)
 		{
 			// Load larger picture from resources and save it to file.
@@ -2617,6 +2620,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_Exists()
 		{
 			IScrBook exodus = m_scr.FindBook(2);
@@ -2661,6 +2666,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_TextChanged()
 		{
 			IScrBook exodus = m_scr.FindBook(2);
@@ -2708,6 +2715,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_OrigParaGone()
 		{
 			IScrBook exodus = m_scr.FindBook(2);
@@ -2756,6 +2765,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_OrigParaEmpty()
 		{
 			IScrBook exodus = (IScrBook)m_scr.FindBook(2);
@@ -2796,6 +2807,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_TextExistethNot()
 		{
 			IScrBook exodus = m_scr.FindBook(2);
@@ -2835,6 +2848,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "helper is a reference")]
 		public void GoToScrScriptureNoteRef_VerseDeleted()
 		{
 			IScrBook exodus = m_scr.FindBook(2);

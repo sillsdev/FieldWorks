@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -80,14 +84,12 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		private IRenderEngine CreateRenderEngine(Func<IRenderEngine> createFunc)
+		private void SetupRenderEngine(IRenderEngine renderEngine)
 		{
-			var renderEngine = createFunc();
 			renderEngine.WritingSystemFactory = WritingSystemManager;
 			var palasoWsManager = WritingSystemManager as PalasoWritingSystemManager;
 			if (palasoWsManager != null)
 				palasoWsManager.RegisterRenderEngine(renderEngine);
-			return renderEngine;
 		}
 
 		/// <summary>
@@ -128,45 +130,43 @@ namespace SIL.CoreImpl
 				}
 
 				bool graphiteFont = false;
-				if (!MiscUtils.IsUnix) // TODO-Linux: UniscribeEngine and GraphiteEngine(FWNX-84) not yet ported
+				if (m_isGraphiteEnabled)
 				{
-					if (m_isGraphiteEnabled && FontHasGraphiteTables(vg))
+					renderEngine = GraphiteEngineClass.Create();
+
+					string fontFeatures = null;
+					if (realFontName == DefaultFontName)
+						fontFeatures = DefaultFontFeatures;
+					renderEngine.InitRenderer(vg, fontFeatures);
+					// check if the font is a valid Graphite font
+					if (renderEngine.FontIsValid)
 					{
-						renderEngine = CreateRenderEngine(FwGrEngineClass.Create);
-
-						string fontFeatures = null;
-						if (realFontName == DefaultFontName)
-							fontFeatures = DefaultFontFeatures;
-						try
-						{
-							renderEngine.InitRenderer(vg, fontFeatures);
-							graphiteFont = true;
-						}
-						catch
-						{
-							graphiteFont = false;
-						}
+						SetupRenderEngine(renderEngine);
+						graphiteFont = true;
 					}
+				}
 
-					if (!graphiteFont)
+				if (!graphiteFont)
+				{
+					if (!MiscUtils.IsUnix)
 					{
 						if (m_uniscribeEngine == null)
 						{
-							m_uniscribeEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+							m_uniscribeEngine = UniscribeEngineClass.Create();
+							m_uniscribeEngine.InitRenderer(vg, null);
+							SetupRenderEngine(m_uniscribeEngine);
 						}
 						renderEngine = m_uniscribeEngine;
 					}
-				}
-				else
-				{
-					// default to the UniscribeEngine unless ROMAN environment variable is set.
-					if (Environment.GetEnvironmentVariable("ROMAN") == null)
-					{
-						renderEngine = CreateRenderEngine(UniscribeEngineClass.Create);
-					}
 					else
 					{
-						renderEngine = CreateRenderEngine(RomRenderEngineClass.Create);
+						// default to the UniscribeEngine unless ROMAN environment variable is set.
+						if (Environment.GetEnvironmentVariable("ROMAN") == null)
+							renderEngine = UniscribeEngineClass.Create();
+						else
+							renderEngine = RomRenderEngineClass.Create();
+						renderEngine.InitRenderer(vg, null);
+						SetupRenderEngine(renderEngine);
 					}
 				}
 
@@ -361,7 +361,7 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the keyboard.
+		/// Gets or sets the keyboard. DON'T USE - THIS IS OBSOLETE
 		/// </summary>
 		/// <value>The keyboard.</value>
 		public override string Keyboard
@@ -411,6 +411,20 @@ namespace SIL.CoreImpl
 			{
 				lock (m_syncRoot)
 					base.SpellCheckingId = value;
+			}
+		}
+
+		/// <summary>
+		/// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
+		/// </summary>
+		public bool UseNfcContext
+		{
+			get
+			{
+				// Currently we use NFD only for Keyman keyboards. If the LocalKeyboard
+				// property is null than for sure we don't have a keyman keyboard either,
+				// so we simply return true (ie. use NFC) in that case.
+				return LocalKeyboard == null || LocalKeyboard.UseNfcContext;
 			}
 		}
 
@@ -1252,14 +1266,6 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		private static bool FontHasGraphiteTables(IVwGraphics vg)
-		{
-			const int tag_Silf = 0x666c6953;
-			int tblSize;
-			vg.GetFontData(tag_Silf, out tblSize);
-			return tblSize > 0;
-		}
-
 		private bool TryGetRealFontName(string fontName, out string realFontName)
 		{
 			if (fontName == "<default font>")
@@ -1297,6 +1303,7 @@ namespace SIL.CoreImpl
 		{
 			return DisplayLabel;
 		}
+
 	}
 
 	/// <summary>

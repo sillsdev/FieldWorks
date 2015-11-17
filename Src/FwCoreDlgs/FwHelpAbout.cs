@@ -15,6 +15,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Diagnostics;
 using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -57,6 +59,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ----------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_systemMonitorLink is added to Controls collection and disposed there")]
 		public FwHelpAbout()
 		{
 			//
@@ -109,9 +113,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				this.Controls.Add(packageVersionLabel);
 				this.Controls.Add(versionInformation);
 
-				foreach(var info in LinuxPackageUtils.FindInstalledPackages("fieldworks*"))
+				foreach(var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp2-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("*geckofx*"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("chmsee"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-libgdiplus"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-gtk-sharp2"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono-basic")))
 				{
-					versionInformation.AppendText(String.Format("{0} {1} {2}", info.Key, info.Value, Environment.NewLine));
+					versionInformation.AppendText(String.Format("{0} {1}{2}", info.Key, info.Value, Environment.NewLine));
 				}
 			}
 		}

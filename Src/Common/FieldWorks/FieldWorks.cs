@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -59,7 +59,6 @@ using SIL.CoreImpl.Properties;
 using FileUtils = SIL.Utils.FileUtils;
 #if !__MonoCS__
 using NetSparkle;
-
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
@@ -133,11 +132,6 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Main Method and Initialization Methods
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("kernel32.dll")]
-		public extern static IntPtr LoadLibrary(string fileName);
-#endif
 
 		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -164,24 +158,23 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser)
+#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				string xulRunnerLocation;
 				if (MiscUtils.IsUnix)
 				{
 					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 					if (String.IsNullOrEmpty(xulRunnerLocation))
 						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-					string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
+				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 					if (!librarySearchPath.Contains(xulRunnerLocation))
 						throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				}
 				else
 				{
-					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "xulrunner");
-					if (!Directory.Exists(xulRunnerLocation))
-						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
-					if (!SetDllDirectory(xulRunnerLocation))
-						throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
+					// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
+					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
+					if (string.IsNullOrEmpty(xulRunnerLocation))
+						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 				}
 
 				Xpcom.Initialize(xulRunnerLocation);
@@ -189,6 +182,7 @@ namespace SIL.FieldWorks
 				//Set default browser for XWebBrowser to use GeckoFX.
 				//This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
+#endregion Initialize XULRunner
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
@@ -241,13 +235,6 @@ namespace SIL.FieldWorks
 				// by a bug in XP.
 				Application.EnableVisualStyles();
 
-#if !__MonoCS__
-				// JohnT: this allows us to use Graphite in all in-process controls, even those
-				// we don't have custom versions of.
-				LoadLibrary("multiscribe.dll");
-#else
-				// TODO-Linux: review this - what is this used for?
-#endif
 				// initialize ICU
 				Icu.InitIcuDataDir();
 
@@ -273,7 +260,14 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					Settings.Default.Reporting = reportingSettings; // to avoid a defect in Settings, rely on the Save in the code below
+				}
+
+				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				if (feedbackEnvVar != null)
+				{
+					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
@@ -304,8 +298,7 @@ namespace SIL.FieldWorks
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				// initialize client-server services to use Db4O backend
-				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
-					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories);
 
 				// initialize the TE styles path so that ScrMappingList can load default styles
 				ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
@@ -738,12 +731,18 @@ namespace SIL.FieldWorks
 				{
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					string thisSid = BasicUtils.GetUserForProcess(thisProcess);
-					foreach (Process procCurr in Process.GetProcessesByName(thisProcessName))
+					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
+					if (MiscUtils.IsUnix)
+					{
+						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
+							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
+					}
+					foreach (Process procCurr in processes)
 					{
 						if (procCurr.Id != thisProcess.Id && thisSid == BasicUtils.GetUserForProcess(procCurr))
 							existingProcesses.Add(procCurr);
-						}
 					}
+				}
 				catch (Exception ex)
 				{
 					Debug.Fail("Got exception in FieldWorks.ExisitingProcess", ex.Message);
@@ -838,6 +837,8 @@ namespace SIL.FieldWorks
 		/// cache could not be created.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		private static FdoCache CreateCache(ProjectId projectId)
 		{
 			Debug.Assert(projectId.IsValid);
@@ -846,8 +847,11 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
+				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
+				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
+				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
@@ -864,6 +868,14 @@ namespace SIL.FieldWorks
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
 		private static void EnsureValidLinkedFilesFolder(FdoCache cache)
 		{
+			// If the location of the LinkedFilesRootDir was changed when this project was restored just now;
+			// overwrite the location that was restored from the fwdata file.
+			if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
+			{
+				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor,
+					() => cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+			}
+
 			if (MiscUtils.RunningTests)
 				return;
 
@@ -873,18 +885,18 @@ namespace SIL.FieldWorks
 
 			if (!Directory.Exists(linkedFilesFolder))
 			{
-				if (!Directory.Exists(defaultFolder))
-					defaultFolder = cache.ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-				while (!Directory.Exists(linkedFilesFolder))
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					else
 					{
-						folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
 					}
 				}
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
@@ -893,8 +905,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Just make the directory if it's the default.
-		/// See FWNX-1092, LT-14491.
+		/// Create the specified Linked Files directory only if it's the default Linked Files directory. See FWNX-1092, LT-14491.
 		/// </summary>
 		internal static void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
 		{
@@ -908,6 +919,8 @@ namespace SIL.FieldWorks
 		/// that as the most recent interesting project to open for the current main window's app.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "settings is a reference")]
 		private static void FieldWorks_OnSave(object sender, SaveEventArgs e)
 		{
 			if (!e.UndoableChanges)
@@ -1163,6 +1176,8 @@ namespace SIL.FieldWorks
 		/// <returns>True if the exception was lethal and the user chose to exit,
 		/// false otherise</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "appKey is a reference")]
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
 			using (new IgnoreAppMessageProccessing(s_teApp))
@@ -1806,6 +1821,8 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The chosen project, or null if no project was chosen</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeWindow is a reference")]
 		internal static ProjectId ChooseLangProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
 			if (!FwNewLangProject.CheckProjectDirectory(dialogOwner, helpTopicProvider))
@@ -1833,10 +1850,10 @@ namespace SIL.FieldWorks
 					if (IsSharedXmlBackendNeeded(projId))
 						projId.Type = FDOBackendProviderType.kSharedXML;
 					return projId;
-				}
+			}
 
 				return null;
-			}
+		}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2621,22 +2638,22 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 
 				try
 				{
-					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
-					settings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
-					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
+					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
+					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
+					backupSettings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
-					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
+					var backupService = new ProjectBackupService(cache, backupSettings);
 					string backupFile;
 					if (!backupService.BackupProject(progressDlg, out backupFile))
 					{
 						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
 						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 							File.Delete(backupFile);
-					}
+				}
 				}
 				catch (FwBackupException e)
 				{
@@ -2656,6 +2673,20 @@ namespace SIL.FieldWorks
 				}
 			}
 			return true;
+		}
+
+		private static FdoSettings CreateFdoSettings()
+		{
+			var settings = new FdoSettings();
+
+			int sharedXmlBackendCommitLogSize = 0;
+			if (FwRegistryHelper.FieldWorksRegistryKey != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize == 0 && FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize > 0)
+				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
+			return settings;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3157,7 +3188,7 @@ namespace SIL.FieldWorks
 					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
 						{
 							CloseAllMainWindows();
-							if (app.ActiveMainWindow != null)
+							if(app.ActiveMainWindow != null)
 							{
 								args.Cancel = true;
 							}
@@ -3650,7 +3681,7 @@ namespace SIL.FieldWorks
 		{
 			try
 			{
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\8", true))
+				using (RegistryKey key = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\8"))
 				{
 					key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
 				}
@@ -3721,6 +3752,16 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
+			ErrorReporter.AddProperty("OSRelease", Palaso.Reporting.ErrorReport.GetOperatingSystemLabel());
+			if (MiscUtils.IsUnix)
+			{
+				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
+				if (packageVersions.Count() > 0)
+				{
+					var packageVersion = packageVersions.First();
+					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
+				}
+			}
 			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
@@ -3899,14 +3940,6 @@ namespace SIL.FieldWorks
 				if (!InitializeFirstApp(app, projId))
 					return;
 
-				//A restore from backup was done and there was a change to the location of the LinkedFilesRootDir
-				//When the fwdata file is restored, it still has the old LinkedFiledRootDir stored in it so this needs to
-				//be changed to the new location.
-				if (!String.IsNullOrEmpty(s_LinkDirChangedTo) && !s_cache.LangProject.LinkedFilesRootDir.Equals(s_LinkDirChangedTo))
-				{
-					NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-						() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-				}
 				s_projectId = projId; // Process needs to know its project
 
 				// Reopen other apps if necessary (shouldn't ever be more then one) :P
@@ -4152,6 +4185,8 @@ namespace SIL.FieldWorks
 		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
 		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
 		{
 			// Assume they want the WS updated when we're not supposed to show a UI.

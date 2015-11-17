@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -9,6 +13,7 @@ using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -172,6 +177,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Default Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_innerFwListBox gets added to the Controls collection and disposed there")]
 		public FwListBox()
 		{
 			m_items = new ObjectCollection(this);
@@ -1640,6 +1647,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="hvo">The HVo of the object to display</param>
 		/// <param name="frag">The fragment to lay out</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "f is a reference")]
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			switch (frag)

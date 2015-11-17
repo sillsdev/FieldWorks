@@ -25,6 +25,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -775,6 +776,8 @@ namespace SIL.FieldWorks.TE
 		/// annotation that matches the filter).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "vc is a reference")]
 		private bool HaveSomethingToExport
 		{
 			get

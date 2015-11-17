@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using SIL.Utils;
@@ -42,8 +46,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name="fBootstrapSystem">True to bootstrap the existing system, false to skip that
 		/// step</param>
 		/// <param name="progressDlg">The progress dialog box</param>
-		/// <param name="forbidDataMigration">True if the application forbids data migration</param>
-		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg, bool forbidDataMigration);
+		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg);
 
 		/// <summary>
 		/// Create a new LanguageProject for the BEP with the given parameters.

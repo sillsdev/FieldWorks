@@ -1,15 +1,16 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
-using System.CodeDom.Compiler;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml.Xsl; // Bizarre location for TempFileCollection
+using System.Xml.Xsl;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -58,17 +59,14 @@ namespace SIL.FieldWorks.IText
 		{
 			return false;
 		}
+
 		/// <summary>
 		/// Override to do nothing since not configuring an FXT export process.
 		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="ft"></param>
-		/// <param name="item"></param>
 		protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
 		{
 			m_ddNodes.Add(ddNode);
 			columnHeader1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			//columnHeader2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		/// <summary>
@@ -114,8 +112,6 @@ namespace SIL.FieldWorks.IText
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
-				// LT-12140 Dialog name shouldn't change from Choose Texts
-				//dlg.Text = ITextStrings.ksExportInterlinearizedTexts;
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
@@ -127,23 +123,39 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		/// <summary>
-		/// Export the data according to specifications.
-		/// </summary>
-		/// <param name="outPath"></param>
+		/// <summary>Export the data according to specifications.</summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Using using")]
 		protected override void DoExport(string outPath)
 		{
-			if (m_objs.Count == 0)
-				m_objs.Add(m_objRoot);
-
-			string fxtPath = (string)m_exportList.SelectedItems[0].Tag;
-			XmlNode ddNode = m_ddNodes[NodeIndex(fxtPath)];
-			string mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
-			InterlinearExporter exporter;
-			using (new SIL.Utils.WaitCursor(this))
+			using (var dlg = new ProgressDialogWithTask(this) { IsIndeterminate = true, AllowCancel = false, Message = ITextStrings.ksExporting_ })
 			{
 				try
 				{
+					var fxtPath = (string)m_exportList.SelectedItems[0].Tag; // read fxtPath here to prevent access to m_exportList on another thread
+					dlg.RunTask(DoExportWithProgress, outPath, fxtPath);
+				}
+				finally
+				{
+					Close();
+				}
+			}
+		}
+
+		private object DoExportWithProgress(IThreadedProgress progressDlg, params object[] args)
+		{
+			var outPath = (string)args[0];
+			var fxtPath = (string)args[1];
+
+			if (m_objs.Count == 0)
+				m_objs.Add(m_objRoot);
+
+			var ddNode = m_ddNodes[NodeIndex(fxtPath)];
+			var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
+			using (new WaitCursor(this))
+			{
+				try
+				{
+					InterlinearExporter exporter;
 					ExportPhase1(mode, out exporter, outPath);
 					string rootDir = FwDirectoryFinder.CodeDirectory;
 					string transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
@@ -152,14 +164,14 @@ namespace SIL.FieldWorks.IText
 							Path.DirectorySeparatorChar));
 					switch (mode)
 					{
+						// ReSharper disable RedundantCaseLabel
 						default:
-							// no further processing needed.
-							break;
 						case "doNothing":
 						case "xml":
 						case "elan":
 							// no further processing needed.
 							break;
+						// ReSharper restore RedundantCaseLabel
 						case "applySingleTransform":
 							string sTransform = Path.Combine(sTransformPath, transform);
 							exporter.PostProcess(sTransform, outPath, 1);
@@ -172,9 +184,9 @@ namespace SIL.FieldWorks.IText
 							Directory.CreateDirectory(tempDir);
 							try
 							{
-								XslCompiledTransform xsl = new XslCompiledTransform();
-								XmlNode implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
-								string styleFileTransform = "xml2OOStyles.xsl";
+								var xsl = new XslCompiledTransform();
+								var implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
+								var styleFileTransform = "xml2OOStyles.xsl";
 								if (implementation != null)
 									styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation,
 																							"styleTransform",
@@ -188,9 +200,9 @@ namespace SIL.FieldWorks.IText
 									contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation,
 																							  "contentTransform",
 																							  contentFileTransform);
-#pragma warning disable 219
-								XslCompiledTransform xsl2 = new XslCompiledTransform();
-#pragma warning restore 219
+#pragma warning disable 219 // ReSharper disable UnusedVariable
+								var xsl2 = new XslCompiledTransform();
+#pragma warning restore 219 // ReSharper restore UnusedVariable
 								xsl.Load(Path.Combine(sTransformPath, contentFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "content.xml"));
 								string mimetypePath = Path.Combine(tempDir, "mimetype");
@@ -210,58 +222,15 @@ namespace SIL.FieldWorks.IText
 							{
 								Directory.Delete(tempDir, true);
 							}
-							//// Generate the styles first, based on the original export file.
-							//string styleFilePath;
-							//using (TempFileCollection tempFiles = new TempFileCollection()) // wanted only to get the default temp file dir and name
-							//{
-							//	styleFilePath = tempFiles.AddExtension("xml", false);
-							//}
-							//XslCompiledTransform xsl = new XslCompiledTransform();
-							//XmlNode implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
-							//string styleFileTransform = "xml2OOStyles.xsl";
-							//if (implementation != null)
-							//	styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "styleTransform", styleFileTransform);
-							//xsl.Load(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + styleFileTransform);
-							//xsl.Transform(outPath, styleFilePath);
-
-							//// Now generate the content. Do this after using outPath as the source above, because it renames the file.
-							//string contentFileTransform = "xml2OO.xsl";
-							//if (implementation != null)
-							//	contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
-							//exporter.PostProcess(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + contentFileTransform, outPath, 1);
-							//string intermediateFile = CollectorEnv.RenameOutputToPassN(outPath, 2);
-							//using (FileStream outFile = new FileStream(outPath, FileMode.Create))
-							//{
-							//	using (ZipOutputStream zipFile = new ZipOutputStream(outFile))
-							//	{
-							//		WriteFileToZipUncompressed("mimetype", rootDir + @"\Language Explorer\Export Templates\Interlinear\mimetype", zipFile);
-							//		WriteFileToZipUncompressed("META-INF/manifest.xml", rootDir + @"\Language Explorer\Export Templates\Interlinear\manifest.xml", zipFile);
-							//		WriteFileToZip("styles.xml", styleFilePath, zipFile);
-							//		WriteFileToZip("content.xml", intermediateFile, zipFile);
-							//		zipFile.Finish();
-							//		zipFile.Close();
-							//	}
-							//	outFile.Close();
-							//}
-							//File.Delete(styleFilePath);
-							//File.Delete(intermediateFile);
-							//System.IO.File.Copy(rootDir + @"\Language Explorer\Export Templates\Interlinear\EmptyOfficeDoc.odt",
-							//	outPath);
-							//ZipFile OOFile = new ZipFile(outPath, ZipConstants.GZIP, System.IO.FileMode.Open);
-							//System.IO.File.Delete("content.xml");
-							//System.IO.File.Move(intermediateFile, "content.xml");
-							//OOFile.Add("content.xml");
-							////OOFile.AddAs("content.xml", intermediateFile);
-							//OOFile.Close();
 							break;
 					}
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show(this, String.Format(ITextStrings.ksExportErrorMsg, e.Message));
+					MessageBox.Show(this, string.Format(ITextStrings.ksExportErrorMsg, e.Message));
 				}
 			}
-			this.Close();
+			return null;
 		}
 
 		protected int NodeIndex(string pathname)
@@ -279,11 +248,12 @@ namespace SIL.FieldWorks.IText
 		internal bool ExportPhase1(string mode, out InterlinearExporter exporter, string fileName)
 		{
 			CheckDisposed();
-			exporter = null;
-			XmlWriterSettings settings = new XmlWriterSettings();
-			settings.Encoding = System.Text.Encoding.UTF8;
-			settings.Indent = true;
-			using (XmlWriter writer = XmlTextWriter.Create(fileName, settings))
+			var settings = new XmlWriterSettings
+			{
+				Encoding = System.Text.Encoding.UTF8,
+				Indent = true
+			};
+			using (var writer = XmlWriter.Create(fileName, settings))
 			{
 				exporter = InterlinearExporter.Create(mode, m_cache, writer, m_objs[0], m_vc.LineChoices, m_vc);
 				exporter.WriteBeginDocument();

@@ -829,7 +829,7 @@ Corrupted Record:
     <value>This GUID is used more than once: {0}</value>
   </data>
   <data name="ksDuplicateGuidsMsg3" xml:space="preserve">
-    <value>Please send a copy of of this report to the FLEx team as soon as possible to have this problem corrected.</value>
+    <value>Please send a copy of this report to the FLEx team as soon as possible to have this problem corrected.</value>
   </data>
   <data name="ksDuplicateGuidsMsg4" xml:space="preserve">
     <value>Email the error report to FLExErrors@sil.org</value>

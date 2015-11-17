@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -58,8 +62,8 @@ namespace SIL.Utils
 			// test runner like Resharper 8 which does not set the current directory to the one containing the DLLs.
 			// Note that we have to use CodeBase here because NUnit runs the tests from a shadow copy directory
 			// that doesn't contain the manifest file.
-			var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-			string location = Path.GetDirectoryName(uri.AbsolutePath);
+			string path = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+			string location = Path.GetDirectoryName(path);
 			var context = new ActCtx
 				{
 					cbSize = Marshal.SizeOf(typeof(ActCtx)),
@@ -92,7 +96,7 @@ namespace SIL.Utils
 		/// <exception cref="System.ComponentModel.Win32Exception">Error activating context</exception>
 		public IDisposable Activate()
 		{
-			IntPtr cookie;
+			IntPtr cookie = IntPtr.Zero;
 #if !__MonoCS__
 			if (!ActivateActCtx(m_activationContext, out cookie))
 				throw new Win32Exception(Marshal.GetLastWin32Error(), "Error activating context");

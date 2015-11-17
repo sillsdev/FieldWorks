@@ -1,3 +1,5 @@
+// Original author or copyright holder unknown.
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -248,6 +250,8 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			// Draw bitmap strech to the size of the size of the combobox

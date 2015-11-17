@@ -18,6 +18,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -231,6 +232,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="expectedStates">The expected checked state array (one per subitem).</param>
 		/// <param name="menu1">The menu.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "item is a reference")]
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
 			Assert.AreEqual(expectedStates.Length, menu1.Count,

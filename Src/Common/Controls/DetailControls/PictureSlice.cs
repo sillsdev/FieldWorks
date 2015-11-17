@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
@@ -9,6 +13,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -27,6 +32,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Panel gets added to the Controls collection and disposed there")]
 		public PictureSlice(ICmPicture picture)
 		{
 			m_picBox = new PictureBox();
@@ -116,6 +123,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion IDisposable override
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "image is a reference")]
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			// Skip handling this, if the DataTree hasn't

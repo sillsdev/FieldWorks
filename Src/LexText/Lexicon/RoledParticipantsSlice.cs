@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -24,6 +29,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class RoledParticipantsSlice : CustomReferenceVectorSlice
 	{
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "VectorReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public RoledParticipantsSlice()
 			: base(new VectorReferenceLauncher())
 		{
@@ -178,6 +185,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_contextMenuStrip = null;
 			}
 		}
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "imgHelp is a reference; ToolStrip* gets added to menu and disposed there")]
 		private ContextMenuStrip CreateContextMenu()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
@@ -303,6 +312,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public bool OnDeleteParticipants(object args)
 		{
 			CheckDisposed();

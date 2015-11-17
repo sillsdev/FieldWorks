@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -281,6 +282,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Derive the LgCharRenderProps from the DataGridViewCellStyle and FwTextBoxColumn.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "font is a reference")]
 		private LgCharRenderProps GetRenderProps(DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
 		{
 			var renderProps = new LgCharRenderProps();

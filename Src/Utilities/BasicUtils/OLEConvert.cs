@@ -60,6 +60,8 @@ namespace SIL.Utils
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "Offending code compiles only on Windows")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Method returns a reference")]
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
 #if !__MonoCS__

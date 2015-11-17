@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,6 +13,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources;
 using System.Diagnostics;
 using SIL.Utils; // for Win32 message defns.
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -1035,6 +1040,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Shows the drop down box.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		protected void ShowDropDownBox()
 		{
 			CheckDisposed();
@@ -2014,6 +2021,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Make one.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_previousForm is a reference")]
 		public ComboListBox()
 		{
 			m_activateOnShow = true;
@@ -2027,7 +2036,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Make sure this isn't null, allow launch to update its value
 			m_previousForm = Form.ActiveForm;
-
 		}
 
 		#region IDisposable & Co. implementation
@@ -2051,7 +2059,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_listForm.Deactivate -= m_ListForm_Deactivate;
 					m_listForm.Controls.Remove(this);
-					m_listForm.Close();
+					if (m_listForm.Visible)
+						m_listForm.Close();
 					m_listForm.Dispose();
 				}
 				if (m_comboMessageFilter != null)

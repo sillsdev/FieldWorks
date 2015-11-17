@@ -122,6 +122,7 @@ namespace SIL.Utils
 		public IKeyboardDefinition DefaultKeyboard
 		{
 			get { return null; }
+			set { }
 		}
 
 		public Dictionary<Control, object> EventHandlers

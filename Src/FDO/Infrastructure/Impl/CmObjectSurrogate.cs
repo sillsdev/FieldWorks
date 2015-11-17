@@ -81,6 +81,24 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// This Constructor is used for lazy load cases.
 		/// The stored XML string (from the data store) is used to instantiate m_object.
 		/// </remarks>
+		internal CmObjectSurrogate(FdoCache cache, byte[] xmlData)
+		{
+			if (cache == null) throw new ArgumentNullException("cache");
+			if (xmlData == null) throw new ArgumentNullException("xmlData");
+
+			m_cache = cache;
+			m_object = null;
+			RawXmlBytes = xmlData;
+			SetBasics();
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <remarks>
+		/// This Constructor is used for lazy load cases.
+		/// The stored XML string (from the data store) is used to instantiate m_object.
+		/// </remarks>
 		internal CmObjectSurrogate(FdoCache cache, Guid guid, string classname, string xmlData)
 			: this(cache, ((IServiceLocatorInternal)cache.ServiceLocator).IdentityMap.CreateObjectIdWithHvo(guid), classname, xmlData)
 		{
@@ -778,6 +796,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		/// <param name="xmlData"></param>
 		public ICmObjectSurrogate Create(string xmlData)
+		{
+			return new CmObjectSurrogate(m_cache, xmlData);
+		}
+
+		/// <summary>
+		/// Create a surrogate from the data store.
+		/// This gets the full XML string of the object from the BEP.
+		/// </summary>
+		public ICmObjectSurrogate Create(byte[] xmlData)
 		{
 			return new CmObjectSurrogate(m_cache, xmlData);
 		}

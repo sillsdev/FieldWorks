@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -332,7 +336,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				base.OnValidating(e);
 				// Only necessary to ensure that validation is done when window is going away. We don't need a Refresh then!
-				DoValidation(false);
+				// Also, in some cases (LT-15730) we come back through here on Undo when we have a deleted object.
+				// Don't do validation then.
+				if (m_env.IsValidObject)
+					DoValidation(false);
 			}
 
 			public override void MakeRoot()

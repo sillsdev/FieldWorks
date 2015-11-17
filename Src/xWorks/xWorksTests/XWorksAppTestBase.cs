@@ -1,14 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Test.cs
-// Authorship History: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Windows.Forms;
@@ -230,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class MockFwManager : IFieldWorksManager
+	public class MockFwManager : IFieldWorksManager
 	{
 
 		/// ------------------------------------------------------------------------------------
@@ -412,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class MockFwXApp : FwXApp
+	public class MockFwXApp : FwXApp
 	{
 		public MockFwXApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
 			: base(fwManager, helpTopicProvider, appArgs)

@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -25,7 +29,7 @@ namespace SIL.FieldWorks.PaObjects
 			xGuid = lxPro.Guid;
 
 			xMediaFiles = (from x in lxPro.MediaFilesOS
-						   where x != null
+						   where x != null && x.MediaFileRA != null
 						   select new PaMediaFile(x)).ToList();
 		}
 

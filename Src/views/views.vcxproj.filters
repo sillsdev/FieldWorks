@@ -6,30 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\FwGr.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\GrGraphics.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\GrJustifier.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\GrResult.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\GrTxtSrc.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IGrGraphics.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IGrGraphicsDrawing.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IGrGraphicsFont.h">
-      <Filter>lib</Filter>
-    </ClInclude>
     <ClInclude Include="lib\VwBaseDataAccess.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -40,9 +16,6 @@
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\VwGraphics.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\VwJustifier.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\VwUndo.h">
@@ -70,15 +43,6 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\GrGraphics.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\GrJustifier.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\GrTxtSrc.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="lib\VwBaseDataAccess.cpp">
       <Filter>lib</Filter>
     </ClCompile>
@@ -89,9 +53,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\VwGraphics.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\VwJustifier.cpp">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\VwUndo.cpp">

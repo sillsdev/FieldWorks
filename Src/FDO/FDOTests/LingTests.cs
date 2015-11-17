@@ -12,17 +12,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
 using SIL.FieldWorks.FDO.Validation;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
@@ -2470,33 +2467,30 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			entry2.EntryRefsOS.Add(ler2);
 			ler2.VariantEntryTypesRS.Add(lexEntryType1);
 
-			using (var progressBar = new ProgressBar())
-			{
-				IProgress progressBarWrapper = new ProgressBarWrapper(progressBar);
+			var progressBar = new DummyProgressDlg();
+			var itemsToChange = new List<ILexEntryType>();
+			itemsToChange.Add(lexEntryType1);
+			itemsToChange.Add(lexEntryType1Sub1);
 
-				var itemsToChange = new List<ILexEntryType>();
-				itemsToChange.Add(lexEntryType1);
-				itemsToChange.Add(lexEntryType1Sub1);
+			Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBar, itemsToChange);
+			var leit1 = ler1.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of first entry should be irregularly inflected form");
+			leit1 = ler1.VariantEntryTypesRS[1];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, leit1.ClassID, "second lex entry type of first entry should be variant");
+			leit1 = ler2.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of second entry should be irregularly inflected form");
 
-				Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBarWrapper, itemsToChange);
-				var leit1 = ler1.VariantEntryTypesRS[0];
-				Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of first entry should be irregularly inflected form");
-				leit1 = ler1.VariantEntryTypesRS[1];
-				Assert.AreEqual(LexEntryTypeTags.kClassId, leit1.ClassID, "second lex entry type of first entry should be variant");
-				leit1 = ler2.VariantEntryTypesRS[0];
-				Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of second entry should be irregularly inflected form");
+			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
 
-				variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
-				Assert.That(variantEntryTypes, Is.Not.Null);
-				Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-				Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
-
-				lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
-				Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1.ClassID, "first type should be irregularly inflected form");
-				lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
-				Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1Sub1.ClassID, "first sub-type of first type should be irregularly inflected form");
-			}
+			lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1.ClassID, "first type should be irregularly inflected form");
+			lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1Sub1.ClassID, "first sub-type of first type should be irregularly inflected form");
 		}
+
 		/// <summary>
 		/// Test conversion of LexEntryInflType to LexEntryType.
 		/// </summary>
@@ -2527,32 +2521,28 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			entry2.EntryRefsOS.Add(ler2);
 			ler2.VariantEntryTypesRS.Add(lexEntryInflType1);
 
-			using (var progressBar = new ProgressBar())
-			{
-				IProgress progressBarWrapper = new ProgressBarWrapper(progressBar);
+			var progressBar = new DummyProgressDlg();
+			var itemsToChange = new List<ILexEntryType>();
+			itemsToChange.Add(lexEntryInflType1);
+			itemsToChange.Add(lexEntryInflType1Sub1);
 
-				var itemsToChange = new List<ILexEntryType>();
-				itemsToChange.Add(lexEntryInflType1);
-				itemsToChange.Add(lexEntryInflType1Sub1);
+			Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBar, itemsToChange);
+			var let1 = ler1.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of first entry should be variant");
+			let1 = ler1.VariantEntryTypesRS[1];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, let1.ClassID, "second lex entry type of first entry should be irregularly inflected form");
+			let1 = ler2.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of second entry should be variant");
 
-				Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBarWrapper, itemsToChange);
-				var let1 = ler1.VariantEntryTypesRS[0];
-				Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of first entry should be variant");
-				let1 = ler1.VariantEntryTypesRS[1];
-				Assert.AreEqual(LexEntryInflTypeTags.kClassId, let1.ClassID, "second lex entry type of first entry should be irregularly inflected form");
-				let1 = ler2.VariantEntryTypesRS[0];
-				Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of second entry should be variant");
+			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
 
-				variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
-				Assert.That(variantEntryTypes, Is.Not.Null);
-				Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-				Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
-
-				var lexEntryType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryType;
-				Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1.ClassID, "third type should be variant");
-				var lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
-				Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1Sub1.ClassID, "third's first type should be variant");
-			}
+			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryType;
+			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1.ClassID, "third type should be variant");
+			var lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1Sub1.ClassID, "third's first type should be variant");
 		}
 	}
 }

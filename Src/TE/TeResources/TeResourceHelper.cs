@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.TE
 	/// <summary>
 	/// Resources for TE
 	/// </summary>
-	public class TeResourceHelper : ResourceHelper
+	public class TeResourceHelper : ResourceHelperImpl
 	{
 		/// <summary>The background color for non-editable text</summary>
 		public static readonly Color NonEditableColor = Color.FromArgb(240, 255, 240);
@@ -286,27 +286,16 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				// Note: this doesn't work if we have more than one class that
-				// derives from ResourceHelper! The reason we do it this way is
+				// derives from ResourceHelperImpl! The reason we do it this way is
 				// that we can gracefully dispose of the resource helper in
 				// the unit tests to prevent hanging tests (FWNX-455).
-				if (!(s_form is TeResourceHelper))
+				if (!(Helper is TeResourceHelper))
 				{
 					// Make sure we have the right kind of resource helper
-					if (s_form != null)
-						s_form.Dispose();
-					s_form = new TeResourceHelper();
+					Helper = new TeResourceHelper();
 				}
-				return (TeResourceHelper)s_form;
+				return (TeResourceHelper)Helper;
 			}
-		}
-
-		/// <summary>
-		/// Shut down the TEResourceHelper Form.
-		/// </summary>
-		[Obsolete("Use Resource.ShutdownHelper instead")]
-		public static void ShutDownTEResourceHelper()
-		{
-			ShutdownHelper();
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -318,7 +307,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="stUndo">Returns string for Undo task</param>
 		/// <param name="stRedo">Returns string for Redo task</param>
 		/// -----------------------------------------------------------------------------------
-		public new static void MakeUndoRedoLabels(string stid, out string stUndo,
+		public static void MakeUndoRedoLabels(string stid, out string stUndo,
 			out string stRedo)
 		{
 			string stRes = GetResourceString(stid);
@@ -355,7 +344,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="stid">String resource id</param>
 		/// <returns>String</returns>
 		/// -----------------------------------------------------------------------------------
-		public static new string GetResourceString(string stid)
+		public static string GetResourceString(string stid)
 		{
 			if (s_stringResources == null)
 			{
@@ -378,7 +367,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="parameters">zero or more parameters to format the resource string</param>
 		/// <returns>String</returns>
 		/// -----------------------------------------------------------------------------------
-		public static new string FormatResourceString(string stid, params object[] parameters)
+		public static string FormatResourceString(string stid, params object[] parameters)
 		{
 			return String.Format(GetResourceString(stid), parameters);
 		}
@@ -390,7 +379,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="stid">String resource id</param>
 		/// <returns>String</returns>
 		/// -----------------------------------------------------------------------------------
-		public static new string GetHelpString(string stid)
+		public static string GetHelpString(string stid)
 		{
 			if (s_helpResources == null)
 			{

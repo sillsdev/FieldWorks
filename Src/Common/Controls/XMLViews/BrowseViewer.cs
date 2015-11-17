@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BrowseViewer.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
@@ -1164,8 +1157,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// 3) Otherwise, use a column's matched sorter and copy the needed information from the given sorter.
 		/// </summary>
 		/// <param name="sorter"></param>
+		/// <param name="fSortChanged">true to force updating the sorter (even if the new one is the same)</param>
 		/// <returns>true if it changed the sorter.</returns>
-		public bool InitSorter(RecordSorter sorter)
+		public bool InitSorter(RecordSorter sorter, bool fSortChanged = false)
 		{
 			CheckDisposed();
 
@@ -1184,7 +1178,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			ArrayList newSorters = new ArrayList();
-			bool fSortChanged = false;
 			for(int i = 0; i < sorters.Count; i++)
 			{
 				int ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i] as RecordSorter);
@@ -2046,7 +2039,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-
+		/// <summary>
+		/// Adjust column width to the content width
+		/// References are in display order.
+		/// </summary>
 		internal void AdjustColumnWidthToMatchContents(int icolLvHeaderToAdjust)
 		{
 			if (m_xbv.Vc.HasSelectColumn && icolLvHeaderToAdjust == 0)
@@ -2693,6 +2689,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "menu is a reference")]
 		private void ConfigItemClicked(object sender, EventArgs args)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.
@@ -3093,48 +3091,29 @@ namespace SIL.FieldWorks.Common.Controls
 		/// class (vernacular or analysis).
 		/// </summary>
 		/// <remarks>This is needed for LT-10293.</remarks>
-		public RecordSorter CreateSorterForFirstColumn(bool fVern, int ws)
+		public RecordSorter CreateSorterForFirstColumn(int ws)
 		{
-			RecordSorter sorter = null;
 			XmlNode colSpec = null;
-			string sWs = m_cache.ServiceLocator.WritingSystemManager.GetStrFromWs(ws);
+			IWritingSystem colWs = null;
 			for (int i = 0; i < m_xbv.Vc.ColumnSpecs.Count; ++i)
 			{
-				XmlNode spec = m_xbv.Vc.ColumnSpecs[i];
-				string sWsAttr = XmlUtils.GetOptionalAttributeValue(spec, "ws");
-				string sOrigWsAttr = XmlUtils.GetOptionalAttributeValue(spec, "originalWs");
-				if (String.IsNullOrEmpty(sWsAttr))
-					continue;
-				if (sWsAttr.StartsWith("$ws="))
-					sWsAttr = sWsAttr.Substring(4);
-				if (fVern)
+				XmlNode curSpec = m_xbv.Vc.ColumnSpecs[i];
+				IWritingSystem curWs = WritingSystemServices.GetWritingSystem(m_cache, curSpec, null, 0);
+				if (curWs.Handle == ws)
 				{
-					if ((sWsAttr == "vernacular" && ws == m_cache.DefaultVernWs) ||
-						sWsAttr == sWs)
-					{
-						colSpec = spec;
-						break;
-					}
-				}
-				else
-				{
-					if ((sWsAttr == "analysis" && ws == m_cache.DefaultAnalWs) ||
-						sWsAttr == sWs)
-					{
-						colSpec = spec;
-						break;
-					}
+					colSpec = curSpec;
+					colWs = curWs;
+					break;
 				}
 			}
+
 			if (colSpec != null)
 			{
 				IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc,
-					(IApp)m_mediator.PropertyTable.GetValue("App"));
-				IWritingSystem wsT = WritingSystemServices.GetWritingSystem(Cache, colSpec,
-					null, fVern ? m_cache.DefaultVernWs : m_cache.DefaultAnalWs);
-				sorter = new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(wsT)));
+					(IApp) m_mediator.PropertyTable.GetValue("App"));
+				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
-			return sorter;
+			return null;
 		}
 
 		private void m_xbv_SelectedIndexChanged(object sender, EventArgs e)
@@ -3220,18 +3199,23 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			// REVISIT: If more than one BrowseViewer gets this message, how do
+			if(m_filterBar == null || Sorter == null)
+				return;
+
+			// TODO: REVISIT: If more than one BrowseViewer gets this message, how do
 			// we know which one should handle it?  Can't we handle this some other way?
-			if (name == "SortedFromEnd" && m_filterBar != null && Sorter != null)
+			switch(name)
 			{
-				CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
-				SetAndRaiseSorter(Sorter, true);
+				default:
+					return;
+				case "SortedFromEnd":
+					CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
+					break;
+				case "SortedByLength":
+					CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
+					break;
 			}
-			if (name == "SortedByLength" && m_filterBar != null && Sorter != null)
-			{
-				CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
-				SetAndRaiseSorter(Sorter, true);
-			}
+			SetAndRaiseSorter(Sorter, true);
 		}
 
 		#region IxCoreColleague Members

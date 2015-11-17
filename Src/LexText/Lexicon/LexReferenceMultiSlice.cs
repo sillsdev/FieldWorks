@@ -1,4 +1,9 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
@@ -314,6 +319,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItems are added to menu and disposed there")]
 		protected ContextMenuStrip SetupContextMenuStrip()
 		{
 			ContextMenuStrip contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();

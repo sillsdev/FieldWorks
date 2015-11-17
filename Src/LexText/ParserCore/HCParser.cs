@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (IPhNCSegments natClass in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OfType<IPhNCSegments>())
 				{
 					HashSet<IFsSymFeatVal> feats = GetImpliedPhonologicalFeatures(natClass);
-					var predictedPhonemes = new HashSet<IPhPhoneme>(m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS.SelectMany(ps => ps.PhonemesOC).Where(p => feats.IsSubsetOf(GetFeatures(p))));
+					var predictedPhonemes = new HashSet<IPhPhoneme>(m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS.SelectMany(ps => ps.PhonemesOC).Where(p => GetFeatures(p) != null && feats.IsSubsetOf(GetFeatures(p))));
 					if (!predictedPhonemes.SetEquals(natClass.SegmentsRC))
 					{
 						writer.WriteStartElement("NatClassPhonemeMismatch");
@@ -235,6 +235,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static IEnumerable<IFsSymFeatVal> GetFeatures(IPhPhoneme phoneme)
 		{
+			if (phoneme == null || phoneme.FeaturesOA == null)
+				return null;
 			return phoneme.FeaturesOA.FeatureSpecsOC.OfType<IFsClosedValue>().Select(cv => cv.ValueRA);
 		}
 

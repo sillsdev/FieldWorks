@@ -128,8 +128,10 @@ namespace SIL.FieldWorks.Common.Controls
 			// Fix the label font for Linux/Mono.  Without this fix, the label may
 			// still show boxes for Chinese characters when the rest of the dialog is
 			// properly showing Chinese characters.
-			var oldFont = lblCurrentEthCodeValue.Font;
-			lblCurrentEthCodeValue.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
+			using (var oldFont = lblCurrentEthCodeValue.Font)
+			{
+				lblCurrentEthCodeValue.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
+			}
 #endif
 		}
 

@@ -28,17 +28,17 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
 	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
 	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -102,22 +102,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
+    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="lib\FwGr.h" />
-    <ClInclude Include="lib\GrGraphics.h" />
-    <ClInclude Include="lib\GrJustifier.h" />
-    <ClInclude Include="lib\GrResult.h" />
-    <ClInclude Include="lib\GrTxtSrc.h" />
-    <ClInclude Include="lib\IGrGraphics.h" />
-    <ClInclude Include="lib\IGrGraphicsDrawing.h" />
-    <ClInclude Include="lib\IGrGraphicsFont.h" />
     <ClInclude Include="lib\VwBaseDataAccess.h" />
     <ClInclude Include="lib\VwBaseVc.h" />
     <ClInclude Include="lib\VwCacheDa.h" />
     <ClInclude Include="lib\VwGraphics.h" />
-    <ClInclude Include="lib\VwJustifier.h" />
     <ClInclude Include="lib\VwUndo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="lib\UtilView.h" />
@@ -141,14 +141,10 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\GrGraphics.cpp" />
-    <ClCompile Include="lib\GrJustifier.cpp" />
-    <ClCompile Include="lib\GrTxtSrc.cpp" />
     <ClCompile Include="lib\VwBaseDataAccess.cpp" />
     <ClCompile Include="lib\VwBaseVc.cpp" />
     <ClCompile Include="lib\VwCacheDa.cpp" />
     <ClCompile Include="lib\VwGraphics.cpp" />
-    <ClCompile Include="lib\VwJustifier.cpp" />
     <ClCompile Include="lib\VwUndo.cpp" />
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="ExplicitInstantiation.cpp" />

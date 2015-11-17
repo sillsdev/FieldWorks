@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -308,6 +309,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "mediator is a reference")]
 		public bool OnDisplayLaunchConnectedDialog(object parameters, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = false;

@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Drawing;
 using System.Collections.Generic;
@@ -13,6 +17,7 @@ using SIL.Utils;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -629,6 +634,8 @@ namespace SIL.FieldWorks.IText
 			e.DrawText();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We return the Brush")]
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
 			Brush textBrush = SystemBrushes.ControlText;
@@ -643,6 +650,8 @@ namespace SIL.FieldWorks.IText
 			return textBrush;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "backBrush is a reference")]
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)
 		{
 			Brush backBrush = SystemBrushes.ControlLightLight;

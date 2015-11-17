@@ -1,12 +1,19 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -14,7 +21,15 @@ using SIL.Utils;
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	/// <summary>
-	/// This is the main Paratext lexicon plugin class
+	/// This is the main Paratext lexicon plugin.
+	///
+	/// It uses an activation context to load the required COM objects. The activation context should be activated
+	/// when making any calls to FDO to ensure that COM objects can be loaded properly. Care should be taken to ensure
+	/// that no calls to FDO occur outside of an activated activation context. The easiest way to do this is to ensure
+	/// that the activation context is activated in all public methods of all implemented interfaces. Be careful of
+	/// deferred execution enumerables, such as those used in LINQ and yield statements. The best way to avoid deferred
+	/// execution of enumerables is to call "ToArray()" or something equivalent when returning the results of LINQ
+	/// functions. Do not use yield statements, instead add all objects to a collection and return the collection.
 	/// </summary>
 	[LexiconPlugin(ID = "FieldWorks", DisplayName = "FieldWorks Language Explorer")]
 	public class FwLexiconPlugin : FwDisposableBase, LexiconPlugin
@@ -31,6 +46,37 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
+			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
+			RegistryHelper.ProductName = "FieldWorks";
+
+			// setup necessary environment variables on Linux
+			if (MiscUtils.IsUnix)
+			{
+				// update ICU_DATA to location of ICU data files
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+				{
+					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
+#if DEBUG
+					string icuDataPath = codeIcuDataPath;
+#else
+					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + Icu.Version);
+					if (!Directory.Exists(icuDataPath))
+						icuDataPath = codeIcuDataPath;
+#endif
+					Environment.SetEnvironmentVariable("ICU_DATA", icuDataPath);
+				}
+				// update COMPONENTS_MAP_PATH to point to code directory so that COM objects can be loaded properly
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COMPONENTS_MAP_PATH")))
+				{
+					string compMapPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					Environment.SetEnvironmentVariable("COMPONENTS_MAP_PATH", compMapPath);
+				}
+				// update FW_ROOTCODE so that strings-en.txt file can be found
+				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
+					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
+			}
+			Icu.InitIcuDataDir();
+
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
@@ -39,8 +85,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			// initialize client-server services to use Db4O backend for FDO
 			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
 			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
-			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs,
-				() => dirs.ProjectsDirectory == ParatextLexiconPluginDirectoryFinder.ProjectsDirectoryLocalMachine);
+			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs);
 		}
 
 		/// <summary>
@@ -71,7 +116,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public bool ChooseLexicalProject(out string projectId)
 		{
 			using (m_activationContext.Activate())
-			using (var dialog = new ChooseFdoProjectForm(m_ui))
+			using (var dialog = new ChooseFdoProjectForm(m_ui, m_fdoCacheCache))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{
@@ -169,11 +214,22 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
+				var settings = new FdoSettings {DisableDataMigration = true};
+				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+				{
+					if (fwKey != null)
+					{
+						var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+						if (sharedXMLBackendCommitLogSize > 0)
+							settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+					}
+				}
+
 				try
 				{
 					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
 					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(backendProviderType, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
-						ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
+						ParatextLexiconPluginDirectoryFinder.FdoDirectories, settings, progress);
 				}
 				catch (FdoDataMigrationForbiddenException)
 				{

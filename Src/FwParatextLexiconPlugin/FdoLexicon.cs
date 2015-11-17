@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
@@ -102,7 +107,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				{
 					var lexemes = new List<Lexeme>();
 					// Get all of the lexical entries in the database
-					foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Where(e => e.PrimaryMorphType != null))
+					foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 						lexemes.Add(GetEntryLexeme(entry));
 
 					// Get all the wordforms in the database
@@ -282,13 +287,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				bool duplicates = false;
 				return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
-					.FindEntriesForWordform(m_cache, m_cache.TsStrFactory.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates).Select(GetEntryLexeme);
+					.FindEntriesForWordform(m_cache, m_cache.TsStrFactory.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates)
+					.Select(GetEntryLexeme).ToArray();
 			}
 		}
 
 		public bool CanOpenInLexicon
 		{
-			get { return ParatextLexiconPluginDirectoryFinder.IsFieldWorksInstalled; }
+			get { return ParatextLexiconPluginRegistryHelper.IsFieldWorksInstalled; }
 		}
 
 		public void OpenInLexicon(Lexeme lexeme)
@@ -316,7 +322,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				string url = string.Format("silfw://localhost/link?app=flex&database={0}&tool={1}&guid={2}",
 					HttpUtility.UrlEncode(m_cache.ProjectId.Name), HttpUtility.UrlEncode(toolName), HttpUtility.UrlEncode(guid));
-				using (Process.Start(url)) {}
+				// TODO: this would probably be faster if we directly called the RPC socket if FW is already open
+				if (MiscUtils.IsUnix)
+				{
+					string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+					using (Process.Start(Path.Combine(libPath, "run-app"), string.Format("FieldWorks.exe {0}", url))) {}
+				}
+				else
+				{
+					using (Process.Start(url)) {}
+				}
 			}
 		}
 
@@ -325,7 +340,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get
 			{
 				using (m_activationContext.Activate())
-					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id);
+					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id).ToArray();
 			}
 		}
 		#endregion
@@ -433,7 +448,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				using (m_activationContext.Activate())
 				{
 					var analyses = new HashSet<WordAnalysis>();
-					foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
+					foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances()
+						.Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
 					{
 						WordAnalysis lexemes;
 						string wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;
@@ -480,12 +496,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				return null;
 
 			if (!m_parser.IsUpToDate())
-			{
 				m_parser.Update();
-				//ProgressUtils.Execute(Localizer.Str("Updating Data for Parser"), CancelModes.NonCancelable, () => m_parser.Update() );
-			}
 
-			ParseResult parseResult = m_parser.ParseWord(wordForm);
+			ParseResult parseResult = m_parser.ParseWord(wordForm.Replace(' ', '.'));
 			if (parseResult != null && parseResult.Analyses != null && parseResult.Analyses.Any())
 			{
 				foreach (ParseMorph morph in parseResult.Analyses.First().Morphs)
@@ -628,8 +641,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
 				LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
-				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize();
-				var key = new LexemeKey(type, form);
+				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+				var key = new LexemeKey(type, form.Normalize());
 
 				SortedSet<ILexEntry> entries;
 				if (!m_entryIndex.TryGetValue(key, out entries))
@@ -700,7 +713,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			CreateEntryIndexIfNeeded();
 			LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
 			HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
-			return new FdoLexEntryLexeme(this, new LexemeKey(type, entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text.Normalize(), hn.Number));
+			string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			return new FdoLexEntryLexeme(this, new LexemeKey(type, form.Normalize(), hn.Number));
 		}
 
 		internal void OnLexemeAdded(Lexeme lexeme)
@@ -732,40 +746,43 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// ------------------------------------------------------------------------------------
 		private static LexemeType GetLexemeTypeForMorphType(IMoMorphType type)
 		{
-			switch (type.Guid.ToString())
+			if (type != null)
 			{
-				case MoMorphTypeTags.kMorphCircumfix:
-				case MoMorphTypeTags.kMorphInfix:
-				case MoMorphTypeTags.kMorphInfixingInterfix:
-				case MoMorphTypeTags.kMorphSimulfix:
-				case MoMorphTypeTags.kMorphSuprafix:
-				case MoMorphTypeTags.kMorphClitic:
-				case MoMorphTypeTags.kMorphProclitic:
-					// These don't map neatly to a lexeme type, so we just return prefix
-					return LexemeType.Prefix;
+				switch (type.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphCircumfix:
+					case MoMorphTypeTags.kMorphInfix:
+					case MoMorphTypeTags.kMorphInfixingInterfix:
+					case MoMorphTypeTags.kMorphSimulfix:
+					case MoMorphTypeTags.kMorphSuprafix:
+					case MoMorphTypeTags.kMorphClitic:
+					case MoMorphTypeTags.kMorphProclitic:
+						// These don't map neatly to a lexeme type, so we just return prefix
+						return LexemeType.Prefix;
 
-				case MoMorphTypeTags.kMorphEnclitic:
-					// This one also isn't a great match, but there is no better choice
-					return LexemeType.Suffix;
+					case MoMorphTypeTags.kMorphEnclitic:
+						// This one also isn't a great match, but there is no better choice
+						return LexemeType.Suffix;
 
-				case MoMorphTypeTags.kMorphPrefix:
-				case MoMorphTypeTags.kMorphPrefixingInterfix:
-					return LexemeType.Prefix;
+					case MoMorphTypeTags.kMorphPrefix:
+					case MoMorphTypeTags.kMorphPrefixingInterfix:
+						return LexemeType.Prefix;
 
-				case MoMorphTypeTags.kMorphSuffix:
-				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					return LexemeType.Suffix;
+					case MoMorphTypeTags.kMorphSuffix:
+					case MoMorphTypeTags.kMorphSuffixingInterfix:
+						return LexemeType.Suffix;
 
-				case MoMorphTypeTags.kMorphPhrase:
-				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
-					return LexemeType.Phrase;
+					case MoMorphTypeTags.kMorphPhrase:
+					case MoMorphTypeTags.kMorphDiscontiguousPhrase:
+						return LexemeType.Phrase;
 
-				case MoMorphTypeTags.kMorphStem:
-				case MoMorphTypeTags.kMorphRoot:
-				case MoMorphTypeTags.kMorphBoundRoot:
-				case MoMorphTypeTags.kMorphBoundStem:
-				case MoMorphTypeTags.kMorphParticle:
-					return LexemeType.Stem;
+					case MoMorphTypeTags.kMorphStem:
+					case MoMorphTypeTags.kMorphRoot:
+					case MoMorphTypeTags.kMorphBoundRoot:
+					case MoMorphTypeTags.kMorphBoundStem:
+					case MoMorphTypeTags.kMorphParticle:
+						return LexemeType.Stem;
+				}
 			}
 
 			// Shouldn't ever get here, but since we don't know what type it is just return

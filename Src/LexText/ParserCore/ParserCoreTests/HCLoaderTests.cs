@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -245,6 +249,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return inflClass;
 		}
 
+		private IMoInflClass AddInflectiononSubclass(IMoInflClass parent, string name)
+		{
+			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			parent.SubclassesOC.Add(inflClass);
+			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
+			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
+			return inflClass;
+		}
+
 		private ICmPossibility AddExceptionFeature(string name)
 		{
 			var excFeat = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
@@ -368,7 +381,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			allo.PhoneEnvRC.Add(AddEnvironment("/ #[C] _ [C]"));
 			allo.MsEnvFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, allo.MsEnvFeaturesOA, new FS {{"tense", "pres"}});
-			allo.InflectionClassesRC.Add(AddInflectionClass(m_verb, "inflClass"));
+			IMoInflClass inflClass = AddInflectionClass(m_verb, "inflClass");
+			AddInflectiononSubclass(inflClass, "inflSubclass");
+			allo.InflectionClassesRC.Add(inflClass);
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
@@ -379,14 +394,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 		}
 
@@ -528,6 +543,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void AffixNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+		}
+
+		[Test]
 		public void DerivationalAffix()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kDeriv, MainPOS = m_verb, SecondaryPOS = m_noun});
@@ -665,6 +690,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void StemNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_verb });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
+		}
+
+		[Test]
 		public void Enclitic()
 		{
 			AddEntry(MoMorphTypeTags.kguidMorphEnclitic, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem});
@@ -677,6 +712,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
+		}
+
+		[Test]
+		public void EncliticAffixAllomorph()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
+			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphEnclitic);
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[1].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule)m_lang.Strata[1].MorphologicalRules[0];
+			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
+
+			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyPlus }));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] { "<stem>", "+ɯd" }));
 		}
 
 		[Test]
@@ -962,6 +1013,42 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					"+a+",
 					string.Format("<{0}> -> [round:-, Type:segment, voc:+]", input2.Hvo),
 					"[cons:+, cont:-, nasal:+, poa:velar, Type:segment, vd:+, voc:-]"
+				}));
+		}
+
+		[Test]
+		public void AffixProcessRuleNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			entry.ReplaceMoForm(entry.LexemeFormOA, Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create());
+			var allo = (IMoAffixProcess)entry.LexemeFormOA;
+			allo.InputOS.Clear();
+
+			IPhVariable input1 = Cache.ServiceLocator.GetInstance<IPhVariableFactory>().Create();
+			allo.InputOS.Add(input1);
+
+			IMoCopyFromInput output1 = Cache.ServiceLocator.GetInstance<IMoCopyFromInputFactory>().Create();
+			allo.OutputOS.Add(output1);
+			output1.ContentRA = input1;
+
+			IMoInsertPhones output2 = Cache.ServiceLocator.GetInstance<IMoInsertPhonesFactory>().Create();
+			allo.OutputOS.Add(output2);
+			output2.ContentRS.Add(GetBdry(LangProjectTags.kguidPhRuleMorphBdry));
+			output2.ContentRS.Add(GetPhoneme("a"));
+
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule)m_lang.Strata[0].MorphologicalRules[0];
+			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
+
+			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyStar }));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
+				{
+					string.Format("<{0}>", input1.Hvo),
+					"+a"
 				}));
 		}
 

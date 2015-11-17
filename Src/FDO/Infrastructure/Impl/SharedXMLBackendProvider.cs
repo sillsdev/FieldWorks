@@ -5,13 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Threading;
-using System.Diagnostics.CodeAnalysis;
 using ProtoBuf;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -24,33 +24,38 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	/// </summary>
 	internal class SharedXMLBackendProvider : XMLBackendProvider
 	{
-		private const int PageSize = 4096;
-		internal static int CommitLogFileSize = 2500 * PageSize;
+		internal const int PageSize = 4096;
 		private const int CommitLogMetadataFileSize = 1 * PageSize;
 
 		/// <summary>
 		/// This mutex synchronizes access to the commit log, its metadata, and the XML file.
 		/// </summary>
-		private Mutex m_commitLogMutex;
+		private GlobalMutex m_commitLogMutex;
 		private MemoryMappedFile m_commitLogMetadata;
 		private MemoryMappedFile m_commitLog;
 		private readonly Guid m_peerID;
 		private readonly Dictionary<int, Process> m_peerProcesses;
+#if __MonoCS__
+		private string m_commitLogDir;
+#endif
 
 		internal SharedXMLBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs, settings)
 		{
 			m_peerProcesses = new Dictionary<int, Process>();
 			m_peerID = Guid.NewGuid();
+#if __MonoCS__
+			// /dev/shm is not guaranteed to be available on all systems, so fall back to temp
+			m_commitLogDir = Directory.Exists("/dev/shm") ? "/dev/shm" : Path.GetTempPath();
+#endif
 		}
 
 		internal int OtherApplicationsConnectedCount
 		{
 			get
 			{
-				m_commitLogMutex.WaitOne();
-				try
+				using (m_commitLogMutex.Lock())
 				{
 					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 					{
@@ -60,28 +65,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						return metadata.Peers.Count - 1;
 					}
 				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
-				}
 			}
 		}
 
 		protected override int StartupInternal(int currentModelVersion)
 		{
+			m_commitLogMutex = new GlobalMutex(MutexName);
 			bool createdNew;
-			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
-			if (!createdNew)
-				m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.InitializeAndLock(out createdNew))
 			{
 				CreateSharedMemory(createdNew);
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
-					CommitLogMetadata metadata;
-					if (!createdNew && TryGetMetadata(stream, out metadata))
-						CheckExitedPeerProcesses(metadata);
-					else
+					CommitLogMetadata metadata = null;
+					if (!createdNew)
+					{
+						if (TryGetMetadata(stream, out metadata))
+						{
+							CheckExitedPeerProcesses(metadata);
+							if (m_peerProcesses.Count == 0)
+								createdNew = true;
+						}
+						else
+						{
+							createdNew = true;
+						}
+					}
+
+					if (createdNew)
 						metadata = new CommitLogMetadata();
 
 					using (Process curProcess = Process.GetCurrentProcess())
@@ -103,10 +114,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					return startupModelVersion;
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
+		}
+
+		protected override void OnCacheDisposing(object sender, EventArgs e)
+		{
+			// we need to shutdown before the rest of the cache disposes because the shutdown might need to access the cache
+			ShutdownInternal();
+			base.OnCacheDisposing(sender, e);
 		}
 
 		protected override void ShutdownInternal()
@@ -114,8 +128,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (m_commitLogMutex != null && m_commitLogMetadata != null)
 			{
 				CompleteAllCommits();
-				m_commitLogMutex.WaitOne();
-				try
+				using (m_commitLogMutex.Lock())
 				{
 #if __MonoCS__
 					bool delete = false;
@@ -163,14 +176,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 #if __MonoCS__
 					if (delete)
 					{
-						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogMetadataName));
-						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogName));
+						File.Delete(Path.Combine(m_commitLogDir, CommitLogMetadataName));
+						File.Delete(Path.Combine(m_commitLogDir, CommitLogName));
+						m_commitLogMutex.Unlink();
 					}
 #endif
-				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
 				}
 			}
 
@@ -194,19 +204,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override void CreateInternal()
 		{
-			bool createdNew;
-			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
-			if (!createdNew)
-			{
-				// Mono does not close the named mutex handle until the process exits, this can cause problems
-				// for some unit tests, so we disable the following check for Mono
-#if !__MonoCS__
-				throw new InvalidOperationException("Cannot create shared XML backend.");
-#else
-				m_commitLogMutex.WaitOne();
-#endif
-			}
-			try
+			m_commitLogMutex = new GlobalMutex(MutexName);
+
+			using (m_commitLogMutex.InitializeAndLock())
 			{
 				CreateSharedMemory(true);
 				var metadata = new CommitLogMetadata { Master = m_peerID };
@@ -218,10 +218,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 
 				base.CreateInternal();
-			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
 			}
 		}
 
@@ -252,6 +248,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 		}
 
+		private void SaveMetadata(CommitLogMetadata metadata)
+		{
+			using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
+				SaveMetadata(stream, metadata);
+		}
+
 		private string MutexName
 		{
 			get { return ProjectId.Name + "_Mutex"; }
@@ -270,7 +272,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private void CreateSharedMemory(bool createdNew)
 		{
 			m_commitLogMetadata = CreateOrOpen(CommitLogMetadataName, CommitLogMetadataFileSize, createdNew);
-			m_commitLog = CreateOrOpen(CommitLogName, CommitLogFileSize, createdNew);
+			m_commitLog = CreateOrOpen(CommitLogName, m_settings.SharedXMLBackendCommitLogSize, createdNew);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
@@ -278,7 +280,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private MemoryMappedFile CreateOrOpen(string name, long capacity, bool createdNew)
 		{
 #if __MonoCS__
-			name = Path.Combine(Path.GetTempPath(), name);
+			name = Path.Combine(m_commitLogDir, name);
 			// delete old file that could be left after a crash
 			if (createdNew && File.Exists(name))
 				File.Delete(name);
@@ -352,8 +354,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal override void LockProject()
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.LockProject();
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
@@ -366,16 +367,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
 		}
 
 		internal override void UnlockProject()
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.UnlockProject();
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
@@ -391,18 +387,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
-			}
 		}
 
 		public override bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
 		{
-			CommitLogMetadata metadata = null;
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
+				CommitLogMetadata metadata;
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					metadata = GetMetadata(stream);
@@ -435,6 +426,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					else
 					{
 						uowService.ConflictingChanges(reconciler);
+						SaveMetadata(metadata);
 						return true;
 					}
 				}
@@ -444,79 +436,75 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					// Check if the former master left the commit log and XML file in a consistent state. If not, we can't continue.
 					if (metadata.CurrentGeneration != metadata.FileGeneration)
-						return false;
+						throw new InvalidOperationException("The commit log and XML file are in an inconsistent state.");
 					base.LockProject();
 					metadata.Master = m_peerID;
 				}
 
 				IEnumerable<CustomFieldInfo> cfiList;
 				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (StartupVersionNumber == ModelVersion))
+				{
+					SaveMetadata(metadata);
 					return true;
-
-				metadata.CurrentGeneration++;
+				}
 
 				var commitRec = new CommitLogRecord
 					{
 						Source = m_peerID,
-						WriteGeneration = metadata.CurrentGeneration,
+						WriteGeneration = metadata.CurrentGeneration + 1,
 						ObjectsDeleted = goners.Select(g => g.Guid).ToList(),
 						ObjectsAdded = newbies.Select(n => n.XMLBytes).ToList(),
 						ObjectsUpdated = dirtballs.Select(d => d.XMLBytes).ToList()
 					};
 
-				// we've seen our own change
-				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
-
 				using (var buffer = new MemoryStream())
 				{
 					Serializer.SerializeWithLengthPrefix(buffer, commitRec, PrefixStyle.Base128, 1);
-					if (metadata.LogLength + buffer.Length > CommitLogFileSize)
-						return false;
-
-					byte[] bytes = buffer.GetBuffer();
-					int commitRecOffset = (metadata.LogOffset + metadata.LogLength) % CommitLogFileSize;
-					// check if the record can fit at the end of the commit log. If not, we wrap around to the beginning.
-					if (commitRecOffset + buffer.Length > CommitLogFileSize)
+					if (metadata.LogLength + buffer.Length > m_settings.SharedXMLBackendCommitLogSize)
 					{
-						metadata.Padding = CommitLogFileSize - commitRecOffset;
-						metadata.LogLength += metadata.Padding;
-						commitRecOffset = 0;
+						// if this peer is the master, then just skip this commit
+						// other peers will not be able to continue when it cannot find the missing commit, but
+						// the master peer can keep going
+						if (metadata.Master != m_peerID)
+							throw new InvalidOperationException("The current commit cannot be written to the commit log, because it is full.");
 					}
-					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(commitRecOffset, buffer.Length))
+					else
 					{
-						stream.Write(bytes, 0, (int) buffer.Length);
-						metadata.LogLength += (int) buffer.Length;
+						byte[] bytes = buffer.GetBuffer();
+						int commitRecOffset = (metadata.LogOffset + metadata.LogLength) % m_settings.SharedXMLBackendCommitLogSize;
+						// check if the record can fit at the end of the commit log. If not, we wrap around to the beginning.
+						if (commitRecOffset + buffer.Length > m_settings.SharedXMLBackendCommitLogSize)
+						{
+							if (metadata.LogLength == 0)
+								metadata.LogOffset = 0;
+							else
+								metadata.Padding = m_settings.SharedXMLBackendCommitLogSize - commitRecOffset;
+							metadata.LogLength += metadata.Padding;
+							commitRecOffset = 0;
+						}
+						using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(commitRecOffset, buffer.Length))
+						{
+							stream.Write(bytes, 0, (int) buffer.Length);
+							metadata.LogLength += (int) buffer.Length;
+						}
 					}
 				}
 
 				if (metadata.Master == m_peerID)
 					PerformCommit(newbies, dirtballs, goners, cfiList);
 
+				metadata.CurrentGeneration++;
+				// we've seen our own change
+				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
+
+				SaveMetadata(metadata);
 				return true;
-			}
-			finally
-			{
-				try
-				{
-					if (metadata != null)
-					{
-						using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
-						{
-							SaveMetadata(stream, metadata);
-						}
-					}
-				}
-				finally
-				{
-					m_commitLogMutex.ReleaseMutex();
-				}
 			}
 		}
 
 		protected override void WriteCommitWork(CommitWork workItem)
 		{
-			m_commitLogMutex.WaitOne();
-			try
+			using (m_commitLogMutex.Lock())
 			{
 				base.WriteCommitWork(workItem);
 
@@ -526,10 +514,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					metadata.FileGeneration = metadata.Peers[m_peerID].Generation;
 					SaveMetadata(stream, metadata);
 				}
-			}
-			finally
-			{
-				m_commitLogMutex.ReleaseMutex();
 			}
 		}
 
@@ -551,7 +535,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			int bytesRemaining = metadata.LogLength;
 			// read all records up to the end of the file or the end of the log, whichever comes first
-			int length = Math.Min(metadata.LogLength, CommitLogFileSize - metadata.LogOffset - metadata.Padding);
+			int length = Math.Min(metadata.LogLength, m_settings.SharedXMLBackendCommitLogSize - metadata.LogOffset - metadata.Padding);
 			bytesRemaining -= ReadUnseenCommitRecords(metadata, minPeerGeneration, metadata.LogOffset, length, unseenCommitRecs);
 			// if there are bytes remaining, it means that we hit the end of the file, so we need to wrap around to the beginning
 			if (bytesRemaining > 0)
@@ -560,6 +544,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			if (unseenCommitRecs.Count == 0)
 				return false;
+
+			// check if there was enough room in the commit log for the last peer to write its commit
+			// if it was not able, then we cannot continue, because we will be out-of-sync
+			if (unseenCommitRecs[unseenCommitRecs.Count - 1].WriteGeneration < metadata.CurrentGeneration)
+				throw new InvalidOperationException("The most recent unseen commit could not be found.");
 
 			var idFactory = m_cache.ServiceLocator.GetInstance<ICmObjectIdFactory>();
 
@@ -588,7 +577,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					foreach (byte[] dirtballXml in commitRec.ObjectsUpdated)
 					{
-						ICmObjectSurrogate dirtballSurrogate = surrogateFactory.Create(DataSortingService.Utf8.GetString(dirtballXml));
+						ICmObjectSurrogate dirtballSurrogate = surrogateFactory.Create(dirtballXml);
 						// This shouldn't be necessary; if a previous foreign transaction deleted it, it
 						// should not show up as a dirtball in a later transaction until it has shown up as a newby.
 						// goners.Remove(dirtball);
@@ -602,7 +591,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					foreach (byte[] newbyXml in commitRec.ObjectsAdded)
 					{
-						ICmObjectSurrogate newObj = surrogateFactory.Create(DataSortingService.Utf8.GetString(newbyXml));
+						ICmObjectSurrogate newObj = surrogateFactory.Create(newbyXml);
 						if (goners.Remove(newObj.Guid))
 						{
 							// an object which an earlier transaction deleted is being re-created.
@@ -646,11 +635,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 
 			// if we have read everything to the end of the file, add padding to read length
-			if (startOffset + length == CommitLogFileSize - metadata.Padding)
+			if (startOffset + length == m_settings.SharedXMLBackendCommitLogSize - metadata.Padding)
 				length += metadata.Padding;
 
 			// check if we've purged all records up to the end of the file. If so, wrap around to the beginning.
-			if (metadata.LogOffset == CommitLogFileSize - metadata.Padding)
+			if (metadata.LogOffset == m_settings.SharedXMLBackendCommitLogSize - metadata.Padding)
 			{
 				metadata.LogOffset = 0;
 				metadata.LogLength -= metadata.Padding;

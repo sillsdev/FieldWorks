@@ -34,8 +34,11 @@ M: System.Void SIL.FieldWorks.LexText.Controls.LexImport::ProcessPhase4Log(Syste
 M: System.Void SIL.FieldWorks.LexText.Controls.InsertEntryDlg::lnkAssistant_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)
 
 # Returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoDlg/EntrySearchFieldGetter/<GetEntrySearchFields>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.RecordGoDlg/<GetRecordSearchFields>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoDlg/<GetFields>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.InsertEntrySearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.RecordGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

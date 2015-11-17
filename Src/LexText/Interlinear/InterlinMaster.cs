@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -34,8 +39,7 @@ namespace SIL.FieldWorks.IText
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 
 		static public Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
-		private bool m_fParsedTextDuringSave = false;
-		//private bool m_fSkipNextParse = false;
+		private bool m_fParsedTextDuringSave;
 
 		// This flag is normally set during a Refresh. When it is set, we suppress switching the focus box
 		// to the current occurrence in a concordance view, which would otherwise happen as a side effect
@@ -135,7 +139,7 @@ namespace SIL.FieldWorks.IText
 
 		protected int GetWidth(string text, Font fnt)
 		{
-			int width = 0;
+			int width;
 			using (Graphics g = Graphics.FromHwnd(Handle))
 			{
 				width = (int)g.MeasureString(text, fnt).Width + 1;
@@ -525,7 +529,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		internal protected IStText RootStText { get; private set; }
+		/// <remarks>virtual for tests</remarks>
+		internal protected virtual IStText RootStText { get; private set; }
 
 		internal int TextListFlid
 		{
@@ -709,8 +714,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(XCore.Mediator mediator,
-			XmlNode configurationParameters)
+		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -924,7 +928,7 @@ namespace SIL.FieldWorks.IText
 					var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
 					options.SuppressSaveOnChangeRecord = true;
 					using (new RecordClerk.ListUpdateHelper(Clerk, options))
-						(Clerk as InterlinearTextsRecordClerk).AddNewTextNonUndoable();
+						((InterlinearTextsRecordClerk)Clerk).AddNewTextNonUndoable();
 				});
 			}
 			if (Clerk.CurrentObjectHvo == 0)
@@ -946,10 +950,19 @@ namespace SIL.FieldWorks.IText
 				if (stText.ParagraphsOS.Count == 0)
 				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-						(Clerk as InterlinearTextsRecordClerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
+						((InterlinearTextsRecordClerk)Clerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
 				}
-				if (stText.ParagraphsOS.Count == 1 && (stText.ParagraphsOS[0] as IStTxtPara).Contents.Length == 0)
+				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
+					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the global default of English.
+					// If this is the case, default to the Default Vernacular WS (LT-15688)
+					var globalDefaultWs = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
+					if(stText.MainWritingSystem == globalDefaultWs)
+					{
+						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeTss(string.Empty, Cache.DefaultVernWs));
+					}
+
 					// since we have no text, we should not sit on any of the analyses tabs,
 					// the info tab is still useful though.
 					if (InterlinearTab != TabPageSelection.Info && InterlinearTab != TabPageSelection.RawText)

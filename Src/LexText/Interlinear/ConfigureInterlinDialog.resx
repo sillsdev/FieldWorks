@@ -133,7 +133,7 @@
 	<value>0</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-	<value>Choose the lines you wish to display and the order in which to display them. Some restrictions apply in Edit view.</value>
+	<value>Choose the lines you wish to display and the order in which to display them. Some restrictions apply in editable views.</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
 	<value>label1</value>

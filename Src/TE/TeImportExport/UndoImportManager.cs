@@ -197,6 +197,21 @@ namespace SIL.FieldWorks.TE
 			}
 		}
 
+		/// <summary>
+		/// Remove the version we made specially for importing
+		/// if doing an import just for updating FLEx texts from Paratext (LT-15945).
+		/// This is because Paratext import generates a new draft each time, and this can
+		/// produce lots of duplication when several people are doing it using S/R.
+		/// </summary>
+		public void RemoveImportedVersion()
+		{
+			if (ImportedVersion != null && ImportedVersion.IsValidObject)
+			{
+				// No need to localize, this should not be seen by the user.
+				UndoableUnitOfWorkHelper.Do("Remove temp version", "Restore temp version", m_cache.ActionHandlerAccessor, () => m_scr.ArchivedDraftsOC.Remove(ImportedVersion));
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When really, truly done with all merging etc, collapse all the things we can Undo

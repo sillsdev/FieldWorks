@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,6 +15,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FDOBrowser
 {
@@ -25,7 +30,7 @@ namespace FDOBrowser
 		private readonly Stack<ICmObject> m_forwardFDO = new Stack<ICmObject>();
 		//private ICmObject m_currentFDO;
 		private ToolStripStatusLabel m_statuslabel = null;
-		private readonly FdoCache m_cache;
+		private FdoCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol = 0;
 
@@ -34,6 +39,8 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ThreadHelper gets disposed in Dispose")]
 		public ModelWnd()
 		{
 			InitializeComponent();
@@ -42,7 +49,7 @@ namespace FDOBrowser
 			m_lvModel.Font = SystemFonts.MenuFont;
 
 			// Add model browsing cache (no data, just model browsing).
-			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(this), FwDirectoryFinder.FdoDirectories);
+			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(this), FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			m_mdc = (IFwMetaDataCacheManaged)m_cache.MainCacheAccessor.MetaDataCache;
 			PopulateModelTree();
 

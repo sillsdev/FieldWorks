@@ -1,25 +1,26 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public class ReversalEntryGoDlg : BaseGoDlg
 	{
 		private IReversalIndex m_reveralIndex;
-		private readonly HashSet<IReversalIndexEntry> m_filteredReversalEntries = new HashSet<IReversalIndexEntry>();
+		private readonly HashSet<int> m_FilteredReversalEntryHvos = new HashSet<int>();
 
 		public ReversalEntryGoDlg()
 		{
@@ -46,12 +47,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		public ICollection<IReversalIndexEntry> FilteredReversalEntries
+		public ICollection<int> FilteredReversalEntryHvos
 		{
 			get
 			{
 				CheckDisposed();
-				return m_filteredReversalEntries;
+				return m_FilteredReversalEntryHvos;
 			}
 		}
 
@@ -60,30 +61,45 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get { return "ReversalEntryGo"; }
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
 		{
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
+
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(mediator, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
+				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));
+			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
+
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				ReversalIndex.AllEntries.Cast<ICmObject>(), SearchType.Prefix,
-				GetReversalEntrySearchFields, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+
+			// start building index
+			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			if (wsObj != null)
+			{
+				ITsString tss = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
+				m_matchingObjectsBrowser.SearchAsync(new[] { field });
+			}
+		}
+
+		private class ReversalEntrySearchEngine : ReversalEntryGoSearchEngine
+		{
+			public ICollection<int> FilteredEntryHvos { private get; set; }
+
+			public ReversalEntrySearchEngine(FdoCache cache, IReversalIndex revIndex) : base(cache, revIndex) {}
+
+			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
+			{
+				return results == null ? null : results.Where(hvo => !FilteredEntryHvos.Contains(hvo));
+			}
 		}
 
 		protected override void LoadWritingSystemCombo()
 		{
 			m_cbWritingSystems.Items.Add(m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
-		}
-
-		private IEnumerable<SearchField> GetReversalEntrySearchFields(ICmObject obj)
-		{
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
-			if (wsObj != null)
-			{
-				var rie = (IReversalIndexEntry)obj;
-				var form = rie.ReversalForm.StringOrNull(wsObj.Handle);
-				if (form != null && form.Length > 0)
-					yield return new SearchField(ReversalIndexEntryTags.kflidReversalForm, form);
-			}
 		}
 
 		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
@@ -98,33 +114,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override void ResetMatches(string searchKey)
 		{
-			using (new WaitCursor(this))
-			{
-				if (m_oldSearchKey == searchKey)
-					return; // Nothing new to do, so skip it.
+			if (m_oldSearchKey == searchKey)
+				return; // Nothing new to do, so skip it.
 
-				// disable Go button until we rebuild our match list.
-				m_btnOK.Enabled = false;
-				m_oldSearchKey = searchKey;
+			// disable Go button until we rebuild our match list.
+			m_btnOK.Enabled = false;
+			m_oldSearchKey = searchKey;
 
-				var wsObj = (IWritingSystem)m_cbWritingSystems.SelectedItem;
-				if (wsObj == null)
-					return;
+			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			if (wsObj == null)
+				return;
 
-				ITsString tss = m_tsf.MakeString(searchKey, wsObj.Handle);
-				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
+			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+				StartSearchAnimation();
 
-				if (!Controls.Contains(m_searchAnimation))
-				{
-					Controls.Add(m_searchAnimation);
-					m_searchAnimation.BringToFront();
-				}
-
-				m_matchingObjectsBrowser.Search(new[] { field }, m_filteredReversalEntries.Cast<ICmObject>());
-
-				if (Controls.Contains(m_searchAnimation))
-					Controls.Remove(m_searchAnimation);
-			}
+			ITsString tss = m_tsf.MakeString(searchKey, wsObj.Handle);
+			var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
+			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
 		#region Windows Form Designer generated code

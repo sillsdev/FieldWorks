@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -13,7 +17,6 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
@@ -23,10 +26,10 @@ namespace SIL.FieldWorks.IText
 {
 	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
 	{
-		private FwStyleSheet m_stylesheet = null;
+		private FwStyleSheet m_stylesheet;
 
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
-		private int m_wsPrevText = 0;
+		private int m_wsPrevText;
 		public int PrevTextWs
 		{
 			get { return m_wsPrevText; }
@@ -358,7 +361,6 @@ namespace SIL.FieldWorks.IText
 		/// Establish the writing system of the new text by filling its first paragraph with
 		/// an empty string in the proper writing system.
 		/// </summary>
-		/// <param name="stText"></param>
 		internal void CreateFirstParagraph(IStText stText, int wsText)
 		{
 			var txtPara = stText.AddNewTextPara(null);
@@ -433,6 +435,7 @@ namespace SIL.FieldWorks.IText
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
 					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+					importSettings.StyleSheet = ScriptureStylesheet;
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -457,6 +460,11 @@ namespace SIL.FieldWorks.IText
 						importSettings.ImportBackTranslation = true;
 					}
 					ParatextHelper.LoadProjectMappings(importSettings);
+					ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
+					ImportMappingInfo figureInfo = importMap[@"\fig"];
+					if (figureInfo != null)
+						figureInfo.IsExcluded = true;
+					importSettings.SaveSettings();
 					return true;
 				});
 

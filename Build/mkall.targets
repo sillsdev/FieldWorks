@@ -6,6 +6,7 @@
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;CopyDlls;allCpp;allCsharp;ensureTLBsUpToDate">
@@ -16,13 +17,13 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews;GrEngine">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -32,11 +33,11 @@
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;GrEngine;Views"
-		AfterTargets="FwKernel;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Views"
+		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
-			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Views.dll"
+			Fragments="@(Fragments)"/>
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
@@ -67,7 +68,7 @@
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
-	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
@@ -79,7 +80,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -91,22 +92,6 @@
 		</Unitpp>
 		<Message Text="Finished building testGenericLib." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
-	</Target>
-
-	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel;Views">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-			Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
-			Configuration="$(config-capital)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)\Src\Graphite\GrEngine"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
-		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.X.manifest"
-			Condition="'$(OS)'=='Windows_NT'" />
-		<Message Text="Finished building GrEngine."/>
 	</Target>
 
 	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;ManagedLgIcuCollator">
@@ -125,7 +110,7 @@
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 				Configuration="$(config-capital)"
@@ -137,7 +122,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -180,7 +165,7 @@
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel;GrEngine">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
@@ -192,7 +177,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -276,8 +261,6 @@
 		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-
 	<ItemGroup>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
@@ -287,7 +270,7 @@
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
 	</ItemGroup>
 
-	<Target Name="CleanAll">
+	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
 		<!-- remove the Obj and Output directories -->
 		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
@@ -302,34 +285,34 @@
 
 	<PropertyGroup>
 		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/fw-8.2.tcbuildtag</ChorusDownloadUrl>
 		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/fw-8.2.tcbuildtag</ChorusDownloadUrl>
 		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/fw-8.2.tcbuildtag</PalasoDownloadUrl>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/fw-8.2.tcbuildtag</PalasoDownloadUrl>
 		<!-- bt399 is the GeckoFX 29 build for Windows -->
-		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/.lastSuccessful</GeckoDownloadUrl>
+		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/fw-8.2.tcbuildtag</GeckoDownloadUrl>
 		<!-- bt400 is the XULRunner 29 build for Windows -->
-		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/.lastSuccessful</XULRunnerDownloadUrl>
+		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/fw-8.2.tcbuildtag</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/8.1.0.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/8.1.0.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
 		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful</IcuDownloadUrl>
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.2.tcbuildtag</IcuDownloadUrl>
 		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/.lastSuccessful</IcuDownloadUrl>
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/fw-8.2.tcbuildtag</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
-		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/.lastSuccessful</Icu4cDownloadUrl>
+		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
+		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -337,7 +320,7 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading latest successful artifacts from Palaso master build."/>
+		<Message Text="Downloading pinned artifacts from Palaso master build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
@@ -349,21 +332,15 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"
-					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"
-					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"
-					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"
-					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
+		<Message Text="Downloading pinned artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
@@ -376,28 +353,26 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core.dll"
+		<Message Text="Downloading pinned artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/geckofx-core.dll.config"
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll.config"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.en-US.win32.zip"
+		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
-		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
+		<Message Text="Downloading pinned artifacts from Chorus master build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<Message Text="Downloading 8.1.0 tagged artifacts for IPCFramework."/>
+		<Message Text="Downloading pinned artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for ExCss."/>
@@ -406,7 +381,7 @@
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading latest successful artifacts for ICU.NET"/>
+		<Message Text="Downloading pinned artifacts for ICU.NET."/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
@@ -416,8 +391,6 @@
 		<Message Text="Downloading ParaTExt DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<!-- Windows downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/geckofx-core-14.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Geckofx-Winforms-14.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -432,13 +405,13 @@
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
 
-		<Message Text="Downloading latest successful artifacts for HermitCrab." />
+		<Message Text="Downloading pinned artifacts for HermitCrab." />
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/QuickGraph.dll" LocalFilename="$(fwrt)/Downloads/QuickGraph.dll"/>
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Machine.dll" LocalFilename="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Collections.dll" LocalFilename="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.HermitCrab.dll" LocalFilename="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
+		<Message Text="Downloading pinned artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/gennorm2.exe" LocalFilename="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -507,12 +480,14 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/QuickGraph.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll.config" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -554,12 +529,14 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
-		<!-- Manually delete directory contents in Linux until upgrade xbuild to include fix in mono.git 7c4e365 -->
-		<Exec Command="rm -rf $(fwrt)/Downloads/protobuf-net/*" Condition="'$(OS)'=='Unix'"/>
-		<RemoveDir Directories="$(fwrt)/Downloads/protobuf-net/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<!-- XULRunner files -->
+		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
+		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
@@ -598,11 +575,11 @@
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="$(dir-outputBase)"
+			Value="/usr/lib/fieldworks"
 			Condition="'$(OS)'=='Unix'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="$(dir-outputBase)/EC/Plugins"
+			Value="/usr/lib/fieldworks/EC/Plugins"
 			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
@@ -625,11 +602,12 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
-		<!-- In mono2 PropertyGroups can not be inside of targets Conditional Exec is the best available hack for the feature/Dictionary branch -->
-		<Exec Condition="'$(OS)'=='Windows_NT'" Command='"$(dir-outputBase)/gennorm2.exe" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
-		<Exec Condition="'$(OS)'=='Windows_NT'" Command='"$(dir-outputBase)/gennorm2.exe" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
-		<Exec Condition="'$(OS)'=='Unix'" Command='"$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
-		<Exec Condition="'$(OS)'=='Unix'" Command='"$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
+		<PropertyGroup>
+			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(dir-outputBase)\gennorm2.exe</gennorm2>
+			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
+		</PropertyGroup>
+		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
+		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
 		<Zip Source="@(IcuDataZipFiles)" WorkingDirectory="$(fwrt)/DistFiles" Destination="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" />
 	</Target>
 

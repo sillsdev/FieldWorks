@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -44,6 +48,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// which will remain enabled after the project is migrated to the new flexbridge location.
 		/// </summary>
 		private static readonly List<string> OldLiftBridgeProjects;
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		static FLExBridgeListener()
 		{
 			OldLiftBridgeProjects = new List<string>();
@@ -229,7 +236,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			StopParser();
 			bool dummy;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
+				FDOBackendProvider.ModelVersion, "0.13", null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -325,9 +333,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			}
 
-			if (ChangeProjectNameIfNeeded())
-				return true;
-
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
@@ -336,7 +341,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+																  null, FDOBackendProvider.ModelVersion, "0.13",
+																  Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -572,7 +578,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -605,7 +611,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -658,7 +664,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null,
+								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -703,7 +709,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -711,6 +717,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ReportDuplicateBridge();
 			}
 			return true;
+		}
+
+		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
+		private void BroadcastMasterRefresh()
+		{
+			_mediator.BroadcastMessage("MasterRefresh", null);
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
@@ -795,7 +807,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -901,14 +913,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Directory.CreateDirectory(liftProjectDir);
 			}
 			_liftPathname = GetLiftPathname(liftProjectDir);
-			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
+			PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
 			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1351,7 +1363,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
+				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
 				out dataChanged, out dummy);
 		}
 
@@ -1363,42 +1375,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				return Path.Combine(Path.GetDirectoryName(FLExBridgeHelper.FullFieldWorksBridgePath()), "Chorus_Help.chm");
 			}
-		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="tempWindow is a reference")]
-		private bool ChangeProjectNameIfNeeded()
-		{
-			// Enhance GJM: When Hg is upgraded to work with non-Ascii filenames, this section can be removed.
-			if (Unicode.CheckForNonAsciiCharacters(Cache.ProjectId.Name))
-			{
-				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
-				if (revisedProjName == string.Empty)
-				{
-					// The whole pre-existing project name is non-Ascii characters!
-					DisplayAllNonAsciiComplaint();
-					return true;
-				}
-				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
-					return true;
-				// Rename Project
-				var projectFolder = RevisedProjectFolder(Cache.ProjectId.ProjectFolder, revisedProjName);
-				if (CheckForExistingFileName(projectFolder, revisedProjName))
-					return true;
-
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
-				if (app.FwManager.RenameProject(revisedProjName, app))
-				{
-					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
-					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
-					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
-					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
-					// to hopefully come back here after resetting things
-				}
-				return true;
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -1460,18 +1436,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
-		private static DialogResult DisplayNonAsciiWarning(string revisedProjName)
-		{
-			return MessageBox.Show(string.Format(LexEdStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexEdStrings.ksWarning,
-					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
-		}
-
-		private void DisplayAllNonAsciiComplaint()
-		{
-			MessageBox.Show(LexEdStrings.ksAllNonAsciiProjectNameWarning, LexEdStrings.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
-		}
-
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
 			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
@@ -1488,6 +1452,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "FwApp is a reference I guess")]
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
 			var manager = app.FwManager;

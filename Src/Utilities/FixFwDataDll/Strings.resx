@@ -221,4 +221,7 @@
   <data name="ksRemovingBadLexReference" xml:space="preserve">
     <value>Removing LexReference with too few references (Targets) (guid='{0}') from its owner (guid='{1}').</value>
   </data>
+  <data name="ksRemovingDuplicateStyle" xml:space="preserve">
+    <value>Removing duplicate style {0}.</value>
+  </data>
 </root>

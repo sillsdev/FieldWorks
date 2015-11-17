@@ -16,6 +16,7 @@ using System.Diagnostics;
 
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -233,6 +234,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Control returns a reference")]
 		private void ControlWasAdded(object sender, ControlEventArgs e)
 		{
 			DeepAddControl(e.Control);
@@ -244,6 +247,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Control returns a reference")]
 		private void ControlWasRemoved(object sender, ControlEventArgs e)
 		{
 			DeepRemoveControl(e.Control);

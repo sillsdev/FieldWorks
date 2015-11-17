@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -379,12 +383,12 @@ namespace FDOBrowser
 
 				var ui = new FwFdoUI(this, this);
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories);
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
 				else
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), progressDlg);
 					}
 				}
 			   // var v = m_cache.

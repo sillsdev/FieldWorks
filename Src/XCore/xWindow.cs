@@ -300,8 +300,9 @@ namespace XCore
 		/// </summary>
 		/// <param name="parentControl"></param>
 		/// <param name="nameOfChildToFocus"></param>
-		/// <param name="focusControl"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "controls contains references")]
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
 			Control firstControl = null;
@@ -1111,6 +1112,8 @@ namespace XCore
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeForm is a reference")]
 		protected void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
 			string id = XmlUtils.GetAttributeValue(m_windowConfigurationNode,"settingsId");

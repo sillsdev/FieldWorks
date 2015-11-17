@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Microsoft.Win32;
 
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -83,6 +84,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "klm is a reference")]
 		private string[] GetLangFiles()
 		{
 			RegistryKey klm = RegistryHelper.CompanyKeyLocalMachine;

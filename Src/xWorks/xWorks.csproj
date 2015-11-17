@@ -154,10 +154,12 @@
       <HintPath>..\..\Output\Debug\FxtDll.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="geckofx-core">
+    <Reference Include="Geckofx-Core">
+      <Package>Geckofx-Core</Package>
       <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
+      <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">

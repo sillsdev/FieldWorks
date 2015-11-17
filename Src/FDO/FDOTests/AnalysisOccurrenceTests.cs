@@ -1,12 +1,9 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: AnalysisOccurrenceTests.cs
 // Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +21,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class AnalysisOccurrenceTests : MemoryOnlyBackendProviderBasicTestBase
+	public class AnalysisOccurrenceTests : MemoryOnlyBackendProviderTestBase
 	{
 		IText m_text;
 		private IStText m_stText, m_stText2;

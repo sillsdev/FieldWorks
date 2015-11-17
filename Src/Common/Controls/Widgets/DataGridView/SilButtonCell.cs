@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -33,6 +37,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SilButtonCell gets disposed in Dispose")]
 		public SilButtonColumn() : base(new SilButtonCell())
 		{
 			base.DefaultCellStyle.Font = SystemInformation.MenuFont;
@@ -60,6 +66,25 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			Name = name;
 			m_showButton = showButton;
+		}
+
+		/// <summary>
+		/// Dispose the SilButtonColumn
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				if (CellTemplate != null)
+				{
+					CellTemplate.Dispose();
+					CellTemplate = null;
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,6 +344,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// specified row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "row is a reference")]
 		private bool InternalShowButton(int rowIndex)
 		{
 			bool owningColShowValue =
@@ -497,13 +524,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Draws the button in the cell.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "buttonFont is a reference")]
 		private void DrawButton(Graphics g, Rectangle rcbtn, int rowIndex)
 		{
 			if (!InternalShowButton(rowIndex))
 				return;
 
-			bool paintComboButton = (OwningButtonColumn == null ? false :
-				OwningButtonColumn.UseComboButtonStyle);
+			bool paintComboButton = (OwningButtonColumn != null && OwningButtonColumn.UseComboButtonStyle);
 
 			VisualStyleElement element = (paintComboButton ?
 				GetVisualStyleComboButton() : GetVisualStylePushButton());

@@ -296,19 +296,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
-        ///{0} is a name that will work.
-        ///You may choose a different project name in FieldWorks Project Properties.
-        ///Click &apos;OK&apos; to change the name of your project and continue with Send/Receive.
-        ///Click &apos;Cancel&apos; to cancel Send/Receive..
-        /// </summary>
-        public static string ksNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksNonAsciiProjectNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses..
         /// </summary>
         public static string ksShowingSemanticClassification {

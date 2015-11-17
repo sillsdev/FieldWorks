@@ -270,7 +270,7 @@ Continue using English as the user interface language?</value>
     <value>Unable to modify project locations.</value>
   </data>
   <data name="SendReceiveGetArrow32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SendReceiveGetArrow32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>../Resources/SendReceiveGetArrow32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kstidInvalidServer" xml:space="preserve">
     <value>Server name could not be resolved to a valid host:
@@ -314,7 +314,7 @@ Continue using English as the user interface language?</value>
     <value>../Resources/Import28x28.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>../Resources/Info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ksHklmCaption" xml:space="preserve">
     <value>FieldWorks can't run</value>

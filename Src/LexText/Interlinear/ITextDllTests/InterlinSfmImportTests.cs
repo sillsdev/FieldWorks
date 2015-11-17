@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -321,6 +325,33 @@ namespace SIL.FieldWorks.IText
 					VerifyText(phrase1, new[] { "fourth", "text" }, new HashSet<string>(), "qaa-x-kal");
 				}
 			}
+		}
+
+		[Test]
+		public void MultipleFileSplitAndJoin()
+		{
+			// I've chosen not to test what it does with empty strings because we really don't care. Path names won't be empty.
+			string[][] inputs =
+			{
+				new string[0], // empty
+				new [] {"abc"}, // simple
+				new []{"abc", "def", "xyz"}, // simple list
+				new []{"a b", "c  d", "4%f ", " ab"}, // spaces in various places
+				new []{"ab", "a b", "cd", "ef", "q d", "t,f", "34"}, // mix of things with and without problem characters
+				new []{",file", "name,", "a,b", "c;d;e", "~`@#$%^&() /-_=\\+{}[]'", @"C:\Users\John\AppData\Roaming\Favorite Files\\Myfile.sfm"} // edge cases and a realistic path
+			};
+			foreach (var list in inputs)
+			{
+				var combined = InterlinearSfmImportWizard.JoinPaths(list);
+				var split = InterlinearSfmImportWizard.SplitPaths(combined);
+				Assert.That(split.Length, Is.EqualTo(list.Length));
+				for (int i = 0; i < split.Length; i++)
+					Assert.That(split[i], Is.EqualTo(list[i]));
+			}
+			var output = InterlinearSfmImportWizard.SplitPaths("ab, \"unterminated");
+			Assert.That(output.Length, Is.EqualTo(2));
+			Assert.That(output[0], Is.EqualTo("ab"));
+			Assert.That(output[1], Is.EqualTo("unterminated"));
 		}
 
 		private PalasoWritingSystemManager GetWsf()

@@ -845,7 +845,7 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please send a copy of of this report to the FLEX team as soon as possible to have this problem corrected..
+        ///   Looks up a localized string similar to Please send a copy of this report to the FLEX team as soon as possible to have this problem corrected..
         /// </summary>
         internal static string ksDuplicateGuidsMsg3 {
             get {

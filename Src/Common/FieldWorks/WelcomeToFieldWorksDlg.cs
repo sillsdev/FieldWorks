@@ -7,6 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -15,6 +16,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
 using Logger = SIL.Utils.Logger;
+using Palaso.UI.WindowsForms.Widgets;
 
 namespace SIL.FieldWorks
 {
@@ -88,16 +90,13 @@ namespace SIL.FieldWorks
 			{
 				m_helpTopic = "khtpUnableToOpenProject";
 				Text = Properties.Resources.kstidUnableToOpenProjectCaption;
-
 				m_lblProjectLoadError.Text = exception.Message;
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
 			}
 
 			if (!showReportingRow)
 			{
-				var reportingInfoRow = tableLayoutPanel.GetRow(reportingInfoLayout);
-				Debug.Assert(reportingInfoRow >= 0, @"Refactoring or the designer has broken behavior here.");
-				tableLayoutPanel.RowStyles[reportingInfoRow].Height = 0;
+				reportingInfoLayout.Visible = false;
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -218,6 +217,34 @@ namespace SIL.FieldWorks
 			// This dialog may be created when no other forms are active. Calling Activate will
 			// make sure that the dialog comes up visible and activated.
 			Activate();
+
+			if (MiscUtils.IsUnix)
+				ReLayoutCorrectly();
+		}
+
+		/// <summary>
+		/// Adjust dialog so that the height of the main FlowLayoutPanel is the right value to
+		/// contain the displayed controls.
+		/// A better solution will be to fix Mono FlowLayoutPanel to not include
+		/// non-Visible controls in the FlowLayoutPanel height calculation, if that is what
+		/// it is doing when it AutoSizes.
+		/// </summary>
+		private void ReLayoutCorrectly()
+		{
+			var shrunkWidth = this.mainVerticalLayout.Width;
+			this.mainVerticalLayout.AutoSize = false;
+			this.mainVerticalLayout.Width = shrunkWidth;
+
+			var heightOfVisibleControls = 0;
+			foreach (Control control in this.mainVerticalLayout.Controls)
+			{
+				if (control.Visible == false)
+					continue;
+				heightOfVisibleControls += control.Height;
+				heightOfVisibleControls += control.Margin.Top;
+				heightOfVisibleControls += control.Margin.Bottom;
+			}
+			this.mainVerticalLayout.Height = heightOfVisibleControls;
 		}
 		#endregion
 
@@ -311,6 +338,8 @@ namespace SIL.FieldWorks
 			m_sampleOrLastProjectLinkLabel.Visible = false;
 			m_openSampleOrLastProjectLink.Visible = false;
 			m_lblProjectLoadError.Visible = true;
+			if(!string.IsNullOrEmpty(m_lblProjectLoadError.Text))
+				Icon = SystemIcons.Exclamation;
 		}
 
 		internal void ShowLinkHideErrorLabel()

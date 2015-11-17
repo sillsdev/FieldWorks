@@ -6,6 +6,7 @@ using System;
 using NUnit.Framework;
 using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.WritingSystems;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils.Attributes
 {
@@ -30,6 +31,8 @@ namespace SIL.Utils.Attributes
 		/// <summary>
 		/// Initialize keyboard controller
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Keyboard.Controller gets disposed")]
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			if (Keyboard.Controller != null)

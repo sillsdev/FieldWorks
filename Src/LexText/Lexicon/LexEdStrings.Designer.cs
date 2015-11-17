@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error exporting LIFT data could not complete Send/Receive.
+        ///   Looks up a localized string similar to Error exporting LIFT data; could not complete Send/Receive.
         /// </summary>
         internal static string FLExBridgeListener_UndoExport_Error_exporting_LIFT {
             get {
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Guids changed..
+        ///   Looks up a localized string similar to GUIDs changed.
         /// </summary>
         internal static string GoldEticGuidFixer_Guids_changed_Title {
             get {
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some guids for parts of speech that did not match the GOLD standard were found and replaced..
+        ///   Looks up a localized string similar to Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced..
         /// </summary>
         internal static string GoldEticGuidFixer_GuidsChangedContent {
             get {
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use standard part of speech guids.
+        ///   Looks up a localized string similar to Use standard Part of Speech GUIDs.
         /// </summary>
         internal static string GoldEticGuidFixer_Label {
             get {
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Guids changed..
+        ///   Looks up a localized string similar to No GUIDs changed.
         /// </summary>
         internal static string GoldEticGuidFixer_NoChangeTitle {
             get {
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This project has already been linked to a Lexicon (LIFT) repository. It is not possible to use Get and Merge with another Lexicon repository..
+        ///   Looks up a localized string similar to This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository..
         /// </summary>
         internal static string kProjectAlreadyHasLiftRepo {
             get {
@@ -255,17 +255,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksAddParticipants {
             get {
                 return ResourceManager.GetString("ksAddParticipants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The current Project name contains non-ASCII characters. This currently prevents use of the Send/Receive project function.
-        ///Please use a name that only contains ASCII characters.
-        ///You may choose a different project name in FieldWorks Project Properties..
-        /// </summary>
-        internal static string ksAllNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksAllNonAsciiProjectNameWarning", resourceCulture);
             }
         }
         
@@ -567,7 +556,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That project already exists. You&apos;ll need to choose a different name in Project Properties..
+        ///   Looks up a localized string similar to That project already exists. Please choose a different name in Project Properties..
         /// </summary>
         internal static string ksExistingProjectName {
             get {
@@ -725,19 +714,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksMustSelectOne {
             get {
                 return ResourceManager.GetString("ksMustSelectOne", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
-        ///{0} is a name that will work.
-        ///You may choose a different project name in FieldWorks Project Properties.
-        ///Click &apos;OK&apos; to change the name of your project and continue with Send/Receive.
-        ///Click &apos;Cancel&apos; to cancel Send/Receive..
-        /// </summary>
-        internal static string ksNonAsciiProjectNameWarning {
-            get {
-                return ResourceManager.GetString("ksNonAsciiProjectNameWarning", resourceCulture);
             }
         }
         
@@ -1435,7 +1411,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This utility will make the part of speech guids for the project match the GOLD standard..
+        ///   Looks up a localized string similar to This utility will make the Part of Speech GUIDs for the project match the GOLD standard..
         /// </summary>
         internal static string ksWhatIsSetPartOfSpeechGUIDsToGold {
             get {
@@ -1443,6 +1419,25 @@ namespace SIL.FieldWorks.XWorks.LexEd {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data by the ICU sort rules for your reversal language.
+        /// </summary>
+        internal static string ksWhatIsSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.
+        /// </summary>
+        internal static string ksWarningSortReversalSubentries
+        {
+            get
+            {
+                return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
@@ -1471,11 +1466,20 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query you should use this utility..
+        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs)..
         /// </summary>
         internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
             get {
                 return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically.
+        /// </summary>
+        internal static string ksWhenToSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWhenToSortReversalSubentries", resourceCulture);
             }
         }
         
@@ -1494,6 +1498,33 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string LiftSRFailureDetectedOnStartupTitle {
             get {
                 return ResourceManager.GetString("LiftSRFailureDetectedOnStartupTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All reversal subentries are now sorted..
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedContent {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal subentry sorting is completed.
+        /// </summary>
+        internal static string SortReversalSubEntries_CompletedTitle {
+            get {
+                return ResourceManager.GetString("SortReversalSubEntries_CompletedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort Reversal Subentries.
+        /// </summary>
+        internal static string SortReversalSubentries_Label {
+            get {
+                return ResourceManager.GetString("SortReversalSubentries_Label", resourceCulture);
             }
         }
     }

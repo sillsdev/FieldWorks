@@ -102,6 +102,8 @@ namespace SIL.FieldWorks.XWorks
 			return layoutList;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
 		{
 			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");
@@ -793,7 +795,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// See if the main owning object has changed.
-			if (clerk.OwningObject.Hvo != m_hvoOwner)
+			if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_hvoOwner)
 			{
 				m_hvoOwner = clerk.OwningObject.Hvo;
 				m_mainView.ResetRoot(m_hvoOwner);
@@ -1071,7 +1073,11 @@ namespace SIL.FieldWorks.XWorks
 				if (clerk.RequestedLoadWhileSuppressed)
 					clerk.UpdateList(false);
 				m_fakeFlid = clerk.VirtualFlid;
-				m_hvoOwner = clerk.OwningObject.Hvo;
+				if (clerk.OwningObject != null)
+				{
+					m_hvoOwner = clerk.OwningObject.Hvo;
+				}
+
 				if (!clerk.SetCurrentFromRelatedClerk())
 				{
 					// retrieve persisted clerk index and set it.

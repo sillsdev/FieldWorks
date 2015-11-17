@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -184,7 +188,7 @@ namespace SIL.CoreImpl
 					break;
 
 				case SearchType.FullText:
-					foreach (string token in m_tokenizer(wsId, text))
+					foreach (string token in RemoveWhitespaceAndPunctTokens(m_tokenizer(wsId, text)))
 						index.Add(m_sortKeySelector(wsId, token), item);
 					break;
 			}
@@ -202,16 +206,13 @@ namespace SIL.CoreImpl
 				return Enumerable.Empty<T>();
 
 			if (tss.RunCount == 1) // VERY common special case
-				return Search(indexId, tss.get_WritingSystemAt(0), tss.Text);
+				return Search(indexId, tss.get_WritingSystemAt(0), tss.Text) ?? Enumerable.Empty<T>();
 
 			IEnumerable<T> results = null;
 			foreach (Tuple<int, string> wsStr in GetWsStrings(tss))
 			{
 				IEnumerable<T> items = Search(indexId, wsStr.Item1, wsStr.Item2);
-				if (results == null)
-					results = items;
-				else
-					results = results.Intersect(items);
+				results = results == null ? items : results.Intersect(items);
 			}
 			return results ?? Enumerable.Empty<T>();
 		}
@@ -248,7 +249,7 @@ namespace SIL.CoreImpl
 
 				case SearchType.FullText:
 					IEnumerable<T> results = null;
-					string[] tokens = m_tokenizer(wsId, text).ToArray();
+					string[] tokens = RemoveWhitespaceAndPunctTokens(m_tokenizer(wsId, text)).ToArray();
 					for (int i = 0; i < tokens.Length; i++)
 					{
 						byte[] sortKey = m_sortKeySelector(wsId, tokens[i]);
@@ -260,15 +261,17 @@ namespace SIL.CoreImpl
 												? Icu.UColBoundMode.UCOL_BOUND_UPPER
 												: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
 						IEnumerable<T> items = index.GetItems(lower, upper);
-						if (results == null)
-							results = items;
-						else
-							results = results.Intersect(items);
+						results = results == null ? items : results.Intersect(items);
 					}
 					return results;
 			}
 
-			return null;
+			return Enumerable.Empty<T>();
+		}
+
+		private static IEnumerable<string> RemoveWhitespaceAndPunctTokens(IEnumerable<string> tokens)
+		{
+			return tokens.Where(t => !t.All(c => Icu.IsSpace(c) || Icu.IsPunct(c)));
 		}
 
 		/// <summary>

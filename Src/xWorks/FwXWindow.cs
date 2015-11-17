@@ -41,6 +41,9 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
+using System.Diagnostics.CodeAnalysis;
+
+
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -103,6 +106,8 @@ namespace SIL.FieldWorks.XWorks
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeCache is a reference")]
 		public virtual void OnMasterRefresh(object sender)
 		{
 			CheckDisposed();
@@ -385,21 +390,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
-
-			if (!Mediator.PropertyTable.GetBoolProperty("DidAutomaticParseIsCurrentReset", false))
-			{
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var paraRepo = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
-						foreach (var para in paraRepo.AllInstances().Where(para => para.ParseIsCurrent))
-						{
-							para.ParseIsCurrent = false;
-						}
-					});
-				Mediator.PropertyTable.SetProperty("DidAutomaticParseIsCurrentReset", true);
-				Mediator.PropertyTable.SetPropertyPersistence("DidAutomaticParseIsCurrentReset", true);
-			}
 
 			m_viewHelper.ActiveViewChanged += new EventHandler<EventArgs>(ActiveViewChanged);
 		}
@@ -754,7 +744,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (string.IsNullOrEmpty(pathname))
 				return false;
-			pathname = MoveOrCopyFilesDlg.MoveCopyOrLeaveExternalFile(pathname,
+			pathname = MoveOrCopyFilesController.MoveCopyOrLeaveExternalFile(pathname,
 				Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider,  Cache.ProjectId.IsLocal);
 			if (String.IsNullOrEmpty(pathname))
 				return false;

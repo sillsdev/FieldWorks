@@ -164,6 +164,8 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 		/// e does not belong to this <see cref="T:System.Windows.Forms.DataGridView"></see>
 		/// control.</exception>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "row is a reference")]
 		protected override void OnRowHeightChanged(DataGridViewRowEventArgs e)
 		{
 			if (e.Row.Height == DataGridViewControlColumn.kMinimumValue && m_fFullyInitialized)

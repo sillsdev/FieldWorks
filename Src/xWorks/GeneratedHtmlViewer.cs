@@ -272,7 +272,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ShowSketch()
 		{
-			m_htmlControl.URL = m_sHtmlFileName;
+			var uri = new Uri(m_sHtmlFileName);
+			m_htmlControl.URL = uri.AbsoluteUri;
 			//m_htmlControl.Invalidate();
 		}
 
@@ -383,11 +384,7 @@ namespace SIL.FieldWorks.XWorks
 									{
 										outputFile = outputFile + (i + 1);
 										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
-										#if !__MonoCS__
 										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-										#else
-										var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
-										#endif
 										using (var writer = new StreamWriter(outputFile + ".xml"))
 										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
 											transform.Transform(reader, null, writer);
@@ -635,11 +632,7 @@ namespace SIL.FieldWorks.XWorks
 				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
 
-#if !__MonoCS__
 			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-#else
-			var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
-#endif
 			using (var writer = new StreamWriter(outputFile))
 			using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
 				GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);

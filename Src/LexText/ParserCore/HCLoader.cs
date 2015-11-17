@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -81,8 +85,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (IPartOfSpeech pos in m_cache.LanguageProject.AllPartsOfSpeech)
 			{
 				posSymbols.Add(new FeatureSymbol(pos.Guid.ToString()) {Description = pos.Name.BestAnalysisAlternative.Text});
-				foreach (IMoInflClass inflClass in pos.AllInflectionClasses)
-					LoadMprFeature(inflClass, inflClassesGroup);
+				foreach (IMoInflClass inflClass in pos.InflectionClassesOC)
+					LoadInflClassMprFeature(inflClass, inflClassesGroup);
 			}
 
 			var prodRestrictsGroup = new MprFeatureGroup { Name = "exceptionFeatures", MatchType = MprFeatureGroupMatchType.All };
@@ -101,7 +105,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			LoadFeatureSystem(m_cache.LanguageProject.PhFeatureSystemOA, m_language.PhoneticFeatureSystem);
 
-			LoadSymbolTable(m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], m_language.PhoneticFeatureSystem);
+			LoadSymbolTable(m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
 
 			foreach (IMoStemName stemName in m_cache.ServiceLocator.GetInstance<IMoStemNameRepository>().AllInstances())
 			{
@@ -242,6 +246,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_loadErrorsWriter.WriteEndElement();
 		}
 
+		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
+		{
+			LoadMprFeature(inflClass, inflClassesGroup);
+			foreach (IMoInflClass subclass in inflClass.SubclassesOC)
+				LoadInflClassMprFeature(subclass, inflClassesGroup);
+		}
+
 		private bool HasValidRuleForm(ILexEntry entry)
 		{
 			if (entry.IsCircumfix() && entry.LexemeFormOA is IMoAffixAllomorph)
@@ -271,23 +282,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
-			switch (form.MorphTypeRA.Guid.ToString())
+			if (form.MorphTypeRA != null)
 			{
-				case MoMorphTypeTags.kMorphProclitic:
-				case MoMorphTypeTags.kMorphEnclitic:
-					return true;
+				switch (form.MorphTypeRA.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphProclitic:
+					case MoMorphTypeTags.kMorphEnclitic:
+						return true;
 
-				case MoMorphTypeTags.kMorphPrefix:
-				case MoMorphTypeTags.kMorphPrefixingInterfix:
-				case MoMorphTypeTags.kMorphSuffix:
-				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					if (formStr.Contains("[") && !formStr.Contains("[...]"))
-						return ((IMoAffixAllomorph) form).PhoneEnvRC.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
-					return true;
+					case MoMorphTypeTags.kMorphPrefix:
+					case MoMorphTypeTags.kMorphPrefixingInterfix:
+					case MoMorphTypeTags.kMorphSuffix:
+					case MoMorphTypeTags.kMorphSuffixingInterfix:
+						if (formStr.Contains("[") && !formStr.Contains("[...]"))
+							return ((IMoAffixAllomorph) form).PhoneEnvRC.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+						return true;
 
-				case MoMorphTypeTags.kMorphInfix:
-				case MoMorphTypeTags.kMorphInfixingInterfix:
-					return ((IMoAffixAllomorph) form).PositionRS.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+					case MoMorphTypeTags.kMorphInfix:
+					case MoMorphTypeTags.kMorphInfixingInterfix:
+						return ((IMoAffixAllomorph) form).PositionRS.Any(env => m_envValidator.Recognize(env.StringRepresentation.Text));
+				}
 			}
 
 			return false;
@@ -302,6 +316,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private bool IsValidLexEntryForm(IMoForm form)
 		{
+			if (!(form is IMoStemAllomorph))
+				return false;
+
 			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
@@ -330,6 +347,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static bool IsStemType(IMoMorphType type)
 		{
+			if (type == null)
+				return false;
+
 			switch (type.Guid.ToString())
 			{
 				case MoMorphTypeTags.kMorphRoot:
@@ -345,6 +365,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static bool IsCliticType(IMoMorphType type)
 		{
+			if (type == null)
+				return false;
+
 			switch (type.Guid.ToString())
 			{
 				case MoMorphTypeTags.kMorphClitic:
@@ -934,15 +957,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			switch (allo.MorphTypeRA.Guid.ToString())
+			if (allo.MorphTypeRA != null)
 			{
-				case MoMorphTypeTags.kMorphPrefix:
-					hcAllo.ReduplicationHint = ReduplicationHint.Prefix;
-					break;
+				switch (allo.MorphTypeRA.Guid.ToString())
+				{
+					case MoMorphTypeTags.kMorphPrefix:
+						hcAllo.ReduplicationHint = ReduplicationHint.Prefix;
+						break;
 
-				case MoMorphTypeTags.kMorphSuffix:
-					hcAllo.ReduplicationHint = ReduplicationHint.Suffix;
-					break;
+					case MoMorphTypeTags.kMorphSuffix:
+						hcAllo.ReduplicationHint = ReduplicationHint.Suffix;
+						break;
+				}
 			}
 
 			hcAllo.Properties["ID"] = allo.Hvo;
@@ -1925,19 +1951,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private FeatureStruct LoadFeatureStruct(IFsFeatStruc fs, FeatureSystem featSys)
 		{
 			var hcFS = new FeatureStruct();
-			foreach (IFsFeatureSpecification value in fs.FeatureSpecsOC)
+			if (fs != null)
 			{
-				var closedValue = value as IFsClosedValue;
-				if (closedValue != null)
+				foreach (IFsFeatureSpecification value in fs.FeatureSpecsOC)
 				{
-					var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
-					hcFS.AddValue(hcFeature, hcFeature.PossibleSymbols[closedValue.ValueRA.Guid.ToString()]);
-				}
-				else
-				{
-					var complexValue = (IFsComplexValue) value;
-					var hcFeature = featSys.GetFeature<ComplexFeature>(complexValue.FeatureRA.Guid.ToString());
-					hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc) complexValue.ValueOA, featSys));
+					var closedValue = value as IFsClosedValue;
+					if (closedValue != null)
+					{
+						var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
+						// TODO: should we display something to the user if a FS has an invalid value?
+						FeatureSymbol symbol;
+						if (hcFeature.PossibleSymbols.TryGetValue(closedValue.ValueRA.Guid.ToString(), out symbol))
+							hcFS.AddValue(hcFeature, symbol);
+					}
+					else
+					{
+						var complexValue = (IFsComplexValue) value;
+						var hcFeature = featSys.GetFeature<ComplexFeature>(complexValue.FeatureRA.Guid.ToString());
+						hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc) complexValue.ValueOA, featSys));
+					}
 				}
 			}
 			return hcFS;
@@ -2046,13 +2078,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			hcFeatSys.Freeze();
 		}
 
-		private void LoadSymbolTable(IPhPhonemeSet phonemeSet, FeatureSystem featSys)
+		private void LoadSymbolTable(IPhPhonemeSet phonemeSet)
 		{
 			m_table = new SymbolTable(m_spanFactory) { Name = phonemeSet.Name.BestAnalysisAlternative.Text };
 			foreach (IPhPhoneme phoneme in phonemeSet.PhonemesOC)
 			{
 				FeatureStruct fs = null;
-				if (featSys.Count > 0)
+				if (phoneme.FeaturesOA != null && phoneme.FeaturesOA.FeatureSpecsOC.Count > 0)
 				{
 					fs = LoadFeatureStruct(phoneme.FeaturesOA, m_language.PhoneticFeatureSystem);
 					fs.AddValue(HCFeatureSystem.Type, HCFeatureSystem.Segment);

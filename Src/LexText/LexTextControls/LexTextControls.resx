@@ -1346,4 +1346,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksLocationsAdded" xml:space="preserve">
     <value>The following Locations were added to the language project:</value>
   </data>
+  <data name="ksNonMatchingRelation" xml:space="preserve">
+    <value>The LIFT ranges file had a conflicting value ({0} instead of {1}) for the {2} of the lexical relation {3}. The value in the LIFT file was ignored.</value>
+  </data>
 </root>

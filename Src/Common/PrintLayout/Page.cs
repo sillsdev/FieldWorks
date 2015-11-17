@@ -22,6 +22,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {
@@ -528,6 +529,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// <returns>The last page element that displays <paramref name="division"/> on this
 		/// page, or <c>null</c> if no page element displays <paramref name="division"/>.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "nextPage and peNext are references")]
 		protected PageElement GetLastElement(DivisionLayoutMgr division, out int xd)
 		{
 			xd = 0;

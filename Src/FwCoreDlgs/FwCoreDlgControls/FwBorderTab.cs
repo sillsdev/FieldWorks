@@ -21,6 +21,7 @@ using System.Diagnostics;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -82,6 +83,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		private void m_pnlBorderPreview_Paint(object sender, PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;

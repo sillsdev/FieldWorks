@@ -1,11 +1,13 @@
 // --------------------------------------------------------------------------------------------
 // <copyright from='2011' to='2011' company='SIL International'>
-// 	Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-// 	Distributable under the terms of either the Common Public License or the
-// 	GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// Copyright (c) 2011-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html).
 // </copyright>
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #if __MonoCS__
 using System;
 using System.ComponentModel;
@@ -95,6 +97,8 @@ namespace SIL.Utils.FileDialog.Linux
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "currentFilter is a reference")]
 		private int CurrentFilterIndex
 		{
 			get
@@ -208,6 +212,8 @@ namespace SIL.Utils.FileDialog.Linux
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Widget is a reference")]
 		protected virtual FileChooserDialog CreateFileChooserDialog()
 		{
 			// TODO: set parent

@@ -592,7 +592,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(),
+				FwDirectoryFinder.FdoDirectories, new FdoSettings());
 		}
 
 		/// <summary>

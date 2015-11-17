@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,7 +142,7 @@ namespace FDOBrowser
 				return;
 
 			using (var threadHelper = new ThreadHelper())
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper), FwDirectoryFinder.FdoDirectories))
+			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
 				s_allFDOClassNames = new List<string>();

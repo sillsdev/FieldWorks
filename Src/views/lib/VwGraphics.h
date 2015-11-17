@@ -80,8 +80,7 @@ public:
 		int cdx, int * prgdx, int * pdxStart);
 	STDMETHOD(DrawLine)(int nTwipsXStart, int nTwipsYStart, int nTwipsXEnd, int nTwipsYEnd);
 	STDMETHOD(DrawText)(int ixTwips, int iyTwips, int cch, const OLECHAR * prgch, int nStretch);
-	STDMETHOD(DrawTextExt)(int x, int y, int cch, const OLECHAR __RPC_FAR * prgchw,
-		UINT uOptions, const RECT __RPC_FAR * pRect, int __RPC_FAR * prgdx);
+	STDMETHOD(DrawGlyphs)(int x, int y, int cgi, const GlyphInfo * prggi);
 	STDMETHOD(GetTextExtent)(int cch, const OLECHAR * prgch, int *pnTwipsWidth, int *pnTwipsHeight);
 	STDMETHOD(GetTextLeadWidth)(int cch, const OLECHAR * prgch, int ich, int dxStretch,
 		int * pdx);
@@ -90,8 +89,7 @@ public:
 	STDMETHOD(GetGlyphMetrics)(int chw,
 		int * psBoundingWidth, int * pyBoundingHeight,
 		int * pxBoundingX, int * pyBoundingY, int * pxAdvanceX, int * pyAdvanceY);
-	STDMETHOD(GetFontData)(int nTableId, int * pcbTableSz, BSTR * pbstrTableData);
-	STDMETHOD(GetFontDataRgch)(int nTableId, int * pcbTableSz, OLECHAR * prgch, int cchMax);
+	STDMETHOD(GetFontData)(int nTableId, int * pcbTableSz, BYTE * prgb);
 	STDMETHOD(XYFromGlyphPoint)(int chw, int nPoint, int * pxRet, int * pyRet);
 	STDMETHOD(get_FontAscent)(int* pdy);
 	STDMETHOD(get_FontDescent)(int* pdy);

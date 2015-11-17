@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -53,9 +57,11 @@ namespace SIL.ObjectBrowser
 
 			m_list = new GenericInspectorObjectList();
 
-			Image img = Properties.Resources.kimidExpand;
-			m_szHotSpot = new Size(img.Width, img.Height);
-			m_dxVLine = (int)(m_szHotSpot.Width * 1.5);
+			using (Image img = Properties.Resources.kimidExpand)
+			{
+				m_szHotSpot = new Size(img.Width, img.Height);
+				m_dxVLine = (int)(m_szHotSpot.Width * 1.5);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

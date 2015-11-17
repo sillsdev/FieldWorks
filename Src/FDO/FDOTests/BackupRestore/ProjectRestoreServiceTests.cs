@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 	/// RestoreProjectPresenter/RestoreProjectDlg
 	/// </summary>
 	[TestFixture]
-	public class ProjectRestoreServiceTests : MemoryOnlyBackendProviderBasicTestBase
+	public class ProjectRestoreServiceTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ProjectRestoreService m_restoreProjectService;
 		private RestoreProjectSettings m_restoreSettings;

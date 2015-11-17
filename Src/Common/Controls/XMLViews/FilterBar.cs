@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
@@ -400,8 +404,10 @@ namespace SIL.FieldWorks.Common.Controls
 			m_userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 
 			// Store the standard font height for use in SetStyleSheet
-			Font tempFont = new Font(MiscUtils.StandardSerif, (float)10.0);
-			m_stdFontHeight = tempFont.Height;
+			using (Font tempFont = new Font(MiscUtils.StandardSerif, (float)10.0))
+			{
+				m_stdFontHeight = tempFont.Height;
+			}
 
 			// This light grey background shows through for any columns where we don't have a combo
 			// because we can't figure a IStringFinder from the XmlParameters.

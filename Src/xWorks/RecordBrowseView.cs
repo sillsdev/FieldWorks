@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordBrowseView.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -49,7 +42,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Required designer variable.
 		/// </summary>
 		private readonly System.ComponentModel.Container components;
-
 		#endregion // Data members
 
 		#region Construction and disposal
@@ -72,13 +64,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
-				// NO. The simple Clerk property guarantees is will not be null.
-				//if (Clerk != null)
-				//	Clerk.FilterChangedByClerk -= new FilterChangeHandler(Clerk_FilterChangedByClerk);
-				if (ExistingClerk != null)
+				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
 					PersistSortSequence();
 					ExistingClerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
+					ExistingClerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
 				}
 				if (m_browseViewer != null)
 				{
@@ -132,6 +122,11 @@ namespace SIL.FieldWorks.XWorks
 			// Let the client(s) know about the change.
 			m_browseViewer.UpdateFilterBar(Clerk.Filter);
 			m_fHandlingFilterChangedByClerk = false;
+		}
+
+		private void Clerk_SorterChangedByClerk(object sender, EventArgs e)
+		{
+			m_browseViewer.InitSorter(Clerk.Sorter, true);
 		}
 
 		private void SortChangedHandler(object sender, EventArgs args)
@@ -620,6 +615,7 @@ namespace SIL.FieldWorks.XWorks
 			m_browseViewer.SelectionDrawingFailure += OnBrowseSelectionDrawingFailed;
 			m_browseViewer.CheckBoxChanged += OnCheckBoxChanged;
 			Clerk.FilterChangedByClerk += Clerk_FilterChangedByClerk;
+			Clerk.SorterChangedByClerk += Clerk_SorterChangedByClerk;
 			if (m_browseViewer.BulkEditBar != null)
 			{
 				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordClerk

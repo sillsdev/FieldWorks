@@ -1,6 +1,11 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic; // Needed for generic Di
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Runtime.InteropServices; // needed for Marshal
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -316,6 +321,8 @@ namespace SIL.FieldWorks.CacheLight
 			return hvo;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "nodeList is a reference")]
 		private void LoadObject(XmlNode objectNode, int hvo, int clid, IDictionary<int, int> objects)
 		{
 			// Optimize by looping over the child nodes,

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Xsl;
 using Microsoft.Build.Framework;
 using Task = Microsoft.Build.Utilities.Task;
 
@@ -143,8 +143,6 @@ namespace FwBuildTasks
 		/// The path where we expect to store a temporary form of the .PO file for a particular locale,
 		/// such as Output/es.xml.
 		/// </summary>
-		/// <param name="p"></param>
-		/// <returns></returns>
 		internal string XmlPoFilePath(string locale)
 		{
 			return Path.Combine(OutputFolder, Path.ChangeExtension(locale, ".xml"));
@@ -168,16 +166,15 @@ namespace FwBuildTasks
 			Log.LogMessage(MessageImportance.Low, "{0} .po files found.", poFiles.Length);
 
 			// Prepare to get responses from processing each .po file
-			bool buildFailed = false;
 			m_localizers = new Localizer[poFiles.Length];
 
+			Log.LogMessage(MessageImportance.Normal, "Generating localization assemblies...");
 			// Main loop for each language:
 			Parallel.ForEach(poFiles, currentFile =>
 			{
 				// Process current .po file:
 				var localizer = new Localizer(currentFile, this);
-				if (!localizer.ProcessFile())
-					buildFailed = true;
+				localizer.ProcessFile();
 
 				// Slot current localizer into array at index matching current language.
 				// This allows us to output any errors in a coherent manner.
@@ -187,6 +184,7 @@ namespace FwBuildTasks
 			}
 			);
 
+			bool buildFailed = false;
 			// Output all processing results to console:
 			for (int i = 0; i < poFiles.Length; i++)
 			{
@@ -197,7 +195,7 @@ namespace FwBuildTasks
 				}
 				else
 				{
-					foreach (var message in m_localizers[i].Errors)
+					foreach (string message in m_localizers[i].Errors)
 					{
 						LogError(message);
 						buildFailed = true;  // an error was reported, e.g., from Assembly Linker, that we didn't manage to make cause a return false.
@@ -208,6 +206,8 @@ namespace FwBuildTasks
 			// Decide if we succeeded or not:
 			if (buildFailed)
 				LogError("STOPPING BUILD - at least one localization build failed.");
+			else
+				Log.LogMessage(MessageImportance.Normal, "Finished generating localization assemblies.");
 
 			return !buildFailed;
 		}
@@ -215,7 +215,7 @@ namespace FwBuildTasks
 		// overridden in tests to trap errors.
 		internal virtual void LogError(string message)
 		{
-			Log.LogMessage(MessageImportance.High, message);
+			Log.LogError(message);
 		}
 
 		/// <summary>
@@ -235,12 +235,12 @@ namespace FwBuildTasks
 			return result;
 		}
 
-		internal virtual bool RunResGen(string outputResourcePath, string localizedResxPath, string originalResxFolder)
+		internal virtual void RunResGen(string outputResourcePath, string localizedResxPath, string originalResxFolder)
 		{
 			using (var resgenProc = new Process())
 			{
 				resgenProc.StartInfo.UseShellExecute = false;
-				resgenProc.StartInfo.RedirectStandardOutput = false;
+				resgenProc.StartInfo.RedirectStandardOutput = true;
 				if (Environment.OSVersion.Platform == PlatformID.Unix)
 				{
 					resgenProc.StartInfo.FileName = "resgen";
@@ -250,7 +250,7 @@ namespace FwBuildTasks
 				{
 					resgenProc.StartInfo.FileName = "resgen.exe";
 					// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
-					var clrFolder = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+					var clrFolder = RuntimeEnvironment.GetRuntimeDirectory();
 					string drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
 					string formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
 					resgenProc.StartInfo.Arguments = Quote(localizedResxPath) + " " + Quote(outputResourcePath) + " /r:" + Quote(drawingPath) + " /r:" + Quote(formsPath);
@@ -260,23 +260,18 @@ namespace FwBuildTasks
 				resgenProc.StartInfo.WorkingDirectory = originalResxFolder;
 				resgenProc.Start();
 
-				//log += resgenProc.StandardOutput.ReadToEnd() + Environment.NewLine;
-
 				// This loop is needed to work around what seems to be a race condition in Mono
 				do
+				{
+					resgenProc.StandardOutput.ReadToEnd();
 					resgenProc.WaitForExit();
-				while (!resgenProc.HasExited);
+				} while (!resgenProc.HasExited);
 
 				if (resgenProc.ExitCode != 0)
 				{
-					LogError("Error: resgen returned error " + resgenProc.ExitCode +
-						" for " + localizedResxPath + "."
-						+ "\n  Full command line was \n     "
-						+ resgenProc.StartInfo.FileName + " " + resgenProc.StartInfo.Arguments);
-					return false;
+					throw new ApplicationException("Resgen returned error " + resgenProc.ExitCode + " for " + localizedResxPath + ".");
 				}
 			}
-			return true;
 		}
 
 		string Quote(string input)
@@ -293,8 +288,7 @@ namespace FwBuildTasks
 		/// <param name="productVersion"></param>
 		/// <param name="version"></param>
 		/// <param name="resources"></param>
-		/// <returns>true unless an error occurs. (Not currently used).</returns>
-		internal virtual bool RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources )
+		internal virtual void RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources )
 		{
 			// Run assembly linker with the specified arguments
 			Directory.CreateDirectory(Path.GetDirectoryName(outputDllPath)); // make sure the directory in which we want to make it exists.
@@ -309,19 +303,13 @@ namespace FwBuildTasks
 				alProc.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
 				alProc.Start();
 
-				//log += resgenProc.StandardOutput.ReadToEnd() + Environment.NewLine;
-
+				alProc.StandardOutput.ReadToEnd();
 				alProc.WaitForExit();
 				if (alProc.ExitCode != 0)
 				{
-					LogError("Error: assembly linker returned error " + alProc.ExitCode +
-						" for " + outputDllPath + "."
-							  + "\n  Full command line was \n     "
-						+ alProc.StartInfo.FileName + " " + alProc.StartInfo.Arguments);
-					return false;
+					throw new ApplicationException("Assembly linker returned error " + alProc.ExitCode + " for " + outputDllPath + ".");
 				}
 			}
-			return true;
 		}
 
 		internal string BuildLinkerArgs(string outputDllPath, string culture, string fileversion, string productVersion,
@@ -376,16 +364,16 @@ namespace FwBuildTasks
 	{
 		public Localizer(string currentFile, LocalizeFieldWorks parent)
 		{
-			ParentTask = parent;
-			RootDirectory = ParentTask.RootDirectory;
+			m_parentTask = parent;
+			RootDirectory = m_parentTask.RootDirectory;
 			CurrentFile = currentFile;
 			var currentFileName = Path.GetFileName(currentFile);
 			Locale = currentFileName.Substring(LocalizeFieldWorks.PoFileLeadIn.Length,
 				currentFileName.Length - LocalizeFieldWorks.PoFileLeadIn.Length - LocalizeFieldWorks.PoFileExtension.Length);
 			try
 			{
-				var x = new System.Globalization.CultureInfo(Locale);
-				LocaleIsSupported = x != null;
+				var x = new CultureInfo(Locale);
+				LocaleIsSupported = true;
 			}
 			catch
 			{
@@ -394,7 +382,7 @@ namespace FwBuildTasks
 			}
 		}
 
-		private LocalizeFieldWorks ParentTask;
+		private readonly LocalizeFieldWorks m_parentTask;
 
 		public List<string> Errors = new List<string>();
 
@@ -409,25 +397,18 @@ namespace FwBuildTasks
 		private string FileVersion { get; set; }
 		private string InformationVersion { get; set; }
 
-		TimeSpan m_xsltTime;
-		TimeSpan m_setupTime;
-		TimeSpan m_resgenTime;
-		TimeSpan m_alTime;
-
 		internal virtual void LogError(string message)
 		{
-			Errors.Add(message);
+			lock (Errors)
+				Errors.Add(message);
 		}
 
-		public bool ProcessFile()
+		public void ProcessFile()
 		{
 			try
 			{
-				DateTime dtStart = DateTime.Now;
-				if (ParentTask.Log != null)
-					ParentTask.Log.LogMessage(MessageImportance.Normal, "LocalizeFieldWorks: Processing localization for {0}", Locale);
 				if (!CheckForPoFileProblems())
-					return false;
+					return;
 
 				CreateStringsXml();
 
@@ -435,8 +416,9 @@ namespace FwBuildTasks
 
 				List<string> projectFolders;
 				if (!GetProjectFolders(out projectFolders))
-					return false;
-				var reader = new StreamReader(ParentTask.AssemblyInfoPath, Encoding.UTF8);
+					return;
+
+				var reader = new StreamReader(m_parentTask.AssemblyInfoPath, Encoding.UTF8);
 				while (!reader.EndOfStream)
 				{
 					string line = reader.ReadLine();
@@ -457,87 +439,73 @@ namespace FwBuildTasks
 				if (string.IsNullOrEmpty(Version))
 					Version = FileVersion;
 
-				m_setupTime += DateTime.Now - dtStart;
 				Parallel.ForEach(projectFolders, ProcessProject);
-
-				if (ParentTask.Log != null)
-				{
-					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: setup for {0} took {1}", Locale, m_setupTime);
-					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: processing XSLT for {0} took {1} for {2} projects", Locale, m_xsltTime, projectFolders.Count);
-					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: resgen for {0} took {1}", Locale, m_resgenTime);
-					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: al for {0} took {1}", Locale, m_alTime);
-				}
-				return true;
 			}
 			catch (Exception ex)
 			{
 				LogError(String.Format("Caught exception processing {0}: {1}", Locale, ex.Message));
-				//LogError(ex.StackTrace);
-				return false;
 			}
 		}
 
 		string ExtractVersion(string line)
 		{
-			int start = line.IndexOf("\"");
-			int end = line.LastIndexOf("\"");
+			int start = line.IndexOf("\"", StringComparison.Ordinal);
+			int end = line.LastIndexOf("\"", StringComparison.Ordinal);
 			return line.Substring(start + 1, end - start - 1);
 		}
 
 		private void ProcessProject(string projectFolder)
 		{
+			var resxFiles = Directory.GetFiles(projectFolder, "*.resx").ToList();
+			// include child folders, one level down, which do not have their own .csproj.
+			foreach (var childFolder in Directory.GetDirectories(projectFolder))
+			{
+				if (Directory.GetFiles(childFolder, "*.csproj").Any())
+					continue;
+				resxFiles.AddRange(Directory.GetFiles(childFolder, "*.resx"));
+			}
+			if (resxFiles.Count == 0)
+				return; // nothing to localize; in particular we should NOT call al with no inputs.
+			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
+			XDocument doc = XDocument.Load(projectFile);
+			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
+			string rootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value;
+			string assemblyName = doc.Descendants(ns + "AssemblyName").First().Value;
+			var embedResources = new List<EmbedInfo>();
+			foreach (string resxFile in resxFiles)
+			{
+				string localizedResxPath = LocalizeResx(resxFile, rootNameSpace, projectFolder);
+				string localizedResourcePath = Path.ChangeExtension(localizedResxPath, ".resources");
+				try
+				{
+					m_parentTask.RunResGen(localizedResourcePath, localizedResxPath, Path.GetDirectoryName(resxFile));
+					embedResources.Add(new EmbedInfo(localizedResourcePath, Path.GetFileName(localizedResourcePath)));
+				}
+				catch (Exception ex)
+				{
+					LogError(String.Format("Error occurred while processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
+				}
+			}
+			var resourceFileName = assemblyName + ".resources.dll";
+			var mainDllFolder = Path.Combine(m_parentTask.OutputFolder, m_parentTask.Config);
+			var localDllFolder = Path.Combine(mainDllFolder, Locale);
+			string resourceDll = Path.Combine(localDllFolder, resourceFileName);
+			string culture = LocaleIsSupported ? Locale : String.Empty;
 			try
 			{
-				DateTime dtStart = DateTime.Now;
-				var resxFiles = Directory.GetFiles(projectFolder, "*.resx").ToList();
-				// include child folders, one level down, which do not have their own .csproj.
-				foreach (var childFolder in Directory.GetDirectories(projectFolder))
-				{
-					if (Directory.GetFiles(childFolder, "*.csproj").Count() > 0)
-						continue;
-					resxFiles.AddRange(Directory.GetFiles(childFolder, "*.resx"));
-				}
-				if (resxFiles.Count == 0)
-					return; // nothing to localize; in particular we should NOT call al with no inputs.
-				var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
-				XDocument doc = XDocument.Load(projectFile);
-				XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
-				string rootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value;
-				string assemblyName = doc.Descendants(ns + "AssemblyName").First().Value;
-				var embedResources = new List<EmbedInfo>();
-				m_setupTime += DateTime.Now - dtStart;
-				foreach (var resxFile in resxFiles)
-				{
-					string localizedResxPath = LocalizeResx(resxFile, rootNameSpace, projectFolder);
-					DateTime dtStartRes = DateTime.Now;
-					string localizedResourcePath = Path.ChangeExtension(localizedResxPath, ".resources");
-					ParentTask.RunResGen(localizedResourcePath, localizedResxPath, Path.GetDirectoryName(resxFile));
-					embedResources.Add(new EmbedInfo(localizedResourcePath, Path.GetFileName(localizedResourcePath)));
-					m_resgenTime += DateTime.Now - dtStartRes;
-				}
-				DateTime dtStartAl = DateTime.Now;
-				var resourceFileName = assemblyName + ".resources.dll";
-				var mainDllFolder = Path.Combine(ParentTask.OutputFolder, ParentTask.Config);
-				var localDllFolder = Path.Combine(mainDllFolder, Locale);
-				string resourceDll = Path.Combine(localDllFolder, resourceFileName);
-				string culture = LocaleIsSupported ? Locale : String.Empty;
-
-				ParentTask.RunAssemblyLinker(resourceDll, culture, FileVersion, InformationVersion, Version, embedResources);
-				m_alTime += DateTime.Now - dtStartAl;
+				m_parentTask.RunAssemblyLinker(resourceDll, culture, FileVersion, InformationVersion, Version, embedResources);
 			}
 			catch (Exception ex)
 			{
-				LogError(String.Format("Caught exception processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
-				//LogError(ex.StackTrace);
-				throw;
+				LogError(String.Format("Error occurred while processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
 			}
 		}
 
 		private string LocalizeResx(string resxPath, string rootNamespace, string projectFolder)
 		{
-			string partialDir = Path.GetDirectoryName(resxPath.Substring(ParentTask.SrcFolder.Length));
-			string projectPartialDir = projectFolder.Substring(ParentTask.SrcFolder.Length);
-			string outputFolder = Path.Combine(ParentTask.OutputFolder, Locale) + partialDir;
+			string partialDir = Path.GetDirectoryName(resxPath.Substring(m_parentTask.SrcFolder.Length));
+			string projectPartialDir = projectFolder.Substring(m_parentTask.SrcFolder.Length);
+			string outputFolder = Path.Combine(m_parentTask.OutputFolder, Locale) + partialDir;
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
 			// This is the relative path from the project folder to the resx file folder.
 			// It needs to go into the file name if not empty, but with a dot instead of folder separator.
@@ -546,24 +514,22 @@ namespace FwBuildTasks
 				subFolder = Path.GetFileName(partialDir) + ".";
 			string fileName = rootNamespace + "." + subFolder + resxFileName + "." + Locale + ".resx";
 			Directory.CreateDirectory(outputFolder);
-			var stylesheet = Path.Combine(ParentTask.RealBldFolder, "LocalizeResx.xsl");
+			var stylesheet = Path.Combine(m_parentTask.RealBldFolder, "LocalizeResx.xsl");
 			var localizedResxPath = Path.Combine(outputFolder, fileName);
-			DateTime dtStart = DateTime.Now;
 			var parameters = new List<BuildUtils.XsltParam>();
-			parameters.Add(new BuildUtils.XsltParam() { Name = "lang", Value = Locale });
+			parameters.Add(new BuildUtils.XsltParam { Name = "lang", Value = Locale });
 			// The output directory that the transform wants is not the one where it will write the file, but the base
 			// Output directory, where it expects to find that we have written the XML version of the PO file, [locale].xml.
-			parameters.Add(new BuildUtils.XsltParam() { Name = "outputdir", Value = ParentTask.OutputFolder });
+			parameters.Add(new BuildUtils.XsltParam { Name = "outputdir", Value = m_parentTask.OutputFolder });
 			//parameters.Add(new XsltParam() { Name = "verbose", Value = "true" });
 			BuildUtils.ApplyXslt(stylesheet, resxPath, localizedResxPath, parameters);
-			m_xsltTime += DateTime.Now - dtStart;
 			return localizedResxPath;
 		}
 
 
 		internal bool GetProjectFolders(out List<string> projectFolders)
 		{
-			var root = ParentTask.SrcFolder;
+			var root = m_parentTask.SrcFolder;
 			projectFolders = new List<string>();
 			if (!CollectInterestingProjects(root, projectFolders))
 				return false;
@@ -594,7 +560,7 @@ namespace FwBuildTasks
 			var projectFiles = Directory.GetFiles(root, "*.csproj");
 			if (projectFiles.Count() > 1)
 			{
-				Errors.Add("Error: folder " + root + " has multiple .csproj files.");
+				LogError("Error: folder " + root + " has multiple .csproj files.");
 				return false;
 			}
 			if (projectFiles.Count() == 1)
@@ -604,8 +570,8 @@ namespace FwBuildTasks
 
 		private void CreateStringsXml()
 		{
-			var input = ParentTask.StringsEnPath;
-			var output = ParentTask.StringsXmlPath(Locale);
+			var input = m_parentTask.StringsEnPath;
+			var output = m_parentTask.StringsXmlPath(Locale);
 			StoreLocalizedStrings(input, output);
 		}
 
@@ -642,7 +608,7 @@ namespace FwBuildTasks
 		{
 			if (xel.Name == "string")
 			{
-				POString pos = null;
+				POString pos;
 				string sEnglish = xel.GetAttribute("txt");
 				if (dictTrans.TryGetValue(sEnglish, out pos))
 				{
@@ -806,9 +772,9 @@ namespace FwBuildTasks
 
 		void CreateXmlMappingFromPo()
 		{
-			var output = ParentTask.XmlPoFilePath(Locale);
+			var output = m_parentTask.XmlPoFilePath(Locale);
 			Directory.CreateDirectory(Path.GetDirectoryName(output));
-			var converter = new Po2XmlConverter() { PoFilePath = CurrentFile, XmlFilePath = output };
+			var converter = new Po2XmlConverter { PoFilePath = CurrentFile, XmlFilePath = output };
 			converter.Run();
 		}
 
@@ -950,7 +916,7 @@ namespace FwBuildTasks
 		/// </summary>
 		internal virtual string RealFwRoot
 		{
-			get { return ParentTask.RealFwRoot; }
+			get { return m_parentTask.RealFwRoot; }
 		}
 	}
 }

@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2299,6 +2303,8 @@ namespace SIL.FieldWorks.Discourse
 			return FindCellPartInColumn(cell) == null;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripSeparator gets added to menu and disposed there")]
 		public ContextMenuStrip MakeCellContextMenu(ChartLocation clickedCell)
 		{
 			var irow = clickedCell.Row.IndexInOwner;

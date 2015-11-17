@@ -23,7 +23,8 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureSetUp]
 		public new void FixtureSetup()
 		{
-			Init();
+			// Init() is called from XWorksAppTestBase's TestFixtureSetup, so we won't call it here.
+
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if(Directory.Exists(testProjPath))
 				Directory.Delete(testProjPath, true);
@@ -511,10 +512,23 @@ namespace SIL.FieldWorks.XWorks
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			m_mediator.Dispose();
+
+			if (m_window != null)
+				m_window.Dispose();
+
+			if (m_application != null)
+				m_application.Dispose();
+
+			if (m_mediator != null)
+				m_mediator.Dispose();
+
+			m_application = null;
+			m_window = null;
+			m_mediator = null;
 		}
 		#endregion
 	}

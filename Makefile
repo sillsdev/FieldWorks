@@ -227,14 +227,12 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
-	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Create temporary symlinks for shared Icu libs on Dictionary branch
 	ln -sf $(DESTDIR)/usr/lib/fieldworks/libicuuc.so.54.1 $(DESTDIR)/usr/lib/fieldworks/libicuuc.so.50
@@ -267,18 +265,13 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	done
 	# Handle the Converter files
 	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
-	# Remove geckofx DLLs since those are shipped in a separate package
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll.config
-	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Winforms.dll
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
-	case $(ARCH) in i686) SUFFIX=x86_64;; x86_64) SUFFIX=x86;; esac; \
-	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}_$$SUFFIX.so
-	case $(ARCH) in i686) OTHERSUFFIX=_64;; x86_64) OTHERSUFFIX=;; esac; \
-	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}$$OTHERSUFFIX.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
+	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
 

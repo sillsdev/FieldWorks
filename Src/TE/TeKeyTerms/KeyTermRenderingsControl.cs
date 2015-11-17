@@ -24,6 +24,7 @@ using SIL.FieldWorks.TE.TeEditorialChecks;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -301,6 +302,8 @@ namespace SIL.FieldWorks.TE
 		/// Handles the ColumnHeaderMouseClick event of the m_dataGridView control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "column is a reference")]
 		private void m_dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left)

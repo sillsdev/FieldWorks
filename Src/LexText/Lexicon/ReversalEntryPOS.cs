@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -10,6 +14,7 @@ using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -43,6 +48,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMoveReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -122,6 +129,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMergeReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -173,6 +182,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteReversalSubPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -185,6 +196,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; //we've handled this
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice and cache are references")]
 		public bool OnPromoteReversalSubPOS(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;

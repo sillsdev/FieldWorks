@@ -51,6 +51,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="otherControls">A TableLayoutPanel that contains the controls to show
 		/// as labels and buttons above and below the current and revision views.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Control is a reference")]
 		public DiffViewWrapper(string name, Control parent, FdoCache cache,
 			IVwStylesheet styleSheet, DiffViewScrProxy currentDraft, DiffViewScrProxy revisionDraft,
 			DiffViewFootnoteProxy currentFootnote, DiffViewFootnoteProxy revisionFootnote,

@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class ExportDialogTests : BaseTest
 	{
+		#region SemanticDomainXml
 		/// <summary>
 		/// The XML representation of a (tiny) subset of the Semantic Domains list.
 		/// </summary>
@@ -455,6 +456,7 @@ namespace SIL.FieldWorks.XWorks
 			"    </CmPossibilityList>" + Environment.NewLine +
 			"  </SemanticDomainList>" + Environment.NewLine +
 			"</LangProject>" + Environment.NewLine;
+		#endregion SemanticDomainXml
 
 		private FdoCache m_cache;
 
@@ -467,7 +469,7 @@ namespace SIL.FieldWorks.XWorks
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
@@ -498,11 +500,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				exportDlg.SetCache(m_cache);
 				var tempPath = Path.GetTempFileName();
-				var fxt = new ExportDialog.FxtType();
-				fxt.m_sXsltFiles = "SemDomQs.xsl";
+				var fxt = new ExportDialog.FxtType { m_sXsltFiles = "SemDomQs.xsl" };
 				var fxtPath = Path.Combine(exportDlg.FxtDirectory, "SemDomQs.xml");
-				var wss = new List<int>();
-				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en"));
+				var wss = new List<int> { m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en") };
 				exportDlg.SetTranslationWritingSystems(wss);
 
 				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
@@ -556,12 +556,9 @@ namespace SIL.FieldWorks.XWorks
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList>();
-			lists.Add(m_cache.LangProject.SemanticDomainListOA);
-			List<int> wses = new List<int>();
-			wses.Add(wsFr);
-			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(
-				lists, wses, null);
+			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			List<int> wses = new List<int> { wsFr };
+			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
 			using (StringWriter w = new StringWriter())
 			{
 				exporter.ExportTranslatedLists(w);
@@ -569,7 +566,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					Assert.IsTrue(r.ReadLine().StartsWith("<Lists date=\""));
+					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
@@ -1077,15 +1074,12 @@ namespace SIL.FieldWorks.XWorks
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList>();
-			lists.Add(m_cache.LangProject.SemanticDomainListOA);
-			List<int> wses = new List<int>();
-			wses.Add(wsFr);
+			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			List<int> wses = new List<int> { wsFr };
 			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(
 				lists, wses, null);
 
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-				"Undo test", "Redo test"))
+			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Undo test", "Redo test"))
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
 				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
@@ -1110,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks
 				using (var r = new StringReader(translatedList))
 				{
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					Assert.IsTrue(r.ReadLine().StartsWith("<Lists date=\""));
+					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());

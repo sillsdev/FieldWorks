@@ -1,9 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
-// </copyright>
-#endregion
+// Copyright (c) 2010-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File:
 // Authorship History:

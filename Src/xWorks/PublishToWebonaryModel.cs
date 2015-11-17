@@ -94,6 +94,8 @@ namespace SIL.FieldWorks.XWorks
 			return decryptMe;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "projectSettings is a reference")]
 		private void LoadFromSettings()
 		{
 			if(!string.IsNullOrEmpty(Settings.Default.WebonaryPass))
@@ -112,6 +114,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "projectSettings is a reference")]
 		internal void SaveToSettings()
 		{
 			Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;

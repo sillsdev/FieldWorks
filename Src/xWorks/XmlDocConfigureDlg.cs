@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,6 +22,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -75,6 +76,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopicID; // should we store the helpID or the configObject
 		bool m_fDeleteCustomFiles;
 		string m_configObjectName;
+		string m_configNotLocalizedObjectName;
 		/// <summary>
 		/// Store nodes that need to be persisted as part of a new copy of a whole layout,
 		/// but which don't directly (or indirectly) appear in configuration.
@@ -203,6 +205,9 @@ namespace SIL.FieldWorks.XWorks
 			m_tbBefore.GotFocus += m_tbBefore_GotFocus;
 			m_tbBetween.GotFocus += m_tbBetween_GotFocus;
 			m_tbAfter.GotFocus += m_tbAfter_GotFocus;
+			m_tbBefore.TextChanged += m_tb_TextChanged;
+			m_tbBetween.TextChanged += m_tb_TextChanged;
+			m_tbAfter.TextChanged += m_tb_TextChanged;
 
 			m_unspecComplexFormType = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType();
 			m_unspecVariantType = XmlViewsUtils.GetGuidForUnspecifiedVariantType();
@@ -266,6 +271,8 @@ namespace SIL.FieldWorks.XWorks
 			m_parts = Inventory.GetInventory("parts", cache.ProjectId.Name);
 			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_stringTbl,
 				configurationParameters, "configureObjectName", "");
+			m_configNotLocalizedObjectName = XmlUtils.GetOptionalAttributeValue(
+				configurationParameters, "configureObjectName", "");
 			Text = String.Format(Text, m_configObjectName);
 			m_defaultRootLayoutName = XmlUtils.GetAttributeValue(configurationParameters, "layout");
 			string sLayoutType = null;
@@ -297,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Make a help topic ID
-			m_helpTopicID = generateChooserHelpTopicID(m_configObjectName);
+			m_helpTopicID = generateChooserHelpTopicID(m_configNotLocalizedObjectName);
 
 			// Load the lists for the styles combo boxes.
 			SetStylesLists();
@@ -735,6 +742,21 @@ namespace SIL.FieldWorks.XWorks
 		void m_tbAfter_GotFocus(object sender, EventArgs e)
 		{
 			m_tbAfter.Select(m_tbAfter.Text.Length, 0);
+		}
+
+		/// <summary>
+		/// Certain characters are not allowed in XML, even escaped, including 0x0 through 0x1F. Prevent these characters from being entered.
+		/// (actually, tabs and linebreaks are in that range and legal, but they cause other problems, so we remove them, too)
+		/// </summary>
+		static void m_tb_TextChanged(object sender, EventArgs e)
+		{
+			const string illegalChars = "[\u0000-\u001F]";
+			var tb = (TextBox)sender;
+			if (Regex.IsMatch(tb.Text, illegalChars))
+			{
+				tb.Text = Regex.Replace(tb.Text, illegalChars, string.Empty);
+				MessageBox.Show(xWorksStrings.ksIllegalXmlChars, xWorksStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private void m_cbDictType_SelectedIndexChanged(object sender, EventArgs e)
@@ -4520,6 +4542,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CopyAndRenameLayout(string className, string layoutName, string suffixCode)
 		{
 			var xnLayout = m_layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });

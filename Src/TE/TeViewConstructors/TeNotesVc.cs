@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.Utils.ComTypes;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -91,6 +92,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "img is a reference")]
 		public TeNotesVc(FdoCache cache) : base(LayoutViewTarget.targetDraft, -1)
 		{
 			m_cache = cache;
@@ -131,6 +134,8 @@ namespace SIL.FieldWorks.TE
 		/// Creates the chooser image.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "img is a reference")]
 		private IPicture GetChooserImage()
 		{
 			Image img = ResourceHelper.ChooserButton;
@@ -1134,6 +1139,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="frag">Always NotesFrags.kfrStatus</param>
 		/// <returns>A picture representing the status</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "img is a reference")]
 		public override IPicture DisplayPicture(IVwEnv vwenv, int hvo, int tag, int val, int frag)
 		{
 			Debug.Assert(frag == (int)NotesFrags.kfrStatus);

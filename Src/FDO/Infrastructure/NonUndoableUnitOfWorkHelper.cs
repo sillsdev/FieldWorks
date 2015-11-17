@@ -76,6 +76,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// the existing UOW.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "uowService is a reference")]
 		public static void DoUsingNewOrCurrentUOW(IActionHandler actionHandler, Action task)
 		{
 			var uowService = ((UndoStack)actionHandler).UowService;
@@ -92,6 +94,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// on an end user machine quietly do nothing; but Debug.Fail so developers are warned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "uowService is a reference")]
 		public static void DoUsingNewOrCurrentUowOrSkip(IActionHandler actionHandler, string debugMsg, Action task)
 		{
 			var uowService = ((UndoStack)actionHandler).UowService;
@@ -173,6 +177,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// Does anything needing to be done after ending the undo task (rolling back or not).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "uowService is a reference")]
 		protected override void DoStuffAfterEndingTask()
 		{
 			UnitOfWorkService uowService = ((UndoStack)m_actionHandler).UowService;

@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IFwMetaDataCacheTests.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +17,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 	/// <summary>
 	/// Base class for all MDC tests. (I store the MDC in a data member for ease of access.)
 	/// </summary>
-	public class FieldTestBase : MemoryOnlyBackendProviderBasicTestBase
+	public class FieldTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		/// <summary>
 		/// The MDC.

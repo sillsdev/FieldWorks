@@ -176,6 +176,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\LibChorus.dll</HintPath>
     </Reference>
+    <Reference Include="ManagedLgIcuCollator, Version=8.2.0.13232, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+    </Reference>
     <Reference Include="MessageBoxExLib">
       <Name>MessageBoxExLib</Name>
       <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
@@ -217,9 +221,13 @@
       <Name>Sfm2Xml</Name>
       <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -430,6 +438,7 @@
     <Compile Include="ReversalEntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ReversalEntryGoSearchEngine.cs" />
     <Compile Include="ReversalEntryPOS.cs" />
     <Compile Include="ReversalIndexEntryChangeHandler.cs">
       <SubType>Code</SubType>
@@ -449,6 +458,7 @@
     <Compile Include="RoledParticipantsSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SortReversalSubEntries.cs" />
     <Compile Include="SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>

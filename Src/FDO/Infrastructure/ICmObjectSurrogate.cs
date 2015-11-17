@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Xml.Linq;
 
@@ -88,6 +92,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// This gets the full XML string of the object from the BEP.
 		/// </summary>
 		ICmObjectSurrogate Create(string xmlData);
+
+		/// <summary>
+		/// Create a surrogate from the data store.
+		/// This gets the full XML string of the object from the BEP.
+		/// </summary>
+		ICmObjectSurrogate Create(byte[] xmlData);
 
 		/// <summary>
 		/// Create a surrogate from the data store.

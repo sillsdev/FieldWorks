@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,6 +10,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -163,6 +168,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void PrintAnalysesInfo(List<IAnalysis> analyses)
 		{
 			if (analyses != null && analyses.Count > 0)
@@ -237,6 +244,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_changedFontOnly = true; // a flag to let later adjustment ops remember this
 			}
 		}
+
+		/// <summary>for tests</summary>
+		internal AnalysisAdjuster() {}
 		#endregion
 
 		#region Public methods
@@ -245,8 +255,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public static void AdjustAnalysis(IStTxtPara para, ITsString oldContents)
 		{
-			int ichFirstDiff, cchInsert, cchDeleteFromOld;
-			TsStringDiffInfo diffInfo = TsStringUtils.GetDiffsInTsStrings(oldContents, para.Contents);
+			var diffInfo = TsStringUtils.GetDiffsInTsStrings(oldContents, para.Contents);
 			if (diffInfo != null)
 				AdjustAnalysis(para, oldContents, diffInfo);
 		}
@@ -519,13 +528,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var iar in m_oldParaRefs)
 			{
 				var endSeg = iar.EndRef().Segment;
+				var begSeg = iar.BegRef().Segment;
+				if(begSeg == null || endSeg == null)
+				{
+					var logString = String.Format("Found a corrupt IAnalysisReference when trying to update and adjust. Removed the reference with GUID {0}",
+						iar.Guid);
+					// This data is corrupt, rather than crashing delete the ref
+					Logger.WriteEvent(logString);
+					refsToDelete.Add(iar);
+					continue;
+				}
 				var iend = iar.EndRef().Index;
 				var iendSeg = endSeg.IndexInOwner;
 				if (iendSeg < m_iSegFirstModified ||
 					(iendSeg == m_iSegFirstModified && iend < m_iFirstAnalysisToFix))
 						continue; // The whole IAnalysisReference is before the change, so no change.
 				var ifirstAnalysisInSegToFix = 0;
-				var begSeg = iar.BegRef().Segment;
 				var ibeg = iar.BegRef().Index;
 				var ibegSeg = begSeg.IndexInOwner;
 				if (ibegSeg > m_iNewSegLastModified)
@@ -739,6 +757,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Make a first pass in which we delete any segment entirely contained in the deleted text.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void DiscardDeletedSegments()
 		{
 			int firstDeleted = -1; //marks the index into the paragraph(m_para) segments of the first segment which is deleted
@@ -1014,23 +1034,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (annObjectsToCheck == null)
 				return null; // none to remove.
 			List<IAnalysisReference> result;
-			result = annObjectsToCheck.Where(segmentIsOutsideOfRange).ToList();
+			result = annObjectsToCheck.Where(SegmentIsOutsideOfRange).ToList();
 			if (result.Count > 0)
 				foreach (var iar in result)
 					annObjectsToCheck.Remove(iar);
 			return annObjectsToCheck;
 		}
 
-		private bool segmentIsOutsideOfRange(IAnalysisReference refObj)
+		internal bool SegmentIsOutsideOfRange(IAnalysisReference refObj)
 		{
-			ISegment seg = null;
+			ISegment endSeg = null, begSeg = null;
 			var endRef = refObj.EndRef();
 			if (endRef != null) // added for LT-13414 - one segment had a null endRef
-				seg = refObj.EndRef().Segment;
-			return seg != null && (seg.IndexInOwner < m_iSegFirstModified || refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified);
+				endSeg = refObj.EndRef().Segment;
+			var begRef = refObj.BegRef();
+			if (begRef != null) // added for LT-16136 - one segment had a null begRef
+				begSeg = refObj.BegRef().Segment;
+			return endSeg != null && begSeg != null
+				&& (endSeg.IndexInOwner < m_iSegFirstModified || begSeg.IndexInOwner > m_iOldSegLastModified);
 		}
 
 		// Compute segment offsets as required for new paragraph contents.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void ComputeRequiredBeginOffsets()
 		{
 			List<TsStringSegment> segs = m_para.Contents.GetSegments(m_para.Cache.WritingSystemFactory);
@@ -1295,6 +1321,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newAnalyses;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private int GetFirstVernacularWs(ITsString token)
 		{
 			return TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, token);

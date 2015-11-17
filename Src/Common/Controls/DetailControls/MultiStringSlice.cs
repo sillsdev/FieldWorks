@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
@@ -14,6 +18,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -22,6 +27,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class MultiStringSlice : ViewPropertySlice
 	{
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "LabaledMultiStringView gets added to the Controls collection and disposed there")]
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			var view = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);

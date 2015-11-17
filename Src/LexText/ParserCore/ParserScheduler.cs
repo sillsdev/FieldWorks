@@ -196,6 +196,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void DisposeManagedResources()
 		{
+			m_thread.Stop();
 			m_thread.Dispose();
 
 			if (m_parserWorker != null)
@@ -298,7 +299,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void HandleTaskUpdate(TaskReport task)
 		{
-			CheckDisposed();
+			if (IsDisposed)
+				return;
 
 			if (ParserUpdateNormal != null && ((task.Depth == 0) || (task.NotificationMessage != null)))
 			{

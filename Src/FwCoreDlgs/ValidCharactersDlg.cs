@@ -716,6 +716,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsName">The name of the writing system for which this dialog is setting
 		/// the valid characters. Can not be <c>null</c> or <c>String.Empty</c>.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gridcol is a reference")]
 		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
 			IHelpTopicProvider helpTopicProvider, IApp app, IWritingSystem ws, string wsName) : this()
 		{
@@ -1612,6 +1614,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.DataGridViewCellFormattingEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cell is a reference")]
 		private void gridCharInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			DataGridViewCell cell = gridCharInventory[e.ColumnIndex, e.RowIndex];

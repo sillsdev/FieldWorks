@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -95,6 +96,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "tv is a reference")]
 		public void PopulateTreeFromFeatureSystem()
 		{
 			// Set up sample data

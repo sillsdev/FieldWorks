@@ -45,6 +45,7 @@ namespace TestFwKernel
 			chrp.ws = g_wsEng;
 			chrp.ttvBold = kttvOff;
 			chrp.ttvItalic = kttvOff;
+			chrp.dympHeight = 0;
 
 			HDC hdc;
 #ifdef WIN32

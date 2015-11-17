@@ -1,8 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FilterSectionDialog.cs
 
 using System;
 using System.Collections.Generic;
@@ -32,7 +30,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private IEnumerable<IStText> m_textsToShow;
 		private IStText m_selectedText;
-		private bool m_fPruneToSelectedSections;
 
 		#region Constructor/Destructor
 		/// ------------------------------------------------------------------------------------
@@ -71,18 +68,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void UpdateButtonState()
 		{
 			m_btnOK.Enabled = true;
-		}
-
-		/// <summary>
-		/// Overridden to allow pruning after the checkmarks have been added to
-		/// indicate sections selected for interlinearization already.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			if (m_fPruneToSelectedSections)
-				PruneToRequestedSectionsAndSelect();
 		}
 
 		/// <summary>
@@ -131,26 +116,16 @@ namespace SIL.FieldWorks.Common.Controls
 		#region Public Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Save the information needed to prune the tree later.
+		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
+		/// Initially select the one specified (m_selectedText).
 		/// </summary>
 		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
 		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
 		/// ------------------------------------------------------------------------------------
 		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
 		{
-			m_fPruneToSelectedSections = true;
 			m_textsToShow = interestingTexts;
 			m_selectedText = selectedText;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
-		/// Initially select the one specified (m_selectedText).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void PruneToRequestedSectionsAndSelect()
-		{
 			// ToList() is absolutely necessary to keep from changing node collection while looping!
 			var unusedNodes = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
 			foreach (var treeNode in unusedNodes)

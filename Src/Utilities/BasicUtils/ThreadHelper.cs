@@ -8,6 +8,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -133,6 +134,8 @@ namespace SIL.Utils
 		/// active form is used. Any invoking that is required is handled.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		public static DialogResult ShowMessageBox(Form owner, string text, string caption,
 			MessageBoxButtons buttons, MessageBoxIcon icon)
 		{

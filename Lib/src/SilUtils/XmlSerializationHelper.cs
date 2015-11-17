@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -7,6 +11,7 @@ using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Xml;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -48,6 +53,8 @@ namespace SIL.Utils
 			/// will preserve and return elements that contain only whitespace, otherwise
 			/// these elements will be ignored during a deserialization.</param>
 			/// --------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="Hopefully the base class will dispose the StreamReader :-)")]
 			public XmlScrTextReader(string filename, bool fKeepWhitespaceInElements) :
 				base(new StreamReader(filename))
 			{

@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -101,6 +105,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "mediator is a reference")]
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
 			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities

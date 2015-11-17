@@ -26,6 +26,7 @@ M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>*::System
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeBelow>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<InOrderTraversal>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Boolean SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>c__Iterator0::MoveNext()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

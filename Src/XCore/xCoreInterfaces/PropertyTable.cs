@@ -856,6 +856,8 @@ namespace XCore
 		/// <summary>
 		/// Save general application settings
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Mediator.PropertyTable returns a reference")]
 		public void SaveGlobalSettings()
 		{
 			string dbprefix = m_mediator.PropertyTable.LocalSettingsId;
@@ -866,6 +868,8 @@ namespace XCore
 		/// <summary>
 		/// Save database specific settings.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Mediator.PropertyTable returns a reference")]
 		public void SaveLocalSettings()
 		{
 			string dbprefix = m_mediator.PropertyTable.LocalSettingsId;
@@ -876,6 +880,8 @@ namespace XCore
 		/// <summary>
 		/// Remove the settings files saved from PropertyTable.Save()
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Mediator.PropertyTable returns a reference")]
 		public void RemoveLocalAndGlobalSettings()
 		{
 			// first remove local settings file.

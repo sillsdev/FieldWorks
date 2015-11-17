@@ -23,12 +23,10 @@
 
 <xsl:template match="ReversalIndexEntry_ReversalForm">
   <xsl:copy>
-	<xsl:text>&#13;&#10;        </xsl:text>
 	<AUni>
 	  <xsl:attribute name="ws"><xsl:value-of select="AStr/@ws"/></xsl:attribute>
 	  <xsl:value-of select="AStr/Run"/>
 	</AUni>
-	<xsl:text>&#13;&#10;        </xsl:text>
   </xsl:copy>
 </xsl:template>
 
@@ -60,7 +58,6 @@
   <xsl:param name="AbbrNode"/>
   <xsl:param name="NameNode"/>
   <xsl:param name="AttrPrefix"/>
-	<xsl:text>&#13;&#10;            </xsl:text>
   <Link>
 	<xsl:for-each select="$AbbrNode/AStr">
 	  <xsl:variable name="wsAbbr">
@@ -96,7 +93,6 @@
 	  </xsl:if>
 	</xsl:for-each>
   </Link>
-	<xsl:text>&#13;&#10;        </xsl:text>
 </xsl:template>
 
 
@@ -186,7 +182,7 @@
 	</xsl:when>
 	<xsl:when test="preceding-sibling::LexEntry_LexemeForm[1]/MoForm and following-sibling::LexEntry_LexemeForm[1]/MoForm">
 	  <LexEntry_Headword>
-		<xsl:text>&#13;&#10;                        </xsl:text>
+		<xsl:text>&#10;                        </xsl:text>
 		  <xsl:if test="not(../LexEntry_LexemeForm/MoForm/MoForm_MorphType/MoMorphTypeLink/MoMorphType_Prefix/AUni='')">
 			<MorphTypePrefix>
 			  <xsl:copy-of select="../LexEntry_LexemeForm/MoForm/MoForm_MorphType/MoMorphTypeLink/MoMorphType_Prefix/AUni"/>
@@ -203,7 +199,7 @@
 			  <xsl:copy-of select="../LexEntry_LexemeForm/MoForm/MoForm_MorphType/MoMorphTypeLink/MoMorphType_Postfix/AUni"/>
 			</MorphTypePostfix>
 		  </xsl:if>
-		<xsl:text>&#13;&#10;                    </xsl:text>
+		<xsl:text>&#10;                    </xsl:text>
 	  </LexEntry_Headword>
 	</xsl:when>
 	<xsl:otherwise>
@@ -218,12 +214,18 @@
 <!-- change AStr/Run into AUni generically -->
 
 <xsl:template match="AStr">
-  <AUni><xsl:copy-of select="@*"/><xsl:value-of select="Run"/></AUni>
+  <AUni><xsl:copy-of select="@*"/><xsl:value-of select="Run"/><xsl:apply-templates select="Run[@namedStyle]"></xsl:apply-templates></AUni>
 </xsl:template>
 <xsl:template match="Str">
   <AUni><xsl:copy-of select="Run[1]/@ws"/><xsl:value-of select="Run"/></AUni>
 </xsl:template>
 
+<xsl:template match="Run[@namedStyle]">
+	<xsl:choose>
+		<xsl:when test="@namedStyle='Homograph-Number'"><RefHomographNumber><xsl:value-of select="normalize-space(text())"/></RefHomographNumber></xsl:when>
+		<xsl:when test="@namedStyle='Sense-Reference-Number'"><RefSenseNumber><xsl:value-of select="normalize-space(text())"/></RefSenseNumber></xsl:when>
+	</xsl:choose>
+</xsl:template>
 <!-- This is the basic default processing. -->
 
 <xsl:template match="*">
@@ -233,4 +235,5 @@
   </xsl:copy>
 </xsl:template>
 
+<xsl:template match="text()[normalize-space(.)='']"/>
 </xsl:stylesheet>

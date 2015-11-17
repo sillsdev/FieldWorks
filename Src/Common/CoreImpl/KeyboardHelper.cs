@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -11,6 +11,7 @@
 // --------------------------------------------------------------------------------------------
 #define DEBUGGINGDISPOSE
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -161,6 +162,8 @@ namespace SIL.CoreImpl
 		/// keyboard
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "KeyboardHelperObject returns a singleton")]
 		public static string ActiveKeymanKeyboard
 		{
 			get { return KeyboardHelperObject.ActiveKeymanKeyboard; }

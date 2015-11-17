@@ -121,7 +121,7 @@ public:
 		int cdx, int * prgdx, int * pdxStart);
 	HRESULT(DrawLine)(int nTwipsXStart, int nTwipsYStart, int nTwipsXEnd, int nTwipsYEnd);
 	HRESULT(DrawText)(int ixTwips, int iyTwips, int cch, const OLECHAR * prgch, int unused);
-	HRESULT DrawTextExt(int THIS, int  METHOD, int IS, const OLECHAR* NO, UINT LONGER, const RECT* IN, int* USE);
+	HRESULT(DrawGlyphs)(int x, int y, int cgi, const GlyphInfo* prggi);
 	HRESULT(GetTextExtent)(int cch, const OLECHAR * prgch, int *pnTwipsWidth, int *pnTwipsHeight);
 	HRESULT(GetTextLeadWidth)(int cch, const OLECHAR * prgch, int ich, int dxStretch,
 		int * pdx);
@@ -130,8 +130,7 @@ public:
 	HRESULT(GetGlyphMetrics)(int chw,
 		int * psBoundingWidth, int * pyBoundingHeight,
 		int * pxBoundingX, int * pyBoundingY, int * pxAdvanceX, int * pyAdvanceY);
-	HRESULT(GetFontData)(int nTableId, int * pcbTableSz, BSTR * pbstrTableData);
-	HRESULT(GetFontDataRgch)(int nTableId, int * pcbTableSz, OLECHAR * prgch, int cchMax);
+	HRESULT(GetFontData)(int nTableId, int * pcbTableSz, BYTE * prgb);
 	HRESULT(XYFromGlyphPoint)(int chw, int nPoint, int * pxRet, int * pyRet);
 	HRESULT(get_FontAscent)(int* pdy);
 	HRESULT(get_FontDescent)(int* pdy);

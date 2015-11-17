@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -15,11 +15,11 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.CoreImpl;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -168,11 +168,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// <param name="projectId"></param>
 		/// <param name="loadType"></param>
+		/// <param name="settings"></param>
 		/// <returns>a working FdoCache</returns>
-		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ThreadHelper gets disposed in FixtureTeardown")]
+		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType, FdoSettings settings)
 		{
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings, new DummyProgressDlg()) :
+				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings);
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;
@@ -234,14 +237,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	}
 	#endregion
 
-	#region MemoryOnlyBackendProviderBasicTestBase class
+	#region MemoryOnlyBackendProviderTestBase class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for testing the FdoCache with the FDOBackendProviderType.kMemoryOnly
 	/// backend provider where each test should start with a fresh system.
+	/// This class does *not* restore the data between test runs; derive from
+	/// MemoryOnlyBackendProviderRestoredForEachTestTestBase if that is desired.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderBasicTestBase : FdoTestBase
+	public abstract class MemoryOnlyBackendProviderTestBase : FdoTestBase
 	{
 		/// <summary>
 		/// Override to create and load a very basic cache.
@@ -251,7 +256,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Make a dummy random file so tests work correctly
 			string projectPath = Path.GetFullPath(Path.GetRandomFileName());
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, projectPath), BackendBulkLoadDomain.All);
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, projectPath), BackendBulkLoadDomain.All, new FdoSettings());
 		}
 
 		/// <summary>
@@ -325,20 +330,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	}
 	#endregion
 
-	#region MemoryOnlyBackendProviderTestBase class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Base class for testing the FdoCache with the FDOBackendProviderType.kMemoryOnly
-	/// backend provider. This class does *not* restore the data between test runs.
-	/// Derive from MemoryOnlyBackendProviderRestoredForEachTestTestBase if that is desired.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderTestBase : MemoryOnlyBackendProviderBasicTestBase
-	{
-		// REVIEW (TimS): Why do we have this class?
-	}
-	#endregion
-
 	#region MemoryOnlyBackendProviderRestoredForEachTestTestBase class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -348,7 +339,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// for every test. It just loops through Undo as long as possible "MemoryOnlyUndoForEachTestBase "
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	public abstract class MemoryOnlyBackendProviderRestoredForEachTestTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -721,7 +712,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// In contrast to MemoryOnlyBackendProviderRestoredForEachTestTestBase, this class doesn't rely on Undo mechanism for
 	/// restoring each tests, instead it tries to recreate the FDO Cache.
 	///</summary>
-	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		/// <summary>
 		/// Setup the FDO Cache and Action Handler

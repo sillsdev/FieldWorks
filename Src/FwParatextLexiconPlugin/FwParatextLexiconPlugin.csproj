@@ -103,6 +103,7 @@
     <Compile Include="ParatextLexiconPluginDirectoryFinder.cs" />
     <Compile Include="ParatextLexiconPluginProjectID.cs" />
     <Compile Include="ParatextLexiconPluginFdoUI.cs" />
+    <Compile Include="ParatextLexiconPluginRegistryHelper.cs" />
     <Compile Include="ParatextLexiconPluginThreadedProgress.cs" />
     <Compile Include="ProjectExistsForm.cs">
       <SubType>Form</SubType>

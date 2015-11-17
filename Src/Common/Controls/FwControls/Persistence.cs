@@ -226,6 +226,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Normally this is the key provided by our parent form.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "key is a reference")]
 		[Browsable(false)]
 		public RegistryKey SettingsKey
 		{

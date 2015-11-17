@@ -283,6 +283,8 @@ namespace XCore
 		/// <returns>
 		/// Returns true if the ToolStrip is out of date.
 		/// </returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "toolStripItem is a reference")]
 		private bool DoesToolStripNeedRegenerating(ChoiceGroup choiceGroup, ToolStrip toolStrip)
 		{
 			if (m_fullRengenerateRequired)

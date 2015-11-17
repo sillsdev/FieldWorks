@@ -541,10 +541,10 @@ namespace FwRemoteDatabaseConnector
 
 			if (ServerObject == null)
 			{
-				// TODO: currently running with no security
-				// TODO-Linux: security support has not been implemented in Mono
+			// TODO: currently running with no security
+			// TODO-Linux: security support has not been implemented in Mono
 				RemotingConfiguration.Configure(remotingTcpServerConfigFile, false);
-			}
+		}
 			else
 			{
 				ServerObject.IsRunning = true;

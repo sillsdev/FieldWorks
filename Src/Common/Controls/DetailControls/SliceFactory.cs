@@ -22,6 +22,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -83,6 +84,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
 			StringTable stringTbl, IPersistenceProvider persistenceProvider, Mediator mediator, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
@@ -399,6 +402,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// appropriate default slice for the custom field indicated in the param attribute of
 		/// the caller.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;

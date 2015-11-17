@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Windows.Forms;
+
 namespace SIL.FieldWorks.XWorks
 {
 	partial class DictionaryConfigurationTreeControl
@@ -22,6 +24,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				components.Dispose();
 			}
+			for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)
+			{
+				m_CtrlRightClickMenu.Items[i].Dispose();
+			}
+			m_CtrlRightClickMenu.Dispose();
 			base.Dispose(disposing);
 		}
 

@@ -1,3 +1,6 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
@@ -19,6 +22,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -514,6 +518,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="iCol">The index of the column.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "col is a reference")]
 		private void SortPuncPatternGridOnColumn(int iCol)
 		{
 			DataGridViewColumn col = gridPatterns.Columns[iCol];
@@ -1414,6 +1420,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fnt is a reference")]
 		private void cboQuotationLangs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			e.DrawBackground();

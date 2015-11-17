@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -155,6 +156,8 @@ namespace SIL.Utils
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "InnerWriter is a reference")]
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

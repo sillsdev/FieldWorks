@@ -1,4 +1,10 @@
-﻿using SIL.FieldWorks.FDO.Infrastructure;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.IO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -48,6 +54,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (ds != null)
 				return false;
 			return true;
+		}
+
+		/// <summary>
+		/// Determines if the project file at the specified path is locked.
+		/// </summary>
+		public static bool IsProjectLocked(string projectPath)
+		{
+			string ext = Path.GetExtension(projectPath);
+			return ext != null && ext.Equals(FdoFileHelper.ksFwDataXmlFileExtension, StringComparison.InvariantCultureIgnoreCase)
+				&& XMLBackendProvider.IsProjectLocked(projectPath);
 		}
 	}
 }

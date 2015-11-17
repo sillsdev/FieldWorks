@@ -450,8 +450,8 @@
 		  <m:m>
 			  <m:mPr>
 				  <m:baseJc m:val="top"/>
-				  <m:rSpRule m:val="3"/>
-				  <m:rSp m:val="20"/>
+				  <m:rSpRule m:val="4"/>
+				  <m:rSp m:val="3"/>
 				  <m:mcs>
 					  <m:mc>
 						  <m:mcPr>
@@ -610,8 +610,8 @@
 			  <m:m>
 				  <m:mPr>
 					  <m:baseJc m:val="top"/>
-					  <m:rSpRule m:val="3"/>
-					  <m:rSp m:val="20"/>
+					  <m:rSpRule m:val="4"/>
+					  <m:rSp m:val="3"/>
 					  <m:mcs>
 						  <m:mc>
 							  <m:mcPr>

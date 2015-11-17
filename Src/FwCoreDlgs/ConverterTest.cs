@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -318,6 +322,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fontFamilies contains references")]
 		private void ConverterTest_Load(object sender, System.EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
