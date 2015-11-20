@@ -321,6 +321,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CheckIsAllParentsChecked_MinorAndMajorEntries()
+		{
+			var minorEntryTypes = new ConfigurableDictionaryNode
+			{
+				// Should this be something else?
+				FieldDescription = "VariantType",
+				Label = "VariantType",
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode>(),
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { minorEntryTypes },
+				FieldDescription = "MinorEntry",
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(mainEntryNode);
+			Assert.AreEqual(true, controller.IsAllParentsChecked(mainEntryNode));
+
+			controller.LoadNode(minorEntryNode);
+			// LT-16459 if IsAllParentsChecked returns false, Minor Entry types are all disabled
+			Assert.AreEqual(true, controller.IsAllParentsChecked(minorEntryNode));
+
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void CheckIsAnyParentsUnchecked()
 		{
 			var pronunciation = new ConfigurableDictionaryNode

@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal bool IsAllParentsChecked(ConfigurableDictionaryNode node)
 		{
-			if (node.Parent == null) return false;
+			if (node.Parent == null) return true; // this should only be the main entry and minor entry nodes
 			while (node != null)
 			{
 				if (!node.IsEnabled)
