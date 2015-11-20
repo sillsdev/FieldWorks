@@ -1092,9 +1092,18 @@ namespace SIL.FieldWorks.XWorks
 						WriteClassNameAttribute(settings.Writer, child);
 						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Hvo : ((ILexSense)collectionOwner).Owner.Hvo;
 						// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
+						// If someone ever uses a "Sequence" type lexical relation, should the current item
+						// be displayed in its location in the sequence?  Just asking...
 						foreach(var target in reference.ConfigTargets.Where(x => x.EntryHvo != ownerHvo))
 						{
 							GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
+							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
+								LexRefDirection(reference, collectionOwner) == ":r")
+							{
+								// In the reverse direction of an asymmetric lexical reference, we want only the first item.
+								// See https://jira.sil.org/browse/LT-16427.
+								break;
+							}
 						}
 						settings.Writer.WriteEndElement();
 					}

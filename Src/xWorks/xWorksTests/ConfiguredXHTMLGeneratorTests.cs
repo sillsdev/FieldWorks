@@ -2202,6 +2202,99 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesAsymmetricRelationsProperly()
+		{
+			var bodyEntry = CreateInterestingLexEntry(Cache);
+			var firstWord = "corps";
+			AddHeadwordToEntry(bodyEntry, firstWord, m_wsFr, Cache);
+			bodyEntry.SensesOS.First().Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString("body", m_wsEn));
+			var armEntry = CreateInterestingLexEntry(Cache);
+			var secondWord = "bras";
+			AddHeadwordToEntry(armEntry, secondWord, m_wsFr, Cache);
+			armEntry.SensesOS.First().Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString("arm", m_wsEn));
+			var legEntry = CreateInterestingLexEntry(Cache);
+			var thirdWord = "jambe";
+			AddHeadwordToEntry(legEntry, thirdWord, m_wsFr, Cache);
+			legEntry.SensesOS.First().Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString("leg", m_wsEn));
+			const string refTypeName = "Part";
+			const string refTypeRevName = "Whole";
+			CreateLexicalReference(bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refListNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var referencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { refType.Guid + ":r" })
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode, refListNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { referencesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(armEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				var fwdNameXpath = string.Format(
+					"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
+				AssertThatXmlIn.String(output).HasNoMatchForXpath(fwdNameXpath);
+				var revNameXpath = string.Format(
+					"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeRevName);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
+				var badTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='gloss']";
+				AssertThatXmlIn.String(output).HasNoMatchForXpath(badTarget1);
+				var badTarget2 = string.Format(
+					"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{0}']", secondWord);
+				AssertThatXmlIn.String(output).HasNoMatchForXpath(badTarget2);
+				var badTarget3 = string.Format(
+					"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{0}']", thirdWord);
+				AssertThatXmlIn.String(output).HasNoMatchForXpath(badTarget3);
+				var goodTarget = string.Format(
+					"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{0}']", firstWord);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(goodTarget, 1);
+			}
+		}
+
 		[Test]
 		public void IsListItemSelectedForExport_Variant_SelectedItemReturnsTrue()
 		{
@@ -3587,7 +3680,7 @@ namespace SIL.FieldWorks.XWorks
 			cache.LangProject.AddToCurrentVernacularWritingSystems(
 				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var wsFr = cache.WritingSystemFactory.GetWsFromStr("Fr");
+			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
 			AddHeadwordToEntry(entry, "Citation", wsFr, cache);
 			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
 			AddSenseToEntry(entry, "gloss", wsEn, cache);
@@ -3626,6 +3719,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
 		{
+			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
+		}
+
+		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
+		{
 			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
 				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
@@ -3642,8 +3740,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 			lrt.MembersOC.Add(lexRef);
-			lexRef.TargetsRS.Add(mainEntry);
-			lexRef.TargetsRS.Add(referencedForm);
+			lexRef.TargetsRS.Add(firstEntry);
+			lexRef.TargetsRS.Add(secondEntry);
+			if (thirdEntry != null)
+				lexRef.TargetsRS.Add(thirdEntry);
 		}
 
 		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
