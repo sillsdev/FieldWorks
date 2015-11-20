@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				newTag = cleaner.GetCompleteTag();
 			}
 
-			newTag = IetfLanguageTag.Normalize(newTag, IetfLanguageTagNormalizationForm.SilCompatible);
+			newTag = IetfLanguageTag.Canonicalize(newTag);
 
 			m_tagMap[oldTag] = newTag;
 			return !newTag.Equals(oldTag, StringComparison.InvariantCultureIgnoreCase);
