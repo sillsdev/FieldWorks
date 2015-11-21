@@ -2542,7 +2542,7 @@ typedef struct tag_SCRIPT_STATE {
 	// JohnT: an earlier version used fParaRTL instead of fwsRtl. However, this produces incorrect
 	// mirroring of bracket-like characters in upstream text.
 	SCRIPT_STATE ss = {
-		fwsRtl ? 1 : 0,
+		WORD(fwsRtl ? 1 : 0),
 		false, false, false, false, false, false, fIsArabic, false, false, 0
 		};
 

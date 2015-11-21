@@ -823,7 +823,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				CheckDisposed();
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
-					KeyboardController.UnregisterControl(this);
+				{
+					if (KeyboardController.IsInitialized)
+						KeyboardController.UnregisterControl(this);
+				}
 				else if (!EditingHelper.Editable && !value)
 				{
 					SubscribeToRootSiteEventHandlerEvents();

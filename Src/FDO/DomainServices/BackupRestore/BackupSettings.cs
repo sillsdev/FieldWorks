@@ -6,6 +6,7 @@
 // Responsibility: FW team
 using System;
 using System.IO;
+using SIL.Lexicon;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -232,6 +233,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				return FdoFileHelper.GetWritingSystemDir(ProjectPath);
 			}
+		}
+
+		/// <summary>
+		/// Path to the standard directory for shared lexicon settings.
+		/// </summary>
+		public string SharedSettingsPath
+		{
+			get { return LexiconSettingsFileHelper.GetSharedSettingsPath(ProjectPath); }
 		}
 
 		/// <summary>

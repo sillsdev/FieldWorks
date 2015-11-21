@@ -197,7 +197,7 @@ protected:
 inline void ThrowHr(HRESULT hr, const wchar * pszMsg, int hHelpId, IErrorInfo* pErrInfo)
 #else
 template<class ZChar>
-inline void ThrowHr(HRESULT hr, const ZChar* pszMsg, int hHelpId = 0, IErrorInfo* pErrInfo = NULL)
+inline void ThrowHr(HRESULT hr, const ZChar* pszMsg, int hHelpId, IErrorInfo* pErrInfo)
 #endif
 {
 	// hHelpId == -1 means that an error info object is already in place. We shouldn't

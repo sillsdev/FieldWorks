@@ -15,6 +15,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Lexicon;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {
@@ -157,6 +158,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			// We can't use Path.Combine here, because the zip files stores all file paths with '/'s
 			UncompressFilesMatchingPath(FdoFileHelper.ksWritingSystemsDir + "/", m_restoreSettings.WritingSystemStorePath);
+			UncompressFilesMatchingPath(LexiconSettingsFileHelper.SharedSettingsFolder + "/", m_restoreSettings.SharedSettingsPath);
 
 			if (m_restoreSettings.IncludeSupportingFiles)
 			{
@@ -591,7 +593,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="destinationDirectory">The destination directory.</param>
 		private void UncompressFilesMatchingPath(String patternToMatch, String destinationDirectory)
 		{
-			using (var zipIn = OpenFWBackupZipfile())
+			using (ZipInputStream zipIn = OpenFWBackupZipfile())
 			{
 				ZipEntry entry;
 

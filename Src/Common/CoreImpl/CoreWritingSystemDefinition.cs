@@ -292,7 +292,7 @@ namespace SIL.CoreImpl
 
 				// Enhance: Is it worth negotiating with Palaso to put this part
 				// in the base class?
-				if (Script != null && !IsVoice && (Language == null || Language.ImplicitScriptCode != Script.Code))
+				if (Script != null && !IsVoice && !IetfLanguageTag.IsScriptImplied(LanguageTag))
 					sb.Append(Script.ToString());
 
 				if (Region != null)

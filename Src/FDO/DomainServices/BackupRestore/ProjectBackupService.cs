@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -107,24 +106,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			return BackupProjectWithFullPaths(progressDlg, filesToZip);
 		}
 
-		#region Get Current Project Fonts
-		//Keep these methods around. There could be a use for them if we want to list all Fonts
-		//of a project that the user would need to manually copy to the Fonts project folders
-		//for backup.  FWR-1647
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Collects font names used in the current project.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private HashSet<String> GetCurrentProjectFonts()
-		{
-			return new HashSet<string>(from ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems
-									   where !string.IsNullOrEmpty(ws.DefaultFontName)
-									   select ws.DefaultFontName);
-		}
-		#endregion
-
 		#region File Gathering Methods
 
 		/// <summary>
@@ -166,8 +147,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			if (File.Exists(questionFile)) // LT-14136 stub file doesn't exist until migration or LexEntry creation
 				filesToBackup.Add(questionFile);
 
-			//Add Writing Systems
+			// Add Writing Systems
 			filesToBackup.UnionWith(AllFilesInADirectory(m_settings.WritingSystemStorePath));
+
+			// Add shared lexicon settings
+			filesToBackup.UnionWith(AllFilesInADirectory(m_settings.SharedSettingsPath));
 
 			return filesToBackup;
 		}

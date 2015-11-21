@@ -2587,7 +2587,7 @@
     <value>User_Interface/Field_Descriptions/Lists/Roles_fields/Status_field_(Roles).htm</value>
   </data>
   <data name="khtpProjectLocationSharingDlg" xml:space="preserve">
-    <value>User_Interface/Menus/File/Project_Locations_and_Sharing.htm</value>
+    <value>User_Interface/Menus/File/Project_Locations.htm</value>
   </data>
   <data name="khtpDataNotebook-ChooseOwnerOfDemotedRecord" xml:space="preserve">
     <value>Using_Tools/Notebook_tools/Record_Edit_overview/Reorder_demote_or_promote_a_record.htm</value>

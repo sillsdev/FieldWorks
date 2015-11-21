@@ -259,10 +259,6 @@
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms">
-      <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ComplexConcControl.resx">
