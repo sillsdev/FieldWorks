@@ -906,5 +906,33 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
 		}
+
+		[Test]
+		public void IsMainEntry_NullArgument_Throws()
+		{
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsMainEntry(null));
+		}
+
+		[Test]
+		public void IsMainEntry_MainEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode));
+		}
+
+		[Test]
+		public void IsMainEntry_MinorEntry_False()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(minorEntryNode));
+		}
+
+		[Test]
+		public void IsMainEntry_OtherEntry_False()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			var someNode = new ConfigurableDictionaryNode{ FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode));
+		}
 	}
 }

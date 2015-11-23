@@ -193,5 +193,20 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return Label;
 		}
+
+		/// <summary>
+		/// If node is a Main Entry node.
+		/// </summary>
+		/// <remarks>
+		/// Other things to check could include FieldDescription == "LexEntry" and Parent == null.
+		/// </remarks>
+		internal static bool IsMainEntry(ConfigurableDictionaryNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			if (node.CSSClassNameOverride == "entry")
+				return true;
+			return false;
+		}
 	}
 }
