@@ -212,10 +212,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Generating the xhtml representation for the given ICmObject using the given configuration to select which data to write out
-		/// If it is a Dictionary Main Entry or non-Dictionary entry, uses the first configuration.
+		/// Generating the xhtml representation for the given ICmObject using the given configuration node to select which data to write out
+		/// If it is a Dictionary Main Entry or non-Dictionary entry, uses the first configuration node.
 		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
-		/// Minor Entry configuration.
+		/// Minor Entry configuration node.
 		/// </summary>
 		public static void GenerateXHTMLForEntry(ICmObject entry, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
@@ -239,6 +239,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// If entry might be a minor entry. Sometimes returns true when the entry is not a minor entry.
+		/// </summary>
 		internal static bool IsMinorEntry(ICmObject entry)
 		{
 			// owning an ILexEntryRef denotes a minor entry (Complex* or Variant Form)
@@ -1256,21 +1259,24 @@ namespace SIL.FieldWorks.XWorks
 		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem, object parent)
 		{
 			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
+			if (listOptions == null)
+				throw new ArgumentException(string.Format("This configuration node had no options and we were expecting them: {0} ({1})", config.DisplayLabel, config.FieldDescription), "config");
+
 			var selectedListOptions = new List<Guid>();
 			var forwardReverseOptions = new List<Tuple<Guid, string>>();
 			foreach (var option in listOptions.Options.Where(optn => optn.IsEnabled))
 			{
-					var forwardReverseIndicator = option.Id.IndexOf(':');
-					if (forwardReverseIndicator > 0)
-					{
-						var guid = new Guid(option.Id.Substring(0, forwardReverseIndicator));
-						forwardReverseOptions.Add(new Tuple<Guid, string>(guid, option.Id.Substring(forwardReverseIndicator)));
-					}
-					else
-					{
-						selectedListOptions.Add(new Guid(option.Id));
-					}
+				var forwardReverseIndicator = option.Id.IndexOf(':');
+				if (forwardReverseIndicator > 0)
+				{
+					var guid = new Guid(option.Id.Substring(0, forwardReverseIndicator));
+					forwardReverseOptions.Add(new Tuple<Guid, string>(guid, option.Id.Substring(forwardReverseIndicator)));
 				}
+				else
+				{
+					selectedListOptions.Add(new Guid(option.Id));
+				}
+			}
 			switch (listOptions.ListId)
 			{
 				case DictionaryNodeListOptions.ListIds.Variant:
@@ -1327,7 +1333,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 						var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
 						return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
-								}
+					}
 				default:
 					{
 						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);

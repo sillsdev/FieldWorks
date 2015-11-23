@@ -2647,6 +2647,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsListItemSelectedForExport_EntryWithNoOptions_Throws()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true
+			};
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(notComplexTypePoss);
+			var entryReferenceNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			Assert.Throws<ArgumentException>(() => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_NoncheckedListItemsAreNotGenerated()
 		{
 			var formNode = new ConfigurableDictionaryNode
