@@ -5,7 +5,7 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2014-08-20" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
+<Styles date="2015-11-23" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
 	<markup version="C0584FE8-A04E-401A-A115-264C9875EF2B">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
@@ -105,6 +105,12 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
+		</tag>
+		<tag id="Dictionary-Continuation" guid="E552C059-F04A-4672-8943-0F36F9F63536" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Style for all main entry content which follows an intermediate paragraph</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Pictures" guid="92E5DC56-317A-461D-A179-E9E005D6612A" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">The paragraph of pictures that follows the main paragraph (if there are pictures).</usage>

@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string DictionaryContinuation = "Dictionary-Continuation";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
@@ -173,7 +174,6 @@ namespace SIL.FieldWorks.XWorks
 			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
 			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
 			styleSheet.Rules.AddRange(beforeAfterSelectors);
-
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
@@ -222,6 +222,9 @@ namespace SIL.FieldWorks.XWorks
 				};
 				styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
+				//Generate the style for field following last sense
+				var rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".sense");
+				styleSheet.Rules.Add(rule);
 			}
 			else
 			{
@@ -251,6 +254,24 @@ namespace SIL.FieldWorks.XWorks
 				};
 				styleSheet.Rules.Add(blockRule2);
 			}
+		}
+
+		/// <summary>
+		/// Generates rule for Content Following Intermediate Para
+		/// </summary>
+		/// <param name="baseSelection">base class tree</param>
+		/// <param name="mediator">mediator to get the styles</param>
+		/// <param name="classname">preceding class name</param>
+		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator,string classname)
+		{
+			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, mediator);
+			var rule = new StyleRule(styledeclaration)
+			{
+				Value =
+					string.Format("{0}+ *",
+						baseSelection.Substring(0, baseSelection.LastIndexOf(classname, StringComparison.Ordinal)))
+			};
+			return rule;
 		}
 
 		/// <summary>
