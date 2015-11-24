@@ -214,14 +214,24 @@ namespace SIL.FieldWorks.XWorks
 					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
 				styleSheet.Rules.Add(senseParaRule);
+				var sensCharDeclaration = GetOnlyCharacterStyle(styleDeclaration);
+				var senseCharRule = new StyleRule(sensCharDeclaration)
+				{
+					// Apply the paragraph style information to all but the first sense
+					Value = string.Format("{0} + {1} > .sense", senseContentSelector, ".sensecontent")
+				};
+				styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
 			}
-			// Generate the style information specifically for senses
-			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
+			else
 			{
-				Value = string.Format(baseSelection)
-			};
-			styleSheet.Rules.Add(senseContentRule);
+				// Generate the style information specifically for senses
+				var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
+				{
+					Value = string.Format(baseSelection)
+				};
+				styleSheet.Rules.Add(senseContentRule);
+			}
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{

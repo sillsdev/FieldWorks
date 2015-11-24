@@ -883,6 +883,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_SenseParaStyleNotApplyToFirstSense()
+		{
+			GenerateStyle("Sense-List");
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = "Sense-List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseNumberCharStyleWorks()
 		{
 			GenerateStyle("Dictionary-SenseNum");
