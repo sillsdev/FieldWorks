@@ -916,16 +916,23 @@ namespace SIL.FieldWorks.XWorks
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
 				GenerateXHTMLForSenses(config, publicationDecorator, settings, collection);
-				writer.WriteEndElement();
 			}
 			else
 			{
 				foreach (var item in collection)
 				{
+					if (publicationDecorator != null &&
+						item is ILexExampleSentence &&
+						publicationDecorator.IsExcludedObject((item as ILexExampleSentence).Hvo))
+					{
+						// Don't show examples that have been marked to exclude from publication.
+						// See https://jira.sil.org/browse/LT-15697.
+						continue;
+					}
 					GenerateCollectionItemContent(config, publicationDecorator, item, collectionOwner, settings);
 				}
-				writer.WriteEndElement();
 			}
+			writer.WriteEndElement();
 		}
 
 		/// <summary>
@@ -933,7 +940,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable collection)
 		{
-			var isSingle = collection.Cast<object>().Count() == 1;
+			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
+			int excluded = 0;
+			foreach (var item in collection)
+			{
+				Debug.Assert(item is ILexSense);
+				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
+					++excluded;
+			}
+			int count = collection.Cast<object>().Count();
+			if (excluded == count)
+				return;
+			var isSingle = count == 1;
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, collection, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo)
@@ -941,6 +959,8 @@ namespace SIL.FieldWorks.XWorks
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			foreach (var item in collection)
 			{
+				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
+					continue;
 				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo);
 			}
 		}
@@ -1730,7 +1750,7 @@ namespace SIL.FieldWorks.XWorks
 					 select item).FirstOrDefault();
 			}
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(mediator, clerk).ToArray();
+			entriesToSave = decorator.GetEntriesToPublish(mediator, clerk.VirtualFlid).ToArray();
 			return decorator;
 		}
 

@@ -417,13 +417,13 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmPossibility Publication { get; set; }
 
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
-		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, RecordClerk clerk)
+		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, int virtualFlid)
 		{
 			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
 			switch(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator))
 			{
 				case "Dictionary":
-					return VecProp(Cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
 				{
 					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
@@ -545,6 +545,15 @@ namespace SIL.FieldWorks.XWorks
 			// It probably isn't necessary to rebuild the fields, but one day we might be able to add a relevant custom field??
 			BuildFieldsToFilter();
 			BuildHomographInfo();
+		}
+
+		/// <summary>
+		/// Return whether this object is explicitly excluded by the publication filtering.
+		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
+		/// </summary>
+		internal bool IsExcludedObject(int hvo)
+		{
+			return m_excludedItems.Contains(hvo);
 		}
 	}
 }

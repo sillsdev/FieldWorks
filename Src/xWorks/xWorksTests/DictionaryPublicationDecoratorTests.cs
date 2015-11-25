@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 			Mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete");
 			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
-			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, null);
+			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Count(), Is.GreaterThan(0));
 
 			// Set UI Language to French
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.XWorks
 			wsm.UserWritingSystem = wsm.Get("fr");
 
 			// SUT
-			var frenchEntries = m_decorator.GetEntriesToPublish(Mediator, null);
+			var frenchEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Count(), Is.EqualTo(frenchEntries.Count()));
 		}
 

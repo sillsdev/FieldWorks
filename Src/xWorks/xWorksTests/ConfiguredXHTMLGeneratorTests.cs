@@ -3637,6 +3637,287 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.VirtualStringAccessor")));
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_FilterByPublication()
+		{
+			// Note that my HS French is nonexistent after 40+ years.  But this is only test code...
+			var typeMain = CreatePublicationType("main");
+			var typeTest = CreatePublicationType("test");
+
+			// This entry is published for both main and test.  Its first sense (and example) are published in main, its
+			// second sense(and example) are published in test.
+			// The second example of the first sense should not be published at all, since it is not published in main and
+			// its owner is not published in test.
+			var entryCorps = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryCorps, "corps", m_wsFr, Cache);
+			entryCorps.SensesOS[0].Gloss.set_String (m_wsEn, "body");
+			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", "The body is big.");
+			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirited.");
+			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
+			var exampleCorpsCorpse1 = AddExampleToSense(entryCorps.SensesOS[1], "Le corps est morte.", "The corpse is dead.");
+
+			entryCorps.SensesOS[0].DoNotPublishInRC.Add(typeTest);
+			exampleCorpsBody1.DoNotPublishInRC.Add(typeTest);
+			exampleCorpsBody2.DoNotPublishInRC.Add(typeMain);	// should not show at all!
+
+			entryCorps.SensesOS[1].DoNotPublishInRC.Add(typeMain);
+			//exampleCorpsCorpse1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
+
+			// This entry is published only in main, together with its sense and example.
+			var entryBras = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryBras, "bras", m_wsFr, Cache);
+			entryBras.SensesOS[0].Gloss.set_String(m_wsEn, "arm");
+			var exampleBrasArm1 = AddExampleToSense(entryBras.SensesOS[0], "Mon bras est broken.", "My arm is broken.");
+			AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
+			var exampleBrasHand1 = AddExampleToSense(entryBras.SensesOS[1], "Ma bras est fine.", "My arm is fine.");
+			entryBras.DoNotPublishInRC.Add(typeTest);
+			entryBras.SensesOS[0].DoNotPublishInRC.Add(typeTest);
+			entryBras.SensesOS[1].DoNotPublishInRC.Add(typeTest);
+			//exampleBrasArm1.DoNotPublishInRC.Add(typeTest); -- should not show in test because its owner is not shown there
+			//exampleBrasHand1.DoNotPublishInRC.Add(typeTest); -- should not show in test because its owner is not shown there
+
+			// This entry is published only in test, together with its sense and example.
+			var entryOreille = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryOreille, "oreille", m_wsFr, Cache);
+			entryOreille.SensesOS[0].Gloss.set_String (m_wsEn, "ear");
+			var exampleOreille1 = AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", "Lake Pend d'Oreille is in Idaho.");
+			entryOreille.DoNotPublishInRC.Add(typeMain);
+			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
+			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
+
+			// Note that the decorators must be created *after* the data exists.
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
+			//SUT
+			var hvosMain = new List<int>( pubMain.GetEntriesToPublish(m_mediator, flidVirtual) );
+			Assert.AreEqual(2, hvosMain.Count, "there are two entries in the main publication");
+			Assert.IsTrue(hvosMain.Contains(entryCorps.Hvo), "corps is shown in the main publication");
+			Assert.IsTrue(hvosMain.Contains(entryBras.Hvo), "bras is shown in the main publication");
+			Assert.IsFalse(hvosMain.Contains(entryOreille.Hvo), "oreille is not shown in the main publication");
+			var hvosTest = new List<int>( pubTest.GetEntriesToPublish(m_mediator, flidVirtual) );
+			Assert.AreEqual(2, hvosTest.Count, "there are two entries in the test publication");
+			Assert.IsTrue(hvosTest.Contains(entryCorps.Hvo), "corps is shown in the test publication");
+			Assert.IsFalse(hvosTest.Contains(entryBras.Hvo), "bras is not shown in the test publication");
+			Assert.IsTrue(hvosTest.Contains(entryOreille.Hvo), "oreille is shown in the test publication");
+
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				CSSClassNameOverride = "translatedsentence",
+				IsEnabled = true
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC",
+				Children = new List<ConfigurableDictionaryNode> { translationNode },
+				CSSClassNameOverride = "translations",
+				IsEnabled = true
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "examplesentence",
+				IsEnabled = true
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode },
+				CSSClassNameOverride = "examples",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] {"en"}),
+				CSSClassNameOverride = "definitionorgloss",
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode, examplesNode },
+				CSSClassNameOverride = "senses",
+				IsEnabled = true
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			const string matchFrenchEntry = "//span[@class='entry']/span[@lang='fr']";
+			const string matchEnglishDefOrGloss =
+				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='definitionorgloss']/span[@lang='en']";
+			const string matchFrenchExample =
+				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='examples']/span[@class='example']/span[@class='examplesentence']/span[@lang='fr']";
+			const string matchEnglishTranslation =
+				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en']";
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the unfiltered output displays everything.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 3);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 3);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the main publication output displays what it should.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+				const string matchBodyIsBig =
+					"//span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en' and text()='The body is big.']";
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchBodyIsBig, 1);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubTest, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
+				// Verify that the test publication output displays what it should.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+				const string matchCorpseIsDead =
+					"//span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en' and text()='The corpse is dead.']";
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchCorpseIsDead, 1);
+			}
+
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubEverything, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the unfiltered output displays everything.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 2);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 2);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubMain, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the main publication output displays everything.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 2);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 2);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				// We can still produce test publication output for the entry since we have a copy of it.  Its senses and
+				// examples should not be displayed because the senses are separately hidden.
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubTest, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the test output doesn't display the senses and examples.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 0);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 0);
+			}
+
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubEverything, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the unfiltered output displays everything.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				// We can still produce main publication output for the entry since we have a copy of it.  Its sense and
+				// example should not be displayed because the sense is separately hidden.
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubMain, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the test output doesn't display the sense and example.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 0);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 0);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubTest, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				// Verify that the test publication output displays everything.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+			}
+		}
+
 		#region Helpers
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
@@ -3775,6 +4056,17 @@ namespace SIL.FieldWorks.XWorks
 			lexRef.TargetsRS.Add(secondEntry);
 			if (thirdEntry != null)
 				lexRef.TargetsRS.Add(thirdEntry);
+		}
+
+		private ICmPossibility CreatePublicationType(string name)
+		{
+			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
+				Cache.LangProject.LexDbOA.PublicationTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
+			item.Name.set_String(m_wsEn, name);
+			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
+			return item;
 		}
 
 		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
