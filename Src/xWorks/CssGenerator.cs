@@ -406,9 +406,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="configNode"></param>
 		/// <param name="baseSelection"></param>
 		/// <returns></returns>
-		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentSelector,
-																							 ConfigurableDictionaryNode configNode,
-																							 out string baseSelection, FdoCache cache, Mediator mediator)
+		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
+			string parentSelector, ConfigurableDictionaryNode configNode,
+			out string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);

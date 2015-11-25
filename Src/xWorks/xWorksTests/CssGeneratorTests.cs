@@ -137,6 +137,40 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterConfigGeneratesBeforeAfterCss_SubentryHeadword()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "Z",
+				After = "A"
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> {headwordNode},
+				FieldDescription = "Subentries"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check result for before and after rules equivalent to .subentries .subentrie .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentrie\\s*\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
+							  "css before rule with Z content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentrie\\s\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
+							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_BeforeAfterConfigGeneratesBeforeAfterFormattedCss()
 		{
 			var headwordNode = new ConfigurableDictionaryNode

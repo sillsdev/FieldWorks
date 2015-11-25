@@ -996,18 +996,6 @@
         <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
         <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
       </ComplexFormOptions>
-      <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS-todo" cssClassNameOverride="complexformtypes">
-        <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-      </ConfigurationItem>
       <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
@@ -1024,6 +1012,18 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
+      <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS-todo" cssClassNameOverride="complexformtypes">
+        <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
+          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+            <Option id="analysis" isEnabled="true"/>
+          </WritingSystemOptions>
+        </ConfigurationItem>
+        <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+            <Option id="analysis" isEnabled="true"/>
+          </WritingSystemOptions>
+        </ConfigurationItem>
+	  </ConfigurationItem>
       <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
         <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
           <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">

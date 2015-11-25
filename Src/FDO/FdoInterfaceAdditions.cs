@@ -14,12 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 
 // Add additional methods/properties to domain object in this file.
@@ -1240,6 +1241,15 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary/>
 		ITsString HeadWord
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase MLHeadWord
 		{
 			get;
 		}

@@ -2458,7 +2458,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Virtual property allows Headword to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor MLHeadWord
+		public IMultiAccessorBase MLHeadWord
 		{
 			get
 			{
