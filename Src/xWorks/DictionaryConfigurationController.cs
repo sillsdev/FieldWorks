@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.XWorks
 																										(ISilDataAccessManaged)cache.MainCacheAccessor,
 																										cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator), cache);
+			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), cache);
 			View = view;
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator);

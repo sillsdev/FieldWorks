@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public abstract class XWorksAppTestBase : MemoryOnlyBackendProviderTestBase
 	{
-		protected FwXWindow m_window; // defined here but created and torn down in subclass?
+		protected FwXWindow m_window; // defined and disposed here but created in subclass
 		protected FwXApp m_application;
 		protected string m_configFilePath;
 
@@ -528,8 +528,7 @@ namespace SIL.FieldWorks.XWorks
 		//this shows multiple splash screens before we have done anything, and
 		//runs afoul of the code which enforces only one FieldWorks application defined in the process
 		//at any one time.
-		abstract protected void Init();
-
+		protected abstract void Init();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -584,11 +583,19 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			if (m_window != null)
 			{
-				m_window.Dispose();
+				m_window.Dispose(); // also disposes mediator
 				m_window = null;
 			}
 			m_application = null;
 			FwRegistrySettings.Release();
+		}
+
+		protected Mediator Mediator
+		{
+			get
+			{
+				return m_window == null ? null : m_window.Mediator;
+			}
 		}
 
 		protected ITestableUIAdapter Menu

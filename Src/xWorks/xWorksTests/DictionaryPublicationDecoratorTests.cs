@@ -2,14 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -17,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Tests of the decorator for dictionary views.
 	/// </summary>
 	[TestFixture]
-	public class DictionaryPublicationDecoratorTests : MemoryOnlyBackendProviderTestBase
+	public class DictionaryPublicationDecoratorTests : XWorksAppTestBase
 	{
 		ILexEntryFactory m_entryFactory;
 		ILexSenseFactory m_senseFactory;
@@ -26,6 +28,8 @@ namespace SIL.FieldWorks.XWorks
 		private ILexRefTypeFactory m_lexRefTypeFactory;
 		private ILexReferenceFactory m_lexRefFactory;
 		private ICmPossibilityListFactory m_possListFactory;
+		private IReversalIndexFactory m_revIndexFactory;
+		private IReversalIndexEntryFactory m_revIndexEntryFactory;
 
 		private ICmPossibility m_mainDict; // the publication we test on.
 
@@ -98,13 +102,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private MockPublisher m_publisher;
 
+		private IReversalIndex m_revIndex;
+
 		const int kmainFlid = 89999956;
 
 		private int m_flidReferringSenses;
 
-		public override void FixtureSetup()
+		protected override void Init()
 		{
-			base.FixtureSetup();
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_exampleFactory = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
@@ -112,9 +117,15 @@ namespace SIL.FieldWorks.XWorks
 			m_lexRefTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
 			m_lexRefFactory = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>();
 			m_possListFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
+			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 
 			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses",
 				false);
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 
 			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor,
 				() =>
@@ -217,10 +228,28 @@ namespace SIL.FieldWorks.XWorks
 						m_edName = MakeEntry("ed", "someone called ed", false);
 						m_edSuffix = MakeEntry("ed", "past", false, false, true);
 
+						m_revIndex = CreateInterestingReversalEntries();
+
 						m_publisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
 						m_publisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
 						m_decorator = new DictionaryPublicationDecorator(Cache, m_publisher, ObjectListPublisher.OwningFlid);
 					});
+		}
+
+		private IReversalIndex CreateInterestingReversalEntries()
+		{
+			var index = m_revIndexFactory.Create();
+			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
+			var indexEntry = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(indexEntry);
+			var ws = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
+			indexEntry.ReversalForm.set_String(ws, "Reversal Form");
+			m_nolanryan.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
+			var indexEntry2 = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(indexEntry2);
+			indexEntry2.ReversalForm.set_String(ws, "Reversal Form 2");
+			m_water.AllSenses[0].ReversalEntriesRC.Add(indexEntry2);
+			return index;
 		}
 
 		private ILexReference MakeLexRef(ILexRefType owner, ICmObject[] targets)
@@ -230,6 +259,31 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var obj in targets)
 				result.TargetsRS.Add(obj);
 			return result;
+		}
+
+		/// <summary>
+		/// DictionaryConfigurationListener was sending a localized configuration type to a switch
+		/// statement in GetEntriesToPublish(), causing any localized version to not match a valid configuration.
+		/// This test prevents a reoccurrence of that problem.
+		/// </summary>
+		[Test]
+		public void GetEntriesToPublish_WorksWithFrenchUI()
+		{
+			// If we use 'Reversal Index', then GetEntriesToPublish() doesn't need a RecordClerk,
+			// which is a bit more difficult to come by than a Mediator
+			Mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete");
+			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+
+			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, null);
+			Assert.That(englishEntries.Count(), Is.GreaterThan(0));
+
+			// Set UI Language to French
+			var wsm = Cache.ServiceLocator.WritingSystemManager;
+			wsm.UserWritingSystem = wsm.Get("fr");
+
+			// SUT
+			var frenchEntries = m_decorator.GetEntriesToPublish(Mediator, null);
+			Assert.That(englishEntries.Count(), Is.EqualTo(frenchEntries.Count()));
 		}
 
 		/// <summary>

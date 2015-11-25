@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject,
 																		 ref UIItemDisplayProperties display)
 		{
-			if(GetDictionaryConfigurationType(m_mediator) != null)
+			if(GetDictionaryConfigurationBaseType(m_mediator) != null)
 			{
 				display.Visible = false;
 				return true;
@@ -78,19 +78,36 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Get the base (non-localized) name of the area in FLEx being configured, such as Dictionary or Reversal Index.
+		/// </summary>
+		internal static string GetDictionaryConfigurationBaseType(Mediator mediator)
+		{
+			var toolName = mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			switch (toolName)
+			{
+				case "reversalToolBulkEditReversalEntries":
+				case "reversalToolEditComplete":
+					return "Reversal Index";
+				case "lexiconBrowse":
+				case "lexiconDictionary":
+				case "lexiconEdit":
+					return "Dictionary";
+				default:
+					return string.Empty;
+			}
+		}
+
+		/// <summary>
 		/// Get the localizable name of the area in FLEx being configured, such as Dictionary of Reversal Index.
 		/// </summary>
 		internal static string GetDictionaryConfigurationType(Mediator mediator)
 		{
-			var toolName = mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-			switch(toolName)
+			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(mediator);
+			switch(nonLocalizedConfigurationType)
 			{
-				case "reversalToolBulkEditReversalEntries":
-				case "reversalToolEditComplete":
+				case "Reversal Index":
 					return xWorksStrings.ReversalIndex;
-				case "lexiconBrowse":
-				case "lexiconDictionary":
-				case "lexiconEdit" :
+				case "Dictionary":
 					return xWorksStrings.Dictionary;
 				default:
 					return null;

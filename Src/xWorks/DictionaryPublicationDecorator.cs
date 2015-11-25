@@ -419,7 +419,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
 		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, RecordClerk clerk)
 		{
-			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator))
+			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
+			switch(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator))
 			{
 				case "Dictionary":
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
