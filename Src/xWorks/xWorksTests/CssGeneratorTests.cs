@@ -1311,6 +1311,25 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable.Add(name, style);
 		}
 
+		private TestStyle GenerateSenseStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_backColor.ExplicitValue = FontBGColor;
+			fontInfo.m_fontName.ExplicitValue = FontName;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_fontSize.ExplicitValue = FontSize;
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = true };
+			// Padding style settings
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceBefore, 0, PadTop);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceAfter, 0, PadBottom);
+			m_styleSheet.Styles.Add(style);
+			m_owningTable.Add(name, style);
+			return style;
+		}
+
 		[Test]
 		public void GenerateCssForBulletStyleForSenses()
 		{
@@ -1334,6 +1353,31 @@ namespace SIL.FieldWorks.XWorks
 			var regExPected = @".lexentry\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
 							  "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForNonBulletStyleForSenses()
+		{
+			GenerateSenseStyle("Sense List");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true },
+				Style = "Sense List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regExPected = @".lexentry\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{\s*?}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
+							  "Sense List style did not generate a specific match.");
 		}
 
 		[Test]

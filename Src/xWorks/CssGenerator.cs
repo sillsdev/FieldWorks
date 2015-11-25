@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.XWorks
 				styleSheet.Rules.Add(afterRule);
 			}
 			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
-			if(senseOptions.DisplayEachSenseInAParagraph)
+			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
 				var senseParaDeclaration = GetOnlyParagraphStyle(styleDeclaration);
 				senseParaDeclaration.Add(new Property("display")
@@ -286,7 +286,8 @@ namespace SIL.FieldWorks.XWorks
 			if (configNode.Style != null)
 			{
 				var bulletRule = new StyleRule { Value = bulletSelector + ":not(:first-child):before" };
-				bulletRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
+				var styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
+				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
 				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
 				var exportStyleInfo = new ExportStyleInfo(projectStyle);
@@ -547,6 +548,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var declaration = new StyleDeclaration();
 			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color")))
+			{
+				declaration.Add(prop);
+			}
+			return declaration;
+		}
+
+		internal static StyleDeclaration GetOnlyBulletContent(StyleDeclaration fullStyleDeclaration)
+		{
+			var declaration = new StyleDeclaration();
+			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("content")))
 			{
 				declaration.Add(prop);
 			}
