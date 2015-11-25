@@ -115,13 +115,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				var showingParagraph = false;
 				var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
 				if(complexFormOpts != null)
 				{
-					// Try to generate the css for the sense number before the baseSelection is updated because
-					// the sense number is a sibling of the sense element and we are normally applying styles to the
-					// children of collections.
-					GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection);
+					GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection, mediator);
+					showingParagraph = complexFormOpts.DisplayEachComplexFormInAParagraph;
 				}
 				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 				if(pictureOptions != null)
@@ -135,6 +134,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					//Generate the rules for the default font info
 					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
+					if (showingParagraph)
+						AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
 				}
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if(wsOptions != null)
@@ -324,17 +325,64 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection)
+		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
-			if(complexFormOpts.DisplayEachComplexFormInAParagraph)
+			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
 			{
-				var blockDeclaration = new StyleDeclaration();
+				var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
+				var blockDeclaration = GetOnlyParagraphStyle(styleDeclaration);
+				// clean out the ":before" formatting that doesn't apply here
+				for (int i = 0; i < blockDeclaration.Properties.Count; ++i)
+				{
+					if (blockDeclaration.Properties[i].Name == "content")
+					{
+						blockDeclaration.Properties.RemoveAt(i);
+						break;
+					}
+				}
 				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
 				var blockRule = new StyleRule(blockDeclaration)
 				{
 					Value = baseSelection + " " + SelectClassName(configNode)
 				};
 				styleSheet.Rules.Add(blockRule);
+			}
+		}
+
+		/// <summary>
+		/// Convert the rule to a :before rule if it derives from a paragraph style with a number scheme (such as bulleted).
+		/// In that case, also remove the properties that don't apply to a :before rule.
+		/// </summary>
+		/// <remarks>
+		/// See https://jira.sil.org/browse/LT-11625 for justification.
+		/// </remarks>
+		private static void AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, Mediator mediator)
+		{
+			var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+			if (exportStyleInfo.NumberScheme != 0)
+			{
+				rule.Value += ":before";
+				// clean out some paragraph formatting that doesn't apply here
+				// (note we're carefully deleting from the end of the list)
+				for (int i = rule.Declarations.Properties.Count - 1; i >= 0; --i)
+				{
+					switch (rule.Declarations.Properties[i].Name)
+					{
+						case "text-indent":
+						case "padding-left":
+						case "border-left-width":
+						case "border-right-width":
+						case "border-top-width":
+						case "border-bottom-width":
+							rule.Declarations.Properties.RemoveAt(i);
+							break;
+					}
+				}
+				var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
+				rule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
+				rule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 			}
 		}
 

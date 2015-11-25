@@ -1598,6 +1598,36 @@ namespace SIL.FieldWorks.XWorks
 							  "Bulleted style for SubSenses not generated.");
 		}
 
+		[Test]
+		public void GenerateCssForBulletStyleForRootSubentries()
+		{
+			GenerateBulletStyle("Bulleted List");
+			var dictNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true, Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>() };
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled = true, Id = "a0000000-dd15-4a03-9032-b40faaa9a754" } );
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled = true, Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" } );
+			var subentriesConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Subentries",
+				DictionaryNodeOptions = dictNodeOptions,
+				Style = "Bulleted List"
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesConfig }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regexExpected1 = @"\.lexentry\s\.subentries\s\.subentrie{.*\sdisplay:block;.*}";
+			Assert.IsTrue(Regex.Match (cssResult, regexExpected1, RegexOptions.Singleline).Success,
+				"expected subentrie rule not generated");
+			var regexExpected2 = @"\.lexentry\s\.subentries\s\.subentrie:before{.*\scontent:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match (cssResult, regexExpected2, RegexOptions.Singleline).Success,
+				"expected subentrie:before rule not generated");
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();
