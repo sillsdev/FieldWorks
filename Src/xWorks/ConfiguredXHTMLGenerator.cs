@@ -1044,7 +1044,7 @@ namespace SIL.FieldWorks.XWorks
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				writer.WriteStartElement("span");
 				writer.WriteAttributeString("class", "sensecontent");
-				GenerateSenseNumberSpanIfNeeded(config.DictionaryNodeOptions as DictionaryNodeSenseOptions, writer, item, settings.Cache,
+				GenerateSenseNumberSpanIfNeeded(config, writer, item, settings.Cache,
 														  publicationDecorator, isSingle);
 			}
 
@@ -1154,23 +1154,25 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeSenseOptions senseOptions, XmlWriter writer,
+		private static void GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, XmlWriter writer,
 																			 object sense, FdoCache cache,
 																			 DictionaryPublicationDecorator publicationDecorator, bool isSingle)
 		{
+			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
 				return;
-			if (string.IsNullOrEmpty(senseOptions.NumberingStyle)) return;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return;
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("class", "sensenumber");
 			string senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
 				publicationDecorator);
-			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber);
+			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, senseConfigNode);
 			writer.WriteString(formatedSenseNumber);
 			writer.WriteEndElement();
 		}
 
-		private static string GenerateOutlineNumber(string numberingStyle, string senseNumber)
+		private static string GenerateOutlineNumber(string numberingStyle, string senseNumber, ConfigurableDictionaryNode senseConfigNode)
 		{
 			string nextNumber;
 			switch (numberingStyle)
@@ -1186,11 +1188,27 @@ namespace SIL.FieldWorks.XWorks
 				case "%I":
 					nextNumber = GetRomanSenseCounter(numberingStyle, senseNumber);
 					break;
-				default://this handles "%O", "%z"
+				case "%O":
+					nextNumber = GetSubSenseNumber(senseNumber, senseConfigNode);
+					break;
+				default://this handles "%z"
 					nextNumber = senseNumber;
 					break;
 			}
 			return nextNumber;
+		}
+
+		private static string GetSubSenseNumber(string senseNumber, ConfigurableDictionaryNode senseConfigNode)
+		{
+			string subSenseNumber = string.Empty;
+			var parentSenseNode = senseConfigNode.Parent.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if (parentSenseNode != null)
+			{
+				if (!string.IsNullOrEmpty(parentSenseNode.NumberingStyle))
+					subSenseNumber = GenerateOutlineNumber(parentSenseNode.NumberingStyle, senseNumber.Split('.')[0], senseConfigNode);
+			}
+			subSenseNumber += "." + senseNumber.Split('.')[senseNumber.Split('.').Length - 1];
+			return subSenseNumber;
 		}
 
 		private static string GetAlphaSenseCounter(string numberingStyle, string senseNumber)

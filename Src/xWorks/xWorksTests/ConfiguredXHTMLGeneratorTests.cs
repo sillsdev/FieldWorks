@@ -1563,6 +1563,84 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_SensesAndSubSensesWithNumberingStyle()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%A",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%O",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense(testEntry, "second gloss");
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
+				XHTMLWriter.Flush();
+				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
+				const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
+				const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B.1']]//span[@lang='en' and text()='second gloss2.1']";
+				const string subSenseNumberTwoTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B.2']]//span[@lang='en' and text()='second gloss2.2']";
+				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(subSensesNumberTwoOne, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(subSenseNumberTwoTwo, 1);
+			}
+		}
+		[Test]
 		public void GenerateXHTMLForEntry_SensesGeneratedForMultipleSubSenses()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);

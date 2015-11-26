@@ -269,10 +269,16 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
 		{
 			// initialize SenseOptionsView
+			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
+			string numberingStyles = "x";
+			if (m_node.DisplayLabel == "Senses")
+			{
+				numberingStyles = "%O";
+			}
 			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView
 			{
 				BeforeText = senseOptions.BeforeNumber,
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles, // load available list before setting value
+				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(), // load available list before setting value
 				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,

@@ -73,7 +73,7 @@
       <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
     </ConfigurationItem>
     <ConfigurationItem name="Senses" isEnabled="true" before="" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
-      <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%O" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
+      <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
       <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between="" after=" " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
         <ConfigurationItem name="Category Info." isEnabled="true" style="Classified-POS" before="" between=" " after=" " field="MLPartOfSpeech">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
