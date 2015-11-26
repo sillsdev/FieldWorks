@@ -382,10 +382,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void LoadLexEntries(Stratum stratum, ILexEntry entry, IList<IMoStemAllomorph> allos)
 		{
-			foreach (IMoStemMsa msa in entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-				AddEntry(stratum, LoadLexEntry(entry, msa, allos), msa);
-
-			if (entry.AllSenses.Count == 0)
+			ILexSense sense = null;
+			if (entry.SensesOS.Count == 0)
 			{
 				foreach (ILexEntryRef lexEntryRef in entry.EntryRefsOS)
 				{
@@ -394,18 +392,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						var mainEntry = component as ILexEntry;
 						if (mainEntry != null)
 						{
+							sense = mainEntry.SensesOS[0];
 							foreach (IMoStemMsa msa in mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-								AddEntry(stratum, LoadLexEntryOfVariant(lexEntryRef, msa, allos, mainEntry.SenseWithMsa(msa)), msa);
+								LoadLexEntryOfVariant(stratum, lexEntryRef, msa, allos, mainEntry.SenseWithMsa(msa));
 						}
 						else
 						{
-							var mainSense = (ILexSense) component;
-							var msa = (IMoStemMsa) mainSense.MorphoSyntaxAnalysisRA;
-							AddEntry(stratum, LoadLexEntryOfVariant(lexEntryRef, msa, allos, mainSense), msa);
+							sense = (ILexSense) component;
+							LoadLexEntryOfVariant(stratum, lexEntryRef, (IMoStemMsa) sense.MorphoSyntaxAnalysisRA, allos, sense);
 						}
 					}
 				}
 			}
+			else
+			{
+				sense = entry.SensesOS[0];
+			}
+
+			foreach (IMoStemMsa msa in entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
+				LoadLexEntry(stratum, msa, allos, sense);
 		}
 
 		private void AddEntry(Stratum stratum, LexEntry hcEntry, IMoMorphSynAnalysis msa)
@@ -417,7 +422,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private LexEntry LoadLexEntry(ILexEntry entry, IMoStemMsa msa, IList<IMoStemAllomorph> allos)
+		private void LoadLexEntry(Stratum stratum, IMoStemMsa msa, IList<IMoStemAllomorph> allos, ILexSense sense)
 		{
 			var hcEntry = new LexEntry();
 
@@ -428,7 +433,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (ICmPossibility prodRestrict in msa.ProdRestrictRC)
 				hcEntry.MprFeatures.Add(m_mprFeatures[prodRestrict]);
 
-			hcEntry.Gloss = entry.SensesOS[0].Gloss.BestAnalysisAlternative.Text;
+			if (sense != null)
+				hcEntry.Gloss = sense.Gloss.BestAnalysisAlternative.Text;
 
 			var fs = new FeatureStruct();
 			if (msa.PartOfSpeechRA != null)
@@ -454,10 +460,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			return hcEntry;
+			AddEntry(stratum, hcEntry, msa);
 		}
 
-		private LexEntry LoadLexEntryOfVariant(ILexEntryRef entryRef, IMoStemMsa msa, IList<IMoStemAllomorph> allos, ILexSense sense)
+		private void LoadLexEntryOfVariant(Stratum stratum, ILexEntryRef entryRef, IMoStemMsa msa, IList<IMoStemAllomorph> allos, ILexSense sense)
 		{
 			var hcEntry = new LexEntry();
 
@@ -528,7 +534,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			return hcEntry;
+			AddEntry(stratum, hcEntry, msa);
 		}
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo)
@@ -563,29 +569,68 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!HasValidRuleForm(entry))
 				return;
 
-			foreach (IMoMorphSynAnalysis msa in entry.MorphoSyntaxAnalysesOC)
+			ILexSense sense = null;
+			if (entry.SensesOS.Count == 0)
 			{
-				AffixProcessRule mrule;
-
-				switch (msa.ClassID)
+				foreach (ILexEntryRef lexEntryRef in entry.EntryRefsOS)
 				{
-					case MoDerivAffMsaTags.kClassId:
-						AddMorphologicalRule(stratum, LoadDerivAffixProcessRule(entry, (IMoDerivAffMsa) msa, allos), msa);
-						break;
-
-					case MoInflAffMsaTags.kClassId:
-						var inflMsa = (IMoInflAffMsa) msa;
-						AddMorphologicalRule(inflMsa.SlotsRC.Count == 0 ? stratum : null, LoadInflAffixProcessRule(entry, inflMsa, allos), msa);
-						break;
-
-					case MoUnclassifiedAffixMsaTags.kClassId:
-						AddMorphologicalRule(stratum, LoadUnclassifiedAffixProcessRule(entry, (IMoUnclassifiedAffixMsa) msa, allos), msa);
-						break;
-
-					case MoStemMsaTags.kClassId:
-						AddMorphologicalRule(stratum, LoadCliticAffixProcessRule(entry, (IMoStemMsa) msa, allos), msa);
-						break;
+					foreach (ICmObject component in lexEntryRef.ComponentLexemesRS)
+					{
+						var mainEntry = component as ILexEntry;
+						if (mainEntry != null)
+						{
+							sense = mainEntry.SensesOS[0];
+							foreach (IMoMorphSynAnalysis msa in mainEntry.MorphoSyntaxAnalysesOC)
+								LoadMorphologicalRule(stratum, entry, allos, msa, mainEntry.SenseWithMsa(msa));
+						}
+						else
+						{
+							sense = (ILexSense) component;
+							LoadMorphologicalRule(stratum, entry, allos, sense.MorphoSyntaxAnalysisRA, sense);
+						}
+					}
 				}
+			}
+			else
+			{
+				sense = entry.SensesOS[0];
+			}
+
+			foreach (IMoMorphSynAnalysis msa in entry.MorphoSyntaxAnalysesOC)
+				LoadMorphologicalRule(stratum, entry, allos, msa, sense);
+		}
+
+		private void LoadMorphologicalRule(Stratum stratum, ILexEntry entry, IList<IMoForm> allos, IMoMorphSynAnalysis msa, ILexSense sense)
+		{
+			AffixProcessRule mrule = null;
+			Stratum s = stratum;
+			switch (msa.ClassID)
+			{
+				case MoDerivAffMsaTags.kClassId:
+					mrule = LoadDerivAffixProcessRule(entry, (IMoDerivAffMsa) msa, allos);
+					break;
+
+				case MoInflAffMsaTags.kClassId:
+					var inflMsa = (IMoInflAffMsa) msa;
+					if (inflMsa.SlotsRC.Count > 0)
+						s = null;
+					mrule = LoadInflAffixProcessRule(entry, inflMsa, allos);
+					break;
+
+				case MoUnclassifiedAffixMsaTags.kClassId:
+					mrule = LoadUnclassifiedAffixProcessRule(entry, (IMoUnclassifiedAffixMsa) msa, allos);
+					break;
+
+				case MoStemMsaTags.kClassId:
+					mrule = LoadCliticAffixProcessRule(entry, (IMoStemMsa) msa, allos);
+					break;
+			}
+
+			if (mrule != null)
+			{
+				if (sense != null)
+					mrule.Gloss = sense.Gloss.BestAnalysisAlternative.Text;
+				AddMorphologicalRule(s, mrule, msa);
 			}
 		}
 
@@ -636,8 +681,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (msa.FromStemNameRA != null)
 				mrule.RequiredStemName = m_stemNames[msa.FromStemNameRA];
 
-			mrule.Gloss = entry.SensesOS[0].Gloss.BestAnalysisAlternative.Text;
-
 			mrule.Properties["ID"] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
@@ -671,8 +714,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
 				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
 
-			mrule.Gloss = entry.SensesOS[0].Gloss.BestAnalysisAlternative.Text;
-
 			mrule.Properties["ID"] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
@@ -694,8 +735,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Gloss = entry.SensesOS[0].Gloss.BestAnalysisAlternative.Text;
-
 			mrule.Properties["ID"] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
@@ -713,8 +752,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(msa.FromPartsOfSpeechRC));
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
-
-			mrule.Gloss = entry.SensesOS[0].Gloss.BestAnalysisAlternative.Text;
 
 			mrule.Properties["ID"] = msa.Hvo;
 

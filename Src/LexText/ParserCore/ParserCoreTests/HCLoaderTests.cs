@@ -249,13 +249,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return inflClass;
 		}
 
-		private IMoInflClass AddInflectiononSubclass(IMoInflClass parent, string name)
+		private void AddInflectiononSubclass(IMoInflClass parent, string name)
 		{
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			parent.SubclassesOC.Add(inflClass);
 			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
 			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
-			return inflClass;
 		}
 
 		private ICmPossibility AddExceptionFeature(string name)
@@ -1063,7 +1062,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
-		public void Variant()
+		public void VariantStem()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
 			ILexEntryInflType type = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
@@ -1085,6 +1084,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+		}
+
+		[Test]
+		public void VariantAffix()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			ILexEntryType type = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("ɯt", Cache.DefaultVernWs));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+
+			rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[1];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 		}
 	}
 }
