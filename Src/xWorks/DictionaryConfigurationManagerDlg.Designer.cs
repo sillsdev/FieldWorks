@@ -190,7 +190,7 @@
 		private System.Windows.Forms.Label explanationLabel;
 		private System.Windows.Forms.TableLayoutPanel buttonTableLayoutPanel;
 		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Button closeButton;
+		public System.Windows.Forms.Button closeButton;
 		private System.Windows.Forms.GroupBox configurationsGroupBox;
 		private System.Windows.Forms.TableLayoutPanel configurationsTableLayoutPanel;
 		public System.Windows.Forms.ListView configurationsListView;
