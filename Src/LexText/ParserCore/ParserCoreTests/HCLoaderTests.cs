@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_verb = AddPartOfSpeech("V");
 			m_adj = AddPartOfSpeech("A");
 
-			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding></HC></ParserParameters>";
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 
 			IFsFeatureSystem phFeatSys = Cache.LanguageProject.PhFeatureSystemOA;
 			AddClosedFeature(phFeatSys, "voc", "+", "-");
@@ -1104,6 +1104,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+		}
+
+		[Test]
+		public void AcceptUnspecifiedGraphemes()
+		{
+			AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ed", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sȧg", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("e"), Is.False);
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("ȧ"), Is.False);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
+			LoadLanguage();
+
+			FeatureStruct fs;
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("e", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("ȧ", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 		}
 	}
 }

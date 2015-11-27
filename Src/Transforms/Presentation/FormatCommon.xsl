@@ -30,13 +30,48 @@
 						<xsl:for-each select="$HCLoadErrors">
 							<xsl:choose>
 								<xsl:when test="@type = 'invalid-shape'">
-									<xsl:call-template name="ShowLoadErrorMessage">
+									<xsl:call-template name="ShowInvalidShapeErrorMessage">
 										<xsl:with-param name="sForm" select="translate(Form, '+', '')"/>
 										<xsl:with-param name="iCharNum" select="Position + 1"/>
 										<xsl:with-param name="sFormPart" select="translate(substring(Form, Position + 1), '+', '')"/>
 										<xsl:with-param name="sPhonemesFoundSoFar" select="translate(substring(Form, 1, Position), '+', '')"/>
 										<xsl:with-param name="sHvo" select="Hvo"/>
 									</xsl:call-template>
+								</xsl:when>
+								<xsl:when test="@type = 'invalid-phoneme'">
+									<li>
+										<xsl:text>The phoneme "</xsl:text>
+										<xsl:value-of select="Name" />
+										<xsl:text>" does not have a grapheme defined for the default vernacular writing system. </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the phoneme.)</xsl:text>
+										</span>
+									</li>
+								</xsl:when>
+								<xsl:when test="@type = 'invalid-affix-process'">
+									<li>
+										<xsl:text>The </xsl:text>
+										<xsl:choose>
+											<xsl:when test="InvalidLhs = 'True'">
+												<xsl:text>left hand side</xsl:text>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:text>right hand side</xsl:text>
+											</xsl:otherwise>
+										</xsl:choose>
+										<xsl:text> of the affix process rule "</xsl:text>
+										<xsl:value-of select="Form" />
+										<xsl:text>" contains an invalid natural class or phoneme. </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the entry.)</xsl:text>
+										</span>
+									</li>
 								</xsl:when>
 								<xsl:otherwise>
 									<!-- Do not expect any others to happen, but just in case, we show them in all their HC glory -->
@@ -49,14 +84,8 @@
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
-	<!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		ShowLoadErrorMessage
-		Show a given load ereror message
-		Parameters: none
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-	<xsl:template name="ShowLoadErrorMessage">
+
+	<xsl:template name="ShowInvalidShapeErrorMessage">
 		<xsl:param name="sForm"/>
 		<xsl:param name="iCharNum"/>
 		<xsl:param name="sFormPart"/>
@@ -80,6 +109,7 @@
 			</span>
 		</li>
 	</xsl:template>
+
 	<xsl:template name="ShowAnyDataIssues">
 		<xsl:variable name="issues" select="DataIssues/NatClassPhonemeMismatch"/>
 		<xsl:if test="count($issues)&gt;0">
