@@ -576,6 +576,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			var hangingIndent = 0.0f;
 			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
 				return declaration;
@@ -612,8 +613,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(exportStyleInfo.HasFirstLineIndent)
 			{
-				//Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
-				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.FirstLineIndent)) });
+				// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
+				var firstLineIndentValue = MilliPtToPt(exportStyleInfo.FirstLineIndent);
+				if (firstLineIndentValue < 0.0f)
+				{
+					hangingIndent = firstLineIndentValue;
+				}
+				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, firstLineIndentValue) } );
 			}
 			if(exportStyleInfo.HasKeepTogether)
 			{
@@ -623,9 +629,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasLeadingIndent)
+			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 			{
-				declaration.Add(new Property("padding-left") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.LeadingIndent)) });
+				var leadingIndent = 0.0f;
+				if (exportStyleInfo.HasLeadingIndent)
+				{
+					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
+				}
+				leadingIndent -= hangingIndent;
+				declaration.Add(new Property("padding-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{

@@ -199,6 +199,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForStyleName_HangingIndentWithExistingPaddingWorks()
+		{
+			var hangingIndent = -15 * 1000;
+			var testStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging");
+			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_mediator);
+			// Indent values are converted into pt values on export
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + (LeadingIndent - hangingIndent) / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_HangingIndentWithNoPaddingWorks()
+		{
+			var hangingIndent = -15 * 1000;
+			var testStyle = GenerateEmptyParagraphStyle("Dictionary-Paragraph-Hanging-No-Padding");
+			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_mediator);
+			// Indent values are converted into pt values on export
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + -hangingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_ParagraphAlignmentWorks()
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Justify");
