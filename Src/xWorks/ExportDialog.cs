@@ -1583,6 +1583,9 @@ namespace SIL.FieldWorks.XWorks
 					case LexEntryTypeTags.kClassId:
 						ExportLexEntryTypeFields(w, item as ILexEntryType);
 						break;
+					case LexEntryInflTypeTags.kClassId:
+						ExportLexEntryInflTypeFields(w, item as ILexEntryInflType);
+						break;
 					case LexRefTypeTags.kClassId:
 						ExportLexRefTypeFields(w, item as ILexRefType);
 						break;
@@ -1634,6 +1637,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (item != null)
 					ExportMultiUnicode(w, item.ReverseAbbr);
+			}
+
+			private void ExportLexEntryInflTypeFields(TextWriter w, ILexEntryInflType item)
+			{
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseAbbr);
+				ExportMultiUnicode(w, item.GlossAppend);
 			}
 
 			private void ExportLexRefTypeFields(TextWriter w, ILexRefType item)
