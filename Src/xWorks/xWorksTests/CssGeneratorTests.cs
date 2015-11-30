@@ -1129,14 +1129,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_BetweenSpanWorks()
+		public void GenerateCssForConfiguration_BetweenSingleWsWithAbbrSpanWorks()
 		{
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Headword",
 				CSSClassNameOverride = "Lexemeform",
 				Between = ",",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en", "fr" })
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en" })
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
@@ -1151,6 +1151,74 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.lexemeform>\s*span\s*\+\s*span:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between span selector not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BetweenMultiWsWithoutAbbrSpanWorks()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr", IsEnabled = true,}
+				},
+				DisplayWritingSystemAbbreviations = false
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Headword",
+				CSSClassNameOverride = "Lexemeform",
+				Between = ",",
+				DictionaryNodeOptions = wsOpts
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { headword }
+			};
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.lexemeform>\s*span\s*\+\s*span:before{.*content:','.*}", RegexOptions.Singleline).Success,
+							  "Between Multi-WritingSystem without Abbr selector not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BetweenMultiWsWithAbbrSpanWorks()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr", IsEnabled = true,}
+				},
+				DisplayWritingSystemAbbreviations = true
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Headword",
+				CSSClassNameOverride = "Lexemeform span",
+				Between = ",",
+				DictionaryNodeOptions = wsOpts
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { headword }
+			};
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.lexemeform\s*span.writingsystemprefix:not.:first-child.:before{.*content:','.*}", RegexOptions.Singleline).Success,
+							  "Between Multi-WritingSystem with Abbr selector not generated.");
 		}
 
 		[Test]

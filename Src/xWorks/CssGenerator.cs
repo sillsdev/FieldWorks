@@ -147,6 +147,7 @@ namespace SIL.FieldWorks.XWorks
 					if(wsOptions.Options.Count(s => s.IsEnabled) > 1)
 					{
 						GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
+						GenerateCssForBetweenContentWithMultipleWs(ref beforeAfterSelectors, baseSelection, configNode.Between, wsOptions.DisplayWritingSystemAbbreviations);
 					}
 				}
 				styleSheet.Rules.AddRange(beforeAfterSelectors);
@@ -159,6 +160,28 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, mediator);
 			}
+		}
+
+		/// <summary>
+		/// Generate CSS for Between rule for multiple writingsystem selection
+		/// </summary>
+		/// <param name="beforeAfterSelectors">before/after/between StyleRules in IEnumerable</param>
+		/// <param name="baseSelection">BaseSelection for the between content</param>
+		/// <param name="betweenContent">Between content value</param>
+		/// <param name="isDisplayWSChecked">True when display writing system checkbox is checked</param>
+		private static void GenerateCssForBetweenContentWithMultipleWs(ref IEnumerable<StyleRule> beforeAfterSelectors, string baseSelection, string betweenContent, bool isDisplayWSChecked)
+		{
+			if(!isDisplayWSChecked) return;
+
+			////Rule added for "writingsystemprefix" class to insert "between" content only when more than one writingsystem selected.
+			var wsRule1 = new StyleRule { Value = baseSelection + ".writingsystemprefix:not(:first-child):before" };
+			wsRule1.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, betweenContent) });
+
+			var beforeAfterList = beforeAfterSelectors.ToList();
+			var betweenSelectorIndex = beforeAfterList.FindIndex(x => x.Value.Contains("span+ span:before"));
+			if (betweenSelectorIndex < 0) return;
+			beforeAfterList[betweenSelectorIndex] = wsRule1;
+			beforeAfterSelectors = beforeAfterList;
 		}
 
 		private static void GenerateCssForFieldWithMultipleWs(StyleSheet styleSheet, string baseSelection)
