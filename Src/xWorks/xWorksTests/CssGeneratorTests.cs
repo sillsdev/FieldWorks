@@ -883,6 +883,62 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_SenseShowGramInfoFirstWorks()
+		{
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.senses\s*\.sense\s*\.senses*>\s*\.sharedgrammaticalinfo\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_WritingSystemAudioWorks()
+		{
+			IWritingSystem wsEnAudio;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexemeFormOA",
+				Label = "Lexeme Form",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" }),
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .lexemeformoa{"));
+			Assert.IsTrue(Regex.Match(cssResult, @"a.en-Zxxx-x-audio{.*text-decoration:none;.*}", RegexOptions.Singleline).Success,
+							  "Audio not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseDisplayInParaWorks()
 		{
 			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
