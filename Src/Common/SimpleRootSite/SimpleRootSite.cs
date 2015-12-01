@@ -23,7 +23,6 @@ using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;
 #if !__MonoCS__
-using System.Windows.Automation.Provider;
 using SIL.Windows.Forms.Keyboarding.Windows;
 #endif
 using XCore;
@@ -351,10 +350,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
-#if !__MonoCS__
-			if (UIAutomationServerProviderFactory == null)
-				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-#endif
 			SubscribeToRootSiteEventHandlerEvents();
 		}
 
@@ -6131,19 +6126,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			base.WndProc(ref msg);
 		}
-
-#if !__MonoCS__
-		#region UIAutomationServerProvider
-
-		/// <summary>
-		/// Gets or sets the factory for our UI automation server provider.
-		/// </summary>
-		/// <value>The UI automation server provider factory.</value>
-		protected Func<IRawElementProviderFragmentRoot> UIAutomationServerProviderFactory
-		{ get; set; }
-
-		#endregion
-#endif
 
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer

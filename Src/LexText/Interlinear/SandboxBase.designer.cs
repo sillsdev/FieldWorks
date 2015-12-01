@@ -9,7 +9,7 @@ using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	partial class SandboxBase : RootSite
+	partial class SandboxBase
 	{
 		/// <summary>
 		/// Required designer variable.

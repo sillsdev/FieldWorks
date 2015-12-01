@@ -177,9 +177,6 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="UIAutomationProvider" Condition="'$(OS)'!='Unix'" />
-    <Reference Include="UIAutomationTypes" Condition="'$(OS)'!='Unix'" />
-    <Reference Include="WindowsBase" Condition="'$(OS)'!='Unix'" />
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -222,13 +219,6 @@
     <Compile Include="RootSiteEditingHelperTests.cs" />
     <Compile Include="RootSiteGroupTests.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="RootSiteDataProviderTests.cs" />
-    <Compile Include="RootSiteDataProviderView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RootSiteDataProviderView.Designer.cs">
-      <DependentUpon>RootSiteDataProviderView.cs</DependentUpon>
     </Compile>
     <Compile Include="StVcTests.cs">
       <SubType>Code</SubType>

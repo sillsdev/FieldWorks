@@ -156,9 +156,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UIAutomationProvider" Condition="'$(OS)'!='Unix'" />
-    <Reference Include="UIAutomationTypes" Condition="'$(OS)'!='Unix'" />
-    <Reference Include="WindowsBase" Condition="'$(OS)'!='Unix'" />
     <Reference Include="xCoreInterfaces, Version=7.0.0.40569, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
@@ -187,8 +184,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SelectionRestorer.cs" />
-    <Compile Include="SimpleRootSiteProvider.cs">
-    </Compile>
     <Compile Include="TsStringWrapper.cs" />
     <Compile Include="VwSelectionArgs.cs">
     </Compile>
@@ -240,11 +235,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="ViewInputManager.cs" />
-    <Compile Include="VwSelectionBasedControl.cs" />
-    <Compile Include="BaseFragmentProvider.cs" />
-    <Compile Include="SimpleRootSiteTextRangeProvider.cs" />
     <Compile Include="IbusRootSiteEventHandler.cs" />
-    <Compile Include="WpfInterfacesForMono.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />

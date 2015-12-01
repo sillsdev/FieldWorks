@@ -20,7 +20,6 @@ M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::OnPaintBackground
 M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::Draw(System.Windows.Forms.PaintEventArgs)
 M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::CloseRootBox()
 M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::RegisterForInputLanguageChanges()
-M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>*()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule
@@ -35,8 +34,5 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.Common.RootSites.AccessibilityWrapper
 T: SIL.FieldWorks.Common.RootSites.OrientationManager
 T: SIL.FieldWorks.Common.RootSites.SelPositionInfo
-T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProvider
-T: SIL.FieldWorks.Common.RootSites.BaseFragmentProvider`1
-T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTextRangeProvider
 T: SIL.FieldWorks.Common.RootSites.VwBaseVc
 T: SIL.FieldWorks.Common.RootSites.SimpleRootSite/WindowsLanguageProfileSink
