@@ -156,21 +156,9 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="UIAutomationTypes, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\UIAutomationTypes.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\WindowsBase.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="UIAutomationProvider" Condition="'$(OS)'!='Unix'" />
+    <Reference Include="UIAutomationTypes" Condition="'$(OS)'!='Unix'" />
+    <Reference Include="WindowsBase" Condition="'$(OS)'!='Unix'" />
     <Reference Include="xCoreInterfaces, Version=7.0.0.40569, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
@@ -256,6 +244,7 @@
     <Compile Include="BaseFragmentProvider.cs" />
     <Compile Include="SimpleRootSiteTextRangeProvider.cs" />
     <Compile Include="IbusRootSiteEventHandler.cs" />
+    <Compile Include="WpfInterfacesForMono.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />

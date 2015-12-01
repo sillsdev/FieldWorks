@@ -24,7 +24,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if !__MonoCS__
 using System.Windows.Automation.Provider;
+#endif
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -119,8 +121,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			InitializeComponent();
 
+#if !__MonoCS__
 			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
 				fragmentRoot => RootSiteServices.CreateUIAutomationControls(fragmentRoot, RootBox));
+#endif
 			// RootSite shouldn't handle tabs like a control
 			AcceptsTab = true;
 			AcceptsReturn = true;
@@ -1279,6 +1283,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			return controls;
 		}
 
+#if !__MonoCS__
 		/// <summary>
 		/// Creates the UI automation invoke buttons.
 		/// </summary>
@@ -1298,6 +1303,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			return buttonControls;
 		}
+#endif
 	}
 	#endregion
 
