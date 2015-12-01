@@ -703,6 +703,12 @@ namespace SIL.FieldWorks.IText
 		int m_hvoSbWord;
 		int m_hvoMorph;
 		bool m_fNeedMorphemeUpdate = false; // Set true if a property we care about changes.
+
+		// The following two variables are used to overcome an infelicity of interacting with TSF
+		// on Windows for keyboard input.
+		private bool m_needDelayedSelection;
+		private SelectionHelper.SelInfo m_infoDelayed;
+
 		/// <summary>
 		/// don't start monitoring until directed to do so.
 		/// </summary>
@@ -758,17 +764,26 @@ namespace SIL.FieldWorks.IText
 			int ichSel = -1;
 			int hvoObj = 0;
 			int tag = 0;
-			int ws = 0;
+			m_needDelayedSelection = false;
 			if (sel != null)
 			{
 				TextSelInfo selInfo = new TextSelInfo(sel);
-				ws = selInfo.WsAltAnchor;
-				ichSel = selInfo.IchAnchor;
-				hvoObj = selInfo.HvoAnchor;
-				tag = selInfo.TagAnchor;
+				// Receiving data from TSF on Windows creates a range covering the inserted character instead
+				// of an insertion point following the inserted character.  Anchor marks the beginning of that
+				// range and End marks the end of the range.  We want an insertion point at the end.
+				ichSel = selInfo.IchEnd;
+				hvoObj = selInfo.Hvo(true);
+				tag = selInfo.Tag(true);
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT && ichSel != selInfo.IchAnchor)
+				{
+					// TSF also replaces our carefully created selection, adjusted carefully to follow the
+					// inserted character, with one of its own choosing after we return, so flag that we'll
+					// need to recreate the desired selection at idle time when TSF has quit interfering.
+					m_needDelayedSelection = true;
+				}
 			}
 			// for now, we'll just configure getting the string for the primary morpheme line.
-			ws = this.VernWsForPrimaryMorphemeLine;
+			int ws = this.VernWsForPrimaryMorphemeLine;
 			m_ichSel = -1;
 
 			ITsStrBldr builder = TsStrBldrClass.Create();
@@ -996,7 +1011,57 @@ namespace SIL.FieldWorks.IText
 				m_fNeedMorphemeUpdate = false;
 				m_sandbox.RootBox.Reconstruct(); // Everything changed, more or less.
 				mb.MakeSel();
+				m_infoDelayed = null;
+				if (m_needDelayedSelection)
+				{
+					// Gather up the information needed to recreate the current selection at idle time.
+					var vwsel = m_sandbox.RootBox.Selection;
+					m_infoDelayed = new SelectionHelper.SelInfo();
+					int cvsli = vwsel.CLevels(false);
+					cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
+					int ichEnd;
+					m_infoDelayed.rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
+						out m_infoDelayed.ihvoRoot,
+						out m_infoDelayed.tagTextProp,
+						out m_infoDelayed.cpropPrevious,
+						out m_infoDelayed.ich,
+						out ichEnd,
+						out m_infoDelayed.ws,
+						out m_infoDelayed.fAssocPrev,
+						out m_infoDelayed.ihvoEnd,
+						out m_infoDelayed.ttpSelProps);
+					Debug.Assert(ichEnd == m_infoDelayed.ich);
+					Application.Idle += RecreateDelayedSelection;
+				}
 			}
+		}
+
+		/// <summary>
+		/// Recreate a selection that has (almost certainly) been overwritten by TSF since it can't handle a
+		/// "selection changed" notification in the middle of it calling into our code to deliver new text.
+		/// </summary>
+		/// <remarks>
+		/// See https://jira.sil.org/browse/LT-16766 "Keyman 9 IPA - insert morpheme breaks can put cursor
+		/// in undesirable location, or cause a crash".
+		/// </remarks>
+		private void RecreateDelayedSelection(object sender, EventArgs e)
+		{
+			Application.Idle -= RecreateDelayedSelection;
+			m_sandbox.RootBox.MakeTextSelection(
+				m_infoDelayed.ihvoRoot,
+				m_infoDelayed.rgvsli.Length,
+				m_infoDelayed.rgvsli,
+				m_infoDelayed.tagTextProp,
+				m_infoDelayed.cpropPrevious,
+				m_infoDelayed.ich,
+				m_infoDelayed.ich,
+				m_infoDelayed.ws,
+				m_infoDelayed.fAssocPrev,
+				m_infoDelayed.ihvoEnd,
+				m_infoDelayed.ttpSelProps,
+				true);
+			m_infoDelayed = null;
+			m_needDelayedSelection = false;
 		}
 
 		#endregion
