@@ -300,16 +300,19 @@ namespace SIL.FieldWorks.XWorks
 				var blockDeclaration = new StyleDeclaration();
 
 				blockDeclaration.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Attribute, "italic") });
+				var sensesCssClass = GetClassAttributeForConfig(configNode);
+				var sensesSelector = baseSelection.Substring(0,
+					baseSelection.LastIndexOf(sensesCssClass, StringComparison.Ordinal) + sensesCssClass.Length);
 				var blockRule1 = new StyleRule(blockDeclaration)
 				{
-					Value = String.Format("{0} .{1}> .sharedgrammaticalinfo", baseSelection, GetClassAttributeForConfig(configNode))
+					Value = String.Format("{0}> .sharedgrammaticalinfo", sensesSelector)
 				};
 				styleSheet.Rules.Add(blockRule1);
 
 				blockDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
 				var blockRule2 = new StyleRule(blockDeclaration)
 				{
-					Value = String.Format("{0} .{1}> .sharedgrammaticalinfo:after", baseSelection, GetClassAttributeForConfig(configNode))
+					Value = String.Format("{0}> .sharedgrammaticalinfo:after", sensesSelector)
 				};
 				styleSheet.Rules.Add(blockRule2);
 			}
@@ -378,7 +381,7 @@ namespace SIL.FieldWorks.XWorks
 				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
 				var blockRule = new StyleRule(blockDeclaration)
 				{
-					Value = baseSelection + " " + SelectClassName(configNode)
+					Value = baseSelection + "> " + SelectClassName(configNode)
 				};
 				styleSheet.Rules.Add(blockRule);
 			}
@@ -541,12 +544,12 @@ namespace SIL.FieldWorks.XWorks
 					if (configNode.DictionaryNodeOptions != null)
 					{
 						// Rule added for all span tag which only having WritingSystems attribute
-						betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+						betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
 					rules.Add(betweenRule);
 				}
-				baseSelection = parentSelector + " " + SelectClassName(configNode, cache);
+				baseSelection = parentSelector + "> " + SelectClassName(configNode, cache);
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
