@@ -1012,7 +1012,7 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-      <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS-todo" cssClassNameOverride="complexformtypes">
+      <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="LookupComplexEntryType" cssClassNameOverride="complexformtypes">
         <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>

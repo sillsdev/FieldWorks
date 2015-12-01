@@ -3125,6 +3125,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		public IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get { throw new NotImplementedException("hard-coded in ConfiguredXHTMLGenerator"); } }
+
+		/// <summary>
 		/// If this entry is a complex one, the primary lexemes (under which it is shown as a subentry).
 		/// Otherwise empty.
 		/// No PropChanged support as yet.

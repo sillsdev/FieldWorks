@@ -1083,13 +1083,23 @@ namespace SIL.FieldWorks.XWorks
 			WriteCollectionItemClassAttribute(config, writer);
 			if (config.Children != null)
 			{
-				var listOptionsNode = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+				var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 				// sense and entry options types suggest that we are working with a cross reference
-				if (listOptionsNode != null &&
-					(listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Sense ||
-					 listOptionsNode.ListId == DictionaryNodeListOptions.ListIds.Entry))
+				if (listOptions != null &&
+					(listOptions.ListId == DictionaryNodeListOptions.ListIds.Sense ||
+					 listOptions.ListId == DictionaryNodeListOptions.ListIds.Entry))
 				{
 					GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings);
+				}
+				else if (listOptions is DictionaryNodeComplexFormOptions)
+				{
+					foreach (var child in config.Children)
+					{
+						if (child.FieldDescription == "LookupComplexEntryType")
+							GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, (ILexEntry)collectionOwner, settings);
+						else
+							GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					}
 				}
 				else
 				{
@@ -1152,6 +1162,20 @@ namespace SIL.FieldWorks.XWorks
 						GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
 				}
 			}
+		}
+
+		private static void GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			ILexEntry subEntry, ILexEntry mainEntry, GeneratorSettings settings)
+		{
+			if (!config.IsEnabled)
+				return;
+
+			var entryRefs = subEntry.ComplexFormEntryRefs.Where(entryRef => entryRef.PrimaryEntryRoots.Contains(mainEntry));
+			var complexEntryRef = entryRefs.FirstOrDefault();
+			if (complexEntryRef == null)
+				return;
+
+			GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
 		private static void GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, XmlWriter writer,

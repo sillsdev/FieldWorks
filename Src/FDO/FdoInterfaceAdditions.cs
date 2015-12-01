@@ -1332,6 +1332,12 @@ namespace SIL.FieldWorks.FDO
 		IEnumerable<ILexEntryRef> ComplexFormEntryRefs { get; }
 
 		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get; }
+
+		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own LexEntryRef objects that refer to this LexSense as a
 		/// variant (component).

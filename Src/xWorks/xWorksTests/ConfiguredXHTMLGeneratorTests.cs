@@ -3743,6 +3743,104 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesComplexFormTypeForSubentry()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+
+			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
+			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var revAbbrevNode  = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType", IsEnabled = true,
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				FieldDescription = "Subentries", IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry", IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var fwdNameXpath = string.Format(
+					"//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
+					complexRefAbbr);
+				var revNameXpath = string.Format(
+					"//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+					complexRefRevAbbr);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasNoMatchForXpath(fwdNameXpath);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DoesntGeneratesComplexFormType_WhenDisabled()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+
+			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
+
+			var revAbbrevNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType", IsEnabled = false,
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				FieldDescription = "Subentries", IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry", IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string refTypeXpath = "//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasNoMatchForXpath(refTypeXpath);
+				StringAssert.DoesNotContain(complexRefAbbr, XHTMLStringBuilder.ToString());
+			}
+		}
+
+		[Test]
 		public void IsCollectionType()
 		{
 			var assembly = Assembly.Load(ConfiguredXHTMLGenerator.AssemblyFile);
@@ -4137,7 +4235,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
-			complexEntryRef.ComplexEntryTypesRS.Add((ILexEntryType)Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0]);
+			var complexEntryType = (ILexEntryType) Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0];
+			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
+			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
+			if(complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
+				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
+			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
 			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
 			complexEntryRef.ComponentLexemesRS.Add(main);
 			if (subentry)

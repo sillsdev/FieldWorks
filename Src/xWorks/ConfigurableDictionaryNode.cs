@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Whether this element of dictionary data is to shown as part of the dictionary.
+		/// Whether this element of dictionary data is shown as part of the dictionary.
 		/// </summary>
 		[XmlAttribute(AttributeName = "isEnabled")]
 		public bool IsEnabled { get; set; }
