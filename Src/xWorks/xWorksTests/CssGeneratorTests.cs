@@ -103,8 +103,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// verify that the css result contains a line similar to a { text-decoration:inherit; color:inherit; }
-			Assert.IsTrue(Regex.Match(cssResult, @"^\s*a\s*{[^}]*text-decoration:inherit;").Success, "Links should inherit underlines and similar.");
-			Assert.IsTrue(Regex.Match(cssResult, @"^\s*a\s*{[^}]*color:inherit;").Success, "Links should inherit color.");
+			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*text-decoration:inherit;").Success, "Links should inherit underlines and similar.");
+			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*color:inherit;").Success, "Links should inherit color.");
 		}
 
 		[Test]
@@ -1460,6 +1460,61 @@ namespace SIL.FieldWorks.XWorks
 				Contains.Substring(
 					"span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}"));
 		}
+
+		[Test]
+		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
+		{
+			GenerateNormalStyle("Dictionary-Normal");
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*padding-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+							  "Generate Dictionary-Normal Paragraph Style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_GenerateDictionaryMinorParagraphStyle()
+		{
+			GenerateNormalStyle("Dictionary-Minor");
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*padding-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+							  "Generate Dictionary-Minor Paragraph Style not generated.");
+		}
+
+
+
 		private TestStyle GenerateStyle(string name)
 		{
 			var fontInfo = new FontInfo();
@@ -1662,9 +1717,29 @@ namespace SIL.FieldWorks.XWorks
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptAlign, 0, (int)ParagraphAlignment);
 			// Line space setting (set to double space)
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvRelative, LineHeight);
+			if (m_styleSheet.Styles.Count > 0)
+				m_styleSheet.Styles.RemoveAt(0);
 			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
 			m_owningTable.Add(name, style);
 			return style;
+		}
+
+		private void GenerateNormalStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontSize.ExplicitValue = FontSize;
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = true };
+			// Padding style settings
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
+			if (m_styleSheet.Styles.Count > 0)
+				m_styleSheet.Styles.RemoveAt(0);
+			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
+			m_owningTable.Add(name, style);
 		}
 
 		private TestStyle GenerateEmptyParagraphStyle(string name)

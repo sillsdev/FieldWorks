@@ -27,6 +27,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string DictionaryContinuation = "Dictionary-Continuation";
+		internal const string DictionaryNormal = "Dictionary-Normal";
+		internal const string DictionaryMinor = "Dictionary-Minor";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
@@ -42,8 +44,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
-			if (mediatorstyleSheet != null && mediatorstyleSheet.Styles.Contains("Normal"))
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
+			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts)
@@ -52,6 +53,24 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Pretty-print the stylesheet
 			return styleSheet.ToString(true, 1);
+		}
+
+		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
+			StyleSheet styleSheet, FdoCache cache)
+		{
+			if (mediatorstyleSheet == null) return;
+			if (mediatorstyleSheet.Styles.Contains("Normal"))
+			{
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
+			}
+			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
+			{
+				GenerateDictionaryNormalParagraphCss(styleSheet, mediator, cache);
+			}
+			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
+			{
+				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, cache);
+			}
 		}
 
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
@@ -72,6 +91,22 @@ namespace SIL.FieldWorks.XWorks
 				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator));
 				styleSheet.Rules.Add(wsRule);
 			}
+		}
+
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		{
+			var dictNormalRule = new StyleRule { Value = "div.entry" };
+			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, mediator);
+			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
+			styleSheet.Rules.Add(dictNormalRule);
+		}
+
+		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		{
+			var dictMinorRule = new StyleRule {Value = "div.minorentry"};
+			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, mediator);
+			dictMinorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictMinorStyle));
+			styleSheet.Rules.Add(dictMinorRule);
 		}
 
 		private static void GenerateCssForAudioWs(StyleSheet styleSheet, FdoCache cache)
