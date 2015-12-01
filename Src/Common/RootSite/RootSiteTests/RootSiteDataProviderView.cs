@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if !__MonoCS__
 using System.Windows.Automation.Provider;
+#endif
 using System.Windows.Forms;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;

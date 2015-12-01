@@ -1015,8 +1015,10 @@ namespace SIL.FieldWorks.IText
 				mediator.PropertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
 			}
 
+#if !__MonoCS__
 			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
 				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
+#endif
 		}
 
 		public SandboxBase(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
