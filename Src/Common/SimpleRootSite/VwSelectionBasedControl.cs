@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+#if !__MonoCS__
 using System.Windows.Automation.Provider;
+#endif
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -38,7 +40,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			: base(parent, site, childControlFactory)
 		{
 			Selection = selection;
+#if !__MonoCS__
 			m_site.Invoke(ComputeScreenBoundingRectangle);
+#endif
 		}
 
 		#region Other protected methods
@@ -51,6 +55,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <value>The selection.</value>
 		protected IVwSelection Selection { get; set; }
 
+#if !__MonoCS__
 		/// <summary>
 		/// Computes the screen bounding rectangle.
 		/// </summary>
@@ -68,11 +73,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				BoundingRectangle = new System.Windows.Rect(screenPoint, size);
 			}
 		}
+#endif
 
 		#region IRawElementProviderFragment Members
 
 		#endregion
 
+#if !__MonoCS__
 		/// <summary>
 		/// Gets the next sibling of this fragment.
 		/// </summary>
@@ -94,7 +101,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return m_parent.Navigate(this, NavigateDirection.PreviousSibling);
 			return null;
 		}
-
+#endif
 		#region IRawElementProviderSimple Members
 
 		#endregion
