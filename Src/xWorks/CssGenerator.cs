@@ -87,8 +87,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
+				// We want only the character type settings from the "Normal" style since we're applying them
+				// to a span, not a div (or a paragraph).  See https://jira.sil.org/browse/LT-16796.
 				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
-				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator));
+				var styleDecls = GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator);
+				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleSheet.Rules.Add(wsRule);
 			}
 		}
