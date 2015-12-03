@@ -1580,6 +1580,12 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
 			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
 			if (m_styleSheet.Styles.Count > 0)
 				m_styleSheet.Styles.RemoveAt(0);
 			m_styleSheet.Styles.Add(style);
@@ -1716,12 +1722,32 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentrie{.*\sdisplay:block;.*}";
-			Assert.IsTrue(Regex.Match (cssResult, regexExpected1, RegexOptions.Singleline).Success,
+			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected subentrie rule not generated");
-			var regexExpected2 = @"\.lexentry>\s\.subentries\s\.subentrie:before{.*\scontent:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
-			Assert.IsTrue(Regex.Match (cssResult, regexExpected2, RegexOptions.Singleline).Success,
+			var regexExpected2 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\scontent:'\\25A0';[^}]*font-size:14pt;[^}]*color:Green;[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
 				"expected subentrie:before rule not generated");
+			// Check that the bullet info values occur only in the :before section, and that the primary values
+			// do not occur in the :before section.
+			var regexUnwanted1 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\scontent:'\\25A0';[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted1, RegexOptions.Singleline).Success,
+				"subentrie rule has unwanted content value");
+			var regexUnwanted2 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\sfont-size:14pt;[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted2, RegexOptions.Singleline).Success,
+				"subentrie rule has unwanted font-size value");
+			var regexUnwanted3 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\scolor:Green;[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted3, RegexOptions.Singleline).Success,
+				"subentrie rule has unwanted color value");
+			var regexUnwanted4 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\sfont-size:12pt;[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted4, RegexOptions.Singleline).Success,
+				"subentrie:before rule has unwanted font-size value");
+			var regexUnwanted5 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\scolor:#F00;[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted5, RegexOptions.Singleline).Success,
+				"subentrie:before rule has unwanted color value");
+			var regexUnwanted6 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\sdisplay:block;[^}]*}";
+			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted6, RegexOptions.Singleline).Success,
+				"subentrie:before rule has unwanted display value");
 		}
 
 		private TestStyle GenerateEmptyStyle(string name)
@@ -1948,6 +1974,11 @@ namespace SIL.FieldWorks.XWorks
 		public void SetWsStyle(FontInfo fontInfo, int wsId)
 		{
 			m_fontInfoOverrides[wsId] = fontInfo;
+		}
+
+		public void SetDefaultFontInfo(FontInfo info)
+		{
+			m_defaultFontInfo = info;
 		}
 
 		/// <summary>

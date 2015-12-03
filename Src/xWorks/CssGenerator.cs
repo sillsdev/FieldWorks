@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 					//Generate the rules for the default font info
 					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
 					if (showingParagraph)
-						AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
+						rule = AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
 				}
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if(wsOptions != null)
@@ -367,15 +367,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
 			{
-				var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
-				var blockDeclaration = GetOnlyParagraphStyle(styleDeclaration);
-				// clean out the ":before" formatting that doesn't apply here
-				for (int i = 0; i < blockDeclaration.Properties.Count; ++i)
+				// Don't remove any character level settings since paragraphs can have their own character level
+				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
+				// But do remove any settings that apply only to ":before" formatting.
+				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
+				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
 				{
 					if (blockDeclaration.Properties[i].Name == "content")
 					{
 						blockDeclaration.Properties.RemoveAt(i);
-						break;
+						break;	// At the moment, there's only the one setting to remove, so we can quit the loop here.
 					}
 				}
 				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
@@ -394,34 +395,22 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// See https://jira.sil.org/browse/LT-11625 for justification.
 		/// </remarks>
-		private static void AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, Mediator mediator)
+		private static StyleRule AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, Mediator mediator)
 		{
 			var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			if (exportStyleInfo.NumberScheme != 0)
 			{
-				rule.Value += ":before";
-				// clean out some paragraph formatting that doesn't apply here
-				// (note we're carefully deleting from the end of the list)
-				for (int i = rule.Declarations.Properties.Count - 1; i >= 0; --i)
-				{
-					switch (rule.Declarations.Properties[i].Name)
-					{
-						case "text-indent":
-						case "padding-left":
-						case "border-left-width":
-						case "border-right-width":
-						case "border-top-width":
-						case "border-bottom-width":
-							rule.Declarations.Properties.RemoveAt(i);
-							break;
-					}
-				}
+
+				var bulletRule = new StyleRule { Value = rule.Value + ":before" };
+				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
 				var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
-				rule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
-				rule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+				bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
+				bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+				return bulletRule;
 			}
+			return rule;
 		}
 
 		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
