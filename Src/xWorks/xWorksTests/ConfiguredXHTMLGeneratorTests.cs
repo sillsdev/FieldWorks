@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using System.Xml;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -1348,8 +1349,8 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, true);
-			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor,
-				Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).ToArray());
+			configModel.Parts[1].DictionaryNodeOptions =
+				configModel.Parts[2].DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Minor);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
@@ -3841,6 +3842,235 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesComplexForm_NoTypeSpecified()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			var complexFormRef= CreateComplexForm(lexentry, complexEntry, false);
+			complexFormRef.ComplexEntryTypesRS.Clear(); // no complex form type specified
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				IsEnabled = true
+			};
+			var complexEntryTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				IsEnabled = true,
+				CSSClassNameOverride = "complexformtypes",
+			};
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var referencedCompFormNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> {complexEntryTypeNode, formNode },
+				DictionaryNodeOptions = complexOptions,
+				FieldDescription = "VisibleComplexFormBackRefs",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { referencedCompFormNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var result = XHTMLStringBuilder.ToString();
+				const string refTypeXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='complexformtypes']/span[@class='complexformtype']";
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
+				const string headwordXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']";
+				AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesSubentry_NoTypeSpecified()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+			subentryRef.ComplexEntryTypesRS.Clear(); // no complex form type specified
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				IsEnabled = true
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType",
+				IsEnabled = true,
+				CSSClassNameOverride = "complexformtypes",
+			};
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
+				DictionaryNodeOptions = complexOptions,
+				FieldDescription = "Subentries",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var result = XHTMLStringBuilder.ToString();
+				const string refTypeXpath = "//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']/span[@class='complexformtype']";
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
+				const string headwordXpath = "//span[@class='subentries']/span[@class='subentrie']/span[@class='headword']";
+				AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesVariant_NoTypeSpecified()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS.Clear(); // no variant entry type specified
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				IsEnabled = true
+			};
+			var variantEntryTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				IsEnabled = true,
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantEntryTypeNode, formNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var result = XHTMLStringBuilder.ToString();
+				const string refTypeXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='variantentrytypesrs']/span[@class='variantentrytypesr']";
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
+				const string headwordXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']";
+				AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			}
+		}
+
+		public enum FormType { Specified, Unspecified, None }
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(
+			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType complexForm,
+			[Values(true, false)] bool isUnspecifiedComplexTypeEnabled,
+			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType variantForm,
+			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled)
+		{
+			if (complexForm == FormType.None && variantForm == FormType.None)
+				return; // A Minor entry makes no sense if it's neither complex nor variant
+
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			var enabledMinorEntryTypes = new List<string>();
+
+			if (complexForm != FormType.None)
+			{
+				var complexRef = CreateComplexForm(mainEntry, minorEntry, false);
+				if (complexForm == FormType.Unspecified)
+					complexRef.ComplexEntryTypesRS.Clear();
+			}
+
+			if(isUnspecifiedComplexTypeEnabled)
+				enabledMinorEntryTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString());
+
+			if (variantForm != FormType.None)
+			{
+				var variantRef = CreateVariantForm(mainEntry, minorEntry);
+				if(variantForm == FormType.Unspecified)
+					variantRef.VariantEntryTypesRS.Clear();
+			}
+
+			if(isUnspecifiedVariantTypeEnabled)
+				enabledMinorEntryTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString());
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord", Label = "Headword", CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				IsEnabled = true
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				DictionaryNodeOptions =  GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Minor, enabledMinorEntryTypes),
+				FieldDescription = "LexEntry", IsEnabled = true
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> {new ConfigurableDictionaryNode(), minorEntryNode} // dummy main entry node
+			};
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(minorEntry, model, null, settings));
+				XHTMLWriter.Flush();
+				var result = XHTMLStringBuilder.ToString();
+
+				var isComplexFormShowing = complexForm == FormType.Unspecified && isUnspecifiedComplexTypeEnabled;
+				var isVariantFormShowing = variantForm == FormType.Unspecified && isUnspecifiedVariantTypeEnabled;
+				var isMinorEntryShowing = isComplexFormShowing || isVariantFormShowing;
+
+				if (isMinorEntryShowing)
+					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+				else
+					Assert.IsEmpty(result);
+			}
+		}
+
+		[Test]
 		public void IsCollectionType()
 		{
 			var assembly = Assembly.Load(ConfiguredXHTMLGenerator.AssemblyFile);
@@ -4140,6 +4370,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Helpers
+
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
 		{
@@ -4220,15 +4451,15 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private void CreateVariantForm(ILexEntry main, ILexEntry variantForm)
+		private ILexEntryRef CreateVariantForm(ILexEntry main, ILexEntry variantForm)
 		{
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
 			var ws = Cache.DefaultAnalWs;
-			var varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory> ().Create ();
-			owningList.PossibilitiesOS.Add (varType);
+			var varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+			owningList.PossibilitiesOS.Add(varType);
 			varType.Name.set_String(ws, TestVariantName);
-			variantForm.MakeVariantOf(main, varType);
+			return variantForm.MakeVariantOf(main, varType);
 		}
 
 		private ILexEntryRef CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
@@ -4238,6 +4469,7 @@ namespace SIL.FieldWorks.XWorks
 			var complexEntryType = (ILexEntryType) Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0];
 			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
 			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
+			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
 			if(complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
 				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
 			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
@@ -4372,12 +4604,55 @@ namespace SIL.FieldWorks.XWorks
 			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),DisplayWritingSystemAbbreviations = true};
 			return wsOptions;
 		}
+
 		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
 		{
 			var listOptions = new DictionaryNodeListOptions {
 				ListId = listName,
 				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings (checkedItems.Select (id => id.Guid.ToString()).ToList())
 			};
+			return listOptions;
+		}
+
+		public static DictionaryNodeOptions GetListOptionsForStrings(DictionaryNodeListOptions.ListIds listName, IEnumerable<string> checkedItems)
+		{
+			var listOptions = new DictionaryNodeListOptions {
+				ListId = listName,
+				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(checkedItems)
+			};
+			return listOptions;
+		}
+
+		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
+		{
+			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
+			switch (listName)
+			{
+				case DictionaryNodeListOptions.ListIds.Minor:
+					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
+						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType(), XmlViewsUtils.GetGuidForUnspecifiedComplexFormType() }
+							.Select(guid => guid.ToString())
+						.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+						.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
+					break;
+				case DictionaryNodeListOptions.ListIds.Variant:
+					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
+						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
+						.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+					break;
+				case DictionaryNodeListOptions.ListIds.Complex:
+					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
+						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
+						.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+					break;
+				default:
+					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));
+			}
+
+			DictionaryNodeListOptions listOptions = isComplex ? new DictionaryNodeComplexFormOptions() : new DictionaryNodeListOptions();
+
+			listOptions.ListId = listName;
+			listOptions.Options = dnoList;
 			return listOptions;
 		}
 

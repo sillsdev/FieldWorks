@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static Dictionary<string, Assembly> AssemblyMap = new Dictionary<string, Assembly>();
 
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
+
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
 		/// </summary>
@@ -1344,45 +1345,55 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Variant:
 					{
 						var entryRef = (ILexEntryRef)listItem;
-						var entryTypeGuids = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid);
-						return entryTypeGuids.Intersect(selectedListOptions).Any();
+						var entryTypeGuids = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid).ToList();
+						return entryTypeGuids.Any()
+							? entryTypeGuids.Intersect(selectedListOptions).Any()
+							: selectedListOptions.Contains(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
 					}
 				case DictionaryNodeListOptions.ListIds.Minor:
 					{
 						// minor entry list options are a combination of both the variant and complex options
 						var entry = (ILexEntry)listItem;
-						var variantTypeGuids = new Set<Guid>();
-						var complexTypeGuids = new Set<Guid>();
+						var entryTypeGuids = new Set<Guid>();
 						foreach (var variantRef in entry.VariantEntryRefs)
 						{
-							variantTypeGuids.AddRange(variantRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+							if(variantRef.VariantEntryTypesRS.Any())
+								entryTypeGuids.AddRange(variantRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+							else
+								entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
 						}
-						foreach (var complexRef in entry.EntryRefsOS)
+						foreach (var complexRef in entry.ComplexFormEntryRefs)
 						{
-							complexTypeGuids.AddRange(complexRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+							if(complexRef.ComplexEntryTypesRS.Any())
+								entryTypeGuids.AddRange(complexRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+							else
+								entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 						}
-						var entryTypeGuids = complexTypeGuids.Union(variantTypeGuids);
 						return entryTypeGuids.Intersect(selectedListOptions).Any();
 					}
 				case DictionaryNodeListOptions.ListIds.Complex:
 					{
-						if (listItem is ILexEntryRef)
+						var entryTypeGuids = new Set<Guid>();
+						var complexEntryRef = listItem as ILexEntryRef;
+						var complexEntry = listItem as ILexEntry;
+						if (complexEntryRef != null)
 						{
-							var entryRef = (ILexEntryRef)listItem;
-							var entryTypeGuids = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
-							return entryTypeGuids.Intersect(selectedListOptions).Any();
+							if(complexEntryRef.ComplexEntryTypesRS.Any())
+								entryTypeGuids.AddRange(complexEntryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+							else
+								entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 						}
-						if (listItem is ILexEntry)
+						else if (complexEntry != null)
 						{
-							var entry = (ILexEntry)listItem;
-							var entryTypeGuids = new List<Guid>();
-							foreach (var entryRef in entry.EntryRefsOS)
+							foreach (var entryRef in complexEntry.EntryRefsOS)
 							{
-								entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+								if(entryRef.ComplexEntryTypesRS.Any())
+									entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+								else
+									entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 							}
-							return entryTypeGuids.Intersect(selectedListOptions).Any();
 						}
-						return false;
+						return entryTypeGuids.Intersect(selectedListOptions).Any();
 					}
 				case DictionaryNodeListOptions.ListIds.Entry:
 				case DictionaryNodeListOptions.ListIds.Sense:
