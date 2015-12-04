@@ -237,9 +237,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_lstAnalWs.Items.Count > 0)
 					m_lstAnalWs.SelectedIndex = 0;
 
-				m_addWSsToSldrCheckBox.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
-				if (m_addWSsToSldrCheckBox.Enabled)
-					m_addWSsToSldrCheckBox.Checked = m_projectLexiconSettings.AddWritingSystemsToSldr;
+				m_addWSsToSldrCheckBox.Checked = m_projectLexiconSettings.AddWritingSystemsToSldr;
 				UpdateOKButton();
 			}
 		}
