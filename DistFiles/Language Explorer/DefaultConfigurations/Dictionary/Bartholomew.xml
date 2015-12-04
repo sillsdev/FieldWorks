@@ -7,6 +7,7 @@
  lastModified="2014-10-08"
  allPublications="true">
   <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
+      <ParagraphOptions paragraphStyle="Dictionary-Normal" continuationParagraphStyle="Dictionary-Continuation" />
   <!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
        prevents styles for the main HeadWord from leaking onto other HeadWords -->
     <ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="mainheadword">

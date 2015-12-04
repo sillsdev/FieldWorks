@@ -77,6 +77,12 @@
 				<xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
 			</xs:complexType>
 		</xs:element>
+		<xs:element name="ParagraphOptions" minOccurs="0">
+			<xs:complexType>
+				<xs:attribute type="xs:string" name="paragraphStyle" use="required"/>
+				<xs:attribute type="xs:string" name="continuationParagraphStyle" use="required"/>
+			</xs:complexType>
+		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
 			<xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ReferenceItem">

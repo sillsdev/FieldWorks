@@ -105,6 +105,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					LoadListOptions(Options as DictionaryNodeListOptions);
 				}
+				else if (Options is DictionaryNodeParagraphOptions)
+				{
+					LoadParagraphOptions(Options as DictionaryNodeParagraphOptions);
+				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
 					// todo: loading options here once UX has been worked out
@@ -180,6 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			view.BetweenText = node.Between;
 			view.AfterText = node.After;
 			view.Visible = true;
+			view.StylesVisible = true;
 			view.Enabled = IsAllParentsChecked(node);
 			view.SurroundingCharsVisible = true;
 		}
@@ -262,6 +267,23 @@ namespace SIL.FieldWorks.XWorks
 
 				wsOptionsView.Load -= WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 			};
+		}
+
+		/// <summary>Initialize options for DictionaryNodeParagraphOptions</summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "paragraphOptions is disposed by its parent")]
+		private void LoadParagraphOptions(DictionaryNodeParagraphOptions paragraphOptions)
+		{
+			IDictionaryParagraphOptionsView paragraphOptionsView = new ParagraphOptionsView();
+			paragraphOptionsView.SetParaStyles(m_paraStyles, paragraphOptions.PargraphStyle);
+			paragraphOptionsView.SetContParaStyles(m_paraStyles, paragraphOptions.ContinuationParagraphStyle);
+			paragraphOptionsView.ParaStyleChanged += (sender, e) => ParaStyleChanged(paragraphOptions, paragraphOptionsView);
+			paragraphOptionsView.ContParaStyleChanged += (sender, e) => ContParaStyleChanged(paragraphOptions, paragraphOptionsView);
+			paragraphOptionsView.StyleParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ParaStyle);
+			paragraphOptionsView.StyleContParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ContParaStyle);
+			View.OptionsView = paragraphOptionsView as ParagraphOptionsView;
+			View.StylesVisible = false;
+			View.SurroundingCharsVisible = false;
+
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
@@ -850,6 +872,22 @@ namespace SIL.FieldWorks.XWorks
 			RefreshPreview();
 		}
 		#endregion SenseChanges
+
+		#region ParagrahChanges
+		private void ParaStyleChanged(DictionaryNodeParagraphOptions paraOptions, IDictionaryParagraphOptionsView paraOptionsView)
+		{
+			paraOptions.PargraphStyle = paraOptionsView.ParaStyle;
+			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(paraOptions.PargraphStyle);
+			RefreshPreview();
+		}
+
+		private void ContParaStyleChanged(DictionaryNodeParagraphOptions contParaOptions, IDictionaryParagraphOptionsView paraOptionsView)
+		{
+			contParaOptions.ContinuationParagraphStyle = paraOptionsView.ParaStyle;
+			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(contParaOptions.PargraphStyle);
+			RefreshPreview();
+		}
+		#endregion
 
 		private void ToggleViewForShowInPara(bool showInPara)
 		{

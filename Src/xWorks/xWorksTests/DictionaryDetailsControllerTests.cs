@@ -694,6 +694,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void LoadNode_LoadingParagraphOptionsViewOnMainEntry()
+		{
+			var paraOptions = new DictionaryNodeParagraphOptions();
+			{
+				paraOptions.PargraphStyle = "Dictionary-Normal";
+				paraOptions.ContinuationParagraphStyle = "Dictionary-Continuation";
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = paraOptions,
+				IsEnabled = true
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(mainEntryNode);
+			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Paragraph OptionsView Test failed, OptionsView shoud not be null");
+			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).StylesVisible, "Paragraph OptionsView Test failed, StylesVisible shoud not be true");
+			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).SurroundingCharsVisible, "Paragraph OptionsView Test failed, SurroundingCharsVisible shoud not be true");
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void CannotUncheckOnlyCheckedItemInList()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
