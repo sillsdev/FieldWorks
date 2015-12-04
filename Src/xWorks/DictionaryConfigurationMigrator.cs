@@ -266,7 +266,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(convertedNode.Label != currentDefaultNode.Label)
 			{
-				throw new ArgumentException("Cannot merge two nodes that do not match.");
+				// This check is necessary to prevent a crash, but is by no means sufficient
+				// for proper migration.  Since more work needs to be done in this method, no
+				// unit test has been written to cover this particular change.  When the work
+				// to properly handle migration is done, this comment should probably be
+				// removed, and exhausting unit tests should be written.
+				// This hackish situation is to allow work to proceed on other, unrelated
+				// migration issues.
+				if (!currentDefaultNode.Label.StartsWith(convertedNode.Label + " "))
+					throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
