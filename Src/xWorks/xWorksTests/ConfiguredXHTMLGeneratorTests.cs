@@ -4130,29 +4130,64 @@ namespace SIL.FieldWorks.XWorks
 			// This entry is published only in test, together with its sense and example.
 			var entryOreille = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOreille, "oreille", m_wsFr, Cache);
-			entryOreille.SensesOS[0].Gloss.set_String (m_wsEn, "ear");
+			entryOreille.SensesOS[0].Gloss.set_String(m_wsEn, "ear");
 			var exampleOreille1 = AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", "Lake Pend d'Oreille is in Idaho.");
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
 
-			// Note that the decorators must be created *after* the data exists.
+			var entryEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
+			entryEntry.SensesOS[0].Gloss.set_String(m_wsEn, "entry");
+			var entryMainsubentry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryMainsubentry, "mainsubentry", m_wsFr, Cache);
+			entryMainsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "mainsubentry");
+			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
+			var complexFormRef1 = CreateComplexForm(entryEntry, entryMainsubentry, true);
+			var complexRefName1 = complexFormRef1.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			var complexTypePoss1 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName1);
+			var entryTestsubentry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryTestsubentry, "testsubentry", m_wsFr, Cache);
+			entryTestsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "testsubentry");
+			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
+			var complexFormRef2 = CreateComplexForm(entryEntry, entryTestsubentry, true);
+			var complexRefName2 = complexFormRef2.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			var complexTypePoss2 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName2);
+
+			// Note that the decorators must be created (or refreshed) *after* the data exists.
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
 			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
 			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
 			//SUT
 			var hvosMain = new List<int>( pubMain.GetEntriesToPublish(m_mediator, flidVirtual) );
-			Assert.AreEqual(2, hvosMain.Count, "there are two entries in the main publication");
+			Assert.AreEqual(4, hvosMain.Count, "there are four entries in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryCorps.Hvo), "corps is shown in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryBras.Hvo), "bras is shown in the main publication");
 			Assert.IsFalse(hvosMain.Contains(entryOreille.Hvo), "oreille is not shown in the main publication");
+			Assert.IsTrue(hvosMain.Contains(entryEntry.Hvo), "entry is shown in the main publication");
+			Assert.IsTrue(hvosMain.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the main publication");
+			Assert.IsFalse(hvosMain.Contains(entryTestsubentry.Hvo), "testsubentry is not shown in the main publication");
 			var hvosTest = new List<int>( pubTest.GetEntriesToPublish(m_mediator, flidVirtual) );
-			Assert.AreEqual(2, hvosTest.Count, "there are two entries in the test publication");
+			Assert.AreEqual(4, hvosTest.Count, "there are four entries in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryCorps.Hvo), "corps is shown in the test publication");
 			Assert.IsFalse(hvosTest.Contains(entryBras.Hvo), "bras is not shown in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryOreille.Hvo), "oreille is shown in the test publication");
+			Assert.IsTrue(hvosTest.Contains(entryEntry.Hvo), "entry is shown in the test publication");
+			Assert.IsFalse(hvosTest.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the test publication");
+			Assert.IsTrue(hvosTest.Contains(entryTestsubentry.Hvo), "testsubentry is shown in the test publication");
 
+			var subHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord", IsEnabled = true,
+				CSSClassNameOverride = "subentry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Subentries", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subHeadwordNode }
+			};
 			var translationNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Translation",
@@ -4206,7 +4241,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode },
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode, subentryNode },
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
@@ -4228,6 +4263,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the unfiltered output displays everything.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -4243,6 +4279,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the main publication output displays what it should.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -4281,6 +4318,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubEverything, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the unfiltered output displays everything.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -4296,6 +4334,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubMain, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the main publication output displays everything.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -4313,6 +4352,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubTest, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the test output doesn't display the senses and examples.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -4329,6 +4369,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubEverything, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the unfiltered output displays everything.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -4346,6 +4387,7 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubMain, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the test output doesn't display the sense and example.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -4361,11 +4403,50 @@ namespace SIL.FieldWorks.XWorks
 					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubTest, settings));
 				XHTMLWriter.Flush();
 				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
 				// Verify that the test publication output displays everything.
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+			}
+
+			var matchFrenchSubentry = "//span[@class='subentries']/span[@class='subentrie']/span[@class='subentry']/span[@lang='fr']";
+			var matchMainsubentry = "//span[@class='subentries']/span[@class='subentrie']/span[@class='subentry']/span[@lang='fr'and text()='mainsubentry']";
+			var matchTestsubentry = "//span[@class='subentries']/span[@class='subentrie']/span[@class='subentry']/span[@lang='fr'and text()='testsubentry']";
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
+				// Verify that the main publication output displays what it should.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchSubentry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchMainsubentry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchTestsubentry, 0);
+			}
+			XHTMLStringBuilder.Clear();
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow (
+					() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubTest, settings));
+				XHTMLWriter.Flush();
+				var output = XHTMLStringBuilder.ToString();
+				Assert.IsNotNullOrEmpty(output);
+				// Verify that the test publication output displays what it should.
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchSubentry, 1);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchMainsubentry, 0);
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchTestsubentry, 1);
 			}
 		}
 

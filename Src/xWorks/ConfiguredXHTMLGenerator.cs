@@ -923,11 +923,11 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var item in collection)
 				{
 					if (publicationDecorator != null &&
-						item is ILexExampleSentence &&
-						publicationDecorator.IsExcludedObject((item as ILexExampleSentence).Hvo))
+						item is ICmObject &&
+						publicationDecorator.IsExcludedObject((item as ICmObject).Hvo))
 					{
-						// Don't show examples that have been marked to exclude from publication.
-						// See https://jira.sil.org/browse/LT-15697.
+						// Don't show examples or subentries that have been marked to exclude from publication.
+						// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
 						continue;
 					}
 					GenerateCollectionItemContent(config, publicationDecorator, item, collectionOwner, settings);
