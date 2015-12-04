@@ -578,6 +578,7 @@ namespace SIL.FieldWorks.XWorks
 			var flowResetRule = new StyleRule();
 			flowResetRule.Value = baseSelection;
 			flowResetRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both")});
+			flowResetRule.Declarations.Properties.Add(new Property("white-space") { Term = new PrimitiveTerm(UnitType.Ident, "pre") });
 			rules.Add(flowResetRule);
 		}
 		/// <summary>

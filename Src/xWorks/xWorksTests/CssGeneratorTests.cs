@@ -85,9 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			// verify that the css result contains a line similar to: .lexentry {
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*{.*").Success,
-							  "Css for root node(lexentry) did not generate a specific match");
+			// verify that the css result contains a line similar to: .lexentry {clear:both;white-space:pre;}
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*{\s*clear:both;\s*white-space:pre;").Success,
+							  "Css for root node(lexentry) did not generate 'clear' and 'white-space' rules match");
 			// verify that the css result contains a line similar to: .lexentry .headword {
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.mainheadword\s*span\s*{.*").Success,
 							  "Css for child node(headword) did not generate a specific match");
