@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.TestUtilities;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {
@@ -33,6 +34,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 	{
 		/// <summary></summary>
 		protected DebugProcs m_debugProcs;
+
+		private OfflineSldr m_offlineSldr;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -88,6 +91,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public virtual void FixtureSetup()
 		{
 			m_debugProcs = new DebugProcs();
+			m_offlineSldr = new OfflineSldr();
 			try
 			{
 				Icu.InitIcuDataDir();
@@ -130,6 +134,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 			// because we're running STA.
 			CoFreeUnusedLibraries();
 
+			m_offlineSldr.Dispose();
+			m_offlineSldr = null;
 			m_debugProcs.Dispose();
 			m_debugProcs = null;
 		}
