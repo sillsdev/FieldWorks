@@ -95,7 +95,7 @@
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;ManagedLgIcuCollator">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -111,7 +111,7 @@
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views">
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;ManagedLgIcuCollator">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 				Configuration="$(config-capital)"
@@ -227,7 +227,7 @@
 		<Original-ANAL_TYPE>$(ANAL_TYPE)</Original-ANAL_TYPE>
 	</PropertyGroup>
 
-	<Target Name="mktlbs" DependsOnTargets="GenerateCellarConstants">
+	<Target Name="mktlbs" DependsOnTargets="GenerateCellarConstants;FwKernel;Views">
 		<SetEnvVar Variable="BUILD_OUTPUT" Value="$(dir-fwoutput)" />
 		<SetEnvVar Variable="OBJ_DIR" Value="$(dir-fwobj)" />
 		<SetEnvVar Variable="BUILD4UX" Value="$(build4ux)"/>
