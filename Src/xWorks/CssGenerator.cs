@@ -231,7 +231,11 @@ namespace SIL.FieldWorks.XWorks
 														StyleSheet styleSheet, ref string baseSelection, Mediator mediator)
 		{
 			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
-			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
+			var senseContentSelector = string.Empty;
+			if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
+				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
+			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
+				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
 			styleSheet.Rules.AddRange(beforeAfterSelectors);
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
@@ -282,7 +286,12 @@ namespace SIL.FieldWorks.XWorks
 				styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
 				//Generate the style for field following last sense
-				var rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".sense");
+				var rule = new StyleRule();
+				if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
+					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".sense");
+				else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
+					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".referringsense");
+
 				styleSheet.Rules.Add(rule);
 			}
 			else

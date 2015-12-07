@@ -1117,6 +1117,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
+		{
+			GenerateStyle("Dictionary-RevSenseNum");
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				CSSClassNameOverride = "ReferringSenses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true, NumberStyle = "Dictionary-RevSenseNum" },
+				Children = new List<ConfigurableDictionaryNode> { gloss }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses .referringsense> .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseNumberBeforeAndAfterWork()
 		{
 			var senses = new ConfigurableDictionaryNode
