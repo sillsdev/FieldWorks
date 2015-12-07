@@ -1050,6 +1050,200 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		private DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
+		{
+			var reverseAbbr = new ConfigurableDictionaryNode
+			{
+				Label = "Abbreviation",
+				IsEnabled = true
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form Type",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reverseAbbr }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultComplexEntryTypeNodes()
+		{
+			var abbreviation = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Abbreviation",
+				FieldDescription = "ReverseAbbr",
+				IsEnabled = true
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form Type",
+				FieldDescription = "LookupComplexEntryType",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { abbreviation }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_SubentryComplexTypeAbbreviationChanged()
+		{
+			const string complexEntryTypePath = "//ConfigurationItem[@name='Main Entry']/ConfigurationItem[@name='Subentries']/ConfigurationItem[@name='Complex Form Type']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedComplexEntryType = BuildConvertedComplexEntryTypeNodes();
+				convertedComplexEntryType.FilePath = convertedModelFile.Path;
+				var defaultComplexEntryType = BuildCurrentDefaultComplexEntryTypeNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedComplexEntryType, defaultComplexEntryType);
+				convertedComplexEntryType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(complexEntryTypePath + "ConfigurationItem[@name='Abbreviation']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(complexEntryTypePath + "ConfigurationItem[@name='Reverse Abbreviation']", 1);
+			}
+		}
+
+		private DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				IsEnabled = true
+			};
+			var refSenseHeadwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Sense Headword",
+				IsEnabled = true
+			};
+			var summaryDefNode = new ConfigurableDictionaryNode
+			{
+				Label = "Summary Definition",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss",
+				IsEnabled = true
+			};
+			var componentsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Components",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode, summaryDefNode, refSenseHeadwordNode }
+			};
+			var componentReferencesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Component References",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultComponentReferencesNodes()
+		{
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss (or Summary Definition)",
+				FieldDescription = "DefinitionOrGloss",
+				IsEnabled = true
+			};
+			var referencedEntriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Entries",
+				FieldDescription = "ConfigReferencedEntries",
+				CSSClassNameOverride = "referencedentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode, glossNode }
+			};
+			var componentReferencesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Component References",
+				FieldDescription = "ComplexFormEntryRefs",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedEntriesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MainEntryComponentReferences_ComponentsRenamedToReferencedEntries()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Main Entry']/ConfigurationItem[@name='Component References']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMainEntry = BuildConvertedComponentReferencesNodes();
+				convertedMainEntry.FilePath = convertedModelFile.Path;
+				var defaultMainEntry = BuildCurrentDefaultComponentReferencesNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMainEntry, defaultMainEntry);
+				convertedMainEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Components']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Gloss']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Summary Definition']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Reference Sense HeadWord']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Gloss (or Summary Definition)']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Referenced Headword']", 1);
+			}
+		}
+
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigrating_ReturnsFalseIfNewReversalConfigsExist()

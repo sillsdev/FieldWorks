@@ -301,11 +301,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var child in convertedNode.Children)
 				{
 					var pathStringToNode = BuildPathStringFromNode(child);
-					if (version == -1) // Some configuration nodes had name changes in the new verison
-					{
-						if (child.Label == "Components" && child.Parent.Label == "Component References")
-							child.Label = "Referenced Entries";
-					}
+					child.Label = HandleChildNodeRenaming(version, child);
 					// Attempt to find a matching node from the current default model from which to copy defaults
 					ConfigurableDictionaryNode matchFromBase;
 					if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
@@ -341,6 +337,25 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
+		}
+
+		/// <summary>
+		/// Some configuration nodes had name changes in the new verison
+		/// </summary>
+		private string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
+		{
+			var result = child.Label;
+			if (version == -1)
+			{
+				if (child.Label == "Components" && child.Parent.Label == "Component References")
+					result = "Referenced Entries";
+				// Don't rename Components -> Complex Form Type -> Abbreviation,
+				// but do rename Subentries -> CFT -> Abbreviations to Reverse Abbreviation
+				if (child.Label == "Abbreviation" && child.Parent.Label == "Complex Form Type" &&
+					child.Parent.Parent.Label == "Subentries") // not renamed in "Components CFTs"
+					result = "Reverse Abbreviation";
+			}
+			return result;
 		}
 
 		/// <summary>
