@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
-		public const string FileExtension = ".xml";
+		public const string FileExtension = ".fwdictconfig";
 
 		/// <summary>
 		/// Trees of dictionary elements

@@ -434,8 +434,8 @@ namespace SIL.FieldWorks.XWorks
 			var pubDecorator = new DictionaryPublicationDecorator(Cache,
 																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			string defaultRoot =
-				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
+			string defaultRoot = string.Concat(
+				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -4516,7 +4516,7 @@ namespace SIL.FieldWorks.XWorks
 			return mainEntryNode;
 		}
 
-		static internal ILexEntry CreateInterestingLexEntry(FdoCache cache)
+		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache)
 		{
 			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();

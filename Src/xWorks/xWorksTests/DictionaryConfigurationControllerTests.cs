@@ -339,7 +339,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
@@ -355,13 +356,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "user.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testUserFolder.FullName, "user"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -375,13 +378,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testUserFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -397,10 +402,10 @@ namespace SIL.FieldWorks.XWorks
 			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			m_model.Label = "configurationALabel";
-			m_model.FilePath = Path.Combine(testDefaultFolder.FullName, "configurationA.xml");
+			m_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
 			m_model.Save();
 			m_model.Label = "configurationBLabel";
-			m_model.FilePath = Path.Combine(testUserFolder.FullName, "configurationB.xml");
+			m_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
 			m_model.Save();
 
 			// SUT
@@ -408,8 +413,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.Contains("configurationALabel", labels.Keys, "missing a label");
 			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
-			Assert.That(labels["configurationALabel"].FilePath, Is.StringContaining("configurationA.xml"), "missing a file name");
-			Assert.That(labels["configurationBLabel"].FilePath, Is.StringContaining("configurationB.xml"), "missing a file name");
+			Assert.That(labels["configurationALabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+			Assert.That(labels["configurationBLabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
 		}
 
 		/// <summary/>
@@ -557,7 +564,8 @@ namespace SIL.FieldWorks.XWorks
 			using (var mockMediator = new MockMediator(Cache))
 			{
 				var mediator = mockMediator.Mediator;
-				var projectPath = Path.Combine(Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test.xml");
+				var projectPath = string.Concat(Path.Combine(Path.Combine(
+					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
 				var controller = new DictionaryConfigurationController();
 				var result = controller.GetProjectConfigLocationForPath(projectPath, mediator);
@@ -568,7 +576,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetProjectConfigLocationForPath_DefaultLocResultsInProjectPath()
 		{
-			var defaultPath = Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test.xml");
+			var defaultPath = string.Concat(Path.Combine(Path.Combine(
+				FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 			using (var mockMediator = new MockMediator(Cache))
 			{
 				var mediator = mockMediator.Mediator;
@@ -577,7 +586,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				var result = controller.GetProjectConfigLocationForPath(defaultPath, mediator);
 				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
-				Assert.IsTrue(result.EndsWith(Path.Combine("Test", "test.xml")));
+				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}
 		}
 
@@ -593,8 +602,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 									 CellarPropertyType.MultiString, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexEntry");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
 			}
@@ -892,7 +900,9 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel(Path.Combine(FwDirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")), Cache);
+				var model = new DictionaryConfigurationModel(string.Concat(Path.Combine(
+					FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension),
+					Cache);
 
 				//SUT
 				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
