@@ -2400,6 +2400,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm));
 		}
 
+		/// <summary>
+		/// Test the new section of ConfiguredXHTMLGenerator.IsListItemSelectedForExport() that
+		/// handles Minor Entry -> Variant Of
+		/// </summary>
+		[Test]
+		public void IsListItemSelectedForExport_MinorVariant_SelectedItemReturnsTrue()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(mainEntry, minorEntry);
+			var crazyVariantPoss = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
+
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentryvariant",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariantPoss })
+			};
+
+			//SUT
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry, null));
+		}
+
 		[Test]
 		public void IsListItemSelectedForExport_Variant_UnselectedItemReturnsFalse()
 		{
