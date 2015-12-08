@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (hcElem.Element(NotOnClitics) == null)
 				hcElem.Add(new XElement(NotOnClitics, true));
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
-				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, true));
+				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 
 			using (XmlReader reader = parserParamsElem.CreateReader())
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);

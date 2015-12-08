@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			XElement hcElem = parserParamsElem.Element("HC");
 			m_noDefaultCompounding = hcElem != null && ((bool?) hcElem.Element("NoDefaultCompounding") ?? false);
 			m_notOnClitics = hcElem == null || ((bool?) hcElem.Element("NotOnClitics") ?? true);
-			m_acceptUnspecifiedGraphemes = hcElem == null || ((bool?) hcElem.Element("AcceptUnspecifiedGraphemes") ?? true);
+			m_acceptUnspecifiedGraphemes = hcElem == null || ((bool?) hcElem.Element("AcceptUnspecifiedGraphemes") ?? false);
 		}
 
 		private void LoadLanguage()
