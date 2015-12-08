@@ -756,7 +756,9 @@ namespace SIL.FieldWorks.XWorks
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if(exportStyleInfo.LineSpacing.m_relative)
 				{
-					lineHeight.Term = new PrimitiveTerm(UnitType.Number, exportStyleInfo.LineSpacing.m_lineHeight);
+					// The relative value is stored internally multiplied by 10000.  (FieldWorks code generally hates floating point.)
+					// CSS expects to see the actual floating point value.  See https://jira.sil.org/browse/LT-16735.
+					lineHeight.Term = new PrimitiveTerm(UnitType.Number, exportStyleInfo.LineSpacing.m_lineHeight / 10000.0F);
 				}
 				else
 				{

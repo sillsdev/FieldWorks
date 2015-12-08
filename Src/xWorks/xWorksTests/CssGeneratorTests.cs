@@ -52,6 +52,8 @@ namespace SIL.FieldWorks.XWorks
 		private const int PadTop = 15 * 1000;
 		private const int PadBottom = 30 * 1000;
 		private const int FontSize = 10 * 1000;
+		private const int DoubleSpace = 2 * 10000;	// Relative line heights are in multiples of 10000.
+		private const float CssDoubleSpace = 2.0F;
 
 		[SetUp]
 		public void ResetAssemblyFile()
@@ -273,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 			GenerateParagraphStyle("Dictionary-Paragraph-RelativeLine");
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_mediator);
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:" + LineHeight + ";"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:" + CssDoubleSpace + ";"));
 		}
 
 		[Test]
@@ -1816,7 +1818,7 @@ namespace SIL.FieldWorks.XWorks
 			// Alignment setting
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptAlign, 0, (int)ParagraphAlignment);
 			// Line space setting (set to double space)
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvRelative, LineHeight);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvRelative, DoubleSpace);
 			if (m_styleSheet.Styles.Count > 0)
 				m_styleSheet.Styles.RemoveAt(0);
 			m_styleSheet.Styles.Add(style);

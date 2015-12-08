@@ -308,20 +308,33 @@ namespace SIL.FieldWorks.XWorks
 						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
 					else
 					{
-						// This node does not match anything in the shipping defaults; it is probably a custom field
-						m_logger.WriteLine(string.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
-						m_logger.IncreaseIndent();
-						SetupCustomFieldNameDictionaries();
+						// This node does not match anything in the shipping defaults; it may be a custom field, or it may
+						// have been overlooked before, or we may have garbage.  See https://jira.sil.org/browse/LT-16735.
 						var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
-						Dictionary<string, string> cfLabelToName;
-						SetupCustomField(child,
-							// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
-							(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
-								? cfLabelToName
-								: null);
-						// REVIEW (Hasso) 2014:12: If we have a top-level Custom Field with no matching Custom Field in this dictionary,
-						// should we alert the user with a yellow screen?
-						m_logger.DecreaseIndent();
+						bool isCustom;
+						if (IsFieldValid(child.Label, parentType, out isCustom))
+						{
+							if (isCustom)
+							{
+								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it is a valid custom field.", pathStringToNode));
+								SetNodeAsCustom(child, parentType);
+							}
+							else
+							{
+								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it actually exists in the model.", pathStringToNode));
+								if (child.FieldDescription == null)
+									child.FieldDescription = child.Label;
+							}
+						}
+						else
+						{
+							// REVIEW (Hasso) 2014:12: If we have a top-level Custom Field with no matching Custom Field in this dictionary,
+							// should we alert the user with a yellow screen?
+							// manual intervention with a text editor may be needed.  :-( :-(
+							m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, and it is totally invalid.  Treating it as a custom field, but EXPECT TROUBLE LATER.", pathStringToNode));
+							// Treat this as a custom field so that unit tests will pass.
+							SetNodeAsCustom(child, parentType);
+						}
 					}
 				}
 				//remove all the matches from default list
@@ -337,6 +350,47 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
+		}
+
+		private void SetNodeAsCustom(ConfigurableDictionaryNode child, string parentType)
+		{
+			m_logger.IncreaseIndent();
+			SetupCustomFieldNameDictionaries();
+			Dictionary<string, string> cfLabelToName;
+			SetupCustomField(child,
+				// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
+				(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
+					? cfLabelToName
+					: null);
+			m_logger.DecreaseIndent();
+		}
+
+		/// <summary>
+		/// Check whether the given field is valid for the given type (class/interface).  Also set an output flag for whether
+		/// it is a custom field.
+		/// </summary>
+		private bool IsFieldValid(string field, string type, out bool isCustom)
+		{
+			isCustom = false;
+			try
+			{
+				// Convert an interface type name to a class type name if necessary.
+				if (type.StartsWith("I") && Char.IsUpper(type[1]))
+					type = type.Substring(1);
+				var metaDataCache = Cache.MetaDataCacheAccessor;
+				var clsid = metaDataCache.GetClassId(type);
+				if (clsid == 0)
+					return false;
+				var flid = metaDataCache.GetFieldId2(clsid, field, true);
+				if (flid == 0)
+					return false;
+				isCustom = Cache.GetIsCustomField(flid);
+			}
+			catch
+			{
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>

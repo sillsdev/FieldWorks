@@ -1229,7 +1229,7 @@ namespace SIL.FieldWorks.XWorks
 			var parentSenseNode = senseConfigNode.Parent.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			if (parentSenseNode != null)
 			{
-				if (!string.IsNullOrEmpty(parentSenseNode.NumberingStyle))
+				if (!string.IsNullOrEmpty(parentSenseNode.NumberingStyle) && senseNumber.Contains('.'))
 					subSenseNumber = GenerateOutlineNumber(parentSenseNode.NumberingStyle, senseNumber.Split('.')[0], senseConfigNode);
 			}
 			subSenseNumber += "." + senseNumber.Split('.')[senseNumber.Split('.').Length - 1];
