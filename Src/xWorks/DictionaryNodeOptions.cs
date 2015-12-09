@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override DictionaryNodeOptions DeepClone()
 		{
-			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
+			return DeepCloneInto(new DictionaryNodeParagraphOptions());
 		}
 	}
 
