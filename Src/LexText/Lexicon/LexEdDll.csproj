@@ -303,12 +303,6 @@
     <Compile Include="GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CreateReversalIndexDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CreateReversalIndexDlg.Designer.cs">
-      <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="EntrySequenceReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -462,10 +456,6 @@
     <Compile Include="SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="CreateReversalIndexDlg.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EntrySequenceReferenceLauncher.resx">
       <DependentUpon>EntrySequenceReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>

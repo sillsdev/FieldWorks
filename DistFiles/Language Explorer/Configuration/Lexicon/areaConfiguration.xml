@@ -186,7 +186,6 @@
 			<item command="CmdInsertSense" defaultVisible="false"/>
 			<item command="CmdInsertVariant" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
-			<item command="CmdInsertReversalIndex" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
 			<item command="CmdInsertMediaFile" defaultVisible="false"/>

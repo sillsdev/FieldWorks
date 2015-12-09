@@ -13,6 +13,9 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Microsoft.Win32;
 using System.IO;
 using System.Drawing;
@@ -1332,6 +1335,103 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
+
+				CreateReversalIndexConfigurationFile(dlg.OriginalProjectName, dlg.AnalysisWsList);
+				AddNewAnalysisWsReversals(dlg.AnalysisWsList);
+			}
+		}
+
+		/// <summary>
+		/// Method which adds the newly created WS in the menu in the blue title bar
+		/// </summary>
+		/// <param name="analysisWsList">Analysis WS CheckedListBox</param>
+		private void AddNewAnalysisWsReversals(CheckedListBox analysisWsList)
+		{
+			var selectedWsObj = analysisWsList.SelectedItem as IWritingSystem;
+			foreach (var wsLang in analysisWsList.Items)
+			{
+
+				var wsObj = wsLang as IWritingSystem;
+				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					UndoableUnitOfWorkHelper.Do("Sample Undo Text", "Sample Redo Text",
+						Cache.ActionHandlerAccessor,
+						() => GetOrCreateWsGuid(wsObj));
+				}
+			}
+			SetReversalIndexGuid(selectedWsObj);
+		}
+
+		/// <summary>
+		/// Method which set the index to the WS property
+		/// </summary>
+		/// <param name="selectedWsObj">selected writing system</param>
+		private void SetReversalIndexGuid(IWritingSystem selectedWsObj)
+		{
+			if (selectedWsObj != null)
+			{
+				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					var revGuid = GetOrCreateWsGuid(selectedWsObj);
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
+				}
+				else
+				{
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString());
+				}
+			}
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+		}
+
+		/// <summary>
+		/// Method returns Guid of existing or created writing system
+		/// </summary>
+		/// <param name="wsObj"></param>
+		/// <returns>returns Guid</returns>
+		private Guid GetOrCreateWsGuid(IWritingSystem wsObj)
+		{
+			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+		}
+
+		/// <summary>
+		/// Method which create configuration file for analysisWS in Reversal Index
+		/// </summary>
+		/// <param name="originalProjectName">Project Name</param>
+		/// <param name="analysisWsList">Analysis WS CheckedListBox</param>
+		private void CreateReversalIndexConfigurationFile(string originalProjectName, CheckedListBox analysisWsList)
+		{
+			var wsList = new List<string>();
+			const string configFileExtension = ".fwdictconfig";
+			var defaultWsFilePath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex",
+				"AllReversalIndexes" + configFileExtension);
+			var newWsFilePath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, originalProjectName, "ConfigurationSettings",
+				"ReversalIndex");
+			//Create new Configuration File
+			for (int i = 0; i < analysisWsList.Items.Count; i++)
+			{
+				if (analysisWsList.Items[i].ToString().ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
+						continue;
+
+				wsList.Add(analysisWsList.Items[i].ToString());
+				if (File.Exists(Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension))) continue;
+				File.Copy(defaultWsFilePath, Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension), true);
+				XDocument xmldoc = XDocument.Load(Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension));
+					var xElement = xmldoc.XPathSelectElement("DictionaryConfiguration").Attribute("name");
+					xElement.Value = analysisWsList.Items[i].ToString();
+					xmldoc.Save(Path.Combine(newWsFilePath, analysisWsList.SelectedItem + configFileExtension));
+			}
+			//Delete old Configuration File
+			if (!Directory.Exists(newWsFilePath)) return;
+			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
+			foreach (string file in files)
+			{
+				var fileName = Path.GetFileNameWithoutExtension(file);
+				if (!wsList.Contains(fileName) && fileName != "AllReversalIndexes")
+				{
+					File.Delete(file);
+				}
 			}
 		}
 

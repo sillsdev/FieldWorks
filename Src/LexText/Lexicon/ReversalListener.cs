@@ -333,42 +333,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			display.List.Sort();
 			return true; // We handled this, no need to ask anyone else.
 		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument"></param>
-		public virtual bool OnInsertReversalIndex_FORCE(object argument)
-		{
-			CheckDisposed();
-
-			Guid newGuid = CreateNewReversalIndex(false);
-			if (newGuid != Guid.Empty)
-			{
-				SetReversalIndexGuid(newGuid);
-			}
-			return true;
-		}
-
-		private Guid CreateNewReversalIndex(bool allowCancel)
-		{
-			using (var dlg = new CreateReversalIndexDlg())
-			{
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				dlg.Init(cache, allowCancel);
-				// Don't bother if all languages already have a reversal index!
-				if (dlg.PossibilityCount > 0)
-				{
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						int hvo = dlg.NewReversalIndexHvo;
-						return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).Guid;
-					}
-				}
-			}
-			return Guid.Empty;
-		}
-
 		#endregion Reversal Index Combo
 
 		/// <summary>
@@ -632,19 +596,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return Guid.Empty;
 			if (Cache.LanguageProject.LexDbOA == null)
 				return Guid.Empty;
-			using (CreateReversalIndexDlg dlg = new CreateReversalIndexDlg())
-			{
-				dlg.Init(Cache);
-				// Don't bother if all languages already have a reversal index!
-				if (dlg.PossibilityCount > 0)
-				{
-					if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-					{
-						int hvo = dlg.NewReversalIndexHvo;
-						return Cache.ServiceLocator.GetObject(hvo).Guid;
-					}
-				}
-			}
 			return Guid.Empty;
 		}
 
