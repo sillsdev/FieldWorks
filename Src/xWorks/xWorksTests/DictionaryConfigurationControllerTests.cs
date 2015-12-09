@@ -620,10 +620,10 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
 				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
 				Assert.AreEqual(2, customFieldNodes[0].Children.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && t.IsCustomField),
-					"No Custom Name node found on possibility list custom node");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && t.IsCustomField),
-					"No Custom Abbreviation node found on possibility list custom node");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && !t.IsCustomField),
+					"No standard Name node found on custom possibility list reference");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+					"No standard Abbreviation node found on custom possibility list reference");
 				Assert.IsNotNull(customFieldNodes[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, "No writing system node on possibility list custom node");
 			}
 		}

@@ -266,13 +266,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(convertedNode.Label != currentDefaultNode.Label)
 			{
-				// This check is necessary to prevent a crash, but is by no means sufficient
-				// for proper migration.  Since more work needs to be done in this method, no
-				// unit test has been written to cover this particular change.  When the work
-				// to properly handle migration is done, this comment should probably be
-				// removed, and exhausting unit tests should be written.
-				// This hackish situation is to allow work to proceed on other, unrelated
-				// migration issues.
+				// This check is necessary to handle splitting "Minor Entries" to
+				// "Minor Entries (Complex Forms)" and "Minor Entries (Variants)".
 				if (!currentDefaultNode.Label.StartsWith(convertedNode.Label + " "))
 					throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
@@ -543,13 +538,72 @@ namespace SIL.FieldWorks.XWorks
 				node.FieldDescription = node.Label;
 			}
 
+			var metaDataCache = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
 				{
 					m_logger.WriteLine(string.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
 					SetupCustomField(child, null);
+					// Children should be not marked as custom unless we know they are.
+					int field = GetFieldIdForNode(child, metaDataCache);
+					if (field != 0)
+						child.IsCustomField = metaDataCache.IsCustom(field);
+					else
+						child.IsCustomField = false;
 				}
+			}
+			else
+			{
+				int field = GetFieldIdForNode(node, metaDataCache);
+				if (field != 0)
+				{
+					var listId = metaDataCache.GetFieldListRoot(field);
+					if (listId != Guid.Empty)
+						DictionaryConfigurationController.AddFieldsForPossibilityList(node);
+					var type = metaDataCache.GetFieldType(field);
+					// Create the proper node options object.
+					switch (type)
+					{
+						case (int) CellarPropertyType.ReferenceCollection:
+						case (int) CellarPropertyType.ReferenceSequence:
+							if (listId != Guid.Empty)
+								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							break;
+						case (int)CellarPropertyType.OwningCollection:
+						case (int)CellarPropertyType.OwningSequence:
+							break;
+						case (int) CellarPropertyType.MultiUnicode:
+						case (int) CellarPropertyType.MultiString:
+							node.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions();
+							break;
+						case (int)CellarPropertyType.ReferenceAtomic:
+							if (listId != Guid.Empty)
+								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							break;
+						case (int)CellarPropertyType.OwningAtomic:
+							break;
+						case (int)CellarPropertyType.GenDate:
+						case (int)CellarPropertyType.Time:
+							break;
+						case (int)CellarPropertyType.String:
+							break;
+					}
+				}
+			}
+		}
+
+		private int GetFieldIdForNode(ConfigurableDictionaryNode node, IFwMetaDataCacheManaged metaDataCache)
+		{
+			try
+			{
+				var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(node.Parent, Cache);
+				var flid = metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
+				return flid;
+			}
+			catch (Exception)
+			{
+				return 0;
 			}
 		}
 

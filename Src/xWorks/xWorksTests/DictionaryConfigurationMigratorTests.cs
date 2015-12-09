@@ -39,7 +39,9 @@ namespace SIL.FieldWorks.XWorks
 		private const string CustomFieldChangedLabel = "Custom Label";
 		private const string CustomFieldOriginalName = "Custom Name";
 		private const string CustomFieldUnchangedNameAndLabel = "Custom";
-		private IDisposable m_cf1, m_cf2;
+		private const string CustomFieldGenDate = "Custom GenDate";
+		private const string CustomFieldLocation = "Custom Person";
+		private IDisposable m_cf1, m_cf2, m_cf3, m_cf4;
 
 		[TestFixtureSetUp]
 		protected void Init()
@@ -59,9 +61,12 @@ namespace SIL.FieldWorks.XWorks
 
 			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
 				CellarPropertyType.ReferenceCollection, Guid.Empty);
-			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-					CellarPropertyType.ReferenceCollection, Guid.Empty);
-
+			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
+				CellarPropertyType.ReferenceCollection, Guid.Empty);
+			m_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.GenDate,  Guid.Empty);
+			m_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
+				CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 		}
 
 		[TestFixtureTearDown]
@@ -798,7 +803,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.IsTrue(customChild.IsCustomField, "Children of Custom nodes should also be Custom.");
+			Assert.IsFalse(customChild.IsCustomField, "Children of Custom nodes are not necessarily Custom.");
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
@@ -850,6 +855,43 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
+		}
+
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ProperChildrenAdded()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries", FieldDescription = "LexEntry" };
+			var customPersonNode = new ConfigurableDictionaryNode { Label = CustomFieldLocation, Parent = convertedParentNode };
+			var customGenDateNode = new ConfigurableDictionaryNode {Label = CustomFieldGenDate, Parent = convertedParentNode };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customPersonNode, customGenDateNode };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			// Test handling expanding "Minor Entries" to "Minor Entries (Complex Forms)" and "Minor Entries (Variants)"
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries (Complex Forms)", FieldDescription = "LexEntry" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", Parent = baseParentNode };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			// Ensure we don't throw because the parent node's label has been expanded.
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(3, convertedModel.Parts[0].Children.Count, "Nodes incorrectly merged");
+			Assert.IsTrue(customPersonNode.IsCustomField, "Custom atomic list reference field should be flagged as custom");
+			Assert.IsNotNull(customPersonNode.Children, "Custom atomic list reference field should have children (added)");
+			Assert.AreEqual(2, customPersonNode.Children.Count, "Custom atomic list reference field should have two children added");
+			for (int i = 0; i < customPersonNode.Children.Count; ++i)
+			{
+				var child = customPersonNode.Children[i];
+				Assert.IsFalse(child.IsCustomField, "Children of customPersonNode should not be flagged as custom (" + i + ")");
+				Assert.IsNotNull(child.DictionaryNodeOptions, "Children of customPersonNode should have a DictionaryNodeOptions object");
+				Assert.IsTrue(child.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Children of customPersonNode DictionaryNodeOptions should be a DictionaryNodeWritingSystemOptions object");
+			}
+			Assert.AreEqual("Name", customPersonNode.Children[0].Label, "The first child of customPersonNode should be Name");
+			Assert.AreEqual("Abbreviation", customPersonNode.Children[1].Label, "The second child of customPersonNode should be Abbreviation");
+			Assert.IsNotNull(customPersonNode.DictionaryNodeOptions, "Custom atomic list reference field should have a DictionaryNodeOptions object");
+			Assert.IsTrue(customPersonNode.DictionaryNodeOptions is DictionaryNodeListOptions, "Custom atomic list reference field DictionaryNodeOptions should be a DictionaryNodeListOptions object");
+			Assert.IsTrue(customGenDateNode.IsCustomField, "Custom GenDate field should be flagged as custom");
+			Assert.IsNull(customGenDateNode.Children, "Custom GenDate field should not have any children (added)");
+			Assert.IsNull(customGenDateNode.DictionaryNodeOptions, "Custom GenDate field should not have a DictionaryNodeOptions object");
+
 		}
 
 		#region Minor Entry Componenents Referenced Entries Tests

@@ -325,6 +325,9 @@ namespace SIL.FieldWorks.XWorks
 					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
 					switch (customFieldType)
 					{
+						case (int)CellarPropertyType.ReferenceCollection:
+						case (int)CellarPropertyType.OwningCollection:
+							// Collections are stored essentially the same as sequences.
 						case (int)CellarPropertyType.ReferenceSequence:
 						case (int)CellarPropertyType.OwningSequence:
 							{
@@ -350,6 +353,12 @@ namespace SIL.FieldWorks.XWorks
 								propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
 								break;
 							}
+						case (int)CellarPropertyType.GenDate:
+							{
+								propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(((ICmObject) field).Hvo, customFieldFlid));
+								break;
+							}
+
 						case (int)CellarPropertyType.Time:
 							{
 								propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(((ICmObject)field).Hvo, customFieldFlid));
@@ -1499,6 +1508,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WriteElementContents(((DateTime)propertyValue).ToLongDateString(), config, settings.Writer);
 			}
+			else if (propertyValue is GenDate)
+			{
+				WriteElementContents(((GenDate)propertyValue).ToLongString(), config, settings.Writer);
+			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
 				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, hvo);
@@ -1520,11 +1533,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if(propertyValue == null)
 				{
-					Debug.WriteLine("Bad configuration node: {0}", DictionaryConfigurationMigrator.BuildPathStringFromNode(config));
+					Debug.WriteLine(String.Format("Bad configuration node: {0}", DictionaryConfigurationMigrator.BuildPathStringFromNode(config)));
 				}
 				else
 				{
-					Debug.WriteLine("What do I do with {0}?", propertyValue.GetType().Name);
+					Debug.WriteLine(String.Format("What do I do with {0}?", propertyValue.GetType().Name));
 				}
 			}
 

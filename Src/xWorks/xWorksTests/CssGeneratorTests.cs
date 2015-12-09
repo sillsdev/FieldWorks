@@ -1785,6 +1785,47 @@ namespace SIL.FieldWorks.XWorks
 				"subentrie:before rule has unwanted display value");
 		}
 
+		[Test]
+		public void GenerateCssForCustomFieldWithSpaces()
+		{
+			var nameConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+			};
+			var abbrConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Abbreviation", FieldDescription = "Abbreviation", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+			};
+			var customConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Custom Location", FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Children = new List<ConfigurableDictionaryNode> { nameConfig, abbrConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry", FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customConfig }
+			};
+			nameConfig.Parent = customConfig;
+			abbrConfig.Parent = customConfig;
+			customConfig.Parent = entryConfig;
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regexExpected1 = @"\.lexentry>\s\.custom-location{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+				"expected custom-location rule not generated");
+			var regexExpected2 = @"\.lexentry>\s\.custom-location>\s\.name{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
+				"expected custom-location>name rule not generated");
+			var regexExpected3 = @"\.lexentry>\s\.custom-location>\s\.abbreviation{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
+				"expected custom-location>abbreviation rule not generated");
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();

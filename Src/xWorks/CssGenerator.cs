@@ -642,7 +642,9 @@ namespace SIL.FieldWorks.XWorks
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
 			// write out the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
-			var classAttribute = configNode.FieldDescription +
+			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert those to hyphens,
+			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
+			var classAttribute = configNode.FieldDescription.Replace(' ', '-') +
 										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("_" + configNode.SubField));
 			if(!String.IsNullOrEmpty(configNode.CSSClassNameOverride))
 			{

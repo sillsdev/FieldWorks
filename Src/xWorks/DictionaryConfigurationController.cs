@@ -758,7 +758,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Add configuration nodes for all properties that we want to enable a user to display for a custom
 		/// PossibilityList field. (Currently Name and Abbreviation)
 		/// </summary>
-		private static void AddFieldsForPossibilityList(ConfigurableDictionaryNode configNode)
+		/// <remarks>
+		/// We need this for migrating configurations of custom fields as well as for creating a configuration
+		/// from scratch for a new custom field.
+		/// </remarks>
+		internal static void AddFieldsForPossibilityList(ConfigurableDictionaryNode configNode)
 		{
 			configNode.Children = new List<ConfigurableDictionaryNode>();
 			configNode.Children.Add(new ConfigurableDictionaryNode
@@ -767,7 +771,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "Name",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = true
+					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				});
 			configNode.Children.Add(new ConfigurableDictionaryNode
 				{
@@ -775,7 +779,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "Abbreviation",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = true
+					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				});
 		}
 

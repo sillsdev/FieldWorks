@@ -2292,7 +2292,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				default:
-					return (int)GetNonModelPropertyForSDA(flid);
+					var val = GetNonModelPropertyForSDA(flid);
+					if (val is GenDate)
+						return ((GenDate)val).ToInt();
+					return (int)val;
 				case (int)CmObjectFields.kflidCmObject_Class:
 					return ClassID;
 				case (int)CmObjectFields.kflidCmObject_OwnFlid:
