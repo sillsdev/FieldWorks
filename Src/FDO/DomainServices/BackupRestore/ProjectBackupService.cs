@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				m_cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
 
 				string tempFilePath = ClientServerServices.Current.Local.CopyToXmlFile(m_cache, m_settings.DatabaseFolder);
+
 				var filesToZip = CreateListOfFilesToZip();
 
 				progressDlg.Title = Strings.ksBackupProgressCaption;
@@ -186,10 +187,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			var files = new HashSet<String>();
 			if (Directory.Exists(dirContainingFilesToZip))
 			{
-				foreach (var fName in Directory.GetFiles(dirContainingFilesToZip))
-				{
-					files.Add(fName);
-				}
+				files = GenerateFileListFolderAndSubfolders(dirContainingFilesToZip);
 			}
 			return files;
 		}

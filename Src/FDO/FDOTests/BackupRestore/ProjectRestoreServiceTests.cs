@@ -349,6 +349,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphSynAnalysis.fwlayout");
 			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphType.fwlayout");
 			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "Settings.xml");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, Path.Combine("Dictionary", "Bartholomew.xml"));
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, Path.Combine("Dictionary", "Root.xml"));
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, Path.Combine("Dictionary", "Stem.xml"));
 
 			//finally delete the restore subfolder for ConfigurationFiles
 			RemoveAllFilesFromFolderAndSubfolders(restoreConfigurationFilesDir);

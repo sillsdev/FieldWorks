@@ -203,10 +203,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//This should check for 6 files.
 			VerifyCoreFilesAreIncluded(filesToBackup);
 
-			//This group of files should be 14 files
+			//This group of files should be 17 files
 			VerifyConfigurationSettingsFiles(filesToBackup);
 
-			Assert.True(filesToBackup.Count() == 21, "The number of files to be backed up is incorrect.");
+			Assert.True(filesToBackup.Count() == 24, "The number of files to be backed up is incorrect.");
 		}
 
 		/// <summary>
@@ -226,12 +226,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//This should check for 6 files.
 			VerifyCoreFilesAreIncluded(filesToBackup);
 
-			//This group of files should be 14 files
+			//This group of files should be 17 files
 			VerifyConfigurationSettingsFiles(filesToBackup);
 
 			VerifyMediaFilesAreIncluded(filesToBackup);
 
-			Assert.True(filesToBackup.Count() == 28, "The number of files to be backed up is incorrect.");
+			Assert.True(filesToBackup.Count() == 31, "The number of files to be backed up is incorrect.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -391,6 +391,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoMorphType.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
 			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("Settings.xml")),
+						"A configuration settings file is missing in the list of files to backup.");
+			//15-17
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile(Path.Combine("Dictionary", "Bartholomew.xml"))),
+						"A configuration settings file is missing in the list of files to backup.");
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile(Path.Combine("Dictionary", "Root.xml"))),
+						"A configuration settings file is missing in the list of files to backup.");
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile(Path.Combine("Dictionary", "Stem.xml"))),
 						"A configuration settings file is missing in the list of files to backup.");
 		}
 
