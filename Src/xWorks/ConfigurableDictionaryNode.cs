@@ -296,5 +296,36 @@ namespace SIL.FieldWorks.XWorks
 			LabelSuffix = newSuffix;
 			return true;
 		}
+
+		/// <summary>
+		/// Check for node having sense as preceding sibling
+		/// </summary>
+		/// <param name="confignode"></param>
+		/// <returns></returns>
+		public bool CheckForPrevSenseSibling(ConfigurableDictionaryNode confignode)
+		{
+			foreach (var node in confignode.Parent.Children)
+			{
+				if (!Equals(node, confignode) && CheckForSenseParaEnabled(node))
+				{
+					return true;
+				}
+				if (Equals(node, confignode))
+				{
+					return false;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check for sense which display in paragraph is enabled
+		/// </summary>
+		/// <param name="confignode"></param>
+		/// <returns></returns>
+		public bool CheckForSenseParaEnabled(ConfigurableDictionaryNode confignode)
+		{
+			return confignode.DictionaryNodeOptions is DictionaryNodeSenseOptions && confignode.IsEnabled && ((DictionaryNodeSenseOptions)confignode.DictionaryNodeOptions).DisplayEachSenseInAParagraph;
+		}
 	}
 }

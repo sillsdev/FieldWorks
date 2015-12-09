@@ -278,6 +278,15 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
+				if (config.CheckForSenseParaEnabled(config))
+				{
+					settings.Writer.WriteStartElement("div");
+					settings.Writer.WriteAttributeString("class", "paracontinuation");
+				}
+			}
+			if (configuration.Children.Any(x => x.CheckForSenseParaEnabled(x)))
+			{
+				settings.Writer.WriteEndElement();
 			}
 			settings.Writer.WriteEndElement(); // </div>
 		}
@@ -917,6 +926,7 @@ namespace SIL.FieldWorks.XWorks
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
 				GenerateXHTMLForSenses(config, publicationDecorator, settings, collection);
+
 			}
 			else
 			{

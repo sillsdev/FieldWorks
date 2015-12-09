@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using ExCSS;
+using Palaso.Extensions;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
@@ -142,6 +143,15 @@ namespace SIL.FieldWorks.XWorks
 																			  string baseSelection,
 																			  Mediator mediator)
 		{
+			if (configNode.Parent != null && configNode.Parent.CSSClassNameOverride != null && configNode.Parent.FieldDescription.Equals("LexEntry"))
+			{
+				if (configNode.CheckForPrevSenseSibling(configNode))
+				{
+					baseSelection = baseSelection.Contains(".paracontinuation")
+						? baseSelection
+						: String.Concat(baseSelection, " .paracontinuation");
+				}
+			}
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			if(senseOptions != null)
@@ -336,14 +346,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="baseSelection">base class tree</param>
 		/// <param name="mediator">mediator to get the styles</param>
 		/// <param name="classname">preceding class name</param>
-		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator,string classname)
+		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator,
+			string classname)
 		{
 			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, mediator);
 			var rule = new StyleRule(styledeclaration)
 			{
 				Value =
-					string.Format("{0}+ *",
-						baseSelection.Substring(0, baseSelection.LastIndexOf(classname, StringComparison.Ordinal)))
+					string.Format("{0}~ .paracontinuation",baseSelection.Substring(0, baseSelection.LastIndexOf(classname, StringComparison.Ordinal)))
 			};
 			return rule;
 		}

@@ -1062,7 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""),
 				Contains.Substring(
-					".lexentry> .senses + *{font-family:'foofoo',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;background-color:#008000;}"));
+					".lexentry> .senses ~ .paracontinuation{font-family:'foofoo',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;background-color:#008000;}"));
 			}
 		[Test]
 		public void GenerateCssForConfiguration_SenseParaStyleNotApplyToFirstSense()
