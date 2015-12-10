@@ -430,7 +430,6 @@ namespace SIL.FieldWorks.XWorks
 		public void SelectModelFromManager(DictionaryConfigurationModel model)
 		{
 			_model = model;
-			SelectCurrentConfiguration();
 		}
 
 		/// <summary>
@@ -570,6 +569,8 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfiguration()
 		{
 			View.SelectConfiguration(_model);
+			SaveModel();
+			RefreshView();
 		}
 
 		/// <summary>
