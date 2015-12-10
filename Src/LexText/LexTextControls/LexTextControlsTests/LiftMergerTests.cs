@@ -133,7 +133,7 @@ namespace LexTextControlsTests
 			return TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepBoth, expectedCount);
 		}
 
-		private string TryImport(string sOrigFile, string sOrigRangesFile, FlexLiftMerger.MergeStyle mergeStyle, int expectedCount)
+		private string TryImport(string sOrigFile, string sOrigRangesFile, FlexLiftMerger.MergeStyle mergeStyle, int expectedCount, bool trustModificationTimes = true)
 		{
 			string logfile = null;
 
@@ -142,7 +142,7 @@ namespace LexTextControlsTests
 			var sFilename = fMigrationNeeded
 								? Migrator.MigrateToLatestVersion(sOrigFile)
 								: sOrigFile;
-			var flexImporter = new FlexLiftMerger(Cache, mergeStyle, true);
+			var flexImporter = new FlexLiftMerger(Cache, mergeStyle, trustModificationTimes);
 			var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 			flexImporter.LiftFile = sOrigFile;
 
@@ -2157,6 +2157,56 @@ namespace LexTextControlsTests
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
 			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
+		}
+
+		/// <summary>
+		/// Test for Date only conflict mediation
+		/// </summary>
+		[Test]
+		public void TestLiftImport_DateAndWesayIdAloneShouldNotChangeDate()
+		{
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+
+			SetWritingSystems("fr");
+			var english = Cache.WritingSystemFactory.GetWsFromStr("en");
+			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, "some entry");
+			entry.SensesOS.Add(sense);
+			sense.Gloss.set_String(english, Cache.TsStrFactory.MakeString("blank", english));
+			var entryCreationMs = entry.DateCreated.Millisecond;
+			var entryModifiedMs = entry.DateModified.Millisecond;
+			var basicLiftEntry = new[]
+			{
+			@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+			@"<lift producer=""SIL.FLEx 8.0.10.41831"" version=""0.13"">",
+			"<entry dateCreated=\"" + entry.DateCreated.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ") + "\" dateModified=\""
+			 + entry.DateModified.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ") + "\" id=\"some entry_" +  entry.Guid + "\" guid=\"" + entry.Guid + "\">",
+			@"<lexical-unit>",
+			@"<form lang=""fr""><text>some entry</text></form>",
+			@"</lexical-unit>",
+			"<sense id=\"" + sense.Guid + "\">",
+			@"<gloss lang=""en""><text>has a blank reversal</text></gloss>",
+			@"</sense>",
+			@"</entry>",
+			@"</lift>"
+			};
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+
+			//Create the LIFT data file
+			var testLiftFile = CreateInputFile(basicLiftEntry);
+
+			var logFile = TryImport(testLiftFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1, false);
+			File.Delete(testLiftFile);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			Assert.AreEqual(entry.DateCreated.Millisecond, entryCreationMs, "Creation Date lost milliseconds on a 'no-op' merge");
+			Assert.AreEqual(entry.DateModified.Millisecond, entryModifiedMs, "Modification time lost milliseconds on a 'no-op' merge");
 		}
 
 		/// <summary>
