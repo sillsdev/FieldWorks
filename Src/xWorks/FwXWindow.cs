@@ -1415,12 +1415,15 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 
 				wsList.Add(analysisWsList.Items[i].ToString());
-				if (File.Exists(Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension))) continue;
-				File.Copy(defaultWsFilePath, Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension), true);
-				XDocument xmldoc = XDocument.Load(Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension));
-					var xElement = xmldoc.XPathSelectElement("DictionaryConfiguration").Attribute("name");
-					xElement.Value = analysisWsList.Items[i].ToString();
-					xmldoc.Save(Path.Combine(newWsFilePath, analysisWsList.SelectedItem + configFileExtension));
+				var destFileName = Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension);
+				if (File.Exists(destFileName))
+					continue;
+				File.Copy(defaultWsFilePath, destFileName, false);
+				File.SetAttributes(destFileName, FileAttributes.Normal);
+				var xmldoc = XDocument.Load(destFileName);
+				var xElement = xmldoc.XPathSelectElement("DictionaryConfiguration").Attribute("name");
+				xElement.Value = analysisWsList.Items[i].ToString();
+				xmldoc.Save(Path.Combine(newWsFilePath, analysisWsList.SelectedItem + configFileExtension));
 			}
 			//Delete old Configuration File
 			if (!Directory.Exists(newWsFilePath)) return;
