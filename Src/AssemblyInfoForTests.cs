@@ -28,3 +28,6 @@ using SIL.Utils.Attributes;
 
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
+
+// Set ICU_DATA environment variable
+[assembly: SetIcuDataEnvironmentVariable]

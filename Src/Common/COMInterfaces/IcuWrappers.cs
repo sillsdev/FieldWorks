@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the directory from the registry where the ICU data is located
+		/// Gets the directory where the ICU data is located from ICU_DATA environment variable.
 		/// Will not return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -75,22 +75,15 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			get
 			{
-				string dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonApplicationData), string.Format("SIL/Icu{0}", Version));
-
-				string icuDirValueName = string.Format("Icu{0}DataDir", Version);
-				using(var userKey = RegistryHelper.CompanyKey)
-				using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
+				// We use the ICU_DATA environment variable instead of directly reading a registry
+				// value. This allows COMInterfaces.dll to be independent of WinForms.
+				// ENHANCE: store data directory somewhere else other than registry (user.config
+				// file?) and use that.
+				string dir = Environment.GetEnvironmentVariable("ICU_DATA");
+				if (string.IsNullOrEmpty(dir))
 				{
-					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
-					{
-						dir = userKey.GetValue(icuDirValueName, dir) as string ?? dir;
-					}
-					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
-					{
-
-						dir = machineKey.GetValue(icuDirValueName, dir) as string ?? dir;
-					}
+					dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+						string.Format("SIL/Icu{0}", Version));
 				}
 				return dir;
 			}
@@ -98,11 +91,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 		///-------------------------------------------------------------------------------------
 		/// <summary>
-		/// Retrieve the ICU Directory from the Registry. As of ICU50, this is the same
-		/// directory we want for the data directory, so just return that.
+		/// Retrieve the ICU Directory from the ICU_DATA environment variable. As of ICU50, this
+		/// is the same directory we want for the data directory, so just return that.
 		/// </summary>
-		/// <returns>The ICU directory, or empty string if the registry value isn't set or if
-		/// the directory doesn't exist.</returns>
 		///-------------------------------------------------------------------------------------
 		public static string DefaultDirectory
 		{
