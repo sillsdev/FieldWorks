@@ -1026,5 +1026,305 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual("2.2-k", sem22.Abbreviation.get_String(m_wsDe).Text);
 			Assert.AreEqual(0, sem22.SubPossibilitiesOS.Count);
 		}
+
+		private static readonly string s_ksVariantTypesTranslations =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
+			"<Lists date=\"12/10/2015 3:50:13 PM\">" + Environment.NewLine +
+			"  <List owner=\"LexDb\" field=\"VariantEntryTypes\" itemClass=\"LexEntryType\">" + Environment.NewLine +
+			"    <Name>" + Environment.NewLine +
+			"      <AUni ws=\"en\">Variant Types</AUni>" + Environment.NewLine +
+			"      <AUni ws=\"fr\"></AUni>" + Environment.NewLine +
+			"    </Name>" + Environment.NewLine +
+			"    <Abbreviation>" + Environment.NewLine +
+			"      <AUni ws=\"en\">EntTyp</AUni>" + Environment.NewLine +
+			"      <AUni ws=\"fr\"></AUni>" + Environment.NewLine +
+			"    </Abbreviation>" + Environment.NewLine +
+			"    <Possibilities>" + Environment.NewLine +
+			"      <LexEntryType guid=\"024b62c9-93b3-41a0-ab19-587a0030219a\">" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Dialectal Variant</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Variante Dialectale</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">dial. var. of</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. dial. de</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <Description>" + Environment.NewLine +
+			"          <AStr ws=\"en\">" + Environment.NewLine +
+			"            <Run ws=\"en\">A variant of a lexeme, characteristically used by a specific demographic subset of the language.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"          <AStr ws=\"fr\">" + Environment.NewLine +
+			"            <Run ws=\"fr\">Une variante d'un lexème, caractéristique utilisé par un sous-ensemble démographique spécifique de la langue.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"        </Description>" + Environment.NewLine +
+			"        <ReverseAbbr>" + Environment.NewLine +
+			"          <AUni ws=\"en\">dial. var.</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. dial.</AUni>" + Environment.NewLine +
+			"        </ReverseAbbr>" + Environment.NewLine +
+			"      </LexEntryType>" + Environment.NewLine +
+			"      <LexEntryType guid=\"4343b1ef-b54f-4fa4-9998-271319a6d74c\">" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Free Variant</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Variante Gratuitement</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">fr. var. of</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. gr. de</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <Description>" + Environment.NewLine +
+			"          <AStr ws=\"en\">" + Environment.NewLine +
+			"            <Run ws=\"en\">If two forms are free variants, the same speaker might use either one in the same setting. The more frequent form would be considered the basic form.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"          <AStr ws=\"fr\">" + Environment.NewLine +
+			"            <Run ws=\"fr\">Si deux formes sont des variantes libres, le même locuteur peut utiliser un ou l'autre dans le même cadre . La forme la plus fréquente serait considéré comme la forme de base.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"        </Description>" + Environment.NewLine +
+			"        <ReverseAbbr>" + Environment.NewLine +
+			"          <AUni ws=\"en\">fr. var.</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. gr.</AUni>" + Environment.NewLine +
+			"        </ReverseAbbr>" + Environment.NewLine +
+			"      </LexEntryType>" + Environment.NewLine +
+			"      <LexEntryInflType guid=\"01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c\">" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Irregularly Inflected Form</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Irrégulière Forme Fléchie</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">irreg. infl. of</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">irreg. fl. de.</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <Description>" + Environment.NewLine +
+			"          <AStr ws=\"en\">" + Environment.NewLine +
+			"            <Run ws=\"en\">An Irregularly Inflected Form is an inflected form of the lexeme that is different from what you would expect from the normal rules of the grammar.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"          <AStr ws=\"fr\">" + Environment.NewLine +
+			"            <Run ws=\"fr\">Une forme fléchie irrégulière est une forme fléchie du lexème qui est différent de ce que vous attendez des règles normales de la grammaire.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"        </Description>" + Environment.NewLine +
+			"        <ReverseAbbr>" + Environment.NewLine +
+			"          <AUni ws=\"en\">irreg. infl.</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">irreg. fl.</AUni>" + Environment.NewLine +
+			"        </ReverseAbbr>" + Environment.NewLine +
+			"        <SubPossibilities>" + Environment.NewLine +
+			"          <LexEntryInflType guid=\"a32f1d1c-4832-46a2-9732-c2276d6547e8\">" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Plural</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Pluriel</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">pl. of</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">pl. de</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"            <Description>" + Environment.NewLine +
+			"              <AStr ws=\"en\">" + Environment.NewLine +
+			"                <Run ws=\"en\">The plural form of a noun that does not take the regular inflectional affix for plural.</Run>" + Environment.NewLine +
+			"              </AStr>" + Environment.NewLine +
+			"              <AStr ws=\"fr\">" + Environment.NewLine +
+			"                <Run ws=\"fr\">Le pluriel d'un nom qui ne prend pas l'affixe flexionnel régulière pour le pluriel.</Run>" + Environment.NewLine +
+			"              </AStr>" + Environment.NewLine +
+			"            </Description>" + Environment.NewLine +
+			"            <ReverseAbbr>" + Environment.NewLine +
+			"              <AUni ws=\"en\">pl.</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">pl.</AUni>" + Environment.NewLine +
+			"            </ReverseAbbr>" + Environment.NewLine +
+			"            <GlossAppend>" + Environment.NewLine +
+			"              <AUni ws=\"en\">.pl</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">.plu</AUni>" + Environment.NewLine +
+			"            </GlossAppend>" + Environment.NewLine +
+			"          </LexEntryInflType>" + Environment.NewLine +
+			"          <LexEntryInflType guid=\"837ebe72-8c1d-4864-95d9-fa313c499d78\">" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Past</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Passé</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">pst. of</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">pas. de</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"            <Description>" + Environment.NewLine +
+			"              <AStr ws=\"en\">" + Environment.NewLine +
+			"                <Run ws=\"en\">The past tense form of a verb that does not take the regular inflectional affix for past tense.</Run>" + Environment.NewLine +
+			"              </AStr>" + Environment.NewLine +
+			"              <AStr ws=\"fr\">" + Environment.NewLine +
+			"                <Run ws=\"fr\">La forme au passé d'un verbe qui ne prend pas l'affixe flexionnel régulier pour passé.</Run>" + Environment.NewLine +
+			"              </AStr>" + Environment.NewLine +
+			"            </Description>" + Environment.NewLine +
+			"            <ReverseAbbr>" + Environment.NewLine +
+			"              <AUni ws=\"en\">pst.</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">pas.</AUni>" + Environment.NewLine +
+			"            </ReverseAbbr>" + Environment.NewLine +
+			"            <GlossAppend>" + Environment.NewLine +
+			"              <AUni ws=\"en\">.pst</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">.pas</AUni>" + Environment.NewLine +
+			"            </GlossAppend>" + Environment.NewLine +
+			"          </LexEntryInflType>" + Environment.NewLine +
+			"        </SubPossibilities>" + Environment.NewLine +
+			"      </LexEntryInflType>" + Environment.NewLine +
+			"      <LexEntryType guid=\"0c4663b3-4d9a-47af-b9a1-c8565d8112ed\">" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Spelling Variant</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Orthographe Variant</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">sp. var. of</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">or. var. de</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <Description>" + Environment.NewLine +
+			"          <AStr ws=\"en\">" + Environment.NewLine +
+			"            <Run ws=\"en\">A variant spelling of a lexeme.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"          <AStr ws=\"fr\">" + Environment.NewLine +
+			"            <Run ws=\"fr\">Une variante de l'orthographe un lexème.</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"        </Description>" + Environment.NewLine +
+			"        <ReverseAbbr>" + Environment.NewLine +
+			"          <AUni ws=\"en\">sp. var.</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">or. var.</AUni>" + Environment.NewLine +
+			"        </ReverseAbbr>" + Environment.NewLine +
+			"      </LexEntryType>" + Environment.NewLine +
+			"    </Possibilities>" + Environment.NewLine +
+			"  </List>" + Environment.NewLine +
+			"</Lists>" + Environment.NewLine;
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the method ImportTranslatedLists with a list with subtypes that have special
+		/// fields.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportTranslatedListWithSubclassTypes()
+		{
+			var listTypes = m_cache.LangProject.LexDbOA.VariantEntryTypesOA;
+
+			var xtl = new XmlTranslatedLists();
+			var mapNameToItem = new Dictionary<string, ICmPossibility>();
+
+			xtl.m_wsEn = m_wsEn;
+			xtl.FillInMapForPossibilities(mapNameToItem, listTypes.PossibilitiesOS);
+
+			Assert.AreEqual(6, mapNameToItem.Count, "We should start with six variant types.");
+			int countSubtypeItems = 0;
+			foreach (var name in mapNameToItem.Keys)
+			{
+				var item = mapNameToItem[name];
+				var nameEnglish = item.Name.get_String(m_wsEn).Text;
+				Assert.AreEqual(name, nameEnglish, "The list should have English names before import.");
+				var nameFrench = item.Name.get_String(m_wsFr).Text;
+				Assert.IsNullOrEmpty(nameFrench, "The original list should have no French names.");
+				var abbrEnglish = item.Abbreviation.get_String(m_wsEn).Text;
+				Assert.IsNotNullOrEmpty(abbrEnglish, "The list should have English abbreviations before import.");
+				var abbrFrench = item.Abbreviation.get_String(m_wsFr).Text;
+				Assert.IsNullOrEmpty(abbrFrench, "The original list should have no French abbreviations.");
+				var descFrench = item.Description.get_String(m_wsFr).Text;
+				Assert.IsNullOrEmpty(descFrench, "The original list should have no French descriptions.");
+				var inflType = item as ILexEntryInflType;
+				if (inflType != null)
+				{
+					++countSubtypeItems;
+					var glossEnglish = inflType.GlossAppend.get_String(m_wsEn).Text;
+					if (String.IsNullOrEmpty(glossEnglish))
+					{
+						// Test data isn't set up quite like default new project data, so tweak it a bit for later on.
+						if (name == "Plural Variant")
+							NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => inflType.GlossAppend.set_String(m_wsEn, ".pl"));
+						else if (name == "Past Variant")
+							NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => inflType.GlossAppend.set_String(m_wsEn, ".pst"));
+					}
+					var glossFrench = inflType.GlossAppend.get_String(m_wsFr).Text;
+					Assert.IsNullOrEmpty(glossFrench, "The original list should have no French 'GlossAppend' values.");
+				}
+			}
+			Assert.AreEqual(3, countSubtypeItems, "The list should have three ILexEntryInflType objects.");
+
+			var reader = new StringReader(s_ksVariantTypesTranslations);
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => xtl.ImportTranslatedLists(reader, m_cache, null));
+
+			var mapNameToItem2 = new Dictionary<string, ICmPossibility>();
+			xtl.FillInMapForPossibilities(mapNameToItem2, listTypes.PossibilitiesOS);
+			Assert.AreEqual(6, mapNameToItem2.Count, "Import should not add any new items: there should still be six variant types.");
+
+			int countNoFrench = 0;
+			foreach (var name in mapNameToItem.Keys)
+			{
+				var item = mapNameToItem[name];
+				var item2 = mapNameToItem2[name];
+				Assert.AreSame(item, item2, "The import should retain the existing items.");
+
+				var nameEnglish = item.Name.get_String(m_wsEn).Text;
+				Assert.AreEqual(name, nameEnglish, "Import should not change the English name.");
+				var nameFrench = item.Name.get_String(m_wsFr).Text;
+				Assert.IsNotNullOrEmpty(nameFrench, "The list should have French names after import.");
+				var abbrEnglish = item.Abbreviation.get_String(m_wsEn).Text;
+				Assert.IsNotNullOrEmpty(abbrEnglish, "The list should still have English abbreviations after import.");
+				var abbrFrench = item.Abbreviation.get_String(m_wsFr).Text;
+				Assert.IsNotNullOrEmpty(abbrFrench, "The list should have French abbreviations after import.");
+				var descFrench = item.Description.get_String(m_wsFr).Text;
+				Assert.IsNotNullOrEmpty(descFrench, "The list should have French descriptions after import.");
+				var inflType = item as ILexEntryInflType;
+				if (inflType != null)
+				{
+					var ga = inflType.GlossAppend;
+					var cws = ga.StringCount;
+					var ui = ga.UiString;
+					var glossEnglish = inflType.GlossAppend.get_String(m_wsEn).Text;
+					var glossFrench = inflType.GlossAppend.get_String(m_wsFr).Text;
+					if (String.IsNullOrEmpty(glossEnglish))
+					{
+						++countNoFrench;
+						Assert.IsNullOrEmpty(glossFrench, "The list should have no French if it has no English for 'GlossAppend' values.");
+					}
+					else
+					{
+						Assert.IsNotNullOrEmpty(glossFrench, "The list should have French if it has English for 'GlossAppend' values.");
+					}
+				}
+			}
+			Assert.AreEqual(1, countNoFrench, "Only one item should lack a French translation due to no English.");
+
+			// Finally, just to be exhaustive, let's examine a few specific values.
+
+			var type = mapNameToItem["Dialectal Variant"] as ILexEntryType;
+			var frenchName = type.Name.get_String(m_wsFr).Text;
+			Assert.AreEqual("Variante Dialectale", frenchName);
+			var typeinfl = type as ILexEntryInflType;
+			Assert.IsNull(typeinfl);
+
+			type = mapNameToItem["Free Variant"] as ILexEntryType;
+			frenchName = type.Name.get_String(m_wsFr).Text;
+			Assert.AreEqual("Variante Gratuitement", frenchName);
+			typeinfl = type as ILexEntryInflType;
+			Assert.IsNull(typeinfl);
+
+			type = mapNameToItem["Irregular Inflectional Variant"] as ILexEntryType;
+			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
+			Assert.AreEqual("Irrégulière Forme Fléchie", frenchName);
+			typeinfl = type as ILexEntryInflType;
+			Assert.IsNotNull(typeinfl);
+			var frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
+			Assert.IsNullOrEmpty(frenchGlossAppend, "Irregular Inflectional Variant should not have a GlossAppend value.");
+
+			type = mapNameToItem["Plural Variant"] as ILexEntryType;
+			frenchName = type.Name.get_String(m_wsFr).Text;
+			Assert.AreEqual("Pluriel", frenchName);
+			typeinfl = type as ILexEntryInflType;
+			Assert.IsNotNull(typeinfl);
+			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
+			Assert.AreEqual(".plu", frenchGlossAppend);
+
+			type = mapNameToItem["Past Variant"] as ILexEntryType;
+			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
+			Assert.AreEqual("Passé", frenchName);
+			typeinfl = type as ILexEntryInflType;
+			Assert.IsNotNull(typeinfl);
+			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
+			Assert.AreEqual(".pas", frenchGlossAppend);
+
+			type = mapNameToItem["Spelling Variant"] as ILexEntryType;
+			frenchName = type.Name.get_String(m_wsFr).Text;
+			Assert.AreEqual("Orthographe Variant", frenchName);
+			typeinfl = type as ILexEntryInflType;
+			Assert.IsNull(typeinfl);
+		}
 	}
 }
