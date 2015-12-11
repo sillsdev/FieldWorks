@@ -129,6 +129,35 @@ namespace SIL.FieldWorks
 
 		#region Main Method and Initialization Methods
 
+		/// <summary>
+		/// Sets the ICU_DATA environment variable.
+		/// </summary>
+		private static void SetIcuDataDirEnvironmentVariable()
+		{
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+				return;
+
+			// We read the registry value and set an environment variable ICU_DATA here so that
+			// COMInterfaces.dll is independent of WinForms.
+			string icuDirValueName = string.Format("Icu{0}DataDir", Icu.Version);
+			using(var userKey = RegistryHelper.CompanyKey)
+			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
+			{
+				string dir = null;
+				if (userKey != null && userKey.GetValue(icuDirValueName) != null)
+				{
+					dir = userKey.GetValue(icuDirValueName, dir) as string;
+				}
+				else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
+				{
+
+					dir = machineKey.GetValue(icuDirValueName, dir) as string;
+				}
+				if (!string.IsNullOrEmpty(dir))
+					Environment.SetEnvironmentVariable("ICU_DATA", dir);
+			}
+		}
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -219,6 +248,9 @@ namespace SIL.FieldWorks
 				// in native code do not have icons if we just use this method. This is caused
 				// by a bug in XP.
 				Application.EnableVisualStyles();
+
+				// Set ICU_DATA environment variable
+				SetIcuDataDirEnvironmentVariable();
 
 				// initialize ICU
 				Icu.InitIcuDataDir();
