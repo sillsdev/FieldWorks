@@ -110,7 +110,7 @@
 			<usage wsId="en">Style for all main entry content which follows an intermediate paragraph</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="0 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Pictures" guid="92E5DC56-317A-461D-A179-E9E005D6612A" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">The paragraph of pictures that follows the main paragraph (if there are pictures).</usage>
