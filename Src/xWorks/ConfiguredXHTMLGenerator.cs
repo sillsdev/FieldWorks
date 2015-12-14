@@ -278,13 +278,13 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
-				if (config.CheckForSenseParaEnabled(config))
+				if (config.CheckForParaNodesEnabled(config) && !config.CheckForPrevParaNodeSibling(config))
 				{
 					settings.Writer.WriteStartElement("div");
 					settings.Writer.WriteAttributeString("class", "paracontinuation");
 				}
 			}
-			if (configuration.Children.Any(x => x.CheckForSenseParaEnabled(x)))
+			if (configuration.Children.Any(x => x.CheckForParaNodesEnabled(x)))
 			{
 				settings.Writer.WriteEndElement();
 			}

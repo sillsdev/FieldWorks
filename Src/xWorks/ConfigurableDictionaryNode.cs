@@ -298,15 +298,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Check for node having sense as preceding sibling
+		/// Check for node having certain node as preceding sibling
 		/// </summary>
 		/// <param name="confignode"></param>
 		/// <returns></returns>
-		public bool CheckForPrevSenseSibling(ConfigurableDictionaryNode confignode)
+		public bool CheckForPrevParaNodeSibling(ConfigurableDictionaryNode confignode)
 		{
 			foreach (var node in confignode.Parent.Children)
 			{
-				if (!Equals(node, confignode) && CheckForSenseParaEnabled(node))
+				if (!Equals(node, confignode) && CheckForParaNodesEnabled(node))
 				{
 					return true;
 				}
@@ -319,13 +319,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Check for sense which display in paragraph is enabled
+		/// Check for nodes display in paragraph is enabled
 		/// </summary>
 		/// <param name="confignode"></param>
 		/// <returns></returns>
-		public bool CheckForSenseParaEnabled(ConfigurableDictionaryNode confignode)
+		public bool CheckForParaNodesEnabled(ConfigurableDictionaryNode confignode)
 		{
-			return confignode.DictionaryNodeOptions is DictionaryNodeSenseOptions && confignode.IsEnabled && ((DictionaryNodeSenseOptions)confignode.DictionaryNodeOptions).DisplayEachSenseInAParagraph;
+			if(confignode.DictionaryNodeOptions is DictionaryNodeSenseOptions )
+			{
+				return confignode.IsEnabled && ((DictionaryNodeSenseOptions)confignode.DictionaryNodeOptions).DisplayEachSenseInAParagraph;
+			}
+			if (confignode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions)
+			{
+				return confignode.IsEnabled && ((DictionaryNodeComplexFormOptions)confignode.DictionaryNodeOptions).DisplayEachComplexFormInAParagraph;
+			}
+			return false;
 		}
 	}
 }

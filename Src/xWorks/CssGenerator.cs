@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (configNode.Parent != null && configNode.Parent.CSSClassNameOverride != null && configNode.Parent.FieldDescription.Equals("LexEntry"))
 			{
-				if (configNode.CheckForPrevSenseSibling(configNode))
+				if (configNode.CheckForPrevParaNodeSibling(configNode))
 				{
 					baseSelection = baseSelection.Contains(".paracontinuation")
 						? baseSelection
