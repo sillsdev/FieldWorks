@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// If we use 'Reversal Index', then GetEntriesToPublish() doesn't need a RecordClerk,
 			// which is a bit more difficult to come by than a Mediator
-			Mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete");
+			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
 			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
 			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);

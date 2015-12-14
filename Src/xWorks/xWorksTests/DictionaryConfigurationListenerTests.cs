@@ -31,15 +31,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				string projectConfigDir;
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconEdit");
+				mediator.PropertyTable.SetProperty("currentContentControl", "lexiconEdit");
 				projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete");
+				mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
 				projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
 				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "somethingElse");
+				mediator.PropertyTable.SetProperty("currentContentControl", "somethingElse");
 				Assert.IsNull(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator), "Other areas should cause null return");
 			}
 		}
@@ -51,15 +51,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				string configDir;
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconEdit");
+				mediator.PropertyTable.SetProperty("currentContentControl", "lexiconEdit");
 				configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 				Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator), Is.EqualTo(configDir), "did not return expected directory");
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalToolEditComplete");
+				mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
 				configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 				Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator), Is.EqualTo(configDir), "did not return expected directory");
 
-				mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "somethingElse");
+				mediator.PropertyTable.SetProperty("currentContentControl", "somethingElse");
 				Assert.IsNull(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator), "Other areas should cause null return");
 			}
 		}

@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetDictionaryConfigurationBaseType(Mediator mediator)
 		{
-			var toolName = mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			var toolName = mediator.PropertyTable.GetStringProperty("currentContentControl", null);
 			switch (toolName)
 			{
 				case "reversalToolBulkEditReversalEntries":
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetInnermostConfigurationDirectory(Mediator mediator)
 		{
-			switch (mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null))
+			switch (mediator.PropertyTable.GetStringProperty("currentContentControl", null))
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
