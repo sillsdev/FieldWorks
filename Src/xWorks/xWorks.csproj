@@ -384,6 +384,7 @@
     <Compile Include="ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
+	<Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="FwXApp.cs">
       <SubType>Code</SubType>
     </Compile>
