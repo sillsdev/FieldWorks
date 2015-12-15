@@ -100,7 +100,20 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else
 				{
-					CopyToOutput(currentChild);
+					var copy = CopyToOutput(currentChild);
+					// We need to merge sublayout nodes as well if at all possible.
+					if (currentChild.Name == "sublayout" && m_oldConfigured.ChildNodes.Count > startIndex)
+					{
+						var currentOldChild = m_oldConfigured.ChildNodes[startIndex];
+						if (currentOldChild.Name == currentChild.Name && currentOldChild.Attributes != null)
+						{
+							foreach (XmlAttribute xa in currentOldChild.Attributes)
+							{
+								if (m_safeAttrs.Contains(xa.Name) || xa.Name == "name" || xa.Name == "group")
+									Utils.XmlUtils.SetAttribute(copy, xa.Name, xa.Value);
+							}
+						}
+					}
 					startIndex++;
 				}
 			}

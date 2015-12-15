@@ -374,13 +374,25 @@ namespace SIL.FieldWorks.XWorks
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
-			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", Path.GetFileNameWithoutExtension(configurationFile));
+			var baseName = MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
+			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
 			var cssPath = basePath + ".css";
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath);
 			m_mainView.Url = new Uri(xhtmlPath);
 			m_mainView.Refresh(WebBrowserRefreshOption.Completely);
+		}
+
+		/// <summary>
+		/// Interpreting the xhtml, gecko doesn't load css files with a # character in it.  (probably because it carries meaning in a URL)
+		/// It's probably safe to assume that : and ? characters would also cause problems.
+		/// </summary>
+		public static string MakeFilenameSafeForHtml(string name)
+		{
+			if (name == null)
+				return String.Empty;
+			return name.Replace('#', '-').Replace('?', '-').Replace(':', '-');
 		}
 
 		private string GetCurrentPublication()

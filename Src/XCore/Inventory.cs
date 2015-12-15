@@ -1073,9 +1073,12 @@ namespace XCore
 		/// </summary>
 		/// <param name="filePaths">Collection of pathnames to individual XDE template files.</param>
 		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
+		/// <remarks>
+		/// tests over in XMLVIews need access to this method.
+		/// </remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
+		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
 			Debug.Assert(m_mainDoc != null);
@@ -1223,34 +1226,45 @@ namespace XCore
 
 				if (fileVersion != version && Merger != null && XmlUtils.GetOptionalAttributeValue(node, "base") == null)
 				{
-					string[] keyAttrs;
-					var key = GetKeyMain(node, out keyAttrs);
-					XmlNode current;
-					if (m_getElementTable.TryGetValue(key, out current))
+					if (node.Name == "layoutType")
 					{
-						XmlNode merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
+						AddLayoutTypeToInventory(node);
 						if (loadUserOverRides)
-							XmlUtils.SetAttribute(merged, "version", version.ToString());
-						survivors.Add(merged);
+							XmlUtils.SetAttribute(node, "version", version.ToString(CultureInfo.InvariantCulture));
+						survivors.Add(node);
 						wasMerged = true;
 					}
 					else
 					{
-						// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
-						string[] standardKeyVals;
-						var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
-						if (!string.IsNullOrEmpty(oldLayoutSuffix))
+						string[] keyAttrs;
+						var key = GetKeyMain(node, out keyAttrs);
+						XmlNode current;
+						if (m_getElementTable.TryGetValue(key, out current))
 						{
-							var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
-							if (m_getElementTable.TryGetValue(originalKey, out current))
+							XmlNode merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
+							if (loadUserOverRides)
+								XmlUtils.SetAttribute(merged, "version", version.ToString());
+							survivors.Add(merged);
+							wasMerged = true;
+						}
+						else
+						{
+							// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
+							string[] standardKeyVals;
+							var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
+							if (!string.IsNullOrEmpty(oldLayoutSuffix))
 							{
-								XmlNode merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
-								// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
-								//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
-								if (loadUserOverRides)
-									XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
-								survivors.Add(merged);
-								wasMerged = true;
+								var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
+								if (m_getElementTable.TryGetValue(originalKey, out current))
+								{
+									XmlNode merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
+									// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
+									//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
+									if (loadUserOverRides)
+										XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
+									survivors.Add(merged);
+									wasMerged = true;
+								}
 							}
 						}
 					}

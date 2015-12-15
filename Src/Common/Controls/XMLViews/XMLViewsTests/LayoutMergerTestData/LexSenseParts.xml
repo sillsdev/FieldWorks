@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PartInventory>
+	<bin class="LexSense">
+		<part id="LexSense-Jt-MorphoSyntaxAnalysisConfig">
+			<obj field="MorphoSyntaxAnalysis" layout="publishStem" />
+		</part>
+		<part id="LexSense-Jt-SmartDefinitionPub">
+			<ifnot field="Definition" stringaltequals="" ws="configure">
+				<configureMlString field="Definition" />
+			</ifnot>
+			<if field="Definition" stringaltequals="" ws="configure">
+				<configureMlString field="Gloss" />
+			</if>
+		</part>
+		<part id="LexSense-Jt-SensesConfig">
+			<seq class="LexSense" field="Senses" layout="publishStem" inheritSeps="true" />
+		</part>
+	</bin>
+</PartInventory>

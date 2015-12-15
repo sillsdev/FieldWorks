@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
+	<layout class="LexEntry" type="jtview" name="publishStemEntry">
+		<sublayout name="publishStemPara" group="para" style="Dictionary-Normal"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemPara" css="$fwstyle=Dictionary-Normal">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishStem" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true" />
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorEntry">
+		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara" entrytype="minor" flowType="para" style="Dictionary-Minor" css="minorentries"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorPara" css="$fwstyle=Dictionary-Minor">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword-minor" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number."/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishStemMinor" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+	</layout>
+</LayoutInventory>
