@@ -136,8 +136,7 @@
     <value>0</value>
   </data>
   <data name="textBox1.Text" xml:space="preserve">
-    <value>Restoring default settings will reset all configured views back to the factory defaults. It will not reset the dictionary configurations.
-Do you want to restore default settings?</value>
+    <value>Restoring default settings will reset all configured views back to the factory defaults. It will not reset the dictionary configurations. Do you want to restore default settings?</value>
   </data>
   <data name="&gt;&gt;textBox1.Name" xml:space="preserve">
     <value>textBox1</value>
