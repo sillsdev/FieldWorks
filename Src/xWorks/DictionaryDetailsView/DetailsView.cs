@@ -159,5 +159,36 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				}
 			}
 		}
+
+		/// <summary>
+		/// Adjust size or position of controls if needed.  This is needed only on Linux, and then only occasionally,
+		/// according to https://jira.sil.org/browse/LT-16836.  But the code below is safe for all situations so it's
+		/// conditioned only on the presence of the overflow bug.
+		/// </summary>
+		/// <remarks>
+		/// No doubt there's a subtle Mono library bug behind the occasional wierdness that this addresses, but I'm
+		/// not sure it's worth the probably protracted effort to chase it down and fix it.
+		/// </remarks>
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			var delta = textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
+			if (delta > 0)
+			{
+				var newSize = new Size(panelOptions.Size.Width, panelOptions.Size.Height - delta);
+				if (newSize.Height <= 0)	// sanity check
+					return;
+				panelOptions.Size = newSize;
+				labelStyle.Location = new Point(labelStyle.Location.X, labelStyle.Location.Y - delta);
+				dropDownStyle.Location = new Point(dropDownStyle.Location.X, dropDownStyle.Location.Y - delta);
+				buttonStyles.Location = new Point(buttonStyles.Location.X, buttonStyles.Location.Y - delta);
+				labelBefore.Location = new Point(labelBefore.Location.X, labelBefore.Location.Y - delta);
+				textBoxBefore.Location = new Point(textBoxBefore.Location.X, textBoxBefore.Location.Y - delta);
+				labelBetween.Location = new Point(labelBetween.Location.X, labelBetween.Location.Y - delta);
+				textBoxBetween.Location = new Point(textBoxBetween.Location.X, textBoxBetween.Location.Y - delta);
+				labelAfter.Location = new Point(labelAfter.Location.X, labelAfter.Location.Y - delta);
+				textBoxAfter.Location = new Point(textBoxAfter.Location.X, textBoxAfter.Location.Y - delta);
+			}
+		}
 	}
 }
