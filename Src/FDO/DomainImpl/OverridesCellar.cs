@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Finds the name of the possibility by name only.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private ICmPossibility FindPossibilityByName(IFdoOwningSequence<ICmPossibility> possList, string possibilityPath, int ws)
+		public ICmPossibility FindPossibilityByName(IFdoOwningSequence<ICmPossibility> possList, string possibilityPath, int ws)
 		{
 
 			foreach (CmPossibility poss in possList)
