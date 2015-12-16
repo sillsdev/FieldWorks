@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (globalMigrator.NeedsMigration())
 					globalMigrator.Migrate();
 				string migratedFilePath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ".migrated");
-				if (!File.Exists(migratedFilePath))
+				if (Directory.Exists(DirectoryFinder.OldGlobalWritingSystemStoreDirectory) && !File.Exists(migratedFilePath))
 				{
 					// copy over all FW global writing systems from the old directory to the new directory and migrate
 					string globalRepoPath = Path.Combine(GlobalWritingSystemRepository.DefaultBasePath, "3");

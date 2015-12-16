@@ -16,7 +16,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Automation.Provider;
 using Accessibility;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -341,8 +340,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
-			if (UIAutomationServerProviderFactory == null)
-				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
 			SubscribeToRootSiteEventHandlerEvents();
 		}
 
@@ -1974,7 +1971,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 		#endregion
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -5981,17 +5977,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			base.WndProc(ref msg);
 		}
-
-		#region UIAutomationServerProvider
-
-		/// <summary>
-		/// Gets or sets the factory for our UI automation server provider.
-		/// </summary>
-		/// <value>The UI automation server provider factory.</value>
-		protected Func<IRawElementProviderFragmentRoot> UIAutomationServerProviderFactory
-		{ get; set; }
-
-		#endregion
 
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer

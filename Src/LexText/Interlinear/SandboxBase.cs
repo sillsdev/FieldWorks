@@ -1033,9 +1033,6 @@ namespace SIL.FieldWorks.IText
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
 
 			PropertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
-
-			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
-				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
 		}
 
 		#endregion

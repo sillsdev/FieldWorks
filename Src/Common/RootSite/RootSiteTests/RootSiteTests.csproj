@@ -177,21 +177,6 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="UIAutomationTypes, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\UIAutomationTypes.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\WindowsBase.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="SimpleRootSiteTests, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SimpleRootSiteTests.dll</HintPath>
@@ -229,13 +214,6 @@
     <Compile Include="RootSiteEditingHelperTests.cs" />
     <Compile Include="RootSiteGroupTests.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="RootSiteDataProviderTests.cs" />
-    <Compile Include="RootSiteDataProviderView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RootSiteDataProviderView.Designer.cs">
-      <DependentUpon>RootSiteDataProviderView.cs</DependentUpon>
     </Compile>
     <Compile Include="StVcTests.cs">
       <SubType>Code</SubType>

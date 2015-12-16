@@ -167,12 +167,6 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
-    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\WindowsBase.dll</HintPath>
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
     </Reference>

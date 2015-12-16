@@ -6,7 +6,6 @@
 
 using System;
 using SIL.FieldWorks.Common.COMInterfaces;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

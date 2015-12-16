@@ -2,9 +2,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Localize all resx files -->
-	<Target Name="localize" DependsOnTargets="zipLocalizedLists;processLanguages"/>
+	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;zipLocalizedLists;processLanguages-source"/>
+	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
 
 	<!-- Zip LocalizedList-*.xml files from Localizations to DistFiles/Templates -->
 	<ItemGroup>
@@ -15,9 +18,11 @@
 	</Target>
 
 	<!-- Main target for processing all .po files -->
-	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
-	<Target Name="processLanguages">
-		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)"/>
+	<Target Name="processLanguages-source">
+		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)" Build="SourceOnly"/>
+	</Target>
+	<Target Name="processLanguages-binaries">
+		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)" Build="BinaryOnly"/>
 	</Target>
 
 </Project>

@@ -24,7 +24,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Automation.Provider;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -117,9 +116,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.AutoScroll = true;
 
 			InitializeComponent();
-
-			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
-				fragmentRoot => RootSiteServices.CreateUIAutomationControls(fragmentRoot, RootBox));
 			// RootSite shouldn't handle tabs like a control
 			AcceptsTab = true;
 			AcceptsReturn = true;
@@ -1171,132 +1167,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return (int)(10 * Zoom);
 		}
 		#endregion
-	}
-	#endregion
-
-	#region RootSiteServices class
-	/// <summary>
-	///
-	/// </summary>
-	public static class RootSiteServices
-	{
-		/// <summary>
-		/// Creates the UI automation edit controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationEditControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var editControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectEditableSelectionPoints(rootBox))
-			{
-				var editControl = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				editControls.Add(editControl);
-			}
-			return editControls;
-		}
-
-		private static SimpleRootSiteEditControl CreateEditControl(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox, IVwSelection selection)
-		{
-				if (!selection.IsRange)
-					selection.ExtendToStringBoundaries();
-			return new SimpleRootSiteEditControl(rawElementProviderRoot,
-					rootBox.Site as SimpleRootSite, selection, "");
-		}
-
-		/// <summary>
-		/// Creates the UI automation edit controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot"></param>
-		/// <param name="rootBox">The root box.</param>
-		/// <param name="vc"></param>
-		/// <param name="sda"></param>
-		/// <param name="hvoRoot"></param>
-		/// <param name="fragRoot"></param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationEditControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox,
-			IVwViewConstructor vc, ISilDataAccess sda, int hvoRoot, int fragRoot)
-		{
-			var editControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectEditableSelectionPoints(rootBox))
-			{
-				var editControl = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				editControls.Add(editControl);
-			}
-			return editControls;
-		}
-
-		/// <summary>
-		/// Creates the UI automation image controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationImageControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var imageControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureSelectionPoints(rootBox))
-			{
-				var imageControl = new ImageControl(rawElementProviderRoot,
-					rootBox.Site as SimpleRootSite, selection);
-				imageControls.Add(imageControl);
-			}
-			return imageControls;
-		}
-
-		/// <summary>
-		/// Creates the UI automation controls for both images and edit boxes.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var controls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureAndEditSelectionPoints(rootBox))
-			{
-				IRawElementProviderFragment control = null;
-				if (selection.SelType == VwSelType.kstPicture)
-				{
-					control = new ImageControl(rawElementProviderRoot,
-														rootBox.Site as SimpleRootSite, selection);
-				}
-				else if (selection.SelType == VwSelType.kstText && selection.IsEditable)
-				{
-					control = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				}
-
-				if (control != null)
-					controls.Add(control);
-			}
-			return controls;
-		}
-
-		/// <summary>
-		/// Creates the UI automation invoke buttons.
-		/// </summary>
-		/// <param name="provider">The provider.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <param name="invokeAction"></param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationInvokeButtons
-			(IChildControlNavigation provider, IVwRootBox rootBox, Action<IVwSelection> invokeAction)
-		{
-			var buttonControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureSelectionPoints(rootBox))
-			{
-				var buttonControl = new UiaInvokeButton(provider,
-					rootBox.Site as SimpleRootSite, selection, "Drop Down Button", invokeAction);
-				buttonControls.Add(buttonControl);
-			}
-			return buttonControls;
-		}
 	}
 	#endregion
 

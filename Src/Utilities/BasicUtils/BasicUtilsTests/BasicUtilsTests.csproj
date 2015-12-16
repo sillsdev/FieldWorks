@@ -115,6 +115,7 @@
     <None Include="App.config" />
     <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
     <Compile Include="Attributes\InitializeNoOpKeyboardControllerAttribute.cs" />
+    <Compile Include="Attributes\SetIcuDataEnvironmentVariableAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
