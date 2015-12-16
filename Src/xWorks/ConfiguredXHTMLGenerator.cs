@@ -1249,9 +1249,9 @@ namespace SIL.FieldWorks.XWorks
 			if (parentSenseNode != null)
 			{
 				if (!string.IsNullOrEmpty(parentSenseNode.NumberingStyle) && senseNumber.Contains('.'))
-					subSenseNumber = GenerateOutlineNumber(parentSenseNode.NumberingStyle, senseNumber.Split('.')[0], senseConfigNode);
+					subSenseNumber = GenerateOutlineNumber(parentSenseNode.NumberingStyle, senseNumber.Split('.')[0], senseConfigNode) + ".";
 			}
-			subSenseNumber += "." + senseNumber.Split('.')[senseNumber.Split('.').Length - 1];
+			subSenseNumber += senseNumber.Split('.')[senseNumber.Split('.').Length - 1];
 			return subSenseNumber;
 		}
 
