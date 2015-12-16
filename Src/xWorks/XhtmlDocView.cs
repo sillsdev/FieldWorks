@@ -330,10 +330,33 @@ namespace SIL.FieldWorks.XWorks
 						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
+					SetReversalIndexOnPropertyDlg();
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
+			}
+		}
+
+
+		/// <summary>
+		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
+		/// </summary>
+		private void SetReversalIndexOnPropertyDlg()
+		{
+			var currWsPath = m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty);
+			var currWsName = Path.GetFileNameWithoutExtension(currWsPath);
+			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
+			foreach (var wsObj in currentAnalysisWsList.Where(wsObj => wsObj.DisplayLabel == currWsName))
+			{
+				if (wsObj == null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) >= 0) return;
+
+				var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+				Guid revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
+				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+				break;
 			}
 		}
 

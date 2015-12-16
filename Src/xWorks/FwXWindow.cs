@@ -1408,13 +1408,15 @@ namespace SIL.FieldWorks.XWorks
 				"AllReversalIndexes" + configFileExtension);
 			var newWsFilePath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, originalProjectName, "ConfigurationSettings",
 				"ReversalIndex");
+			if (!File.Exists(defaultWsFilePath)) return;
 			//Create new Configuration File
 			for (int i = 0; i < analysisWsList.Items.Count; i++)
 			{
-				if (analysisWsList.Items[i].ToString().ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
+				string wsLang = analysisWsList.Items[i].ToString();
+				if (wsLang.ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
 						continue;
 
-				wsList.Add(analysisWsList.Items[i].ToString());
+				wsList.Add(wsLang);
 				var destFileName = Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension);
 				if (File.Exists(destFileName))
 					continue;
@@ -1422,8 +1424,8 @@ namespace SIL.FieldWorks.XWorks
 				File.SetAttributes(destFileName, FileAttributes.Normal);
 				var xmldoc = XDocument.Load(destFileName);
 				var xElement = xmldoc.XPathSelectElement("DictionaryConfiguration").Attribute("name");
-				xElement.Value = analysisWsList.Items[i].ToString();
-				xmldoc.Save(Path.Combine(newWsFilePath, analysisWsList.SelectedItem + configFileExtension));
+				xElement.Value = wsLang;
+				xmldoc.Save(Path.Combine(newWsFilePath, wsLang + configFileExtension));
 			}
 			//Delete old Configuration File
 			if (!Directory.Exists(newWsFilePath)) return;
@@ -2282,7 +2284,6 @@ namespace SIL.FieldWorks.XWorks
 				if (this.OwnedForms.Length > 0 && this.OwnedForms[0] is FwFindReplaceDlg)
 					this.OwnedForms[0].Close();
 			}
-
 			base.OnPropertyChanged(name);
 		}
 

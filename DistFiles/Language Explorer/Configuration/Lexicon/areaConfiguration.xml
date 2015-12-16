@@ -40,12 +40,6 @@
 		<command id="CmdChangeToVariant" label="Lexeme Form is a variant" message="ConvertEntryIntoVariant">
 			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
 		</command>
-		<command id="CmdInsertReversalIndex" label="Reversal Index" message="InsertReversalIndex">
-			<parameters className="ReversalIndex"/>
-		</command>
-		<command id="CmdDeleteReversalIndex" label="Delete Reversal Index" message="DeleteReversalIndex" icon="Delete">
-			<parameters className="ReversalIndex"/>
-		</command>
 		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
 			<parameters className="ReversalIndexEntry"/>
 		</command>
@@ -195,7 +189,6 @@
 		</menu>
 		<menu id="Edit">
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
-			<item command="CmdDeleteReversalIndex" defaultVisible="false"/>
 		</menu>
 		<menu id="View">
 			<item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
