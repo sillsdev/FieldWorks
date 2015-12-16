@@ -289,7 +289,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="true" between=" " after=" " field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="false" between=" " after=" " field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		  <Option id="reversal" isEnabled="true" />
 		</WritingSystemOptions>
@@ -304,7 +304,7 @@
 		  <Option id="reversal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" isEnabled="true" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
+	  <ConfigurationItem name="Examples" isEnabled="false" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
 		<ConfigurationItem name="Example" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true" />
@@ -331,7 +331,7 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Reference" isEnabled="false" after=" " field="Reference" />
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Encyclopedic Info." isEnabled="true" before="[" between=" " after="] " field="EncyclopedicInfo">
+	  <ConfigurationItem name="Encyclopedic Info." isEnabled="false" before="[" between=" " after="] " field="EncyclopedicInfo">
 		<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		  <Option id="reversal" isEnabled="true" />
 		</WritingSystemOptions>
@@ -418,7 +418,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" isEnabled="true" after=" " field="ScientificName" />
 	  <ConfigurationItem name="Source" isEnabled="false" after=" " field="Source" />
-	  <ConfigurationItem name="Semantic Domains" isEnabled="true" before="(sem. domains: " between="," after=".) " field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" isEnabled="false" before="(sem. domains: " between="," after=".) " field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " after=" - " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 			<Option id="reversal" isEnabled="true" />
@@ -442,7 +442,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Academic Domains" isEnabled="true" before="ac. domains: " between=", " after=" " field="DomainTypesRC" cssClassNameOverride="academicdomains">
+	  <ConfigurationItem name="Academic Domains" isEnabled="false" before="ac. domains: " between=", " after=" " field="DomainTypesRC" cssClassNameOverride="academicdomains">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -454,7 +454,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" isEnabled="true" before="{" between=", " after="} " field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" isEnabled="false" before="{" between=", " after="} " field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 			<Option id="reversal" isEnabled="true" />
