@@ -969,16 +969,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-			// For now, it attaches itself to various things through events, and runs until
-			// the program exits.
-			using (ScriptMaker sm = new ScriptMaker(ActiveForm))
-			{
-				LinkListener ll = m_propertyTable.GetValue<LinkListener>("LinkListener", null);
-				if (ll == null)
-					return true;
-				sm.GoTo(ll.CurrentContext.ToString());
-				return true;
-			}
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
