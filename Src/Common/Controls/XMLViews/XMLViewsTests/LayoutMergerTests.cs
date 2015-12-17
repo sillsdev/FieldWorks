@@ -52,6 +52,9 @@ namespace XMLViewsTests
 			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara#stem-785']/part[@ref='MLHeadWordPub' and @before='Headword: ']").Count, "The revised attributes for entry parts in the copy should pass through the merge.");
 			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem#stem-785']/part[@ref='SmartDefinitionPub' and @before='Definition: ']").Count, "The revised attributes for sense parts in the copy should pass through the merge.");
 			// If we add some modifications to the standard layout types in additional data files, then more testing could be done on those values passing through...  But this demonstrates the fixes for https://jira.sil.org/browse/LT-15378.
+
+			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemMinorEntry#stem-785']/part[@ref='MinorEntryConfig' and @entrytypeseq='-b0000000-c40e-433e-80b5-31da08771344,+024b62c9-93b3-41a0-ab19-587a0030219a']").Count, "The entrytypeseq attribute for entry parts in the copy should pass through the merge.");
+			//Added above test case to handle entrytypeseq to fix https://jira.sil.org/browse/LT-16442
 		}
 	}
 }

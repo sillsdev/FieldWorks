@@ -15,7 +15,7 @@
     <part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech" />
   </layout>
   <layout class="LexEntry" type="jtview" name="publishStemMinorEntry#stem-785" version="0">
-    <part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara#stem-785" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries" after=" " />
+    <part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara#stem-785" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries" after=" " entrytypeseq="-b0000000-c40e-433e-80b5-31da08771344,+024b62c9-93b3-41a0-ab19-587a0030219a" />
   </layout>
   <layout class="LexEntry" type="jtview" name="publishStemMinorPara#stem-785" css="$fwstyle=Dictionary-Minor" version="0">
     <part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword-minor" visibility="ifdata" comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number." />

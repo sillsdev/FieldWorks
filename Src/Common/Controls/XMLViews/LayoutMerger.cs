@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private Set<XmlNode> m_insertedMissing; // missing nodes we already inserted.
 		Set<string> m_safeAttrs = new Set<string>(
 			new string[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
-				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup" });
+				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup","entrytypeseq" });
 
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
