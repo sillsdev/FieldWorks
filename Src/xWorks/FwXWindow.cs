@@ -1418,7 +1418,10 @@ namespace SIL.FieldWorks.XWorks
 
 				wsList.Add(wsLang);
 				var destFileName = Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension);
-				if (File.Exists(destFileName))
+				// Ensure proper directory structure for new projects.
+				if (!Directory.Exists(newWsFilePath))
+					Directory.CreateDirectory(newWsFilePath);
+				else if (File.Exists(destFileName))
 					continue;
 				File.Copy(defaultWsFilePath, destFileName, false);
 				File.SetAttributes(destFileName, FileAttributes.Normal);
