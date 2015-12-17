@@ -100,6 +100,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">

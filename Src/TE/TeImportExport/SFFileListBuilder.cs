@@ -10,27 +10,27 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.TE;
-using XCore;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.TE;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.Common.Controls

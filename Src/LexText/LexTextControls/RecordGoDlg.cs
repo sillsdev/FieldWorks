@@ -28,12 +28,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return "RecordGo"; }
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, string form)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultAnalWs);
 		}

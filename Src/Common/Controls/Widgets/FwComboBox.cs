@@ -4,15 +4,16 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using System.Diagnostics;
 using SIL.Utils; // for Win32 message defns.
-using System.Diagnostics.CodeAnalysis;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

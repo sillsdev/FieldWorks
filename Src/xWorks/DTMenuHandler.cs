@@ -9,29 +9,31 @@
 // <remarks>
 // </remarks>
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+using SIL.Reporting;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
 using XCore;
-using SIL.FieldWorks.Common.Widgets;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {

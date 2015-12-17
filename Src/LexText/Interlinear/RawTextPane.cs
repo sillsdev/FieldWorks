@@ -8,16 +8,17 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.XWorks;
 using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.IText
 {

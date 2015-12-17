@@ -10,6 +10,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

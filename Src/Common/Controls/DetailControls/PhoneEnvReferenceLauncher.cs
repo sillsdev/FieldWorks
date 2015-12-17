@@ -12,13 +12,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;

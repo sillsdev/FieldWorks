@@ -11,27 +11,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using System.Reflection;
-using System.Globalization;
-using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IVwStylesheet m_stylesheet;
 		private Mediator m_mediator;
 		private WritingSystemManager m_wsManager;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private IStTextFactory m_factStText;
 		private IStTextRepository m_repoStText;
 		private IStTxtParaFactory m_factPara;
@@ -734,7 +734,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(PropertyTable propertyTable)
+		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(XCore.PropertyTable propertyTable)
 		{
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;

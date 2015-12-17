@@ -15,19 +15,20 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Lift;
-using SIL.Lift.Migration;
-using SIL.Lift.Parsing;
-using SIL.Lift.Validation;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.Lift.Validation;
+using SIL.Reporting;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
 		private OpenFileDialogAdapter openFileDialog1;
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		void IFwExtension.Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -285,7 +286,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						SIL.Utils.Logger.WriteEvent(bldr.ToString());
+						Logger.WriteEvent(bldr.ToString());
 				}
 				catch
 				{

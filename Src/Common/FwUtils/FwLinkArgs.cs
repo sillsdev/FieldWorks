@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Web;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

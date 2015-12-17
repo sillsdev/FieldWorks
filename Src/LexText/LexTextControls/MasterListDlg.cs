@@ -10,12 +10,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls.MGA;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls.MGA;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected IFdoOwningCollection<IFsFeatDefn> m_featureList;
 		protected bool m_launchedFromInsertMenu = false;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected XCore.PropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected IFsFeatDefn m_selFeatDefn;
@@ -162,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		///  <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu)
+		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
 			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
@@ -178,7 +179,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="launchedFromInsertMenu"></param>
 		///  <param name="sWindowKey">used to store location and size of dialog window</param>
 		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
-		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
+		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();
 
@@ -214,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var locWnd = m_propertyTable.GetValue<Point>(m_sWindowKeyLocation);
 				var szWnd = m_propertyTable.GetValue<Size>(m_sWindowKeySize);
 				Rectangle rect = new Rectangle(locWnd, szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

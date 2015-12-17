@@ -13,13 +13,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -11,11 +12,12 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Keyboarding;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

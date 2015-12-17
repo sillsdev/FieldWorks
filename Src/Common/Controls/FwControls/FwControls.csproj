@@ -92,18 +92,18 @@
       <Name>Controls.Design</Name>
       <HintPath>..\..\..\..\Output\Debug\Controls.Design.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FDO">
+      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=8.0.9.31046, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FwUtils">
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedLgIcuCollator, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ManagedLgIcuCollator">
       <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" >
+      <HintPath>..\..\..\..\DistFiles/Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
@@ -153,15 +153,21 @@
     <Reference Include="SharedScrUtils">
       <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="xCore">
+      <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="xCoreInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -502,6 +508,31 @@
     <None Include="resources\MissingGlyph.png" />
     <Content Include="resources\Unchecked.bmp" />
     <None Include="gendarme-FwControls.ignore" />
+    <Compile Include="FileDialog\FileDialogAdapter.cs" />
+    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+      <DependentUpon>FileDialogStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+    <Compile Include="FileDialog\Manager.cs" />
+    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+    <None Include="FileDialog\readme.txt" />
+    <Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
+    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -524,4 +555,7 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="FileDialog\" />
+  </ItemGroup>
 </Project>

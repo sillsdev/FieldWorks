@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Reflection;
 
 using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {

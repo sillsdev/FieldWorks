@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using SIL.FieldWorks.FDO;
 using SIL.Reporting;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using System.Xml;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using Logger = SIL.Utils.Logger;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {

@@ -9,9 +9,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 using SIL.Utils;
-using XCore;
-using Logger = SIL.Utils.Logger;
 
 namespace SIL.FieldWorks
 {

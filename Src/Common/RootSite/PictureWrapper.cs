@@ -10,8 +10,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

@@ -6,12 +6,11 @@
 // Responsibility: Eberhard Beilharz
 
 using System;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {

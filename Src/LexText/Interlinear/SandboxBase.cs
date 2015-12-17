@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.IText
 		protected SandboxVc m_vc;
 		private Point m_LastMouseMovePos;
 		// Rectangle containing last selection passed to ShowComboForSelection.
-		private SIL.Utils.Rect m_locLastShowCombo;
+		private Rect m_locLastShowCombo;
 		// True during calls to MakeCombo to suppress selected index changed effects.
 		private bool m_fMakingCombo = false;
 		// True when the user has started editing text in the combo. Blocks moving and
@@ -2258,7 +2258,7 @@ namespace SIL.FieldWorks.IText
 		private void ShowComboForSelection(IVwSelection vwselNew, bool fMouseDown)
 		{
 			// It's a good idea to get this first...it's possible for MakeCombo to leave the selection invalid.
-			SIL.Utils.Rect loc;
+			Rect loc;
 			vwselNew.GetParaLocation(out loc);
 			if (!fMouseDown)
 			{
@@ -2266,7 +2266,7 @@ namespace SIL.FieldWorks.IText
 				// If we've moved to somewhere outside any paragraph get rid of the combos.
 				// But, allow somewhere close, since otherwise it's almost impossible to get
 				// a combo on an empty string.
-				SIL.Utils.Rect locExpanded = loc;
+				Rect locExpanded = loc;
 				locExpanded.right += 50;
 				locExpanded.left -= 5;
 				locExpanded.top -= 2;
@@ -2385,7 +2385,7 @@ namespace SIL.FieldWorks.IText
 			IVwSelection selArrow;
 			int dxPixelIncrement = 3;
 			uint iconParagraphWidth = 10;
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			if (m_vc.RightToLeft)
 			{
@@ -2434,7 +2434,7 @@ namespace SIL.FieldWorks.IText
 			if (dxPixelIncrement == 0)
 				throw new ArgumentException(String.Format("dxPixelIncrement({0}) must be nonzero", dxPixelIncrement));
 
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			int y = rect.top + (rect.bottom - rect.top) / 2;
 			Point pt = new Point((int)xMin, y);
@@ -2497,7 +2497,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(tsi.IsPicture);
 			IVwSelection selStartOfText = null;
 			int dxPixelIncrement = 1;
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			int widthIconPara = (rect.right - rect.left);
 			int xMaxCountOfPixels = (widthIconPara) * 2;

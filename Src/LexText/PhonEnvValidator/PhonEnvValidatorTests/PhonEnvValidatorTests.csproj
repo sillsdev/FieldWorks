@@ -121,6 +121,9 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />

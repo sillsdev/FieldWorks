@@ -25,10 +25,10 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
-using SIL.IO;
-using SIL.Windows.Forms.HtmlBrowser;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -41,20 +41,20 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
+using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.LexicalProvider;
-using SIL.Reporting;
 using SIL.FieldWorks.XWorks;
+using SIL.IO;
+using SIL.Reporting;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
+using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using XCore;
-using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using ExceptionHelper = SIL.Utils.ExceptionHelper;
-using Logger = SIL.Utils.Logger;
 using FileUtils = SIL.Utils.FileUtils;
+
+
 #if __MonoCS__
 using SIL.Keyboarding;
 #else

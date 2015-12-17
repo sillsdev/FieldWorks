@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private FdoCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
@@ -215,7 +216,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="rule"></param>
 		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
@@ -223,7 +224,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, mediator, propertyTable, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPhRegularRule rule)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule)
 		{
 			CheckDisposed();
 
@@ -236,7 +237,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IFsFeatStruc fs)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IFsFeatStruc fs)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
@@ -249,21 +250,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			m_fs = fs;
 			m_owningFlid = owningFlid;
@@ -282,7 +283,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var locWnd = m_propertyTable.GetValue<Point>("phonFeatListDlgLocation");
 					var szWnd = m_propertyTable.GetValue<Size>("phonFeatListDlgSize");
 					var rect = new Rectangle(locWnd, szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}

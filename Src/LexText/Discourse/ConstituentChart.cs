@@ -4,20 +4,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
+using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Xml;
-using SIL.Utils;
 using SIL.FieldWorks.IText;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -96,8 +97,6 @@ namespace SIL.FieldWorks.Discourse
 			Controls.AddRange(new Control[] { m_topStuff, m_bottomStuff });
 
 			Dock = DockStyle.Fill;
-
-			AccessibleNameCreator.AddNames(this);
 
 			ResumeLayout();
 		}

@@ -169,6 +169,9 @@
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

@@ -7,18 +7,18 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Runtime.InteropServices; // needed for Marshal
+ // needed for Marshal
 using System.Windows.Forms.VisualStyles;
 
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

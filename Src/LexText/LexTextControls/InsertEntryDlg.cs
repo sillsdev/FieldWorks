@@ -21,19 +21,20 @@ using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.Collections;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -453,7 +454,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var width = (int)regKey.GetValue("InsertWidth", Width);
 					var height = (int)regKey.GetValue("InsertHeight", Height);
 					var rect = new Rectangle(x, y, width, height);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
@@ -792,7 +793,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="tssForm">The initial form to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -834,7 +835,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">The XCore.Mediator to use.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
@@ -856,7 +857,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="filter">The filter.</param>
 		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, PropertyTable propertyTable, MorphTypeFilterType filter)
+			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, XCore.PropertyTable propertyTable, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
 

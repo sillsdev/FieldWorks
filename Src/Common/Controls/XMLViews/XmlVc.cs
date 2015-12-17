@@ -9,21 +9,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Globalization;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils.ComTypes;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		protected FdoCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="fs"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -148,7 +149,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -172,7 +173,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="pos"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IPartOfSpeech pos)
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPartOfSpeech pos)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
 		}
@@ -199,7 +200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						var locWnd = m_propertyTable.GetValue<Point>("msaInflFeatListDlgLocation");
 						var szWnd = m_propertyTable.GetValue<Size>("msaInflFeatListDlgSize");
 						var rect = new Rectangle(locWnd, szWnd);
-						ScreenUtils.EnsureVisibleRect(ref rect);
+						ScreenHelper.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
 					}

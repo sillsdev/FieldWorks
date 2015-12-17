@@ -125,6 +125,9 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">

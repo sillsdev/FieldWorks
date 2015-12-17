@@ -7,13 +7,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.FDO;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Resources;
-using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.TE
 {

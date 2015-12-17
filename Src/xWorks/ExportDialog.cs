@@ -9,33 +9,36 @@
 // <remarks>
 // </remarks>
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.Lift;
-using SIL.Lift.Validation;
-using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Resources;
+using SIL.Lift;
+using SIL.Lift.Validation;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
+using ReflectionHelper = SIL.Utils.ReflectionHelper;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -52,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected FdoCache m_cache;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected XCore.PropertyTable m_propertyTable;
 		private Label label1;
 		protected ColumnHeader columnHeader1;
 		protected ColumnHeader columnHeader2;
@@ -138,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public ExportDialog(Mediator mediator, PropertyTable propertyTable)
+		public ExportDialog(Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -159,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 				var width = (int) SettingsKey.GetValue("InsertWidth", Width);
 				var height = (int) SettingsKey.GetValue("InsertHeight", Height);
 				var rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

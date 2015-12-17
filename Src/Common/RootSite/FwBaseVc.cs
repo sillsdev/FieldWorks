@@ -24,7 +24,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

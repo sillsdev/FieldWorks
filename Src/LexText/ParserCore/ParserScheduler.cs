@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

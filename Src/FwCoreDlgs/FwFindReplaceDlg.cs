@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -131,7 +132,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fDisableReplacePatternMatching;
 
 		private Mediator m_mediator; // optional, used for persistence.
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 
 		private string s_helpTopic;
 		private System.Windows.Forms.HelpProvider helpProvider;
@@ -581,7 +582,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void RestoreAndPersistSettingsIn(Mediator mediator, PropertyTable propertyTable)
+		public void RestoreAndPersistSettingsIn(Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -643,7 +644,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (locWnd != null)
 					{
 						Rectangle rect = new Rectangle((Point)locWnd, this.Size);
-						ScreenUtils.EnsureVisibleRect(ref rect);
+						ScreenHelper.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
 					}
@@ -1872,7 +1873,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					try
 					{
-						var newSite = ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
+						var newSite = SIL.Utils.ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
 						if (newSite != null)
 							m_vwRootsite = newSite;
 					}

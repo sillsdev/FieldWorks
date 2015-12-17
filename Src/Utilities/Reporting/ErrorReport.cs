@@ -18,6 +18,10 @@ using System.Windows.Forms;
 using System.Drawing;  // GDI+ stuff
 using Microsoft.Win32;
 using SIL.Email;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
+
+
 #if __MonoCS__
 using System.Runtime.InteropServices;
 #endif
@@ -550,13 +554,13 @@ namespace SIL.Utils
 			Exception innerMostException = null;
 			if (error != null)
 			{
-				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, out innerMostException));
+				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, ref innerMostException));
 
 				// if the exception had inner exceptions, show the inner-most exception first, since
 				// that is usually the one we want the developer to read.
 				if (innerMostException != null)
 				{
-					StringBuilder innerException = new StringBuilder();
+					var innerException = new StringBuilder();
 					innerException.AppendLine("Inner most exception:");
 					innerException.AppendLine(ExceptionHelper.GetExceptionText(innerMostException));
 					innerException.AppendLine();

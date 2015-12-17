@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 
@@ -27,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	public partial class ListRefFieldOptions : UserControl
 	{
 		FdoCache m_cache;
-		XCore.IHelpTopicProvider m_helpTopicProvider;
+		IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListRefFieldOptions"/> class.
@@ -112,7 +113,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		internal void Initialize(FdoCache cache, XCore.IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
+		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
 			NotebookImportWiz.RnSfMarker rsfm, CellarPropertyType cpt)
 		{
 			m_cache = cache;

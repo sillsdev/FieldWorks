@@ -25,6 +25,7 @@ using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {

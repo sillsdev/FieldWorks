@@ -7,6 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs

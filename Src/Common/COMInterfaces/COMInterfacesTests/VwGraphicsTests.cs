@@ -112,22 +112,6 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		/// <summary>
-		/// Make sure our initialization of the character property engine works.
-		/// (This test doesn't really belong here but it didn't seem worth creating a whole new test
-		/// class which would have to register all the DLLs just for one test. And this one
-		/// is important...it's the only one that verifies that our ICU overrides are working
-		/// when the ICU directory is initialized from C#.)
-		/// </summary>
-		[Test]
-		public void CharacterPropertyOverrides()
-		{
-			Icu.InitIcuDataDir();
-			var cpe = LgIcuCharPropEngineClass.Create();
-			var result = cpe.get_GeneralCategory('\xF171');
-			Assert.That(result, Is.EqualTo(LgGeneralCharCategory.kccMn));
-		}
-
-		/// <summary>
 		/// Compares R,G,B values of two Colors
 		/// </summary>
 		/// <returns>retur of R,G,B values of the two colors are the same</returns>
@@ -162,8 +146,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-				var rect1 = new Utils.Rect(0, 0, 1000, 1000);
-				var rect2 = new Utils.Rect(500, 500, 700, 700);
+				var rect1 = new Rect(0, 0, 1000, 1000);
+				var rect2 = new Rect(500, 500, 700, 700);
 
 				vwGraphics.PushClipRect(rect1);
 
@@ -221,7 +205,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-					vwGraphics.PushClipRect(new Utils.Rect(0, 0, 1000, 1000));
+					vwGraphics.PushClipRect(new Rect(0, 0, 1000, 1000));
 					vwGraphics.BackColor = ConvertToVwGraphicsColor(Color.Red);
 					vwGraphics.DrawRectangle(0, 0, 1000, 1000);
 
@@ -241,7 +225,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 					// make the clip rect not include the area we are going to draw to.
-					vwGraphics.PushClipRect(new Utils.Rect(100, 100, 200, 200));
+					vwGraphics.PushClipRect(new Rect(100, 100, 200, 200));
 
 					// attempt to draw off the clip rect.
 					vwGraphics.BackColor = ConvertToVwGraphicsColor(Color.Green);
@@ -278,7 +262,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 				int left, top, right, bottom;
 
-				var rect = new Utils.Rect(50,25,1000,1000);
+				var rect = new Rect(50,25,1000,1000);
 				vwGraphics.SetClipRect(ref rect);
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
 
@@ -308,7 +292,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				// Test on a single push
 				int left, top, right, bottom;
 
-				vwGraphics.PushClipRect(new Utils.Rect(50, 60, 500, 510));
+				vwGraphics.PushClipRect(new Rect(50, 60, 500, 510));
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
 				Assert.AreEqual(50, left, "Left doesn't match");
 				Assert.AreEqual(60, top, "Top doesn't match");
@@ -316,7 +300,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				Assert.AreEqual(510, bottom, "Bottom doesn't match");
 
 				// Test on a second push
-				vwGraphics.PushClipRect(new Utils.Rect(1, 1, 300, 310));
+				vwGraphics.PushClipRect(new Rect(1, 1, 300, 310));
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
 				Assert.AreEqual(50, left, "Left doesn't match");
 				Assert.AreEqual(60, top, "Top doesn't match");
@@ -421,7 +405,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-					vwGraphics.PushClipRect(new Utils.Rect(0, 0, areaWidth, areaHeight));
+					vwGraphics.PushClipRect(new Rect(0, 0, areaWidth, areaHeight));
 					vwGraphics.ForeColor = ConvertToVwGraphicsColor(Color.Black);
 
 					int extentX;
@@ -487,7 +471,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 				vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-				vwGraphics.PushClipRect(new Utils.Rect(0, 0, areaWidth, areaHeight));
+				vwGraphics.PushClipRect(new Rect(0, 0, areaWidth, areaHeight));
 				vwGraphics.ForeColor = ConvertToVwGraphicsColor(Color.Black);
 
 				int extentX;
@@ -539,7 +523,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-					vwGraphics.PushClipRect(new Utils.Rect(clipLeft, 0, clipRight, areaHeight));
+					vwGraphics.PushClipRect(new Rect(clipLeft, 0, clipRight, areaHeight));
 					vwGraphics.ForeColor = ConvertToVwGraphicsColor(Color.Black);
 
 					vwGraphics.DrawText(0, 0, longString.Length, longString, 0);
@@ -591,7 +575,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-					vwGraphics.PushClipRect(new Utils.Rect(0, 0, width, height));
+					vwGraphics.PushClipRect(new Rect(0, 0, width, height));
 					vwGraphics.BackColor = ConvertToVwGraphicsColor(Color.Red);
 					vwGraphics.DrawRectangle(0, 0, width, height);
 

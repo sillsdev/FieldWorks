@@ -537,7 +537,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnStyles_Click(object sender, EventArgs e)
 		{
-			PropertyTable propertyTable = null;
+			XCore.PropertyTable propertyTable = null;
 			LexImportWizard wiz = LexImportWizard.Wizard();
 			if (wiz != null)
 			{

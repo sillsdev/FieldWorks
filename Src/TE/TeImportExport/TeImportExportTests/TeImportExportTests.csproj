@@ -129,6 +129,7 @@
     </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.16580, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -168,6 +169,7 @@
     </Reference>
     <Reference Include="SharedScrControls, Version=7.2.0.15701, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SharedScrControls.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -208,6 +210,7 @@
     </Reference>
     <Reference Include="TeResources, Version=7.0.1.24126, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\TeResources.dll</HintPath>
     </Reference>
     <Reference Include="TestUtils, Version=5.5.0.23778, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -215,6 +218,7 @@
     </Reference>
     <Reference Include="Utilities, Version=7.4.100.36, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\Utilities.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces, Version=5.5.0.19444, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

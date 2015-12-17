@@ -6,15 +6,15 @@
 // Responsibility: FieldWorks Team
 
 using System;
+using System.Linq;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using System.Linq;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.Reporting;
+using SIL.Utils;
 #if !DEBUG
 using SIL.FieldWorks.Resources;
 #endif

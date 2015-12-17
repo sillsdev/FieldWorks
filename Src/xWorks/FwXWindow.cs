@@ -9,37 +9,39 @@
 //	This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
 // </remarks>
 using System;
-using System.Windows.Forms;
-using System.Diagnostics;
-using Microsoft.Win32;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 using L10NSharp;
+using Microsoft.Win32;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.XWorks.Archiving;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FwCoreDlgControls;
-using XCore;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
-using Logger = SIL.Utils.Logger;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks.Archiving;
 using SIL.IO;
+using SIL.Reporting;
+using SIL.Utils;
+using XCore;
+
+
 #if !__MonoCS__
 using NetSparkle;
 #endif

@@ -6,8 +6,8 @@
 // --------------------------------------------------------------------------------------------
 
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

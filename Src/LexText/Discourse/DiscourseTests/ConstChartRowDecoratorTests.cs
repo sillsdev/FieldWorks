@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Discourse
 {

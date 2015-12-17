@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private DummyCmObject m_obj;
 		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
@@ -97,7 +98,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mergeCandidates"></param>
 		/// <param name="guiControl"></param>
 		/// <param name="helpTopic"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();
@@ -145,7 +146,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			if (locWnd != null && szWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

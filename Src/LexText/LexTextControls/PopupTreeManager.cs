@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_useAbbr;
 		private Form m_parent;
 		protected Mediator m_mediator;
-		protected PropertyTable m_propertyTable;
+		protected XCore.PropertyTable m_propertyTable;
 		// It's conceivable to have a subclass that isn't based on a possibility list,
 		// but we haven't needed it yet, and it would be easy to just pass null if
 		// we need to make one. So it's handy to have it in the common code.
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_treeCombo = treeCombo;
 			Init(cache, mediator, propertyTable, list, ws, useAbbr, parent);
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(PopupTree popupTree, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(PopupTree popupTree, FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_popupTree = popupTree;
 			Init(cache, mediator, propertyTable, list, ws, useAbbr, parent);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			popupTree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
-		private void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		private void Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -700,7 +700,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class PossibilityListPopupTreeManager : PopupTreeManager
 	{
 		public PossibilityListPopupTreeManager(TreeCombo treeCombo, FdoCache cache,
-			Mediator mediator, PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+			Mediator mediator, XCore.PropertyTable propertyTable, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}

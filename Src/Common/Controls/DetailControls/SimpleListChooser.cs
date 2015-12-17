@@ -10,17 +10,17 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Generic;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
 using XCore;
-// for FwLink (in FdoUiLowLevel assembly)
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

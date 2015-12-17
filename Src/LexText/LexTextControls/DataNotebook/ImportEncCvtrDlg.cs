@@ -9,19 +9,11 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SilEncConverters40;
-
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {

@@ -18,18 +18,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Xml;
-using System.IO; // MemoryStream.
+using System.Xml; // MemoryStream.
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

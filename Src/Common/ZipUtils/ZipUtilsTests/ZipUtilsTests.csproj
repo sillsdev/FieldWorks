@@ -122,11 +122,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
     <Compile Include="DataZipTest.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
+      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

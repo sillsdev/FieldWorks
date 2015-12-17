@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public partial class LexOptionsDlg : Form, IFwExtension
 	{
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private FdoCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		void IFwExtension.Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;

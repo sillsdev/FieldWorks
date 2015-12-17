@@ -11,20 +11,21 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
 using System.Xml;
 using Microsoft.Win32;
+using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.FieldWorks.XWorks;
-using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.PublishingSolution
 {

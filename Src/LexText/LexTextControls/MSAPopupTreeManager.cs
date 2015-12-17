@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Constructor.
 		/// </summary>
 		public MSAPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list,
-			int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent)
+			int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 			LoadStrings();
@@ -438,10 +438,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly ILexSense m_sense;
 		private readonly Form m_parentOfPopupMgr;
 		private readonly Mediator m_mediator;
-		private readonly PropertyTable m_propertyTable;
+		private readonly XCore.PropertyTable m_propertyTable;
 		private readonly string m_field;
 
-		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator, PropertyTable propertyTable,
+		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator, XCore.PropertyTable propertyTable,
 			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
 		{
 			m_parentOfPopupMgr = popupMgrParent;

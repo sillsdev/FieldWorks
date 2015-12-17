@@ -4,9 +4,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using System.Drawing;
-using SIL.Utils; // for ImageCollection
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {

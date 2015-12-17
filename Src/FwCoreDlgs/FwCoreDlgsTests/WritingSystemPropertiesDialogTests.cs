@@ -8,15 +8,16 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.Utils.Attributes;
 using SIL.WritingSystems;
-// ReSharper disable InconsistentNaming
+
+
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	#region Dummy WritingSystemPropertiesDlg

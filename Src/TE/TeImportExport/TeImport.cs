@@ -3,23 +3,24 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Threading;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.FwUtils;
-using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Reporting;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

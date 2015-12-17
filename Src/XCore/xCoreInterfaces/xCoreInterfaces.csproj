@@ -125,6 +125,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -137,7 +146,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IFeedbackInfoProvider.cs" />
-    <Compile Include="IHelpTopicProvider.cs" />
     <Compile Include="IImageCollection.cs" />
     <Compile Include="MessageSequencer.cs">
       <SubType>Code</SubType>
@@ -172,9 +180,6 @@
     <Compile Include="PersistenceProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PropertyTable.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="RecordFilterListProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -189,6 +194,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>xCoreInterfaces.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="IPersistenceProvider.cs" />
+    <Compile Include="IdleQueue.cs" />
+    <Compile Include="PropertyTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

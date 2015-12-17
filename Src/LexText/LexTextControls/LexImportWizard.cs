@@ -19,6 +19,7 @@ using Sfm2Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -27,9 +28,8 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
 using SilEncConverters40;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
 		private bool m_formHasLoaded = false;	// so we don't process text changed msgs
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
+		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		public PropertyTable PropTable
+		public XCore.PropertyTable PropTable
 		{
 			get { return m_propertyTable; }
 		}

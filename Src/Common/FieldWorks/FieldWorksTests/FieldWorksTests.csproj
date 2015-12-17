@@ -111,6 +111,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="LexTextDll">
       <HintPath>..\..\..\..\Output\Debug\LexTextDll.dll</HintPath>
     </Reference>

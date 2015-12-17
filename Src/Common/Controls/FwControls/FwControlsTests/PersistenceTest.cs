@@ -9,13 +9,11 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Windows.Forms;
 using System.Drawing;
-using Microsoft.Win32;
+using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

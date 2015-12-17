@@ -10,11 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils.FileDialog;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

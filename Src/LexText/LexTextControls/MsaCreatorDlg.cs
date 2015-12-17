@@ -3,17 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
+using SIL.Windows.Forms;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -26,7 +27,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnOk;
@@ -88,7 +89,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sandboxMsa"></param>
 		/// <param name="hvoOriginalMsa"></param>
 		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+			Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			CheckDisposed();
@@ -171,9 +172,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				// to prevent the dialog growing every time at 120 dpi. But such an override
 				// makes it too small to show all the controls at the default size.
 				// It's better just to use the default size until it's resizeable for some reason.
-				//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
+				//m_mediator.XCore.PropertyTable.GetValue("msaCreatorDlgSize");
 				Rectangle rect = new Rectangle(locWnd, Size);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
@@ -323,7 +324,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true);
-				//No need, since the dlg isnt; resizable. m_mediator.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
+				//No need, since the dlg isnt; resizable. m_mediator.XCore.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
 			}
 		}
 

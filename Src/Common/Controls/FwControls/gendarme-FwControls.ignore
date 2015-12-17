@@ -29,6 +29,9 @@ M: ControlExtenders.IFloaty ControlExtenders.DockExtender::Attach(System.Windows
 # we are calling Dispose(), gendarme doesn't recognize it
 M: System.Void SIL.FieldWorks.Common.Controls.ExplorerBarItem::DrawButtonBackground(System.Drawing.Graphics)
 
+# Added to collection
+M: System.Void SIL.FieldWorks.Common.Controls.FileDialog.Linux.FileDialogLinux::ApplyFilter(Gtk.FileChooserDialog)
+
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 

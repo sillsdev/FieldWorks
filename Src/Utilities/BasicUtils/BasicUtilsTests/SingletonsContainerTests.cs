@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using NUnit.Framework;
 
 namespace SIL.Utils
@@ -28,6 +27,25 @@ namespace SIL.Utils
 		}
 
 		#endregion
+
+		private class DummyDisposable: IDisposable
+		{
+			~DummyDisposable()
+			{
+				Dispose(false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			protected virtual void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			}
+		}
 
 		private sealed class MyDisposable: IDisposable
 		{
@@ -243,7 +261,7 @@ namespace SIL.Utils
 		[Test]
 		public void GetExistingWrongKey()
 		{
-			using (var existingSingleton = new Control())
+			using (var existingSingleton = new DummyDisposable())
 			{
 				SingletonsContainer.Add("foo", existingSingleton);
 				Assert.Throws(typeof(InvalidCastException),
@@ -381,7 +399,7 @@ namespace SIL.Utils
 		{
 			using (var singleton = SingletonsContainer.Get<MyDisposable>("foo"))
 			{
-				Assert.IsFalse(SingletonsContainer.Contains<Control>("foo"));
+				Assert.IsFalse(SingletonsContainer.Contains<DummyDisposable>("foo"));
 			}
 		}
 	}

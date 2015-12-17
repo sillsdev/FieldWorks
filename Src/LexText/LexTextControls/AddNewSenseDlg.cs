@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int width = (int)SettingsKey.GetValue("InsertWidth", Width);
 				int height = (int)SettingsKey.GetValue("InsertHeight", Height);
 				Rectangle rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}*/
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="le"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 

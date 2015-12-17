@@ -20,7 +20,6 @@ using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites

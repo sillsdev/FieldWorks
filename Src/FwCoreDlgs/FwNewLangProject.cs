@@ -5,22 +5,22 @@
 // File: FwNewLangProject.cs
 // Responsibility: TE Team
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.Reporting;
 using SIL.Utils;
-using XCore;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -5,13 +5,11 @@
 // File: WelcomeToFieldWorksDlg.cs
 // Responsibility: naylor
 
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using SIL.Utils;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms.Widgets;
-using XCore;
 
 namespace SIL.FieldWorks
 {

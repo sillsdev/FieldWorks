@@ -19,12 +19,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private readonly List<string> m_filesToArchive = new List<string>();
 		private readonly FdoCache m_cache;
-		private readonly XCore.IHelpTopicProvider m_helpTopicProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_lastBackupFile;
 
 		/// ------------------------------------------------------------------------------------
 		public ArchiveWithRamp(FdoCache cache,
-			XCore.IHelpTopicProvider helpTopicProvider)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;

@@ -7,15 +7,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-
 using Microsoft.Win32;
-
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

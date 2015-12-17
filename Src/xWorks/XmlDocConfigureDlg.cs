@@ -24,17 +24,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -61,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		FwStyleSheet m_styleSheet;
 		IMainWindowDelegateCallbacks m_callbacks;
 		Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		string m_sLayoutPropertyName;
 		Inventory m_layouts;
 		Inventory m_parts;
@@ -247,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
 			FwStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
-			Mediator mediator, PropertyTable propertyTable, string sLayoutPropertyName)
+			Mediator mediator, XCore.PropertyTable propertyTable, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
@@ -290,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 				var locWnd = m_propertyTable.GetValue<Point>("XmlDocConfigureDlg_Location");
 				var szWnd = m_propertyTable.GetValue<Size>("XmlDocConfigureDlg_Size");
 				Rectangle rect = new Rectangle(locWnd, szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
@@ -1226,10 +1227,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty(m_sLayoutPropertyName,
 					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName,
-					PropertyTable.SettingsGroup.LocalSettings,
+					XCore.PropertyTable.SettingsGroup.LocalSettings,
 					true);
 				m_propertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
-					PropertyTable.SettingsGroup.LocalSettings);
+					XCore.PropertyTable.SettingsGroup.LocalSettings);
 				SaveModifiedLayouts();
 				DialogResult = DialogResult.OK;
 			}

@@ -6,18 +6,19 @@
 // Responsibility:
 //
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Application;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Reporting;
 using SIL.Utils;
-using SIL.CoreImpl;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

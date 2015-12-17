@@ -3,20 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using XCore;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;
 		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FdoCache m_cache;
 		private List<TreeNode> m_nodes = new List<TreeNode>();
@@ -124,7 +125,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		///  <param name="subItemOwner"></param>
-		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, PropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
+		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
 
@@ -143,7 +144,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var locWnd = m_propertyTable.GetValue<Point>("masterCatListDlgLocation");
 					var szWnd = m_propertyTable.GetValue<Size>("masterCatListDlgSize");
 					Rectangle rect = new Rectangle(locWnd, szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
