@@ -6,7 +6,7 @@
 // --------------------------------------------------------------------------------------------
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.Reporting;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 

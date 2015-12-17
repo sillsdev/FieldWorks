@@ -10,23 +10,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Widgets;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl;
+using Palaso.Reporting;
+using SIL.Utils;
+using XCore;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {

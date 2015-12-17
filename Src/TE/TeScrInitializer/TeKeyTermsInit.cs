@@ -8,21 +8,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Palaso.Reporting;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {

@@ -195,6 +195,12 @@
 	  <Name>xCoreInterfaces</Name>
 	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
 	</Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <HintPath>..\..\..\Output\Debug\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\..\CommonAssemblyInfo.cs">

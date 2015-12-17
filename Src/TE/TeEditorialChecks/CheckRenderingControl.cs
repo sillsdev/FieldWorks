@@ -7,19 +7,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.Common.Framework;
-using System.Drawing;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.Controls;
-using Microsoft.Win32;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Microsoft.Win32;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {

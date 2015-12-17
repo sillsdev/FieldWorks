@@ -97,6 +97,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\UnicodeCharEditor.exe</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -9,15 +9,13 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.Utils;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {

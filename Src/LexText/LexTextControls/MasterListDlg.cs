@@ -11,15 +11,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
-using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.LexText.Controls.MGA;
-using SIL.FieldWorks.Common.Framework;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls.MGA;
+using SIL.Utils;
+using Palaso.UI.WindowsForms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -158,11 +156,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="featSys"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="featSys"></param>
+		///  <param name="mediator"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, bool launchedFromInsertMenu)
 		{
@@ -171,14 +169,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlginfo(featSys, mediator, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="featSys"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="featSys"></param>
+		///  <param name="mediator"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		/// <param name="sWindowKey">used to store location and size of dialog window</param>
-		/// <param name="sXmlFile">file containing the XML form of the gloss list</param>
+		///  <param name="sWindowKey">used to store location and size of dialog window</param>
+		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
 		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();
@@ -213,7 +211,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (locWnd != null && szWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

@@ -6,23 +6,25 @@
 // Responsibility: TE Team
 
 using System;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using Palaso.Reporting;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

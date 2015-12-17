@@ -7,23 +7,22 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Drawing;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.FDO.Application;
-
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

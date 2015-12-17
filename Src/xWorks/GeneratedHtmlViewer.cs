@@ -10,29 +10,29 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using System.Windows.Forms;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

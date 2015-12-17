@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
+using Palaso.UI.WindowsForms;
 
 namespace XCore
 {
@@ -72,7 +72,7 @@ namespace XCore
 			// since the last time he ran the program.  (See LT-1078.)
 			Rectangle rcNewWnd = form.DesktopBounds;
 //			Rectangle rcScrn = System.Windows.Forms.Screen.FromRectangle(rcNewWnd).WorkingArea;
-			ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+			ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 			form.DesktopBounds = rcNewWnd;
 		}
 

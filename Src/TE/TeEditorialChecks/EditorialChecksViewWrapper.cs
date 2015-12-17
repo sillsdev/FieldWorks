@@ -7,13 +7,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls.SplitGridView;
-using SIL.FieldWorks.FDO;
 using Microsoft.Win32;
+using SIL.FieldWorks.Common.Controls.SplitGridView;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {

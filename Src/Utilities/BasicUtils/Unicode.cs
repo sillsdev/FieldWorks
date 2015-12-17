@@ -11,7 +11,7 @@ namespace SIL.Utils
 	/// A collection of utility functions related to Unicode.
 	/// See also CaseFunctions, Surrogates, IcuWrappers.
 	/// </summary>
-	public class Unicode
+	public static class Unicode
 	{
 		/// <summary>
 		/// Returns a list of the characters that are considered white space.

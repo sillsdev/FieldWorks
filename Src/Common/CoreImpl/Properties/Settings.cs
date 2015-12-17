@@ -23,10 +23,8 @@ namespace SIL.CoreImpl.Properties
 		{
 			foreach(SettingsProperty property in Properties)
 			{
-				if(!(property.Provider is CrossPlatformSettingsProvider))
-				{
-					Debug.Assert(property.Provider is CrossPlatformSettingsProvider, "Property '" + property.Name + "' Needs the Provider string set to CrossPlatformSettingsProvider");
-				}
+				Debug.Assert(property.Provider is CrossPlatformSettingsProvider,
+					"Property '" + property.Name + "' Needs the Provider string set to CrossPlatformSettingsProvider");
 			}
 		}
 	}

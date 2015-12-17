@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
+using Palaso.UI.WindowsForms.Miscellaneous;
 
 namespace SILUBS.PhraseTranslationHelper
 {
@@ -354,7 +355,7 @@ namespace SILUBS.PhraseTranslationHelper
 				m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
 				m_phraseCustomizationsFile = Path.Combine(s_unsDataFolder, string.Format("Question Customizations - {0}.xml", projectName));
 				m_phraseSubstitutionsFile = Path.Combine(s_unsDataFolder, string.Format("Phrase substitutions - {0}.xml", projectName));
-				m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
+				m_phraseSubstitutions = ListHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
 				KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
 
 				LoadTranslations(splashScreen);
@@ -1070,8 +1071,9 @@ namespace SILUBS.PhraseTranslationHelper
 			Justification = "We're dealing with references")]
 		private void Reload(bool fForceSave, QuestionKey key, int fallBackRow)
 		{
-			using (new WaitCursor(this))
+			try
 			{
+				WaitCursor.Show();
 				int iCol = dataGridUns.CurrentCell.ColumnIndex;
 				Save(fForceSave);
 
@@ -1103,6 +1105,10 @@ namespace SILUBS.PhraseTranslationHelper
 					if (iRow < dataGridUns.Rows.Count)
 						dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
 				}
+			}
+			finally
+			{
+				WaitCursor.Hide();
 			}
 		}
 

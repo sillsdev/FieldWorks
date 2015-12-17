@@ -10,22 +10,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi.Dialogs;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -239,6 +240,8 @@ namespace SIL.FieldWorks.FdoUi
 			DisplayEntries(cache, owner, mediator, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "leui is disposed in finally block")]
 		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{

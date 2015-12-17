@@ -190,9 +190,8 @@
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="Palaso, Version=1.5.162.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

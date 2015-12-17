@@ -13,9 +13,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace ControlExtenders
 {
@@ -1084,7 +1084,7 @@ namespace ControlExtenders
 				key.SetValue(ModifiedRegValue("UndockedBounds"), DesktopBounds);
 			else
 			{
-				Rectangle rc = MiscUtils.GetRcFromString(bounds);
+				Rectangle rc = FwUtils.GetRcFromString(bounds);
 				if (rc != Rectangle.Empty)
 					DesktopBounds = rc;
 			}

@@ -14,16 +14,16 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Drawing;
-using SIL.FieldWorks.FDO;
+using System.Runtime.InteropServices;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils.ComTypes;
-using SIL.Utils; // for check-box icons.
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {

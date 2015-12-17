@@ -5,12 +5,6 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -33,8 +27,6 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <SccAuxPath>
-    </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -160,10 +152,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.1.1.30101, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -205,6 +193,23 @@
       <LastGenOutput>FwUtilsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Include="IFwRegistryHelper.cs" />
+    <Compile Include="Pathway\SilSubKey.cs" />
+    <Compile Include="Pathway\PathwayUtils.cs" />
+    <Compile Include="ComponentsExtensionMethods.cs" />
+    <Compile Include="Win32Wrappers.cs" />
+    <Compile Include="RegistryHelper.cs" />
+    <Compile Include="UserActivityMonitor.cs" />
+    <Compile Include="MessageBoxUtils.cs" />
+    <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="ClipboardUtils.cs" />
+    <Compile Include="ThreadHelper.cs" />
+    <Compile Include="OLEConvert.cs" />
+    <Compile Include="PrinterUtils.cs" />
+    <Compile Include="GraphicsManager.cs" />
+    <Compile Include="IHelpTopicProvider.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="WaitCursor.cs" />
+    <Compile Include="RegistryGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -235,4 +240,7 @@
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
   <Import Project="BuildInclude.targets" />
+  <ItemGroup>
+    <Folder Include="Pathway\" />
+  </ItemGroup>
 </Project>

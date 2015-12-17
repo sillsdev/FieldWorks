@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests

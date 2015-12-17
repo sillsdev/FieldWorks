@@ -191,7 +191,7 @@
       <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
+      <Package>Geckofx-Winforms</Package>
       <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>

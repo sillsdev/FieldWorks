@@ -100,6 +100,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="Reporting, Version=1.0.2936.28260, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>

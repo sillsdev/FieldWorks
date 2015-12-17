@@ -9,14 +9,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Palaso.Reporting;
+using Palaso.UI.WindowsForms.Widgets;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using XCore;
-using Logger = SIL.Utils.Logger;
-using Palaso.UI.WindowsForms.Widgets;
 
 namespace SIL.FieldWorks
 {

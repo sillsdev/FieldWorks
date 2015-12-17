@@ -7,14 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using SIL.FieldWorks.FDO;
 using Palaso.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using System.Xml;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using Logger = SIL.Utils.Logger;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -362,12 +361,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				var nodes = windowConfiguration.SelectNodes(GetToolXPath("lists"));
 				if (nodes != null)
-					foreach (XmlNode node in nodes)
-					{
+				foreach (XmlNode node in nodes)
+				{
 						if ((!FwUtils.IsTEInstalled) && XmlUtils.GetOptionalBooleanAttributeValue(node, "bteOnly", false))
 							continue;
 						AddToolNodeToDisplay(possRepo, cache, display, tbl, node);
-					}
+				}
 			}
 			return true;
 		}
@@ -1057,7 +1056,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// the currentContentControl (is that partly obsolete?).
 				if (area != null)
 					m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_" + area, toolName);
-			}
+				}
 			m_mediator.PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"));
 			m_mediator.PropertyTable.SetProperty("currentContentControl", toolName);
 			return true;

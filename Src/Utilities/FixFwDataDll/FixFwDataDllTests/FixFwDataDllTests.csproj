@@ -106,6 +106,12 @@
       <Name>FixFwDataDll</Name>
       <HintPath>..\..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\..\..\Downloads\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

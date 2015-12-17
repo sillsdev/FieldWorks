@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return KeyboardDescription.Zero;
 
 				var wsd = manager.Get(ws.Handle) as IWritingSystemDefinition;
-				return wsd.LocalKeyboard;
+				return wsd.LocalKeyboard ?? KeyboardDescription.Zero;
 			}
 		}
 	}

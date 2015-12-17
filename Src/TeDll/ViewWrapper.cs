@@ -22,6 +22,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

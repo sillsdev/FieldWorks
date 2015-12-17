@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using XCore;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.TE
 {

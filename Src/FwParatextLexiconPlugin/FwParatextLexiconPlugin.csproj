@@ -49,6 +49,9 @@
     <Reference Include="FDO">
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>

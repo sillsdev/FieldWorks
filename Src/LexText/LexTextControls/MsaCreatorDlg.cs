@@ -3,18 +3,19 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
+using Palaso.UI.WindowsForms;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -155,24 +156,24 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (mediator != null)
 			{
-				// Reset window location.
-				// Get location to the stored values, if any.
+			// Reset window location.
+			// Get location to the stored values, if any.
 				object locWnd = m_mediator.PropertyTable.GetValue("msaCreatorDlgLocation");
 				// JohnT: this dialog can't be resized. So it doesn't make sense to
 				// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 				// to prevent the dialog growing every time at 120 dpi. But such an override
 				// makes it too small to show all the controls at the default size.
 				// It's better just to use the default size until it's resizeable for some reason.
-				//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
+				//m_mediator.XCore.PropertyTable.GetValue("msaCreatorDlgSize");
 				object szWnd = this.Size;
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
 			}
+		}
 		}
 
 		/// <summary>
@@ -318,8 +319,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_mediator != null)
 			{
-				m_mediator.PropertyTable.SetProperty("msaCreatorDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
+				m_mediator.PropertyTable.SetProperty("msaCreatorDlgLocation", Location, true);
+				//No need, since the dlg isnt; resizable. m_mediator.PropertyTable.XCore.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
 			}
 		}
 

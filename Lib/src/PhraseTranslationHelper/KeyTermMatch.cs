@@ -55,7 +55,7 @@ namespace SILUBS.PhraseTranslationHelper
 			set
 			{
 				m_keyTermRenderingInfoFile = value;
-				m_keyTermRenderingInfo = XmlSerializationHelper.LoadOrCreateList<KeyTermRenderingInfo>(m_keyTermRenderingInfoFile, true);
+				m_keyTermRenderingInfo = ListHelper.LoadOrCreateList<KeyTermRenderingInfo>(m_keyTermRenderingInfoFile, true);
 			}
 		}
 		#endregion

@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.WritingSystems;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils.Attributes
 {

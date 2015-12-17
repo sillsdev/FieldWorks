@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

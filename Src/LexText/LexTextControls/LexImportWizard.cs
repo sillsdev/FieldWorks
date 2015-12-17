@@ -19,6 +19,7 @@ using Microsoft.Win32;		// For Registry and RegistryKey.
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -27,9 +28,8 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
 using SilEncConverters40;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -4056,19 +4056,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
 			{
-			dlg.Init(null, GetUILanguages(), m_cache);
-			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
-			dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
-			dlg.SetExistingElementNames(ExtractExistingElementNames(false));
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				m_dirtySenseLastSave = true;
+				dlg.Init(null, GetUILanguages(), m_cache);
+				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
+				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
+				dlg.SetExistingElementNames(ExtractExistingElementNames(false));
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_dirtySenseLastSave = true;
 
-				// now add the new item and then select it
-				AddInLineMarker(dlg.IFM(), true);
-				listViewCharMappings.Focus();
+					// now add the new item and then select it
+					AddInLineMarker(dlg.IFM(), true);
+					listViewCharMappings.Focus();
+				}
 			}
-		}
 		}
 
 		private void btnModifyCharMapping_Click(object sender, System.EventArgs e)
@@ -4175,27 +4175,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			string sig = "";
 			if (fd.Type == CellarPropertyType.MultiUnicode)
-				sig = "MultiUnicode";
+					sig = "MultiUnicode";
 			else if (fd.Type == CellarPropertyType.String)
-				sig = "string";
+					sig = "string";
 			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
-				sig = "text";
+						sig = "text";
 			else if (fd.Type == CellarPropertyType.ReferenceAtomic && fd.ListRootId != Guid.Empty)
-				sig = "ListRef";
+						sig = "ListRef";
 			else if (fd.Type == CellarPropertyType.ReferenceCollection && fd.ListRootId != Guid.Empty)
-				sig = "ListMultiRef";
-			// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
-			// Not sure these string values are actually used for anything; if they are, it might be a problem,
-			// because I haven't been able to track down how or where they are used.
+						sig = "ListMultiRef";
+				// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
+				// Not sure these string values are actually used for anything; if they are, it might be a problem,
+				// because I haven't been able to track down how or where they are used.
 			else if (fd.Type == CellarPropertyType.GenDate)
-				sig = "Date";
+					sig = "Date";
 			else if (fd.Type == CellarPropertyType.Integer)
-				sig = "Integer";
+					sig = "Integer";
 			else if (fd.Type == CellarPropertyType.Numeric)
-				sig = "Number";
+					sig = "Number";
 			else
 			{
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
+					throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
 			Sfm2Xml.LexImportCustomField lif = new Sfm2Xml.LexImportCustomField(
 				fd.Class,

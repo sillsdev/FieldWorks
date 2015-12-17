@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {

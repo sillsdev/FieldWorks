@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using Palaso.Reporting;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 

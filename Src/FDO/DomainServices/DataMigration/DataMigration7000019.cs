@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Palaso.Reporting;
 using Palaso.WritingSystems;
 using Palaso.WritingSystems.Collation;
 using Palaso.Xml;
@@ -234,7 +235,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (String.IsNullOrEmpty(wsVal))
 				{
 					wsVal = "en";
-					SIL.Utils.Logger.WriteEvent(String.Format(
+					Logger.WriteEvent(String.Format(
 						"Converting empty ws attribute to ws=\"en\" in DataMigration7000019: ParentNode={1}{0}",
 						elem.Parent.ToString(), Environment.NewLine));
 				}
@@ -251,7 +252,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (String.IsNullOrEmpty(wsVal))
 				{
 					wsVal = "en";
-					SIL.Utils.Logger.WriteEvent(String.Format(
+					Logger.WriteEvent(String.Format(
 						"Converting empty wsBase attribute to ws=\"en\" in DataMigration7000019: ParentNode={1}{0}.",
 						elem.Parent.ToString(), Environment.NewLine));
 				}

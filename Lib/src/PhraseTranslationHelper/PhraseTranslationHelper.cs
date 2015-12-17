@@ -464,7 +464,7 @@ namespace SILUBS.PhraseTranslationHelper
 			set
 			{
 				m_keyTermRenderingRulesFile = value;
-				m_termRenderingSelectionRules = XmlSerializationHelper.LoadOrCreateList<RenderingSelectionRule>(m_keyTermRenderingRulesFile, true);
+				m_termRenderingSelectionRules = ListHelper.LoadOrCreateList<RenderingSelectionRule>(m_keyTermRenderingRulesFile, true);
 			}
 		}
 

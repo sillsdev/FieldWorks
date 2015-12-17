@@ -3,18 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
 using System.Xml;
-
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

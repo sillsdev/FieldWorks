@@ -3,21 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using Palaso.UI.WindowsForms;
 using XCore;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -116,13 +116,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="posList"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="posList"></param>
+		///  <param name="mediator"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		/// <param name="subItemOwner"></param>
+		///  <param name="subItemOwner"></param>
 		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}

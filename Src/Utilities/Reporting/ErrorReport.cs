@@ -24,7 +24,8 @@ using System.Drawing.Imaging;  // ImageFormat
 
 using Microsoft.Win32;
 using Palaso.Email;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using Palaso.Reporting;
 
 namespace SIL.Utils
 {
@@ -567,13 +568,13 @@ namespace SIL.Utils
 			Exception innerMostException = null;
 			if (error != null)
 			{
-				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, out innerMostException));
+				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, ref innerMostException));
 
 				// if the exception had inner exceptions, show the inner-most exception first, since
 				// that is usually the one we want the developer to read.
 				if (innerMostException != null)
 				{
-					StringBuilder innerException = new StringBuilder();
+					var innerException = new StringBuilder();
 					innerException.AppendLine("Inner most exception:");
 					innerException.AppendLine(ExceptionHelper.GetExceptionText(innerMostException));
 					innerException.AppendLine();

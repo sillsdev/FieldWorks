@@ -91,8 +91,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					IApp app = (IApp)mediator.PropertyTable.GetValue("App");
 					if (app != null)
 						parent = app.ActiveMainWindow;
-				}
-				if (parent == null)
+					}
+					if (parent == null)
 					parent = Form.ActiveForm; // desperate for something...
 			}
 			m_cache = cache;

@@ -5,18 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
-using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls;
+using System.Xml;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Diagnostics.CodeAnalysis;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

@@ -7,20 +7,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
-
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using Palaso.UI.WindowsForms;
 using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -256,9 +256,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
 						rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
 
-					//rect.Height = 600;
-
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
@@ -499,12 +497,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			Form = form;
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="wp"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="wp"></param>
+		///  <param name="mediator"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
 		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, ITsString tssform)
 		{

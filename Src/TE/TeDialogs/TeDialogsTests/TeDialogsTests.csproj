@@ -202,6 +202,9 @@
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">

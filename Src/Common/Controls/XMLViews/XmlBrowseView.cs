@@ -15,13 +15,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {

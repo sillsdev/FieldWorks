@@ -14,7 +14,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SilUtils.Controls;
+using Palaso.UI.WindowsForms.Widgets;
 
 namespace SILUBS.PhraseTranslationHelper
 {

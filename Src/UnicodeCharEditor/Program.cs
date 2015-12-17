@@ -9,9 +9,8 @@
 // </remarks>
 
 using System;
-using System.IO;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

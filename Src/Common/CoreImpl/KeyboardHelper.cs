@@ -13,7 +13,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 

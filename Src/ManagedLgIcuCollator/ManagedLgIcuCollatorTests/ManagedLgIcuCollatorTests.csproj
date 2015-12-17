@@ -75,6 +75,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="ManagedLgIcuCollator">
       <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>

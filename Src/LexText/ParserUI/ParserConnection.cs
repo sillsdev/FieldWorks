@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

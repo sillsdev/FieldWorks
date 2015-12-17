@@ -22,6 +22,7 @@ using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

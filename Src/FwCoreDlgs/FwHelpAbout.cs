@@ -6,17 +6,16 @@
 // Responsibility: TE Team
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using System.Diagnostics;
-using System.Threading;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

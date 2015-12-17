@@ -13,17 +13,16 @@
 // </remarks>
 
 using System;
-using System.Windows.Forms;
 using System.Text;
-
-using SIL.FieldWorks.FDO;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using SIL.FieldWorks.Common.Framework;
 using XCore;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

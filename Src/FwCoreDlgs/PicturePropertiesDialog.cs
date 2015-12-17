@@ -3,22 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using Palaso.Reporting;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

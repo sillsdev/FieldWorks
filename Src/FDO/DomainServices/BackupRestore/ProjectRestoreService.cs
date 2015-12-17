@@ -13,8 +13,9 @@ using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using Palaso.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {

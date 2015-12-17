@@ -988,7 +988,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 					base.WndProc(ref msg);
 
 					OnKillFocus(Control.FromHandle(msg.WParam),
-						MiscUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
+						SIL.FieldWorks.Common.FwUtils.FwUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
 					return;
 				// Might need to handle more messages here...
 			}
@@ -4138,6 +4138,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// <param name="rcSrcRoot">The rc SRC root.</param>
 		/// <param name="rcDstRoot">The rc DST root.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "pe is a reference")]
 		public void GetTransformAtSrc(IVwRootBox root, Point pt, out Rect rcSrcRoot, out Rect rcDstRoot)
 		{
 			CheckDisposed();

@@ -64,6 +64,12 @@
     <Reference Include="Paratext.LexicalContracts">
       <HintPath>..\..\..\DistFiles\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>

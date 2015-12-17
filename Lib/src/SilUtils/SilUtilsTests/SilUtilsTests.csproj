@@ -64,8 +64,6 @@
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.Data" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>
@@ -76,10 +74,8 @@
 	<None Include="App.config" />
 	<Compile Include="PorterStemmerEnhancementTests.cs" />
 	<Compile Include="ListUtilsTests.cs" />
-	<Compile Include="ScreenUtilsTest.cs" />
 	<Compile Include="StringUtilsTests.cs" />
 	<Compile Include="SurrogateTests.cs" />
-	<Compile Include="TextBoxExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

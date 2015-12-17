@@ -12,9 +12,9 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls

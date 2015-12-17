@@ -137,7 +137,11 @@
 	</Reference>
 	<Reference Include="PhraseTranslationHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\PhraseTranslationHelper.dll</HintPath>
 	</Reference>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
 	<Reference Include="RootSite">
 	  <Name>RootSite</Name>
 	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>

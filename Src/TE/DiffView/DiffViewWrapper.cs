@@ -8,14 +8,13 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls.SplitGridView;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.TE

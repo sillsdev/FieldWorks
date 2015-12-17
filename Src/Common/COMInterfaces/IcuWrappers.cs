@@ -13,8 +13,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Windows.Forms;
 using SIL.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				{
 					dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
 						string.Format("SIL/Icu{0}", Version));
-				}
+					}
 				return dir;
 			}
 		}
@@ -239,7 +239,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				// This provides a bit of extra info, especially if it fails on a no-gui build machine.
 				Debug.Fail("SilIcuInit returned false. It was trying to load from " + overrideDataPath + ". The file " +
 					(File.Exists(overrideDataPath) ? "exists." : "does not exist."));
-				MessageBoxUtils.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath));
+				ErrorReport.ReportNonFatalMessageWithStackTrace(
+					Properties.Resources.ksIcuInitFailed, overrideDataPath);
 			}
 		}
 
@@ -1116,7 +1117,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		public static string GetDisplayName(string localeID)
 		{
-			string uilocale = Application.CurrentCulture.TwoLetterISOLanguageName;
+			string uilocale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 			uilocale = uilocale.Replace('-', '_');
 
 			string displayName;
@@ -2550,6 +2551,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			/// <summary>http://oss.software.ibm.com/icu/apiref/uchar_8h-source.html</summary>
 			U_NT_COUNT
 		}
+
 		/// <summary>
 		/// Collation constants
 		/// </summary>

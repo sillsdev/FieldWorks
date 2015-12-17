@@ -11,13 +11,14 @@ using System.IO;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
+using Palaso.UI.WindowsForms;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -670,7 +671,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static IScrCheckInventory CreateScrCharInventoryBldr(string checksDll, IChecksDataSource scrDataSource, string checkType)
 		{
-			var scrCharInventoryBldr = (IScrCheckInventory)ReflectionHelper.CreateObject(checksDll,
+			var scrCharInventoryBldr = (IScrCheckInventory)SIL.Utils.ReflectionHelper.CreateObject(checksDll,
 				checkType, new object[] { scrDataSource });
 			return scrCharInventoryBldr;
 		}

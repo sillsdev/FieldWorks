@@ -10,11 +10,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -27,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	public partial class DateFieldOptions : UserControl
 	{
 		FdoCache m_cache;
-		XCore.IHelpTopicProvider m_helpTopicProvider;
+		IHelpTopicProvider m_helpTopicProvider;
 		// This example DateTime value must match that found in ImportDateFormatDlg.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 		bool m_fGenDate = false;
@@ -87,7 +84,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		internal void Initialize(FdoCache cache, XCore.IHelpTopicProvider helpTopicProvider,
+		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider,
 			DataNotebook.NotebookImportWiz.RnSfMarker rsfm, bool fGenDate)
 		{
 			m_cache = cache;

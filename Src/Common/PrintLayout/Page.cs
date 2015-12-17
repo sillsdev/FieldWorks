@@ -13,16 +13,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
+using System.Drawing;
+using System.Runtime.InteropServices;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using System.Runtime.InteropServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {

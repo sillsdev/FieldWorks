@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.IText
 						else
 						{
 							// LT-7733 Warning dialog for Text Chart
-							XCore.XMessageBoxExManager.Trigger("TextChartNewFeature");
+							XMessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
@@ -1300,7 +1300,7 @@ namespace SIL.FieldWorks.IText
 				FdoCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
-				link.PropertyTableEntries.Add(new XCore.Property("InterlinearTab",
+				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				m_mediator.SendMessage("AddContextToHistory", link, false);

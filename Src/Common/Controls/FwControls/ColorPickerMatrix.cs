@@ -10,15 +10,11 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Resources;
 using System.Windows.Forms;
 
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls

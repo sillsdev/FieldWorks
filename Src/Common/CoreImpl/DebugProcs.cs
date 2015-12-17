@@ -174,6 +174,37 @@ namespace SIL.CoreImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the name of the executable
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+#if !__MonoCS__
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[PreserveSig]
+		private static extern uint GetModuleFileName(IntPtr hModule, [Out]StringBuilder lpFilename,
+		[MarshalAs(UnmanagedType.U4)]int nSize);
+#else
+		private static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename,
+			int nSize)
+		{
+			if (hModule != IntPtr.Zero)
+				return 0; // not supported (yet)
+
+			byte[] buf = new byte[nSize];
+			int ret = readlink("/proc/self/exe", buf, buf.Length);
+			if (ret == -1)
+				return 0;
+			char[] cbuf = new char[nSize];
+			int nChars = Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
+			lpFilename.Append(new String(cbuf, 0, nChars));
+			return (uint)nChars;
+		}
+
+		[DllImport ("libc")]
+		private static extern int readlink(string path, byte[] buffer, int buflen);
+#endif
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the message.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -191,7 +222,7 @@ namespace SIL.CoreImpl
 			// Note that we can't use Assembly.GetEntryAssembly() because that returns null
 			// since this method gets called from unmanaged code!
 			var exeName = new StringBuilder(255);
-			Win32.GetModuleFileName(IntPtr.Zero, exeName, exeName.Capacity);
+			GetModuleFileName(IntPtr.Zero, exeName, exeName.Capacity);
 
 			if (exeName.Length > MaxLineLength + 9) // "Program: ".Length
 			{

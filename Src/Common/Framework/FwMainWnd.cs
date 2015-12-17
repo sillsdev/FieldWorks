@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Palaso.Reporting;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;

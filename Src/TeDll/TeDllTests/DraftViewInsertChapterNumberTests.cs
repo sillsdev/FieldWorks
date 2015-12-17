@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.TE.DraftViews
 {

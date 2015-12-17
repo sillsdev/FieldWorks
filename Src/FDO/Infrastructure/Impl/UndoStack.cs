@@ -6,15 +6,16 @@
 // Responsibility: Randy Regnier
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
-using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainImpl;
+using Palaso.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {

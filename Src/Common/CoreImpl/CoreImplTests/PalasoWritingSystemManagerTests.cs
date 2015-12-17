@@ -16,7 +16,7 @@ using NUnit.Framework;
 using Palaso.WritingSystems;
 using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {

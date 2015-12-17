@@ -16,6 +16,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using Palaso.Reporting;
 
 namespace XCore
 {
@@ -1587,7 +1589,7 @@ namespace XCore
 				CheckDisposed();
 				object table = PropertyTable.GetValue("stringTable");
 				if (table == null)
-					throw new ConfigurationException("Could not get the StringTable. Make sure there is at least an 'strings-en.xml' in the configuration directory.");
+					throw new SIL.Utils.ConfigurationException("Could not get the StringTable. Make sure there is at least an 'strings-en.xml' in the configuration directory.");
 				return (StringTable)table;
 			}
 			set
@@ -1610,7 +1612,7 @@ namespace XCore
 					var table = this.StringTbl;
 					return true;
 				}
-				catch (ConfigurationException)
+				catch (SIL.Utils.ConfigurationException)
 				{
 					return false;
 				}

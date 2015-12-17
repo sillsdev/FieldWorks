@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

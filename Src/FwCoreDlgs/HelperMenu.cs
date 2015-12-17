@@ -5,9 +5,9 @@
 using System;
 using System.Windows.Forms;
 
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

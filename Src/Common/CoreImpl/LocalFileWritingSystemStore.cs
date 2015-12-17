@@ -6,10 +6,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using Palaso.WritingSystems;
-using SIL.Utils;
+using Palaso.Reporting;
 
 namespace SIL.CoreImpl
 {
@@ -222,9 +221,7 @@ namespace SIL.CoreImpl
 					}
 					catch (UnauthorizedAccessException)
 					{
-						var msg = string.Format(CoreImplStrings.ksCannotWriteWritingSystemInfo, path);
-						MessageBoxUtils.Show(Form.ActiveForm, msg, CoreImplStrings.ksWarning,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						Logger.WriteEvent(CoreImplStrings.ksCannotWriteWritingSystemInfo, path);
 					}
 				}
 			}
@@ -238,9 +235,7 @@ namespace SIL.CoreImpl
 				}
 				catch (UnauthorizedAccessException)
 				{
-					var msg = string.Format(CoreImplStrings.ksCannotWriteWritingSystemInfo, path);
-					MessageBox.Show(Form.ActiveForm, msg, CoreImplStrings.ksWarning,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					Logger.WriteEvent(CoreImplStrings.ksCannotWriteWritingSystemInfo, path);
 				}
 			}
 		}

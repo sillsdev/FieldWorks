@@ -7,14 +7,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

@@ -13,7 +13,7 @@ using System.Web;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using XCore;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

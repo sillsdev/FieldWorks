@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
+using XCore;
 using ProgressBarWrapper = SIL.FieldWorks.FdoUi.ProgressBarWrapper;
 
 namespace SIL.FieldWorks.XWorks.LexEd

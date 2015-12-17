@@ -9,14 +9,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
-using SIL.Utils;
-using System.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

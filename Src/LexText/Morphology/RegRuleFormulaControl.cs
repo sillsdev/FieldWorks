@@ -4,12 +4,13 @@
 
 using System;
 using System.Drawing;
-using System.Xml;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;

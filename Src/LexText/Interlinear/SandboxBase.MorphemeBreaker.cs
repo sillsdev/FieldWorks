@@ -492,7 +492,7 @@ namespace SIL.FieldWorks.IText
 				int ichMatch = 0;
 				do
 				{
-					ichMatch = sourceString.IndexOfAny(Unicode.SpaceChars, ichMatch);
+					ichMatch = sourceString.IndexOfAny(SIL.Utils.Unicode.SpaceChars, ichMatch);
 					if (ichMatch != -1)
 					{
 						whiteSpaceOffsets.Add(ichMatch);
@@ -599,12 +599,12 @@ namespace SIL.FieldWorks.IText
 				string origInput = m_input;
 				m_input = m_input.Trim();
 				// first see if the selection was at the end of the input string on a whitespace
-				if (origInput.LastIndexOfAny(Unicode.SpaceChars) == (origInput.Length - 1) &&
+				if (origInput.LastIndexOfAny(SIL.Utils.Unicode.SpaceChars) == (origInput.Length - 1) &&
 					m_ichSelInput == origInput.Length)
 				{
 					m_ichSelInput = m_input.Length;	// adjust to the new length
 				}
-				else if (origInput.IndexOfAny(Unicode.SpaceChars) == 0 &&
+				else if (origInput.IndexOfAny(SIL.Utils.Unicode.SpaceChars) == 0 &&
 					m_ichSelInput >= 0)
 				{
 					// if we trimmed something from the start of our input string
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.IText
 		private static bool IsBaseWordPhrase(string baseWord)
 		{
 
-			bool fBaseWordIsPhrase = baseWord.IndexOfAny(Unicode.SpaceChars) != -1;
+			bool fBaseWordIsPhrase = baseWord.IndexOfAny(SIL.Utils.Unicode.SpaceChars) != -1;
 			return fBaseWordIsPhrase;
 		}
 

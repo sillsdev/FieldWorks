@@ -11,24 +11,22 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
-using Palaso.WritingSystems;
-using XCore;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Xml.Xsl;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using Palaso.WritingSystems;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -242,9 +240,9 @@ namespace SIL.FieldWorks.XWorks
 				//        XmlUtils.MakeSafeXml(wsLocal.ValidChars));
 				//writer.WriteLine("<ICULocale><Uni>{0}</Uni></ICULocale>",
 				//    XmlUtils.MakeSafeXml(wsLocal.IcuLocale));
-				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
+					writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
 					XmlUtils.MakeSafeXml(wsLocal.SortUsing.ToString()));
-				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
+					writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
 					XmlUtils.MakeSafeXml(wsLocal.SortRules));
 				writer.WriteLine("</WritingSystem>");
 			}

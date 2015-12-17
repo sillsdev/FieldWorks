@@ -143,6 +143,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\Palaso.Lift.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\Palaso.Palaso.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="Sfm2Xml, Version=1.0.2496.16215, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>

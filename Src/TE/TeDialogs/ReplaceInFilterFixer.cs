@@ -8,9 +8,7 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;

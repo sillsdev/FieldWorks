@@ -8,14 +8,15 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using Palaso.WritingSystems;
 using Palaso.UI.WindowsForms.Keyboarding;
+using Palaso.WritingSystems;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl;
-using SIL.Utils;
 
-// ReSharper disable InconsistentNaming
+
+
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	#region Dummy WritingSystemPropertiesDlg
@@ -509,16 +510,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
-			m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
-			CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
-			CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
+				m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
+				m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
+				CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
+				CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
 			IWritingSystem wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
-			m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
-			Cache.ServiceLocator.WritingSystemManager.Save();
-			// this will remove it from the local store, but not from the global store
-			wsTest.MarkedForDeletion = true;
-			Cache.ServiceLocator.WritingSystemManager.Save();
+				m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
+				Cache.ServiceLocator.WritingSystemManager.Save();
+				// this will remove it from the local store, but not from the global store
+				wsTest.MarkedForDeletion = true;
+				Cache.ServiceLocator.WritingSystemManager.Save();
 			m_dlg = new DummyWritingSystemPropertiesDialog(Cache);
 		}
 
@@ -546,7 +547,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (!m_origLocalWss.Contains(ws))
 					ws.MarkedForDeletion = true;
-			}
+		}
 
 			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems)
 			{

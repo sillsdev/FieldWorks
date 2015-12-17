@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Discourse
 {

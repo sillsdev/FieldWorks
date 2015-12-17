@@ -30,7 +30,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl;
-using SIL.Utils.ComTypes;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls

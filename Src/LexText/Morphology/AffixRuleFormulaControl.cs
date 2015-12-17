@@ -4,15 +4,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

@@ -11,22 +11,23 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.FieldWorks.FDO;
+using Palaso.UI.WindowsForms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SILUBS.SharedScrUtils;
-using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.Utils.ComTypes;
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

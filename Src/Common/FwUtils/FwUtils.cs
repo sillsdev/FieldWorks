@@ -6,13 +6,15 @@
 // Responsibility: TE Team
 
 using System;
-using System.IO;
+using System.Windows.Forms;
+using System.Drawing;
+
 #if __MonoCS__
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 #endif
 using SIL.CoreImpl;
-
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -216,5 +218,146 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return result;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Translate mouse buttons received from a Win API mouse message to .NET mouse buttons
+		/// </summary>
+		/// <param name="winMouseButtons">Windows mouse buttons</param>
+		/// <returns>.NET mouse buttons</returns>
+		/// ------------------------------------------------------------------------------------
+		public static MouseButtons TranslateMouseButtons(Win32.MouseButtons winMouseButtons)
+		{
+			MouseButtons mouseButton = MouseButtons.None;
+			if ((winMouseButtons & Win32.MouseButtons.MK_LBUTTON) == Win32.MouseButtons.MK_LBUTTON)
+				mouseButton |= MouseButtons.Left;
+			if ((winMouseButtons & Win32.MouseButtons.MK_RBUTTON) == Win32.MouseButtons.MK_RBUTTON)
+				mouseButton |= MouseButtons.Right;
+			if ((winMouseButtons & Win32.MouseButtons.MK_MBUTTON) == Win32.MouseButtons.MK_MBUTTON)
+				mouseButton |= MouseButtons.Middle;
+			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON1) == Win32.MouseButtons.MK_XBUTTON1)
+				mouseButton |= MouseButtons.XButton1;
+			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON2) == Win32.MouseButtons.MK_XBUTTON2)
+				mouseButton |= MouseButtons.XButton2;
+
+			return mouseButton;
 	}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the window handle is a child window of the specified parent form.
+		/// </summary>
+		/// <param name="parent">The parent.</param>
+		/// <param name="hWnd">The window handle.</param>
+		/// <returns><c>true</c> if the window is a child window of the parent form; otherwise,
+		/// <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public static bool IsChildWindowOfForm(Form parent, IntPtr hWnd)
+		{
+			if (parent == null)
+				return false;
+
+			// Try to get the managed window for the handle. We will get one only if hWnd is
+			// a child window of this application, so we can return true.
+			if (Control.FromHandle(hWnd) != null)
+				return true;
+
+			// Otherwise hWnd might be the handle of an unmanaged window. We look at all
+			// parents and grandparents... to see if we eventually belong to the application
+			// window.
+			IntPtr hWndParent = hWnd;
+			while (hWndParent != IntPtr.Zero)
+			{
+				hWnd = hWndParent;
+				hWndParent = Win32.GetParent(hWnd);
+			}
+			return (hWnd == parent.Handle);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Takes a string in the form "{X=l,Y=t,Width=w,Height=h}" (where l, t, w, and h are
+		/// X, Y, width and height values) and returns a corresponding rectangle.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static Rectangle GetRcFromString(string str)
+		{
+			str = str.Replace("{", string.Empty);
+			str = str.Replace("}", string.Empty);
+			str = str.Replace("X=", string.Empty);
+			str = str.Replace("Y=", string.Empty);
+			str = str.Replace("Width=", string.Empty);
+			str = str.Replace("Height=", string.Empty);
+
+			string[] strVals = str.Split(",".ToCharArray(), 4);
+			Rectangle rc = Rectangle.Empty;
+
+			if (strVals != null)
+			{
+				int val;
+				if (strVals.Length > 0 && int.TryParse(strVals[0], out val))
+					rc.X = val;
+				if (strVals.Length > 1 && int.TryParse(strVals[1], out val))
+					rc.Y = val;
+				if (strVals.Length > 2 && int.TryParse(strVals[2], out val))
+					rc.Width = val;
+				if (strVals.Length > 3 && int.TryParse(strVals[3], out val))
+					rc.Height = val;
+			}
+
+			return rc;
+		}
+
+		/// <summary>
+		/// calls Disposes on a Winforms Control, Calling BeginInvoke if needed.
+		/// If BeginInvoke is needed then the Control handle is created if needed.
+		/// </summary>
+		public static void DisposeOnGuiThread(this Control control)
+		{
+			if (control.InvokeRequired)
+				control.SafeBeginInvoke(new MethodInvoker(control.Dispose));
+			else
+				control.Dispose();
+		}
+
+		/// <summary>
+		/// a BeginInvoke extenstion that causes the Control handle to be created if needed before calling BeginInvoke
+		/// </summary>
+		public static IAsyncResult SafeBeginInvoke(this Control control, Delegate method)
+		{
+			return SafeBeginInvoke(control, method, null);
+		}
+
+		/// <summary>
+		/// a BeginInvoke that extenstion causes the Control handle to be created if needed before calling BeginInvoke
+		/// </summary>
+		public static IAsyncResult SafeBeginInvoke(this Control control, Delegate method, Object[] args)
+		{
+			// JohnT: I found this method without the first if statement, and added it because if an invoke
+			// is required...the usual reason for calling this...and it already has a handle, calling control.Handle crashes.
+			// I'm still nervous about the method because there are possible race conditions; for example, if some other
+			// thread gives it a handle between when we test IsHandleCreated and when we call Handle, we'll crash.
+			// Also, although it works, it's not supposed to be safe to call IsHandleCreated without Invoke.
+			// I'm reluctantly leaving it like this because I don't see how to make it safe.
+			// Given that it mostly worked before, it seems existng callers must typically call it with controls
+			// that don't have handles, and expect to get them created.
+			// There is however at least one case...disposing a progress bar when TE is creating key terms while
+			// opening a new project...where control.IsHandleCreated is true.
+			if (control.IsHandleCreated)
+			{
+				return control.BeginInvoke(method, args);
+			}
+
+			else if (control.Handle != IntPtr.Zero) // will typically create the handle, since it doesn't already have one.
+			{
+				// now the handle is created in THIS thread!
+				return control.BeginInvoke(method, args);
+			}
+
+			// this should never happen.
+			return null;
+		}
+
+	}
+
 }

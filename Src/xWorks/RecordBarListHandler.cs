@@ -3,20 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using XCore;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
-
-using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Filters;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -140,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 				if (window != null)
 					return (ListView)window.ListStyleRecordList;
 				else
-					return null;
+				return null;
 			}
 		}
 

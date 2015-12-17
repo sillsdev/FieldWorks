@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using Palaso.UI.WindowsForms;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -137,7 +138,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			if (locWnd != null && szWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using XCore;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.TE
 {

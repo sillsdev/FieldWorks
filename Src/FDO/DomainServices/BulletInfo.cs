@@ -10,11 +10,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

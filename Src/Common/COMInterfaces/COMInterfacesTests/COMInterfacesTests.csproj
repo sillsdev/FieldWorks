@@ -67,6 +67,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="TestUtils">
+      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
@@ -101,15 +104,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
     <Compile Include="MarshalExTests.cs" />
     <Compile Include="VwGraphicsTests.cs" />
     <None Include="App.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ArrayPtrTests.cs" />
+    <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
+      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
+    </Compile>
     <Compile Include="IcuWrappersTests.cs" />
+    <Compile Include="ImagePictureTest.cs" />
     <Compile Include="ManagedPictureFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>

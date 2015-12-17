@@ -14,9 +14,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -263,16 +260,6 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				IsDisposed = true;
 			}
 			#endregion
-		}
-
-		/// <summary>
-		/// Converts the image to (an OLECvt) IPicture picture and wraps it with a disposable object.
-		/// </summary>
-		/// <param name="image">The image.</param>
-		/// <returns></returns>
-		static public ComPictureWrapper ConvertImageToComPicture(Image image)
-		{
-			return new ComPictureWrapper((IPicture) OLECvt.ToOLE_IPictureDisp(image));
 		}
 
 	}

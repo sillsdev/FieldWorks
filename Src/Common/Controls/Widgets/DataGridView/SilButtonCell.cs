@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using Palaso.UI.WindowsForms;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

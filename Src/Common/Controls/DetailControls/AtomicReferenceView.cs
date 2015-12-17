@@ -11,13 +11,14 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

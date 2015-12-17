@@ -171,37 +171,4 @@ namespace Palaso.Xml
 
 		#endregion
 	}
-
-
-	public class NullXMlNodeList : XmlNodeList
-	{
-		public override XmlNode Item(int index)
-		{
-			throw new ArgumentOutOfRangeException();
-		}
-
-		public override IEnumerator GetEnumerator()
-		{
-			yield return null;
-		}
-
-		public override int Count
-		{
-			get { return 0; }
-		}
-	}
-	public class XmlFormatException : ApplicationException
-	{
-		private string _filePath;
-		public XmlFormatException(string message)
-			: base(message)
-		{
-		}
-
-		public string FilePath
-		{
-			get { return _filePath; }
-			set { _filePath = value; }
-		}
-	}
 }

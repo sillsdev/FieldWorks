@@ -10,12 +10,12 @@ using System.Runtime.InteropServices;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
-using SIL.Utils.ComTypes;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.IText
 				m_tssMissingMorphGloss = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 				m_tssMissingMorphPos = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 				m_tssMissingWordPos = m_tssMissingMorphPos;
-				m_PulldownArrowPic = VwConstructorServices.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
+				m_PulldownArrowPic = OLECvt.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
 				m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
 				IWritingSystem wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs);
 				if (wsObj != null)

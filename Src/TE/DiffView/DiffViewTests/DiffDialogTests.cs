@@ -8,17 +8,17 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.TE
 {

@@ -22,11 +22,14 @@ using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
+using XCore;
+
 #if !__MonoCS__
 using System.Windows.Automation.Provider;
 #endif
-using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -1833,7 +1836,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 						int dyRange = m_rootb.Height;
 						Rectangle r = AdjustedClientRectangle;
-						SIL.Utils.Rect clipRect = new SIL.Utils.Rect(r.Left, r.Top, r.Right, r.Bottom);
+						Rect clipRect = new Rect(r.Left, r.Top, r.Right, r.Bottom);
 
 						if (m_graphicsManager.VwGraphics is IVwGraphicsWin32)
 							((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref clipRect);
@@ -2087,7 +2090,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 					{
 #if !__MonoCS__
-						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 1, 0);
+						Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 1, 0);
 						Update();
 						Invalidate();
 #else
@@ -2106,7 +2109,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{   // prevent painting
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 #if !__MonoCS__
-						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 0, 0);
+						Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 0, 0);
 #else
 						this.SuspendLayout();
 #endif
@@ -3395,8 +3398,8 @@ namespace SIL.FieldWorks.Common.RootSites
 #if !__MonoCS__
 				IntPtr hwndOld = m.WParam;
 				int procIdOld, procIdThis;
-				Utils.Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
-				Utils.Win32.GetWindowThreadProcessId(Handle, out procIdThis);
+				Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
+				Win32.GetWindowThreadProcessId(Handle, out procIdThis);
 				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
 					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
 #else
@@ -6183,7 +6186,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						OnKeyPress(new KeyPressEventArgs((char)msg.WParam));
 						return;
 					}
-				case (int)Utils.Win32.WinMsgs.WM_SETFOCUS:
+				case (int)Win32.WinMsgs.WM_SETFOCUS:
 					OnSetFocus(msg);
 #if __MonoCS__
 					// In Linux+Mono, if you .Focus() a SimpleRootSite, checking .Focused reports false unless
@@ -6197,10 +6200,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					base.WndProc(ref msg);
 #endif // __MonoCS__
 					return;
-				case (int)Utils.Win32.WinMsgs.WM_KILLFOCUS:
+				case (int)Win32.WinMsgs.WM_KILLFOCUS:
 					base.WndProc(ref msg);
 					OnKillFocus(Control.FromHandle(msg.WParam),
-						MiscUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
+						SIL.FieldWorks.Common.FwUtils.FwUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
 					return;
 			}
 			base.WndProc(ref msg);
@@ -6298,17 +6301,17 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			switch (m.Msg)
 			{
-				case (int)Utils.Win32.WinMsgs.WM_KEYUP:
-				case (int)Utils.Win32.WinMsgs.WM_LBUTTONUP:
-				case (int)Utils.Win32.WinMsgs.WM_KEYDOWN:
+				case (int)Win32.WinMsgs.WM_KEYUP:
+				case (int)Win32.WinMsgs.WM_LBUTTONUP:
+				case (int)Win32.WinMsgs.WM_KEYDOWN:
 					// If user-initiated messages come (or our spurious one, which we check
 					// for below), remove this filter.
 					Application.RemoveMessageFilter(this);
 					m_messageFilterInstalled = false;
 
 					// Now check for the spurious CTRL-UP message
-					if (m.Msg == (int)Utils.Win32.WinMsgs.WM_KEYUP &&
-						m.WParam.ToInt32() == (int)Utils.Win32.VirtualKeycodes.VK_CONTROL)
+					if (m.Msg == (int)Win32.WinMsgs.WM_KEYUP &&
+						m.WParam.ToInt32() == (int)Win32.VirtualKeycodes.VK_CONTROL)
 					{
 						return true; // discard this message
 					}

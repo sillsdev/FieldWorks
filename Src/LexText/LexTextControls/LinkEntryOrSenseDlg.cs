@@ -156,12 +156,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, null, mediator);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="wp"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="wp"></param>
+		///  <param name="mediator"></param>
 		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
 		{
 			CheckDisposed();

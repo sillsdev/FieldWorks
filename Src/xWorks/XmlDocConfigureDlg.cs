@@ -25,17 +25,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.Utils;
+using Palaso.UI.WindowsForms;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -410,10 +411,10 @@ namespace SIL.FieldWorks.XWorks
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
+			}
 			}
 
 			// Make a help topic ID
@@ -433,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(xnConfig != null);
 			var configClass = XmlUtils.GetManditoryAttributeValue(xnConfig, "class");
 			foreach (var xn in m_layouts.GetLayoutTypes())
-			{
+		{
 				var xnConfigure = xn.SelectSingleNode("configure");
 				if (XmlUtils.GetManditoryAttributeValue(xnConfigure, "class") == configClass)
 					layoutTypes.Add(xn);
@@ -1766,9 +1767,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_mediator.PropertyTable.SetProperty(m_sLayoutPropertyName,
 					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName, true,
-					PropertyTable.SettingsGroup.LocalSettings);
+					XCore.PropertyTable.SettingsGroup.LocalSettings);
 				m_mediator.PropertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
-					PropertyTable.SettingsGroup.LocalSettings);
+					XCore.PropertyTable.SettingsGroup.LocalSettings);
 				SaveModifiedLayouts();
 				DialogResult = DialogResult.OK;
 			}

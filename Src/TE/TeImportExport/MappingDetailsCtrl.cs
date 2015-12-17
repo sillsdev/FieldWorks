@@ -11,24 +11,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-using System.Resources;
 using System.Diagnostics;
+using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.FieldWorks.TE;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

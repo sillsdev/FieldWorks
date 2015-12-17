@@ -3,19 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 using System.Xml;
-using System.Runtime.InteropServices;
 
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

@@ -9,15 +9,16 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Reflection;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using System.Drawing;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using System.Diagnostics;
+using Palaso.Reporting;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

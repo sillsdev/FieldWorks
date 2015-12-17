@@ -217,6 +217,9 @@
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

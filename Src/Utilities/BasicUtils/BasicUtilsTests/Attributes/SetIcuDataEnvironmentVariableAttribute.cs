@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.Utils.Attributes
 {

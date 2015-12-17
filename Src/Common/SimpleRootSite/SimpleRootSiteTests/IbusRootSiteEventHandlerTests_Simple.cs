@@ -1,15 +1,14 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 #if __MonoCS__
 using System;
 using System.Drawing;
-using NUnit.Framework;
 using IBusDotNet;
+using NUnit.Framework;
 using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils.Attributes;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -20,7 +19,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <remarks>Note that we have slightly different parameters on the tests: we define a
 	/// selection by anchor and end whereas in Palaso we use anchor and length!</remarks>
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
 	public class IbusRootSiteEventHandlerTests_Simple: SimpleRootsiteTestsBase<UndoableRealDataCache>
 	{
 		private IbusRootSiteEventHandler m_Handler;

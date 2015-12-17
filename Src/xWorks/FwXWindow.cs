@@ -10,38 +10,37 @@
 // </remarks>
 
 using System;
-using System.Linq;
-using System.Windows.Forms;
-using System.Diagnostics;
-using Microsoft.Win32;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 using L10NSharp;
-using SIL.Archiving;
-using SIL.CoreImpl;
+using Microsoft.Win32;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.XWorks.Archiving;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FwCoreDlgControls;
-using XCore;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
-using Logger = SIL.Utils.Logger;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks.Archiving;
+using Palaso.IO;
+using Palaso.Reporting;
+using SIL.Utils;
+using XCore;
 
 
 #if !__MonoCS__
@@ -992,17 +991,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-			// For now, it attaches itself to various things through events, and runs until
-			// the program exits.
-			using (ScriptMaker sm = new ScriptMaker(ActiveForm))
-			{
-				LinkListener ll = (LinkListener)m_mediator.PropertyTable.GetValue("LinkListener",
-					null);
-				if (ll == null)
-					return true;
-				sm.GoTo(ll.CurrentContext.ToString());
-				return true;
-			}
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------

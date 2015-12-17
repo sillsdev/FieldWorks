@@ -163,11 +163,20 @@
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="PalasoUIWindowsForms">
       <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

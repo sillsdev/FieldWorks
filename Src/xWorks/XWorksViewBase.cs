@@ -14,12 +14,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

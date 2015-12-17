@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using Palaso.UI.WindowsForms;
 
 namespace SIL.FieldWorks.Common.Controls
 {

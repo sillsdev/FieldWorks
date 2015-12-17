@@ -8,10 +8,10 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

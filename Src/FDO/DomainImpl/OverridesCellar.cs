@@ -18,10 +18,51 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
-using SILUBS.PhraseTranslationHelper;
 
+// This is a hack to apply changes from develop branch (where we already got of rid of TE related
+// classes) to lfmerge branch. Things are more complicated here in lfmerge branch: We want to
+// make FDO independent of SWF and so we can't reference PhraseTranslationHelper which defines
+// IKeyTerm. This workaround should do for now (I hope).
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	///
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public interface IKeyTerm
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the term in the "source" language (i.e., the source of the UNS questions list,
+		/// which is in English).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		string Term { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the renderings for the term in the target language.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		IEnumerable<string> Renderings { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the primary (best) rendering for the term in the target language.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		string BestRendering { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the references of all occurences of this key term as integers in the form
+		/// BBBCCCVVV.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		IEnumerable<int> BcvOccurences { get; }
+	}
+
 	#region StPara Class
 	/// ------------------------------------------------------------------------------------
 	/// <summary>

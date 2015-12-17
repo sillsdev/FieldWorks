@@ -8,7 +8,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-
+using Palaso.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs

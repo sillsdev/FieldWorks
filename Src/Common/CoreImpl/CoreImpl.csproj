@@ -92,7 +92,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -105,7 +104,6 @@
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />
-    <Compile Include="GraphicsManager.cs" />
     <Compile Include="ISpellEngine.cs" />
     <Compile Include="KernelExtensions.cs" />
     <Compile Include="DispPropOverrideFactory.cs" />
@@ -149,6 +147,12 @@
     <Compile Include="TsStringSerializer.cs" />
     <Compile Include="TsStringUtils.cs" />
     <Compile Include="WritingSystemUtils.cs" />
+    <Compile Include="ColorStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ColorStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ColorUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CoreImplStrings.resx">
@@ -159,6 +163,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

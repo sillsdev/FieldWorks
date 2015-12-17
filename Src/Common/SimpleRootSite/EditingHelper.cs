@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -14,10 +15,11 @@ using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites.Properties;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 using Palaso.PlatformUtilities;
+using Palaso.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

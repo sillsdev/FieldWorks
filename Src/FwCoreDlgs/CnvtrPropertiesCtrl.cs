@@ -13,14 +13,13 @@ using System.Windows.Forms;
 using System.Resources;
 using System.Reflection;
 using ECInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SilEncConverters40;
-
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

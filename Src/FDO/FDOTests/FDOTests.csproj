@@ -236,6 +236,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\..\Downloads\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfoForTests.cs">

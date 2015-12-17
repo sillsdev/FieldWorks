@@ -45,6 +45,8 @@ using SIL.CoreImpl;
 using SIL.OxesIO;
 using SILUBS.PhraseTranslationHelper;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
+using SIL.FieldWorks.Common.FwUtils.Pathway;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.TE
 {

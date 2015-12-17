@@ -166,6 +166,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="FDOTests">
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>

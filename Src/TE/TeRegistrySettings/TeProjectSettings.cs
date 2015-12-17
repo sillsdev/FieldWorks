@@ -9,6 +9,7 @@ using System;
 using Microsoft.Win32;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

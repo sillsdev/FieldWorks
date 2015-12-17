@@ -22,6 +22,7 @@ using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -30,9 +31,8 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
+using Palaso.UI.WindowsForms;
 using SILUBS.SharedScrUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

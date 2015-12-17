@@ -6,13 +6,14 @@
 // Authorship History: John Hatton
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
-using System.Collections;
-using System.Globalization;
 using System.Windows.Forms;
+using System.Xml;
 
+using SIL.FieldWorks.Common.FwUtils;
+using Palaso.Reporting;
 using SIL.Utils;
 
 namespace XCore
@@ -470,7 +471,7 @@ namespace XCore
 					}
 					catch (Exception e)
 					{
-						throw new ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
+						throw new SIL.Utils.ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
 							+ sc + ".", m_configurationNode, e);
 					}
 					return keys;
@@ -693,7 +694,7 @@ namespace XCore
 			CheckDisposed();
 			string result = GetParameter(attributeName, null);
 			if (result == null)
-				throw new ConfigurationException("The command '"+this.Id+"' must have a parameter attribute named '"+attributeName +"'.",this.ConfigurationNode);
+				throw new SIL.Utils.ConfigurationException("The command '"+this.Id+"' must have a parameter attribute named '"+attributeName +"'.",this.ConfigurationNode);
 			return result;
 		}
 

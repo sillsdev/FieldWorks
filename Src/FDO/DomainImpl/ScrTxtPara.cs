@@ -7,15 +7,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using System.Collections.Generic;
-using SIL.CoreImpl;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

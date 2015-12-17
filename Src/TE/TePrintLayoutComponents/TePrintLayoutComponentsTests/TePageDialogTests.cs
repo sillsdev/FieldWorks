@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.TE
 			{
 				get { throw new NotImplementedException(); }
 			}
-			public SIL.FieldWorks.Common.Framework.PictureHolder PictureHolder { get; private set; }
+			public PictureHolder PictureHolder { get; private set; }
 
 			public string ApplicationName
 			{

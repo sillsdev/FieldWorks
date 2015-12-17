@@ -9,13 +9,11 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Windows.Forms;
 using NUnit.Framework;
-using System;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using System.Collections.Generic;
-using System.Linq;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

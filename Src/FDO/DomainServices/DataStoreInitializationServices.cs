@@ -12,6 +12,7 @@ using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
+using Palaso.Reporting;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 

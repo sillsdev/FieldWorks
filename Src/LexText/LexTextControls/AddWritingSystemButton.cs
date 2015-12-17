@@ -9,21 +9,21 @@
 // </remarks>
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

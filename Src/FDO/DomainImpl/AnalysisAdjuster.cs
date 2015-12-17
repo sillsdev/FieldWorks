@@ -5,12 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainServices;
+using Palaso.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

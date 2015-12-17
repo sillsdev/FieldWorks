@@ -16,13 +16,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

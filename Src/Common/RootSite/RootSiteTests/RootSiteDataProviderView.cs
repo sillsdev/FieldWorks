@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.FwUtils;
+
+
 #if !__MonoCS__
 using System.Windows.Automation.Provider;
 #endif
@@ -261,7 +264,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public OnePictureVc()
 		{
-			m_picture = VwConstructorServices.ConvertImageToComPicture(Properties.Resources.InterlinPopupArrow);
+			m_picture = OLECvt.ConvertImageToComPicture(Properties.Resources.InterlinPopupArrow);
 		}
 
 		#region Disposable stuff
@@ -329,7 +332,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public OnePictureOneEditBoxVc()
 		{
-			m_picture = VwConstructorServices.ConvertImageToComPicture(Properties.Resources.InterlinPopupArrow);
+			m_picture = OLECvt.ConvertImageToComPicture(Properties.Resources.InterlinPopupArrow);
 		}
 
 		#region Disposable stuff

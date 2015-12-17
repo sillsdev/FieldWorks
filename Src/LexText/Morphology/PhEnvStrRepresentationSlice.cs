@@ -9,12 +9,13 @@ using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Validation;
-using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Validation;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

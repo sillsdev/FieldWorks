@@ -16,19 +16,20 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using Palaso.Lift;
-using Palaso.Lift.Migration;
-using Palaso.Lift.Parsing;
-using Palaso.Lift.Validation;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
+using Palaso.Lift;
+using Palaso.Lift.Migration;
+using Palaso.Lift.Parsing;
+using Palaso.Lift.Validation;
+using Palaso.Reporting;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -283,7 +284,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						SIL.Utils.Logger.WriteEvent(bldr.ToString());
+						Logger.WriteEvent(bldr.ToString());
 				}
 				catch
 				{

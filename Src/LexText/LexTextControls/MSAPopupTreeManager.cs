@@ -116,17 +116,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_mediator.StringTbl != null)
 			{
 				m_sUnknown = m_mediator.StringTbl.GetString("NullItemLabel",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 				m_sSpecifyGramFunc = m_mediator.StringTbl.GetString("AddNewGramFunc",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 				m_sModifyGramFunc = m_mediator.StringTbl.GetString("ModifyGramFunc",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 				m_sSpecifyDifferent = m_mediator.StringTbl.GetString("SpecifyDifferentGramFunc",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 				m_sCreateGramFunc = m_mediator.StringTbl.GetString("CreateGramFunc",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 				m_sEditGramFunc = m_mediator.StringTbl.GetString("EditGramFunc",
-					"DetailControls/MSAReferenceComboBox");
+				"DetailControls/MSAReferenceComboBox");
 			}
 			if (m_sUnknown == null || m_sUnknown.Length == 0 ||
 				m_sUnknown == "*NullItemLabel*")

@@ -7,23 +7,23 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
+using System.Windows.Forms;
+using Palaso.Reporting;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.CoreImpl;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {

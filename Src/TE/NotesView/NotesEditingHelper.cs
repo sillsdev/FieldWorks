@@ -6,16 +6,16 @@
 // Responsibility: TE Team
 
 using System;
-using SIL.FieldWorks.FDO;
+using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
-using XCore;
-using SIL.FieldWorks.FDO.Application;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.TE
 {

@@ -7,8 +7,8 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace XCore
 {

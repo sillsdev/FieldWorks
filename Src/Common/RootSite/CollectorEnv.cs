@@ -24,7 +24,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

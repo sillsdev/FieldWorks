@@ -8,14 +8,13 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using Palaso.Reporting;
 using Timer = System.Threading.Timer;
 
 namespace SIL.FieldWorks.LexicalProvider

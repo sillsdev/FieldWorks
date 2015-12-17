@@ -218,6 +218,9 @@
 	  <Name>ITextDll</Name>
 	  <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
 	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\..\CommonAssemblyInfo.cs">

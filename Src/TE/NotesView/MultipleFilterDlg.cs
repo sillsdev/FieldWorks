@@ -9,16 +9,12 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using Palaso.Reporting;
 using SIL.CoreImpl;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

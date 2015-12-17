@@ -20,6 +20,7 @@ using System.Resources;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls

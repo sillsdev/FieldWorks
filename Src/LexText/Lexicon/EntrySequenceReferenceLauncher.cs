@@ -21,6 +21,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace Utils.MessageBoxExLib

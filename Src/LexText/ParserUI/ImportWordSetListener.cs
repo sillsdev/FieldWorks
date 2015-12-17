@@ -14,11 +14,11 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

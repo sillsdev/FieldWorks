@@ -4,9 +4,10 @@
 
 using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

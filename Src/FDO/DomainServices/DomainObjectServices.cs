@@ -10,14 +10,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.Infrastructure;
+using Palaso.Reporting;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

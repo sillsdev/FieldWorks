@@ -20,19 +20,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.XWorks;
-using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

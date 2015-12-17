@@ -13,9 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.IO.FileLock;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using Palaso.IO.FileLock;
+using Palaso.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl

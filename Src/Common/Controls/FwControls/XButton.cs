@@ -4,11 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.Utils;
+using Palaso.UI.WindowsForms;
 
 namespace SIL.FieldWorks.Common.Controls
 {

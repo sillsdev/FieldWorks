@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.IText
 		IWritingSystem[] m_writingSystems;
 		ITsString[] m_WsLabels;
 		ITsTextProps m_ttpWsLabel;
-		int m_editBackColor = (int)SIL.Utils.ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
+		int m_editBackColor = (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
 
 		public TitleContentsVc(FdoCache cache)
 		{
