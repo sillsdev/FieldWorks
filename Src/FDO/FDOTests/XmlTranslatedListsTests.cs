@@ -1205,9 +1205,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			Assert.AreEqual(6, mapNameToItem.Count, "We should start with six variant types.");
 			int countSubtypeItems = 0;
-			foreach (var name in mapNameToItem.Keys)
+			foreach (var key in mapNameToItem.Keys)
 			{
-				var item = mapNameToItem[name];
+				var keypath = key.Split(':');
+				var name = keypath[keypath.Length - 1];
+				var item = mapNameToItem[key];
 				var nameEnglish = item.Name.get_String(m_wsEn).Text;
 				Assert.AreEqual(name, nameEnglish, "The list should have English names before import.");
 				var nameFrench = item.Name.get_String(m_wsFr).Text;
@@ -1245,12 +1247,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(6, mapNameToItem2.Count, "Import should not add any new items: there should still be six variant types.");
 
 			int countNoFrench = 0;
-			foreach (var name in mapNameToItem.Keys)
+			foreach (var key in mapNameToItem.Keys)
 			{
-				var item = mapNameToItem[name];
-				var item2 = mapNameToItem2[name];
+				var item = mapNameToItem[key];
+				var item2 = mapNameToItem2[key];
 				Assert.AreSame(item, item2, "The import should retain the existing items.");
-
+				var keypath = key.Split(':');
+				var name = keypath[keypath.Length - 1];
 				var nameEnglish = item.Name.get_String(m_wsEn).Text;
 				Assert.AreEqual(name, nameEnglish, "Import should not change the English name.");
 				var nameFrench = item.Name.get_String(m_wsFr).Text;
@@ -1284,19 +1287,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Finally, just to be exhaustive, let's examine a few specific values.
 
-			var type = mapNameToItem["Dialectal Variant"] as ILexEntryType;
+			var type = mapNameToItem[":Dialectal Variant"] as ILexEntryType;
 			var frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Variante Dialectale", frenchName);
 			var typeinfl = type as ILexEntryInflType;
 			Assert.IsNull(typeinfl);
 
-			type = mapNameToItem["Free Variant"] as ILexEntryType;
+			type = mapNameToItem[":Free Variant"] as ILexEntryType;
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Variante Gratuitement", frenchName);
 			typeinfl = type as ILexEntryInflType;
 			Assert.IsNull(typeinfl);
 
-			type = mapNameToItem["Irregular Inflectional Variant"] as ILexEntryType;
+			type = mapNameToItem[":Irregular Inflectional Variant"] as ILexEntryType;
 			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
 			Assert.AreEqual("Irrégulière Forme Fléchie", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1304,7 +1307,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.IsNullOrEmpty(frenchGlossAppend, "Irregular Inflectional Variant should not have a GlossAppend value.");
 
-			type = mapNameToItem["Plural Variant"] as ILexEntryType;
+			type = mapNameToItem[":Plural Variant"] as ILexEntryType;
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Pluriel", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1312,7 +1315,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.AreEqual(".plu", frenchGlossAppend);
 
-			type = mapNameToItem["Past Variant"] as ILexEntryType;
+			type = mapNameToItem[":Past Variant"] as ILexEntryType;
 			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
 			Assert.AreEqual("Passé", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1320,11 +1323,240 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.AreEqual(".pas", frenchGlossAppend);
 
-			type = mapNameToItem["Spelling Variant"] as ILexEntryType;
+			type = mapNameToItem[":Spelling Variant"] as ILexEntryType;
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Orthographe Variant", frenchName);
 			typeinfl = type as ILexEntryInflType;
 			Assert.IsNull(typeinfl);
+		}
+
+		private static readonly string s_ksAcademicDomainTranslations =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
+			"<Lists date=\"12/16/2015 10:49:54 AM\">" + Environment.NewLine +
+			"  <List owner=\"LexDb\" field=\"DomainTypes\" itemClass=\"CmPossibility\">" + Environment.NewLine +
+			"    <Name>" + Environment.NewLine +
+			"      <AUni ws=\"en\">Academic Domains</AUni>" + Environment.NewLine +
+			"      <AUni ws=\"fr\">Domaines Académiques</AUni>" + Environment.NewLine +
+			"    </Name>" + Environment.NewLine +
+			"    <Abbreviation>" + Environment.NewLine +
+			"      <AUni ws=\"en\">AcDom</AUni>" + Environment.NewLine +
+			"      <AUni ws=\"fr\">DomAc</AUni>" + Environment.NewLine +
+			"    </Abbreviation>" + Environment.NewLine +
+			"    <Possibilities>" + Environment.NewLine +
+			"      <CmPossibility>" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">linguistics</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">linguistique</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Ling</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Ling</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <SubPossibilities>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">applied linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">linguistique appliquée</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">App ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling app</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">comparative linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">la linguistique comparative</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Comp ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling comp</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">historical linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">la linguistique historique</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Hist ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling hist</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">semantics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">sémantique</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Sem</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Sem</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"        </SubPossibilities>" + Environment.NewLine +
+			"      </CmPossibility>" + Environment.NewLine +
+			"      <CmPossibility>" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">psycholinguistics</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">psycholinguistique</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Psycholing</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Psycholing</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"      </CmPossibility>" + Environment.NewLine +
+			"      <CmPossibility>" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">sociolinguistics</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">sociolinguistique</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Socioling</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Socioling</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <SubPossibilities>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">applied linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">linguistique appliquée</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">App ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling app</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">comparative linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">la linguistique comparative</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Comp ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling comp</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">historical linguistics</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">la linguistique historique</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Hist ling</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Ling hist</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"          <CmPossibility>" + Environment.NewLine +
+			"            <Name>" + Environment.NewLine +
+			"              <AUni ws=\"en\">survey</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">enquête</AUni>" + Environment.NewLine +
+			"            </Name>" + Environment.NewLine +
+			"            <Abbreviation>" + Environment.NewLine +
+			"              <AUni ws=\"en\">Surv</AUni>" + Environment.NewLine +
+			"              <AUni ws=\"fr\">Enq</AUni>" + Environment.NewLine +
+			"            </Abbreviation>" + Environment.NewLine +
+			"          </CmPossibility>" + Environment.NewLine +
+			"        </SubPossibilities>" + Environment.NewLine +
+			"      </CmPossibility>" + Environment.NewLine +
+			"    </Possibilities>" + Environment.NewLine +
+			"  </List>" + Environment.NewLine +
+			"</Lists>" + Environment.NewLine;
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the method ImportTranslatedLists with a list with subitems that have the same
+		/// name.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportTranslatedListWithDuplicateSubitemNames()
+		{
+			var listDomains = m_cache.LangProject.LexDbOA.DomainTypesOA;
+			Assert.AreEqual(0, listDomains.PossibilitiesOS.Count, "The Academic Domains list should be empty to start.");
+
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => CreateStandardEnglishOnlyDomainTypes(listDomains));
+			var xtl = new XmlTranslatedLists();
+			var mapNameToItem = new Dictionary<string, ICmPossibility>();
+			xtl.m_wsEn = m_wsEn;
+			xtl.FillInMapForPossibilities(mapNameToItem, listDomains.PossibilitiesOS);
+			Assert.AreEqual(3, listDomains.PossibilitiesOS.Count, "There should be only three toplevel Academic Domain possibilities.");
+			Assert.AreEqual(11, mapNameToItem.Count, "There should be eleven Academic Domain possibilities in all for this test.");
+
+			var reader = new StringReader(s_ksAcademicDomainTranslations);
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => xtl.ImportTranslatedLists(reader, m_cache, null));
+
+			var mapNameToItem2 = new Dictionary<string, ICmPossibility>();
+			xtl.FillInMapForPossibilities(mapNameToItem2, listDomains.PossibilitiesOS);
+			Assert.AreEqual(11, mapNameToItem2.Count, "Import should not add any new items: there should still be eleven Academic Domain possibilities.");
+
+			foreach (var key in mapNameToItem.Keys)
+			{
+				var item = mapNameToItem[key];
+				var item2 = mapNameToItem2[key];
+				Assert.AreSame(item, item2, "The import should retain the existing items.");
+				var keypath = key.Split(':');
+				var name = keypath[keypath.Length - 1];
+				var nameEnglish = item.Name.get_String(m_wsEn).Text;
+				Assert.AreEqual(name, nameEnglish, "Import should not change the English name.");
+				var nameFrench = item.Name.get_String(m_wsFr).Text;
+				Assert.IsNotNullOrEmpty(nameFrench, "Every item should have a French name after import.");
+				var abbrEnglish = item.Abbreviation.get_String(m_wsEn).Text;
+				Assert.IsNotNullOrEmpty(abbrEnglish, "Every item should still have an English abbreviation after import.");
+				var abbrFrench = item.Abbreviation.get_String(m_wsFr).Text;
+				Assert.IsNotNullOrEmpty(abbrFrench, "Every item should have an French abbreviation after import.");
+			}
+			// Check first occurrence of "applied linguistics"
+			var poss = mapNameToItem[":linguistics:applied linguistics"];
+			var frenchName = poss.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
+			Assert.AreEqual("linguistique appliquée", frenchName);
+			var frenchAbbr = poss.Abbreviation.get_String(m_wsFr).Text;
+			Assert.AreEqual("Ling app", frenchAbbr);
+			// Check second occurrenence of "applied linguistics"
+			poss = mapNameToItem[":sociolinguistics:applied linguistics"];
+			frenchName = poss.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
+			Assert.AreEqual("linguistique appliquée", frenchName);
+			frenchAbbr = poss.Abbreviation.get_String(m_wsFr).Text;
+			Assert.AreEqual("Ling app", frenchAbbr);
+		}
+
+		private void CreateStandardEnglishOnlyDomainTypes(ICmPossibilityList list)
+		{
+			var fact = list.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+
+			var possLing = fact.Create(Guid.NewGuid(), list);
+			possLing.Name.set_String(m_wsEn, "linguistics");
+			possLing.Abbreviation.set_String(m_wsEn, "Ling");
+			var possAppLing1 = fact.Create(Guid.NewGuid (), possLing);
+			possAppLing1.Name.set_String(m_wsEn, "applied linguistics");
+			possAppLing1.Abbreviation.set_String(m_wsEn, "App ling");
+			var possCompLing1 = fact.Create(Guid.NewGuid (), possLing);
+			possCompLing1.Name.set_String(m_wsEn, "comparative linguistics");
+			possCompLing1.Abbreviation.set_String(m_wsEn, "Comp ling");
+			var possHistLing1 = fact.Create(Guid.NewGuid (), possLing);
+			possHistLing1.Name.set_String(m_wsEn, "historical linguistics");
+			possHistLing1.Abbreviation.set_String(m_wsEn, "Hist ling");
+			var possSemant = fact.Create(Guid.NewGuid (), possLing);
+			possSemant.Name.set_String(m_wsEn, "semantics");
+			possSemant.Abbreviation.set_String(m_wsEn, "Sem");
+
+			var possPsycho = fact.Create(Guid.NewGuid (), list);
+			possPsycho.Name.set_String(m_wsEn, "psycholinguistics");
+			possPsycho.Abbreviation.set_String(m_wsEn, "Psycholing");
+
+			var possSocio = fact.Create(Guid.NewGuid (), list);
+			possSocio.Name.set_String(m_wsEn, "sociolinguistics");
+			possSocio.Abbreviation.set_String(m_wsEn, "Socioling");
+			var possAppLing2 = fact.Create(Guid.NewGuid (), possSocio);
+			possAppLing2.Name.set_String(m_wsEn, "applied linguistics");
+			possAppLing2.Abbreviation.set_String(m_wsEn, "App ling");
+			var possCompLing2 = fact.Create(Guid.NewGuid (), possSocio);
+			possCompLing2.Name.set_String(m_wsEn, "comparative linguistics");
+			possCompLing2.Abbreviation.set_String(m_wsEn, "Comp ling");
+			var possHistLing2 = fact.Create(Guid.NewGuid (), possSocio);
+			possHistLing2.Name.set_String(m_wsEn, "historical linguistics");
+			possHistLing2.Abbreviation.set_String(m_wsEn, "Hist ling");
+			var possSurvey = fact.Create(Guid.NewGuid (), possSocio);
+			possSurvey.Name.set_String(m_wsEn, "survey");
+			possSurvey.Abbreviation.set_String(m_wsEn, "Surv");
 		}
 	}
 }

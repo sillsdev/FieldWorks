@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							break;
 						case "Possibilities":
 							// we know the list, but we don't have the map yet at this level.
-							ReadPossibilitiesFromXml(xrdr, list, sItemClass);
+							ReadPossibilitiesFromXml(xrdr, list, sItemClass, "");
 							break;
 						default:
 							throw new Exception(String.Format("Unknown field element in <List>: {0}", xrdr.Name));
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		}
 
 		private void ReadPossibilitiesFromXml(XmlReader xrdr, ICmPossibilityList list, string sItemClass,
-			Dictionary<string, ICmPossibility> mapNameToPoss = null)
+			string ownerPath, Dictionary<string, ICmPossibility> mapNameToPoss = null)
 		{
 			var listElementName = xrdr.Name;
 			do
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					}
 					using (var inner = xrdr.ReadSubtree())
 					{
-						ReadPossItem(inner, poss, sItemClass, mapNameToPoss);
+						ReadPossItem(inner, poss, sItemClass, ownerPath, mapNameToPoss);
 						inner.Close();
 					}
 				}
@@ -275,20 +275,39 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				return;
 			foreach (var item in possibilities)
 			{
-				ITsString tss = item.Name.get_String(m_wsEn);
-				if (tss == null)
+				var key = GetKeyForPossibility(item);
+				if (String.IsNullOrEmpty(key))
 					continue;
-				string name = tss.Text;
-				if (String.IsNullOrEmpty(name))
+				if (mapNameToItem.ContainsKey(key))
 					continue;
-				if (mapNameToItem.ContainsKey(name))
-					continue;
-				mapNameToItem.Add(name, item);
+				mapNameToItem.Add(key, item);
 				FillInMapForPossibilities(mapNameToItem, item.SubPossibilitiesOS);
 			}
 		}
 
-		private void ReadPossItem(XmlReader xrdrSub, ICmPossibility poss, string sItemClassName,
+		/// <summary>
+		/// Generate a key by appending the name of this CmPossibility to the names of
+		/// each of its owning CmPossibilities (if the owner is a CmPossibility).  The
+		/// result is a rooted path of English CmPossibility names separated by colons,
+		/// with a leading colon preceding the CmPossibility at the top level of the list.
+		/// This allows items at lower levels of the list to have the same name without
+		/// being confused.
+		/// </summary>
+		private string GetKeyForPossibility(ICmPossibility item)
+		{
+			ITsString tss = item.Name.get_String(m_wsEn);
+			if (tss == null)
+				return String.Empty;
+			string name = tss.Text;
+			if (String.IsNullOrEmpty(name))
+				return String.Empty;
+			var ownerPath = String.Empty;
+			if (item.Owner is ICmPossibility)
+				ownerPath = GetKeyForPossibility(item.Owner as ICmPossibility);
+			return String.Format("{0}:{1}", ownerPath, name);
+		}
+
+		private void ReadPossItem(XmlReader xrdrSub, ICmPossibility poss, string sItemClassName, string ownerPath,
 			Dictionary<string, ICmPossibility> mapNameToPoss)
 		{
 			xrdrSub.Read();
@@ -327,7 +346,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								}
 								else
 								{
-									poss = FindPossibilityAndSetName(xrdrSub, mapNameToPoss);
+									poss = FindPossibilityAndSetName(xrdrSub, ownerPath, mapNameToPoss);
 									if (poss != null)
 									{
 										if (abbrXml != null)
@@ -464,7 +483,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								break;
 							case "SubPossibilities":
 								// we have the map, but we don't know the list at this level.
-								ReadPossibilitiesFromXml(xrdrSub, null, sItemClassName, mapNameToPoss);
+								var myName = String.Empty;
+								if (poss != null && poss.Name != null)
+								{
+									var tss = poss.Name.get_String(m_wsEn);
+									if (tss != null && tss.Text != null)
+										myName = tss.Text;
+								}
+								ReadPossibilitiesFromXml(xrdrSub, null, sItemClassName, String.Format("{0}:{1}", ownerPath, myName), mapNameToPoss);
 								break;
 
 							// Additional Subclass fields.
@@ -667,7 +693,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			return domq;
 		}
 
-		private ICmPossibility FindPossibilityAndSetName(XmlReader xrdr,
+		private ICmPossibility FindPossibilityAndSetName(XmlReader xrdr, string ownerPath,
 			Dictionary<string, ICmPossibility> mapNameToPoss)
 		{
 			if (xrdr.IsEmptyElement)
@@ -686,7 +712,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					if (sWs == "en")
 					{
 						// Use the English name to look up the possibility.
-						mapNameToPoss.TryGetValue(sVal, out poss);
+						mapNameToPoss.TryGetValue(String.Format("{0}:{1}", ownerPath, sVal), out poss);
 						continue;		// don't overwrite the English string
 					}
 					int ws = GetWsFromStr(sWs);
