@@ -575,7 +575,7 @@
 	</layout>
 
 	<layout class="StText" type="jtview" name="publishRnResearchPlan">
-		<part ref="RnResearchPlanConfig" label="ResearchPlan" visibility="ifdata" flowType="div" before="Research Plan:" beforeStyle="Heading 2"/>
+		<part ref="RnResearchPlanConfig" label="Research Plan" param="publishRnResearchPlan" visibility="ifdata" flowType="div" before="Research Plan:" beforeStyle="Heading 2"/>
 	</layout>
 
 	<layout class="StTxtPara" type="jtview" name="publishRnResearchPlan">

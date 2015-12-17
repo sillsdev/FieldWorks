@@ -491,6 +491,9 @@
 		<part id="StText-Jt-RnFurtherQuestionsConfig" type="jtview">
 			<seq field="Paragraphs" layout="publishRnFurtherQuestions" targetclass="StTxtPara"/>
 		</part>
+		<part id="StText-Jt-RnResearchPlanConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnResearchPlan" targetclass="StTxtPara"/>
+		</part>
 		<part id="StText-Jt-RnPersonalNotesConfig" type="jtview">
 			<seq field="Paragraphs" layout="publishRnPersonalNotes" targetclass="StTxtPara"/>
 		</part>
