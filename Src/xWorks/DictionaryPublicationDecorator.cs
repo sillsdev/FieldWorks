@@ -427,12 +427,12 @@ namespace SIL.FieldWorks.XWorks
 				case "Reversal Index":
 				{
 					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
-					if(reversalIndexGuid != Guid.Empty)
+					if (reversalIndexGuid != Guid.Empty)
 					{
 						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
 						if (currentReversalIndex != null)
 						{
-							return currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo);
+							return GetSortedAndFilteredReversalEntries(currentReversalIndex, virtualFlid);
 						}
 					}
 					break;
@@ -440,6 +440,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return new int[] { };
 		}
+
 
 		public override int[] VecProp(int hvo, int tag)
 		{
@@ -467,6 +468,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return result.Where(IsPublishablePicture).ToArray();
 			}
+			return result;
+		}
+
+		/// <summary>
+		/// Get the list of ReversalIndexEntries sorted and filtered the way the user has set it up.
+		/// The default is presumably sorted by the writing system collator on ShortName.
+		/// </summary>
+		private int[] GetSortedAndFilteredReversalEntries(IReversalIndex currentReversalIndex, int virtualFlid)
+		{
+			// Get the list of ReversalIndexItem objects sorted and filtered as set by the reversal bulk edit.
+			var result = base.VecProp(currentReversalIndex.Hvo, virtualFlid);
+			// Is there ever any more filtering that we need to do?  It would be done here.
 			return result;
 		}
 
