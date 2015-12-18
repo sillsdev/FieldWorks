@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.TE
 			if (importSettings != null)
 			{
 				return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet,
-					undoManager, importUi);
+					undoManager, importUi, m_fParatextStreamlinedImport);
 			}
 
 			return (ScrReference) TeXmlImporter.Import(m_cache, m_styleSheet, m_sOXESFile,

@@ -561,6 +561,15 @@ namespace SIL.FieldWorks.TE.ImportTests
 				return m_undoManager;
 			}
 		}
+
+		/// <summary>
+		/// Exposes the <see cref="TeSfmImporter.m_fStreamLinedImport"/> variable.
+		/// </summary>
+		public bool StreamLinedImport
+		{
+			get { return m_fStreamLinedImport; }
+			set { m_fStreamLinedImport = value; }
+		}
 		#endregion
 
 		#region Methods
