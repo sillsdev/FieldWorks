@@ -90,10 +90,6 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
@@ -157,6 +153,12 @@
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net" Condition="'$(OS)'=='Unix'">
+      <HintPath>..\..\Downloads\protobuf-net\Full\mono\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net" Condition="'$(OS)'!='Unix'">
+      <HintPath>..\..\Downloads\protobuf-net\Full\net30\protobuf-net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
