@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 				case "lexiconEdit":
 					return "Dictionary";
 				default:
-					return string.Empty;
+					return null;
 			}
 		}
 

@@ -45,6 +45,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetDictionaryConfigurationBaseType_ReportsCorrectlyForDictionaryAndReversal()
+		{
+			var mediator = m_mediator;
+			mediator.PropertyTable.SetProperty("currentContentControl", "lexiconEdit");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "did not return expected type");
+			mediator.PropertyTable.SetProperty("currentContentControl", "lexiconBrowse");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "did not return expected type");
+			mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "did not return expected type");
+
+			mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
+			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "did not return expected type");
+			mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolBulkEditReversalEntries");
+			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "did not return expected type");
+
+			mediator.PropertyTable.SetProperty("currentContentControl", "somethingElse");
+			Assert.IsNull(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), "Other areas should return null");
+		}
+
+		[Test]
 		public void GetDefaultConfigurationDirectory_ReportsCorrectlyForDictionaryAndReversal()
 		{
 			var mediator = m_mediator;
