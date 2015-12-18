@@ -1047,19 +1047,22 @@ namespace SIL.FieldWorks.IText
 		private void RecreateDelayedSelection(object sender, EventArgs e)
 		{
 			Application.Idle -= RecreateDelayedSelection;
-			m_sandbox.RootBox.MakeTextSelection(
-				m_infoDelayed.ihvoRoot,
-				m_infoDelayed.rgvsli.Length,
-				m_infoDelayed.rgvsli,
-				m_infoDelayed.tagTextProp,
-				m_infoDelayed.cpropPrevious,
-				m_infoDelayed.ich,
-				m_infoDelayed.ich,
-				m_infoDelayed.ws,
-				m_infoDelayed.fAssocPrev,
-				m_infoDelayed.ihvoEnd,
-				m_infoDelayed.ttpSelProps,
-				true);
+			if (m_sandbox != null && m_sandbox.RootBox != null)
+			{
+				m_sandbox.RootBox.MakeTextSelection(
+					m_infoDelayed.ihvoRoot,
+					m_infoDelayed.rgvsli.Length,
+					m_infoDelayed.rgvsli,
+					m_infoDelayed.tagTextProp,
+					m_infoDelayed.cpropPrevious,
+					m_infoDelayed.ich,
+					m_infoDelayed.ich,
+					m_infoDelayed.ws,
+					m_infoDelayed.fAssocPrev,
+					m_infoDelayed.ihvoEnd,
+					m_infoDelayed.ttpSelProps,
+					true);
+			}
 			m_infoDelayed = null;
 			m_needDelayedSelection = false;
 		}
