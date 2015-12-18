@@ -8,7 +8,6 @@ T: SIL.Utils.RegistryGroup
 
 # Dispose is called, but there's no implicit Dispose() method
 T: SIL.Utils.ConsumerThread`2
-T: SIL.Utils.ScriptMaker
 
 # Disposed, potentially on different thread
 T: SIL.Utils.ThreadHelper
@@ -20,7 +19,6 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Void SIL.Utils.Logger::InitializeTextWriter()
 
 # Reference
-M: System.Boolean SIL.Utils.ScriptMaker::PreFilterMessage(System.Windows.Forms.Message&)
 M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>*::System.Collections.IEnumerable.GetEnumerator()

@@ -1,16 +1,6 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2006' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: Property.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
 using System.Xml;
 using NVelocity;

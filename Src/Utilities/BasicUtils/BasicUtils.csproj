@@ -139,7 +139,6 @@
     <Compile Include="RegistryGroup.cs" />
     <Compile Include="TreeDictionary.cs" />
     <Compile Include="RomanNumerals.cs" />
-    <Compile Include="ScriptMaker.cs" />
     <Compile Include="Set.cs" />
     <Compile Include="SimpleBag.cs" />
     <Compile Include="SmallDictionary.cs" />
