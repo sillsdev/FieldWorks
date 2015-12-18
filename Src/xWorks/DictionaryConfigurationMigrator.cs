@@ -208,9 +208,8 @@ namespace SIL.FieldWorks.XWorks
 					case "publishReversal" :
 					{
 						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-						// TODO:
-						//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
-						return;
+						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+						break;
 					}
 					default :
 					{
@@ -234,9 +233,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							var customFileName = string.Format("{0}{1}", layout, extension); // TODO pH 2015.07: better name
 							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-							return;
-							// TODO:
-							//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 						}
 						else
 							throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
@@ -403,6 +400,19 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Abbreviation" && child.Parent.Label == "Complex Form Type" &&
 					child.Parent.Parent.Label == "Subentries") // not renamed in "Components CFTs"
 					result = "Reverse Abbreviation";
+
+				if (child.Label == "Features" && child.Parent.Label == "Grammatical Info.")
+					result = "Inflection Features";
+
+				if (child.Label == "Form" && child.Parent.Label == "Reversal Entry")
+					result = "Reversal Form";
+
+				if (child.Label == "Category" && child.Parent.Label == "Reversal Entry")
+					result = "Reversal Category";
+
+				if (child.Label == "Referenced Senses" && child.Parent.Label == "Reversal Entry")
+					result = "Vernacular Form";
+
 			}
 			return result;
 		}

@@ -1176,6 +1176,184 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private DictionaryConfigurationModel BuildConvertedGrammaticalInfoNodes()
+		{
+			var features = new ConfigurableDictionaryNode
+			{
+				Label = "Features",
+				FieldDescription = "Features",
+				IsEnabled = true
+			};
+			var grammaticalInfo = new ConfigurableDictionaryNode
+			{
+				Label = "Grammatical Info.",
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { features }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { grammaticalInfo }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultGrammaticalInfoNodes()
+		{
+			var inflectionFeatures = new ConfigurableDictionaryNode
+			{
+				Label = "Inflection Features",
+				FieldDescription = "FeaturesTSS",
+				IsEnabled = true
+			};
+			var grammaticalInfo = new ConfigurableDictionaryNode
+			{
+				Label = "Grammatical Info.",
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { inflectionFeatures }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { grammaticalInfo }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexInflectionFeaturesMigration()
+		{
+			const string grammaticalInfoTypePath = "//ConfigurationItem[@name='Reversal Entry']/ConfigurationItem[@name='Referenced Senses']/ConfigurationItem[@name='Grammatical Info.']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedGrammaticalInfoType = BuildConvertedGrammaticalInfoNodes();
+				convertedGrammaticalInfoType.FilePath = convertedModelFile.Path;
+				var defaultGrammaticalInfoType = BuildCurrentDefaultGrammaticalInfoNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedGrammaticalInfoType, defaultGrammaticalInfoType);
+				convertedGrammaticalInfoType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Features']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Inflection Features']", 1);
+			}
+		}
+
+		private DictionaryConfigurationModel BuildConvertedReversalIndexChildNodes()
+		{
+			var reversalForm = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Form",
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalCategory = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Category",
+				FieldDescription = "PartOfSpeechRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodes()
+		{
+			var reversalForm = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Form",
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalCategory = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Category",
+				FieldDescription = "PartOfSpeechRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexChildNodesMigrated()
+		{
+			const string reversalIndexChildNodesPath = "//ConfigurationItem[@name='Reversal Entry']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedreversalIndexChildNodesType = BuildConvertedReversalIndexChildNodes();
+				convertedreversalIndexChildNodesType.FilePath = convertedModelFile.Path;
+				var defaultreversalIndexChildNodesType = BuildCurrentDefaultReversalIndexChildNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedreversalIndexChildNodesType, defaultreversalIndexChildNodesType);
+				convertedreversalIndexChildNodesType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Form']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Form']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Category']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Category']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Referenced Senses']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Vernacular Form']", 1);
+			}
+		}
+
 		private DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
