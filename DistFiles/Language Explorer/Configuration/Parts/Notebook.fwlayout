@@ -453,8 +453,40 @@
 		<part ref="SupersededByConfig" label="Superseded By" param="publishRnSupersededBy" flowType="para" style="Normal" before="Superseded By: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
 		<part ref="SeeAlsoConfig" label="See Also" param="publishRnSeeAlso" flowType="para" style="Normal" before="See Also: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
 		<part ref="HistoryConfig" label="Created/Modified" param="publishHistory" flowType="para" style="Normal" visibility="never"/>
-		<generate class="RnGenericRec" fieldType="atom" restrictions="customOnly" destClass="StText">
-			<part ref="CustomStTextForRecord_$fieldName" hideConfig="true" param="publishCustomStText"/>
+		<generate class="RnGenericRec" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label" beforeStyle="Strong" visibility="never" flowType="div">
+				<obj field="$fieldName" layout="publishCustom"/>
+			</part>
 		</generate>
 		<part ref="SubrecordsConfig" label="Subrecords" param="publishRecord" flowType="div" before="Subrecords" beforeStyle="Heading 2" visibility="ifdata" css="subentries" recurseConfig="false" number="%O"/>
 	</layout>
@@ -604,6 +636,11 @@
 	</layout>
 
 	<layout class="CmPossibility" type="jtview" name="publishCustomPossItem">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmCustomItem" type="jtview" name="publishCustomVectorItem">
 		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
 	</layout>
