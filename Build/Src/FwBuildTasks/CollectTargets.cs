@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -394,6 +395,8 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t</NUnit>");
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
+						// Generate dotCover task
+						GenerateDotCoverTask(writer, new [] {project}, string.Format("{0}.coverage.xml", project));
 					}
 					else
 					{
@@ -442,7 +445,6 @@ namespace FwBuildTasks
 					first = false;
 				}
 				writer.WriteLine("\"/>");
-				writer.WriteLine();
 
 				ProcessDependencyGraph(writer);
 
@@ -451,6 +453,18 @@ namespace FwBuildTasks
 				writer.Close();
 			}
 			Console.WriteLine("Created {0}", Path.Combine(m_fwroot, "Build/FieldWorks.targets"));
+		}
+
+		private static void GenerateDotCoverTask(StreamWriter writer, IEnumerable<string> projects, string outputXml)
+		{
+			string assemblyList = projects.Aggregate("", (current, proj) => current + string.Format("$(dir-outputBase)/{0}.dll;", proj));
+			writer.WriteLine("\t\t<Message Text=\"Running coverage analysis for {0}\" Condition=\"'$(action)'=='cover'\"/>", string.Join(", ", projects));
+			writer.WriteLine("\t\t<GenerateTestCoverageReport Condition=\"'$(action)'=='cover'\"");
+			writer.WriteLine("\t\t\tAssemblies=\"" + assemblyList + "\"");
+			writer.WriteLine("\t\t\tNUnitConsoleExe=\"$(fwrt)/Bin/NUnit/bin/nunit-console-x86.exe\"");
+			writer.WriteLine("\t\t\tDotCoverExe=\"$(DOTCOVER_HOME)/dotcover.exe\"");
+			writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
+			writer.WriteLine("\t\t\tOutputXmlFile=\"$(dir-outputBase)/{0}\"/>", outputXml);
 		}
 
 		/// <summary>
