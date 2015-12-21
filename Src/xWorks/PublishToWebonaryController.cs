@@ -120,7 +120,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (WebException e)
 				{
-					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}", e.Message));
+					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
+					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
 					return;
 				}
 				var responseText = System.Text.Encoding.ASCII.GetString(response);
