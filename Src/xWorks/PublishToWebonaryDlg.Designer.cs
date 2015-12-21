@@ -256,6 +256,7 @@ namespace SIL.FieldWorks.XWorks
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.closeButton;
 			this.Controls.Add(this.tableLayoutPanel);
+			this.MinimizeBox = false;
 			this.Name = "PublishToWebonaryDlg";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.tableLayoutPanel.ResumeLayout(false);
