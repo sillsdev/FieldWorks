@@ -74,6 +74,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_cf1.Dispose();
 			m_cf2.Dispose();
+			m_cf3.Dispose();
+			m_cf4.Dispose();
 			m_window.Dispose();
 			m_application.Dispose();
 			m_mediator.Dispose();
@@ -1515,6 +1517,173 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(m_migrator.ConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
 			}
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+		}
+
+		/// <summary>
+		/// Check that an old configuration node migrates properly even if the label has been changed
+		/// from "Type" to "Variant Type".  (See https://jira.sil.org/browse/LT-16896.)
+		/// </summary>
+		[Test]
+		public void ConfigsMigrateModifiedLabelOkay()
+		{
+			var oldTypeNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = ", ",
+				ClassName = "LexEntryRef",
+				ContentVisible = true,
+				Label = "Type"
+			};
+			var oldVariantFormNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = ", ",
+				ClassName = "LexEntry",
+				ContentVisible = true,
+				Label = "Variant Form"
+			};
+			var oldCommentNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = " ",
+				ClassName = "LexEntryRef",
+				ContentVisible = false,
+				Label = "Comment",
+				WsLabel = "analysis",
+				WsType = "analysis"
+			};
+			var oldVariantsNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = ")",
+				Before = " (",
+				Between = "; ",
+				ClassName = "LexEntry",
+				ContentVisible = true,
+				Label = "Variants (of Entry)",
+			};
+			oldVariantsNode.Nodes.Add(oldTypeNode);
+			oldVariantsNode.Nodes.Add(oldVariantFormNode);
+			oldVariantsNode.Nodes.Add(oldCommentNode);
+			var oldRefSensesNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = "; ",
+				ClassName = "ReversalIndexEntry",
+				ContentVisible = true,
+				Label = "Referenced Senses",
+			};
+			oldRefSensesNode.Nodes.Add(oldVariantsNode);
+			var oldReversalEntryNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				ClassName = "ReversalIndexEntry",
+				ContentVisible = false,
+				Label = "Reversal Entry",
+			};
+			oldReversalEntryNode.Nodes.Add(oldRefSensesNode);
+
+			var convertedTopNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldReversalEntryNode);
+			Assert.AreEqual("Reversal Entry", convertedTopNode.Label, "Initial conversion should copy the Label attribute verbatim.");
+			Assert.AreEqual(1, convertedTopNode.Children.Count, "Children nodes should be converted");
+			Assert.AreEqual(1, convertedTopNode.Children[0].Children.Count, "Grandchildren nodes should be converted");
+			Assert.AreEqual(3, convertedTopNode.Children[0].Children[0].Children.Count, "Greatgrandchildren should be converted");
+			var convertedTypeNode = convertedTopNode.Children[0].Children[0].Children[0];
+			Assert.AreEqual("Type", convertedTypeNode.Label, "Nodes are converted in order");
+			Assert.IsNull(convertedTypeNode.FieldDescription, "Initial conversion should not set FieldDescription for the Type node");
+			var convertedCommentNode = convertedTopNode.Children[0].Children[0].Children[2];
+			Assert.AreEqual("Comment", convertedCommentNode.Label, "Third child converted in order okay");
+			Assert.IsNull(convertedCommentNode.FieldDescription, "Initial conversion should not set FieldDescription for the Comment node");
+
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedTopNode }, Label = "Test", Version = -1, AllPublications = true};
+			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
+
+			var newTypeNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = ", ",
+				Label = "Variant Type",
+				FieldDescription = "OwningEntry",
+				IsEnabled = true
+			};
+			var newFormNode = new ConfigurableDictionaryNode
+			{
+				Between = ", ",
+				Label = "Variant Form",
+				FieldDescription = "VariantEntryTypesRS",
+				SubField = "MLHeadWord",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				IsEnabled = true
+			};
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+			};
+			var newCommentNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = " ",
+				Label = "Comment",
+				FieldDescription = "Summary",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				IsEnabled = false
+			};
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+			};
+			var newVariantsNode = new ConfigurableDictionaryNode
+			{
+				After = ") ",
+				Before = "(",
+				Between = "; ",
+				Label = "Variants (of Entry)",
+				FieldDescription = "Owner",
+				SubField = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Children = new List<ConfigurableDictionaryNode> { newTypeNode, newFormNode, newCommentNode },
+				IsEnabled = true
+			};
+			(newVariantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).ListId = DictionaryNodeListOptions.ListIds.Variant;
+			(newVariantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> {
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "b0000000-c40e-433e-80b5-31da08771344", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "837ebe72-8c1d-4864-95d9-fa313c499d78", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a32f1d1c-4832-46a2-9732-c2276d6547e8", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "0c4663b3-4d9a-47af-b9a1-c8565d8112ed", IsEnabled = true }
+			};
+			var newRefSensesNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = "; ",
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { newVariantsNode },
+				IsEnabled = true
+			};
+			var newReversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
+				IsEnabled = true
+			};
+			var currentDefaultModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newReversalEntryNode } };
+			DictionaryConfigurationModel.SpecifyParents(currentDefaultModel.Parts);
+
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
+			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
+			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");
+			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");
 		}
 
 		#region Helper

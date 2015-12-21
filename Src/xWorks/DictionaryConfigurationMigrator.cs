@@ -413,6 +413,9 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Referenced Senses" && child.Parent.Label == "Reversal Entry")
 					result = "Vernacular Form";
 
+				if (child.Label == "Type" && child.Parent.Label == "Variants (of Entry)")
+					result = "Variant Type";
+
 			}
 			return result;
 		}

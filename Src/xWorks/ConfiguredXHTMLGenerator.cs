@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.XWorks
 				var property = entryType.GetProperty(config.FieldDescription);
 				if (property == null)
 				{
-					Debug.WriteLine("Issue with finding {0}", (object)config.FieldDescription);
+					Debug.WriteLine(String.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType));
 					return;
 				}
 				propertyValue = property.GetValue(field, new object[] { });
@@ -397,7 +397,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var subType = propertyValue.GetType();
 				var subProp = subType.GetProperty(config.SubField);
+				if (subProp == null)
+				{
+					Debug.WriteLine(String.Format("Issue with finding {0} for {1}", config.SubField, subType));
+					return;
+				}
 				propertyValue = subProp.GetValue(propertyValue, new object[] { });
+				// If the property value is null there is nothing to generate
+				if (propertyValue == null)
+					return;
 			}
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
