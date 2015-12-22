@@ -12,6 +12,7 @@ using System.Xml;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
@@ -322,20 +323,43 @@ namespace SIL.FieldWorks.XWorks
 					UpdateContent(pubDecorator, validConfiguration);
 					break;
 				case "DictionaryPublicationLayout":
+				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration();
+					currentConfig = GetCurrentConfigForReversalIndex(name, currentConfig);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if(validPublication != currentPublication)
 					{
 						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
 					}
-					UpdateContent(PublicationDecorator, currentConfig);
 					SetReversalIndexOnPropertyDlg();
+					UpdateContent(PublicationDecorator, currentConfig);
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
+		/// </summary>
+		/// <param name="name">Name of the property which affected say "ReversalIndexPublicationLayout"</param>
+		/// <param name="currentConfig">Configuration which is from DictionaryPublicationLayout, Which may be default</param>
+		/// <returns></returns>
+		private string GetCurrentConfigForReversalIndex(string name, string currentConfig)
+		{
+			if (name != "ReversalIndexPublicationLayout") return currentConfig;
+			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
+			{
+				currentConfig = allConfigurations[currentReversalIndex.ShortName];
+				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
+				SetReversalIndexOnPropertyDlg();
+			}
+			return currentConfig;
 		}
 
 
@@ -488,20 +512,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(m_informationBar == null)
 				return;
-
 			var titleStr = GetBaseTitleStringFromConfig();
-			if(titleStr == string.Empty)
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_mediator) == "Reversal Index";
+			if (isReversalIndex && Clerk.OwningObject.ShortName != null)
+				titleStr = Clerk.OwningObject.ShortName;
+			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				return;
 			}
-			// Set the configuration part of the title
-			SetConfigViewTitle();
-			//Set the publication part of the title
-			var pubNameTitlePiece = GetCurrentPublication();
-			if(pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
-				pubNameTitlePiece = xWorksStrings.ksAllEntries;
-			titleStr = pubNameTitlePiece + " " + titleStr;
+			if (!isReversalIndex)
+			{
+				// Set the configuration part of the title
+				SetConfigViewTitle();
+				//Set the publication part of the title
+				var pubNameTitlePiece = GetCurrentPublication();
+				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
+					pubNameTitlePiece = xWorksStrings.ksAllEntries;
+				titleStr = pubNameTitlePiece + " " + titleStr;
+			}
 			((IPaneBar)m_informationBar).Text = titleStr;
 		}
 
