@@ -226,6 +226,7 @@ namespace SIL.FieldWorks.XWorks
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
 			this.Controls.Add(this.manageConfigs_treeDetailButton_split);
+			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "DictionaryConfigurationDlg";
 			this.ShowIcon = false;
