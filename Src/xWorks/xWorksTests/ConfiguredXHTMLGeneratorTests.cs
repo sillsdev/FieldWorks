@@ -1485,6 +1485,79 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubsense()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = false,
+				ShowSharedGrammarInfoFirst = false
+			};
+			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d.d",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = false,
+				ShowSharedGrammarInfoFirst = false
+			};
+
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSingleSubSenseToSense(testEntry, "gloss",testEntry.SensesOS.First());
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
+				XHTMLWriter.Flush();
+				const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
+				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithDifferentNumberingStyle()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
@@ -4798,6 +4871,13 @@ namespace SIL.FieldWorks.XWorks
 			subSensesTwo.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.2", m_wsEn));
 		}
 
+		private void AddSingleSubSenseToSense(ILexEntry entry, string gloss,ILexSense sense)
+		{
+			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			sense.SensesOS.Add(subSensesOne);
+			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "1.1", m_wsEn));
+		}
 		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
 		{
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();

@@ -966,31 +966,43 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a senses collection and its contents
 		/// </summary>
-		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable collection)
+		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable senseCollection)
 		{
 			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
 			int excluded = 0;
-			foreach (var item in collection)
+			foreach (var item in senseCollection)
 			{
 				Debug.Assert(item is ILexSense);
 				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
 					++excluded;
 			}
-			int count = collection.Cast<object>().Count();
+			int count = senseCollection.Cast<object>().Count();
 			if (excluded == count)
 				return;
-			var isSingle = count == 1;
+			var isSingle = IsSingleSense(publicationDecorator, senseCollection);
 			string lastGrammaticalInfo, langId;
-			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, collection, out lastGrammaticalInfo, out langId);
+			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, senseCollection, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo)
 				InsertGramInfoBeforeSenses(settings, lastGrammaticalInfo, langId);
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
-			foreach (var item in collection)
+			foreach (var item in senseCollection)
 			{
 				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
 					continue;
 				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo);
 			}
+		}
+
+		/// <summary>
+		/// This method will Check for single sense
+		/// </summary>
+		private static bool IsSingleSense(DictionaryPublicationDecorator publicationDecorator, IEnumerable senseCollection)
+		{
+			int count = senseCollection.Cast<object>().Count();
+			if (count > 1) return false;
+			Debug.Assert(senseCollection is ICollection<ILexSense>);
+			int subcount = (senseCollection as ICollection<ILexSense>).Select(s => s.SensesOS.Count).FirstOrDefault();
+			return subcount == 0;
 		}
 
 		private static void InsertGramInfoBeforeSenses(GeneratorSettings settings, string lastGrammaticalInfo, string langId)
