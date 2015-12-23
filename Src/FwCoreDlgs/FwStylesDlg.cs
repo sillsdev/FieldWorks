@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fShowTEStyleTypes = false;
 		private object m_lastStyleTypeEntryForOtherApp;
 		private bool m_fOkToSaveTabsToStyle = true;
+		private static string m_oldStyle = "Dictionary-Normal";
 		#endregion
 
 		#region Constructors and initialization
@@ -248,14 +249,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					app.Synchronize(SyncMsg.ksyncStyle);
 					selectedStyle = stylesDlg.SelectedStyle;
-					var oldStyle = GetStyleName(combo.SelectedItem);
+					m_oldStyle = GetStyleName(combo.SelectedItem);
 					if (fixCombo != null)
 						fixCombo();
 					if (string.IsNullOrEmpty(selectedStyle))
 						selectedStyle = defaultStyle;
 					// Make the requested change if possible...otherwise restore the previous selction.
 					if (!SelectStyle(combo, selectedStyle))
-						SelectStyle(combo, oldStyle);
+						SelectStyle(combo, m_oldStyle);
 				}
 			}
 		}
@@ -719,6 +720,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else
 			{
+				m_cboTypes.SelectedIndex = 1; // All Styles
+				CurrentStyle = m_oldStyle;
 				m_btnDelete.Enabled = false;
 				m_btnCopy.Enabled = false;
 			}

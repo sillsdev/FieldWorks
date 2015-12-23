@@ -720,6 +720,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
 				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
+			LoadStylesLists_ResetComboxBox();
 			RefreshPreview();
 		}
 
