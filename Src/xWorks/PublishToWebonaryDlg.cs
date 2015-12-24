@@ -58,9 +58,27 @@ namespace SIL.FieldWorks.XWorks
 
 		private void PopulatePublicationsList()
 		{
-			foreach(var pub in Model.Publications)
+			var selectedConfiguration = Model.Configurations.Where(prop => prop.Value.ToString() == Model.SelectedConfiguration).ToList();
+			foreach (var pub in selectedConfiguration[0].Value.Publications)
 			{
 				publicationBox.Items.Add(pub);
+			}
+		}
+
+		private void PopulatePublicationsListBySelectedConfiguration()
+		{
+			if (Model.SelectedConfiguration != configurationBox.SelectedItem.ToString())
+			{
+				var selectedConfiguration =
+					Model.Configurations.Where(prop => prop.Value.ToString() == configurationBox.SelectedItem.ToString()).ToList();
+				publicationBox.Items.Clear();
+				foreach (var pub in selectedConfiguration[0].Value.Publications)
+				{
+					publicationBox.Items.Add(pub);
+				}
+				if (selectedConfiguration[0].Value.Publications.Count > 0)
+					publicationBox.SelectedIndex = 0;
+				Model.SelectedConfiguration = configurationBox.SelectedItem.ToString();
 			}
 		}
 
@@ -187,6 +205,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SaveToModel();
 		}
+
+		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			PopulatePublicationsListBySelectedConfiguration();
+		}
+
 	}
 
 	/// <summary>

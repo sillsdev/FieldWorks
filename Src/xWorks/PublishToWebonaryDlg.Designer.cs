@@ -213,6 +213,7 @@ namespace SIL.FieldWorks.XWorks
 			this.configurationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.configurationBox.FormattingEnabled = true;
 			this.configurationBox.Name = "configurationBox";
+			this.configurationBox.SelectedIndexChanged += new System.EventHandler(this.configurationBox_SelectedIndexChanged);
 			// 
 			// publicationBox
 			// 
