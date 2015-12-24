@@ -3778,6 +3778,44 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_IntegerCustomFieldGeneratesContent()
+		{
+			using (var customField = new CustomFieldForTest(Cache, "CustomInteger", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			 CellarPropertyType.Integer, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomInteger",
+					Label = "Custom Integer",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const int customData = 123456;
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetInt(testEntry.Hvo, customField.Flid, customData);
+				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+					XHTMLWriter.Flush();
+					var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_VariantOfReferencedHeadWord()
 		{

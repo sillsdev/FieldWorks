@@ -375,6 +375,11 @@ namespace SIL.FieldWorks.XWorks
 								propertyValue = cache.MainCacheAccessor.get_StringProp(((ICmObject)field).Hvo, customFieldFlid);
 								break;
 							}
+						case (int)CellarPropertyType.Integer:
+						{
+							propertyValue = cache.MainCacheAccessor.get_IntProp(((ICmObject)field).Hvo, customFieldFlid);
+							break;
+						}
 					}
 				}
 			}
