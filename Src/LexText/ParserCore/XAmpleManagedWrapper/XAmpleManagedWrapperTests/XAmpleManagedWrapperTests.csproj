@@ -61,6 +61,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\XAmpleManagedWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <SpecificVersion>False</SpecificVersion>

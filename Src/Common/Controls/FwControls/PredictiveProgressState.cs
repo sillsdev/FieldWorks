@@ -26,8 +26,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
-using System.Diagnostics;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -10,13 +10,13 @@ using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
 using Rhino.Mocks;
-using X11.XKlavier;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.Keyboarding.Linux;
+using X11.XKlavier;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -465,19 +465,19 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 		}
 
-		public void Location(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst,
-			out Utils.Rect _rdPrimary, out Utils.Rect _rdSecondary, out bool _fSplit,
+		public void Location(IVwGraphics _vg, Rect rcSrc, Rect rcDst,
+			out Rect _rdPrimary, out Rect _rdSecondary, out bool _fSplit,
 			out bool _fEndBeforeAnchor)
 		{
-			_rdPrimary = default(Utils.Rect);
-			_rdSecondary = default(Utils.Rect);
+			_rdPrimary = default(Rect);
+			_rdSecondary = default(Rect);
 			_fSplit = false;
 			_fEndBeforeAnchor = false;
 		}
 
-		public void GetParaLocation(out Utils.Rect _rdLoc)
+		public void GetParaLocation(out Rect _rdLoc)
 		{
-			_rdLoc = default(Utils.Rect);
+			_rdLoc = default(Rect);
 		}
 
 		public void ReplaceWithTsString(ITsString _tss)
@@ -1254,7 +1254,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public IVwSelection MakeSelAt(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst, bool fInstall)
+		public IVwSelection MakeSelAt(int xd, int yd, Rect rcSrc, Rect rcDst, bool fInstall)
 		{
 			throw new NotImplementedException();
 		}
@@ -1265,18 +1265,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInText(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public bool get_IsClickInText(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInObject(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst, out int _odt)
+		public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int _odt)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInOverlayTag(int xd, int yd, Utils.Rect rcSrc1, Utils.Rect rcDst1,
-			out int _iGuid, out string _bstrGuids, out Utils.Rect _rcTag, out Utils.Rect _rcAllTags,
+		public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1,
+			out int _iGuid, out string _bstrGuids, out Rect _rcTag, out Rect _rcAllTags,
 			out bool _fOpeningTag)
 		{
 			throw new NotImplementedException();
@@ -1327,27 +1327,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public void MouseDown(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDown(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseDblClk(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDblClk(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseMoveDrag(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseMoveDrag(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseDownExtended(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDownExtended(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseUp(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseUp(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
@@ -1357,12 +1357,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void DrawRoot(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst, bool fDrawSel)
+		public void DrawRoot(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
 		{
 			throw new NotImplementedException();
 		}
@@ -1427,7 +1427,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public void DrawRoot2(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst, bool fDrawSel,
+		public void DrawRoot2(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel,
 			int ysTop, int dysHeight)
 		{
 			throw new NotImplementedException();

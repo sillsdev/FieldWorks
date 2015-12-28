@@ -19,6 +19,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

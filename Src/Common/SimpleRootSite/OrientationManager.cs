@@ -3,8 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Drawing;
 using System.Windows.Forms;
@@ -52,7 +50,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="drawSel"></param>
 		/// <param name="clipRect"></param>
 		public virtual void DrawTheRoot(IVwDrawRootBuffered vdrb, IVwRootBox rootb, IntPtr hdc,
-			SIL.Utils.Rect drawRect, uint backColor, bool drawSel,
+			Rect drawRect, uint backColor, bool drawSel,
 			Rectangle clipRect)
 		{
 			vdrb.DrawTheRoot(rootb, hdc, clipRect, backColor,
@@ -198,7 +196,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="clipRect"></param>
 		/// -----------------------------------------------------------------------------------
 		public override void DrawTheRoot(IVwDrawRootBuffered vdrb, IVwRootBox rootb, IntPtr hdc,
-			SIL.Utils.Rect drawRect, uint backColor, bool drawSel,
+			Rect drawRect, uint backColor, bool drawSel,
 			Rectangle clipRect)
 		{
 			vdrb.DrawTheRootRotated(rootb, hdc, drawRect, backColor,

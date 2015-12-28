@@ -10,13 +10,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls.MGA;
+using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -209,7 +210,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
 			{
 				Rectangle rect = new Rectangle(dlgLocation, dlgSize);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

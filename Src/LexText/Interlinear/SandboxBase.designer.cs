@@ -5,7 +5,6 @@
 using System;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Impls;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.IText

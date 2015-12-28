@@ -136,7 +136,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			//if (locWnd != null && szWnd != null)
 			//{
 			//    Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-			//    ScreenUtils.EnsureVisibleRect(ref rect);
+			//    ScreenHelper.EnsureVisibleRect(ref rect);
 			//    DesktopBounds = rect;
 			//    StartPosition = FormStartPosition.Manual;
 			//}

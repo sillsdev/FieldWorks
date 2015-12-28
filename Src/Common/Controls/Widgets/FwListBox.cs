@@ -5,15 +5,16 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using System.Diagnostics;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -1484,9 +1485,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_owner.Items.Count == 0)
 				return;
 			IVwSelection sel = m_rootb.MakeSelAt(pt.X, pt.Y,
-				new SIL.Utils.Rect(rcSrcRoot.Left, rcSrcRoot.Top,
+				new Rect(rcSrcRoot.Left, rcSrcRoot.Top,
 				rcSrcRoot.Right, rcSrcRoot.Bottom),
-				new SIL.Utils.Rect(rcDstRoot.Left, rcDstRoot.Top,
+				new Rect(rcDstRoot.Left, rcDstRoot.Top,
 				rcDstRoot.Right, rcDstRoot.Bottom),
 				false);
 			if (sel == null)

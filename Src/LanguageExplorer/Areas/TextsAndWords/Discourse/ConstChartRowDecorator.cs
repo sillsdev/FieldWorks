@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils.ComTypes;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {

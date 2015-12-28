@@ -10,7 +10,6 @@ using System;
 using System.Collections.Specialized; // for StringCollection
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -21,11 +20,11 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Reporting;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE

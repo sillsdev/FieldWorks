@@ -3,21 +3,20 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Reporting;
 using SIL.Utils;
-using System.Collections.Generic;
 using SIL.CoreImpl;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.TE
 {

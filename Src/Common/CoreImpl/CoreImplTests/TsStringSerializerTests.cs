@@ -11,6 +11,7 @@ using System.Text;
 using System.Xml.Schema;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.CoreImpl

@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Reporting;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -1368,11 +1369,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (owner == null) throw new ArgumentNullException("owner");
 
-			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
-
-			var retval = new PartOfSpeech(m_cache, hvo, guid);
-			owner.SubPossibilitiesOS.Add(retval);
-			return retval;
+			IPartOfSpeech pos;
+			if (guid == Guid.Empty)
+			{
+				pos = Create();
+			}
+			else
+			{
+				int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				pos = new PartOfSpeech(m_cache, hvo, guid);
+			}
+			owner.SubPossibilitiesOS.Add(pos);
+			return pos;
 		}
 	}
 	#endregion

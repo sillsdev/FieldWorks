@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

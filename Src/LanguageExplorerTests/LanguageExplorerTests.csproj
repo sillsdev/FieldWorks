@@ -72,6 +72,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FwUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="ITextDll, Version=9.0.0.26705, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\ITextDll.dll</HintPath>
@@ -145,20 +149,26 @@
     <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
     <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
     <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Discourse\ConstituentChartTests.cs" />
+    <Compile Include="Discourse\ConstituentChartTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Discourse\DiscourseExportTests.cs" />
     <Compile Include="Discourse\DiscourseTestHelper.cs" />
     <Compile Include="Discourse\InMemoryDiscourseTestBase.cs" />
     <Compile Include="Discourse\InMemoryLogicTest.cs" />
     <Compile Include="Discourse\InMemoryMovedTextTests.cs" />
     <Compile Include="Discourse\InMemoryMoveEditTests.cs" />
-    <Compile Include="Discourse\InterlinRibbonTests.cs" />
+    <Compile Include="Discourse\InterlinRibbonTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Discourse\LogicTest.cs" />
     <Compile Include="Discourse\NotifyChangeSpy.cs" />
     <Compile Include="Discourse\TestCCLogic.cs" />
     <Compile Include="Dumpster\FlexBridgeListenerTests.cs" />
     <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
-    <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
+    <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
     <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -146,7 +147,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				&& m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

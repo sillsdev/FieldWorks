@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas

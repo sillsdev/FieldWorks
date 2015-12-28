@@ -253,15 +253,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		protected override ResourceManager ResourceMgr
-		{
-			get
-			{
-				return Properties.Resources.ResourceManager;
-			}
-		}
-
-		/// <summary />
 		[Test]
 		public void SimpleOverride()
 		{

@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using SIL.CoreImpl.Properties;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {

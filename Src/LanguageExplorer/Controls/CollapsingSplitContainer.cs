@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
 {

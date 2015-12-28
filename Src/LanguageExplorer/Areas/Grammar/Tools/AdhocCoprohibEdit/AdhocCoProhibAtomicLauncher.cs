@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.CoreImpl.MessageBoxEx;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -19,6 +18,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 
 namespace SIL.FieldWorks.IText
 {
@@ -809,8 +809,8 @@ namespace SIL.FieldWorks.IText
 			if (site == null)
 				return;
 
-			SetStyleSheetFor(site as IStyleSheet);
-			site.Cache = Cache;
+				SetStyleSheetFor(site as IStyleSheet);
+				site.Cache = Cache;
 			if (site is IFlexComponent)
 			{
 				(site as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);

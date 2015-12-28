@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int width = (int)SettingsKey.GetValue("InsertWidth", Width);
 				int height = (int)SettingsKey.GetValue("InsertHeight", Height);
 				Rectangle rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}*/

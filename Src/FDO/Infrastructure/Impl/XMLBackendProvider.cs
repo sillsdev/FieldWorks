@@ -13,10 +13,11 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.IO.FileLock;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.IO.FileLock;
 using SIL.Lexicon;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl

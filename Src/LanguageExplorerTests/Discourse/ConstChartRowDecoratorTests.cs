@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorerTests.Discourse
 {

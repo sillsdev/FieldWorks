@@ -11,10 +11,9 @@
 using System;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -67,22 +66,18 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Overrides of XmlBrowseViewBase
 
-		#region Overrides of XmlBrowseViewBase
-
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
+		{
 				Subscriber.Unsubscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
 			}
 
 			base.Dispose(disposing);
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Cause the behavior to switch to the current setting of ReadOnlyBrowse.
@@ -90,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private void SetSelectedRowHighlighting(object newValue)
 		{
-			SetSelectedRowHighlighting();
+				SetSelectedRowHighlighting();
 		}
 
 		/// <summary>

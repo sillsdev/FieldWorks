@@ -15,8 +15,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 
-// for FwApp
-
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>

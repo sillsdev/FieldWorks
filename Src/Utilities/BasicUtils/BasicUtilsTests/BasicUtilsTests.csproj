@@ -62,17 +62,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
@@ -82,30 +79,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
     <Compile Include="AlphaOutlineTests.cs" />
     <Compile Include="ArrayUtilsTests.cs" />
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
     <Compile Include="Attributes\RedirectHKCU.cs" />
-    <Compile Include="Attributes\SetCompanyAndProductForTestsAttribute.cs" />
     <Compile Include="BagTests.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
-    <Compile Include="ClipboardStub.cs" />
-    <Compile Include="ColorUtilTests.cs" />
-    <Compile Include="DummyKeyboardAdaptor.cs" />
     <Compile Include="FileUtilsTest.cs" />
-    <Compile Include="ImagePictureTest.cs" />
-    <Compile Include="MessageBoxStub.cs" />
     <Compile Include="MiscUtilsTests.cs" />
     <Compile Include="MockFileOs.cs" />
     <Compile Include="RecentItemsCacheTests.cs" />
     <Compile Include="Attributes\RegisterComDllsAttribute.cs" />
     <Compile Include="Attributes\RequireAdminPrivilegesAttribute.cs" />
     <Compile Include="RomanNumeralsTests.cs" />
-    <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="SetTests.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="SingletonsContainerTests.cs" />
@@ -113,9 +100,11 @@
     <Compile Include="UtilsTest.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <None Include="App.config" />
-    <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
-    <Compile Include="Attributes\InitializeNoOpKeyboardControllerAttribute.cs" />
     <Compile Include="Attributes\SetIcuDataEnvironmentVariableAttribute.cs" />
+    <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
+      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
+    </Compile>
+    <None Include="gendarme-BasicUtilsTests.ignore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

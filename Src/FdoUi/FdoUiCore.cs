@@ -3,26 +3,26 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -67,7 +67,6 @@ namespace SIL.FieldWorks.FdoUi
 		// and use reflection to make an instance?
 		static readonly Dictionary<int, int> m_subclasses = new Dictionary<int, int>();
 		protected Control m_hostControl;
-		// An additional target that should
 		protected IVwViewConstructor m_vc = null;
 
 		#endregion Data members
@@ -645,11 +644,11 @@ namespace SIL.FieldWorks.FdoUi
 				return false; // a special magic class id, only enabled explicitly.
 			if (Object.ClassID == specifiedClsid)
 				return true;
-			int baseClsid = m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID);
-			if (baseClsid == specifiedClsid) //handle one level of subclassing
-				return true;
-			return false;
-		}
+				int baseClsid = m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID);
+				if (baseClsid == specifiedClsid) //handle one level of subclassing
+					return true;
+					return false;
+				}
 #endif
 
 		/// <summary>
@@ -690,7 +689,6 @@ namespace SIL.FieldWorks.FdoUi
 
 			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
 		}
-
 
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
@@ -924,7 +922,6 @@ namespace SIL.FieldWorks.FdoUi
 			return false;
 		}
 
-
 		/// <summary>
 		/// Delete the object, after showing a confirmation dialog.
 		/// Return true if deleted, false, if cancelled.
@@ -1004,10 +1001,10 @@ namespace SIL.FieldWorks.FdoUi
 
 			IFlexApp app;
 			if (propertyTable != null && propertyTable.TryGetValue("App", out app))
-			{
-				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
-			}
-			string fileToDelete = file.AbsoluteInternalPath;
+				{
+					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
+				}
+				string fileToDelete = file.AbsoluteInternalPath;
 
 #if RANDYTODO
 				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
@@ -1036,7 +1033,7 @@ namespace SIL.FieldWorks.FdoUi
 				// If we can't actually delete the file for some reason, don't bother the user complaining.
 			}
 #endif
-			file.Delete();
+				file.Delete();
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()

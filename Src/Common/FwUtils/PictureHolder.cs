@@ -6,13 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
+using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// PictureHolder is a holding place for pictures that are useful to various windows through the lifetime of the

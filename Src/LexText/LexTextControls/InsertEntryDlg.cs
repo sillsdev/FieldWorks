@@ -21,18 +21,19 @@ using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.Collections;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -431,7 +432,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var width = (int)regKey.GetValue("InsertWidth", Width);
 					var height = (int)regKey.GetValue("InsertHeight", Height);
 					var rect = new Rectangle(x, y, width, height);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}

@@ -2,13 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
-using SIL.Utils;
-using System.Windows.Forms.VisualStyles;
+using System.Windows.Forms;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -131,7 +127,7 @@ namespace SIL.FieldWorks.Common.Controls
 					parts &= ~DataGridViewPaintParts.Focus;
 
 					// Grr. PaintParts is readonly. So I have to brute force it.
-					ReflectionHelper.SetField(e, "paintParts", parts);
+					SIL.Utils.ReflectionHelper.SetField(e, "paintParts", parts);
 					doPaint = true;
 				}
 			}

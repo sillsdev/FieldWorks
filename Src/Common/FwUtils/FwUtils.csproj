@@ -5,12 +5,6 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -33,8 +27,6 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <SccAuxPath>
-    </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -102,6 +94,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility" />
     <Reference Include="BasicUtils, Version=6.9.0.14190, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -126,6 +119,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\IPCFramework.dll</HintPath>
     </Reference>
+    <Reference Include="MsHtmHstInterop">
+      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SharedScrUtils, Version=7.0.1.18991, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
@@ -138,6 +135,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Lift.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
@@ -145,6 +146,14 @@
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core">
+      <Package>Geckofx-Core</Package>
+      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <Package>Geckofx-WinForms</Package>
+      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -177,7 +186,14 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
+    <Compile Include="FwAccessibleObject.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
+    <Compile Include="HtmlControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ICollapsingSplitContainer.cs" />
+    <Compile Include="ICtrlTabProvider.cs" />
+    <Compile Include="IdleQueue.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
@@ -189,12 +205,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="IMainContentControl.cs" />
+    <Compile Include="IMainUserControl.cs" />
     <Compile Include="InstallationException.cs" />
     <Compile Include="Inventory.cs" />
+    <Compile Include="IPaneBar.cs" />
+    <Compile Include="IPaneBarContainer.cs" />
+    <Compile Include="IPaneBarUser.cs" />
+    <Compile Include="IPersistenceProvider.cs" />
+    <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
+    <Compile Include="IReceiveSequentialMessages.cs" />
+    <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
+    <Compile Include="MainUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
+    <Compile Include="MessageSequencer.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
@@ -210,6 +239,47 @@
       <LastGenOutput>FwUtilsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Include="IFwRegistryHelper.cs" />
+    <Compile Include="Pathway\SilSubKey.cs" />
+    <Compile Include="Pathway\PathwayUtils.cs" />
+    <Compile Include="ComponentsExtensionMethods.cs" />
+    <Compile Include="Win32Wrappers.cs" />
+    <Compile Include="RegistryHelper.cs" />
+    <Compile Include="UserActivityMonitor.cs" />
+    <Compile Include="MessageBoxUtils.cs" />
+    <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="ClipboardUtils.cs" />
+    <Compile Include="ThreadHelper.cs" />
+    <Compile Include="ImagePicture.cs" />
+    <Compile Include="OLEConvert.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PrinterUtils.cs" />
+    <Compile Include="ManagedPictureFactory.cs" />
+    <Compile Include="GraphicsManager.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="WaitCursor.cs" />
+    <Compile Include="RegistryGroup.cs" />
+    <Compile Include="PersistenceProviderFactory.cs" />
+    <Compile Include="PropertyTableFactory.cs" />
+    <Compile Include="Impls\PersistenceProvider.cs" />
+    <Compile Include="Impls\PropertyTable.cs" />
+    <EmbeddedResource Include="HtmlControl.resx">
+      <DependentUpon>HtmlControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageBoxEx\MessageBoxExIcon.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExManager.cs" />
+    <Compile Include="MessageBoxEx\MessageBoxExResult.cs" />
+    <Compile Include="MessageBoxEx\TimeoutResult.cs" />
+    <EmbeddedResource Include="MessageBoxEx\MessageBoxExForm.resx">
+      <DependentUpon>MessageBoxExForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <Content Include="MessageBoxEx\Notes.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -240,4 +310,5 @@
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
   <Import Project="BuildInclude.targets" />
+  <ItemGroup />
 </Project>

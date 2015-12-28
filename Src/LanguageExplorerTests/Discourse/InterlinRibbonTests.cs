@@ -4,16 +4,16 @@
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
-using System.Windows.Forms;
 using System.Drawing;
-using SIL.FieldWorks.FDO;
-using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using System.Windows.Forms;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.Utils.Attributes;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using LanguageExplorer.Areas.TextsAndWords.Discourse;
 
 namespace LanguageExplorerTests.Discourse
 {

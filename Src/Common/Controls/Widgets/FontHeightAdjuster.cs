@@ -9,15 +9,14 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Reflection;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using System.Drawing;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using System.Diagnostics;
+using SIL.Reporting;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Widgets

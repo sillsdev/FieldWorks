@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit

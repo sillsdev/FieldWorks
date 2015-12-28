@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {

@@ -3,14 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Xml;
-using System.Windows.Forms;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using System.Xml;
 using System.Linq;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon
 {

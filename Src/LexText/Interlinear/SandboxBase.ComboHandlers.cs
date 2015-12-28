@@ -10,17 +10,17 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
-using Color=System.Drawing.Color;
-using SIL.CoreImpl;
+using SIL.Utils;
+using Color = System.Drawing.Color;
 
 namespace SIL.FieldWorks.IText
 {
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 		/// If it is a ComboListBox pop it up at the relevant place for the indicated location.
 		/// </summary>
 		/// <param name="loc"></param>
-		void Activate(SIL.Utils.Rect loc);
+		void Activate(Rect loc);
 
 		/// <summary>
 		/// This one is a bit awkward in this interface, but it simplifies things. It's OK to
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.IText
 			// If the control is a combo make it visible at the indicated location.
 			// If it is a ComboListBox pop it up at the relevant place for the indicated
 			// location.
-			public virtual void Activate(SIL.Utils.Rect loc)
+			public virtual void Activate(Rect loc)
 			{
 				CheckDisposed();
 
@@ -3323,7 +3323,7 @@ namespace SIL.FieldWorks.IText
 				m_tree.Load += new EventHandler(m_tree_Load);
 				// Handle AfterSelect events through POSPopupTreeManager in m_tree_Load().
 			}
-			public override void Activate(SIL.Utils.Rect loc)
+			public override void Activate(Rect loc)
 			{
 				CheckDisposed();
 

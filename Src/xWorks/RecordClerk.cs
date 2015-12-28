@@ -40,18 +40,20 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.Utils;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.Reporting;
+using SIL.Utils;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -642,12 +644,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return false; // we didn't change anything.
 			}
-			if (m_list.Sorter == sorter)
-				return false;
+				if (m_list.Sorter == sorter)
+					return false;
 			// (LT-9515) restored sorters need to set some properties that could not be persisted.
-			m_list.Sorter = sorter;
-			return true;
-		}
+				m_list.Sorter = sorter;
+				return true;
+			}
 
 		/// <summary>
 		/// Compares the state of the filters and sorters to persisted values in property table
@@ -1863,51 +1865,51 @@ namespace SIL.FieldWorks.XWorks
 
 			var target = m_relatedClerk.CurrentObject;
 			if (m_relationToRelatedClerk.StartsWith("root:"))
-			{
-				// The object to look for in our list is a 'root' of the one in the other list:
-				// that is, the object in the other list itself or one of its owners, the highest one in the
-				// hierarchy of a specified class. For example, the other list may contain subrecords,
-				// we want to select an owning top-level record.
-				var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
-				var mdc = Cache.MetaDataCacheAccessor;
-				var classId = mdc.GetClassId(className);
-				var targetObj = target;
-				for(;targetObj != null; targetObj = targetObj.Owner)
-				{
-					if (targetObj.ClassID == classId)
-						target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
-				}
+					{
+						// The object to look for in our list is a 'root' of the one in the other list:
+						// that is, the object in the other list itself or one of its owners, the highest one in the
+						// hierarchy of a specified class. For example, the other list may contain subrecords,
+						// we want to select an owning top-level record.
+						var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
+						var mdc = Cache.MetaDataCacheAccessor;
+						var classId = mdc.GetClassId(className);
+						var targetObj = target;
+						for(;targetObj != null; targetObj = targetObj.Owner)
+						{
+							if (targetObj.ClassID == classId)
+								target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
+						}
 				if (target != m_relatedClerk.CurrentObject)
 					SetSubitem(m_relatedClerk.CurrentObject);
-				else
-					SetSubitem(null); // same object, no need for special subitem behavior.
-			}
+						else
+							SetSubitem(null); // same object, no need for special subitem behavior.
+					}
 			else if ( m_relationToRelatedClerk == "part")
-			{
+					{
 				if (m_relatedClerk is SubitemRecordClerk)
-				{
-					// It should keep track of precisely which object we want.
+						{
+							// It should keep track of precisely which object we want.
 					var subitemClerk = m_relatedClerk as SubitemRecordClerk;
-					if (subitemClerk.UsedToSyncRelatedClerk)
-					{
-						// We've synchronized this clerk from the related one ONCE. In case we initialize
-						// another view from this Clerk, we don't want to do it again...for example, if we
-						// switch from doc to Edit, then change records, then switch to Browse, we want
-						// to stay on the same record, not switch again to the document view one.
-						// Of course this would be a problem if more than one Clerk had the same
-						// related clerk, but that hasn't happened yet.
-						return false;
+							if (subitemClerk.UsedToSyncRelatedClerk)
+							{
+								// We've synchronized this clerk from the related one ONCE. In case we initialize
+								// another view from this Clerk, we don't want to do it again...for example, if we
+								// switch from doc to Edit, then change records, then switch to Browse, we want
+								// to stay on the same record, not switch again to the document view one.
+								// Of course this would be a problem if more than one Clerk had the same
+								// related clerk, but that hasn't happened yet.
+								return false;
+							}
+							if (subitemClerk.Subitem != null)
+							{
+								target = subitemClerk.Subitem;
+								subitemClerk.UsedToSyncRelatedClerk = true;
+							}
+						}
 					}
-					if (subitemClerk.Subitem != null)
-					{
-						target = subitemClerk.Subitem;
-						subitemClerk.UsedToSyncRelatedClerk = true;
-					}
+					JumpToRecord(target.Hvo);
+					return true;
 				}
-			}
-			JumpToRecord(target.Hvo);
-			return true;
-		}
 
 		private void ResetStatusBarMessageForCurrentObject()
 		{
@@ -2182,9 +2184,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Update the contents of the filter list.
 		/// </summary>
 		private void FilterListChanged_Message_Handler(object newValue)
-		{
-			m_filterProvider.ReLoad();
-		}
+			{
+				m_filterProvider.ReLoad();
+			}
 
 		public ICmObject CurrentObject
 		{

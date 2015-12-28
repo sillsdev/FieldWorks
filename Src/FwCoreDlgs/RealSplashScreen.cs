@@ -11,8 +11,9 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -366,8 +367,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void SetPosition(object obj, System.EventArgs e)
 		{
-			Left = (ScreenUtils.PrimaryScreen.WorkingArea.Width - Width) / 2;
-			Top = (ScreenUtils.PrimaryScreen.WorkingArea.Height - Height) / 2;
+			Left = (ScreenHelper.PrimaryScreen.WorkingArea.Width - Width) / 2;
+			Top = (ScreenHelper.PrimaryScreen.WorkingArea.Height - Height) / 2;
 		}
 		#endregion
 

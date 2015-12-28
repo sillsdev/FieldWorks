@@ -4,7 +4,7 @@
 
 using System.IO;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.SendReceive
 {

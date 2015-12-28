@@ -15,19 +15,20 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Lift;
-using SIL.Lift.Migration;
-using SIL.Lift.Parsing;
-using SIL.Lift.Validation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.Lift.Validation;
+using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -282,7 +283,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						SIL.Utils.Logger.WriteEvent(bldr.ToString());
+						Logger.WriteEvent(bldr.ToString());
 				}
 				catch
 				{

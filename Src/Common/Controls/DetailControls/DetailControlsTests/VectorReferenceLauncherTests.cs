@@ -10,13 +10,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
-
 using NUnit.Framework;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

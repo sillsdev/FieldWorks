@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
+using SIL.FieldWorks.FDO;
 using SIL.Reporting;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using Logger = SIL.Utils.Logger;
 
 namespace LanguageExplorer.Dumpster
 {

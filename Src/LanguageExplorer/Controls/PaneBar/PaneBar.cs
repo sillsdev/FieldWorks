@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.PaneBar
 {

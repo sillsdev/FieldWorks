@@ -18,6 +18,7 @@ using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {

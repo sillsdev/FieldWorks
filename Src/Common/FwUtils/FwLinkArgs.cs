@@ -9,9 +9,9 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Web;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace XMLViewsTests
 {

@@ -14,17 +14,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.WordWorks.Parser;
+using SIL.Utils;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 namespace LanguageExplorer.Dumpster
 {

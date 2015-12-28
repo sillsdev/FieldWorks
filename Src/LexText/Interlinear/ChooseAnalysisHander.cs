@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -553,7 +552,7 @@ namespace SIL.FieldWorks.IText
 		/// Display the combo box at the specified location, or the list box pulled down from the specified location.
 		/// </summary>
 		/// <param name="loc"></param>
-		public void Activate(SIL.Utils.Rect loc)
+		public void Activate(Rect loc)
 		{
 			CheckDisposed();
 

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.SendReceive
 {

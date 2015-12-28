@@ -6,6 +6,7 @@ using System.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.FDOTests;

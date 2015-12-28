@@ -11,10 +11,7 @@
 
 using System.Windows.Forms;
 using NUnit.Framework;
-using System;
 using SIL.FieldWorks.FDO.FDOTests;
-using System.Collections.Generic;
-using System.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs

@@ -5,7 +5,8 @@
 using System;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnClientSizeChanged(e);
 
 			if (m_overrideBorderDrawing)
-				Utils.Win32.SendMessage(Handle, PaintingHelper.WM_NCPAINT, 1, 0);
+				Win32.SendMessage(Handle, PaintingHelper.WM_NCPAINT, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------

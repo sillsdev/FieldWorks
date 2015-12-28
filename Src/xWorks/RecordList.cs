@@ -10,18 +10,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Widgets;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl;
+using SIL.Reporting;
+using SIL.Utils;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -120,11 +122,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected ICmObject m_owningObject;
 		/// <summary>
-		/// This enables/disables SendPropChangedOnListChange(). The default is enabled (true).
+		/// This enables/disables SendPropChangedOnListChange().  The default is enabled (true).
 		/// </summary>
 		protected bool m_fEnableSendPropChanged = true;
 		/// <summary>
-		/// This enables/disables filtering independent of assigning a filter. The default is enabled (true).
+		/// This enables/disables filtering independent of assigning a filter.  The default is enabled (true).
 		/// </summary>
 		protected bool m_fEnableFilters = true;
 
@@ -235,8 +237,8 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				return m_objectListPublisher;
+				}
 			}
-		}
 
 		internal protected virtual string PropertyTableId(string sorterOrFilter)
 		{
@@ -712,30 +714,30 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-			// We've deleted an object. Unfortunately we can't find out what object was deleted.
-			// Therefore it will be too slow to check every item in our list. Checking out the current one
-			// thoroughly prevents many problems (e.g., LT-4880)
+				// We've deleted an object. Unfortunately we can't find out what object was deleted.
+				// Therefore it will be too slow to check every item in our list. Checking out the current one
+				// thoroughly prevents many problems (e.g., LT-4880)
 			var item = SortedObjects[CurrentIndex];
 			if (!(item is IManyOnePathSortItem))
-			{
+				{
 				return;
 			}
 			var asManyOnePathSortItem = (IManyOnePathSortItem)item;
 			if (!m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.KeyObject))
-			{
-				ReloadList();
+					{
+						ReloadList();
 				return;
-			}
+					}
 			for (var i = 0; i < asManyOnePathSortItem.PathLength; i++)
-			{
+					{
 				if (m_cache.ServiceLocator.IsValidObjectId(asManyOnePathSortItem.PathObject(i)))
-				{
+						{
 					continue;
 				}
-				ReloadList();
+							ReloadList();
 				return;
-			}
-		}
+						}
+					}
 
 		protected virtual bool TryHandleUpdateOrMarkPendingReload(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -745,9 +747,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					return true;		// This PropChanged doesn't really apply to us.
 				}
-				ReloadList(ivMin, cvIns, cvDel);
-				return true;
-			}
+					ReloadList(ivMin, cvIns, cvDel);
+					return true;
+				}
 			if (tag == SegmentTags.kflidAnalyses && m_objectListPublisher.OwningFieldName == "Wordforms")
 			{
 				// Changing this potentially changes the list of wordforms that occur in the interesting texts.
@@ -765,28 +767,28 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 
-			// This may be a change to content we depend upon.
-			// 1) see if the property is the VirtualFlid of the owning clerk. If so,
-			// the owning clerk has reloaded, so we should also reload.
-			RecordClerk clerkProvidingRootObject = null;
-			if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
-				clerkProvidingRootObject.VirtualFlid == tag &&
-				cvDel > 0)
-			{
-				// we're deleting or replacing items, so assume need to reload.
-				// we want to wait until after everything is finished reloading, however.
-				m_requestedLoadWhileSuppressed = true;
-				return true;
-			}
-			// 2) Entries depend upon a few different properties.
+				// This may be a change to content we depend upon.
+				// 1) see if the property is the VirtualFlid of the owning clerk. If so,
+				// the owning clerk has reloaded, so we should also reload.
+				RecordClerk clerkProvidingRootObject = null;
+				if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
+					clerkProvidingRootObject.VirtualFlid == tag &&
+					cvDel > 0)
+				{
+					// we're deleting or replacing items, so assume need to reload.
+					// we want to wait until after everything is finished reloading, however.
+					m_requestedLoadWhileSuppressed = true;
+					return true;
+				}
+				// 2) Entries depend upon a few different properties.
 			if (m_flid != m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries || !EntriesDependsUponProp(tag))
-			{
+				{
 				return false;
 			}
 
-			MarkEntriesForReload();
-			return true;
-		}
+					MarkEntriesForReload();
+					return true;
+				}
 
 		protected virtual void MarkEntriesForReload()
 		{
@@ -2725,14 +2727,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
-		/// <summary>
+	/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
+	/// </summary>
 		/// <param name="propertyTable">Interface to a property table.</param>
 		/// <param name="publisher">Interface to the publisher.</param>
 		/// <param name="subscriber">Interface to the subscriber.</param>
 		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
-		{
+	{
 			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
 
 			PropertyTable = propertyTable;
@@ -2751,18 +2753,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				UpdatePrivateList();
 			}
-		}
+	}
 
 		#endregion
 
 		private class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
 		{
 			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
-			{
+	{
 				HvoOwner = hvoOwner;
 				CpiPath = cpiPath;
 				List = list;
-			}
+	}
 
 			private readonly int HvoOwner;
 			private readonly IList<ClassAndPropInfo> CpiPath;
@@ -2771,7 +2773,7 @@ namespace SIL.FieldWorks.XWorks
 			#region ICreateAndInsert<ICmObject> Members
 
 			public ICmObject Create()
-			{
+	{
 				return List.CreateNewObject(HvoOwner, CpiPath);
 			}
 

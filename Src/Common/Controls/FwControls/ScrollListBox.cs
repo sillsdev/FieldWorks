@@ -10,9 +10,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Controls
 			else if (m.Msg == (int)Win32.WinMsgs.WM_MOUSEMOVE)
 			{
 				OnMouseMove(new MouseEventArgs(
-					MiscUtils.TranslateMouseButtons((Win32.MouseButtons)m.WParam.ToInt32()), 0,
+					SIL.FieldWorks.Common.FwUtils.FwUtils.TranslateMouseButtons((Win32.MouseButtons)m.WParam.ToInt32()), 0,
 					MiscUtils.LoWord(m.LParam), MiscUtils.HiWord(m.LParam), 0));
 				m.Result = IntPtr.Zero;
 				return;

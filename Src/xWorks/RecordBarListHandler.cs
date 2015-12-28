@@ -6,12 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
 {

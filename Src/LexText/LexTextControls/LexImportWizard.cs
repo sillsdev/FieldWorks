@@ -14,10 +14,10 @@ using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Sfm2Xml;
-// For Registry and RegistryKey.
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -25,8 +25,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SilEncConverters40;
 
 namespace SIL.FieldWorks.LexText.Controls

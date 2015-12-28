@@ -8,12 +8,13 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>Used to move or copy media files when they are linked to a FieldWorks project</summary>
-	public class MoveOrCopyFilesController
+	public static class MoveOrCopyFilesController
 	{
 		#region Static methods
 		/// <summary>

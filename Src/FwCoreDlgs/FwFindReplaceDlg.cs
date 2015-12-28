@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -637,7 +638,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (locWnd != null)
 					{
 						Rectangle rect = new Rectangle((Point)locWnd, this.Size);
-						ScreenUtils.EnsureVisibleRect(ref rect);
+						ScreenHelper.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
 					}
@@ -1314,7 +1315,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private static bool SuppressAllMatchNotFoundMessages(object sender, string defaultMsg, MatchType type)
 		{
-				return false;
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1867,7 +1868,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					try
 					{
-						var newSite = ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
+						var newSite = SIL.Utils.ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
 						if (newSite != null)
 							m_vwRootsite = newSite;
 					}

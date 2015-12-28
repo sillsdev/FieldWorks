@@ -7,6 +7,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -14,10 +15,9 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Media;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Resources;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.SharedScrControls
@@ -755,7 +755,7 @@ namespace SILUBS.SharedScrControls
 			// Make sure that the drop down fits on the screen.
 			Rectangle rect = new Rectangle(dropDown.DesktopLocation,
 				new Size(dropDown.Width, dropDown.Height));
-			ScreenUtils.EnsureVisibleRect(ref rect);
+			ScreenHelper.EnsureVisibleRect(ref rect);
 			dropDown.DesktopLocation = new Point(rect.Left, rect.Top);
 		}
 
@@ -772,7 +772,7 @@ namespace SILUBS.SharedScrControls
 		{
 			// determine the usable space on the screen that contains the top left
 			// corner of the ScrPassageControl.
-			Rectangle rcAllowable = ScreenUtils.AdjustedWorkingArea(Screen.FromPoint(screenPoint));
+			Rectangle rcAllowable = ScreenHelper.AdjustedWorkingArea(Screen.FromPoint(screenPoint));
 
 			// If there is not enough space to go down, then go up
 			return (rcAllowable.Height - screenPoint.Y - Height - dropDown.Height < 0);

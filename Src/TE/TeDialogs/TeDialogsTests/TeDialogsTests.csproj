@@ -198,14 +198,23 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="ArchiveMaintenanceDialogTests.cs" />
-    <Compile Include="BookPropertiesTests.cs" />
-    <Compile Include="FilterBookDialogTests.cs" />
+    <Compile Include="ArchiveMaintenanceDialogTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BookPropertiesTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterBookDialogTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ImportedBooksTests.cs" />
     <Compile Include="ScripturePropertiesTests.cs">
     </Compile>

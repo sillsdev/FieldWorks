@@ -13,19 +13,20 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Paratext;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.RootSites;
-using Paratext;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.Resources;
+using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

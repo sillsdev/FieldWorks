@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using Sfm2Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -22,7 +23,6 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.IText
 {

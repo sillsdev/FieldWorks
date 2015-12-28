@@ -3,20 +3,11 @@
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 
-# reference only, we don't create the object
-T: SIL.Utils.RegistryGroup
-
 # Dispose is called, but there's no implicit Dispose() method
 T: SIL.Utils.ConsumerThread`2
 
-# Disposed, potentially on different thread
-T: SIL.Utils.ThreadHelper
-
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
-
-# Passed in to m_out, disposed in Dispose()
-M: System.Void SIL.Utils.Logger::InitializeTextWriter()
 
 # Reference
 M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>*::System.Collections.IEnumerable.GetEnumerator()
@@ -25,12 +16,6 @@ M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>*::S
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeBelow>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<InOrderTraversal>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Boolean SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>c__Iterator0::MoveNext()
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Portability.NewLineLiteralRule
-
-# Splitting lines
-M: System.Void SIL.Utils.Logger::WriteEventInternal(System.String)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
@@ -42,12 +27,6 @@ T: SIL.Utils.TextWriterStream
 T: SIL.Utils.SingletonsContainer/SingletonsContainerImpl
 
 #-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
-
-# interface exposes Dispose() for COM objects
-T: SIL.Utils.IComDisposable
-
-#-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
 
 # Looking at the mono source it looks like DefaultTraceListener.LogFileName is complete
@@ -55,9 +34,6 @@ M: System.Void SIL.Utils.EnvVarTraceListener::.ctor(System.String)
 
 # MainWindowHandle is only used to log information
 M: System.Void SIL.Utils.Logger::WriteEventInternal(System.String)
-
-# Incomplete Mono feature. TODO-Linux comment added.
-M: System.Windows.Forms.DialogResult SIL.Utils.MessageBoxUtils/MessageBoxAdapter::Show(System.Windows.Forms.IWin32Window,System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon,System.Windows.Forms.MessageBoxDefaultButton,System.Windows.Forms.MessageBoxOptions,System.String,System.Windows.Forms.HelpNavigator,System.Object)
 
 # We don't care too much about Mono on Windows
 M: System.Int32 SIL.Utils.MiscUtils::GetDiskDriveStats(System.UInt64&,System.UInt64&)

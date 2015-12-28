@@ -18,6 +18,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -133,12 +134,12 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			// to prevent the dialog growing every time at 120 dpi. But such an override
 			// makes it too small to show all the controls at the default size.
 			// It's better just to use the default size until it's resizeable for some reason.
-			//m_propertyTable.GetValue("msaCreatorDlgSize");
+			//PropertyTable.GetValue("msaCreatorDlgSize");
 			object szWnd = Size;
 			if (locWnd != null && szWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

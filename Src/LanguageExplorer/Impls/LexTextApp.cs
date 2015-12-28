@@ -13,21 +13,23 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
-using LanguageExplorer.HelpTopics;
 using Microsoft.Win32;
 using SIL.CoreImpl;
-using SIL.CoreImpl.MessageBoxEx;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.Reporting;
 using SIL.Utils;
+using SIL.Windows.Forms;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 namespace LanguageExplorer.Impls
 {
@@ -1098,7 +1100,7 @@ Old Mediator methods/commands
 				// since the last time he ran the program.  (See LT-1083.)
 				Rectangle rcNewWnd = fwMainWindow.DesktopBounds;
 				//				Rectangle rcScrn = Screen.FromRectangle(rcNewWnd).WorkingArea;
-				ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+				ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 				fwMainWindow.DesktopBounds = rcNewWnd;
 				fwMainWindow.StartPosition = FormStartPosition.Manual;
 			}
@@ -1505,7 +1507,7 @@ Old Mediator methods/commands
 			// on the screen its mostly on. Note: this will only be necessary when the window
 			// being copied from is partly off the screen in a single monitor system or
 			// spanning multiple monitors in a multiple monitor system.
-			ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+			ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 
 			// Set the properties of the new window
 			wndNew.DesktopBounds = rcNewWnd;
@@ -1667,7 +1669,7 @@ Old Mediator methods/commands
 			// Get the screen in which to cascade.
 			var scrn = Screen.FromControl(wndCurr);
 
-			var rcScrnAdjusted = ScreenUtils.AdjustedWorkingArea(scrn);
+			var rcScrnAdjusted = ScreenHelper.AdjustedWorkingArea(scrn);
 			var rcUpperLeft = rcScrnAdjusted;
 			rcUpperLeft.Width = CascadeSize(rcUpperLeft.Width, wndCurr.MinimumSize.Width);
 			rcUpperLeft.Height = CascadeSize(rcUpperLeft.Height, wndCurr.MinimumSize.Height);
@@ -1833,8 +1835,8 @@ Old Mediator methods/commands
 			// does not include the task bar. However, we cannot set a widnow's X or Y
 			// coordinate to the working area's X or Y. If the window is to be located
 			// in the upper left corner next to the task bar, X and Y must be 0.
-			rcDesired.X -= ScreenUtils.TaskbarWidth;
-			rcDesired.Y -= ScreenUtils.TaskbarHeight;
+			rcDesired.X -= ScreenHelper.TaskbarWidth;
+			rcDesired.Y -= ScreenHelper.TaskbarHeight;
 
 			// Move the active window to its proper place and size.
 			wndCurr.DesktopBounds = rcDesired;

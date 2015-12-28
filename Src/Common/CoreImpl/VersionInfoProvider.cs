@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,7 +8,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace SIL.CoreImpl
 {
@@ -20,10 +19,10 @@ namespace SIL.CoreImpl
 	public class VersionInfoProvider
 	{
 		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2013 SIL International";
+		public const string kDefaultCopyrightString = "Copyright (c) 2002-2016 SIL International";
 		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is
 		/// true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2013";
+		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2016";
 
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;
@@ -44,6 +43,81 @@ namespace SIL.CoreImpl
 			m_fShowSILInfo = fShowSILInfo;
 		}
 
+		private static string InternalProductName
+		{
+			// Code copied from Mono implementation of Application.ProductName
+			get
+			{
+				var name = string.Empty;
+
+				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+
+
+				var attrs = (AssemblyProductAttribute[])assembly.GetCustomAttributes(
+					typeof(AssemblyProductAttribute), true);
+
+				if (attrs != null && attrs.Length > 0)
+					name = attrs [0].Product;
+
+				// If there is no [AssemblyProduct], .NET returns the name of the innermost
+				// namespace and if that fails, resorts to the name of the class containing Main()
+				if (string.IsNullOrEmpty(name) && assembly.EntryPoint != null)
+				{
+					name = assembly.EntryPoint.DeclaringType.Namespace;
+
+					if (name != null)
+					{
+						int lastDot = name.LastIndexOf('.');
+						if (lastDot >= 0 && lastDot < name.Length - 1)
+							name = name.Substring(lastDot + 1);
+					}
+
+					if (string.IsNullOrEmpty(name))
+						name = assembly.EntryPoint.DeclaringType.FullName;
+				}
+
+				return name;
+			}
+		}
+
+		private static string InternalProductVersion
+		{
+			// Code copied from Mono implementation of Application.ProductVersion
+			get
+			{
+				var version = string.Empty;
+
+				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+
+
+				var infoVersion = Attribute.GetCustomAttribute(assembly,
+						typeof (AssemblyInformationalVersionAttribute))
+					as AssemblyInformationalVersionAttribute;
+
+				if (infoVersion != null)
+					version = infoVersion.InformationalVersion;
+
+				// If [AssemblyFileVersion] is present it is used
+				// before resorting to assembly version
+				if (string.IsNullOrEmpty(version))
+				{
+					var fileVersion = Attribute.GetCustomAttribute(assembly,
+							typeof(AssemblyFileVersionAttribute))
+						as AssemblyFileVersionAttribute;
+					if (fileVersion != null)
+						version = fileVersion.Version;
+				}
+
+				// If neither [AssemblyInformationalVersionAttribute] nor [AssemblyFileVersion]
+				// are present, then use the assembly version
+				if (string.IsNullOrEmpty(version))
+					version = assembly.GetName().Version.ToString();
+
+				return version;
+			}
+		}
+
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the product.
@@ -55,7 +129,7 @@ namespace SIL.CoreImpl
 			{
 				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
 				return (attributes != null && attributes.Length > 0) ?
-					((AssemblyTitleAttribute)attributes[0]).Title : Application.ProductName;
+					((AssemblyTitleAttribute)attributes[0]).Title : InternalProductName;
 			}
 		}
 
@@ -69,7 +143,8 @@ namespace SIL.CoreImpl
 			get
 			{
 				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				string version = (attributes.Length > 0) ? ((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
+				string version = (attributes.Length > 0) ?
+					((AssemblyFileVersionAttribute)attributes[0]).Version : InternalProductVersion;
 				int ichSpace = version.IndexOf(' ');
 				return (ichSpace > 0) ? version.Remove(ichSpace) : version;
 			}
@@ -106,7 +181,7 @@ namespace SIL.CoreImpl
 				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
 				string appVersion = (attributes != null && attributes.Length > 0) ?
 					((AssemblyFileVersionAttribute)attributes[0]).Version :
-					Application.ProductVersion;
+					InternalProductVersion;
 				// Extract the fourth (and final) field of the version to get a date value.
 				int ich = 0;
 				for (int i = 0; i < 3; i++)
@@ -143,7 +218,7 @@ namespace SIL.CoreImpl
 					typeof(AssemblyInformationalVersionAttribute), false);
 				string version = (attributes != null && attributes.Length > 0) ?
 					((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
-					Application.ProductVersion;
+					InternalProductVersion;
 				return string.Format(CoreImplStrings.kstidMajorVersionFmt, version);
 			}
 		}

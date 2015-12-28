@@ -5,21 +5,21 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {

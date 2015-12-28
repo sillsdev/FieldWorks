@@ -156,6 +156,9 @@
       <Name>TeStylesXml</Name>
       <HintPath>..\..\..\..\Output\Debug\TeStylesXml.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtilsTests">
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

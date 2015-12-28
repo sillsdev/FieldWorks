@@ -7,8 +7,8 @@
 using System;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 

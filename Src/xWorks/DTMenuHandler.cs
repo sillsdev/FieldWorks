@@ -4,25 +4,25 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.Common.Widgets;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.XWorks
 							{
 								foreach (string fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
 								{
-								int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
+									int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
 									ICmMedia media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
 									ICmFolder folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
 									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, fileName);

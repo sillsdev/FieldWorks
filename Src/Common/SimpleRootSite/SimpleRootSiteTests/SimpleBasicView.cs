@@ -11,8 +11,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Collections;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

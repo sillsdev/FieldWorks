@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

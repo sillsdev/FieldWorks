@@ -97,17 +97,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -125,8 +117,13 @@
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils">
+      <SpecificVersion>False</SpecificVersion>
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtilsTests">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -146,7 +143,6 @@
     <Compile Include="StringTableTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
     <Compile Include="XmlUtilsTest.cs">
       <SubType>Code</SubType>
     </Compile>

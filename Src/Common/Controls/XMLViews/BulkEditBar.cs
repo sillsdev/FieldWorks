@@ -1977,7 +1977,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// 'using' with the ProgressState fixes LT-4186, since it forces the manual Dispose call,
 				// which, in turn, clears the progress panel.
 				using (ProgressState state = CreateSimpleProgressState())
-				using (new SIL.Utils.WaitCursor(this))
+				using (new WaitCursor(this))
 				{
 					try
 					{

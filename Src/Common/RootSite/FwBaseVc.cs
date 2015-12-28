@@ -12,8 +12,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using SIL.CoreImpl;
@@ -24,7 +22,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

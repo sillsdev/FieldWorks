@@ -141,9 +141,6 @@
     <Compile Include="XDumper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="xDumpExceptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="XUpdater.cs" />
   </ItemGroup>
   <ItemGroup>

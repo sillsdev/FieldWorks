@@ -13,10 +13,12 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
+using SIL.Utils;
+using ComponentsExtensionMethods = SIL.FieldWorks.Common.FwUtils.ComponentsExtensionMethods;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
+
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -149,7 +151,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			/// This allows either the launcher or the embedded view to communicate size changes to
 			/// the embedding slice.
 			/// </summary>
-			public event FwViewSizeChangedEventHandler ViewSizeChanged;
+			public event SIL.Utils.FwViewSizeChangedEventHandler ViewSizeChanged;
 
 			#endregion Events
 
@@ -259,7 +261,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				e.EventHandled = true;
 				e.Selection.Install();
-				var menu = components.ContextMenuStrip("contextMenu");
+				var menu = ComponentsExtensionMethods.ContextMenuStrip(components, "contextMenu");
 					string sMenuText = LanguageExplorerResources.ksShowInReversalIndex;
 				var item = new ToolStripMenuItem(sMenuText);
 				item.Click += OnShowInReversalIndex;
@@ -313,7 +315,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var parms = new List<object>
 						{
 							null,
-							new FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid)
+							new SIL.FieldWorks.Common.FwUtils.FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid)
 						};
 				Publisher.Publish(commands, parms);
 			}

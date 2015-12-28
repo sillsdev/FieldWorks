@@ -154,6 +154,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Utilities.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core">
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

@@ -7,7 +7,6 @@
 
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.TE

@@ -10,16 +10,16 @@
 // </remarks>
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Paratext;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Reporting;
+using SILUBS.SharedScrUtils;
 using ScrVers = SILUBS.SharedScrUtils.ScrVers;
 
 namespace SIL.FieldWorks.TE

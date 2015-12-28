@@ -6,11 +6,13 @@
 // Responsibility:
 // Last reviewed:
 //
+#if DEBUG
 // <remarks>
 // Uncomment the #define if you want to see the "Restore Defaults" and "Set/Clear All" buttons.
 // (This affects only DEBUG builds.)
 // </remarks>
-#define DEBUG_TEST
+//#define DEBUG_TEST
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,17 +26,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -285,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_propertyTable.TryGetValue("XmlDocConfigureDlg_Location", out dlgLocation) && m_propertyTable.TryGetValue("XmlDocConfigureDlg_Size", out dlgSize))
 			{
 				Rectangle rect = new Rectangle(dlgLocation, dlgSize);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}

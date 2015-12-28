@@ -8,7 +8,6 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 

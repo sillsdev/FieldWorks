@@ -19,7 +19,6 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

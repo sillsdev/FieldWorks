@@ -10,20 +10,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
-using SIL.WritingSystems;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -268,9 +269,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (!string.IsNullOrEmpty(sortUsing))
 				{
-				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
+					writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
 						XmlUtils.MakeSafeXml(sortUsing));
-				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
+					writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
 						XmlUtils.MakeSafeXml(sortRules));
 				}
 				writer.WriteLine("</WritingSystem>");

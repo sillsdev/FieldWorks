@@ -13,10 +13,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Accessibility;
-using System.Drawing;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -167,7 +163,4 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 		#endregion
 	}
-
-	#region IPicture and IPictureDisp interfaces from stdole
-	#endregion
 }

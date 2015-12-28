@@ -12,20 +12,18 @@
 //
 
 using System;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
-using System.Reflection;
-using System.ComponentModel;
 using Microsoft.Win32;
 
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -485,27 +483,27 @@ namespace SIL.FieldWorks.Common.Controls
 			int iHeight = (int)key.GetValue(Parent.GetType().Name + "Height", (Parent is Form ?
 				((Form)Parent).DesktopBounds.Height : Parent.Height));
 
-			Rectangle rect = new Rectangle(iLeft, iTop, iWidth, iHeight);
+			var rect = new Rectangle(iLeft, iTop, iWidth, iHeight);
 
-			if (Parent is Form)
+			var parentForm = Parent as Form;
+			if (parentForm != null)
 			{
-				Form parent = Parent as Form;
-				ScreenUtils.EnsureVisibleRect(ref rect);
-				if (rect != parent.DesktopBounds)
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				if (rect != parentForm.DesktopBounds)
 				{
 					// this means we loaded values from the registry - or the form is to big
-					parent.StartPosition = FormStartPosition.Manual;
+					parentForm.StartPosition = FormStartPosition.Manual;
 				}
-				parent.DesktopLocation = new Point(rect.X, rect.Y);
+				parentForm.DesktopLocation = new Point(rect.X, rect.Y);
 
 				// we can't set the width and height on the form yet - if we do it won't
 				// resize our child controls
 				m_normalLeft = rect.X;
 				m_normalTop = rect.Y;
-				parent.Width = m_normalWidth = rect.Width;
-				parent.Height = m_normalHeight = rect.Height;
-				parent.WindowState = (FormWindowState)SettingsKey.GetValue(
-					parent.GetType().Name + sWindowState, parent.WindowState);
+				parentForm.Width = m_normalWidth = rect.Width;
+				parentForm.Height = m_normalHeight = rect.Height;
+				parentForm.WindowState = (FormWindowState)SettingsKey.GetValue(
+					parentForm.GetType().Name + sWindowState, parentForm.WindowState);
 			}
 			else
 			{

@@ -5,16 +5,14 @@
 // File: SimpleRootSiteTests_IsSelectionVisibleTests.cs
 // Responsibility:
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using NUnit.Framework;
 using NMock;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.CoreImpl;
-using SIL.Utils.Attributes;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

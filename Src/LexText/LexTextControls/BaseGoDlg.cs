@@ -6,18 +6,19 @@
 // Responsibility: Randy Regnier
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.CoreImpl;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -260,7 +261,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
 						rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
 
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}

@@ -9,7 +9,9 @@
 // <remarks>
 // </remarks>
 
+using System.Resources;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.Utils
 {
@@ -23,6 +25,15 @@ namespace SIL.Utils
 		/// Location of test files
 		/// </summary>
 		protected string m_sTestPath;
+
+		/// <summary />
+		protected override ResourceManager ResourceMgr
+		{
+			get
+			{
+				return Properties.Resources.ResourceManager;
+			}
+		}
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp()

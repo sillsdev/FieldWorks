@@ -6,18 +6,17 @@
 //		ImportWordSetDlg - Dialog for editing XML representation of parser parameters
 //                            (MoMorphData : ParserParameters)
 // </remarks>
-
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using System.Text;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

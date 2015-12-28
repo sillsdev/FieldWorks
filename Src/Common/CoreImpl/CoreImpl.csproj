@@ -66,7 +66,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility" />
     <Reference Include="BasicUtils, Version=6.1.0.30261, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -78,10 +77,6 @@
     <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Ethnologue.dll</HintPath>
-    </Reference>
-    <Reference Include="MsHtmHstInterop">
-      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -98,22 +93,11 @@
     <Reference Include="SilUtils, Version=7.0.1.23997, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -127,49 +111,16 @@
     <Compile Include="CaseFunctions.cs" />
     <Compile Include="MemoryWritingSystemRepository.cs" />
     <Compile Include="FlexComponentCheckingService.cs" />
-    <Compile Include="FwAccessibleObject.cs" />
-    <Compile Include="HtmlControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ICollapsingSplitContainer.cs" />
-    <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IFeedbackInfoProvider.cs" />
     <Compile Include="IFlexComponent.cs" />
     <Compile Include="IHelpTopicProvider.cs" />
-    <Compile Include="IMainContentControl.cs" />
-    <Compile Include="IMainUserControl.cs" />
-    <Compile Include="Impls\PersistenceProvider.cs" />
-    <Compile Include="IPaneBar.cs" />
-    <Compile Include="IPaneBarContainer.cs" />
-    <Compile Include="IPaneBarUser.cs" />
-    <Compile Include="IReceiveSequentialMessages.cs" />
     <Compile Include="IRecordListUpdater.cs" />
-    <Compile Include="ISnapSplitPosition.cs" />
-    <Compile Include="MainUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MessageBoxEx\MessageBoxExIcon.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExManager.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExResult.cs" />
-    <Compile Include="MessageBoxEx\TimeoutResult.cs" />
-    <Compile Include="MessageSequencer.cs" />
-    <Compile Include="PersistenceProviderFactory.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Impls\PropertyTable.cs" />
-    <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IPropertyTable.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="IPublisherProvider.cs" />
     <Compile Include="ISubscriber.cs" />
     <Compile Include="ISubscriberProvider.cs" />
-    <Compile Include="PropertyTableFactory.cs" />
     <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="SettingsGroup.cs" />
@@ -178,7 +129,6 @@
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />
-    <Compile Include="GraphicsManager.cs" />
     <Compile Include="ISpellEngine.cs" />
     <Compile Include="KernelExtensions.cs" />
     <Compile Include="DispPropOverrideFactory.cs" />
@@ -219,26 +169,29 @@
     <Compile Include="TsStringSerializer.cs" />
     <Compile Include="TsStringUtils.cs" />
     <Compile Include="WritingSystemUtils.cs" />
+    <Compile Include="ColorStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ColorStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ColorUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CoreImplStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CoreImplStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="HtmlControl.resx">
-      <DependentUpon>HtmlControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MessageBoxEx\MessageBoxExForm.resx">
-      <DependentUpon>MessageBoxExForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="ColorStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MessageBoxEx\Notes.txt" />
     <Content Include="Resources\lsr-region-utf8.txt" />
     <Content Include="Resources\lsr-variant-utf8.txt" />
   </ItemGroup>

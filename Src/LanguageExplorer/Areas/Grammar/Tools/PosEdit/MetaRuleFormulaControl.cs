@@ -3,14 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using System.Drawing;
+using System.Linq;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {

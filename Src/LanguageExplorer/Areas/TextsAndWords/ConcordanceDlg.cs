@@ -21,6 +21,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

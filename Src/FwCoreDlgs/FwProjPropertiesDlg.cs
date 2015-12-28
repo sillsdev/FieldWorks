@@ -6,26 +6,26 @@
 // Responsibility: TE Team
 using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Linq;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Lexicon;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using System.IO;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
+using SIL.Lexicon;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

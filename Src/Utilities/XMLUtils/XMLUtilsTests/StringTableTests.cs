@@ -12,7 +12,9 @@
 using System;
 using NUnit.Framework;
 using System.Reflection;
+using System.Resources;
 using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.Utils
 {
@@ -24,11 +26,20 @@ namespace SIL.Utils
 	{
 		protected StringTable m_table;
 
+		/// <summary />
+		protected override ResourceManager ResourceMgr
+		{
+			get
+			{
+				return Properties.Resources.ResourceManager;
+			}
+		}
+
 		[TestFixtureSetUp]
 		public void FixtureInit()
 		{
-			string baseFolder = CreateTempTestFiles(typeof(Properties.Resources), "food");
-			m_table = new StringTable(System.IO.Path.Combine(baseFolder, "fruit/citrus"));
+			var baseFolder = CreateTempTestFiles(typeof(Properties.Resources), "food");
+			m_table = new StringTable(System.IO.Path.Combine(baseFolder, "fruit", "citrus"));
 		}
 
 		private Assembly GetExecutingAssembly()

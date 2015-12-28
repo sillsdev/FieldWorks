@@ -21,6 +21,7 @@ using SIL.Code;
 using SIL.CoreImpl;
 using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -32,7 +33,9 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
+
 #if RANDYTODOMERGEFILES
 using System.Xml;
 using System.Collections.Specialized;

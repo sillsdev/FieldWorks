@@ -3,17 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using SIL.CoreImpl;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 
 namespace SIL.FieldWorks.IText
 {
