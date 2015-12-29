@@ -2186,6 +2186,59 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesCrossReferencesOnUnCheckConfigTargets()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType);
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "headword",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
+				},
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT-
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasNoMatchForXpath(
+					"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']");
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesForwardNameForSymmetricCrossReferences()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);

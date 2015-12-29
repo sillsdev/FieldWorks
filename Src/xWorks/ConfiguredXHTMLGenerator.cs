@@ -1164,7 +1164,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach(var child in config.Children)
 				{
-					if(child.FieldDescription == "ConfigTargets")
+					if(child.IsEnabled && child.FieldDescription == "ConfigTargets")
 					{
 						settings.Writer.WriteStartElement("span");
 						WriteClassNameAttribute(settings.Writer, child);
