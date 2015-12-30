@@ -4,10 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,20 +23,35 @@ namespace SIL.FieldWorks.XWorks
 		public event EventHandler ManageConfigurations;
 
 		public event SwitchConfigurationEvent SwitchConfiguration;
-
+		Mediator m_mediator;
 		/// <summary>
 		/// When OK or Apply are clicked tell anyone who is listening to do their save.
 		/// </summary>
 		public event EventHandler SaveModel;
 
-		public DictionaryConfigurationDlg()
+		public DictionaryConfigurationDlg(Mediator mediator)
 		{
+			m_mediator = mediator;
 			InitializeComponent();
 			m_preview.Dock = DockStyle.Fill;
 			m_preview.Location = new Point(0, 0);
 			previewDetailSplit.Panel1.Controls.Add(m_preview);
 			manageConfigs_treeDetailButton_split.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
+
+			// Restore the location and size from last time we called this dialog.
+			if (m_mediator != null && m_mediator.PropertyTable != null)
+			{
+				object locWnd = m_mediator.PropertyTable.GetValue("DictionaryConfigurationDlg_Location");
+				object szWnd = m_mediator.PropertyTable.GetValue("DictionaryConfigurationDlg_Size");
+				if (locWnd != null && szWnd != null)
+				{
+					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					ScreenUtils.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
+			}
 		}
 
 		public DictionaryConfigurationTreeControl TreeControl
@@ -135,6 +153,21 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
 			});
+		}
+
+		/// <summary>
+		/// Save the location and size for next time.
+		/// </summary>
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			if (m_mediator != null)
+			{
+				m_mediator.PropertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, false);
+				m_mediator.PropertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Location", true);
+				m_mediator.PropertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, false);
+				m_mediator.PropertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Size", true);
+			}
+			base.OnClosing(e);
 		}
 	}
 }

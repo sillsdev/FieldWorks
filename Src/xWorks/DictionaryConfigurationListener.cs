@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
-			using(var dlg = new DictionaryConfigurationDlg())
+			using (var dlg = new DictionaryConfigurationDlg(m_mediator))
 			{
 				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
