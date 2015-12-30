@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -50,6 +52,19 @@ namespace SIL.FieldWorks.XWorks
 				{}
 			};
 
+			// Restore the location and size from last time we called this dialog.
+			if (Mediator != null && Mediator.PropertyTable != null)
+			{
+				object locWnd = Mediator.PropertyTable.GetValue("PublishToWebonaryDlg_Location");
+				object szWnd = Mediator.PropertyTable.GetValue("PublishToWebonaryDlg_Size");
+				if (locWnd != null && szWnd != null)
+				{
+					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					ScreenUtils.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
+			}
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog.
@@ -211,6 +226,20 @@ namespace SIL.FieldWorks.XWorks
 			PopulatePublicationsListBySelectedConfiguration();
 		}
 
+		/// <summary>
+		/// Save the location and size for next time.
+		/// </summary>
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			if (Mediator != null)
+			{
+				Mediator.PropertyTable.SetProperty("PublishToWebonaryDlg_Location", Location, false);
+				Mediator.PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Location", true);
+				Mediator.PropertyTable.SetProperty("PublishToWebonaryDlg_Size", Size, false);
+				Mediator.PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Size", true);
+			}
+			base.OnClosing(e);
+		}
 	}
 
 	/// <summary>
