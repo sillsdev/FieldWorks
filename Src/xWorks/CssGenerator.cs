@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var beforeRule = new StyleRule(dec) { Value = baseSelection + ":first-child:before" };
+				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(baseSelection, ":before") };
 				rules.Add(beforeRule);
 			}
 			if(!String.IsNullOrEmpty(configNode.After))
@@ -576,10 +576,27 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var afterRule = new StyleRule(dec) { Value = baseSelection + ":last-child:after" };
+				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(baseSelection, ":after") };
 				rules.Add(afterRule);
 			}
 			return rules;
+		}
+
+		/// <summary>
+		/// Method to create matching selector based on baseSelection
+		/// If baseSelection ends with span, first-child/last-child will add before the before/after selector
+		/// </summary>
+		/// <param name="baseSelection">baseselector value</param>
+		/// <param name="selector">Before/After selector</param>
+		/// <returns></returns>
+		private static string GetBaseSelectionWithSelectors(string baseSelection, string selector)
+		{
+			string baseSelectionValue = baseSelection;
+			if (baseSelection.LastIndexOf("span", StringComparison.Ordinal) != baseSelection.Length - 4)
+				return baseSelectionValue + selector;
+			string firstOrLastChild = selector == ":before" ? ":first-child" : ":last-child";
+			baseSelectionValue = baseSelectionValue + firstOrLastChild + selector;
+			return baseSelectionValue;
 		}
 
 		private static void GenerateFlowResetForBaseNode(string baseSelection, List<StyleRule> rules)
