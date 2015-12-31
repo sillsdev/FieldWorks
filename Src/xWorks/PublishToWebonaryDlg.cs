@@ -73,36 +73,28 @@ namespace SIL.FieldWorks.XWorks
 
 		private void PopulatePublicationsList()
 		{
-			var selectedConfiguration = Model.Configurations.Where(prop => prop.Value.ToString() == Model.SelectedConfiguration).ToList();
-			foreach (var pub in selectedConfiguration[0].Value.Publications)
+			foreach (var pub in Model.Publications)
 			{
 				publicationBox.Items.Add(pub);
 			}
 		}
 
-		private void PopulatePublicationsListBySelectedConfiguration()
+		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (Model.SelectedConfiguration != configurationBox.SelectedItem.ToString())
-			{
-				var selectedConfiguration =
-					Model.Configurations.Where(prop => prop.Value.ToString() == configurationBox.SelectedItem.ToString()).ToList();
-				publicationBox.Items.Clear();
-				foreach (var pub in selectedConfiguration[0].Value.Publications)
-				{
-					publicationBox.Items.Add(pub);
-				}
-				if (selectedConfiguration[0].Value.Publications.Count > 0)
-					publicationBox.SelectedIndex = 0;
-				Model.SelectedConfiguration = configurationBox.SelectedItem.ToString();
-			}
+			PopulateConfigurationsListBySelectedPublication();
 		}
 
-		private void PopulateConfigurationsList()
+		private void PopulateConfigurationsListBySelectedPublication()
 		{
-			foreach(var config in Model.Configurations.Keys)
+			var selectedConfiguration =
+				Model.Configurations.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			configurationBox.Items.Clear();
+			foreach (var config in selectedConfiguration)
 			{
-				configurationBox.Items.Add(config);
+				configurationBox.Items.Add(config.Value.Label);
 			}
+			if (selectedConfiguration.Count > 0)
+				configurationBox.SelectedIndex = 0;
 		}
 
 		private void PopulateReversalsCheckboxList()
@@ -121,7 +113,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Load the contents of the drop down and checkbox list controls
 				PopulatePublicationsList();
-				PopulateConfigurationsList();
 				PopulateReversalsCheckboxList();
 
 				if(Model.RememberPassword)
@@ -132,6 +123,14 @@ namespace SIL.FieldWorks.XWorks
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
 				SetSelectedReversals(Model.SelectedReversals);
+				if (!String.IsNullOrEmpty(Model.SelectedPublication))
+				{
+					publicationBox.SelectedItem = Model.SelectedPublication;
+				}
+				else
+				{
+					publicationBox.SelectedIndex = 0;
+				}
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
 					configurationBox.SelectedItem = Model.SelectedConfiguration;
@@ -139,14 +138,6 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					configurationBox.SelectedIndex = 0;
-				}
-				if(!String.IsNullOrEmpty(Model.SelectedPublication))
-				{
-					publicationBox.SelectedItem = Model.SelectedPublication;
-				}
-				else
-				{
-					publicationBox.SelectedIndex = 0;
 				}
 			}
 		}
@@ -221,11 +212,6 @@ namespace SIL.FieldWorks.XWorks
 			SaveToModel();
 		}
 
-		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			PopulatePublicationsListBySelectedConfiguration();
-		}
-
 		/// <summary>
 		/// Save the location and size for next time.
 		/// </summary>
@@ -240,6 +226,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			base.OnClosing(e);
 		}
+
 	}
 
 	/// <summary>
