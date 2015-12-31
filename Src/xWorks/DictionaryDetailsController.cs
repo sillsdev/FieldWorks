@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks
 			view.Visible = true;
 			view.StylesVisible = true;
 			view.Enabled = IsAllParentsChecked(node);
-			view.SurroundingCharsVisible = true;
+			view.SurroundingCharsVisible = node.Label == null || node.Label.IndexOf("Minor Entry", StringComparison.Ordinal) != 0;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>

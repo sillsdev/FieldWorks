@@ -117,6 +117,53 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(configNode.Label, oldMinorNode.Label, "Label for Minor Entry root node was not migrated");
 		}
 
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_MinorEntryWithoutBeforeAfterWorks()
+		{
+			const string reversalIndexChildNodesPath = "//ConfigurationItem[@name='Minor Entry']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntryNodesType = BuildConvertedMinorEntryNodes();
+				convertedMinorEntryNodesType.FilePath = convertedModelFile.Path;
+				var defaultMInorEntryNodesType = BuildCurrentDefaultMinorEntryNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryNodesType, defaultMInorEntryNodesType);
+				convertedMinorEntryNodesType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "@before");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "@after");
+			}
+		}
+
+		private DictionaryConfigurationModel BuildConvertedMinorEntryNodes()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = "(",
+				Before = ")"
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = null,
+				Before = null
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode } };
+		}
+
 		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_IsEnabledWorks()
