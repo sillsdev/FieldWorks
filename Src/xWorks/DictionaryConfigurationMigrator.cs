@@ -269,6 +269,8 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
+			if (convertedNode.DictionaryNodeOptions == null)
+				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 			convertedNode.SubField = currentDefaultNode.SubField;
 

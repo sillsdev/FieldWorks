@@ -726,6 +726,35 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_WsOptionIsMigrated()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+			};
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+			};
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(convertedModel.Parts[0].DictionaryNodeOptions, baseModel.Parts[0].DictionaryNodeOptions, "DictionaryNodeOptions for parent node not migrated");
+			Assert.AreEqual(convertedModel.Parts[0].Children[0].DictionaryNodeOptions, baseModel.Parts[0].Children[0].DictionaryNodeOptions, "DictionaryNodeOptions for child not migrated");
+		}
+		///<summary/>
+		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
