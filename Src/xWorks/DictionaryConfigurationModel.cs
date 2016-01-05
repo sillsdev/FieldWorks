@@ -97,6 +97,9 @@ namespace SIL.FieldWorks.XWorks
 					Publications = LoadPublicationsSafe(model, cache);
 			}
 			SpecifyParents(Parts);
+			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
+			// The "Merge" method handles both additions and deletions.
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
 		}
 
 		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)
