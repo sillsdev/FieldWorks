@@ -100,6 +100,48 @@ namespace SIL.FieldWorks.XWorks
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
+			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
+			EnsureValidStylesInModel(cache);
+		}
+
+		internal void EnsureValidStylesInModel(FdoCache cache)
+		{
+			var styles = new Dictionary<string, IStStyle>();
+			foreach (var style in cache.LangProject.StylesOC)
+				styles.Add(style.Name, style);
+			foreach (var part in this.Parts)
+				EnsureValidStylesInConfigNodes(part, styles);
+		}
+
+		private void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
+		{
+			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+				node.Style = null;
+			if (node.DictionaryNodeOptions != null)
+				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
+			if (node.Children != null)
+			{
+				foreach (var child in node.Children)
+					EnsureValidStylesInConfigNodes(child, styles);
+			}
+		}
+
+		private void EnsureValidStylesInNodeOptions(DictionaryNodeOptions options, Dictionary<string, IStStyle> styles)
+		{
+			if (options is DictionaryNodeParagraphOptions)
+			{
+				var paraOptions = options as DictionaryNodeParagraphOptions;
+				if (!String.IsNullOrEmpty(paraOptions.PargraphStyle) && !styles.ContainsKey(paraOptions.PargraphStyle))
+					paraOptions.PargraphStyle = null;
+				if (!String.IsNullOrEmpty(paraOptions.ContinuationParagraphStyle) && !styles.ContainsKey(paraOptions.ContinuationParagraphStyle))
+					paraOptions.ContinuationParagraphStyle = null;
+			}
+			else if (options is DictionaryNodeSenseOptions)
+			{
+				var senseOptions = options as DictionaryNodeSenseOptions;
+				if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+					senseOptions.NumberStyle = null;
+			}
 		}
 
 		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)

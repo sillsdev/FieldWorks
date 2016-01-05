@@ -40,6 +40,12 @@ namespace SIL.FieldWorks.XWorks
 			XmlCloseTagsFromRoot;
 		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
+		[TestFixtureSetUp]
+		public void DictionaryConfigModelFixtureSetup()
+		{
+			CreateStandardStyles();
+		}
+
 		[Test]
 		public void Load_LoadsBasicsAndDetails()
 		{
@@ -933,6 +939,74 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
 			var someNode = new ConfigurableDictionaryNode{ FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
 			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode));
+		}
+
+		[Test]
+		public void EnsureValidStylesInModelRemovesMissingStyles()
+		{
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberStyle = "Green-Dictionary-SenseNumber",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = "Orange-Sense-Paragraph"
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
+				{
+					PargraphStyle = "Dictionary-Normal",
+					ContinuationParagraphStyle = "Dictionary-Continuation"
+				},
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			model.EnsureValidStylesInModel(Cache);
+			//SUT
+			Assert.AreEqual("Dictionary-Normal", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).PargraphStyle, "Existing style should remain.");
+			Assert.AreEqual("Dictionary-Continuation", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).ContinuationParagraphStyle, "Existing style should remain.");
+			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
+			Assert.IsNull((senseNode.DictionaryNodeOptions as DictionaryNodeSenseOptions).NumberStyle, "Missing style should be removed.");
+		}
+
+		private void CreateStandardStyles()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				CreateStyle(fact, "Dictionary-Normal", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);		// needed by EnsureValidStylesInModelRemovesMissingStyles
+				CreateStyle(fact, "Dictionary-Continuation", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
+				CreateStyle(fact, "Sense-Paragraph", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
+				CreateStyle(fact, "Dictionary-SenseNumber", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);
+				CreateStyle(fact, "Dictionary-Headword", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
+				CreateStyle(fact, "bold", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
+			});
+		}
+
+		private void CreateStyle(IStStyleFactory fact, string name, SIL.FieldWorks.Common.COMInterfaces.StyleType type)
+		{
+			var st = fact.Create();
+			Cache.LangProject.StylesOC.Add(st);
+			st.Name = name;
+			st.Type = type;
 		}
 	}
 }
