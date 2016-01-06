@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using Gecko;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -44,6 +46,98 @@ namespace SIL.FieldWorks.XWorks
 				Clerk.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
+
+			var web = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (web != null)
+			{
+				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
+				if (clerk == "entries" || clerk == "AllReversalEntries")
+				{
+					web.DomClick += OnDomClick;
+					web.DomKeyPress += OnDomKeyPress;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Handle a key press in the web browser displaying the xhtml. [TODO: LT-xxxxx]
+		/// </summary>
+		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
+		{
+			Console.WriteLine(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e);
+		}
+
+		/// <summary>
+		/// Handle a mouse click in the web browser displaying the xhtml.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
+		private void OnDomClick(object sender, DomMouseEventArgs e)
+		{
+			var web = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (web == null)
+				return;
+			var element = web.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
+			if (element == null || element.TagName == "html")
+				return;
+			if (e.Button == GeckoMouseButton.Left)
+			{
+				// Select the entry represented by the current element.  [TODO: LT-xxxxx]
+				e.Handled = true;
+			}
+			else if (e.Button == GeckoMouseButton.Right)
+			{
+				// Pop up a menu to allow the user to start the document configuration dialog.
+				// Start the dialog at the configuration node indicated by the current element.  [TODO: LT-16926]
+				// Idea: use element, element.Parent, element.Parent.Parent, ... to generate an xpath like expression.
+				string nodePath = String.Empty;
+				string label;
+				if (string.IsNullOrEmpty(nodePath))
+					label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
+				else
+					label = string.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
+				m_contextMenu = new ContextMenuStrip();
+				var item = new ToolStripMenuItem(label);
+				m_contextMenu.Items.Add(item);
+				item.Click += RunConfigureDialogAt;
+				item.Tag = nodePath;
+				m_contextMenu.Show(web, new Point(e.ClientX, e.ClientY));
+				m_contextMenu.Closed += m_contextMenu_Closed;
+				e.Handled = true;
+			}
+		}
+
+		void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		{
+			Application.Idle += DisposeContextMenu;
+		}
+
+		void DisposeContextMenu(object sender, EventArgs e)
+		{
+			Application.Idle -= DisposeContextMenu;
+			if (m_contextMenu != null)
+			{
+				m_contextMenu.Dispose();
+				m_contextMenu = null;
+			}
+		}
+
+		// Context menu exists just for one invocation (until idle).
+		private ContextMenuStrip m_contextMenu;
+
+		void RunConfigureDialogAt(object sender, EventArgs e)
+		{
+			// TODO: initialize dialog to start on the desired configuration node (LT-16926)
+			//var item = (ToolStripMenuItem)sender;
+			//var nodePath = (string)item.Tag;
+			using (var dlg = new DictionaryConfigurationDlg(m_mediator))
+			{
+				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator));
+				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
+			}
+			m_mediator.SendMessage("MasterRefresh", null);
 		}
 
 		public override int Priority
