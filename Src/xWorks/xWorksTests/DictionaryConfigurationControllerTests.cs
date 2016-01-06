@@ -1015,7 +1015,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Context
-		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
+		internal sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private readonly DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
 
@@ -1025,7 +1025,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			public IDictionaryDetailsView DetailsView { set; private get; }
-			public string PreviewData { set; private get; }
+			public string PreviewData { set; internal get; }
 
 			public void Redraw()
 			{ }
@@ -1052,5 +1052,73 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning restore 67
 		}
 		#endregion // Context
+
+		[Test]
+		public void PopulateTreeView_NewProjectDoesNotCrash_DoesNotGeneratesContent()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalForm",
+				Label = "Form",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true,}
+					},
+					DisplayWritingSystemAbbreviations = false
+				},
+				IsEnabled = true
+			};
+			var reversalNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
+
+				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
+				dcc._previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache);
+
+				CreateALexEntry(Cache);
+				Assert.AreEqual(0, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count,
+					"Should have not a Reversal Index at this point");
+				// But actually a brand new project contains an empty ReversalIndex
+				// for the analysisWS, so create one for our test here.
+				CreateDefaultReversalIndex();
+
+				//SUT
+				dcc.PopulateTreeView();
+
+				Assert.IsNullOrEmpty(testView.PreviewData, "Should not have created a preview");
+				Assert.AreEqual(1, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
+				Assert.AreEqual("en", Cache.LangProject.LexDbOA.ReversalIndexesOC.First().WritingSystem);
+			}
+		}
+
+		private void CreateDefaultReversalIndex()
+		{
+			var aWs = Cache.DefaultAnalWs;
+			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			riRepo.FindOrCreateIndexForWs(aWs);
+		}
+
+		private void CreateALexEntry(FdoCache cache)
+		{
+			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
+			entry.CitationForm.set_String(wsFr, cache.TsStrFactory.MakeString("mot", wsFr));
+			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var sense = senseFactory.Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+		}
 	}
 }

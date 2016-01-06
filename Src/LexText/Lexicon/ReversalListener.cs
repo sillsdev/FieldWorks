@@ -9,7 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
-
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,6 +21,7 @@ using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -153,12 +155,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_mediator.AddColleague(this);
 
 			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<IWritingSystem>();
 			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
-				var ws = cache.ServiceLocator.WritingSystemManager.get_Engine(rev.WritingSystem);
-				usedWses.Add((IWritingSystem)ws);
+				usedWses.Add(wsMgr.Get(rev.WritingSystem));
 				if (rev.PartsOfSpeechOA == null)
 					rev.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				rev.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
@@ -175,7 +177,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					corruptReversalIndices.Add(rev);
 					continue;
 				}
-				IWritingSystem revWs = cache.ServiceLocator.WritingSystemManager.Get(rev.WritingSystem);
+				IWritingSystem revWs = wsMgr.Get(rev.WritingSystem);
 				// TODO WS: is DisplayLabel the right thing to use here?
 				rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
 			}
@@ -197,6 +199,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				SetReversalIndexGuid(firstGuid);
 			}
+			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr,
+				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
+				cache.LangProject.ShortName, cache.LangProject.AnalysisWss);
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
@@ -323,10 +328,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			display.List.Clear();
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			var lp = ((FdoCache) m_mediator.PropertyTable.GetValue("cache")).LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)
-			//IReversalIndex riOwner = this.IReversalIndex;
-			foreach (IReversalIndex ri in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
+			// But only for analysis wss
+			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC
+										  where lp.AnalysisWss.Contains(ri.WritingSystem)
+										  select ri)
 			{
 				display.List.Add(ri.ShortName, ri.Guid.ToString(), null, null);
 			}

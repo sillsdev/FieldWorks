@@ -1645,6 +1645,9 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			}
 			// TODO pH 2014.12: this can generate an empty span if no checked WS's contain data
+			// gjm 2015.12 but this will help some (LT-16846)
+			if (multiStringAccessor == null || multiStringAccessor.StringCount == 0)
+				return;
 			settings.Writer.WriteStartElement("span");
 			WriteClassNameAttribute(settings.Writer, config);
 			foreach (var option in wsOptions.Options)

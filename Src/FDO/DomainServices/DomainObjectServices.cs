@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
@@ -2414,6 +2416,72 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			IsDisposed = true;
 		}
 	#endregion
+	}
+	#endregion
+
+	#region ReversalIndexServices class
+	/// <summary>
+	/// Utility services relating to Reversal Indexes
+	/// </summary>
+	public static class ReversalIndexServices
+	{
+
+		/// <summary>
+		/// Create configuration file for analysis writing systems in Reversal Index
+		/// </summary>
+		/// <param name="wsMgr">IWritingSystemManager</param>
+		/// <param name="defaultConfigDir">Default Configuration directory</param>
+		/// <param name="projectsDir">Projects directory</param>
+		/// <param name="originalProjectName">Project Name</param>
+		/// <param name="analysisWss">All analysis writing systems, space-delimited list</param>
+		public static void CreateReversalIndexConfigurationFile(IWritingSystemManager wsMgr, string defaultConfigDir, string projectsDir, string originalProjectName, string analysisWss)
+		{
+			const string configFileExtension = ".fwdictconfig";
+			const string revIndexDir = "ReversalIndex";
+			const string configDir = "ConfigurationSettings";
+			const string allIndexesFileName = "AllReversalIndexes";
+			const string dictConfigElement = "DictionaryConfiguration";
+
+			var wsList = new List<string>();
+			var defaultWsFilePath = Path.Combine(defaultConfigDir, revIndexDir,
+				allIndexesFileName + configFileExtension);
+			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, configDir,
+				revIndexDir);
+			var analysisWsArray = analysisWss.Split(' ');
+			//Create new Configuration File
+			foreach (var curWs in analysisWsArray)
+			{
+				if (curWs.ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
+					continue;
+
+				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
+				wsList.Add(curWsLabel);
+				var newRIFileName = curWsLabel + configFileExtension;
+				if (File.Exists(Path.Combine(newWsFilePath, newRIFileName)))
+					continue;
+
+				if (!Directory.Exists(newWsFilePath))
+					Directory.CreateDirectory(newWsFilePath);
+				File.Copy(defaultWsFilePath, Path.Combine(newWsFilePath, newRIFileName), true);
+				var xmldoc = XDocument.Load(Path.Combine(newWsFilePath, newRIFileName));
+				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
+				xElement.Value = curWsLabel;
+				xmldoc.Save(Path.Combine(newWsFilePath, newRIFileName));
+			}
+			//Delete old Configuration File
+			if (!Directory.Exists(newWsFilePath))
+				return;
+			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
+			foreach (var file in files)
+			{
+				var fileName = Path.GetFileNameWithoutExtension(file);
+				if (fileName != allIndexesFileName && !wsList.Any(ws => fileName.Contains(ws)))
+				{
+					File.Delete(file);
+				}
+			}
+		}
+
 	}
 	#endregion
 }

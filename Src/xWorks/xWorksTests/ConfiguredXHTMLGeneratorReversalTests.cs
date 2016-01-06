@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.TestUtilities;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -106,8 +106,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var entry = CreateInterestingReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -119,11 +118,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
-			var entry = CreateInterestingReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry();
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -141,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
-			var entry = CreateInterestingReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry();
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -158,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-			var entry = CreateInterestingReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry();
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
@@ -176,17 +174,64 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		private ICmObject CreateInterestingReversalEntry()
+		[Test]
+		public void GenerateXHTMLForEntry_ReversalStringGeneratesContent()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalForm",
+				Label = "Form",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr", IsEnabled = true,}
+					},
+					DisplayWritingSystemAbbreviations = false
+				},
+				IsEnabled = true
+			};
+			var reversalNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			var rie = CreateInterestingFrenchReversalEntry() as IReversalIndexEntry;
+			var entryHeadWord = rie.ReferringSenses.First().Entry.HeadWord;
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, settings));
+				XHTMLWriter.Flush();
+				var result = XHTMLStringBuilder.ToString();
+				var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", rie.LongName);
+				var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.Text);
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
+			}
+		}
+
+		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			var indexfactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
-			var index = indexfactory.Create();
-			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
-			var indexEntry = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
-			index.EntriesOC.Add(indexEntry);
-			indexEntry.ReversalForm.set_String(m_wsEn, "ReversalForm");
-			entry.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
-			return indexEntry;
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsFr);
+			var riEntry = revIndex.FindOrCreateReversalEntry("intéressant");
+			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			return riEntry;
+		}
+
+		private IReversalIndexEntry CreateInterestingEnglishReversalEntry()
+		{
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
+			var riEntry = revIndex.FindOrCreateReversalEntry("ReversalForm");
+			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			return riEntry;
 		}
 	}
 }

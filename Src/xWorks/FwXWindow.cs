@@ -13,9 +13,6 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using Microsoft.Win32;
 using System.IO;
 using System.Drawing;
@@ -23,7 +20,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using L10NSharp;
-using SIL.Archiving;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
@@ -1336,7 +1332,9 @@ namespace SIL.FieldWorks.XWorks
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
 
-				CreateReversalIndexConfigurationFile(dlg.OriginalProjectName, dlg.AnalysisWsList);
+				ReversalIndexServices.CreateReversalIndexConfigurationFile(m_app.Cache.ServiceLocator.WritingSystemManager,
+					FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
+					dlg.OriginalProjectName, m_app.Cache.LangProject.AnalysisWss);
 				AddNewAnalysisWsReversals(dlg.AnalysisWsList);
 			}
 		}
@@ -1396,54 +1394,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Method which create configuration file for analysisWS in Reversal Index
-		/// </summary>
-		/// <param name="originalProjectName">Project Name</param>
-		/// <param name="analysisWsList">Analysis WS CheckedListBox</param>
-		private void CreateReversalIndexConfigurationFile(string originalProjectName, CheckedListBox analysisWsList)
-		{
-			var wsList = new List<string>();
-			const string configFileExtension = ".fwdictconfig";
-			var defaultWsFilePath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex",
-				"AllReversalIndexes" + configFileExtension);
-			var newWsFilePath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, originalProjectName, "ConfigurationSettings",
-				"ReversalIndex");
-			if (!File.Exists(defaultWsFilePath)) return;
-			//Create new Configuration File
-			for (int i = 0; i < analysisWsList.Items.Count; i++)
-			{
-				string wsLang = analysisWsList.Items[i].ToString();
-				if (wsLang.ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
-						continue;
-
-				wsList.Add(wsLang);
-				var destFileName = Path.Combine(newWsFilePath, analysisWsList.Items[i] + configFileExtension);
-				// Ensure proper directory structure for new projects.
-				if (!Directory.Exists(newWsFilePath))
-					Directory.CreateDirectory(newWsFilePath);
-				else if (File.Exists(destFileName))
-					continue;
-				File.Copy(defaultWsFilePath, destFileName, false);
-				File.SetAttributes(destFileName, FileAttributes.Normal);
-				var xmldoc = XDocument.Load(destFileName);
-				var xElement = xmldoc.XPathSelectElement("DictionaryConfiguration").Attribute("name");
-				xElement.Value = wsLang;
-				xmldoc.Save(Path.Combine(newWsFilePath, wsLang + configFileExtension));
-			}
-			//Delete old Configuration File
-			if (!Directory.Exists(newWsFilePath)) return;
-			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
-			foreach (string file in files)
-			{
-				var fileName = Path.GetFileNameWithoutExtension(file);
-				if (!wsList.Contains(fileName) && fileName != "AllReversalIndexes")
-				{
-					File.Delete(file);
-				}
-			}
-		}
-
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="fullName"></param>
@@ -1462,8 +1412,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return oldName;
 		}
-
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
