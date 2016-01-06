@@ -5094,7 +5094,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			public void SetModifyTime()
 			{
-				m_le.DateModified = m_dt;
+				if (!AreDatesInSameSecond(m_le.DateModified.ToUniversalTime(), m_dt.ToUniversalTime()))
+				{
+					m_le.DateModified = m_dt;
+				}
 			}
 		}
 		readonly List<PendingModifyTime> m_rgPendingModifyTimes = new List<PendingModifyTime>();

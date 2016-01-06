@@ -438,6 +438,7 @@ namespace SIL.FieldWorks.IText
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
 					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+					importSettings.StyleSheet = ScriptureStylesheet;
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -462,6 +463,11 @@ namespace SIL.FieldWorks.IText
 						importSettings.ImportBackTranslation = true;
 					}
 					ParatextHelper.LoadProjectMappings(importSettings);
+					ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
+					ImportMappingInfo figureInfo = importMap[@"\fig"];
+					if (figureInfo != null)
+						figureInfo.IsExcluded = true;
+					importSettings.SaveSettings();
 					return true;
 				});
 

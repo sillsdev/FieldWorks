@@ -33,7 +33,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		IFwMetaDataCacheManaged m_mdc;
 		ILgWritingSystemFactory m_wsf;
 		int[] m_rgItemClasses;
-		int m_wsEn;
+		internal int m_wsEn;	// allow access to tests.
+		// Record subclass names to go along with sItemClass used in many methods
+		List<string> m_itemClassNames = new List<string>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -187,7 +189,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							SetMultiUnicodeFromXml(xrdr, list.Abbreviation);
 							break;
 						case "Possibilities":
-							ReadPossibilitiesFromXml(xrdr, list, sItemClass);
+							// we know the list, but we don't have the map yet at this level.
+							ReadPossibilitiesFromXml(xrdr, list, sItemClass, "");
 							break;
 						default:
 							throw new Exception(String.Format("Unknown field element in <List>: {0}", xrdr.Name));
@@ -212,26 +215,39 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			}
 		}
 
-		private void ReadPossibilitiesFromXml(XmlReader xrdr, ICmPossibilityList list, string sItemClass)
+		private void ReadPossibilitiesFromXml(XmlReader xrdr, ICmPossibilityList list, string sItemClass,
+			string ownerPath, Dictionary<string, ICmPossibility> mapNameToPoss = null)
 		{
-			if (xrdr.ReadToDescendant(sItemClass))
+			var listElementName = xrdr.Name;
+			do
 			{
-				Dictionary<string, ICmPossibility> mapNameToPoss = GetMappingForList(list);
-				do
+				xrdr.Read();
+				if (xrdr.NodeType == XmlNodeType.Element &&
+					(xrdr.Name == sItemClass || m_itemClassNames.Contains(xrdr.Name)))
 				{
-					string sGuid = xrdr.GetAttribute("guid");
-					xrdr.MoveToElement();
+					if (mapNameToPoss == null)
+						mapNameToPoss = GetMappingForList(list);
+					string sGuid = xrdr.GetAttribute ("guid");
+					xrdr.MoveToElement ();
 					Guid guid = Guid.Empty;
 					ICmPossibility poss = null;
-					if (!String.IsNullOrEmpty(sGuid))
+					if (!String.IsNullOrEmpty (sGuid))
 					{
-						guid = new Guid(sGuid);
+						guid = new Guid (sGuid);
 						PossibilityRepository.TryGetObject(guid, out poss);
 					}
-					ReadPossItem(xrdr.ReadSubtree(), poss, sItemClass, mapNameToPoss);
-				} while (xrdr.ReadToNextSibling(sItemClass));
-			}
-			xrdr.Read();	// reads end element.
+					using (var inner = xrdr.ReadSubtree())
+					{
+						ReadPossItem(inner, poss, sItemClass, ownerPath, mapNameToPoss);
+						inner.Close();
+					}
+				}
+				else if (xrdr.NodeType == XmlNodeType.EndElement && xrdr.Name == listElementName)
+				{
+					xrdr.ReadEndElement();
+					return;
+				}
+			} while (!xrdr.EOF);
 		}
 
 		private Dictionary<string, ICmPossibility> GetMappingForList(ICmPossibilityList list)
@@ -246,31 +262,56 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			return mapNameToItem;
 		}
 
-		private void FillInMapForPossibilities(Dictionary<string, ICmPossibility> mapNameToItem,
+		/// <summary>
+		/// Fills the in map of English name to CmPossibility object.
+		/// </summary>
+		/// <remarks>
+		/// Allow access to tests.
+		/// </remarks>
+		internal void FillInMapForPossibilities(Dictionary<string, ICmPossibility> mapNameToItem,
 			IFdoOwningSequence<ICmPossibility> possibilities)
 		{
 			if (possibilities == null)
 				return;
 			foreach (var item in possibilities)
 			{
-				ITsString tss = item.Name.get_String(m_wsEn);
-				if (tss == null)
+				var key = GetKeyForPossibility(item);
+				if (String.IsNullOrEmpty(key))
 					continue;
-				string name = tss.Text;
-				if (String.IsNullOrEmpty(name))
+				if (mapNameToItem.ContainsKey(key))
 					continue;
-				if (mapNameToItem.ContainsKey(name))
-					continue;
-				mapNameToItem.Add(name, item);
+				mapNameToItem.Add(key, item);
 				FillInMapForPossibilities(mapNameToItem, item.SubPossibilitiesOS);
 			}
 		}
 
-		private void ReadPossItem(XmlReader xrdrSub, ICmPossibility poss, string sItemClassName,
+		/// <summary>
+		/// Generate a key by appending the name of this CmPossibility to the names of
+		/// each of its owning CmPossibilities (if the owner is a CmPossibility).  The
+		/// result is a rooted path of English CmPossibility names separated by colons,
+		/// with a leading colon preceding the CmPossibility at the top level of the list.
+		/// This allows items at lower levels of the list to have the same name without
+		/// being confused.
+		/// </summary>
+		private string GetKeyForPossibility(ICmPossibility item)
+		{
+			ITsString tss = item.Name.get_String(m_wsEn);
+			if (tss == null)
+				return String.Empty;
+			string name = tss.Text;
+			if (String.IsNullOrEmpty(name))
+				return String.Empty;
+			var ownerPath = String.Empty;
+			if (item.Owner is ICmPossibility)
+				ownerPath = GetKeyForPossibility(item.Owner as ICmPossibility);
+			return String.Format("{0}:{1}", ownerPath, name);
+		}
+
+		private void ReadPossItem(XmlReader xrdrSub, ICmPossibility poss, string sItemClassName, string ownerPath,
 			Dictionary<string, ICmPossibility> mapNameToPoss)
 		{
 			xrdrSub.Read();
-			Debug.Assert(xrdrSub.Name == sItemClassName);
+			Debug.Assert(xrdrSub.Name == sItemClassName || m_itemClassNames.Contains(xrdrSub.Name));
 			try
 			{
 				string abbrXml = null;
@@ -305,7 +346,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								}
 								else
 								{
-									poss = FindPossibilityAndSetName(xrdrSub, mapNameToPoss);
+									poss = FindPossibilityAndSetName(xrdrSub, ownerPath, mapNameToPoss);
 									if (poss != null)
 									{
 										if (abbrXml != null)
@@ -441,7 +482,15 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								}
 								break;
 							case "SubPossibilities":
-								ReadSubPossibilitiesFromXml(xrdrSub, sItemClassName, mapNameToPoss);
+								// we have the map, but we don't know the list at this level.
+								var myName = String.Empty;
+								if (poss != null && poss.Name != null)
+								{
+									var tss = poss.Name.get_String(m_wsEn);
+									if (tss != null && tss.Text != null)
+										myName = tss.Text;
+								}
+								ReadPossibilitiesFromXml(xrdrSub, null, sItemClassName, String.Format("{0}:{1}", ownerPath, myName), mapNameToPoss);
 								break;
 
 							// Additional Subclass fields.
@@ -452,7 +501,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								else if (poss == null)
 									questionsXml = GetXmlOfElement(xrdrSub);
 								else
-									SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+									StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 
 							case "Alias":
@@ -463,7 +512,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								else if (poss == null)
 									aliasXml = GetXmlOfElement(xrdrSub);
 								else
-									SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+									StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 
 							case "ReverseAbbr":
@@ -472,7 +521,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								else if (poss == null)
 									revabbrXml = GetXmlOfElement(xrdrSub);
 								else
-									SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+									StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 
 							case "ReverseAbbreviation":
@@ -481,7 +530,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								else if (poss == null)
 									revabbrevXml = GetXmlOfElement(xrdrSub);
 								else
-									SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+									StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 
 							case "ReverseName":
@@ -490,11 +539,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								else if (poss == null)
 									revnameXml = GetXmlOfElement(xrdrSub);
 								else
-									SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+									StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 
 							default:
-								SkipAndReportUnexpectedElement(xrdrSub, sItemClassName);
+								StoreOrReportUnexpectedElement(poss, xrdrSub, sItemClassName);
 								break;
 						}
 					}
@@ -597,7 +646,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 									SetMultiStringFromXml(xrdrSub, cdq.ExampleSentences);
 								break;
 							default:
-								SkipAndReportUnexpectedElement(xrdrSub, "CmSemanticDomain/Questions/CmDomainQ");
+								StoreOrReportUnexpectedElement(cdq, xrdrSub, "CmSemanticDomain/Questions/CmDomainQ");
 								break;
 						}
 					}
@@ -644,7 +693,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			return domq;
 		}
 
-		private ICmPossibility FindPossibilityAndSetName(XmlReader xrdr,
+		private ICmPossibility FindPossibilityAndSetName(XmlReader xrdr, string ownerPath,
 			Dictionary<string, ICmPossibility> mapNameToPoss)
 		{
 			if (xrdr.IsEmptyElement)
@@ -663,7 +712,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					if (sWs == "en")
 					{
 						// Use the English name to look up the possibility.
-						mapNameToPoss.TryGetValue(sVal, out poss);
+						mapNameToPoss.TryGetValue(String.Format("{0}:{1}", ownerPath, sVal), out poss);
 						continue;		// don't overwrite the English string
 					}
 					int ws = GetWsFromStr(sWs);
@@ -684,33 +733,58 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			return xrdrSub.ReadOuterXml();
 		}
 
-		private void ReadSubPossibilitiesFromXml(XmlReader xrdr, string sItemClassName,
-			Dictionary<string, ICmPossibility> mapNameToPoss)
+		private void StoreOrReportUnexpectedElement(ICmObject obj, XmlReader xrdrSub, string sItemClass)
 		{
-			if (xrdr.ReadToDescendant(sItemClassName))
-			{
-				do
-				{
-					string sGuid = xrdr.GetAttribute("guid");
-					xrdr.MoveToElement();
-					ICmPossibility poss = null;
-					Guid guid = Guid.Empty;
-					if (!String.IsNullOrEmpty(sGuid))
-					{
-						guid = new Guid(sGuid);
-						PossibilityRepository.TryGetObject(guid, out poss);
-					}
-					ReadPossItem(xrdr.ReadSubtree(), poss, sItemClassName, mapNameToPoss);
-				} while (xrdr.ReadToNextSibling(sItemClassName));
-			}
-			xrdr.Read();	// reads end element.
-		}
-
-		private void SkipAndReportUnexpectedElement(XmlReader xrdrSub, string sItemClass)
-		{
+			if (StoreUnanticipatedDataIfPossible(obj, xrdrSub))
+				return;
 			// Ignore this -- it shouldn't be in the import file.
 			ReportUnexpectedElement(sItemClass, xrdrSub.Name);
 			xrdrSub.ReadOuterXml();
+		}
+
+		/// <summary>
+		/// Use the MetaDataCache and reflection to store the XML data if at all possible.
+		/// </summary>
+		/// <returns><c>true</c> if data was stored, <c>false</c> otherwise.</returns>
+		private bool StoreUnanticipatedDataIfPossible(ICmObject obj, XmlReader xrdrSub)
+		{
+			try
+			{
+				var metaDataCache = obj.Cache.MetaDataCache as IFwMetaDataCacheManaged;
+				if (metaDataCache == null)
+					return false;
+				var flid = metaDataCache.GetFieldId(obj.GetType().Name, xrdrSub.Name, true);
+				if (flid == 0)
+					return false;
+				var type = metaDataCache.GetFieldType(flid);
+				// REVIEW: how do we handle custom fields?  Do we need to worry about those in this context?
+				var prop = obj.GetType().GetProperty(xrdrSub.Name);
+				if (prop == null)
+					return false;
+				switch (type)
+				{
+				case (int)CellarPropertyType.MultiString:
+					var ms = prop.GetValue(obj, null) as IMultiString;
+					if (ms == null)
+						return false;
+					SetMultiStringFromXml(xrdrSub, ms);
+					return true;
+				case (int)CellarPropertyType.MultiUnicode:
+					var mu = prop.GetValue(obj, null) as IMultiUnicode;
+					if (mu == null)
+						return false;
+					SetMultiUnicodeFromXml(xrdrSub, mu);
+					return true;
+				default:
+					// We don't know how to handle any other data types for now.  The two above are the ones
+					// that are relevant for translation anyway.
+					return false;
+				}
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		private void ReportUnexpectedElement(string sItemClass, string sField)
@@ -782,6 +856,12 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			}
 			if (!fOk)
 				throw new Exception("Invalid itemClass attribute value for <List> element: not a CmPossibility");
+			// Find the names of subclasses of our particular class.  One or more may be used in the XML file
+			// instead of sItemClass.
+			m_itemClassNames.Clear();
+			int[] subClassIds = m_mdc.GetAllSubclasses(clid);
+			for (int i = 0; i < subClassIds.Length; ++i)
+				m_itemClassNames.Add(m_mdc.GetClassName(subClassIds [i]));
 		}
 
 		private ICmPossibilityList GetListFromAttributes(XmlReader xrdr)

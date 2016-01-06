@@ -210,6 +210,7 @@
     <Compile Include="FwXmlTraceManager.cs" />
     <Compile Include="HCLoader.cs" />
     <Compile Include="HCParser.cs" />
+    <Compile Include="InvalidAffixProcessException.cs" />
     <Compile Include="InvalidReduplicationEnvironmentException.cs" />
     <Compile Include="IParser.cs" />
     <Compile Include="ParserModelChangeListener.cs">

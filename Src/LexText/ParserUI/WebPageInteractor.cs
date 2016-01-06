@@ -128,6 +128,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					sTool = "PhonologicalRuleEdit";
 					parentClassId = cmo.ClassID;
 					break;
+				case PhPhonemeTags.kClassId:
+					sTool = "phonemeEdit";
+					parentClassId = cmo.ClassID;
+					break;
 			}
 			if (parentClassId <= 0)
 				return; // do nothing

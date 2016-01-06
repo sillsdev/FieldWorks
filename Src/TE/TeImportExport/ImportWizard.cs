@@ -1311,7 +1311,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private string GetPTShortName(FwOverrideComboBox cbo)
 		{
-			return ((ScrText)cbo.Items[cbo.SelectedIndex]).Name;
+			string shortName = ((ScrText)cbo.Items[cbo.SelectedIndex]).Name;
+			return shortName != s_noneProject.Name ? shortName : null;
 		}
 
 		/// ------------------------------------------------------------------------------------

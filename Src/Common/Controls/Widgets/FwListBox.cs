@@ -611,7 +611,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				return -1;
 			for (int i = 0; i < m_items.Count; ++i)
 			{
-				if (TextOfItem(m_items[i]).Equals(tss))
+				// To avoid some odd comparison problems in tss strings we will just use the text to compare here
+				// since the user can't see anything but that in the list box in any case. (LT-16283)
+				var listItemString = TextOfItem(m_items[i]).Text;
+				var searchString = tss.Text;
+				if (listItemString != null && searchString != null && listItemString.Equals(searchString, StringComparison.InvariantCulture))
 					return i;
 			}
 			return -1;

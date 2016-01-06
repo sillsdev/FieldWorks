@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
 			TeImportUi importUi)
 		{
-			return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi);
+			return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi, m_fParatextStreamlinedImport);
 		}
 
 		#endregion
