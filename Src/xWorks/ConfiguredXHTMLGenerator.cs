@@ -1390,6 +1390,7 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Complex:
 				case DictionaryNodeListOptions.ListIds.Minor:
 					{
+						LoadCustomOptions(config, listItem, selectedListOptions);
 						return IsListItemSelectedForExportInternal(listOptions.ListId, listItem, selectedListOptions);
 					}
 				case DictionaryNodeListOptions.ListIds.Entry:
@@ -1409,6 +1410,60 @@ namespace SIL.FieldWorks.XWorks
 						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
 						return true;
 					}
+			}
+		}
+
+		private static void LoadCustomOptions(ConfigurableDictionaryNode config, object listItem, List<Guid> selectedListOptions)
+		{
+			if (selectedListOptions.Count == 0 || config.DisplayLabel == null) return;
+			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
+			var entryRef = listItem as ILexEntryRef;
+			var entry = listItem as ILexEntry;
+			if (entryRef != null)
+			{
+				if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Variant || listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
+				{
+					if (entryRef.VariantEntryTypesRS.Any())
+					{
+						var entryRefGuid = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid);
+						//Add the variant type to the list if it is missing
+						if (!(entryRefGuid.Intersect(listOptions.Options.Select(x => new Guid(x.Id)))).Any())
+						{
+							selectedListOptions.AddRange(entryRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+						}
+					}
+				}
+				if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex || listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
+				{
+					if (entryRef.ComplexEntryTypesRS.Any())
+					{
+						var entryRefGuid = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
+						//Add the complex form type to the list if it is missing
+						if (!(entryRefGuid.Intersect(listOptions.Options.Select(x => new Guid(x.Id)))).Any())
+						{
+							selectedListOptions.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+						}
+					}
+				}
+			}
+			else if (entry != null)
+			{
+				if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Variant || listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
+				{
+					foreach (var visibleEntryRef in entry.VisibleVariantEntryRefs)
+					{
+						if (visibleEntryRef.VariantEntryTypesRS.Any())
+							selectedListOptions.AddRange(visibleEntryRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+					}
+				}
+				if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex || listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
+				{
+					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
+					{
+						if (complexFormEntryRef.ComplexEntryTypesRS.Any())
+							selectedListOptions.AddRange(complexFormEntryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+					}
+				}
 			}
 		}
 
