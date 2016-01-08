@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="textBoxBefore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 77</value>
+    <value>3, 260</value>
   </data>
   <data name="textBoxBefore.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 20</value>
@@ -148,7 +148,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxBetween.Location" type="System.Drawing.Point, System.Drawing">
-    <value>109, 77</value>
+    <value>109, 260</value>
   </data>
   <data name="textBoxBetween.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 20</value>
@@ -172,7 +172,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxAfter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>215, 77</value>
+    <value>215, 260</value>
   </data>
   <data name="textBoxAfter.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 20</value>
@@ -199,7 +199,7 @@
     <value>True</value>
   </data>
   <data name="labelBefore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 61</value>
+    <value>0, 242</value>
   </data>
   <data name="labelBefore.Size" type="System.Drawing.Size, System.Drawing">
     <value>41, 13</value>
@@ -229,7 +229,7 @@
     <value>True</value>
   </data>
   <data name="labelBetween.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 61</value>
+    <value>106, 242</value>
   </data>
   <data name="labelBetween.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 13</value>
@@ -259,7 +259,7 @@
     <value>True</value>
   </data>
   <data name="labelAfter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>212, 61</value>
+    <value>212, 242</value>
   </data>
   <data name="labelAfter.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 13</value>
