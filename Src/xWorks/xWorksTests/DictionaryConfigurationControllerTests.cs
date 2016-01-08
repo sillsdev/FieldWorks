@@ -1120,5 +1120,117 @@ namespace SIL.FieldWorks.XWorks
 			entry.SensesOS.Add(sense);
 			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
 		}
+
+		[Test]
+		public void SetStartingNode_SelectsCorrectNode()
+		{
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord", Label = "Headword", CSSClassNameOverride = "mainheadword", IsEnabled = true
+			};
+			var summaryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SummaryDefinition", Label = "Summary Definition", IsEnabled = false
+			};
+			var restrictionsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Restrictions", Label = "Restrictions (Entry)", IsEnabled = true
+			};
+			var defglossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss", Label = "Definition (or Gloss)", IsEnabled = true
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example", Label = "Example", IsEnabled = true
+			};
+			var typeAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation", Label = "Abbreviation", IsEnabled = true
+			};
+			var typeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name", Label = "Name", IsEnabled = true
+			};
+			var transTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TypeRA", Label = "Type", CSSClassNameOverride = "type", IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { typeAbbrNode, typeNameNode }
+			};
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation", Label = "Translation", IsEnabled = true
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC", Label = "Translations", CSSClassNameOverride = "translations", IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { transTypeNode, translationNode }
+			};
+			var referenceNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Reference", Label = "Reference", IsEnabled = false
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS", Label = "Examples", CSSClassNameOverride = "examples", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode, referenceNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", Label = "Senses", CSSClassNameOverride = "senses", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { defglossNode, examplesNode },
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", Label = "Main Entry", CSSClassNameOverride = "entry", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, summaryNode, restrictionsNode, sensesNode },
+			};
+			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
+				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
+				//SUT
+				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
+
+				dcc.SetStartingNode(null);
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing a null class list should not find a TreeNode (and should not crash either)");
+
+				dcc.SetStartingNode(new List<string>());
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
+
+				dcc.SetStartingNode(new List<string> {"something","invalid"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
+
+				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
+				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
+
+				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
+				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
+				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
+
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
+				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
+				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
+
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
+				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
+				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
+			}
+		}
 	}
 }

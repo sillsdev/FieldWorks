@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
-			Console.WriteLine(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e);
+			System.Diagnostics.Debug.WriteLine(String.Format(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e));
 		}
 
 		/// <summary>
@@ -87,20 +87,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				// Pop up a menu to allow the user to start the document configuration dialog.
-				// Start the dialog at the configuration node indicated by the current element.  [TODO: LT-16926]
-				// Idea: use element, element.Parent, element.Parent.Parent, ... to generate an xpath like expression.
-				string nodePath = String.Empty;
-				string label;
-				if (string.IsNullOrEmpty(nodePath))
-					label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
-				else
-					label = string.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
+				// Pop up a menu to allow the user to start the document configuration dialog, and
+				// start the dialog at the configuration node indicated by the current element.
+				var classList = new List<string>();
+				for (var elem = element; elem != null; elem = elem.ParentElement)
+				{
+					if (elem.TagName == "body" || elem.TagName == "html")
+						break;
+					var className = elem.GetAttribute("class");
+					if (!String.IsNullOrEmpty(className))
+					{
+						if (className == "letHead")
+							return;
+						classList.Insert(0, className);
+					}
+				}
+				var label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
 				m_contextMenu = new ContextMenuStrip();
 				var item = new ToolStripMenuItem(label);
 				m_contextMenu.Items.Add(item);
 				item.Click += RunConfigureDialogAt;
-				item.Tag = nodePath;
+				item.Tag = classList;
 				m_contextMenu.Show(web, new Point(e.ClientX, e.ClientY));
 				m_contextMenu.Closed += m_contextMenu_Closed;
 				e.Handled = true;
@@ -127,13 +134,13 @@ namespace SIL.FieldWorks.XWorks
 
 		void RunConfigureDialogAt(object sender, EventArgs e)
 		{
-			// TODO: initialize dialog to start on the desired configuration node (LT-16926)
-			//var item = (ToolStripMenuItem)sender;
-			//var nodePath = (string)item.Tag;
+			var item = (ToolStripMenuItem)sender;
+			var classList = item.Tag as List<string>;
 			using (var dlg = new DictionaryConfigurationDlg(m_mediator))
 			{
 				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
+				controller.SetStartingNode(classList);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator));
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
