@@ -1880,6 +1880,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please remove the punctuation/space from the suffix name (&quot;{0}&quot;) to allow export and some other functions to work..
+        /// </summary>
+        internal static string PunctOrSpaceInSuffixNameError {
+            get {
+                return ResourceManager.GetString("PunctOrSpaceInSuffixNameError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Really delete field and contents?.
         /// </summary>
         internal static string ReallyDeleteField {

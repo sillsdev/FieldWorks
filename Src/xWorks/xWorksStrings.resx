@@ -744,6 +744,9 @@ Are you sure you want to delete this list?</value>
   <data name="PunctInFieldNameError" xml:space="preserve">
     <value>Please remove the punctuation from the custom field name ("{0}") to allow export and some other functions to work.</value>
   </data>
+  <data name="PunctOrSpaceInSuffixNameError" xml:space="preserve">
+    <value>Please remove the punctuation/space from the suffix name ("{0}") to allow export and some other functions to work.</value>
+  </data>
   <data name="PunctInFieldNameWarning" xml:space="preserve">
     <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
 Do you want to continue with the export?</value>

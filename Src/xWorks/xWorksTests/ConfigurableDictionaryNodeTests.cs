@@ -236,6 +236,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CanChangeSuffixWithPunc()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+
+			var originallabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig" };
+			parent.Children.Add(node);
+
+			var newSuffix = "entry#";
+			// SUT
+			node.ChangeSuffix(newSuffix);
+			Assert.IsNotEmpty(newSuffix, "suffix was not updated with punctuation");
+			Assert.That(node.Label, Is.EqualTo(originallabel), "should not have changed label");
+		}
+
+		[Test]
+		public void CanChangeSuffixWithMultiPunc()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+
+			var originallabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig" };
+			parent.Children.Add(node);
+
+			var newSuffix = "#entry#";
+			// SUT
+			var result = node.ChangeSuffix(newSuffix);
+			Assert.IsNotEmpty(result, "suffix was not updated with multiple punctuation");
+			Assert.That(node.Label, Is.EqualTo(originallabel), "should not have changed label");
+		}
+
+		[Test]
+		public void CanChangeSuffixWithSpace()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+
+			var originallabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig" };
+			parent.Children.Add(node);
+
+			var newSuffix = "entry new";
+			// SUT
+			var result = node.ChangeSuffix(newSuffix);
+			Assert.IsNotEmpty(result, "suffix was not updated with space");
+			Assert.That(node.Label, Is.EqualTo(originallabel), "should not have changed label");
+		}
+
+		[Test]
 		public void CanAddInitialSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
@@ -260,7 +308,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var result = node.ChangeSuffix("new");
-			Assert.That(result, Is.True);
+			Assert.IsEmpty(result);
 		}
 
 		[Test]
@@ -276,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var result = node.ChangeSuffix(otherNode.LabelSuffix);
-			Assert.That(result, Is.False, "Should have reported failure to change suffix");
+			Assert.IsNotEmpty(result, "Should have reported failure to change suffix");
 			Assert.That(node.LabelSuffix, Is.EqualTo(originalSuffix), "Should not have changed suffix");
 		}
 
@@ -291,7 +339,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var result = node.ChangeSuffix(originalSuffix);
-			Assert.That(result, Is.True, "Report success when requesting a suffix that is already the suffix");
+			Assert.IsEmpty(result, "Report success when requesting a suffix that is already the suffix");
 			Assert.That(node.LabelSuffix, Is.EqualTo(originalSuffix), "Should not have changed suffix");
 		}
 
@@ -303,7 +351,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var result = rootNode.ChangeSuffix("new", rootNodes);
-			Assert.That(result, Is.True, "allow changing suffix of root");
+			Assert.IsEmpty(result, "allow changing suffix of root");
 			Assert.That(rootNode.LabelSuffix, Is.EqualTo("new"), "failed to change suffix");
 		}
 

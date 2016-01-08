@@ -375,9 +375,11 @@ namespace SIL.FieldWorks.XWorks
 					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewSuffix == dictionaryNode.LabelSuffix)
 						return;
 
-					if (!dictionaryNode.ChangeSuffix(renameDialog.NewSuffix, siblings))
+					var errMsg = dictionaryNode.ChangeSuffix(renameDialog.NewSuffix, siblings);
+					if (!string.IsNullOrEmpty(errMsg))
 					{
-						MessageBox.Show(xWorksStrings.FailedToRename);
+						errMsg = string.Format(errMsg, renameDialog.NewSuffix);
+						MessageBox.Show(errMsg);
 						return;
 					}
 				}
