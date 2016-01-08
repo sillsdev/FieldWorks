@@ -2,12 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 {
@@ -16,6 +21,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	/// </summary>
 	internal sealed class NotebookDocumentTool : ITool
 	{
+		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 
 		#region Implementation of IPropertyTableProvider
@@ -88,10 +94,19 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			_configurationDocument = XDocument.Parse("<parameters area='notebook' altTitleId='RnGenericRec-Plural' persistContext='Notebk' backColor='White' layout='publishRecord' layoutProperty='NotebookPublicationLayout' editable='false' configureObjectName='Document' findHelpId='khtpFindNotebook'>" + Environment.NewLine +
+"<configureLayouts>" + Environment.NewLine +
+"<layoutType label='Notebook Records' layout='publishRecord'>" + Environment.NewLine +
+"<configure class='RnGenericRec' label='Record' layout='publishRecord'/>" + Environment.NewLine +
+"</layoutType>" + Environment.NewLine +
+"</configureLayouts>" + Environment.NewLine +
+"</parameters>");
+			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
+			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				PropertyTable, Publisher, Subscriber,
 				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				new XmlDocView(_configurationDocument.Root, recordClerk));
 		}
 
 		/// <summary>

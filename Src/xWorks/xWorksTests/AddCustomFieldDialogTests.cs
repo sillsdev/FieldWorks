@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -121,9 +121,8 @@ namespace SIL.FieldWorks.XWorks
 			if (Cache.LangProject.GenreListOA == null)
 				Cache.LangProject.GenreListOA = cmPossibilityListFactory.Create();
 			var realSource = source.Replace("placeholder", customList.Guid.ToString());
-			var doc = new XmlDocument();
-			doc.LoadXml(realSource);
-			var windowConfiguration = doc.DocumentElement;
+			var doc = XDocument.Parse(realSource);
+			var windowConfiguration = doc.Root;
 			var items = AddCustomFieldDlg.GetListsComboItems(Cache, windowConfiguration);
 			Assert.That(items, Has.Count.EqualTo(4));
 			Assert.That(items[0].Name, Is.EqualTo("Custom 1"));

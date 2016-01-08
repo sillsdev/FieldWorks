@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>Control to invoke methods that need to be run on this
 		/// thread, but are called from another thread.</summary>
-		private readonly Control m_invokeControl;
+		private Control m_invokeControl;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -40,13 +40,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#region Disposable stuff
-		#if DEBUG
+		//#if DEBUG
 		/// <summary/>
 		~ThreadHelper()
 		{
 			Dispose(false);
 		}
-		#endif
+		//#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
@@ -62,10 +62,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
-			if (fDisposing && !IsDisposed)
+
+			if (IsDisposed)
+				return;
+
+			if (fDisposing && m_invokeControl != null)
 			{
 				// dispose managed and unmanaged objects
-				Invoke((MethodInvoker)(m_invokeControl.Dispose));
+				if (m_invokeControl.IsHandleCreated)
+				{
+					// I (RandyR) have seen cases where the handle is destroyed, before this point,
+					// which then throws when the Invoke is done.
+					Invoke((MethodInvoker)(m_invokeControl.Dispose));
+				}
+				m_invokeControl = null;
 			}
 			IsDisposed = true;
 		}

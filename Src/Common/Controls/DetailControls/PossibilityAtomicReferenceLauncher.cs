@@ -6,7 +6,6 @@
 // Responsibility: RandyR
 using System;
 using System.Linq;
-using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+				var node = m_configurationNode.Element("deParams");
 				string nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel");
 				return nullLabel == null || nullLabel.Length > 0;
 			}

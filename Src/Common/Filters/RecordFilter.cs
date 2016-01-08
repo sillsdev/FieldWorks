@@ -45,7 +45,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="configuration">The configuration.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public RecordFilter Create (FdoCache cache, XmlNode configuration)
+		static public RecordFilter Create(FdoCache cache, XElement configuration)
 		{
 			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
 			filter.Init(cache, configuration);
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache">The cache.</param>
 		/// <param name="filterNode">The filter node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(FdoCache cache,XmlNode filterNode)
+		public virtual void Init(FdoCache cache, XElement filterNode)
 		{
 		}
 
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void PersistAsXml(XmlNode node)
+		public virtual void PersistAsXml(XElement node)
 		{
 			XmlUtils.AppendAttribute(node, "name", m_name);
 		}
@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void InitXml(XmlNode node)
+		public virtual void InitXml(XElement node)
 		{
 			m_name = XmlUtils.GetManditoryAttributeValue(node, "name");
 		}
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "classIds", XmlUtils.MakeListValue(m_classIds));
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_classIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(node, "classIds"));
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache"></param>
 		/// <param name="filterNode"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(FdoCache cache,XmlNode filterNode)
+		public override void Init(FdoCache cache, XElement filterNode)
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void PersistAsXml(XmlNode node)
+		public virtual void PersistAsXml(XElement node)
 		{
 			if (m_tssLabel != null)
 			{
@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ---------------------------------------------------------------------------------------
-		public virtual void InitXml(XmlNode node)
+		public virtual void InitXml(XElement node)
 		{
 			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(node, "label");
 		}
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.Filters
 		protected ITsString m_tssSource;
 		protected const int m_MaxSearchStringLength = 1000;	// max lenthg of search string
 
-		protected XmlNode m_persistNode;
+		protected XElement m_persistNode;
 
 		protected MatchRangePair m_currentMatchRangePair = new MatchRangePair(-1, -1);
 		/// <summary>
@@ -943,7 +943,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ---------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
 			XmlUtils.AppendAttribute(node, "pattern", m_pattern.Pattern.Text);
@@ -962,7 +962,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 
@@ -1422,9 +1422,9 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
-			base.PersistAsXml (node);
+			base.PersistAsXml(node);
 			DynamicLoader.PersistObject(m_matcher, node, "invertMatcher");
 		}
 
@@ -1434,9 +1434,9 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
-			base.InitXml (node);
+			base.InitXml(node);
 			m_matcher = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
 		}
 
@@ -1630,7 +1630,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void PersistAsXml(XmlNode node)
+		public virtual void PersistAsXml(XElement node)
 		{
 			// nothing to do in base class
 		}
@@ -1641,7 +1641,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void InitXml(XmlNode node)
+		public virtual void InitXml(XElement node)
 		{
 			// nothing to do in base class
 		}
@@ -1722,7 +1722,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
@@ -1734,7 +1734,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
@@ -1832,7 +1832,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
@@ -1844,7 +1844,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ---------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
@@ -1956,7 +1956,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flidVec", m_flidVec.ToString());
@@ -1970,7 +1970,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flidVec = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidVec");
@@ -2091,7 +2091,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(m_flidVec));
@@ -2105,7 +2105,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flidVec = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "flidVec");
@@ -2272,7 +2272,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flidAtom", m_flidAtom.ToString());
@@ -2286,7 +2286,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flidAtom = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidAtom");
@@ -2436,7 +2436,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			DynamicLoader.PersistObject(m_finder, node, "finder");
@@ -2449,7 +2449,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			Debug.Assert(m_finder == null);
@@ -2587,7 +2587,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			foreach(RecordFilter rf in m_filters)
@@ -2600,12 +2600,12 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			Debug.Assert(m_filters != null && m_filters.Count == 0);
-			m_filters = new ArrayList(node.ChildNodes.Count);
-			foreach (XmlNode child in node.ChildNodes)
+			m_filters = new ArrayList(node.Elements().Count());
+			foreach (var child in node.Elements())
 			{
 				var filter = DynamicLoader.RestoreFromChild(child, ".");
 				m_filters.Add(filter);

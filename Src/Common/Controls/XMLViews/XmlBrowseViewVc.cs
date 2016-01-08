@@ -8,7 +8,7 @@
 //
 // <remarks>
 // </remarks>
-using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="xnSpec"></param>
 		/// <param name="fakeFlid"></param>
 		/// <param name="xbv"></param>
-		public XmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+		public XmlBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
 			: base(xnSpec, fakeFlid, xbv)
 		{
 		}

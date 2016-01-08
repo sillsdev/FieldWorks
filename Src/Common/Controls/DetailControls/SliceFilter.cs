@@ -3,12 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class SliceFilter
 	{
-		protected XmlDocument m_filterList;
+		protected XDocument m_filterList;
 
 		/// <summary>
 		/// create a filter which does not have an external setup notes to filter (but which will still ask FDO)
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// create a filter which will consult both FDO and an external XML document when making filtering decisions
 		/// </summary>
 		/// <param name="filterList">XML document (see distfiles/lexed/basicFilter.xml for an example)</param>
-		public SliceFilter(XmlDocument filterList)
+		public SliceFilter(XDocument filterList)
 		{
 			m_filterList= filterList;
 		}
@@ -43,14 +42,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj"></param>
 		/// <param name="flid"></param>
 		/// <returns>true if this slice should be included</returns>
-		virtual public bool IncludeSlice(XmlNode configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
+		virtual public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (m_filterList!= null)
 			{
 				string id = XmlUtils.GetOptionalAttributeValue(configurationNode, "id");
 				if (id != null)
 				{
-					XmlNode instruction = m_filterList.SelectSingleNode("SliceFilter/node[@id='" + id + "']");
+					var instruction = m_filterList.XPathSelectElement("SliceFilter/node[@id='" + id + "']");
 
 					if (instruction != null)
 						return false;

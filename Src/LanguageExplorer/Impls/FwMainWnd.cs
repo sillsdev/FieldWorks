@@ -971,24 +971,18 @@ namespace LanguageExplorer.Impls
 				// message loop.
 				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
 
-				if (PropertyTable != null)
-				{
-					PropertyTable.Dispose();
-				}
-
 				if (_sidePane != null)
 				{
 					_sidePane.Dispose();
+					_sidePane = null;
 				}
 				if (_viewHelper != null)
 				{
 					_viewHelper.Dispose();
+					_viewHelper = null;
 				}
 			}
 
-			PropertyTable = null;
-			_sidePane = null;
-			_viewHelper = null;
 			_currentArea = null;
 			_stylesheet = null;
 			_publisher = null;
@@ -996,6 +990,13 @@ namespace LanguageExplorer.Impls
 			_areaRepository = null;
 
 			base.Dispose(disposing);
+
+			if (disposing && PropertyTable != null)
+			{
+				// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
+				PropertyTable.Dispose();
+				PropertyTable = null;
+			}
 		}
 
 		/// <summary>

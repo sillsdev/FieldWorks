@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -38,8 +38,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private Label label3;
 		internal ListView currentList;
 
-		List<XmlNode> m_possibleColumns;
-		List<XmlNode> m_currentColumns;
+		List<XElement> m_possibleColumns;
+		List<XElement> m_currentColumns;
 		readonly FdoCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="currentColumns">The current columns.</param>
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns, IPropertyTable propertyTable)
+		public ColumnConfigureDialog(List<XElement> possibleColumns, List<XElement> currentColumns, IPropertyTable propertyTable)
 		{
 			m_possibleColumns = possibleColumns;
 			m_currentColumns = currentColumns;
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The current specs.</value>
 		/// ------------------------------------------------------------------------------------
-		public List<XmlNode> CurrentSpecs
+		public List<XElement> CurrentSpecs
 		{
 			get
 			{
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.Controls
 				blkEditIcon.Visible = blkEditText.Visible = showBulkEditIcons;
 				currentList.SmallImageList = imageList1;
 				optionsList.SmallImageList = imageList1;
-				this.Refresh();
+				Refresh();
 			}
 		}
 
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <returns>The ListViewItem or null. If null is returned, the caller should delete this
 		/// column from the current list.</returns>
-		ListViewItem MakeCurrentItem(XmlNode node)
+		ListViewItem MakeCurrentItem(XElement node)
 		{
 			var cols = new string[2];
 			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
@@ -584,8 +584,10 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			var itemWithToolTip = new ListViewItem(cols);
-			itemWithToolTip.ToolTipText = cols[1];
+			var itemWithToolTip = new ListViewItem(cols)
+			{
+				ToolTipText = cols[1]
+			};
 			if (XmlUtils.GetOptionalAttributeValue(node, "bulkEdit") != null ||
 				XmlUtils.GetOptionalAttributeValue(node, "transduce") != null)
 			{
@@ -651,7 +653,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return result;
 		}
 
-		private bool TryToRevertToDefaultWs(XmlNode node, out string newColName, out string newWsDispCat)
+		private bool TryToRevertToDefaultWs(XElement node, out string newColName, out string newWsDispCat)
 		{
 			newColName = String.Empty;
 			newWsDispCat = String.Empty;
@@ -673,10 +675,10 @@ namespace SIL.FieldWorks.Common.Controls
 			return true;
 		}
 
-		private string UpdateNodeToReflectDefaultWs(XmlNode node, string origWs)
+		private string UpdateNodeToReflectDefaultWs(XElement node, string origWs)
 		{
 			var result = String.Empty;
-			if (node.Attributes != null)
+			if (node.HasAttributes)
 			{
 				const string wsAttrName = "ws";
 				if (XmlUtils.GetOptionalAttributeValue(node, wsAttrName)!= null)
@@ -691,8 +693,8 @@ namespace SIL.FieldWorks.Common.Controls
 						const string origWsAttrName = "originalWs";
 						XmlUtils.SetAttribute(node, "label", origLabel);
 						// remove 'originalLabel' and 'originalWs' attributes
-						node.Attributes.RemoveNamedItem(origLabelAttrName);
-						node.Attributes.RemoveNamedItem(origWsAttrName);
+						node.Attribute(origLabelAttrName).Remove();
+						node.Attribute(origWsAttrName).Remove();
 					}
 				}
 			}
@@ -735,7 +737,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return null;
 		}
 
-		ListViewItem AddCurrentItem(XmlNode node)
+		ListViewItem AddCurrentItem(XElement node)
 		{
 			var item = MakeCurrentItem(node);
 			// Should only occur if user deleted this ws
@@ -752,13 +754,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 		void InitCurrentList()
 		{
-			IComparer<XmlNode> columnSorter = new ColumnSorter();
+			IComparer<XElement> columnSorter = new ColumnSorter();
 			int firstIndex = 0;
 			int count = m_possibleColumns.Count;
-			if (m_possibleColumns.Count > 0 && m_possibleColumns[0].ParentNode != null)
+			if (m_possibleColumns.Count > 0 && m_possibleColumns[0].Parent != null)
 			{
 				// The parent columns element may specify that the first few items are to be left in place and not sorted.
-				var leadingUnsortedColumns = XmlUtils.GetOptionalIntegerValue(m_possibleColumns[0].ParentNode, "leadingUnsortedColumns", 0);
+				var leadingUnsortedColumns = XmlUtils.GetOptionalIntegerValue(m_possibleColumns[0].Parent, "leadingUnsortedColumns", 0);
 				firstIndex += leadingUnsortedColumns;
 				count -= leadingUnsortedColumns;
 			}
@@ -1071,7 +1073,7 @@ namespace SIL.FieldWorks.Common.Controls
 					string otherLabel = GetColumnLabel(j);
 					if (label == otherLabel)
 					{
-						string otherWsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[j] as XmlNode);
+						string otherWsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[j]);
 
 						// If the ws is not -50, then we know to compare against integer ws codes, not string labels
 						if (ws != -50)
@@ -1114,7 +1116,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			XmlNode columnBeingAdded = m_possibleColumns[optionsList.SelectedIndices[0]];
+			var columnBeingAdded = m_possibleColumns[optionsList.SelectedIndices[0]];
 			m_currentColumns.Add(columnBeingAdded);
 
 			int index = CurrentListIndex;
@@ -1148,20 +1150,20 @@ namespace SIL.FieldWorks.Common.Controls
 
 		//Some fields such as Sense have no $ws attribute. Other fields such as Form do have this attribute.
 		//This information is used to determine if a unique column label should be created.
-		private static bool ColumnHasWsParam(XmlNode columnBeingAdded)
+		private static bool ColumnHasWsParam(XElement columnBeingAdded)
 		{
 			return !String.IsNullOrEmpty(XmlViewsUtils.FindWsParam(columnBeingAdded));
 		}
 
-		private bool ColumnHasAsDuplicate(XmlNode colSpec)
+		private bool ColumnHasAsDuplicate(XElement colSpec)
 		{
-			List<string> duplicateColumnLabels = GetDuplicateColumns();
-			return duplicateColumnLabels.Contains(colSpec.Attributes.GetNamedItem("label").Value);
+			var duplicateColumnLabels = GetDuplicateColumns();
+			return duplicateColumnLabels.Contains(colSpec.Attribute("label").Value);
 		}
 
-		private void removeButton_Click(object sender, System.EventArgs e)
+		private void removeButton_Click(object sender, EventArgs e)
 		{
-			int index = CurrentListIndex;
+			var index = CurrentListIndex;
 			if (index < 0 || currentList.Items.Count == 1)
 				return;
 			currentList.Items.RemoveAt(index);
@@ -1175,29 +1177,29 @@ namespace SIL.FieldWorks.Common.Controls
 			currentList.Select();
 		}
 
-		private void moveUpButton_Click(object sender, System.EventArgs e)
+		private void moveUpButton_Click(object sender, EventArgs e)
 		{
-			int index = CurrentListIndex;
+			var index = CurrentListIndex;
 			if (index <= 0)
 				return; // should be disabled, but play safe.
-			XmlNode itemMove = m_currentColumns[index];
+			var itemMove = m_currentColumns[index];
 			m_currentColumns[index] = m_currentColumns[index - 1];
 			m_currentColumns[index - 1] = itemMove;
-			ListViewItem listItemMove = currentList.Items[index];
+			var listItemMove = currentList.Items[index];
 			currentList.Items.RemoveAt(index);
 			currentList.Items.Insert(index - 1, listItemMove);
 			listItemMove.Selected = true;
 		}
 
-		private void moveDownButton_Click(object sender, System.EventArgs e)
+		private void moveDownButton_Click(object sender, EventArgs e)
 		{
-			int index = CurrentListIndex;
+			var index = CurrentListIndex;
 			if (index < 0 || index >= m_currentColumns.Count - 1)
 				return; // should be disabled, but play safe.
-			XmlNode itemMove = m_currentColumns[index];
+			var itemMove = m_currentColumns[index];
 			m_currentColumns[index] = m_currentColumns[index + 1];
 			m_currentColumns[index + 1] = itemMove;
-			ListViewItem listItemMove = currentList.Items[index];
+			var listItemMove = currentList.Items[index];
 			currentList.Items.RemoveAt(index);
 			currentList.Items.Insert(index + 1, listItemMove);
 			listItemMove.Selected = true;
@@ -1247,7 +1249,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int index = CurrentListIndex;
 				if (index < 0 || index >= m_currentColumns.Count)
 					return;
-				XmlNode node = m_currentColumns[index];
+				var node = m_currentColumns[index];
 				string wsLabel = XmlViewsUtils.FindWsParam(node);
 				if (wsLabel == "")
 				{
@@ -1400,11 +1402,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (index < 0)
 				return;
 			string wsId = ((WsComboItem) wsCombo.SelectedItem).Id;
-			XmlNode current = m_currentColumns[index];
+			var current = m_currentColumns[index];
 			string sWsOrig = XmlViewsUtils.FindWsParam(current);
 			if (String.IsNullOrEmpty(sWsOrig))
 				sWsOrig = XmlUtils.GetOptionalAttributeValue(current, "ws");
-			XmlNode replacement = XmlViewsUtils.CopyReplacingParamDefault(current, "ws", wsId);
+			var replacement = XmlViewsUtils.CopyReplacingParamDefault(current, "ws", wsId);
 			string originalWs = XmlUtils.GetOptionalAttributeValue(replacement, "originalWs");
 			if (originalWs == null)
 			{
@@ -1421,7 +1423,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			GenerateColumnLabel(replacement, m_cache);
 
-			XmlAttribute xa = replacement.Attributes["label"];
+			var xa = replacement.Attribute("label");
 			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
 			var listItem = MakeCurrentItem(replacement);
 			if (listItem == null) // The user deleted this ws and there was already one with the default ws.
@@ -1447,7 +1449,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The XML node of the column specification</param>
 		/// <param name="cache">The FdoCache</param>
 		/// ------------------------------------------------------------------------------------
-		static public void GenerateColumnLabel(XmlNode colSpec, FdoCache cache)
+		static public void GenerateColumnLabel(XElement colSpec, FdoCache cache)
 		{
 			string newWs = XmlViewsUtils.FindWsParam(colSpec);
 			string originalWs = XmlUtils.GetOptionalAttributeValue(colSpec, "originalWs");
@@ -1504,18 +1506,18 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Class to sort the columns before they are displayed
-		private class ColumnSorter : IComparer<XmlNode>
+		private class ColumnSorter : IComparer<XElement>
 		{
 			#region IComparer<T> Members
 
-			public int Compare(XmlNode x, XmlNode y)
+			public int Compare(XElement x, XElement y)
 			{
 				string xVal = XmlUtils.GetLocalizedAttributeValue(x, "label", null);
 				if (xVal == null)
 					xVal = XmlUtils.GetManditoryAttributeValue(x, "label");
 				string yVal = XmlUtils.GetLocalizedAttributeValue(y, "label", null);
 				if (yVal == null)
-					yVal = XmlUtils.GetManditoryAttributeValue((XmlNode)y, "label");
+					yVal = XmlUtils.GetManditoryAttributeValue(y, "label");
 				return xVal.CompareTo(yVal);
 			}
 
@@ -1528,13 +1530,13 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class OptionListItem
 	{
-		XmlNode m_item;
-		public OptionListItem(XmlNode item)
+		XElement m_item;
+		public OptionListItem(XElement item)
 		{
 			m_item = item;
 		}
 
-		public XmlNode Item
+		public XElement Item
 		{
 			get { return m_item; }
 		}

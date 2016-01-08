@@ -6,16 +6,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using SIL.Xml;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -157,7 +156,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement configNode,
 			SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, propertyTable, configNode, searchEngine, null);
@@ -172,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement configNode,
 			SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();
@@ -313,7 +312,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Other methods
 
-		private void CreateBrowseViewer(XmlNode configNode, CoreWritingSystemDefinition reversalWs)
+		private void CreateBrowseViewer(XElement configNode, CoreWritingSystemDefinition reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
 #if RANDYTODO
@@ -344,7 +343,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var results = new List<string>();
 			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
 			{
-				var colLabel = columnSpec.GetOptionalStringAttribute("layout", null);
+				var colLabel = Utils.XmlUtils.GetOptionalAttributeValue(columnSpec, "layout", null);
 				if (colLabel == null)
 				{
 					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()

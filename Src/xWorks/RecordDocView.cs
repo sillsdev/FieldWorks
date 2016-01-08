@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void SetupDataContext()
 		{
-			Debug.Assert(m_configurationParameters != null);
+			Debug.Assert(m_configurationParametersElement != null);
 
 			base.SetupDataContext();
 			m_rootSite = ConstructRoot();
@@ -201,11 +201,11 @@ namespace SIL.FieldWorks.XWorks
 		/// if the XML configuration does not specify the availability of the treebar
 		/// (e.g. treeBarAvailibility="Required"), then use this.
 		/// </summary>
-		protected override RecordView.TreebarAvailability DefaultTreeBarAvailability
+		protected override TreebarAvailability DefaultTreeBarAvailability
 		{
 			get
 			{
-				return RecordView.TreebarAvailability.NotAllowed;
+				return TreebarAvailability.NotAllowed;
 			}
 		}
 
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion
 
-		public XmlDocItemView(int hvoRoot, XmlNode xnSpec, string sLayout) :
+		public XmlDocItemView(int hvoRoot, XElement xnSpec, string sLayout) :
 			base(hvoRoot, sLayout, XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
 		{
 			if (m_xnSpec == null)
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class RecordDocXmlView : RecordDocView
 	{
-		XmlNode m_jtSpecs; // node required by XmlView.
+		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
 		#region IDisposable override
@@ -440,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 		/// is (e.g.) publishStemPreview. (This view wraps publishStem with some conditional logic to ensure
 		/// that we display things like "Not published" if the entry is excluded from all publications.)
 		/// </summary>
-		public static string GetLayoutName(XmlNode xnSpec, IPropertyTable propertyTable)
+		public static string GetLayoutName(XElement xnSpec, IPropertyTable propertyTable)
 		{
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
@@ -455,13 +455,13 @@ namespace SIL.FieldWorks.XWorks
 		protected override void SetupDataContext()
 		{
 			// The base class uses these specs, so locate them first!
-			m_jtSpecs = m_configurationParameters;
+			m_jtSpecs = m_configurationParametersElement;
 			base.SetupDataContext ();
 		}
 
 		protected override void ReadParameters()
 		{
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 			base.ReadParameters();
 		}
 
@@ -501,12 +501,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			CheckDisposed();
-			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
 			if(String.IsNullOrEmpty(sProp))
 				sProp = "DictionaryPublicationLayout";
 			using(var dlg = new XmlDocConfigureDlg())
 			{
-				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
+				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
 					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 					// m_mediator != null && m_rootSite == null so we need to handle this to prevent a crash.
 					if (PropertyTable != null && m_rootSite != null)
 					{
-						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, PropertyTable));
+						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParametersElement, PropertyTable));
 					}
 				}
 				if (dlg.MasterRefreshRequired)

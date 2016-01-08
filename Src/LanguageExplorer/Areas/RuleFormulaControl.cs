@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 		}
 
-		public RuleFormulaControl(XmlNode configurationNode)
+		public RuleFormulaControl(XElement configurationNode)
 		{
 			m_configurationNode = configurationNode;
 			InitializeComponent();
@@ -515,9 +515,9 @@ namespace LanguageExplorer.Areas
 			IPhEnvironment selectedEnv = null;
 			if (m_configurationNode != null)
 			{
-				XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+				var node = m_configurationNode.Element("deParams");
 				if (node != null)
-					displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
+					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);

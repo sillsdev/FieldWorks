@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	public class InflAffixTemplateEventArgs : EventArgs
 	{
-		private XmlNode m_node;
+		private XElement m_node;
 		private Point m_location;
 		private Control m_contextControl;
 		private int m_tag;
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public InflAffixTemplateEventArgs(Control context, XmlNode node, Point location, int tag)
+		public InflAffixTemplateEventArgs(Control context, XElement node, Point location, int tag)
 		{
 			m_location = location;
 			m_node = node;
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return m_tag;
 			}
 		}
-		public XmlNode ConfigurationNode
+		public XElement ConfigurationNode
 		{
 			get
 			{

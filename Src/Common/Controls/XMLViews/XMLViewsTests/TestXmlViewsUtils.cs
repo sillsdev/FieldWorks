@@ -3,13 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using SIL.Utils;
 
 namespace XMLViewsTests
 {
@@ -27,92 +30,88 @@ namespace XMLViewsTests
 		/// <param name="node1"></param>
 		/// <param name="node2"></param>
 		/// <returns></returns>
-		static public bool NodesMatch(XmlNode node1, XmlNode node2)
+		static public bool NodesMatch(XElement node1, XElement node2)
 		{
 			if (node1.Name != node2.Name)
 				return false;
-			if (node1.ChildNodes.Count != node2.ChildNodes.Count)
+			if (node1.Name.LocalName != node2.Name.LocalName)
 				return false;
-			if (node1.Attributes.Count != node2.Attributes.Count)
+			if (node1.Elements().Count() != node2.Elements().Count())
 				return false;
-			if (node1.InnerText != node2.InnerText)
+			if (node1.Attributes().Count() != node2.Attributes().Count())
 				return false;
-			for (int i = 0; i < node1.Attributes.Count; i++)
+			if (node1.GetInnerText() != node2.GetInnerText())
+				return false;
+			foreach (var attr in node1.Attributes())
 			{
-				XmlAttribute xa1 = node1.Attributes[i];
-				XmlAttribute xa2 = node2.Attributes[xa1.Name];
-				if (xa2 == null || xa1.Value != xa2.Value)
+				var xa2 = node2.Attribute(attr.Name);
+				if (xa2 == null || attr.Value != xa2.Value)
 					return false;
 			}
-			for (int i = 0; i < node1.ChildNodes.Count; i++)
-				if (!NodesMatch(node1.ChildNodes[i], node2.ChildNodes[i]))
-					return false;
-			return true;
+			var node1ElementsAsList = node1.Elements().ToList();
+			var node2ElementsAsList = node2.Elements().ToList();
+			return !node1ElementsAsList.Where((t, i) => !NodesMatch(t, node2ElementsAsList[i])).Any();
 		}
 
-		public static XmlNode GetRootNode(XmlDocument doc, string name)
+		public static XElement GetRootNode(XDocument doc, string name)
 		{
-			return doc.DocumentElement.SelectSingleNode("//" + name);
+			return doc.Root.XPathSelectElement("//" + name);
 		}
 
 		[Test]
 		public void CopyWithParamDefaults()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<column label=\"Gloss\"> "
 					+"<seq field=\"Senses\" sep=\"$delimiter=commaSpace\"> "
 					+"<string field=\"Gloss\" ws=\"$ws=analysis\"/> "
 					+"</seq> "
 				+"</column>");
 
-			XmlNode source = GetRootNode(docSrc, "column");
+			var source = GetRootNode(docSrc, "column");
 			Assert.IsNotNull(source);
 
-			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
+			var output = XmlViewsUtils.CopyWithParamDefaults(source);
 			Assert.IsNotNull(output);
 			Assert.IsFalse(source == output);
 
-			XmlDocument docExpected = new XmlDocument();
-			docExpected.LoadXml(
+			var docExpected = XDocument.Parse(
 				"<column label=\"Gloss\"> "
 					+"<seq field=\"Senses\" sep=\"commaSpace\"> "
 						+"<string field=\"Gloss\" ws=\"analysis\"/> "
 					+"</seq> "
 				+"</column>");
-			XmlNode expected = GetRootNode(docExpected, "column");
+			var expected = GetRootNode(docExpected, "column");
 			Assert.IsTrue(NodesMatch(output, expected));
 		}
 
 		[Test]
 		public void TrivialCopyWithParamDefaults()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<column label=\"Gloss\"> "
 				+"<seq field=\"Senses\" sep=\"commaSpace\"> "
 				+"<string field=\"Gloss\" ws=\"analysis\"/> "
 				+"</seq> "
 				+"</column>");
 
-			XmlNode source = GetRootNode(docSrc, "column");
+			var source = GetRootNode(docSrc, "column");
 			Assert.IsNotNull(source);
-			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
+			var output = XmlViewsUtils.CopyWithParamDefaults(source);
 			Assert.IsTrue(source == output);
 		}
 
 		[Test]
 		public void FindDefaults()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<column label=\"Gloss\"> "
 				+"<seq field=\"Senses\" sep=\"$delimiter=commaSpace\"> "
 				+"<string field=\"Gloss\" ws=\"$ws=analysis\"/> "
 				+"</seq> "
 				+"</column>");
 
-			XmlNode source = GetRootNode(docSrc, "column");
+			var source = GetRootNode(docSrc, "column");
 			Assert.IsNotNull(source);
 			Assert.IsTrue(XmlViewsUtils.HasParam(source));
 
@@ -164,9 +163,8 @@ namespace XMLViewsTests
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			entry.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("kick", Cache.DefaultVernWs);
-			var doc = new XmlDocument();
-			doc.LoadXml(@"<string class='LexEntry' field='CitationForm'/>");
-			var node = doc.DocumentElement;
+			var doc = XDocument.Parse(@"<string class='LexEntry' field='CitationForm'/>");
+			var node = doc.Root;
 			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null,
 				WritingSystemServices.kwsVern);
 			Assert.That(strings, Has.Length.EqualTo(1));

@@ -10,11 +10,13 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.IO;
-using System.Xml;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.Utils;
 using System.Resources;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -33,14 +35,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Setup()
 		{
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new string[] {"class", "type", "mode", "name" };
-			keyAttrs["group"] = new string[] {"label"};
-			keyAttrs["part"] = new string[] {"ref"};
+			keyAttrs["layout"] = new[] {"class", "type", "mode", "name" };
+			keyAttrs["group"] = new[] {"label"};
+			keyAttrs["part"] = new[] {"ref"};
 
 			string testPathBase = CreateTempTestFiles(typeof(Properties.Resources), "InventoryBaseTestFiles");
 			string testPathLater = CreateTempTestFiles(typeof(Properties.Resources), "InventoryLaterTestFiles");
 
-			m_inventory = new Inventory(new string[] {testPathBase, testPathLater},
+			m_inventory = new Inventory(new[] {testPathBase, testPathLater},
 				"*Layouts.xml", "/layoutInventory/*", keyAttrs, "InventoryTests", "projectPath");
 		}
 
@@ -53,32 +55,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		XmlNode CheckNode(string name, string[] keyvals, string target)
+		XElement CheckNode(string name, string[] keyvals, string target)
 		{
-			XmlNode node = m_inventory.GetElement(name, keyvals);
+			var node = m_inventory.GetElement(name, keyvals);
 			Check(node, target);
 			return node;
 		}
-		void Check(XmlNode node, string target)
+
+		static void Check(XElement node, string target)
 		{
 			if (node == null)
 				Assert.IsNotNull(node, "expected node not found: " + target);
-			XmlNode match = node.Attributes["match"];
+			var match = node.Attribute("match");
 			if (match == null)
 				Assert.IsNotNull(match, "expected node lacks match attr: " + target);
-			Assert.AreEqual(target, node.Attributes["match"].Value);
+			Assert.AreEqual(target, node.Attribute("match").Value);
 		}
-		XmlNode CheckBaseNode(string name, string[] keyvals, string target)
+		void CheckBaseNode(string name, string[] keyvals, string target)
 		{
-			XmlNode node = m_inventory.GetBase(name, keyvals);
+			var node = m_inventory.GetBase(name, keyvals);
 			Check(node, target);
-			return node;
 		}
-		XmlNode CheckAlterationNode(string name, string[] keyvals, string target)
+		void CheckAlterationNode(string name, string[] keyvals, string target)
 		{
-			XmlNode node = m_inventory.GetAlteration(name, keyvals);
+			var node = m_inventory.GetAlteration(name, keyvals);
 			Check(node, target);
-			return node;
 		}
 
 		/// <summary>
@@ -89,30 +90,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Test loading a file and confirm expected elements present.
 			// Also checks that elements not replaced survive.
-			CheckNode("layout", new string[] {"LexSense", "jtview", null, "Test4"}, "test7");
-			CheckNode("part", new string[] {"nonsense"}, "test5");
+			CheckNode("layout", new[] {"LexSense", "jtview", null, "Test4"}, "test7");
+			CheckNode("part", new[] {"nonsense"}, "test5");
 
 			// Check that nodes from both test files are loaded.
-			CheckNode("layout", new string[] {"LexSense", "jtview", null, "Test3"}, "test6");
+			CheckNode("layout", new[] {"LexSense", "jtview", null, "Test3"}, "test6");
 
 			// Test loading a second file with some new and some duplicate elements.
 			// (b) new elements are present;
-			CheckNode("layout", new string[] {"LexEntry", "jtview", null, "Test3D"}, "test3D");
+			CheckNode("layout", new[] {"LexEntry", "jtview", null, "Test3D"}, "test3D");
 			// (c) appropriate elements are replaced (not unchanged or duplicated)
-			CheckNode("layout", new string[] {"LexSense", "jtview", null, "Test2"}, "test2D");
+			CheckNode("layout", new[] {"LexSense", "jtview", null, "Test2"}, "test2D");
 		}
 
-		void VerifyAttr(XmlNode node, string attr, string val)
+		static void VerifyAttr(XElement node, string attr, string val)
 		{
 			Assert.AreEqual(val, XmlUtils.GetOptionalAttributeValue(node, attr));
 		}
 
 		// Verifies that parent's index'th child has the specified value for the specified attribute.
 		// Returns the child.
-		XmlNode VerifyChild(XmlNode parent, int index, string attr, string val)
+		static XElement VerifyChild(XContainer parent, int index, string attr, string val)
 		{
-			Assert.IsTrue(parent.ChildNodes.Count > index);
-			XmlNode child = parent.ChildNodes[index];
+			Assert.IsTrue(parent.Elements().Count() > index);
+			var child = parent.Elements().ToList()[index];
 			VerifyAttr(child, attr, val);
 			return child;
 		}
@@ -123,42 +124,42 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Check that we can get a base node for this view BEFORE we have retrieved anything about the layout
 			// (a derived one) on which it is based.
-			CheckBaseNode("layout", new string[] {"LexEntry", "jtview", null, "Test5D"}, "test1D");
+			CheckBaseNode("layout", new[] {"LexEntry", "jtview", null, "Test5D"}, "test1D");
 			// Load a file involving derived elements.
 			// Check that we can retrieve the base, derived, and unified versions of the elements.
-			XmlNode unified = CheckNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // unified
-			CheckBaseNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test3"); // baseNode
-			CheckAlterationNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // derived
-			Assert.IsNull(m_inventory.GetAlteration("layout", new string[] {"LexEntry", "jtview", null, "Test1"}),
+			var unified = CheckNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // unified
+			CheckBaseNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test3"); // baseNode
+			CheckAlterationNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // derived
+			Assert.IsNull(m_inventory.GetAlteration("layout", new[] {"LexEntry", "jtview", null, "Test1"}),
 				"GetAlteration should be null for non-derived node.");
 
 			// Check correct working of unification:
 			// - first main child is present as expected
-			XmlNode groupMain = unified.ChildNodes[0];
-			Assert.AreEqual("group", groupMain.Name, "first child of unified should be a group");
-			Assert.AreEqual(3, groupMain.ChildNodes.Count, "main group should have three chidren");
+			var groupMain = unified.Elements().ToList()[0];
+			Assert.IsTrue("group" == groupMain.Name, "first child of unified should be a group");
+			Assert.AreEqual(3, groupMain.Elements().Count(), "main group should have three chidren");
 			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
 				"first child should be group 'main'");
 			// - added elements are added. (Also checks default order: original plus extras.)
 			// - unmatched original elements are left alone.
-			XmlNode part0M = VerifyChild(groupMain, 0, "ref", "LexEntry-Jt-Citationform"); // part0M
+			var part0M = VerifyChild(groupMain, 0, "ref", "LexEntry-Jt-Citationform"); // part0M
 			VerifyChild(groupMain, 1, "ref", "LexEntry-Jt-Senses"); // part1M
 			VerifyChild(groupMain, 2, "ref", "LexEntry-Jt-Forms"); // part2M
 
 			// - child elements are correctly ordered when 'reorder' is true.
-			XmlNode groupSecond = unified.ChildNodes[1];
-			Assert.AreEqual("group", groupSecond.Name, "second child of unified should be a group");
-			Assert.AreEqual(3, groupSecond.ChildNodes.Count, "main group should have three chidren");
+			var groupSecond = unified.Elements().ToList()[1];
+			Assert.IsTrue("group" == groupSecond.Name, "second child of unified should be a group");
+			Assert.AreEqual(3, groupSecond.Elements().Count(), "main group should have three chidren");
 			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
 				"second child should be group 'second'");
 			VerifyChild(groupSecond, 0, "ref", "LexEntry-Jt-Forms"); // part0S
-			XmlNode part1S = VerifyChild(groupSecond, 1, "ref", "LexEntry-Jt-Citationform"); // part1S
+			var part1S = VerifyChild(groupSecond, 1, "ref", "LexEntry-Jt-Citationform"); // part1S
 			VerifyChild(groupSecond, 2, "ref", "LexEntry-Jt-Senses"); // part2S
 
 			// - check no reordering when no element added, and reorder is false
-			XmlNode groupThird = unified.ChildNodes[2];
-			Assert.AreEqual("group", groupThird.Name, "Third child of unified should be a group");
-			Assert.AreEqual(3, groupThird.ChildNodes.Count, "main group should have three chidren");
+			var groupThird = unified.Elements().ToList()[2];
+			Assert.IsTrue("group" == groupThird.Name, "Third child of unified should be a group");
+			Assert.AreEqual(3, groupThird.Elements().Count(), "main group should have three chidren");
 			Assert.AreEqual("third", XmlUtils.GetOptionalAttributeValue(groupThird, "label"),
 				"third child should be group 'Third'");
 			VerifyChild(groupThird, 0, "ref", "LexEntry-Jt-Citationform");
@@ -185,12 +186,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Overrides()
 		{
 			// Check that we can find a base node for a layout derived from an override.
-			CheckBaseNode("layout", new string[] {"LexSense", "jtview", null, "Test8D"}, "test7D");
-			CheckAlterationNode("layout", new string[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
-			XmlNode unified = CheckNode("layout", new string[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
-			XmlNode groupMain = unified.ChildNodes[0];
-			Assert.AreEqual("group", groupMain.Name, "first child of unified should be a group");
-			Assert.AreEqual(0, groupMain.ChildNodes.Count, "main group should have no chidren");
+			CheckBaseNode("layout", new[] {"LexSense", "jtview", null, "Test8D"}, "test7D");
+			CheckAlterationNode("layout", new[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
+			var unified = CheckNode("layout", new[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
+			var groupMain = unified.Elements().ToList()[0];
+			Assert.IsTrue("group" == groupMain.Name, "first child of unified should be a group");
+			Assert.AreEqual(0, groupMain.Elements().Count(), "main group should have no chidren");
 			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
 				"first child should be group 'main'");
 
@@ -204,12 +205,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void OverrideDerived()
 		{
 			// Check that we can find a base node for a layout derived from an override.
-			CheckBaseNode("layout", new string[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO2");
-			CheckAlterationNode("layout", new string[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
-			XmlNode unified = CheckNode("layout", new string[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
-			XmlNode groupSecond = unified.ChildNodes[1];
-			Assert.AreEqual("group", groupSecond.Name, "first child of unified should be a group");
-			Assert.AreEqual(2, groupSecond.ChildNodes.Count, "main group should have two chidren");
+			CheckBaseNode("layout", new[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO2");
+			CheckAlterationNode("layout", new[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
+			var unified = CheckNode("layout", new[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
+			var groupSecond = unified.Elements().ToList()[1];
+			Assert.IsTrue("group" == groupSecond.Name, "first child of unified should be a group");
+			Assert.AreEqual(2, groupSecond.Elements().Count(), "main group should have two chidren");
 			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
 				"second child should be group 'second'");
 
@@ -221,16 +222,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetUnified()
 		{
-			XmlNode baseNode = m_inventory.GetElement("layout",
-				new string[] {"LexEntry", "detail", null, "TestGetUnify1"});
-			XmlNode alteration = m_inventory.GetElement("layout",
-				new string[] {"LexEntry", "detail", null, "TestGetUnify2"});
-			XmlNode unified = m_inventory.GetUnified(baseNode, alteration);
-			Assert.AreEqual(3, unified.ChildNodes.Count);
-			Assert.AreEqual("main", unified.ChildNodes[0].Attributes["label"].Value);
-			Assert.AreEqual("second", unified.ChildNodes[1].Attributes["label"].Value);
-			Assert.AreEqual("third", unified.ChildNodes[2].Attributes["label"].Value);
-			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
+			var baseNode = m_inventory.GetElement("layout",
+				new[] {"LexEntry", "detail", null, "TestGetUnify1"});
+			var alteration = m_inventory.GetElement("layout",
+				new[] {"LexEntry", "detail", null, "TestGetUnify2"});
+			var unified = m_inventory.GetUnified(baseNode, alteration);
+			Assert.AreEqual(3, unified.Elements().Count());
+			Assert.AreEqual("main", unified.Elements().ToList()[0].Attribute("label").Value);
+			Assert.AreEqual("second", unified.Elements().ToList()[1].Attribute("label").Value);
+			Assert.AreEqual("third", unified.Elements().ToList()[2].Attribute("label").Value);
+			var repeat = m_inventory.GetUnified(baseNode, alteration);
 			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
 		}
 	}
@@ -239,17 +240,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class CreateOverrideTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
-		XmlNode root;
+		XElement _root;
 		/// <summary>
 		/// Initialize everything...load a set of fragments from a file.
 		/// </summary>
 		[TestFixtureSetUp]
 		public void Setup()
 		{
-			XmlDocument doc = new XmlDocument();
-			string folder = CreateTempTestFiles(typeof(Properties.Resources), "CreateOverrideTestData");
-			doc.Load(Path.Combine(folder, "CreateOverrideTestData.xml"));
-			root = doc.DocumentElement;
+			var folder = CreateTempTestFiles(typeof(Properties.Resources), "CreateOverrideTestData");
+			var doc = XDocument.Load(Path.Combine(folder, "CreateOverrideTestData.xml"));
+			_root = doc.Root;
 		}
 
 		/// <summary />
@@ -257,13 +257,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void SimpleOverride()
 		{
 			// simulate a path to the citation form
-			XmlNode rootLayout = root.SelectSingleNode("layout[@name=\"Test1\"]");
-			XmlNode cfPartRef = rootLayout.SelectSingleNode("part[@ref=\"CitationForm\"]");
+			var rootLayout = _root.XPathSelectElement("layout[@name=\"Test1\"]");
+			var cfPartRef = rootLayout.XPathSelectElement("part[@ref=\"CitationForm\"]");
 			object[] path = {rootLayout, cfPartRef};
-			XmlNode finalPartref;
-			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
-			XmlNode cfNewPartRef =  result.SelectSingleNode("part[@ref=\"CitationForm\"]");
+			XElement finalPartref;
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out finalPartref);
+			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
+			var cfNewPartRef = result.XPathSelectElement("part[@ref=\"CitationForm\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(cfNewPartRef, "visibility"));
 			Assert.AreEqual("7", XmlUtils.GetOptionalAttributeValue(result, "version"));
 		}
@@ -273,20 +273,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void LevelTwoOverride()
 		{
 			// simulate a path to the gloss
-			XmlNode rootLayout = root.SelectSingleNode("layout[@name=\"Test1\"]");
-			XmlNode sensesPartRef = rootLayout.SelectSingleNode("part[@ref=\"Senses\"]");
-			XmlNode glossPartRef = root.SelectSingleNode("part[@ref=\"Gloss\"]");
+			var rootLayout = _root.XPathSelectElement("layout[@name=\"Test1\"]");
+			var sensesPartRef = rootLayout.XPathSelectElement("part[@ref=\"Senses\"]");
+			var glossPartRef = _root.XPathSelectElement("part[@ref=\"Gloss\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, 2, glossPartRef};
-			XmlNode finalPartref;
-			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
-			XmlNode glossNewPartRef =  result.SelectSingleNode("//part[@ref=\"Gloss\"]");
+			XElement finalPartref;
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
+			var glossNewPartRef = result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
-			XmlNode sensesNewPartRef = glossNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
+			var sensesNewPartRef = glossNewPartRef.Parent;
+			Assert.IsTrue("part" == sensesNewPartRef.Name);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
-			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
+			var rootNewLayout = sensesNewPartRef.Parent;
+			Assert.IsTrue("layout" == rootNewLayout.Name);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 
@@ -295,28 +295,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void LevelThreeOverride()
 		{
 			// simulate a path to the gloss of a synonym. Include some non-part-ref XML nodes.
-			XmlNode rootLayout = root.SelectSingleNode("layout[@name=\"Test1\"]");
-			XmlNode sensesPartRef = rootLayout.SelectSingleNode("part[@ref=\"Senses\"]");
-			XmlNode glossPartRef = root.SelectSingleNode("part[@ref=\"Gloss\"]");
-			XmlNode synPartRef = root.SelectSingleNode("part[@ref=\"Synonyms\"]");
-			XmlNode blahPart = root.SelectSingleNode("part[@id=\"blah\"]");
-			XmlNode nonsenceLayout = root.SelectSingleNode("layout[@id=\"nonsence\"]");
+			var rootLayout = _root.XPathSelectElement("layout[@name=\"Test1\"]");
+			var sensesPartRef = rootLayout.XPathSelectElement("part[@ref=\"Senses\"]");
+			var glossPartRef = _root.XPathSelectElement("part[@ref=\"Gloss\"]");
+			var synPartRef = _root.XPathSelectElement("part[@ref=\"Synonyms\"]");
+			var blahPart = _root.XPathSelectElement("part[@id=\"blah\"]");
+			var nonsenceLayout = _root.XPathSelectElement("layout[@id=\"nonsence\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, blahPart, nonsenceLayout, synPartRef, 2, glossPartRef};
-			XmlNode finalPartref;
-			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
-			XmlNode glossNewPartRef =  result.SelectSingleNode("//part[@ref=\"Gloss\"]");
+			XElement finalPartref;
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
+			var glossNewPartRef = result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
-			XmlNode synNewPartRef = glossNewPartRef.ParentNode;
-			Assert.AreEqual("part", synNewPartRef.Name);
+			var synNewPartRef = glossNewPartRef.Parent;
+			Assert.IsTrue("part" == synNewPartRef.Name);
 			Assert.AreEqual("Synonyms", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "ref"));
 			// Should have kept unmodified attributes of this element.
 			Assert.AreEqual("TestingParam", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "param"));
-			XmlNode sensesNewPartRef = synNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
+			var sensesNewPartRef = synNewPartRef.Parent;
+			Assert.IsTrue("part" == sensesNewPartRef.Name);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
-			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
+			var rootNewLayout = sensesNewPartRef.Parent;
+			Assert.IsTrue("layout" == rootNewLayout.Name);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 
@@ -325,22 +325,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void IndentedOverride()
 		{
 			// simulate a path to the Antonymns
-			XmlNode rootLayout = root.SelectSingleNode("layout[@name=\"Test1\"]");
-			XmlNode sensesPartRef = rootLayout.SelectSingleNode("part[@ref=\"Senses\"]");
-			XmlNode antonymnPartRef = sensesPartRef.SelectSingleNode("indent/part[@ref=\"Antonymns\"]");
+			var rootLayout = _root.XPathSelectElement("layout[@name=\"Test1\"]");
+			var sensesPartRef = rootLayout.XPathSelectElement("part[@ref=\"Senses\"]");
+			var antonymnPartRef = sensesPartRef.XPathSelectElement("indent/part[@ref=\"Antonymns\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, 2, antonymnPartRef};
-			XmlNode finalPartref;
-			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
-			XmlNode antonymNewPartRef =  result.SelectSingleNode("//part[@ref=\"Antonymns\"]");
+			XElement finalPartref;
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
+			var antonymNewPartRef = result.XPathSelectElement("//part[@ref=\"Antonymns\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(antonymNewPartRef, "visibility"));
-			XmlNode indentNewPartRef = antonymNewPartRef.ParentNode;
-			Assert.AreEqual("indent", indentNewPartRef.Name);
-			XmlNode sensesNewPartRef = indentNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
+			var indentNewPartRef = antonymNewPartRef.Parent;
+			Assert.IsTrue("indent" == indentNewPartRef.Name);
+			var sensesNewPartRef = indentNewPartRef.Parent;
+			Assert.IsTrue("part" == sensesNewPartRef.Name);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
-			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
+			var rootNewLayout = sensesNewPartRef.Parent;
+			Assert.IsTrue("layout" == rootNewLayout.Name);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 	}

@@ -1,16 +1,13 @@
 // Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Xml;
-
+using System.Xml.Linq;
 using NUnit.Framework;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -27,13 +24,11 @@ namespace XMLViewsTests
 	/// to the root object of each row.
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 	public class TestManyOneBrowse : SIL.FieldWorks.Test.TestUtils.BaseTest
 	{
 		private IFwMetaDataCache m_mdc;
 		private ISilDataAccess m_sda;
-		private XmlNodeList m_columnList;
+		private IList<XElement> m_columnList;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
 		private LayoutCache m_layouts;
@@ -100,13 +95,12 @@ namespace XMLViewsTests
 			// - Sense glosses (string in para in seq, nested in column element)
 			// - Semantic domains (pair of strings in para in seq in seq, using layout refs)
 			// - MSAs (simplified, but polymorphic with one having <choice> and one <obj> to CmPossibility
-			XmlDocument docColumns = new XmlDocument();
-			docColumns.Load(Path.Combine(FwDirectoryFinder.SourceDirectory,
+			var docColumns = XDocument.Load(Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("Common",
 				Path.Combine("Controls",
 				Path.Combine("XMLViews",
 				Path.Combine("XMLViewsTests", "TestColumns.xml"))))));
-			m_columnList = docColumns.DocumentElement.ChildNodes;
+			m_columnList = docColumns.Root.Elements().ToList();
 
 			// Parts just has what those columns need.
 			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
@@ -114,19 +108,19 @@ namespace XMLViewsTests
 				Path.Combine("Controls",
 				Path.Combine("XMLViews", "XMLViewsTests"))));
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new string[] { "class", "type", "name" };
-			keyAttrs["group"] = new string[] { "label" };
-			keyAttrs["part"] = new string[] { "ref" };
+			keyAttrs["layout"] = new[] { "class", "type", "name" };
+			keyAttrs["group"] = new[] { "label" };
+			keyAttrs["part"] = new[] { "ref" };
 
 
 			// Currently there are no specialized layout files that match.
-			m_layoutInventory = new Inventory(new string[] { partDirectory },
+			m_layoutInventory = new Inventory(new[] { partDirectory },
 				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "TestManyOneBrowse", "ProjectPath");
 
 			keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["part"] = new string[] { "id" };
+			keyAttrs["part"] = new[] { "id" };
 
-			m_partInventory = new Inventory(new string[] { partDirectory },
+			m_partInventory = new Inventory(new[] { partDirectory },
 				"TestParts.xml", "/PartInventory/bin/*", keyAttrs, "TestManyOneBrowse", "ProjectPath");
 			m_layouts = new LayoutCache(m_mdc, m_layoutInventory, m_partInventory);
 		}
@@ -167,7 +161,7 @@ namespace XMLViewsTests
 		public void GeneratePathlessItems()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[0];
+			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for lexeme obj 1");
 			IManyOnePathSortItem bv = list[0] as IManyOnePathSortItem;
@@ -191,7 +185,7 @@ namespace XMLViewsTests
 		public void GenerateAtomicItems()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[1]; // Etymology
+			var column = m_columnList[1]; // Etymology
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for etymology obj 1");
 			IManyOnePathSortItem bv = list[0] as IManyOnePathSortItem;
@@ -219,7 +213,7 @@ namespace XMLViewsTests
 		public void GenerateSeqItems()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[3]; // Glosses
+			var column = m_columnList[3]; // Glosses
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one items for glosses obj 1");
 			list.Clear();
@@ -252,7 +246,7 @@ namespace XMLViewsTests
 		{
 			ArrayList list = new ArrayList();
 			IManyOnePathSortItem bv;
-			XmlNode column = m_columnList[5]; // Semantic domains
+			var column = m_columnList[5]; // Semantic domains
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(1, list.Count, "got one item for SD obj 1"); // no senses!
 			list.Clear();
@@ -262,8 +256,8 @@ namespace XMLViewsTests
 			// Senses 7, 8, 9, having SDs 7->30, 8->31, and 9->30, 31, 32
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
 			Assert.AreEqual(5, list.Count, "got five items for SD obj 6");
-			int[] keys = new int[] {30, 31, 30, 31, 32};
-			int[] keys2 = new int[] {7, 8, 9, 9, 9};
+			int[] keys = {30, 31, 30, 31, 32};
+			int[] keys2 = {7, 8, 9, 9, 9};
 			for (int i = 0; i < keys.Length; i++)
 			{
 				bv = list[i] as IManyOnePathSortItem;
@@ -283,15 +277,15 @@ namespace XMLViewsTests
 		public void DisplayPathlessObject()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[0];
+			var column = m_columnList[0];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			IManyOnePathSortItem bvi = list[0] as IManyOnePathSortItem;
 
 			// Try on original column. We get original object since there's no path,
 			// but we still dig inside the span
 			int useHvo;
-			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			var collectStructNodes = new List<XElement>();
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.AreEqual(1, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
@@ -305,7 +299,7 @@ namespace XMLViewsTests
 			Assert.AreEqual(1, useHvo);
 			CheckDebugId(useNode, "EtymologyObj");
 			Assert.AreEqual(1, collectStructNodes.Count);
-			XmlNode structNode1 = collectStructNodes[0];
+			var structNode1 = collectStructNodes[0];
 			CheckDebugId(structNode1, "EtymologySpan");
 
 			// Try on a column involving a lookup. This affects the node output.
@@ -319,7 +313,7 @@ namespace XMLViewsTests
 			CheckDebugId(structNode1, "EntryMsasDiv");
 		}
 
-		void CheckDebugId(XmlNode node, string id)
+		void CheckDebugId(XElement node, string id)
 		{
 			Assert.AreEqual(id, XmlUtils.GetOptionalAttributeValue(node, "debugId"));
 		}
@@ -331,15 +325,15 @@ namespace XMLViewsTests
 		public void DisplayAtomicPathObject()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[1];
+			var column = m_columnList[1];
 			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
 			IManyOnePathSortItem bvi = list[0] as IManyOnePathSortItem;
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
 			int useHvo;
-			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			var collectStructNodes = new List<XElement>();
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.AreEqual(1, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
@@ -353,7 +347,7 @@ namespace XMLViewsTests
 			Assert.AreEqual(bvi.KeyObject, useHvo);
 			CheckDebugId(useNode, "EtymologyComment");
 			Assert.AreEqual(1, collectStructNodes.Count);
-			XmlNode structNode1 = collectStructNodes[0];
+			var structNode1 = collectStructNodes[0];
 			CheckDebugId(structNode1, "EtymologySpan");
 
 			// Try on a column involving a lookup. This affects the node output.
@@ -383,15 +377,15 @@ namespace XMLViewsTests
 		public void DisplayDoubleSeqPathObject()
 		{
 			ArrayList list = new ArrayList();
-			XmlNode column = m_columnList[5];
+			var column = m_columnList[5];
 			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
 			IManyOnePathSortItem bvi = list[0] as IManyOnePathSortItem;
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
 			int useHvo;
-			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			var collectStructNodes = new List<XElement>();
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.AreEqual(6, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
@@ -405,7 +399,7 @@ namespace XMLViewsTests
 			Assert.AreEqual(6, useHvo);
 			CheckDebugId(useNode, "EtymologyObj");
 			Assert.AreEqual(1, collectStructNodes.Count);
-			XmlNode structNode1 = collectStructNodes[0];
+			var structNode1 = collectStructNodes[0];
 			CheckDebugId(structNode1, "EtymologySpan");
 
 			// Try on a column involving a lookup. This affects the node output.

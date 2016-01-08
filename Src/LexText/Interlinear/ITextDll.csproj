@@ -404,9 +404,6 @@
     <Compile Include="InterlinMasterNoTitleBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="InterlinMasterNoTitleContent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="InterlinPrintView.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="frag">XmlNode containing the ws id for Multi string types.</param>
 		/// <param name="fTypeFound">true if the flid refers to a supported string type, false otherwise.</param>
 		/// <returns>if fTypeFound is true we return the string value for the flid. Otherwise we return </returns>
-		public string GetText(int hvo, int flid, XmlNode frag, out bool fTypeFound)
+		public string GetText(int hvo, int flid, XElement frag, out bool fTypeFound)
 		{
 			CheckDisposed();
 

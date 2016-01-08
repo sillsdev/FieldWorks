@@ -173,6 +173,7 @@
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">

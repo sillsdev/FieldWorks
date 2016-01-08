@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		protected override void AddSimpleLink(string sLabel, string sTool, XmlNode node)
+		protected override void AddSimpleLink(string sLabel, string sTool, XElement node)
 		{
 			switch (sTool)
 			{

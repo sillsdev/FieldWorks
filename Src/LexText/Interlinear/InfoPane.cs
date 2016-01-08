@@ -4,12 +4,13 @@
 
 using System;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
@@ -101,11 +102,10 @@ namespace SIL.FieldWorks.IText
 		{
 			if (PropertyTable == null)
 				return;
-			var xnWindow = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			if (xnWindow == null)
 				return;
-			XmlNode xnControl = xnWindow.SelectSingleNode(
-				"controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
+			var xnControl = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
 			if (xnControl == null)
 				return;
 			var activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
@@ -217,11 +217,11 @@ namespace SIL.FieldWorks.IText
 		{
 			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 				Justification = "StTextDataTree gets disposed in base class")]
-			public InterlinearTextsRecordEditView(InfoPane info, XmlNode xnControl)
+			public InterlinearTextsRecordEditView(InfoPane info, XElement xnControl)
 				: base(new StTextDataTree())
 			{
 				(m_dataEntryForm as StTextDataTree).InfoPane = info;
-				m_configurationParameters = xnControl;
+				m_configurationParametersElement = xnControl;
 			}
 
 			private class StTextDataTree : DataTree

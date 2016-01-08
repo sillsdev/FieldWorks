@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -113,9 +112,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				string displayWs = "analysis vernacular";
 				if (m_configurationNode != null)
 				{
-					XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+					var node = m_configurationNode.Element("deParams");
 					if (node != null)
-						displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
+						displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 				}
 				ILexEntryRef ler = m_obj as ILexEntryRef;
 				Debug.Assert(ler != null);

@@ -13,9 +13,9 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using System.Xml;
 using SIL.CoreImpl;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.FdoUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionClassEditor(IPublisher publisher, XmlNode configurationNode)
+		public InflectionClassEditor(IPublisher publisher, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public InflectionClassFilter() { }
-		public InflectionClassFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public InflectionClassFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
@@ -562,7 +562,7 @@ namespace SIL.FieldWorks.FdoUi
 			get { return "external"; }
 		}
 
-		public override bool CompatibleFilter(XmlNode colSpec)
+		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;

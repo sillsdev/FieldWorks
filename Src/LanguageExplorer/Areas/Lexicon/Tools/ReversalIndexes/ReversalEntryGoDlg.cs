@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -69,8 +70,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
+			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
 			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(m_propertyTable, "ReversalEntrySearchEngine-" + m_reveralIndex.Hvo,
 				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));

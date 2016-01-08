@@ -9,7 +9,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -147,8 +148,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
 		{
-			XmlNode configurationParameters = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode toolNode = configurationParameters.SelectSingleNode("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
+			var configurationParameters = PropertyTable.GetValue<XElement>("WindowConfiguration");
+			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kfakeFlid = 8999958;
 			ObjectListPublisher sda = new ObjectListPublisher((ISilDataAccessManaged)m_cache.DomainDataByFlid , kfakeFlid);

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -37,13 +37,13 @@ namespace SIL.FieldWorks.XWorks
 		protected string m_currentView;
 
 		protected bool m_fPersisted;
-		protected List<XmlNode> m_originalViewConfigNodes;
+		protected List<XElement> m_originalViewConfigNodes;
 
 		/// <summary>
 		/// Create the Manager for stored dictionary configurations.
 		/// </summary>
-		public DictionaryConfigManager(IDictConfigViewer viewer, List<XmlNode> configViews,
-			XmlNode current)
+		public DictionaryConfigManager(IDictConfigViewer viewer, List<XElement> configViews,
+			XElement current)
 		{
 			m_viewer = viewer;
 			m_originalViewConfigNodes = configViews;
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Get protected and user-stored dictionary configurations to load into the dialog.
 		/// Tests will override this to load the manager in their own fashion.
 		/// </summary>
-		private void LoadDataFromInventory(XmlNode current)
+		private void LoadDataFromInventory(XElement current)
 		{
 			// Tuples are <uniqueCode, dispName, IsProtected>
 			var configList = new List<Tuple<string, string, bool>>();

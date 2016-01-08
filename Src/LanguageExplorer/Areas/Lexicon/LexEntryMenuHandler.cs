@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks;
@@ -250,14 +250,14 @@ namespace LanguageExplorer.Areas.Lexicon
 		private static void GetNotifyVirtChgInfo(Slice slice, out string propName, out int clid,
 			out Control parent)
 		{
-			XmlNode xa = null;
-			XmlNode caller = slice.CallerNode;
+			XAttribute xa = null;
+			var caller = slice.CallerNode;
 			if (caller != null)
-				xa = caller.Attributes["notifyVirtual"];
+				xa = caller.Attribute("notifyVirtual");
 			if (xa == null)
-				xa = slice.ConfigurationNode.Attributes["notifyVirtual"];
+				xa = slice.ConfigurationNode.Attribute("notifyVirtual");
 			propName = (xa != null) ? xa.Value : "";
-			clid = (int)slice.Object.ClassID;
+			clid = slice.Object.ClassID;
 			parent = slice.Parent;
 		}
 

@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public event TreeNodeEventHandler ShowContextMenu;
 
-		XmlNode m_configurationParameters;
+		XElement m_configurationParameters;
 
 		//test
 		//		protected MenuController m_menuController= null;
@@ -79,8 +79,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected string m_strAbbr;
 		protected bool m_isHighlighted = false;
 		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
-		protected XmlNode m_configurationNode; // If this slice was generated from an XmlNode, store it here.
-		protected XmlNode m_callerNode;	// This stores the layout time caller for menu processing
+		protected XElement m_configurationNode; // If this slice was generated from an XmlNode, store it here.
+		protected XElement m_callerNode;	// This stores the layout time caller for menu processing
 		protected Point m_location;
 		protected ICmObject m_obj; // The object that will be the context if our children are expanded, or for figuring
 		// what things can be inserted here.
@@ -231,7 +231,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// the XmlNode that was used to construct this slice
 		/// </summary>
-		public XmlNode ConfigurationNode
+		public XElement ConfigurationNode
 		{
 			get
 			{
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// This node stores the caller for future processing
 		/// </summary>
-		public XmlNode CallerNode
+		public XElement CallerNode
 		{
 			get
 			{
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (ConfigurationNode == null)
 					return false;
-				XmlNode node = ConfigurationNode.SelectSingleNode("seq");
+				var node = ConfigurationNode.Element("seq");
 				if (node == null)
 					return false;
 
@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (ConfigurationNode == null)
 					return false;
-				return ConfigurationNode.SelectSingleNode("seq") != null && !IsSequenceNode;
+				return ConfigurationNode.Element("seq") != null && !IsSequenceNode;
 			}
 		}
 
@@ -1010,13 +1010,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// an attribute indent="true".
 		/// </summary>
 		/// <returns>0 for no indent, 1 to indent.</returns>
-		internal static int ExtraIndent(XmlNode indentNode)
+		internal static int ExtraIndent(XElement indentNode)
 		{
 			return XmlUtils.GetOptionalBooleanAttributeValue(indentNode, "indent", false) ? 1 : 0;
 		}
 
 		/// <summary></summary>
-		public virtual void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
+		public virtual void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent,
 			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
@@ -1033,9 +1033,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// show, perhaps because a sequence is empty. First evaluate this, and if true, set it
 			// to ktisCollapsedEmpty.
 			//bool fUseChildrenOfNode;
-			XmlNode indentNode = null;
+			XElement indentNode = null;
 			if (caller != null)
-				indentNode = caller.SelectSingleNode("indent");
+				indentNode = caller.Element("indent");
 			if (indentNode != null)
 			{
 				// Similarly pretest for children of caller, to see whether anything is produced.
@@ -1093,17 +1093,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		public virtual void CreateIndentedNodes(XmlNode caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, ObjSeqHashMap reuseMap, XmlNode node)
+		public virtual void CreateIndentedNodes(XElement caller, ICmObject obj, int indent, ref int insPos,
+			ArrayList path, ObjSeqHashMap reuseMap, XElement node)
 		{
 			CheckDisposed();
 
 			string parameter = null;
 			if (caller != null)
 				parameter = XmlUtils.GetOptionalAttributeValue(caller, "param");
-			XmlNode indentNode = null;
+			XElement indentNode = null;
 			if (caller != null)
-				indentNode = caller.SelectSingleNode("indent");
+				indentNode = caller.Element("indent");
 			if (indentNode != null)
 			{
 				DataTree.NodeTestResult ntr;
@@ -1518,9 +1518,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
-				XmlNode caller = null;
+				XElement caller = null;
 				if (Key.Length > 1)
-					caller = Key[Key.Length - 2] as XmlNode;
+					caller = Key[Key.Length - 2] as XElement;
 				int insPos = iSlice + 1;
 				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
 
@@ -1659,11 +1659,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				string sClassName = Object.ClassName;
 				return
-					(ConfigurationNode.SelectSingleNode("node") != null ||
+					(ConfigurationNode.Element("node") != null ||
 					("PhCode" == sClassName) || // This is a hack to get one case to work that should be handled by the todo in the next comment (hab 2004.01.16 )
 					false)	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
 					&&
-					ConfigurationNode.SelectSingleNode("seq") == null &&
+					ConfigurationNode.Element("seq") == null &&
 					//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
 					Object != ContainingDataTree.Root;
 			}
@@ -1704,24 +1704,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			for (int inode = m_key.Length; --inode >= 0; )
 			{
 				object objNode = m_key[inode];
-				if (objNode is XmlNode)
+				if (objNode is XElement)
 				{
-					var node = (XmlNode)objNode;
+					var node = (XElement)objNode;
 					if (node.Name == "seq")
 					{
-						string attrName = node.Attributes["field"].Value;
+						string attrName = node.Attribute("field").Value;
 						int clsid = 0;
 						// if this is the last index, we don't have an hvo of anything to edit.
 						// But it may be ghost slice that we can use.  (See FWR-556.)
 						if (inode == m_key.Length - 1)
 						{
-							if (this.Object != null && node.Attributes["ghost"] != null)
+							if (Object != null && node.Attribute("ghost") != null)
 							{
-								clsid = this.Object.ClassID;
+								clsid = Object.ClassID;
 								flid = ContainingDataTree.GetFlidIfPossible(clsid, attrName, mdc);
 								if (flid == 0)
 									return false;
-								hvoOwner = this.Object.Hvo;
+								hvoOwner = Object.Hvo;
 								ihvoPosition = -1;		// 1 before actual location.
 								return true;
 							}
@@ -1770,16 +1770,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			for (int inode = m_key.Length; --inode >= 0; )
 			{
 				object objNode = m_key[inode];
-				if (objNode is XmlNode)
+				if (objNode is XElement)
 				{
-					var node = (XmlNode)objNode;
+					var node = (XElement)objNode;
 					if (node.Name == "atomic")
 					{
 						// got it!
 						// The next thing we push into key right after the "atomic" node is always the
 						// HVO of the particular item we're editing.
 						var hvoItem = (int)(m_key[inode + 1]);
-						string attrName = node.Attributes["field"].Value;
+						string attrName = node.Attribute("field").Value;
 						FdoCache cache = ContainingDataTree.Cache;
 						flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId2(
 							cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner.ClassID,
@@ -2368,16 +2368,14 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// gives the object hvo hat should be the target of Delete, copy, etc. for menus operating on this slice label.
 		/// </summary>
 		/// <returns>return 0 if this slice is supposed to operate on an atomic field which is currently empty.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public ICmObject GetObjectForMenusToOperateOn()
 		{
 			CheckDisposed();
 
 			if (WrapsAtomic)
 			{
-				XmlNodeList nodes = m_configurationNode.SelectNodes("atomic");
-				if (nodes == null || nodes.Count != 1)
+				var nodes = m_configurationNode.Elements("atomic").ToList();
+				if (nodes.Count != 1)
 					throw new ConfigurationException("Expected to find a single <atomic> element in here", m_configurationNode);
 				string field = XmlUtils.GetManditoryAttributeValue(nodes[0], "field");
 				int flid = GetFlid(field);
@@ -2691,15 +2689,15 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 		protected void ReplacePartWithNewAttribute(string attr, string attrValueNew)
 		{
-			XmlNode newPartref;
-			XmlNode newLayout = Inventory.MakeOverride(
+			XElement newPartref;
+			var newLayout = Inventory.MakeOverride(
 				Key,
 				attr,
 				attrValueNew,
 				LayoutCache.LayoutVersionNumber, out newPartref);
 			Inventory.GetInventory("layouts", m_cache.ProjectId.Name).PersistOverrideElement(newLayout);
 			DataTree dt = ContainingDataTree;
-			var rootKey = Key[0] as XmlNode;
+			var rootKey = Key[0] as XElement;
 			// The first item in the key is always the root XML node for the whole display. This has now changed,
 			// so if we don't do something, subsequent visibility commands for other slices will use the old
 			// version as a basis and lose the change we just made (unless we Refresh, which we don't want to do
@@ -2711,10 +2709,10 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			}
 
 			int lastPartRef;
-			XmlNode oldPartRef = PartRef(out lastPartRef);
+			var oldPartRef = PartRef(out lastPartRef);
 			if (oldPartRef != null)
 			{
-				oldPartRef = (XmlNode)Key[lastPartRef];
+				oldPartRef = (XElement)Key[lastPartRef];
 				Key[lastPartRef] = newPartref;
 
 				foreach (Slice slice in dt.Slices)
@@ -2723,7 +2721,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 						continue;		// this can happen for dummy slices.  (LT-5817)
 					for (int i = 0; i < slice.Key.Length; i++)
 					{
-						var node = slice.Key[i] as XmlNode;
+						var node = slice.Key[i] as XElement;
 						if (node == null)
 							continue;
 
@@ -2737,13 +2735,13 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// <summary>
 		/// extract the "part ref" node from the slice.Key
 		/// </summary>
-		protected internal XmlNode PartRef()
+		protected internal XElement PartRef()
 		{
 			int indexInKey;
 			return PartRef(out indexInKey);
 		}
 
-		private XmlNode PartRef(out int indexInKey)
+		private XElement PartRef(out int indexInKey)
 		{
 			indexInKey = -1;
 			Debug.Assert(Key != null);
@@ -2751,14 +2749,14 @@ only be sent to the subscribers one at a time and considered done as soon as som
 				return null;
 			for (int i = 0; i < Key.Length; i++)
 			{
-				var node = Key[i] as XmlNode;
+				var node = Key[i] as XElement;
 				if (node == null || node.Name != "part" || XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
 					continue;
 				indexInKey = i;
 			}
 			if (indexInKey != -1)
 			{
-				return (XmlNode)Key[indexInKey];
+				return (XElement)Key[indexInKey];
 			}
 			return null;
 		}
@@ -2774,10 +2772,10 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		{
 			CheckDisposed();
 
-			XmlNode lastPartRef = null;
+			XElement lastPartRef = null;
 			foreach (object obj in Key)
 			{
-				var node = obj as XmlNode;
+				var node = obj as XElement;
 				if (node == null || node.Name != "part" || XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
 					continue;
 				lastPartRef = node;

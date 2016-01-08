@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -11,6 +10,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace SIL.Utils
 {
@@ -24,11 +25,11 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="parentConfigNode">A parent node that must have one child nade named 'dynamicloaderinfo', which contains the two required attributes.</param>
 		/// <returns></returns>
-		static public Object CreateObjectUsingLoaderNode(XmlNode parentConfigNode)
+		static public Object CreateObjectUsingLoaderNode(XElement parentConfigNode)
 		{
-			XmlNode dynLoaderNode = parentConfigNode.SelectSingleNode("dynamicloaderinfo");
+			var dynLoaderNode = parentConfigNode.Element("dynamicloaderinfo");
 			if (dynLoaderNode == null)
-				throw new ArgumentException("Required 'dynamicloaderinfo' XML node not found.", "parentConfigNode");
+				throw new ArgumentException(@"Required 'dynamicloaderinfo' XML node not found.", "parentConfigNode");
 
 			return CreateObject(dynLoaderNode);
 		}
@@ -38,6 +39,22 @@ namespace SIL.Utils
 		static public Type TypeForLoaderNode(XmlNode parentConfigNode)
 		{
 			XmlNode configuration = parentConfigNode.SelectSingleNode("dynamicloaderinfo");
+			if (configuration == null)
+				return null;
+			string assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			if (assemblyPath == "null")
+				return null;
+			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			Assembly assembly;
+			GetAssembly(assemblyPath, out assembly);
+			return assembly.GetType(className.Trim());
+		}
+
+		// Return the class of object that will be created if CreateObjectUsingLoaderNode is called with this argument.
+		// Return null if dynamic loader node not found or if it doesn't specify a valid class.
+		static public Type TypeForLoaderNode(XElement parentConfigNode)
+		{
+			var configuration = parentConfigNode.Element("dynamicloaderinfo");
 			if (configuration == null)
 				return null;
 			string assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
@@ -95,6 +112,23 @@ namespace SIL.Utils
 				}
 			}
 			return argList.Count > 0 ? argList.ToArray() : null;
+		}
+
+		/// <summary>
+		/// Dynamically find an assembly and create an object of the name to class.
+		/// configuration has assemblyPath and class (fully qualified) as in other overloads.
+		/// The constructor arguments are supplied explicitly.
+		/// </summary>
+		/// <returns></returns>
+		static public Object CreateObject(XElement configuration, params object[] args)
+		{
+			var assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
+			// as a child of another object is null.
+			if (assemblyPath == "null")
+				return null;
+			var className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			return CreateObject(assemblyPath, className, args);
 		}
 
 		/// <summary>
@@ -277,7 +311,22 @@ namespace SIL.Utils
 			object obj = CreateObject(node);
 			IPersistAsXml persistObj = obj as IPersistAsXml;
 			if (persistObj != null)
-				persistObj.InitXml(node);
+				persistObj.InitXml(XElement.Parse(node.OuterXml));
+			return obj;
+		}
+
+		/// <summary>
+		/// Create the object specified by the assemblyPath and class attributes of node,
+		/// and if the resulting object implements IPersistAsXml, call InitXml.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		static public object RestoreObject(XElement node)
+		{
+			object obj = CreateObject(node);
+			IPersistAsXml persistObj = obj as IPersistAsXml;
+			if (persistObj != null)
+				persistObj.InitXml(node.Clone());
 			return obj;
 		}
 
@@ -310,6 +359,21 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Return the object obtained by calling RestoreObject on the element
+		/// selected from node by xpath.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="xpath"></param>
+		/// <returns></returns>
+		static public object RestoreFromChild(XElement node, string xpath)
+		{
+			var child = node.XPathSelectElement(xpath);
+			if (child == null)
+				throw new Exception("expected child " + xpath);
+			return RestoreObject(child);
+		}
+
+		/// <summary>
 		/// Creates a string representation of the supplied object, an XML string
 		/// containing the required assemblyPath and class attributes needed to create an
 		/// instance using CreateObject, plus whatever gets added to the node by passsing
@@ -323,14 +387,13 @@ namespace SIL.Utils
 		{
 			if (src == null)
 				return null;
-			IPersistAsXml obj = src as IPersistAsXml;
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml("<" + elementName + "/>");
-			XmlNode root = doc.DocumentElement;
+			var obj = src as IPersistAsXml;
+			var doc = XDocument.Parse("<" + elementName + "/>");
+			var root = doc.Root;
 			AddAssemblyClassInfoTo(root, src);
 			if (obj != null)
 				obj.PersistAsXml(root);
-			return root.OuterXml;
+			return root.ToString();
 		}
 
 		static public XmlNode PersistObject(object src, XmlNode parent, string elementName)
@@ -338,6 +401,17 @@ namespace SIL.Utils
 			IPersistAsXml obj = src as IPersistAsXml;
 			XmlNode node = parent.OwnerDocument.CreateElement(elementName);
 			parent.AppendChild(node);
+			AddAssemblyClassInfoTo(node, obj);
+			if (obj != null)
+				obj.PersistAsXml(XElement.Parse(node.OuterXml));
+			return node;
+		}
+
+		static public XElement PersistObject(object src, XElement parent, string elementName)
+		{
+			IPersistAsXml obj = src as IPersistAsXml;
+			var node = new XElement(elementName);
+			parent.Add(node);
 			AddAssemblyClassInfoTo(node, obj);
 			if (obj != null)
 				obj.PersistAsXml(node);
@@ -367,6 +441,20 @@ namespace SIL.Utils
 			xaClass.Value = obj.GetType().FullName;
 			node.Attributes.Append(xaClass);
 		}
+
+		/// <summary>
+		/// Add to the specified node assembly and class information for the specified object.
+		/// </summary>
+		static internal void AddAssemblyClassInfoTo(XElement node, object obj)
+		{
+			if (obj == null)
+			{
+				node.Add(new XAttribute("assemblyPath", "null"));
+				return;
+			}
+			node.Add(new XAttribute("assemblyPath", obj.GetType().Assembly.GetName().Name + ".dll"));
+			node.Add(new XAttribute("class", obj.GetType().FullName));
+		}
 	}
 
 	public interface IPersistAsXml
@@ -377,14 +465,14 @@ namespace SIL.Utils
 		/// sufficient to create an instance of the proper class.
 		/// </summary>
 		/// <param name="node"></param>
-		void PersistAsXml(XmlNode node);
+		void PersistAsXml(XElement node);
 
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
 		/// <param name="node"></param>
-		void InitXml(XmlNode node);
+		void InitXml(XElement node);
 	}
 
 }

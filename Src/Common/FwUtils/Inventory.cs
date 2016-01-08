@@ -6,11 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
-using System.Xml;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -75,15 +76,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This does not represent any physical file on the disk,
 		/// it is an in memory only document.
 		/// </summary>
-		protected XmlDocument m_mainDoc;
+		protected XDocument m_mainDoc;
 		/// <summary />
-		protected XmlDocument m_baseDoc; // doc used to store replaced base elements
+		protected XDocument m_baseDoc; // doc used to store replaced base elements
 		/// <summary>
 		/// doc used to store alteration elements. (This is not the OUTPUT of the derivation/
 		/// unification process: that is stored in m_mainDoc. This is the node we read from
 		/// the file containing the specifications for the alteration.
 		/// </summary>
-		protected XmlDocument m_alterationsDoc;
+		protected XDocument m_alterationsDoc;
 		/// <summary>
 		/// Set of template paths.
 		/// </summary>
@@ -114,15 +115,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// an element produced by unifying the children of two nodes. The key is a 'KeyValuePair'
 		/// in which the items are the two source XML nodes. The value is the unified XML node.
 		/// </summary>
-		protected Dictionary<Tuple<XmlNode, XmlNode>, XmlNode> m_unifiedNodes = new Dictionary<Tuple<XmlNode, XmlNode>, XmlNode>();
-		Dictionary<GetElementKey, XmlNode> m_getElementTable = new Dictionary<GetElementKey, XmlNode>();
+		protected Dictionary<Tuple<XElement, XElement>, XElement> m_unifiedNodes = new Dictionary<Tuple<XElement, XElement>, XElement>();
+		Dictionary<GetElementKey, XElement> m_getElementTable = new Dictionary<GetElementKey, XElement>();
 		static Dictionary<string, Inventory> s_inventories = new Dictionary<string, Inventory>();
 		List<KeyValuePair<string, DateTime>> m_fileInfo;
 		int m_version = 0; // Version number passed to LoadUserOverrides.
 		// This is used to store layout nodes that have an attribute tagForWs="true".  These are
 		// used in displaying Reversal Indexes, and need have separate versions generated for each
 		// reversal index writing system.
-		List<XmlNode> m_wsTaggedNodes = new List<XmlNode>();
+		List<XElement> m_wsTaggedNodes = new List<XElement>();
 
 		// Tracing variable - used to control when and what is output to the debug and trace listeners
 		private TraceSwitch xmlInventorySwitch = new TraceSwitch("XML_Inventory", "", "Off");
@@ -162,7 +163,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public Inventory(string customInventoryPath, string filePattern, string xpath,
 			Dictionary<string, string[]> keyAttrs, string appName, string projectPath) :
-			this(customInventoryPath != null ? new string[] { customInventoryPath } : null,
+			this(customInventoryPath != null ? new[] { customInventoryPath } : null,
 			filePattern, xpath, keyAttrs, appName, projectPath)
 		{
 		}
@@ -181,7 +182,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectPath"></param>
 		/// -----------------------------------------------------------------------------------
 		public Inventory(string[] customInventoryPaths, string filePattern, string xpath,
-			Dictionary<string, string[]> keyAttrs, string appName, String projectPath)
+			Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
 			:this (filePattern, xpath, keyAttrs, appName, projectPath)
 		{
 			int msStart = Environment.TickCount;
@@ -310,12 +311,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///   However, if the name looks like "Full#Foo", the filename comes from the
 		///   corresponding layoutType node with a layout name that ends with "#Foo".
 		/// </summary>
-		/// <param name="element"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void PersistOverrideElement(XmlNode element)
+		public void PersistOverrideElement(XElement element)
 		{
-			string[] keyAttrs = m_keyAttrs[element.Name];
+			string[] keyAttrs = m_keyAttrs[element.Name.LocalName];
 			if (element.Name == "layout")
 			{
 				string sVersion = XmlUtils.GetOptionalAttributeValue(element, "version");
@@ -325,7 +323,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string name = null;
 			var layoutName = XmlUtils.GetOptionalAttributeValue(element, "name", "");
 			var idxTag = layoutName.IndexOf(kcMarkLayoutCopy);
-			XmlNode layoutType = null;
+			XElement layoutType = null;
 			if (idxTag > 0)
 			{
 				var tag = layoutName.Substring(idxTag);
@@ -333,12 +331,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (idx > 0)
 					tag = tag.Remove(idx);
 				Debug.Assert(m_mainDoc != null);
-				XmlNode root = m_mainDoc["Main"];
+				XElement root = m_mainDoc.Root;
 				Debug.Assert(root != null);
-				var nodes = root.SelectNodes("layoutType");
+				var nodes = root.Elements("layoutType");
 				if (nodes != null)
 				{
-					foreach (var node in nodes.OfType<XmlNode>())
+					foreach (var node in nodes.OfType<XElement>())
 					{
 						var layoutNode = XmlUtils.GetManditoryAttributeValue(node, "layout");
 						if (layoutNode.EndsWith(tag))
@@ -350,7 +348,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (layoutType != null)
 					{
 						var label = XmlUtils.GetManditoryAttributeValue(layoutType, "label");
-						var className = XmlUtils.GetOptionalAttributeValue(layoutType.FirstChild, "class");
+						var className = XmlUtils.GetOptionalAttributeValue(layoutType.Elements().First(), "class");
 						name = String.Format("{0}_{1}", label, className);
 					}
 				}
@@ -361,17 +359,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
 			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
 			CreateDirectoryIfNonexistant(UserOverrideConfigurationSettingsPath);
-			XmlDocument doc = null;
+			XDocument doc = null;
 			string[] parentEltNames = GetParentElementNames();
-			XmlNode parent = null; // where we will put new element
+			XElement parent = null; // where we will put new element
 
 			// We expect to find or create a document that has one element
 			if (File.Exists(path))
 			{
-				doc = new XmlDocument();
-				doc.Load(path);
-				parent = doc.DocumentElement;
-				XmlNode current = parent;
+				doc = XDocument.Load(path);
+				parent = doc.Root;
+				XElement current = parent;
 				foreach (string eltName in parentEltNames)
 				{
 					if (current.Name != eltName)
@@ -385,7 +382,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (parent != null)
 				{
 					// Remove any matching child
-					foreach (XmlNode child in parent.ChildNodes)
+					foreach (var child in parent.Elements())
 					{
 						if (child.Name != element.Name)
 							continue;
@@ -401,7 +398,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						}
 						if (match)
 						{
-							parent.RemoveChild(child);
+							child.Remove();
 							break;
 						}
 					}
@@ -409,13 +406,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (layoutType != null)
 					{
 						var layout = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
-						foreach (XmlNode child in parent.ChildNodes)
+						foreach (var child in parent.Elements())
 						{
 							if (child.Name != layoutType.Name)
 								continue;
 							if (XmlUtils.GetOptionalAttributeValue(child, "layout") != layout)
 								continue;
-							parent.RemoveChild(child);
+							child.Remove();
 							break;
 						}
 					}
@@ -424,29 +421,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (parent == null)
 			{
 				// File does not exist, or has unexpected contents; overwrite.
-				doc = new XmlDocument();
+				doc = new XDocument();
 
-				doc.AppendChild(doc.CreateElement(parentEltNames[0]));
-				parent = doc.DocumentElement;
+				doc.Add(new XElement(parentEltNames[0]));
+				parent = doc.Root;
 				for (int i = 1; i < parentEltNames.Length; i++)
 				{
-					XmlNode child = doc.CreateElement(parentEltNames[i]);
-					parent.AppendChild(child);
+					XElement child = new XElement(parentEltNames[i]);
+					parent.Add(child);
 					parent = child;
 				}
 			}
 			// One way or another we now have a parent node that doesn't contain an element
 			// that conflicts with the new one.
-			parent.AppendChild(doc.ImportNode(element, true));
+			parent.Add(element);
 			if (layoutType != null)
-				parent.AppendChild(doc.ImportNode(layoutType, true));
+				parent.Add(layoutType);
 			// OK, the document now contains the desired content. Write it out.
-			using (var xwriter = new XmlTextWriter(path, Encoding.UTF8))
-			{
-				xwriter.Formatting = Formatting.Indented;
-				doc.WriteTo(xwriter);
-				xwriter.Close();
-			}
+			doc.Save(path);
 			// Finally actually add it to the inventory, replacing any existing node of the same key.
 			AddNodeToInventory(element);
 		}
@@ -460,56 +452,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Add (or replace) the given layout type in the inventory.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void AddLayoutTypeToInventory(XmlNode layoutType)
+		public void AddLayoutTypeToInventory(XElement layoutType)
 		{
 			Debug.Assert(m_mainDoc != null);
-			XmlNode root = m_mainDoc["Main"];
+			var root = m_mainDoc.Root;
 			Debug.Assert(root != null);
 
 			var layoutName = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
-			var nodes = root.SelectNodes("layoutType");
-			if (nodes != null)
+			var nodes = root.Elements("layoutType");
+			foreach (var xn in nodes)
 			{
-				foreach (var xn in nodes.OfType<XmlNode>())
+				var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+				if (layoutOld == layoutName)
 				{
-					var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
-					if (layoutOld == layoutName)
-					{
-						root.ReplaceChild(m_mainDoc.ImportNode(layoutType, true), xn);
-						return;
-					}
+					xn.ReplaceWith(layoutType);
+					return;
 				}
 			}
-			root.AppendChild(m_mainDoc.ImportNode(layoutType, true));
+			root.Add(layoutType);
 		}
 
 		/// <summary>
 		/// Return the list of layout types that the inventory knows about.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public List<XmlNode> GetLayoutTypes()
+		public List<XElement> GetLayoutTypes()
 		{
 			Debug.Assert(m_mainDoc != null);
-			XmlNode root = m_mainDoc["Main"];
+			var root = m_mainDoc.Root;
 			Debug.Assert(root != null);
 
-			var retval = new List<XmlNode>();
-			var nodes = root.SelectNodes("layoutType");
-			if (nodes != null)
-				retval.AddRange(nodes.OfType<XmlNode>());
-			return retval;
+			return root.Elements("layoutType").ToList();
 		}
 
 		/// <summary>
 		/// Take the given node and add it to the parts/layouts inventory
 		/// </summary>
 		/// <param name="element"></param>
-		public void AddNodeToInventory(XmlNode element)
+		public void AddNodeToInventory(XElement element)
 		{
-			AddNode(element, m_mainDoc["Main"]);
+			AddNode(element, m_mainDoc.Root);
 		}
 
 		private string[] GetParentElementNames()
@@ -590,12 +571,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Get the root node that has the collected elements as direct children.
 		/// </summary>
-		public XmlNode Root
+		public XElement Root
 		{
 			get
 			{
 				Debug.Assert(m_mainDoc != null);
-				return m_mainDoc["Main"];
+				return m_mainDoc.Root;
 			}
 		}
 
@@ -619,9 +600,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public XmlNode GetElement(string elementName, string[] attrvals)
+		public XElement GetElement(string elementName, string[] attrvals)
 		{
-			XmlNode node = GetEltFromDoc(elementName, attrvals, m_mainDoc);
+			XElement node = GetEltFromDoc(elementName, attrvals, m_mainDoc);
 			if (node != null)
 				return node;
 			// If not found, there might be an alteration node for which we have not yet computed the
@@ -630,7 +611,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// 1. Saves memory and time for alterations that are never used.
 			// 2. Ensures that an alteration based on an override gets based on the override,
 			// even if it is loaded before the override.
-			XmlNode alteration = GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
+			var alteration = GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
 			if (alteration == null)
 				return null;
 			return ApplyAlteration(elementName, attrvals, alteration);
@@ -644,15 +625,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="alteration"></param>
 		/// <param name="elementName"></param>
 		/// <returns></returns>
-		private XmlNode ApplyAlteration(string elementName, string[] attrvals, XmlNode alteration)
+		private XElement ApplyAlteration(string elementName, string[] attrvals, XElement alteration)
 		{
 			string baseName = XmlUtils.GetManditoryAttributeValue(alteration, "base");
 			string[] baseKey = (string[])attrvals.Clone();
 			int cKeys = baseKey.Length;
 			baseKey[cKeys - 1] = baseName;
-			XmlNode baseNode = GetEltFromDoc(elementName, baseKey, m_mainDoc);
-			XmlNode result = Unify(alteration, baseNode);
-			m_mainDoc["Main"].AppendChild(result);
+			var baseNode = GetEltFromDoc(elementName, baseKey, m_mainDoc);
+			var result = Unify(alteration, baseNode);
+			m_mainDoc.Root.Add(result);
 			// we may already have a 'miss' for this element cached, so update the table
 			// 'result' may be null;
 			var key = new GetElementKey(elementName, attrvals, m_mainDoc);
@@ -681,19 +662,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// if alteration has the attribute/value reorder='true', then the order is the
 		/// order in alteration, followed by base nodes that don't unify.
 		/// </summary>
-		/// <param name="alteration"></param>
-		/// <param name="baseNode"></param>
-		/// <returns></returns>
-		private XmlNode Unify(XmlNode alteration, XmlNode baseNode)
+		private XElement Unify(XElement alteration, XElement baseNode)
 		{
 			// If we don't have a base node, make an exact copy of alteration.
 			if (baseNode == null)
-				return m_mainDoc.ImportNode(alteration, true);
+				return alteration;
 			// And, likewise, if we don't have an alteration, make an exact copy of base.
 			if (alteration == null)
-				return m_mainDoc.ImportNode(baseNode, true);
-			XmlNode unified = m_mainDoc.CreateNode(XmlNodeType.Element, alteration.Name, null);
-			CopyAttributes(alteration, unified, false);
+				return baseNode;
+			XElement unified = new XElement(alteration.Name, alteration.Attributes());
+			// Not done with child elements of alteration yet.
 			CopyAttributes(baseNode, unified, true);
 
 			UnifyChildren(alteration, baseNode, unified);
@@ -703,48 +681,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "ChildNodes returns a reference")]
-		private void UnifyChildren(XmlNode alteration, XmlNode baseNode, XmlNode unified)
+		private void UnifyChildren(XElement alteration, XElement baseNode, XElement unified)
 		{
-			bool reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
-			XmlNodeList orderBy;
-			HashSet<XmlNode> remainingOthers;
-			XmlNodeList others;
+			var reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
+			IEnumerable<XElement> orderBy;
+			IEnumerable<XElement> others;
 			if (reorder)
 			{
-				orderBy = alteration.ChildNodes;
-				others = baseNode.ChildNodes;
+				orderBy = alteration.Elements();
+				others = baseNode.Elements();
 			}
 			else
 			{
-				orderBy = baseNode.ChildNodes;
-				others = alteration.ChildNodes;
+				orderBy = baseNode.Elements();
+				others = alteration.Elements();
 			}
-			remainingOthers = new HashSet<XmlNode>();
-			foreach(XmlNode node in others)
-				remainingOthers.Add(node);
-			foreach(XmlNode item in orderBy)
+			var remainingOthers = new HashSet<XElement>();
+			foreach (var node in others)
 			{
-				XmlNode other = MatchAndRemove(remainingOthers, item);
-				XmlNode newChild;
-				if (reorder)
-					newChild = Unify(item, other); // other is the base, item is the override.
-				else
-					newChild = Unify(other, item); // item is the base, other is the override
-				unified.AppendChild(newChild);
+				remainingOthers.Add(node);
 			}
-			foreach(XmlNode item in remainingOthers)
-				unified.AppendChild(m_mainDoc.ImportNode(item, true));
+			foreach (var item in orderBy)
+			{
+				var other = MatchAndRemove(remainingOthers, item);
+				var newChild = reorder ? Unify(item, other) : Unify(other, item);
+				unified.Add(newChild);
+			}
+			foreach (var item in remainingOthers)
+			{
+				unified.Add(item);
+			}
 		}
 
-		private void CopyAttributes(XmlNode source, XmlNode dest, bool fIfNotPresent)
+		private static void CopyAttributes(XElement source, XElement dest, bool fIfNotPresent)
 		{
-			foreach(XmlAttribute attr in source.Attributes)
+			foreach (var attr in source.Attributes())
 			{
-				if (fIfNotPresent && dest.Attributes[attr.Name] != null)
+				if (fIfNotPresent && dest.Attribute(attr.Name) != null)
 					continue;
-				XmlAttribute xa = m_mainDoc.CreateAttribute(attr.Name);
-				dest.Attributes.Append(xa);
-				xa.Value = attr.Value;
+				dest.Add(attr);
 			}
 		}
 
@@ -755,17 +730,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="remainingOthers"></param>
 		/// <param name="target"></param>
 		/// <returns></returns>
-		XmlNode MatchAndRemove(HashSet<XmlNode> remainingOthers, XmlNode target)
+		XElement MatchAndRemove(ICollection<XElement> remainingOthers, XElement target)
 		{
-			string elementName = target.Name;
+			var elementName = target.Name.LocalName;
 			string[] keyAttrs = null;
 			if (m_keyAttrs.ContainsKey(elementName))
 				keyAttrs = m_keyAttrs[elementName];
-			int ckeys = (keyAttrs == null ? 0 : keyAttrs.Length);
-			string[] keyVals = new string[ckeys]; // keys to try to match for each item
-			for (int i = 0; i < ckeys; i++)
+			var ckeys = (keyAttrs == null ? 0 : keyAttrs.Length);
+			var keyVals = new string[ckeys]; // keys to try to match for each item
+			for (var i = 0; i < ckeys; i++)
 				keyVals[i] = XmlUtils.GetOptionalAttributeValue(target, keyAttrs[i]);
-			foreach (XmlNode item in remainingOthers)
+			foreach (var item in remainingOthers)
 			{
 				if (item.Name != elementName)
 					continue;
@@ -791,9 +766,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="xpath">xpath string</param>
 		/// <returns></returns>
-		public XmlNodeList GetElements(string xpath)
+		public IEnumerable<XElement> GetElements(string xpath)
 		{
-			return m_mainDoc["Main"].SelectNodes(xpath);
+			return m_mainDoc.Root.XPathSelectElements(xpath);
 		}
 
 		/// <summary>
@@ -804,7 +779,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public XmlNodeList GetElements(string elementName, string[] attrvals)
+		public IEnumerable<XElement> GetElements(string elementName, string[] attrvals)
 		{
 			// Create an xpath that will select a node with the same name and key attributes
 			// (if any) as newNode. If some attributes are missing from newNode, they
@@ -814,17 +789,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				keyAttrs = m_keyAttrs[elementName];
 			if (keyAttrs == null)
 				keyAttrs = new string[0];
-			StringBuilder pathBldr = new StringBuilder(elementName);
-			int numAttrs = Math.Min(keyAttrs.Length, attrvals.Length);
+			var pathBldr = new StringBuilder(elementName);
+			var numAttrs = Math.Min(keyAttrs.Length, attrvals.Length);
 			if (numAttrs > 0)
 			{
 				pathBldr.Append("[");
-				for(int i = 0; i < numAttrs; i++)
+				for (var i = 0; i < numAttrs; i++)
 				{
-					string attr = keyAttrs[i];
+					var attr = keyAttrs[i];
 					if (i != 0)
 						pathBldr.Append(" and ");
-					string val = attrvals[i];
+					var val = attrvals[i];
 					if (val == null)
 					{
 						pathBldr.Append("not(@");
@@ -843,17 +818,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				pathBldr.Append("]");
 			}
 
-			return m_mainDoc["Main"].SelectNodes(pathBldr.ToString());
+			return m_mainDoc.Root.XPathSelectElements(pathBldr.ToString());
 		}
 
 		/// <summary />
-		protected XmlNode GetEltFromDoc(string elementName, string[] attrvals, XmlDocument doc)
+		protected XElement GetEltFromDoc(string elementName, string[] attrvals, XDocument doc)
 		{
 			var key = new GetElementKey(elementName, attrvals, doc);
-			XmlNode result = null;
-			bool hasKey = m_getElementTable.ContainsKey(key);
+			XElement result = null;
+			var hasKey = m_getElementTable.ContainsKey(key);
 			if (hasKey)
+			{
 				result = m_getElementTable[key]; // May be null, even with the key.
+}
 			if (result == null && !hasKey)
 			{
 				result = GetEltFromDoc1(elementName, attrvals, doc);
@@ -863,7 +840,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		protected XmlNode GetEltFromDoc1(string elementName, string[] attrvals, XmlDocument doc)
+		protected XElement GetEltFromDoc1(string elementName, string[] attrvals, XDocument doc)
 		{
 			// Create an xpath that will select a node with the same name and key attributes
 			// (if any) as newNode. If some attributes are missing from newNode, they
@@ -873,16 +850,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				keyAttrs = m_keyAttrs[elementName];
 			if (keyAttrs == null)
 				keyAttrs = new string[0];
-			StringBuilder pathBldr = new StringBuilder(elementName);
+			var pathBldr = new StringBuilder(elementName);
 			if (keyAttrs.Length > 0)
 			{
 				pathBldr.Append("[");
-				for(int i = 0; i < keyAttrs.Length; i++)
+				for (var i = 0; i < keyAttrs.Length; i++)
 				{
-					string attr = keyAttrs[i];
+					var attr = keyAttrs[i];
 					if (i != 0)
 						pathBldr.Append(" and ");
-					string val = attrvals[i];
+					var val = attrvals[i];
 					if (val == null)
 					{
 						pathBldr.Append("not(@");
@@ -910,7 +887,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				pathBldr.Append("]");
 			}
 
-			return doc["Main"].SelectSingleNode(pathBldr.ToString());
+			return doc.Root.XPathSelectElement(pathBldr.ToString());
 		}
 
 		/// <summary>
@@ -928,7 +905,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public XmlNode GetAlteration(string elementName, string[] attrvals)
+		public XElement GetAlteration(string elementName, string[] attrvals)
 		{
 			return GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
 		}
@@ -941,32 +918,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///
 		/// Exactly the keys that produce a value in GetDerived will produce one here.
 		/// </summary>
-		/// <param name="elementName"></param>
-		/// <param name="attrvals"></param>
-		/// <returns></returns>
-		public XmlNode GetBase(string elementName, string[] attrvals)
+		public XElement GetBase(string elementName, string[] attrvals)
 		{
-			XmlNode alteration = GetAlteration(elementName, attrvals);
+			var alteration = GetAlteration(elementName, attrvals);
 			if (alteration == null)
 				return null;
-			string[] keyBase = (string[])attrvals.Clone();
+			var keyBase = (string[])attrvals.Clone();
 			keyBase[keyBase.Length - 1] = XmlUtils.GetManditoryAttributeValue(alteration, "base");
 			// if the alteration is an override (key = id), the base node is saved in m_baseDoc,
 			// otherwise it is just in the normal main document.
-			string[] keyAttrs = m_keyAttrs[elementName];
-			string id = XmlUtils.GetOptionalAttributeValue(alteration, keyAttrs[keyAttrs.Length - 1]);
+			var keyAttrs = m_keyAttrs[elementName];
+			var id = XmlUtils.GetOptionalAttributeValue(alteration, keyAttrs[keyAttrs.Length - 1]);
 			if (id == keyBase[keyBase.Length - 1])
 			{
 				// An override, the base should already be saved in m_baseDoc
 				return GetEltFromDoc(elementName, keyBase, m_baseDoc);
 			}
-			else
-			{
-				// not an override, just an ordinary derived node.
-				// Possibly the base is another derived node, not yet computed, so we need
-				// to use the full GetElement to ensure that it gets created if needed.
-				return GetElement(elementName, keyBase);
-			}
+			// not an override, just an ordinary derived node.
+			// Possibly the base is another derived node, not yet computed, so we need
+			// to use the full GetElement to ensure that it gets created if needed.
+			return GetElement(elementName, keyBase);
 		}
 
 		/// <summary>
@@ -993,62 +964,58 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="inventoryFilePath">Path to one inventory file.</param>
 		/// <returns>A list of elements which should be inventory elements.</returns>
-		protected XmlNodeList LoadOneInventoryFile(string inventoryFilePath)
+		protected IEnumerable<XElement> LoadOneInventoryFile(string inventoryFilePath)
 		{
 			m_fileInfo.Add(new KeyValuePair<string, DateTime>(inventoryFilePath, File.GetLastWriteTime(inventoryFilePath)));
 
-			XmlDocument xdoc = new XmlDocument();
+			XDocument xdoc;
 			try
 			{
-				xdoc.Load(inventoryFilePath);
+				xdoc = XDocument.Load(inventoryFilePath);
 			}
 			catch(Exception error)
 			{
-				string x = string.Format(FwUtilsStrings.ErrorReadingXMLFile0, inventoryFilePath);
+				var x = string.Format(FwUtilsStrings.ErrorReadingXMLFile0, inventoryFilePath);
 				throw new ApplicationException(x, error);
 
 			}
-			return xdoc.SelectNodes(m_xpathElementsWanted);
+			return xdoc.XPathSelectElements(m_xpathElementsWanted);
 		}
 
 		/// <summary>
 		/// This method will save the given Nodes into the requested path, first it will remove all the existing nodes which match
 		/// the type that this inventory is representing. Then it will add the new data to the parent node of the first match.
 		/// </summary>
-		/// <param name="inventoryFilePath"></param>
-		/// <param name="newData"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XmlNode> newData)
+		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XElement> newData)
 		{
-			XmlDocument xdoc = new XmlDocument();
+			XDocument xdoc;
 			try
 			{
-				xdoc.Load(inventoryFilePath);
+				xdoc = XDocument.Load(inventoryFilePath);
 			}
 			catch (Exception error)
 			{
-				string x = string.Format(FwUtilsStrings.ErrorReadingXMLFile0, inventoryFilePath);
+				var x = string.Format(FwUtilsStrings.ErrorReadingXMLFile0, inventoryFilePath);
 				throw new ApplicationException(x, error);
 
 			}
-			var oldAndBusted = xdoc.SelectNodes(m_xpathElementsWanted);
-			if (oldAndBusted != null && oldAndBusted.Count > 0)
+			var oldAndBusted = xdoc.XPathSelectElements(m_xpathElementsWanted).ToList();
+			if (oldAndBusted.Any())
 			{
 				//get the parent of the nodes in the path
-				XmlElement root = oldAndBusted[0].ParentNode as XmlElement;
+				var root = oldAndBusted[0].Parent;
 				// In Mono, changing the root element invalidates the XmlNodeList iterator
 				// so that it quits the loop immediately after the first node is removed.
 				// See FWNX-1057.  This results in evergrowing fwlayout files stored with
 				// the project!  So we copy the list first into a form that won't be
 				// invalidated.
-				foreach (XmlNode match in new List<XmlNode>(oldAndBusted.Cast<XmlNode>()))
+				foreach (var match in new List<XElement>(oldAndBusted))
 				{
-					root.RemoveChild(match);
+					match.Remove();
 				}
-				foreach (XmlNode newItem in newData)
+				foreach (var newItem in newData)
 				{
-					root.AppendChild(root.OwnerDocument.ImportNode(newItem, true));
+					root.Add(newItem);
 				}
 				xdoc.Save(inventoryFilePath);
 			}
@@ -1060,9 +1027,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="filePaths"></param>
 		public void AddCustomFiles(string[] filePaths)
 		{
-			for(int i = 0; i < filePaths.Length; ++i)
+			for(var i = 0; i < filePaths.Length; ++i)
 			{
-				string path = filePaths[i];
+				var path = filePaths[i];
 				if (m_inventoryPaths.Contains(path))
 				{
 					// Already in the path collection.
@@ -1089,22 +1056,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="filePaths">Collection of pathnames to individual XDE template files.</param>
 		/// <param name="version"></param>
 		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
 			Debug.Assert(m_mainDoc != null);
-			XmlNode root = m_mainDoc["Main"];
+			var root = m_mainDoc.Root;
 
-			foreach(string path in filePaths)
+			foreach(var path in filePaths)
 			{
 				if (path == null)
 					continue;
 				var nodeList = LoadOneInventoryFile(path);
 				bool wasMerged;
-				List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, loadUserOverRides);
-				LoadNodeList(cleanedNodes, version, root);
+				var cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, loadUserOverRides);
+				LoadElementList(cleanedNodes, version, root);
 				if (wasMerged)
 				{
 					RefreshOneInventoryFile(path, cleanedNodes);
@@ -1115,59 +1080,56 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Collect all of the elements up from a string input (used in testing).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromString(string input, int version)
 		{
 			Debug.Assert(m_mainDoc != null);
-			XmlNode root = m_mainDoc["Main"];
-			var xdoc = new XmlDocument();
-			xdoc.LoadXml(input);
-			var nodeList = xdoc.SelectNodes(m_xpathElementsWanted);
+			var root = m_mainDoc.Root;
+			var xdoc = XDocument.Parse(input);
+			var elementList = xdoc.XPathSelectElements(m_xpathElementsWanted);
 			bool wasMerged;
-			List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, false);
-			LoadNodeList(cleanedNodes, version, root);
+			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out wasMerged, false);
+			LoadElementList(cleanedNodes, version, root);
 		}
 
 		/// <summary>
 		/// Take the collection of merged or retained nodes and insert them into our in memory document.
 		/// </summary>
-		/// <param name="nodeList"></param>
+		/// <param name="elementList"></param>
 		/// <param name="version"></param>
 		/// <param name="root"></param>
-		private void LoadNodeList(List<XmlNode> nodeList, int version, XmlNode root)
+		private void LoadElementList(IEnumerable<XElement> elementList, int version, XElement root)
 		{
-			foreach (XmlNode node in nodeList)
+			foreach (var element in elementList)
 			{
-				NoteIfNodeWsTagged(node);
+				NoteIfNodeWsTagged(element);
 				//"layoutType" nodes are handled differently in the Inventory.
 				//Don't ask me why, the reason seems to have been lost to history.
 				//It is important to follow through on that here though. naylor 6/7/2012
-				if (node.Name == "layoutType")
+				if (element.Name == "layoutType")
 				{
-					AddLayoutTypeToInventory(node);
+					AddLayoutTypeToInventory(element);
 					continue;
 				}
 				//if the version is the same then we want to use the basic AddNode to get it into the inventory
-				if(version == Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString())))
+				if(version == Int32.Parse(XmlUtils.GetOptionalAttributeValue(element, "version", version.ToString())))
 				{
-					AddNode(node, root);
+					AddNode(element, root);
 					continue;
 				}
 				//set up the values for other options
 				string[] keyAttrs;
-				var key = GetKeyMain(node, out keyAttrs);
-				XmlNode current;
+				var key = GetKeyMain(element, out keyAttrs);
+				XElement current;
 				//if the element table already has a match then we want to insert replacing the current value
 				if (m_getElementTable.TryGetValue(key, out current))
 				{
-					InsertNodeInDoc(node, current, m_mainDoc, key);
+					InsertNodeInDoc(element, current, m_mainDoc, key);
 				}
 				else //otherwise we are not going to attempt and replace any existing configurations
 				{
 					// We do NOT want this one to replace 'current', since it has a different name.
 					// We already know there is no matching node to replace.
-					InsertNodeInDoc(node, null, m_mainDoc, key);
+					InsertNodeInDoc(element, null, m_mainDoc, key);
 				}
 			}
 		}
@@ -1176,18 +1138,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This comparison class allows us to simplify getting only unique elements
 		/// in the MergeAndUpdateNodes method below.
 		/// </summary>
-		class XmlNodeCompare : IEqualityComparer<XmlNode>
+		class XElementCompare : IEqualityComparer<XElement>
 		{
 			/// <summary></summary>
-			public bool Equals(XmlNode first, XmlNode second)
+			public bool Equals(XElement first, XElement second)
 			{
-				return first.OuterXml == second.OuterXml;
+				return first.ToString() == second.ToString();
 			}
 
 			/// <summary></summary>
-			public int GetHashCode(XmlNode x)
+			public int GetHashCode(XElement x)
 			{
-				return x.OuterXml.GetHashCode();
+				return x.ToString().GetHashCode();
 			}
 		}
 
@@ -1199,14 +1161,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="wasMerged">This parameter will be set to true if any nodes were merged to the latest version</param>
 		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
 		/// <returns></returns>
-		private List<XmlNode> MergeAndUpdateNodes(XmlNodeList nodeList, int version, out bool wasMerged, bool loadUserOverRides)
+		private List<XElement> MergeAndUpdateNodes(IEnumerable<XElement> nodeList, int version, out bool wasMerged, bool loadUserOverRides)
 		{
 			wasMerged = false;
 			// Past bugs may have left duplication in the layout file.  (See FWNX-1057.)  Use a simple
 			// check to weed out any duplicates, which will be exactly identical.
-			var comparer = new XmlNodeCompare();
-			HashSet<XmlNode> survivors = new HashSet<XmlNode>(comparer);
-			foreach(XmlNode node in nodeList)
+			var comparer = new XElementCompare();
+			var survivors = new HashSet<XElement>(comparer);
+			foreach (var node in nodeList)
 			{
 				// Load only nodes that either have matching version number or none.
 				// JohnT says that all user files will have a version number, and have had one from the beginning.
@@ -1218,7 +1180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// as if they were in the default configuration files.  The loadUserOverRides boolean was added to ensure
 				// version number is added to the elements in the user configuration files.
 
-				int fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version",
+				var fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version",
 																				 loadUserOverRides ? "0" : version.ToString()));
 
 				//The layoutType element in user config files (i.e. a copy of the root dictionary view)
@@ -1227,12 +1189,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					//So to make sure that copies of the dictionary views get reloaded we will look for
 					//the version number of a sibling node.
-					if (node.ParentNode != null)
+					if (node.Parent != null)
 					{
-						var versionedSibling = node.SelectSingleNode("../*[@version]");
+						var versionedSibling = node.XPathSelectElement("../*[@version]");
 						// ReSharper disable PossibleNullReferenceException
 						// if we found a node, it has a version attribute.
-						fileVersion = Int32.Parse(versionedSibling != null ? versionedSibling.Attributes["version"].Value : "0");
+						fileVersion = Int32.Parse(versionedSibling != null ? versionedSibling.Attribute("version").Value : "0");
 						// ReSharper restore PossibleNullReferenceException
 					}
 				}
@@ -1241,10 +1203,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					string[] keyAttrs;
 					var key = GetKeyMain(node, out keyAttrs);
-					XmlNode current;
+					XElement current;
 					if (m_getElementTable.TryGetValue(key, out current))
 					{
-						XmlNode merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
+						XElement merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
 						if (loadUserOverRides)
 							XmlUtils.SetAttribute(merged, "version", version.ToString());
 						survivors.Add(merged);
@@ -1260,7 +1222,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 							var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
 							if (m_getElementTable.TryGetValue(originalKey, out current))
 							{
-								XmlNode merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
+								var merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
 								// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
 								//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
 								if (loadUserOverRides)
@@ -1281,7 +1243,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return survivors.ToList();
 		}
 
-		private void NoteIfNodeWsTagged(XmlNode node)
+		private void NoteIfNodeWsTagged(XElement node)
 		{
 			if (node.Name == "layout" &&
 				XmlUtils.GetManditoryAttributeValue(node, "type") == "jtview" &&
@@ -1300,49 +1262,47 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Debug.Assert(sWsTag != null && sWsTag.Length > 0);
 			Debug.Assert(m_mainDoc != null);
-			XmlNode root = m_mainDoc["Main"];
+			XElement root = m_mainDoc.Root;
 
-			foreach (XmlNode xn in m_wsTaggedNodes)
+			foreach (var xn in m_wsTaggedNodes)
 			{
-				string sName = XmlUtils.GetManditoryAttributeValue(xn, "name");
-				string sWsName = String.Format("{0}-{1}", sName, sWsTag);
-				string sClass = XmlUtils.GetManditoryAttributeValue(xn, "class");
-				string sType = XmlUtils.GetManditoryAttributeValue(xn, "type");
+				var sName = XmlUtils.GetManditoryAttributeValue(xn, "name");
+				var sWsName = String.Format("{0}-{1}", sName, sWsTag);
+				var sClass = XmlUtils.GetManditoryAttributeValue(xn, "class");
+				var sType = XmlUtils.GetManditoryAttributeValue(xn, "type");
 				Debug.Assert(xn.Name == "layout" && sType == "jtview" &&
 					XmlUtils.GetOptionalBooleanAttributeValue(xn, "tagForWs", false));
-				XmlNode layout = GetElement("layout", new[] { sClass, sType, sWsName, null });
+				var layout = GetElement("layout", new[] { sClass, sType, sWsName, null });
 				if (layout != null)
 					continue;		// node has already been added.
-				XmlNode xnWs = xn.Clone();
-				xnWs.Attributes["name"].Value = sWsName;
-				foreach (XmlNode xnChild in xnWs.ChildNodes)
+				var xnWs = xn.Clone();
+				xnWs.Attribute("name").Value = sWsName;
+				foreach (var xnChild in xnWs.Elements())
 				{
-					if (xnChild is XmlComment)
-						continue;
 					if (xnChild.Name == "sublayout")
 					{
-						string sSubName = XmlUtils.GetManditoryAttributeValue(xnChild, "name");
-						xnChild.Attributes["name"].Value = String.Format("{0}-{1}", sSubName, sWsTag);
+						var sSubName = XmlUtils.GetManditoryAttributeValue(xnChild, "name");
+						xnChild.Attribute("name").Value = string.Format("{0}-{1}", sSubName, sWsTag);
 					}
 					else if (xnChild.Name == "part")
 					{
-						string sParam = XmlUtils.GetOptionalAttributeValue(xnChild, "param", null);
-						if (!String.IsNullOrEmpty(sParam))
-							xnChild.Attributes["param"].Value = String.Format("{0}-{1}", sParam, sWsTag);
+						var sParam = XmlUtils.GetOptionalAttributeValue(xnChild, "param", null);
+						if (!string.IsNullOrEmpty(sParam))
+							xnChild.Attribute("param").Value = string.Format("{0}-{1}", sParam, sWsTag);
 					}
 				}
 				AddNode(xnWs, root);
 			}
 		}
 
-		private void AddNode(XmlNode node, XmlNode root)
+		private void AddNode(XElement node, XElement root)
 		{
 			string[] keyAttrs;
 			var keyMain = GetKeyMain(node, out keyAttrs);
 			string[] keyVals = keyMain.KeyVals;
 			string elementName = keyMain.ElementName;
 
-			XmlNode extantNode = null;
+			XElement extantNode = null;
 			// Value may be null in the Dictionary, even if key is present.
 			m_getElementTable.TryGetValue(keyMain, out extantNode);
 
@@ -1365,11 +1325,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (m_getElementTable.ContainsKey(keyBase))
 						throw new Exception("only one level of override is allowed " + baseName);
 					// Save the base node for future use.
-					m_baseDoc["Main"].AppendChild(m_baseDoc.ImportNode(extantNode, true));
+					m_baseDoc.Root.Add(extantNode);
 					m_getElementTable[keyBase] = extantNode;
 					// Immediately compute the effect of the override and save it, replacing the base.
-					XmlNode unified = Unify(node, extantNode);
-					root.ReplaceChild(unified, extantNode);
+					var unified = Unify(node, extantNode);
+					extantNode.ReplaceWith(unified);
 					// and update the cache, which is loaded with the old element
 					m_getElementTable[keyMain] = unified;
 				}
@@ -1379,7 +1339,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (extantNode != null)
 					{
 						// derived node displaces non-derived one.
-						root.RemoveChild(extantNode);
+						extantNode.Remove();
 					}
 				}
 				// alteration node goes into alterations doc (displacing any previous alteration
@@ -1398,9 +1358,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		// Get the key we use to look up the specified element, and also the array of attribute names
 		// appropriate to the element type.
-		private GetElementKey GetKeyMain(XmlNode node, out string[] keyAttrs)
+		private GetElementKey GetKeyMain(XElement node, out string[] keyAttrs)
 		{
-			string elementName = node.Name;
+			string elementName = node.Name.LocalName;
 			keyAttrs = null;
 			if (m_keyAttrs.ContainsKey(elementName))
 				keyAttrs = m_keyAttrs[elementName];
@@ -1416,19 +1376,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return new GetElementKey(elementName, keyVals, m_mainDoc);
 		}
 
-		private void CopyNodeToDoc(XmlNode node, XmlNode extantNode, XmlDocument doc, GetElementKey key)
+		private void CopyNodeToDoc(XElement node, XElement extantNode, XDocument doc, GetElementKey key)
 		{
-			XmlNode newNode = doc.ImportNode(node, true);
-			InsertNodeInDoc(newNode, extantNode, doc, key);
+			InsertNodeInDoc(node, extantNode, doc, key);
 		}
 
-		private void InsertNodeInDoc(XmlNode newNode, XmlNode extantNode, XmlDocument doc, GetElementKey key)
+		private void InsertNodeInDoc(XElement newNode, XElement extantNode, XDocument doc, GetElementKey key)
 		{
-			XmlNode root = doc["Main"];
+			var root = doc.Root;
 			if (extantNode == null)
-				root.AppendChild(newNode);
+			{
+				root.Add(newNode);
+			}
 			else
-				root.ReplaceChild(newNode, extantNode);
+			{
+				extantNode.ReplaceWith(newNode);
+			}
 			if (newNode.Name != "layoutType")
 				m_getElementTable[key] = newNode;
 		}
@@ -1463,14 +1426,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private void BasicInit()
 		{
 			// If this is called more than once,
-			// it will throw away the old xmlDocument here.
+			// it will throw away the old xml document here.
 			m_fileInfo = new List<KeyValuePair<string, DateTime>>();
-			m_mainDoc = new XmlDocument();
-			m_mainDoc.AppendChild(m_mainDoc.CreateElement("Main"));
-			m_alterationsDoc = new XmlDocument();
-			m_alterationsDoc.AppendChild(m_alterationsDoc.CreateElement("Main"));
-			m_baseDoc = new XmlDocument();
-			m_baseDoc.AppendChild(m_baseDoc.CreateElement("Main"));
+			m_mainDoc = new XDocument();
+			m_mainDoc.Add(new XElement("Main"));
+			m_alterationsDoc = new XDocument();
+			m_alterationsDoc.Add(new XElement("Main"));
+			m_baseDoc = new XDocument();
+			m_baseDoc.Add(new XElement("Main"));
 			m_getElementTable.Clear();
 		}
 
@@ -1508,16 +1471,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// overriding. It saves the result and will reuse it if a unification
 		/// of the same two elements is requested again.
 		/// </summary>
-		/// <param name="main"></param>
-		/// <param name="alteration"></param>
-		/// <returns></returns>
-		public XmlNode GetUnified(XmlNode main, XmlNode alteration)
+		public XElement GetUnified(XElement main, XElement alteration)
 		{
-			XmlNode result;
-			var key = new Tuple<XmlNode, XmlNode>(main, alteration);
+			XElement result;
+			var key = new Tuple<XElement, XElement>(main, alteration);
 			if (!m_unifiedNodes.TryGetValue(key, out result))
 			{
-				result = m_mainDoc.CreateNode(XmlNodeType.Element, main.Name, null);
+				result = new XElement(main.Name);
 				CopyAttributes(main, result, false);
 				UnifyChildren(alteration, main, result);
 				m_unifiedNodes[key] = result;
@@ -1532,8 +1492,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			readonly string m_elementName;
 			readonly string[] m_attrvals;
-			readonly XmlDocument m_doc;
-			internal GetElementKey(string elementName, string[] attrvals, XmlDocument doc)
+			readonly XDocument m_doc;
+			internal GetElementKey(string elementName, string[] attrvals, XDocument doc)
 			{
 				m_elementName = elementName;
 				m_attrvals = attrvals.Select(attrval => (attrval == null ? null : attrval.ToLowerInvariant())).ToArray();
@@ -1625,7 +1585,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="version">The version.</param>
 		/// <param name="newPartRef">The new part ref.</param>
 		/// <returns></returns>
-		static public XmlNode MakeOverride(object[] path, string attrName, string value, int version, out XmlNode newPartRef)
+		static public XElement MakeOverride(object[] path, string attrName, string value, int version, out XElement newPartRef)
 		{
 			// if we are overriding an attribute in a part ref that is in a sublayout, we want to treat the sublayout as the
 			// root layout, so we search starting from the end of the path for the last sublayout and if it exists we make it
@@ -1633,24 +1593,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int i;
 			for (i = path.Length - 1; i > 0; i--)
 			{
-				var node = path[i] as XmlNode;
+				var node = path[i] as XElement;
 				if (node == null || node.Name != "sublayout")
 					continue;
 
 				i++;
 				break;
 			}
-			var original = (XmlNode) path[i++];
-			XmlNode result = original.Clone();
+			var original = (XElement)path[i++];
+			var result = original.Clone();
 			XmlUtils.AppendAttribute(result, "version", version.ToString());
-			XmlNode finalPartRef = null;
-			XmlNode currentParent = result;
+			XElement finalPartRef = null;
+			var currentParent = result;
 			for (; i < path.Length; i++)
 			{
-				var node = path[i] as XmlNode;
+				var node = path[i] as XElement;
 				if (node == null || node.Name != "part")
 					continue;
-				string partId = XmlUtils.GetOptionalAttributeValue(node, "ref");
+				var partId = XmlUtils.GetOptionalAttributeValue(node, "ref");
 				if (partId == null)
 					continue; // a part node, but not a part ref.
 
@@ -1659,11 +1619,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// <indent>. If the current part ref we are trying to add has such a parent,
 				// try to reuse a matching one from the currentParent; failing that, make
 				// a suitable parent node and make it current.
-				XmlNode parent = node.ParentNode;
+				var parent = node.Parent;
 				if (parent != null && parent.Name == "indent")
 				{
-					XmlNode adjustParent = null;
-					foreach (XmlNode child in currentParent.ChildNodes)
+					XElement adjustParent = null;
+					foreach (var child in currentParent.Elements())
 					{
 						if (child.Name == parent.Name)
 						{
@@ -1673,14 +1633,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 					if (adjustParent == null)
 					{
-						adjustParent = currentParent.OwnerDocument.ImportNode(parent, false);
-						currentParent.AppendChild(adjustParent);
+						adjustParent = parent;
+						currentParent.Add(adjustParent);
 					}
 					currentParent = adjustParent;
 				}
 
-				XmlNode currentChild = null;
-				foreach (XmlNode child in currentParent.ChildNodes)
+				XElement currentChild = null;
+				foreach (var child in currentParent.Elements())
 				{
 					string partIdChild = XmlUtils.GetOptionalAttributeValue(child, "ref");
 					// For most children, one with the right part ID is enough, but for custom ones
@@ -1698,14 +1658,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// It's not one of the children of the current parent, presumably, it's a parent
 					// of a layout invoked by that parent. We create a direct child to override the
 					// behavior of that layout.
-					currentChild = currentParent.OwnerDocument.CreateNode(XmlNodeType.Element, "part", null);
-					currentParent.AppendChild(currentChild);
+					currentChild = new XElement("part");
+					currentParent.Add(currentChild);
 					XmlUtils.AppendAttribute(currentChild, "ref", partId);
 					if (XmlUtils.GetOptionalAttributeValue(node, "ref") == "Custom")
 					{
 						// In this case (and possibly this case only, at least, we weren't doing it
 						// before), we need to copy the param attribute.
-						string param = XmlUtils.GetOptionalAttributeValue(node, "param");
+						var param = XmlUtils.GetOptionalAttributeValue(node, "param");
 						if (!string.IsNullOrEmpty(param))
 							XmlUtils.AppendAttribute(currentChild, "param", param);
 					}
@@ -1736,6 +1696,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Do the merge.
 		/// </summary>
-		XmlNode Merge(XmlNode newMaster, XmlNode oldConfigured, XmlDocument dest, string oldLayoutLevelSuffix);
+		XElement Merge(XElement newMaster, XElement oldConfigured, XDocument dest, string oldLayoutLevelSuffix);
 	}
 }

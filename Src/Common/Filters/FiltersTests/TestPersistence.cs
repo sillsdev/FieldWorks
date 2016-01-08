@@ -5,7 +5,7 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -83,10 +83,9 @@ namespace SIL.FieldWorks.Filters
 			IcuComparer icomp = new IcuComparer("fr");
 			GenRecordSorter grs = new GenRecordSorter(icomp);
 			xml = DynamicLoader.PersistObject(grs, "sorter");
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml);
-			Assert.AreEqual("sorter", doc.DocumentElement.Name);
-			object obj = DynamicLoader.RestoreObject(doc.DocumentElement);
+			var doc = XDocument.Parse(xml);
+			Assert.IsTrue("sorter" == doc.Root.Name);
+			object obj = DynamicLoader.RestoreObject(doc.Root);
 			try
 			{
 				Assert.IsInstanceOf<GenRecordSorter>(obj);
@@ -109,18 +108,16 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void PersistAndSorter()
 		{
-			string xml;
 			IcuComparer icomp1 = new IcuComparer("fr"), icomp2 = new IcuComparer("en");
 			GenRecordSorter grs1 = new GenRecordSorter(icomp1), grs2 = new GenRecordSorter(icomp2);
 			ArrayList sorters = new ArrayList();
 			sorters.Add(grs1);
 			sorters.Add(grs2);
 			AndSorter asorter = new AndSorter(sorters);
-			xml = DynamicLoader.PersistObject(asorter, "sorter");
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml);
-			Assert.AreEqual("sorter", doc.DocumentElement.Name);
-			object obj = DynamicLoader.RestoreObject(doc.DocumentElement);
+			var xml = DynamicLoader.PersistObject(asorter, "sorter");
+			var doc = XDocument.Parse(xml);
+			Assert.IsTrue("sorter" == doc.Root.Name);
+			object obj = DynamicLoader.RestoreObject(doc.Root);
 			m_objectsToDispose.Add(obj);
 			Assert.IsInstanceOf<AndSorter>(obj);
 			ArrayList sortersOut = (obj as AndSorter).Sorters;
@@ -261,20 +258,18 @@ namespace SIL.FieldWorks.Filters
 
 			andFilter.Add(new NullFilter());
 
-			XmlDocument docPaf = new XmlDocument();
-			docPaf.LoadXml("<root targetClasses=\"LexEntry, LexSense\"></root>");
+			var docPaf = XDocument.Parse("<root targetClasses=\"LexEntry, LexSense\"></root>");
 			ProblemAnnotationFilter paf = new ProblemAnnotationFilter();
-			paf.Init(Cache, docPaf.DocumentElement);
+			paf.Init(Cache, docPaf.Root);
 			andFilter.Add(paf);
 
 			// Save and restore!
 			string xml = DynamicLoader.PersistObject(andFilter, "filter");
 
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml);
+			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var andFilterOut = DynamicLoader.RestoreObject(doc.DocumentElement) as AndFilter;
+			var andFilterOut = DynamicLoader.RestoreObject(doc.Root) as AndFilter;
 			m_objectsToDispose.Add(andFilterOut);
 			andFilterOut.Cache = Cache;
 
@@ -372,11 +367,10 @@ namespace SIL.FieldWorks.Filters
 			PropertyRecordSorter prs = new PropertyRecordSorter("longName");
 			// Save and restore!
 			string xml = DynamicLoader.PersistObject(prs, "sorter");
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml);
+			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			PropertyRecordSorter prsOut = DynamicLoader.RestoreObject(doc.DocumentElement) as PropertyRecordSorter;
+			PropertyRecordSorter prsOut = DynamicLoader.RestoreObject(doc.Root) as PropertyRecordSorter;
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}
@@ -391,10 +385,9 @@ namespace SIL.FieldWorks.Filters
 			sfComp.SortedFromEnd = true;
 			// Save and restore!
 			xml = DynamicLoader.PersistObject(sfComp, "comparer");
-			var doc = new XmlDocument();
-			doc.LoadXml(xml);
+			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
-			var sfCompOut = DynamicLoader.RestoreObject(doc.DocumentElement) as StringFinderCompare;
+			var sfCompOut = DynamicLoader.RestoreObject(doc.Root) as StringFinderCompare;
 			m_objectsToDispose.Add(sfCompOut);
 			sfCompOut.Cache = Cache;
 

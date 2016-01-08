@@ -44,6 +44,17 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Returns true if value of attrName is 'true' or 'yes' (case ignored)
+		/// </summary>
+		/// <param name="node">The XElement to look in.</param>
+		/// <param name="attrName">The optional attribute to find.</param>
+		/// <returns></returns>
+		public static bool GetBooleanAttributeValue(XElement node, string attrName)
+		{
+			return GetBooleanAttributeValue(GetOptionalAttributeValue(node, attrName));
+		}
+
+		/// <summary>
 		/// Returns true if sValue is 'true' or 'yes' (case ignored)
 		/// </summary>
 		public static bool GetBooleanAttributeValue(string sValue)
@@ -65,6 +76,17 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Returns a integer obtained from the (mandatory) attribute named.
+		/// </summary>
+		/// <param name="node">The XmlNode to look in.</param>
+		/// <param name="attrName">The mandatory attribute to find.</param>
+		/// <returns>The value, or 0 if attr is missing.</returns>
+		public static int GetMandatoryIntegerAttributeValue(XElement node, string attrName)
+		{
+			return Int32.Parse(GetManditoryAttributeValue(node, attrName), CultureInfo.InvariantCulture);
+		}
+
+		/// <summary>
 		/// Return an optional integer attribute value, or if not found, the default value.
 		/// </summary>
 		/// <param name="node"></param>
@@ -80,19 +102,18 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
-		/// Retrieve an array, given an attribute consisting of a comma-separated list of integers
+		/// Return an optional integer attribute value, or if not found, the default value.
 		/// </summary>
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
+		/// <param name="defaultVal"></param>
 		/// <returns></returns>
-		public static int[] GetMandatoryIntegerListAttributeValue(XmlNode node, string attrName)
+		public static int GetOptionalIntegerValue(XElement node, string attrName, int defaultVal)
 		{
-			string input = GetManditoryAttributeValue(node, attrName);
-			string[] vals = input.Split(',');
-			var result = new int[vals.Length];
-			for (int i = 0; i < vals.Length; i++)
-				result[i] = Int32.Parse(vals[i], CultureInfo.InvariantCulture);
-			return result;
+			string val = GetOptionalAttributeValue(node, attrName);
+			if (string.IsNullOrEmpty(val))
+				return defaultVal;
+			return Int32.Parse(val, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -101,13 +122,13 @@ namespace SIL.Utils
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns></returns>
-		public static uint[] GetMandatoryUIntegerListAttributeValue(XmlNode node, string attrName)
+		public static int[] GetMandatoryIntegerListAttributeValue(XElement node, string attrName)
 		{
 			string input = GetManditoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
-			var result = new uint[vals.Length];
+			var result = new int[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
-				result[i] = UInt32.Parse(vals[i]);
+				result[i] = Int32.Parse(vals[i], CultureInfo.InvariantCulture);
 			return result;
 		}
 
@@ -187,24 +208,23 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
-		/// Deprecated: use GetOptionalAttributeValue instead.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="attrName"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
-		public static string GetAttributeValue(XmlNode node, string attrName, string defaultValue)
-		{
-			return GetOptionalAttributeValue(node, attrName, defaultValue);
-		}
-
-		/// <summary>
 		/// Get an optional attribute value from an XmlNode.
 		/// </summary>
 		/// <param name="node">The XmlNode to look in.</param>
 		/// <param name="attrName">The attribute to find.</param>
 		/// <returns>The value of the attribute, or null, if not found.</returns>
 		public static string GetAttributeValue(XmlNode node, string attrName)
+		{
+			return GetOptionalAttributeValue(node, attrName);
+		}
+
+		/// <summary>
+		/// Get an optional attribute value from an XmlNode.
+		/// </summary>
+		/// <param name="node">The XElement to look in.</param>
+		/// <param name="attrName">The attribute to find.</param>
+		/// <returns>The value of the attribute, or null, if not found.</returns>
+		public static string GetAttributeValue(XElement node, string attrName)
 		{
 			return GetOptionalAttributeValue(node, attrName);
 		}
@@ -270,14 +290,21 @@ namespace SIL.Utils
 		/// Get an optional attribute value from an XmlNode, and look up its localized value in the
 		/// given StringTable.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="attrName"></param>
-		/// <param name="defaultString"></param>
-		/// <returns></returns>
 		public static string GetLocalizedAttributeValue(XmlNode node,
 			string attrName, string defaultString)
 		{
 			string sValue = GetOptionalAttributeValue(node, attrName, defaultString);
+			return StringTable.Table.LocalizeAttributeValue(sValue);
+		}
+
+		/// <summary>
+		/// Get an optional attribute value from an XmlNode, and look up its localized value in the
+		/// given StringTable.
+		/// </summary>
+		public static string GetLocalizedAttributeValue(XElement element,
+			string attrName, string defaultString)
+		{
+			var sValue = GetOptionalAttributeValue(element, attrName, defaultString);
 			return StringTable.Table.LocalizeAttributeValue(sValue);
 		}
 
@@ -287,17 +314,38 @@ namespace SIL.Utils
 		/// <param name="node">The XmlNode to look in.</param>
 		/// <param name="name">The XmlNode name to find.</param>
 		/// <returns></returns>
-		public static XmlNode FindNode(XmlNode node, string name)
+		public static XElement FindNode(XElement node, string name)
 		{
 			if (node.Name == name)
 				return node;
-			foreach (XmlNode childNode in node.ChildNodes)
+			foreach (var childNode in node.Elements())
 			{
 				if (childNode.Name == name)
 					return childNode;
-				XmlNode n = FindNode(childNode, name);
+				var n = FindNode(childNode, name);
 				if (n != null)
 					return n;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Return the element that has the desired 'name', either the input element or a decendent.
+		/// </summary>
+		/// <param name="element">The XElement to look in.</param>
+		/// <param name="name">The XElement name to find.</param>
+		/// <returns></returns>
+		public static XElement FindElement(XElement element, string name)
+		{
+			if (element.Name == name)
+				return element;
+			foreach (var childElement in element.Elements())
+			{
+				if (childElement.Name == name)
+					return childElement;
+				var grandchildElement = FindElement(childElement, name);
+				if (grandchildElement != null)
+					return grandchildElement;
 			}
 			return null;
 		}
@@ -360,11 +408,38 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Append an attribute with the specified name and value to parent.
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="attrName"></param>
+		/// <param name="attrVal"></param>
+		public static void AppendAttribute(XElement parent, string attrName, string attrVal)
+		{
+			var attr = parent.Attribute(attrName);
+			if (attr == null)
+				parent.Add(new XAttribute(attrName, attrVal));
+			else if (attr.Value != attrVal)
+				attr.SetValue(attrVal);
+		}
+
+		/// <summary>
 		/// Change the value of the specified attribute, appending it if not already present.
 		/// </summary>
 		public static void SetAttribute(XmlNode parent, string attrName, string attrVal)
 		{
 			XmlAttribute xa = parent.Attributes[attrName];
+			if (xa != null)
+				xa.Value = attrVal;
+			else
+				AppendAttribute(parent, attrName, attrVal);
+		}
+
+		/// <summary>
+		/// Change the value of the specified attribute, appending it if not already present.
+		/// </summary>
+		public static void SetAttribute(XElement parent, string attrName, string attrVal)
+		{
+			var xa = parent.Attribute(attrName);
 			if (xa != null)
 				xa.Value = attrVal;
 			else
@@ -382,16 +457,16 @@ namespace SIL.Utils
 			parent.AppendChild(xe);
 			return xe;
 		}
+
 		/// <summary>
 		/// Return true if the two nodes match. Corresponding children should match, and
 		/// corresponding attributes (though not necessarily in the same order).
-		/// The nodes are expected to be actually XmlElements; not tested for other cases.
 		/// Comments do not affect equality.
 		/// </summary>
 		/// <param name="node1"></param>
 		/// <param name="node2"></param>
 		/// <returns></returns>
-		static public bool NodesMatch(XmlNode node1, XmlNode node2)
+		static public bool NodesMatch(XElement node1, XElement node2)
 		{
 			if (node1 == null && node2 == null)
 				return true;
@@ -399,55 +474,35 @@ namespace SIL.Utils
 				return false;
 			if (node1.Name != node2.Name)
 				return false;
-			if (node1.InnerText != node2.InnerText)
+			if (node1.GetInnerText() != node2.GetInnerText())
 				return false;
-			if (node1.Attributes == null && node2.Attributes != null)
+			if (!node1.Attributes().Any() && node2.Attributes().Any())
 				return false;
-			if (node1.Attributes != null && node2.Attributes == null)
+			if (node1.Attributes().Any() && !node2.Attributes().Any())
 				return false;
-			if (node1.Attributes != null)
+			if (node1.Attributes().Any())
 			{
-				if (node1.Attributes.Count != node2.Attributes.Count)
+				if (node1.Attributes().Count() != node2.Attributes().Count())
 					return false;
-				for (int i = 0; i < node1.Attributes.Count; i++)
+				foreach (var xa1 in node1.Attributes())
 				{
-					XmlAttribute xa1 = node1.Attributes[i];
-					XmlAttribute xa2 = node2.Attributes[xa1.Name];
+					var xa2 = node2.Attribute(xa1.Name);
 					if (xa2 == null || xa1.Value != xa2.Value)
 						return false;
 				}
 			}
-			if (node1.ChildNodes == null && node2.ChildNodes != null)
+			if (!node1.HasElements && node2.HasElements)
 				return false;
-			if (node1.ChildNodes != null && node2.ChildNodes == null)
+			if (node1.HasElements && !node2.HasElements)
 				return false;
-			if (node1.ChildNodes != null)
+			if (node1.HasElements)
 			{
-				int ichild1 = 0; // index node1.ChildNodes
-				int ichild2 = 0; // index node2.ChildNodes
-				while (ichild1 < node1.ChildNodes.Count && ichild2 < node1.ChildNodes.Count)
+				int ichild1 = 0; // index node1.Elements()
+				int ichild2 = 0; // index node2.Elements()
+				while (ichild1 < node1.Elements().Count() && ichild2 < node1.Elements().Count())
 				{
-					XmlNode child1 = node1.ChildNodes[ichild1];
-
-					// Note that we must defer doing the 'continue' until after we have checked to see if both children are comments
-					// If we continue immediately and the last node of both elements is a comment, the second node will not have
-					// ichild2 incremented and the final test will fail.
-					bool foundComment = false;
-
-					if (child1 is XmlComment)
-					{
-						ichild1++;
-						foundComment = true;
-					}
-					XmlNode child2 = node2.ChildNodes[ichild2];
-					if (child2 is XmlComment)
-					{
-						ichild2++;
-						foundComment = true;
-					}
-
-					if (foundComment)
-						continue;
+					var child1 = node1.Elements().ToList()[ichild1];
+					var child2 = node2.Elements().ToList()[ichild2];
 
 					if (!NodesMatch(child1, child2))
 						return false;
@@ -455,7 +510,7 @@ namespace SIL.Utils
 					ichild2++;
 				}
 				// If we finished both lists we got a match.
-				return ichild1 == node1.ChildNodes.Count && ichild2 == node2.ChildNodes.Count;
+				return (ichild1 == node1.Elements().Count()) && (ichild2 == node2.Elements().Count());
 			}
 
 			// both lists are null
@@ -475,6 +530,16 @@ namespace SIL.Utils
 				if (!(child is XmlComment))
 					return child;
 			return null;
+		}
+
+		/// <summary>
+		/// Return the first child of the node that is not a comment (or null).
+		/// </summary>
+		/// <param name="element"></param>
+		/// <returns></returns>
+		public static XElement GetFirstNonCommentChild(XElement element)
+		{
+			return (element == null) ? null : element.Elements().FirstOrDefault();
 		}
 
 		/// <summary>
@@ -662,10 +727,10 @@ namespace SIL.Utils
 		/// <param name="target">The target.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static int FindIndexOfMatchingNode(IEnumerable<XmlNode> nodes, XmlNode target)
+		public static int FindIndexOfMatchingNode(IEnumerable<XElement> nodes, XElement target)
 		{
 			int index = 0;
-			foreach (XmlNode node in nodes)
+			foreach (var node in nodes)
 			{
 				if (NodesMatch(node, target))
 					return index;
@@ -782,12 +847,25 @@ namespace SIL.Utils
 				"node " + node.OuterXml, out typeFound);
 			return mi;
 		}
+
 		/// <summary>
 		/// Utility function to find a methodInfo for the named method.
 		/// It is a static method of the class specified in the EditRowClass of the EditRowAssembly.
 		/// </summary>
-		/// <param name="methodName"></param>
-		/// <returns></returns>
+		public static MethodInfo GetStaticMethod(XElement node, string sAssemblyAttr, string sClassAttr,
+			string sMethodName, out Type typeFound)
+		{
+			string sAssemblyName = GetAttributeValue(node, sAssemblyAttr);
+			string sClassName = GetAttributeValue(node, sClassAttr);
+			MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
+				"node " + node.GetOuterXml(), out typeFound);
+			return mi;
+		}
+
+		/// <summary>
+		/// Utility function to find a methodInfo for the named method.
+		/// It is a static method of the class specified in the EditRowClass of the EditRowAssembly.
+		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
 		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
@@ -848,7 +926,7 @@ namespace SIL.Utils
 		/// Allow the visitor to 'visit' each attribute in the input XmlNode.
 		/// </summary>
 		/// <param name="input"></param>
-		/// <param name="result"></param>
+		/// <param name="visitor"></param>
 		/// <returns>true if any Visit call returns true</returns>
 		public static bool VisitAttributes(XmlNode input, IAttributeVisitor visitor)
 		{
@@ -857,13 +935,41 @@ namespace SIL.Utils
 			{
 				foreach (XmlAttribute xa in input.Attributes)
 				{
-					if (visitor.Visit(xa))
+					if (visitor.Visit(new XAttribute(xa.Name, xa.Value)))
 						fSuccessfulVisit = true;
 				}
 			}
 			if (input.ChildNodes != null) // not sure whether this can happen.
 			{
 				foreach (XmlNode child in input.ChildNodes)
+				{
+					if (VisitAttributes(child, visitor))
+						fSuccessfulVisit = true;
+				}
+			}
+			return fSuccessfulVisit;
+		}
+
+		/// <summary>
+		/// Allow the visitor to 'visit' each attribute in the input XmlNode.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="visitor"></param>
+		/// <returns>true if any Visit call returns true</returns>
+		public static bool VisitAttributes(XElement input, IAttributeVisitor visitor)
+		{
+			bool fSuccessfulVisit = false;
+			if (input.HasAttributes) // can be, e.g, if Input is a XmlTextNode
+			{
+				foreach (XAttribute xa in input.Attributes())
+				{
+					if (visitor.Visit(xa))
+						fSuccessfulVisit = true;
+				}
+			}
+			if (input.Elements().Any()) // not sure whether this can happen.
+			{
+				foreach (var child in input.Elements())
 				{
 					if (VisitAttributes(child, visitor))
 						fSuccessfulVisit = true;
@@ -930,11 +1036,11 @@ namespace SIL.Utils
 	}
 
 	/// <summary>
-	/// Superclass for operations we can apply to attributes.
+	/// Interface for operations we can apply to attributes.
 	/// </summary>
 	public interface IAttributeVisitor
 	{
-		bool Visit(XmlAttribute xa);
+		bool Visit(XAttribute xa);
 	}
 
 	public class ReplaceSubstringInAttr : IAttributeVisitor
@@ -946,7 +1052,7 @@ namespace SIL.Utils
 			m_pattern = pattern;
 			m_replacement = replacement;
 		}
-		public virtual bool Visit(XmlAttribute xa)
+		public virtual bool Visit(XAttribute xa)
 		{
 			string old = xa.Value;
 			int index = old.IndexOf(m_pattern);

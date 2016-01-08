@@ -8,7 +8,8 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text; // StringBuilder
+using System.Text;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -116,11 +117,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public static XmlNode CopyWithParamDefaults(XmlNode input)
+		public static XElement CopyWithParamDefaults(XElement input)
 		{
 			if (!HasParam(input))
 				return input;
-			XmlNode result = input.Clone();
+			var result = input.Clone();
 
 			ReplaceParamWithDefault replacer = new ReplaceParamWithDefault();
 			XmlUtils.VisitAttributes(result, replacer);
@@ -137,9 +138,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="val">The val.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode CopyReplacingParamDefault(XmlNode input, string paramId, string val)
+		public static XElement CopyReplacingParamDefault(XElement input, string paramId, string val)
 		{
-			XmlNode result = input.Clone();
+			var result = input.Clone();
 
 			ReplaceParamDefault replacer = new ReplaceParamDefault(paramId, val);
 			XmlUtils.VisitAttributes(result, replacer);
@@ -152,7 +153,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public static bool HasParam(XmlNode input)
+		public static bool HasParam(XElement input)
 		{
 			TestForParameter tfp = new TestForParameter();
 			XmlUtils.VisitAttributes(input, tfp);
@@ -166,7 +167,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="input">The input.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static string[] FindParams(XmlNode input)
+		public static string[] FindParams(XElement input)
 		{
 			AccumulateParameters ap = new AccumulateParameters();
 			XmlUtils.VisitAttributes(input, ap);
@@ -179,10 +180,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		public static string FindWsParam(XmlNode node)
+		public static string FindWsParam(XElement node)
 		{
-			string[] paramList = FindParams(node);
-			foreach (string s in paramList)
+			var paramList = FindParams(node);
+			foreach (var s in paramList)
 			{
 				// Enhance JohnT: may handle other parameters, and show something here for them.
 				if (s.StartsWith(StringServices.WsParamLabel))
@@ -190,7 +191,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return s.Substring(StringServices.WsParamLabel.Length);
 				}
 			}
-			return "";
+			return string.Empty;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -203,10 +204,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="attVal">The att val.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static int FindIndexOfAttrVal(List<XmlNode> nodes, string attName, string attVal)
+		public static int FindIndexOfAttrVal(List<XElement> nodes, string attName, string attVal)
 		{
 			int index = 0;
-			foreach (XmlNode node in nodes)
+			foreach (var node in nodes)
 			{
 				string sAttr = XmlUtils.GetLocalizedAttributeValue(node, attName, null);
 				if (sAttr == attVal)
@@ -226,7 +227,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="possibleAttributesToMatch">the attributes to try to match, in the order we try to match them.
 		/// if this routine returns <c>true</c> then this the top queue element will be the attribute we matched on.</param>
 		/// <returns></returns>
-		public static bool TryMatchExistingAttributes(XmlNode colSpec1, XmlNode colSpec2, ref Queue<string> possibleAttributesToMatch)
+		public static bool TryMatchExistingAttributes(XElement colSpec1, XElement colSpec2, ref Queue<string> possibleAttributesToMatch)
 		{
 			if (colSpec1 == colSpec2)
 				return true;
@@ -235,9 +236,9 @@ namespace SIL.FieldWorks.Common.Controls
 				// we've compared all the possible attributes given, and haven't found a mismatch.
 				return true;
 			}
-			string attribute = possibleAttributesToMatch.Peek();
-			string attrVal1 = XmlUtils.GetOptionalAttributeValue(colSpec1, attribute);
-			string attrVal2 = XmlUtils.GetOptionalAttributeValue(colSpec2, attribute);
+			var attribute = possibleAttributesToMatch.Peek();
+			var attrVal1 = XmlUtils.GetOptionalAttributeValue(colSpec1, attribute);
+			var attrVal2 = XmlUtils.GetOptionalAttributeValue(colSpec2, attribute);
 			possibleAttributesToMatch.Dequeue();
 			return attrVal1 == attrVal2 &&
 				TryMatchExistingAttributes(colSpec1, colSpec2, ref possibleAttributesToMatch);
@@ -301,7 +302,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		public static string DateTimeCompString(DateTime dt)
 		{
-			string format = "u";	// 2000-08-17 23:32:32Z
+			var format = "u";	// 2000-08-17 23:32:32Z
 			return dt.ToString(format, System.Globalization.DateTimeFormatInfo.InvariantInfo);
 		}
 
@@ -314,7 +315,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="target">The target.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static int FindIndexOfMatchingNode(IEnumerable<XmlNode> nodes, XmlNode target)
+		public static int FindIndexOfMatchingNode(IEnumerable<XElement> nodes, XElement target)
 		{
 			return XmlUtils.FindIndexOfMatchingNode(nodes, target);
 		}
@@ -328,9 +329,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="attVal">The att val.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode FindNodeWithAttrVal(List<XmlNode> nodes, string attName, string attVal)
+		public static XElement FindNodeWithAttrVal(List<XElement> nodes, string attName, string attVal)
 		{
-			int index = FindIndexOfAttrVal(nodes, attName, attVal);
+			var index = FindIndexOfAttrVal(nodes, attName, attVal);
 			if (index == -1)
 				return null;
 			return nodes[index];
@@ -344,13 +345,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="selectNodes"></param>
 		/// <param name="attName"></param>
 		/// <returns></returns>
-		public static List<XmlNode> CorrespondingItems(List<XmlNode> sourceNodes, List<XmlNode> selectNodes, string attName)
+		public static List<XElement> CorrespondingItems(List<XElement> sourceNodes, List<XElement> selectNodes, string attName)
 		{
-			List<XmlNode> result = new List<XmlNode>(selectNodes.Count);
-			foreach(XmlNode node in selectNodes)
+			var result = new List<XElement>(selectNodes.Count);
+			foreach(var node in selectNodes)
 			{
-				string attVal = XmlUtils.GetManditoryAttributeValue(node, attName);
-				foreach(XmlNode node1 in sourceNodes)
+				var attVal = XmlUtils.GetManditoryAttributeValue(node, attName);
+				foreach(var node1 in sourceNodes)
 				{
 					if (XmlUtils.GetManditoryAttributeValue(node1, attName) == attVal)
 					{
@@ -374,10 +375,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="layouts">The layouts.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void CollectBrowseItems(int hvo, XmlNode colSpec, ArrayList collector,
+		public static void CollectBrowseItems(int hvo, XElement colSpec, ArrayList collector,
 			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
 		{
-			XmlNode topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, hvo, sda, layouts);
+			var topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, hvo, sda, layouts);
 
 			// Todo: handle various cases here, mostly drill-down to <seq> or <obj>
 			CollectBrowseItems(hvo, topNode, collector, mdc, sda, layouts, null, null, null);
@@ -398,16 +399,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvos">The hvos.</param>
 		/// <param name="flids">The flids.</param>
 		/// ------------------------------------------------------------------------------------
-		static void CollectBrowseItems(int hvo, XmlNode node, ArrayList collector,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XmlNode caller, int[] hvos, int[] flids)
+		static void CollectBrowseItems(int hvo, XElement node, ArrayList collector,
+			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XElement caller, int[] hvos, int[] flids)
 		{
-			switch(node.Name)
+			switch(node.Name.LocalName)
 			{
 			case "obj":
 			{
-				int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
-				int hvoDst = sda.get_ObjectProp(hvo, flid);
+				var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
+				var flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				var hvoDst = sda.get_ObjectProp(hvo, flid);
 				if (hvoDst == 0)
 				{
 					// We want a row, even though it's blank for this column.
@@ -416,7 +417,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				// At this point we have to mimic the process that XmlVc uses to come up with the
 				// node that will be used to process the destination item.
-				XmlNode dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
+				var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
 				if (dstNode == null)
 				{
 					// maybe an old-style "frag" element? Anyway, we can't do anything smart,
@@ -444,7 +445,7 @@ namespace SIL.FieldWorks.Common.Controls
 					int hvoDst = sda.get_VecItem(hvo, flid, ihvo);
 					// At this point we have to mimic the process that XmlVc uses to come up with the
 					// node that will be used to process the destination item.
-					XmlNode dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
+					var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
 					if (dstNode == null)
 					{
 						if (ihvo == 0)
@@ -474,7 +475,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "layout":
 				// These are grouping nodes. In general this terminates things. However, if there is only
 				// one thing embedded apart from comments and properties, we can proceed.
-				XmlNode mainChild = FindMainChild(node);
+				var mainChild = FindMainChild(node);
 				if (mainChild == null)
 				{
 					// no single non-trivial child, keep our current object
@@ -498,12 +499,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node">The node.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static private XmlNode FindMainChild(XmlNode node)
+		static private XElement FindMainChild(XElement node)
 		{
-			XmlNode mainChild = null;
-			foreach (XmlNode child in node.ChildNodes)
+			XElement mainChild = null;
+			foreach (var child in node.Elements())
 			{
-				if (child is XmlComment || child.Name == "properties")
+				if (child.Name == "properties")
 					continue;
 				if (mainChild != null)
 				{
@@ -529,15 +530,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static XmlNode GetNodeForRelatedObject(int hvoDst, XmlNode caller, XmlNode node,
+		static XElement GetNodeForRelatedObject(int hvoDst, XElement caller, XElement node,
 			LayoutCache layouts, ISilDataAccess sda)
 		{
 			if (XmlUtils.GetOptionalAttributeValue(node, "frag") != null)
 				return null; // old approach not handled.
 			// (frag="true" is also used to prevent splitting entry when sorting on gloss or
 			// allomorph in Find Entries dialog display.  Part of fixing LT-10293.)
-			string layoutName = XmlVc.GetLayoutName(node, caller);
-			XmlNode layoutNode = XmlVc.GetNodeForPart(hvoDst, layoutName, true, sda, layouts);
+			var layoutName = XmlVc.GetLayoutName(node, caller);
+			var layoutNode = XmlVc.GetNodeForPart(hvoDst, layoutName, true, sda, layouts);
 			return XmlVc.GetDisplayNodeForChild(layoutNode, node, layouts);
 		}
 
@@ -585,20 +586,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Returns an array of string values (keys) for the objects under the layout child nodes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static internal string[] ChildKeys(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, int wsForce)
+		static internal string[] ChildKeys(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			string[] result = null;
-			foreach (XmlNode child in layout.ChildNodes)
+			foreach (var child in layout.Elements())
 			{
-				if (child is XmlComment)
-					continue;
 				result = Concatenate(result, StringsFor(fdoCache, sda, child, hvo, layoutCache, caller, wsForce));
 			}
 			return result;
 		}
 
-		static private void AddSeparator(ref string item, int ichInsert, XmlNode layout)
+		static private void AddSeparator(ref string item, int ichInsert, XElement layout)
 		{
 			string separator = XmlUtils.GetOptionalAttributeValue(layout, "sep");
 			if (string.IsNullOrEmpty(separator))
@@ -610,8 +609,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 
-		static private string[] AssembleChildKeys(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, int wsForce)
+		static private string[] AssembleChildKeys(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			return Assemble(ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce));
 		}
@@ -627,7 +626,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag">The frag.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
-		static int GetFlid(ISilDataAccess sda, XmlNode frag, int hvo)
+		static int GetFlid(ISilDataAccess sda, XElement frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag,"class");
 			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag,"field");
@@ -660,7 +659,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return sLabel + " ";
 		}
 
-		static string AddMultipleAlternatives(FdoCache cache, ISilDataAccess sda, IEnumerable<int> wsIds, int hvo, int flid, XmlNode frag)
+		static string AddMultipleAlternatives(FdoCache cache, ISilDataAccess sda, IEnumerable<int> wsIds, int hvo, int flid, XElement frag)
 		{
 			string sep = XmlUtils.GetOptionalAttributeValue(frag, "sep", null);
 			bool fLabel = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showLabels", false); // true to 'separate' using multistring labels.
@@ -688,7 +687,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return result;
 		}
-		internal static string[] AddStringFromOtherObj(XmlNode frag, int hvoTarget, FdoCache cache, ISilDataAccess sda)
+		internal static string[] AddStringFromOtherObj(XElement frag, int hvoTarget, FdoCache cache, ISilDataAccess sda)
 		{
 			int flid = XmlVc.GetFlid(frag, hvoTarget, sda);
 			ITsStrFactory tsf = cache.TsStrFactory;
@@ -729,7 +728,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal static string DisplayMultiSep(XmlNode frag)
+		internal static string DisplayMultiSep(XElement frag)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
@@ -758,14 +757,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is the 'part ref' that invoked it.</param>
 		/// <param name="wsForce">if non-zero, "string" elements are forced to use that writing system for multistrings.</param>
 		/// <returns></returns>
-		static public string[] StringsFor(FdoCache fdoCache, ISilDataAccess sda, XmlNode layout, int hvo,
-			LayoutCache layoutCache, XmlNode caller, int wsForce)
+		static public string[] StringsFor(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			// Some nodes are known to be uninteresting.
 			if (XmlVc.CanSkipNode(layout))
 				return new string[0]; // don't know how to sort, treat as empty key.
 
-			switch (layout.Name)
+			switch (layout.Name.LocalName)
 			{
 				case "string":
 				{
@@ -802,7 +801,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 					throw new Exception("Bad property type (" + strValue + " for hvo " + hvo +
 												" found for string property "
-							+ flid + " in " + layout.OuterXml);
+							+ flid + " in " + layout);
 				}
 				case "configureMlString":
 				{
@@ -833,15 +832,14 @@ namespace SIL.FieldWorks.Common.Controls
 					// if multipara is false, otherwise as for "div"
 					if (XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false))
 						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
-					else
-						return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 
 				case "part":
 				{
 					string partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
 					if (partref == null)
 						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
-					XmlNode part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
+					var part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
 					// This is the critical place where we introduce a caller. The 'layout' is really a 'part ref' which is the
 					// 'caller' for all embedded nodes in the called part.
 					return StringsFor(fdoCache, sda, part, hvo, layoutCache, layout, wsForce);
@@ -856,12 +854,12 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Follow the property, get the object, look up the layout to use,
 					// invoke recursively.
-					int flid = GetFlid(sda, layout, hvo);
-					int hvoTarget = sda.get_ObjectProp(hvo, flid);
+					var flid = GetFlid(sda, layout, hvo);
+					var hvoTarget = sda.get_ObjectProp(hvo, flid);
 					if (hvoTarget == 0)
 						break; // return empty key
-					string targetLayoutName = XmlUtils.GetOptionalAttributeValue(layout, "layout"); // uses 'default' if missing.
-					XmlNode layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
+					var targetLayoutName = XmlUtils.GetOptionalAttributeValue(layout, "layout"); // uses 'default' if missing.
+					var layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
 					if (layoutTarget == null)
 						break;
 					return ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce);
@@ -870,9 +868,9 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Follow the property. For each object, look up the layout to use,
 					// invoke recursively, concatenate
-					int flid = GetFlid(sda, layout, hvo);
+					var flid = GetFlid(sda, layout, hvo);
 					int[] contents;
-					int ctarget = sda.get_VecSize(hvo, flid);
+					var ctarget = sda.get_VecSize(hvo, flid);
 					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(ctarget))
 					{
 						int chvo;
@@ -881,12 +879,12 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					string[] result = null;
-					string targetLayoutName = XmlVc.GetLayoutName(layout, caller); // also allows for finding "param" attr in caller, if not null
-					int i = 0;
-					foreach (int hvoTarget in contents)
+					var targetLayoutName = XmlVc.GetLayoutName(layout, caller); // also allows for finding "param" attr in caller, if not null
+					var i = 0;
+					foreach (var hvoTarget in contents)
 					{
-						int prevResultLength = GetArrayLength(result);
-						XmlNode layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
+						var prevResultLength = GetArrayLength(result);
+						var layoutTarget = GetLayoutNodeForChild(sda, hvoTarget, flid, targetLayoutName, layout, layoutCache);
 						if (layoutTarget == null)
 							continue; // should not happen, but best recovery we can make
 						result = Concatenate(result, ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce));
@@ -905,7 +903,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				case "choice":
 				{
-					foreach(XmlNode whereNode in layout.ChildNodes)
+					foreach(var whereNode in layout.Elements())
 					{
 						if (whereNode.Name != "where")
 						{
@@ -933,33 +931,30 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				case "lit":
 				{
-					string literal = layout.InnerText;
-					string sTranslate = XmlUtils.GetOptionalAttributeValue(layout, "translate", "");
+					var literal = string.Concat(layout.Elements());
+					var sTranslate = XmlUtils.GetOptionalAttributeValue(layout, "translate", "");
 					if (sTranslate.Trim().ToLower() != "do not translate")
 						literal = StringTable.Table.LocalizeLiteralValue(literal);
 					return new[] { literal };
 				}
 				case "int":
 				{
-					int flid = GetFlid(sda, layout, hvo);
-					int val = sda.get_IntProp(hvo, flid);
+					var flid = GetFlid(sda, layout, hvo);
+					var val = sda.get_IntProp(hvo, flid);
 					return new[] {AlphaCompNumberString(val)};
 				}
 				case "datetime":
 				{
-					int flid = GetFlid(sda, layout, hvo);
-					CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
+					var flid = GetFlid(sda, layout, hvo);
+					var itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
 					if (itype == CellarPropertyType.Time)
 					{
 						DateTime dt = SilTime.GetTimeProperty(sda, hvo, flid);
 						return new[] {DateTimeCompString(dt)};
 					}
-					else
-					{
-						string stFieldName = XmlUtils.GetManditoryAttributeValue(layout, "field");
-						throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
-							layout.Name + "  property "	+ flid + " in " + layout.OuterXml);
-					}
+					var stFieldName = XmlUtils.GetManditoryAttributeValue(layout, "field");
+					throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
+						layout.Name + "  property " + flid + " in " + layout);
 				}
 				case "picture":
 					// Treat a picture as a non-empty string for purposes of deciding whether something is empty.
@@ -976,8 +971,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Process a fragment's children against multiple writing systems.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static private string[] ProcessMultiLingualChildren(FdoCache fdoCache, ISilDataAccess sda, XmlNode frag, int hvo,
-			LayoutCache layoutCache, XmlNode caller, int wsForce)
+		static private string[] ProcessMultiLingualChildren(FdoCache fdoCache, ISilDataAccess sda, XElement frag, int hvo,
+			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs == null)
@@ -988,7 +983,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string[] result = null;
 			try
 			{
-				HashSet<int> wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, frag, s_qwsCurrent, 0, 0);
+				var wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, frag, s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 					s_sMultiSep = XmlUtils.GetOptionalAttributeValue(frag, "sep");
@@ -1010,13 +1005,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return result;
 		}
 
-		static private XmlNode GetLayoutNodeForChild(ISilDataAccess sda, int hvoTarget, int flid, string targetLayoutName,
-			XmlNode layout, LayoutCache layoutCache)
+		static private XElement GetLayoutNodeForChild(ISilDataAccess sda, int hvoTarget, int flid, string targetLayoutName,
+			XElement layout, LayoutCache layoutCache)
 		{
-			XmlNode layoutTarget = XmlVc.GetNodeForPart(hvoTarget, targetLayoutName, true, sda, layoutCache);
+			var layoutTarget = XmlVc.GetNodeForPart(hvoTarget, targetLayoutName, true, sda, layoutCache);
 			if (layoutTarget == null)
 				layoutTarget = layout; // no layout looked up, use whatever children caller has
-			else if (layout.ChildNodes.Count != 0)
+			else if (layout.Elements().Any())
 			{
 				// got both a looked-up layout and child nodes overriding.
 				if (layoutTarget.Name == "layout")
@@ -1038,7 +1033,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// We want to display the object bvi.KeyObject, or one of its pathobjects, in a
 		/// column specified by colSpec.
-		/// Determine the hvo and XmlNode that we should use as the root for the cell.
+		/// Determine the hvo and XElement that we should use as the root for the cell.
 		/// By default, we display the first object in the path, using the base node
 		/// derived from the colSpec.
 		/// However, if the colSpec begins with a path compatible with bvi.PathFlid(0),
@@ -1056,8 +1051,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="collectOuterStructParts">The collect outer struct parts.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode GetNodeToUseForColumn(IManyOnePathSortItem bvi, XmlNode colSpec,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
+		public static XElement GetNodeToUseForColumn(IManyOnePathSortItem bvi, XElement colSpec,
+			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XElement> collectOuterStructParts)
 		{
 			return GetDisplayCommandForColumn(bvi, colSpec, mdc, sda, layouts, out hvo, collectOuterStructParts).Node;
 		}
@@ -1074,10 +1069,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		/// <param name="collectOuterStructParts"></param>
 		/// <returns></returns>
-		public static NodeDisplayCommand GetDisplayCommandForColumn(IManyOnePathSortItem bvi, XmlNode colSpec,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
+		public static NodeDisplayCommand GetDisplayCommandForColumn(IManyOnePathSortItem bvi, XElement colSpec,
+			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XElement> collectOuterStructParts)
 		{
-			XmlNode topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, bvi.PathObject(0), sda, layouts);
+			var topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, bvi.PathObject(0), sda, layouts);
 			return GetDisplayCommandForColumn1(bvi, topNode, mdc, sda, layouts, 0, out hvo, collectOuterStructParts);
 		}
 
@@ -1093,12 +1088,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		/// <param name="collectOuterStructParts"></param>
 		/// <returns></returns>
-		static NodeDisplayCommand GetDisplayCommandForColumn1(IManyOnePathSortItem bvi, XmlNode node,
+		static NodeDisplayCommand GetDisplayCommandForColumn1(IManyOnePathSortItem bvi, XElement node,
 			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, int depth,
-			out int hvo, List<XmlNode> collectOuterStructParts)
+			out int hvo, List<XElement> collectOuterStructParts)
 		{
 			hvo = bvi.PathObject(depth); // default
-			switch(node.Name)
+			switch(node.Name.LocalName)
 			{
 			case "obj":
 			case "seq":
@@ -1128,7 +1123,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return new NodeDisplayCommand(node); // different field, can't dig deeper.
 				// At this point we have to mimic the process that XmlVc uses to come up with the
 				// node that will be used to process the destination item.
-				XmlNode dstNode = GetNodeForRelatedObject(hvoDst, null, node, layouts, sda);
+				var dstNode = GetNodeForRelatedObject(hvoDst, null, node, layouts, sda);
 				return GetDisplayCommandForColumn1(bvi, dstNode, mdc, sda, layouts, depth + 1, out hvo, collectOuterStructParts);
 			}
 			case "para":
@@ -1137,7 +1132,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "concpara":
 			case "innerpile":
 			{
-				XmlNode mainChild = FindMainChild(node);
+				var mainChild = FindMainChild(node);
 				if (mainChild == null)
 					return new NodeDisplayCommand(node); // can't usefully go further.
 				if (collectOuterStructParts != null)
@@ -1154,7 +1149,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// It's actually a part ref, in a layout, not a part looked up by one!
 					// Get the node it refers to, and make a command to process its children.
-					XmlNode part = XmlVc.GetNodeForPart(hvo, layoutName, false, sda, layouts);
+					var part = XmlVc.GetNodeForPart(hvo, layoutName, false, sda, layouts);
 					if (part != null)
 						return new NodeChildrenDisplayCommand(part); // display this object using the children of the part referenced.
 					else
@@ -1165,7 +1160,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node);
+				var mainChild = FindMainChild(node);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
 				return GetDisplayCommandForColumn1(bvi, mainChild, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
@@ -1178,7 +1173,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node);
+				var mainChild = FindMainChild(node);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
 				return GetDisplayCommandForColumn1(bvi, mainChild, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
@@ -1223,9 +1218,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="frag"></param>
 		/// <returns></returns>
-		public static bool GetWsRequiresObject(XmlNode frag)
+		public static bool GetWsRequiresObject(XElement frag)
 		{
-			var xa = frag.Attributes["ws"];
+			var xa = frag.Attribute("ws");
 			if (xa == null)
 				return false;
 			var wsSpec = xa.Value;
@@ -1277,7 +1272,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 		}
 
-		public virtual bool Visit(XmlAttribute xa)
+		public virtual bool Visit(XAttribute xa)
 		{
 			m_fFound |= IsParameter(xa.Value);
 			return m_fFound;
@@ -1311,7 +1306,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		List<string> m_list = new List<string>();
 
-		public override bool Visit(XmlAttribute xa)
+		public override bool Visit(XAttribute xa)
 		{
 			if (IsParameter(xa.Value))
 				m_list.Add(xa.Value);
@@ -1329,14 +1324,13 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class ReplaceParamWithDefault : TestForParameter
 	{
-		public override bool Visit(XmlAttribute xa)
+		public override bool Visit(XAttribute xa)
 		{
 			if (!IsParameter(xa.Value))
 				return false;
 			xa.Value = xa.Value.Substring(xa.Value.IndexOf('=') + 1);
 			return false;
 		}
-
 	}
 	/// <summary>
 	/// This one modifies the attribute, replacing the default value of the named parameter.
@@ -1352,13 +1346,13 @@ namespace SIL.FieldWorks.Common.Controls
 			m_defVal = defVal;
 		}
 
-		public bool Visit(XmlAttribute xa)
+
+		public bool Visit(XAttribute xa)
 		{
 			if (!xa.Value.StartsWith(m_paramPrefix))
 				return false;
 			xa.Value = m_paramPrefix + m_defVal;
 			return true;
 		}
-
 	}
 }

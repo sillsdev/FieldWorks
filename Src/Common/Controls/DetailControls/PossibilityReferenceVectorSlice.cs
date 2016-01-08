@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -26,7 +25,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get
 			{
 				var list = (ICmPossibilityList) m_obj.ReferenceTargetOwner(m_flid);
-				XmlNode parameters = ConfigurationNode.SelectSingleNode("deParams");
+				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 					return list.IsVernacular ? "best vernoranal" : "best analorvern";
 

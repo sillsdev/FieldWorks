@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
 			XmlUtils.AppendAttribute(node, "id", m_id);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			m_id = XmlUtils.GetManditoryAttributeValue(node, "id");

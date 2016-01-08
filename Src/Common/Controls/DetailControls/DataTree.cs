@@ -13,7 +13,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -69,7 +70,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected FdoCache m_cache;
 		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
 		protected event SliceShowMenuRequestHandler ShowContextMenuEvent;
-		//protected AutoDataTreeMenuHandler m_autoHandler;
 		/// <summary></summary>
 		/// <summary>the descendent object that is being displayed</summary>
 		protected ICmObject m_descendant;
@@ -100,12 +100,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// controlled by the XML file; the value here is a last-resort default.
 		/// </summary>
 		protected int m_sliceSplitPositionBase = 150;
-		/// <summary>
-		/// This XML document object holds the nodes that we create on-the-fly to represent custom fields.
-		/// </summary>
-		protected XmlDocument m_autoCustomFieldNodesDocument;
-		/// <summary></summary>
-		protected XmlNode m_autoCustomFieldNodesDocRoot;
 		/// <summary></summary>
 		protected Inventory m_layoutInventory; // inventory of layouts for different object classes.
 		/// <summary></summary>
@@ -253,7 +247,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			ForceSliceIndex(slice, index);
 			Debug.Assert(slice.IndexInContainer == index,
 				String.Format("InstallSlice: slice '{0}' at index({1}) should have been inserted in index({2}).",
-				(slice.ConfigurationNode != null && slice.ConfigurationNode.OuterXml != null ? slice.ConfigurationNode.OuterXml : "(DummySlice?)"),
+				(slice.ConfigurationNode != null && slice.ConfigurationNode.GetOuterXml() != null ? slice.ConfigurationNode.GetOuterXml() : "(DummySlice?)"),
 				slice.IndexInContainer, index));
 
 			// Note that it is absolutely vital to do this AFTER adding the slice to the data tree.
@@ -474,9 +468,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 //			string objName = ToString() + GetHashCode().ToString();
 //			Debug.WriteLine("Creating object:" + objName);
 			Slices = new List<Slice>();
-			m_autoCustomFieldNodesDocument = new XmlDocument();
-			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");
-			m_autoCustomFieldNodesDocument.AppendChild(m_autoCustomFieldNodesDocRoot);
 		}
 
 		/// <summary>
@@ -707,7 +698,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int i = Slices.Count - 1;
 				for (; i >= 0; --i)
 				{
-					var current = (Slice) Slices[i];
+					var current = Slices[i];
 					// Not sure these two cases are general enough to find a SubPossibilities slice.
 					// Ideally we want to find the <seq field='SubPossibilities'> node, but in the case of
 					// a header node, it's not that easy, and I (EricP) am not sure how to actually get from the
@@ -715,14 +706,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (current.IsSequenceNode)
 					{
 						// see if slices is a SubPossibilities
-						XmlNode node = current.ConfigurationNode.SelectSingleNode("seq");
+						var node = current.ConfigurationNode.Element("seq");
 						string field = XmlUtils.GetOptionalAttributeValue(node, "field");
 						if (field == "SubPossibilities")
 							break;
 					}
 					else if (current.IsHeaderNode)
 					{
-						XmlNode node = current.CallerNode.SelectSingleNode("*/part[starts-with(@ref,'SubPossibilities')]");
+						var node = current.CallerNode.XPathSelectElement("*/part[starts-with(@ref,'SubPossibilities')]");
 						if (node != null)
 							break;
 					}
@@ -1098,12 +1089,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		protected void InitializeBasic(FdoCache cache, bool fHasSplitter)
 		{
-			//in a normal user application, this auto menu handler will not be used.
-			//instead, the client of this control will call SetContextMenuHandler()
-			//with a customized handler.
-			// m_autoHandler = new AutoDataTreeMenuHandler(this);
-			// we never use auto anymore			SetContextMenuHandler(new SliceShowMenuRequestHandler(m_autoHandler.GetSliceContextMenu));
-
 			// This has to be created before we start adding slices, so they can be put into it.
 			// (Otherwise we would normally do this in initializeComponent.)
 			m_fHasSplitter = fHasSplitter;
@@ -1210,11 +1195,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_root = null;
 			m_cache = null;
 			m_mdc = null;
-			m_autoCustomFieldNodesDocument = null;
-			m_autoCustomFieldNodesDocRoot = null;
 			m_rch = null;
 			m_rootLayoutName = null;
-			// protected AutoDataTreeMenuHandler m_autoHandler; // No tusing this data member.
 			m_layoutInventory = null;
 			m_partInventory = null;
 			m_sliceFilter = null;
@@ -1359,17 +1341,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_currentSliceObjGuid = Guid.Empty;
 				m_fSetCurrentSliceNew = false;
 				m_currentSliceNew = null;
-				XmlNode xnConfig = null;
-				XmlNode xnCaller = null;
+				XElement xnConfig = null;
+				XElement xnCaller = null;
 				string sLabel = null;
 				Type oldType = null;
 				if (m_currentSlice != null)
 				{
 					if (m_currentSlice.ConfigurationNode != null &&
-						m_currentSlice.ConfigurationNode.ParentNode != null)
+						m_currentSlice.ConfigurationNode.Parent != null)
 					{
-						m_currentSlicePartName = XmlUtils.GetAttributeValue(
-							m_currentSlice.ConfigurationNode.ParentNode, "id", String.Empty);
+						m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", String.Empty);
 					}
 					if (m_currentSlice.Object != null)
 						m_currentSliceObjGuid = m_currentSlice.Object.Guid;
@@ -1691,17 +1672,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
 		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent,
-			int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XmlNode unifyWith)
+			int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
 		{
 			CheckDisposed();
 
 			// NB: 'path' can hold either ints or XmlNodes, so a generic can't be used for it.
 			if (obj == null)
 				return insertPosition;
-			XmlNode template = GetTemplateForObjLayout(obj, layoutName, layoutChoiceField);
+			var template = GetTemplateForObjLayout(obj, layoutName, layoutChoiceField);
 			path.Add(template);
-			XmlNode template2 = template;
-			if (unifyWith != null && unifyWith.ChildNodes.Count > 0)
+			var template2 = template;
+			if (unifyWith != null && unifyWith.Elements().Any())
 			{
 				// This assumes that the attributes don't need to be unified.
 				template2 = m_layoutInventory.GetUnified(template, unifyWith);
@@ -1714,7 +1695,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get the template that should be used to display the specified object using the specified layout.
 		/// </summary>
-		private XmlNode GetTemplateForObjLayout(ICmObject obj, string layoutName,
+		private XElement GetTemplateForObjLayout(ICmObject obj, string layoutName,
 			string layoutChoiceField)
 		{
 			int classId = obj.ClassID;
@@ -1755,7 +1736,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 
-			XmlNode template;
+			XElement template;
 			string useName = layoutName ?? "default";
 			string origName = useName;
 			for( ; ; )
@@ -1771,7 +1752,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					template = m_layoutInventory.GetElement("layout", new[] { classname, "detail", useName, null });
 					if (template != null)
 					{
-						XmlNode newTemplate = template.Clone();
+						var newTemplate = template.Clone();
 						XmlUtils.AppendAttribute(newTemplate, "choiceGuid", choiceGuidStr);
 						m_layoutInventory.AddNodeToInventory(newTemplate);
 						m_layoutInventory.PersistOverrideElement(newTemplate);
@@ -1856,7 +1837,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
-		public int ApplyLayout(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
+		public int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition,
 			ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			CheckDisposed();
@@ -1877,18 +1858,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="reuseMap">The reuse map.</param>
 		/// <param name="isTestOnly">if set to <c>true</c> [is test only].</param>
 		/// <param name="testResult">The test result.</param>
-		protected internal virtual int ApplyLayout(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
+		protected internal virtual int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition,
 			ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
 		{
 			int insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
 			int cPossible = 0;
 			// This loop handles the multiple parts of a layout.
-			foreach (XmlNode partRef in template.ChildNodes)
+			foreach (var partRef in template.Elements())
 			{
-				if (partRef.GetType() == typeof(XmlComment))
-					continue;
-
 				// This code looks for the a special part definition with an attribute called "customFields"
 				// It doesn't matter what this attribute is set to, as long as it exists.  If this attribute is
 				// found, the custom fields will not be generated.
@@ -1947,18 +1925,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="insPos">The ins pos.</param>
 		/// <param name="isTestOnly">if set to <c>true</c> [is test only].</param>
 		/// <returns>NodeTestResult</returns>
-		private NodeTestResult ProcessPartRefNode(XmlNode partRef, ArrayList path, ObjSeqHashMap reuseMap,
+		private NodeTestResult ProcessPartRefNode(XElement partRef, ArrayList path, ObjSeqHashMap reuseMap,
 			ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly)
 		{
 			NodeTestResult ntr = NodeTestResult.kntrNothing;
-			switch (partRef.Name)
+			switch (partRef.Name.LocalName)
 			{
 				case "sublayout":
 					// a sublayout simply includes another layout within the current layout, the layout is
 					// located by name and choice field
-					string layoutName = XmlUtils.GetOptionalAttributeValue(partRef, "name");
-					string layoutChoiceField = XmlUtils.GetOptionalAttributeValue(partRef, "layoutChoiceField");
-					XmlNode template = GetTemplateForObjLayout(obj, layoutName, layoutChoiceField);
+					var layoutName = XmlUtils.GetOptionalAttributeValue(partRef, "name");
+					var layoutChoiceField = XmlUtils.GetOptionalAttributeValue(partRef, "layoutChoiceField");
+					var template = GetTemplateForObjLayout(obj, layoutName, layoutChoiceField);
 					path.Add(partRef);
 					path.Add(template);
 					insPos = ApplyLayout(obj, parentSlice, template, indent, insPos, path, reuseMap, isTestOnly, out ntr);
@@ -1969,12 +1947,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case "part":
 					// If the previously selected slice doesn't display in this refresh, we try for the next
 					// visible slice instead.  So m_fSetCurrentSliceNew might still be set.  See LT-9010.
-					string partName = XmlUtils.GetManditoryAttributeValue(partRef, "ref");
+					var partName = XmlUtils.GetManditoryAttributeValue(partRef, "ref");
 					if (!m_fSetCurrentSliceNew && m_currentSlicePartName != null && obj.Guid == m_currentSliceObjGuid)
 					{
-						for (int clid = obj.ClassID; clid != 0; clid = m_mdc.GetBaseClsId(clid))
+						for (var clid = obj.ClassID; clid != 0; clid = m_mdc.GetBaseClsId(clid))
 						{
-							string sFullPartName = String.Format("{0}-Detail-{1}", m_mdc.GetClassName(clid), partName);
+							var sFullPartName = String.Format("{0}-Detail-{1}", m_mdc.GetClassName(clid), partName);
 							if (m_currentSlicePartName == sFullPartName)
 							{
 								m_fSetCurrentSliceNew = true;
@@ -1982,7 +1960,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							}
 						}
 					}
-					string visibility = "always";
+					var visibility = "always";
 					if (!m_fShowAllFields)
 					{
 						visibility = XmlUtils.GetOptionalAttributeValue(partRef, "visibility", "always");
@@ -1992,13 +1970,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 
 					// Use the part inventory to find the indicated part.
-					int classId = obj.ClassID;
-					XmlNode part;
+					var classId = obj.ClassID;
+					XElement part;
 					for (;;)
 					{
-						string classname = m_mdc.GetClassName(classId);
+						var classname = m_mdc.GetClassName(classId);
 						// Inventory of parts has key ID. The ID is made up of the class name, "-Detail-", partname.
-						string key = classname + "-Detail-" + partName;
+						var key = classname + "-Detail-" + partName;
 						part = m_partInventory.GetElement("part", new[] {key});
 
 						if (part != null)
@@ -2012,7 +1990,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// Otherwise try superclass.
 						classId = m_mdc.GetBaseClsId(classId);
 					}
-					string parameter = XmlUtils.GetOptionalAttributeValue(partRef, "param", null);
+					var parameter = XmlUtils.GetOptionalAttributeValue(partRef, "param", null);
 					// If you are wondering why we put the partref in the key, one reason is that it may be needed
 					// when expanding a collapsed slice.
 					path.Add(partRef);
@@ -2024,16 +2002,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return ntr;
 		}
 
-		internal NodeTestResult ProcessPartChildren(XmlNode part, ArrayList path,
+		internal NodeTestResult ProcessPartChildren(XElement part, ArrayList path,
 			ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly,
-			string parameter, bool fVisIfData, XmlNode caller)
+			string parameter, bool fVisIfData, XElement caller)
 		{
 			CheckDisposed();
 			// The children of the part element must now be processed. Often there is only one.
-			foreach (XmlNode node in part.ChildNodes)
+			foreach (var node in part.Elements())
 			{
-				if (node.GetType() == typeof(XmlComment))
-					continue;
 				NodeTestResult testResult = ProcessSubpartNode(node, path, reuseMap, obj, parentSlice,
 					indent, ref insPos, isTestOnly, parameter, fVisIfData, caller);
 				// If we're just looking to see if there would be any slices, and there was,
@@ -2051,7 +2027,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj">The obj.</param>
 		/// <param name="template">The template.</param>
 		/// <param name="insertAfter">The insert after.</param>
-		private void EnsureCustomFields(ICmObject obj, XmlNode template, XmlNode insertAfter)
+		private void EnsureCustomFields(ICmObject obj, XElement template, XElement insertAfter)
 		{
 			var interestingClasses = new Set<int>();
 			int clsid = obj.ClassID;
@@ -2060,55 +2036,30 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				interestingClasses.Add(clsid);
 				clsid = obj.Cache.MetaDataCacheAccessor.GetBaseClsId(clsid);
 			}
-			//for each custom field, we need to construct or reuse the kind of XmlNode that would normally be found in the XDE file
+			//for each custom field, we need to construct or reuse the kind of element that would normally be found in the XDE file
 			foreach (FieldDescription field in FieldDescription.FieldDescriptors(m_cache))
 			{
 				if (field.IsCustomField && interestingClasses.Contains(field.Class))
 				{
 					bool exists = false;
 					string target = field.Name;
-					// We could do this search with an XPath but they are excruciatingly slow.
-					// Check all of the siblings, first going forward, then backward
-					for(XmlNode sibling = insertAfter.NextSibling; sibling != null && !exists;	sibling = sibling.NextSibling)
+					// Check the siblings of 'template', and do nothing if we find a sibling that matches.
+					if (insertAfter.Parent.Elements().Any(sibling => sibling != template
+						&& sibling.Name == "part"
+						&& sibling.Attribute("param") != null
+						&& sibling.Attribute("param").Value == target
+						&& sibling.Attribute("ref") != null
+						&& sibling.Attribute("ref").Value == "Custom"))
 					{
-						if (CheckCustomFieldsSibling(sibling, target))
-							exists = true;
-					}
-					for(XmlNode sibling = insertAfter.PreviousSibling; sibling != null && !exists;	sibling = sibling.PreviousSibling)
-					{
-						if (CheckCustomFieldsSibling(sibling, target))
-							exists = true;
-					}
-
-					if (exists)
 						continue;
+					}
 
-					XmlNode part = template.OwnerDocument.CreateElement("part");
-					AddAttribute(part, "ref", "Custom");
-					AddAttribute(part, "param", target);
-					template.InsertAfter(part, insertAfter);
+					var part = new XElement("part",
+						new XAttribute("ref", "Custom"),
+						new XAttribute("param", target));
+					insertAfter.AddAfterSelf(part);
 				}
 			}
-		}
-
-		private static bool CheckCustomFieldsSibling(XmlNode sibling, string target)
-		{
-			if (sibling.Attributes == null)
-				return false;	// no attributes on this nodeas XmlComment  LT-3566
-
-			XmlNode paramAttr = sibling.Attributes["param"];
-			XmlNode refAttr = sibling.Attributes["ref"];
-			if (paramAttr != null && refAttr != null && paramAttr.Value == target && sibling.Name == "part" && refAttr.Value == "Custom")
-				return true;
-
-			return false;
-		}
-
-		private static void AddAttribute(XmlNode node, string name, string value)
-		{
-			XmlAttribute attribute = node.OwnerDocument.CreateAttribute(name);
-			attribute.Value = value;
-			node.Attributes.Append(attribute);
 		}
 
 		/// <summary>
@@ -2129,12 +2080,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="parameter">The parameter.</param>
 		/// <param name="fVisIfData">If true, show slice only if data present.</param>
 		/// <param name="caller">The caller.</param>
-		private NodeTestResult ProcessSubpartNode(XmlNode node, ArrayList path,
+		private NodeTestResult ProcessSubpartNode(XElement node, ArrayList path,
 			ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition,
 			bool fTestOnly, string parameter, bool fVisIfData,
-		XmlNode caller)
+		XElement caller)
 		{
-			string editor = XmlUtils.GetOptionalAttributeValue(node, "editor");
+			var editor = XmlUtils.GetOptionalAttributeValue(node, "editor");
 
 			try
 			{
@@ -2149,7 +2100,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return NodeTestResult.kntrNothing;
 				}
 
-				switch (node.Name)
+				switch (node.Name.LocalName)
 				{
 					default:
 						break;
@@ -2193,13 +2144,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						break;
 
 					case "choice":
-						foreach (XmlNode clause in node.ChildNodes)
+						foreach (var clause in node.Elements())
 						{
 							if (clause.Name == "where")
 							{
 								if (XmlVc.ConditionPasses(clause, obj.Hvo, m_cache))
 								{
-									NodeTestResult ntr = ProcessPartChildren(clause, path,
+									var ntr = ProcessPartChildren(clause, path,
 										reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly,
 										parameter, fVisIfData,
 									caller);
@@ -2213,7 +2164,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							else if (clause.Name == "otherwise")
 							{
 								// enhance: verify last node?
-								NodeTestResult ntr = ProcessPartChildren(clause, path,
+								var ntr = ProcessPartChildren(clause, path,
 									reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly,
 									parameter, fVisIfData,
 								caller);
@@ -2262,7 +2213,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				bldr.Append("The object id was " + obj.Hvo + ".");
 				if (editor != null)
 					bldr.AppendLine(" The editor was '" + editor + "'.");
-				bldr.Append(" The text of the current node was " + node.OuterXml);
+				bldr.Append(" The text of the current node was " + node.GetOuterXml());
 				//now send it on
 				throw new ApplicationException(bldr.ToString(), error);
 			}
@@ -2279,9 +2230,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_rch = null;
 		}
 
-		private int GetFlidFromNode(XmlNode node, ICmObject obj)
+		private int GetFlidFromNode(XElement node, ICmObject obj)
 		{
-			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
+			var attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			if ((node.Name == "if" || node.Name == "ifnot") &&
 				(XmlUtils.GetOptionalAttributeValue(node, "target", "this").ToLower() != "this" ||
 				(attrName != null && attrName.IndexOf('/') != -1)))
@@ -2290,7 +2241,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// not belong directly to "this".
 				return 0;
 			}
-			int flid = 0;
+			var flid = 0;
 			if (attrName != null)
 			{
 				try
@@ -2307,13 +2258,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return flid;
 		}
 
-		private NodeTestResult AddAtomicNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
+		private NodeTestResult AddAtomicNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
-			bool fVisIfData, XmlNode caller)
+			bool fVisIfData, XElement caller)
 		{
 			// Facilitate insertion of an expandable tree node representing an owned or ref'd object.
 			if (flid == 0)
-				throw new ApplicationException("field attribute required for atomic properties " + node.OuterXml);
+				throw new ApplicationException("field attribute required for atomic properties " + node.GetOuterXml());
 			var innerObj = m_cache.GetAtomicPropObject(m_cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid));
 			m_monitoredProps.Add(Tuple.Create(obj.Hvo, flid));
 			if (fVisIfData && innerObj == null)
@@ -2328,8 +2279,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			path.Add(node);
 			if (innerObj != null)
 			{
-				string layoutOverride = XmlUtils.GetOptionalAttributeValue(node, "layout", layoutName);
-				string layoutChoiceField = XmlUtils.GetOptionalAttributeValue(node, "layoutChoiceField");
+				var layoutOverride = XmlUtils.GetOptionalAttributeValue(node, "layout", layoutName);
+				var layoutChoiceField = XmlUtils.GetOptionalAttributeValue(node, "layoutChoiceField");
 				path.Add(innerObj.Hvo);
 				insertPosition = CreateSlicesFor(innerObj, parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, reuseMap, caller);
 				path.RemoveAt(path.Count - 1);
@@ -2346,15 +2297,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return NodeTestResult.kntrNothing;
 		}
 
-		void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
-			int flidEmptyProp, XmlNode caller, int indent, ref int insertPosition)
+		void MakeGhostSlice(ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
+			int flidEmptyProp, XElement caller, int indent, ref int insertPosition)
 		{
 			// It's a really bad idea to add it to the path, since it kills
 			// the code that hot swaps it, when becoming real.
 			//path.Add(node);
 			if (parentSlice != null)
 				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
-			Slice slice = GetMatchingSlice(path, reuseMap);
+			var slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
 				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
@@ -2448,12 +2399,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private const int kInstantSliceMax = 20;
 
-		private NodeTestResult AddSeqNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
+		private NodeTestResult AddSeqNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
-			bool fVisIfData, XmlNode caller)
+			bool fVisIfData, XElement caller)
 		{
 			if (flid == 0)
-				throw new ApplicationException("field attribute required for seq properties " + node.OuterXml);
+				throw new ApplicationException("field attribute required for seq properties " + node.GetOuterXml());
 			int cobj = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			// monitor it even if we're testing: result may change.
 			m_monitoredProps.Add(Tuple.Create(obj.Hvo, flid));
@@ -2619,8 +2570,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>
 		/// NodeTestResult, an enum showing if usable data is contained in the field
 		/// </returns>
-		private NodeTestResult AddSimpleNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, string editor,
-			int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool fTestOnly, bool fVisIfData, XmlNode caller)
+		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor,
+			int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool fTestOnly, bool fVisIfData, XElement caller)
 		{
 			var realSda = m_cache.DomainDataByFlid;
 			if (parentSlice != null)
@@ -2764,12 +2715,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else if (editor == null)
 				{
 					// may be a summary node for a sequence or atomic node. Suppress it as well as the prop.
-					XmlNode child = null;
+					XElement child = null;
 					int cnodes = 0;
-					foreach (XmlNode n in node.ChildNodes)
+					foreach (var n in node.Elements())
 					{
-						if (node is XmlComment)
-							continue;
 						cnodes++;
 						if (cnodes > 1)
 							break;
@@ -2859,7 +2808,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ForceSliceIndex(slice, insertPosition);
 			}
 			Debug.Assert(slice.IndexInContainer == insertPosition, String.Format("EnsureValideIndexFOrReusedSlice: slice '{0}' at index({1}) should have been inserted in index({2})",
-				slice.ConfigurationNode.OuterXml, slice.IndexInContainer, insertPosition));
+				slice.ConfigurationNode.GetOuterXml(), slice.IndexInContainer, insertPosition));
 			ResetTabIndices(insertPosition);
 		}
 
@@ -2870,7 +2819,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="node"></param>
 		/// <param name="obj"></param>
 		/// <param name="attr"></param>
-		private string GetLabel(XmlNode caller, XmlNode node, ICmObject obj, string attr)
+		private string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
 		{
 			var label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null)
 				?? XmlUtils.GetLocalizedAttributeValue(node, attr, null)
@@ -2888,7 +2837,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="label"></param>
 		/// <param name="attr"></param>
 		/// <returns>null if no suitable abbreviation is found.</returns>
-		private string GetLabelAbbr(XmlNode caller, XmlNode node, ICmObject obj, string label, string attr)
+		private string GetLabelAbbr(XElement caller, XElement node, ICmObject obj, string label, string attr)
 		{
 			// First see if we can find an explicit attribute value.
 			string abbr = GetLabel(caller, node, obj, attr);
@@ -2909,7 +2858,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return abbr;
 		}
 
-		private static void SetNodeWeight(XmlNode node, Slice slice)
+		private static void SetNodeWeight(XElement node, Slice slice)
 		{
 			string weightString = XmlUtils.GetOptionalAttributeValue(node, "weight", "field");
 			ObjectWeight weight;
@@ -2951,17 +2900,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return ShowContextMenuEvent(this, e);
 		}
 
-		///// <summary>
-		///// this is called by a client which normally provides its own custom menu, in order to allow it to
-		///// fall back on an auto menu during development, before the custom menu has been defined.
-		///// </summary>
-		///// <param name="sender"></param>
-		///// <param name="e"></param>
-		//		public ContextMenu GetAutoMenu (object sender, SIL.FieldWorks.Common.Framework.DetailControls.SliceMenuRequestArgs e)
-		//		{
-		//			return m_autoHandler.GetSliceContextMenu(sender, e);
-		//		}
-
 		/// <summary>
 		/// Set the handler which will be invoked when the user right-clicks on the
 		/// TreeNode portion of a slice, or for some other reason we need the context menu.
@@ -2988,12 +2926,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="path">The path.</param>
 		/// <param name="reuseMap">The reuse map.</param>
 		/// <returns></returns>
-		public int ApplyChildren(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
+		public int ApplyChildren(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition,
 			ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			CheckDisposed();
 			int insertPos = insertPosition;
-			foreach (XmlNode node in template.ChildNodes)
+			foreach (var node in template.Elements())
 			{
 				if (node.Name == "ChangeRecordHandler")
 					continue;	// Handle only at the top level (at least for now).
@@ -3099,9 +3037,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_currentSlice != null)
 			{
 				if (m_currentSlice.ConfigurationNode != null &&
-					m_currentSlice.ConfigurationNode.ParentNode != null)
+					m_currentSlice.ConfigurationNode.Parent != null)
 				{
-					sCurrentPartName = XmlUtils.GetAttributeValue(m_currentSlice.ConfigurationNode.ParentNode,
+					sCurrentPartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent,
 						"id", String.Empty);
 				}
 				if (m_currentSlice.Object != null)
@@ -3341,7 +3279,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Debug.Assert(tci.IndexInContainer == index,
 					String.Format("MakeSliceVisible: slice '{0}' at index({2}) should not have changed to index ({1})." +
 					" This can occur when making slices visible in an order different than their order in DataTree.Slices. See LT-7307.",
-					(tci.ConfigurationNode != null && tci.ConfigurationNode.OuterXml != null ? tci.ConfigurationNode.OuterXml : "(DummySlice?)"),
+					(tci.ConfigurationNode != null && tci.ConfigurationNode.GetOuterXml() != null ? tci.ConfigurationNode.GetOuterXml() : "(DummySlice?)"),
 				tci.IndexInContainer, index));
 				// This was moved out of the Control setter because it prematurely creates
 				// root boxes (because it creates a window handle). The embedded control shouldn't
@@ -4371,19 +4309,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (newKey[i] == oldKey[i])
 					continue;
-				if (newKey[i] is XmlNode && oldKey[i] is XmlNode)
+				if (newKey[i] is XElement && oldKey[i] is XElement)
 				{
-					XmlNode newNode = newKey[i] as XmlNode;
-					XmlNode oldNode = oldKey[i] as XmlNode;
+					var newNode = newKey[i] as XElement;
+					var oldNode = oldKey[i] as XElement;
 					if (newNode.Name != oldNode.Name)
 						return false;
-					if (newNode.InnerXml != oldNode.InnerXml)
+					if (newNode.GetInnerText() != oldNode.GetInnerText())
 						return false;
-					if (newNode.OuterXml == oldNode.OuterXml)
+					if (newNode.GetOuterXml() == oldNode.GetOuterXml())
 						continue;
-					foreach (XmlAttribute xa in oldNode.Attributes)
+					foreach (var xa in oldNode.Attributes())
 					{
-						XmlAttribute xaNew = newNode.Attributes[xa.Name];
+						var xaNew = newNode.Attribute(xa.Name);
 						if (xaNew == null || xaNew.Value != xa.Value)
 							return false;
 					}
@@ -4450,7 +4388,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 	class DummyObjectSlice : Slice
 	{
-		private XmlNode m_node; // Node with name="seq" that controls the sequence we're a dummy for
+		private XElement m_node; // Node with name="seq" that controls the sequence we're a dummy for
 		// Path of parent slice info up to and including m_node.
 		// We can't use a List<int>, as the Arraylist may hold XmlNodes and ints, at least.
 		private ArrayList m_path;
@@ -4458,7 +4396,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private int m_ihvoMin; // index in sequence of first object we stand for.
 		private readonly string m_layoutName;
 		private readonly string m_layoutChoiceField;
-		private XmlNode m_caller; // Typically "partRef" node that invoked the part containing the <seq>
+		private XElement m_caller; // Typically "partRef" node that invoked the part containing the <seq>
 
 		/// <summary>
 		/// Create a slice. Note that callers that will further modify path should pass a Clone.
@@ -4472,8 +4410,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="layoutName">Name of the layout.</param>
 		/// <param name="layoutChoiceField">The layout choice field.</param>
 		/// <param name="caller">The caller.</param>
-		public DummyObjectSlice(int indent, XmlNode node, ArrayList path, ICmObject obj, int flid, int ihvoMin,
-			string layoutName, string layoutChoiceField, XmlNode caller)
+		public DummyObjectSlice(int indent, XElement node, ArrayList path, ICmObject obj, int flid, int ihvoMin,
+			string layoutName, string layoutChoiceField, XElement caller)
 		{
 			m_indent = indent;
 			m_node = node;

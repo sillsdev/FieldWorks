@@ -12,10 +12,8 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -63,8 +61,8 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
-		public RecordView(XElement browseViewDefinitions)
-			: base(browseViewDefinitions)
+		public RecordView(XElement configurationParametersElement, RecordClerk recordClerk)
+			: base(configurationParametersElement, recordClerk)
 		{
 			Init();
 		}
@@ -152,8 +150,8 @@ namespace SIL.FieldWorks.XWorks
 		protected override void ShowRecord()
 		{
 			base.ShowRecord();
-			if (m_configurationParameters != null
-				&& !XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "omitFromHistory", false))
+			if (m_configurationParametersElement != null
+				&& !XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "omitFromHistory", false))
 			{
 				UpdateContextHistory();
 			}
@@ -204,11 +202,11 @@ namespace SIL.FieldWorks.XWorks
 		/// to true when it is fully initialized.</remarks>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(IPropertyTable propertyTable, XmlNode configurationParameters)
+		protected void InitBase(IPropertyTable propertyTable, XElement configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
-			m_configurationParameters = configurationParameters;
+			m_configurationParametersElement = configurationParameters;
 
 			ReadParameters();
 
@@ -312,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetTreebarAvailability()
 		{
-			string a = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "treeBarAvailability", "");
+			string a = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "treeBarAvailability", "");
 
 			if(a == "NotMyBusiness")
 				m_treebarAvailability = TreebarAvailability.NotMyBusiness;
@@ -325,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 
 				//m_previousShowTreeBarValue= PropertyTable.GetValue<bool>("ShowRecordList", SettingsGroup.GlobalSettings);
 
-				//				string e = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "treeBarAvailability", DefaultTreeBarAvailability);
+				//				string e = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "treeBarAvailability", DefaultTreeBarAvailability);
 				//				m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), e, true);
 
 				switch (m_treebarAvailability)

@@ -607,7 +607,7 @@ namespace LanguageExplorer.Areas
 					string msg = string.Format("Orientation: {0} Width: {1} Height: {2} Original SD: {3} New SD: {4} Panel1MinSize: {5} Panel2MinSize: {6} ID: {7} Panel1Collapsed: {8} Panel2Collapsed: {9}",
 						Orientation.ToString(), Width, Height, originalSD, defaultLocation,
 						Panel1MinSize, Panel2MinSize,
-						XmlUtils.GetAttributeValue(m_configurationParameters, "id", "NOID"),
+						XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "id", "NOID"),
 						Panel1Collapsed, Panel2Collapsed);
 					throw new ArgumentOutOfRangeException(msg, err);
 				}

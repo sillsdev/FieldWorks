@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
 		private FdoCache m_cache;
-		private XmlNode m_nodeSpec;
+		private XElement m_nodeSpec;
 		/// <summary/>
 		protected DhListView m_lvHeader;
 		private RecordSorter m_sorter;
@@ -851,7 +851,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// the sorted, filtered list of objects accessed as property fakeFlid of hvoRoot.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda);
@@ -865,10 +865,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The key is the nodeSpec passed to the constructor surrogate and the hvoRoot.
 		/// The value is the
 		/// </summary>
-		static Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache
-			= new Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>>();
+		static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache
+			= new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
 
-		internal void ContructorSurrogate(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		internal void ContructorSurrogate(XElement nodeSpec, int hvoRoot, int fakeFlid,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			CheckDisposed();
@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_nodeSpec = nodeSpec;
 			m_cache = cache;
 			Tuple<Dictionary<int, int>, bool> selectedInfo;
-			var key = new Tuple<XmlNode, int>(nodeSpec, hvoRoot);
+			var key = new Tuple<XElement, int>(nodeSpec, hvoRoot);
 			if (s_selectedCache.TryGetValue(key, out selectedInfo))
 			{
 				m_specialCache = new XMLViewsDataCache(sda, selectedInfo.Item2, selectedInfo.Item1);
@@ -946,7 +946,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				for (int i = ColumnSpecs.Count - 1; i >= 0; --i)
 				{
-					XmlNode node = ColumnSpecs[i];
+					var node = ColumnSpecs[i];
 					ColumnHeader ch = MakeColumnHeader(node);
 					m_lvHeader.Columns.Add(ch);
 				}
@@ -955,7 +955,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				for (int i = 0; i < ColumnSpecs.Count; ++i)
 				{
-					XmlNode node = ColumnSpecs[i];
+					var node = ColumnSpecs[i];
 					ColumnHeader ch = MakeColumnHeader(node);
 					m_lvHeader.Columns.Add(ch);
 				}
@@ -970,7 +970,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// FilterBar
 			//
-			XmlAttribute xa = m_nodeSpec.Attributes["filterBar"];
+			var xa = m_nodeSpec.Attribute("filterBar");
 			if (xa != null && xa.Value == "true")
 			{
 				m_filterBar = new FilterBar(this, m_nodeSpec, PropertyTable.GetValue<IApp>("App"));
@@ -982,7 +982,7 @@ namespace SIL.FieldWorks.Common.Controls
 				AddControl(m_filterBar);
 			}
 			AddControl(m_lvHeader); // last so on top of z-order, puts it above other things docked at top.
-			xa = m_nodeSpec.Attributes["bulkEdit"];
+			xa = m_nodeSpec.Attribute("bulkEdit");
 			if (xa != null && xa.Value == "true")
 			{
 				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, PropertyTable, m_cache);
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected int m_lastChangedSelectionListItemsClass = 0;
 
-		private XmlNode m_modifiedColumn;
+		private XElement m_modifiedColumn;
 
 		/// <summary>
 		/// This is called just before the TargetComboSelecctedIndexChanged event.
@@ -1094,7 +1094,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// whole rows doesn't apply to particular columns). Checking the other end of the range is just paranoia.
 			if (e.ColumnIndex >= 0 && e.ColumnIndex < ColumnSpecs.Count)
 			{
-				XmlNode column = ColumnSpecs[e.ColumnIndex];
+				var column = ColumnSpecs[e.ColumnIndex];
 				string editLayout = XmlUtils.GetOptionalAttributeValue(column, "editLayout");
 				string layout = XmlUtils.GetOptionalAttributeValue(column, "layout");
 				if (layout != null && editLayout != null && editLayout != layout)
@@ -1138,7 +1138,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache)
 		{
 			return new BulkEditBar(bv, spec, propertyTable, cache);
 		}
@@ -1268,20 +1268,20 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Make a column header for a specified XmlNode that is a "column" element.
+		/// Make a column header for a specified XElement that is a "column" element.
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		private ColumnHeader MakeColumnHeader(XmlNode node)
+		private ColumnHeader MakeColumnHeader(XElement node)
 		{
 			// Currently, if you add a new attribute here,
 			// you need to update the conditionals in LayoutFinder.SameFinder (cf. LT-2858).
 			string label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
 			if (label == null)
 			{
-				if (node.Attributes["label"] == null)
+				if (node.Attribute("label") == null)
 					throw new ApplicationException("column must have label attr");
-				label = node.Attributes["label"].Value;
+				label = node.Attribute("label").Value;
 			}
 			ColumnHeader ch = new ColumnHeader();
 			ch.Text = label;
@@ -1290,7 +1290,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, IPropertyTable propertyTable)
 		{
-			if (m_nodeSpec.Attributes["editRowModelClass"] != null)
+			if (m_nodeSpec.Attribute("editRowModelClass") != null)
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
 			else
 				m_xbv = new XmlBrowseView();
@@ -1490,7 +1490,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if( disposing )
 			{
 				if (m_nodeSpec != null && m_specialCache != null && m_xbv != null && RootObjectHvo != 0)
-					s_selectedCache[new Tuple<XmlNode, int>(m_nodeSpec, RootObjectHvo)] =
+					s_selectedCache[new Tuple<XElement, int>(m_nodeSpec, RootObjectHvo)] =
 						new Tuple<Dictionary<int, int>, bool>(m_specialCache.SelectedCache, m_specialCache.DefaultSelected);
 				// If these controls are child controls of either 'this' or of m_scrollContainer,
 				// they will automatically be disposed. If they have been removed for whatever reason,
@@ -1780,7 +1780,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// a little wider than the scroll bar. 23 seems to be the smallest value that suppresses scrolling within
 				// the header control...hopefully we can get some sound basis for it eventually.
 				int widthAvail = idealWidth;
-				List<XmlNode> columns = ColumnSpecs;
+				var columns = ColumnSpecs;
 				int count = columns.Count;
 				int dpiX = GetDpiX();
 				if (ColumnIndexOffset() > 0)
@@ -1795,7 +1795,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// If the user previously altered the column width, it will be available
 					// in the Property table, as an absolute value. If not, use node.Attributes
 					// to get a percentage value.
-					int width = GetPersistedWidthForColumn(columns, i);
+					int width = GetPersistedWidthForColumn(i);
 					if (width < 0)
 					{
 						width = GetInitialColumnWidth(columns[i], widthAvail, dpiX);
@@ -1823,10 +1823,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get the persisted property table value for the specified column.
 		/// </summary>
-		/// <param name="colSpecs">XmlNode column specs</param>
 		/// <param name="iCol">index to the column node</param>
 		/// <returns>width if property value found, otherwise -1.</returns>
-		private int GetPersistedWidthForColumn(List<XmlNode> colSpecs, int iCol)
+		private int GetPersistedWidthForColumn(int iCol)
 		{
 			int width = -1; // default to trigger percentage width calculation.
 			if (PropertyTable != null)
@@ -1849,7 +1848,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private int GetInitialColumnWidth(XmlNode node, int widthAvail, int dpiX)
+		private static int GetInitialColumnWidth(XElement node, int widthAvail, int dpiX)
 		{
 			int width;
 			string strWidth = XmlUtils.GetOptionalAttributeValue(node, "width", "48000");
@@ -1893,7 +1892,7 @@ namespace SIL.FieldWorks.Common.Controls
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, IPropertyTable propertyTable,
+			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, FdoCache cache, IPropertyTable propertyTable,
 				IVwStylesheet styleSheet, BrowseViewer bv)
 			{
 #if RANDYTODO
@@ -1915,7 +1914,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_rootb.SetSite(this);
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
-				m_rootb.SetRootObject(m_hvoRoot, Vc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);
+				m_rootb.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
@@ -2009,7 +2008,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			internal void SetupOneColumnSpec(BrowseViewer bv, int icolToAdd)
 			{
-				ColumnSpecs = new List<XmlNode>(new XmlNode[] { bv.ColumnSpecs[icolToAdd - bv.ColumnIndexOffset()] });
+				ColumnSpecs = new List<XElement>(new[] { bv.ColumnSpecs[icolToAdd - bv.ColumnIndexOffset()] });
 				m_icolAdded = icolToAdd;
 				// if we have a bulk edit bar, we need to process strings added for Preview
 				if (bv.BulkEditBar != null)
@@ -2031,7 +2030,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return -1;
 			}
 
-			public OneColumnXmlBrowseViewVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+			public OneColumnXmlBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
 				: base(xnSpec, fakeFlid, xbv)
 			{
 			}
@@ -2442,7 +2441,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var menu = components.ContextMenu("configIconContextMenu");
 			// add items
-			foreach (XmlNode node in m_xbv.Vc.ComputePossibleColumns())
+			foreach (var node in m_xbv.Vc.ComputePossibleColumns())
 			{
 				// Show those nodes that have visibility="always" or "menu" (or none specified)
 				string vis = XmlUtils.GetOptionalAttributeValue(node, "visibility", "always");
@@ -2500,7 +2499,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void ConfigMoreChoicesItemClicked(object sender, EventArgs args)
 		{
 			using (ColumnConfigureDialog dlg = new ColumnConfigureDialog(m_xbv.Vc.PossibleColumnSpecs,
-				new List<XmlNode>(ColumnSpecs), PropertyTable))
+				new List<XElement>(ColumnSpecs), PropertyTable))
 			{
 				dlg.RootObjectHvo = RootObjectHvo;
 				dlg.FinishInitialization();
@@ -2515,7 +2514,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private bool AreRemovingColumns(List<XmlNode> oldSpecs, List<XmlNode> newSpecs)
+		private bool AreRemovingColumns(List<XElement> oldSpecs, List<XElement> newSpecs)
 		{
 			if (oldSpecs.Count > newSpecs.Count)
 				return true;
@@ -2533,7 +2532,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="oldSpecs"></param>
 		/// <param name="newSpecs"></param>
 		/// <returns></returns>
-		private bool IsColumnOrderDifferent(List<XmlNode> oldSpecs, List<XmlNode> newSpecs)
+		private bool IsColumnOrderDifferent(List<XElement> oldSpecs, List<XElement> newSpecs)
 		{
 			Debug.Assert(oldSpecs.Count <= newSpecs.Count);
 			for (int i = 0; i < oldSpecs.Count; ++i)
@@ -2544,7 +2543,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		internal void InstallNewColumns(List<XmlNode> newColumnSpecs)
+		internal void InstallNewColumns(List<XElement> newColumnSpecs)
 		{
 			if (m_bulkEditBar != null)
 				m_bulkEditBar.SaveSettings(); // before we change column list!
@@ -2554,7 +2553,7 @@ namespace SIL.FieldWorks.Common.Controls
 				fOrderChanged = IsColumnOrderDifferent(ColumnSpecs, newColumnSpecs);
 			// We begin by saving the current column widths to preserve widths as far as possible
 			// when recreating the list in OK.
-			Dictionary<XmlNode, int> widths;
+			Dictionary<XElement, int> widths;
 			StoreColumnWidths(ColumnSpecs, out widths);
 
 			// Copy configured list back to ColumnSpecs, update display, etc.x
@@ -2599,7 +2598,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ch gets added to Columns collection and disposed there")]
-		private void RebuildHeaderColumns(List<XmlNode> colSpecs, Dictionary<XmlNode, int> widths)
+		private void RebuildHeaderColumns(List<XElement> colSpecs, Dictionary<XElement, int> widths)
 		{
 			m_lvHeader.BeginUpdate();
 			bool fSave = m_lvHeader.AdjustingWidth;
@@ -2613,7 +2612,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ColumnHeader[] rghdr = new ColumnHeader[colSpecs.Count];
 			for (int i = 0; i < colSpecs.Count; ++i)
 			{
-				XmlNode node = colSpecs[i];
+				var node = colSpecs[i];
 				ColumnHeader ch = MakeColumnHeader(node);
 				//Set the width either to the temporarily stored width, or the default initial column width
 				int width;
@@ -2637,11 +2636,11 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lvHeader.EndUpdate();
 		}
 
-		private void StoreColumnWidths(List<XmlNode> colSpecs, out Dictionary<XmlNode, int> widths)
+		private void StoreColumnWidths(List<XElement> colSpecs, out Dictionary<XElement, int> widths)
 		{
-			widths = new Dictionary<XmlNode, int>();
+			widths = new Dictionary<XElement, int>();
 			int index = 0;
-			foreach(XmlNode node in colSpecs)
+			foreach(var node in colSpecs)
 			{
 				widths.Add(node, m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(index)].Width);
 				index++;
@@ -2655,9 +2654,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_bulkEditBar != null)
 				m_bulkEditBar.SaveSettings(); // before we change column list!
 			// Sync the Browse View columns with the new column header order.
-			List<int> columnsOrder = e.DragDropColumnOrder;
-			List<XmlNode> oldSpecs = new List<XmlNode>(ColumnSpecs);
-			int delta = ColumnIndexOffset();
+			var columnsOrder = e.DragDropColumnOrder;
+			var oldSpecs = new List<XElement>(ColumnSpecs);
+			var delta = ColumnIndexOffset();
 			Debug.Assert(columnsOrder.Count == ColumnSpecs.Count + delta);
 			for (int i = 0; i < ColumnSpecs.Count; ++i)
 			{
@@ -2688,11 +2687,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_bulkEditBar != null)
 				m_bulkEditBar.SaveSettings(); // before we change column list!
 			MenuItem mi = sender as MenuItem;
-			List<XmlNode> newColumns = new List<XmlNode>(ColumnSpecs);
-			List<XmlNode> possibleColumns = m_xbv.Vc.PossibleColumnSpecs;
+			var newColumns = new List<XElement>(ColumnSpecs);
+			var possibleColumns = m_xbv.Vc.PossibleColumnSpecs;
 			//set the column to any column in the specs that matches the menu item text
 			// or the unaltered text (for multiunicode fields).
-			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text)
+			var column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text)
 						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text);
 			bool fRemovingColumn = true;
 			bool fOrderChanged = false;
@@ -2734,9 +2733,9 @@ namespace SIL.FieldWorks.Common.Controls
 			InstallNewColumns(newColumns);
 		}
 
-		private FilterBarCellFilter MakeFilter(List<XmlNode> possibleColumns, string colName, IMatcher matcher)
+		private FilterBarCellFilter MakeFilter(List<XElement> possibleColumns, string colName, IMatcher matcher)
 		{
-			XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", colName);
+			var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", colName);
 			if (colSpec == null)
 				return null;
 			IApp app = PropertyTable.GetValue<IApp>("App");
@@ -2769,12 +2768,12 @@ namespace SIL.FieldWorks.Common.Controls
 				linkSetupInfo != "FilterAnthroItems")
 				return null; // Only setting we know as yet.
 
-			List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
+			List<XElement> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
 
 			var spellFilter = new FilterBarCellFilter();
 			if (linkSetupInfo == "TeReviewUndecidedSpelling" || linkSetupInfo == "TeCorrectSpelling")
 			{
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
+				var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
 				if (colSpec == null)
 					return null;
 				int desiredItem;
@@ -2813,7 +2812,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return null;
 				PropertyTable.RemoveProperty("HvoOfAnthroItem");
 
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
+				var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
 				if (colSpec == null)
 					return null;
 
@@ -2859,12 +2858,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="colSpec"></param>
-		public XmlNode ReplaceColumn(int index, XmlNode colSpec)
+		public XElement ReplaceColumn(int index, XElement colSpec)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.
 			if (m_bulkEditBar != null)
 				m_bulkEditBar.SaveSettings(); // before we change column list!
-			XmlNode result = ColumnSpecs[index];
+			var result = ColumnSpecs[index];
 			ColumnSpecs[index] = colSpec; // will throw if bad index...but we'd just throw anyway.
 			UpdateColumnList();
 			return result;
@@ -2875,7 +2874,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colName"></param>
 		/// <param name="colSpec"></param>
-		public XmlNode ReplaceColumn(string colName, XmlNode colSpec)
+		public XElement ReplaceColumn(string colName, XElement colSpec)
 		{
 			int index = IndexOfColumn(colName);
 			Debug.Assert(index >= 0, "looking for invalid column in view");
@@ -2885,7 +2884,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Get the index of the column that has the specified name/label
 		private int IndexOfColumn(string colName)
 		{
-			return ColumnSpecs.FindIndex(delegate(XmlNode item)
+			return ColumnSpecs.FindIndex(delegate(XElement item)
 			{ return XmlUtils.GetAttributeValue(item, "label") == colName; });
 		}
 
@@ -2894,9 +2893,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec">xml specification for the column</param>
 		/// <param name="position">column index</param>
-		protected void InsertColumn(XmlNode colSpec, int position)
+		protected void InsertColumn(XElement colSpec, int position)
 		{
-			List<XmlNode> columns = ColumnSpecs;
+			var columns = ColumnSpecs;
 			columns.Insert(position, colSpec);
 			ColumnHeader colHeader = MakeColumnHeader(colSpec);
 			int colWidth = GetInitialColumnWidth(colSpec, m_scrollContainer.ClientRectangle.Width, GetDpiX());
@@ -2976,7 +2975,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Exception: if any column has 'doNotPersist="true"' skip saving.
 			StringBuilder colList = new StringBuilder();
 			colList.Append("<root version=\"" + kBrowseViewVersion + "\">");
-			foreach (XmlNode node in ColumnSpecs)
+			foreach (var node in ColumnSpecs)
 			{
 				if (XmlUtils.GetOptionalBooleanAttributeValue(node, "doNotPersist", false))
 					return; // without saving column info!
@@ -2986,12 +2985,12 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// persist it with the normal layout, not the special edit one.
 					XmlUtils.SetAttribute(node, "layout", normalLayout);
-					colList.Append(node.OuterXml);
+					colList.Append(node);
 					XmlUtils.SetAttribute(node, "layout", layout);
 				}
 				else
 				{
-					colList.Append(node.OuterXml);
+					colList.Append(node);
 				}
 			}
 			colList.Append("</root>");
@@ -3009,7 +3008,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (FilterInitializationComplete || filter == null)
 				return false;
 			bool fInsertedColumn = false;
-			foreach (XmlNode colSpec in m_xbv.Vc.ComputePossibleColumns())
+			foreach (var colSpec in m_xbv.Vc.ComputePossibleColumns())
 			{
 				// detect if hidden column (hidden columns are not in our active ColumnSpecs)
 				if(IsColumnHidden(colSpec))
@@ -3030,13 +3029,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
-		protected internal bool IsColumnShowing(XmlNode colSpec)
+		protected internal bool IsColumnShowing(XElement colSpec)
 		{
 			//for some reason column specs may not have a layout set, fall back to the old test
-			if (colSpec == null || colSpec.Attributes == null || colSpec.Attributes["layout"] == null)
+			if (colSpec == null || !colSpec.HasAttributes || colSpec.Attribute("layout") == null)
 				return XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, colSpec) >= 0;
 			//Be as non-specific about the column as we can, writing system options and width and other things may give false negatives
-			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value) != null;
+			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attribute("layout").Value) != null;
 		}
 
 		/// <summary>
@@ -3044,7 +3043,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
-		protected internal bool IsColumnHidden(XmlNode colSpec)
+		protected internal bool IsColumnHidden(XElement colSpec)
 		{
 			return !IsColumnShowing(colSpec);
 		}
@@ -3053,12 +3052,12 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		/// <param name="colSpec"></param>
-		protected internal void AppendColumn(XmlNode colSpec)
+		protected internal void AppendColumn(XElement colSpec)
 		{
 			InsertColumn(colSpec, ColumnSpecs.Count);
 		}
 
-		internal List<XmlNode> ColumnSpecs
+		internal List<XElement> ColumnSpecs
 		{
 			get
 			{
@@ -3081,11 +3080,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <remarks>This is needed for LT-10293.</remarks>
 		public RecordSorter CreateSorterForFirstColumn(int ws)
 		{
-			XmlNode colSpec = null;
+			XElement colSpec = null;
 			CoreWritingSystemDefinition colWs = null;
 			for (int i = 0; i < m_xbv.Vc.ColumnSpecs.Count; ++i)
 			{
-				XmlNode curSpec = m_xbv.Vc.ColumnSpecs[i];
+				var curSpec = m_xbv.Vc.ColumnSpecs[i];
 				CoreWritingSystemDefinition curWs = WritingSystemServices.GetWritingSystem(m_cache, curSpec, null, 0);
 				if (curWs.Handle == ws)
 				{
@@ -4056,7 +4055,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see><cref>T:BrowseActiveViewer</cref></see> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseActiveViewer(XElement nodeSpec, int hvoRoot, int fakeFlid,
 								  FdoCache cache, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda)

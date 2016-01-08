@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class GhostLexRefLauncher : ButtonLauncher
 	{
 		/// <summary />
-		public GhostLexRefLauncher(ICmObject obj, XmlNode configNode)
+		public GhostLexRefLauncher(ICmObject obj, XElement configNode)
 		{
 			m_obj = obj;
 			m_configurationNode = configNode;

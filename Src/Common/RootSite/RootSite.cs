@@ -32,6 +32,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.WritingSystems;
+using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 // How to debug COM reference counts:
 // a) create a global variable that contains a file handle:

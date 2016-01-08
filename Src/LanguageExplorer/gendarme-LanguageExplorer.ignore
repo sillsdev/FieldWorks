@@ -66,6 +66,7 @@ M: System.Void LanguageExplorer.Areas.Notebook.Tools.NotebookDocument.NotebookDo
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms.BulkEditWordformsTool::Activate(SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.InterlinearSlice::FinishInit()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.AnalysisInterlinearRs::MakeRoot()
+M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Notebook.NotebookArea::CreateRecordClerkForAllNotebookAreaTools(SIL.FieldWorks.FDO.FdoCache)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)

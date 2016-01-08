@@ -7,12 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		// The specification node that contains fragments (in the old approach). Null in new.
 		/// <summary></summary>
-		protected XmlNode m_xnSpec;
+		protected XElement m_xnSpec;
 
 		// Summary of how we use frag IDs.
 
@@ -51,7 +50,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// New approach.
 		// When an element does not have a "frag" attribute, we generate a Pair
 		// (frag, caller) in m_idToDisplayInfo. This allows us to retrieve from the fragID
-		// the two key XmlNodes involved in invoking whatever property it was when we need
+		// the two key XElements involved in invoking whatever property it was when we need
 		// them to display the resulting thing.
 
 		// Map from fragment ID to an object that will actually be used in Display
@@ -63,7 +62,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// to m_idToDisplayInfo.
 		internal Dictionary<DisplayCommand, int> m_displayCommandToId = new Dictionary<DisplayCommand, int>();
 		// Cache for results of asking the string table to GetStringsFromListNode on a particular node.
-		internal Dictionary<XmlNode, string[]> m_StringsFromListNode = new Dictionary<XmlNode, string[]>();
+		internal Dictionary<XElement, string[]> m_StringsFromListNode = new Dictionary<XElement, string[]>();
 
 		/// <summary>
 		/// Set this true (currently in XmlDocView and XmlDocItemView) to enable identifying the source
@@ -122,7 +121,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// The next two variables are saved in the constructor to be used in ResetTables(layoutName)
 		// when the layout name changes.
-		XmlNode m_conditionNode = null;
+		XElement m_conditionNode = null;
 		SimpleRootSite m_rootSite = null;
 		internal IApp m_app;
 
@@ -164,7 +163,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// "caller" even when the chain has been broken in method calls into the views code and
 		/// back out.  (part of the implementation of LT-10542)
 		/// </summary>
-		internal readonly List<XmlNode> m_stackPartRef = new List<XmlNode>();
+		internal readonly List<XElement> m_stackPartRef = new List<XElement>();
 
 		/// <summary>
 		/// List of guids used to filter/sort in DisplayVec().
@@ -206,7 +205,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
 		public XmlVc(string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IFlexApp app, XmlNode condition, ISilDataAccess sda)
+			SimpleRootSite rootSite, IFlexApp app, XElement condition, ISilDataAccess sda)
 			: this()
 		{
 			m_rootLayoutName = rootLayoutName;
@@ -296,7 +295,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal void MakeRootCommand(SimpleRootSite rootSite, XmlNode condition)
+		internal void MakeRootCommand(SimpleRootSite rootSite, XElement condition)
 		{
 			DisplayCommand dc;
 			if (m_fEditable)
@@ -416,7 +415,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Given the XmlNode that invoked a display of a related object, and the node that
+		/// Given the XElement that invoked a display of a related object, and the node that
 		/// is looked up as the main way to display the object given the layout name,
 		/// come up with the node to actually use to display it.
 		/// </summary>
@@ -425,11 +424,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layouts">The layouts.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode GetDisplayNodeForChild(XmlNode node, XmlNode callingFrag, LayoutCache layouts)
+		public static XElement GetDisplayNodeForChild(XElement node, XElement callingFrag, LayoutCache layouts)
 		{
 			if (node == null)
 				node = callingFrag; // didn't get anything, hope the calling node has useful children
-			else if (callingFrag != null && callingFrag.ChildNodes.Count > 0)
+			else if (callingFrag != null && callingFrag.Elements().Any())
 			{
 				// The calling node is attempting to provide info about how to
 				// display items, for example, a seq node that specifies how to display
@@ -454,7 +453,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layoutName"></param>
 		/// <param name="fIncludeLayouts">if true, include layouts, otherwise just parts.</param>
 		/// <returns></returns>
-		protected internal XmlNode GetNodeForPart(int hvo, string layoutName, bool fIncludeLayouts)
+		protected internal XElement GetNodeForPart(int hvo, string layoutName, bool fIncludeLayouts)
 		{
 			return GetNodeForPart(hvo, layoutName, fIncludeLayouts, m_sda,
 				m_layouts);
@@ -471,7 +470,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layouts">The layouts.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode GetNodeForPart(int hvo, string layoutName, bool fIncludeLayouts,
+		public static XElement GetNodeForPart(int hvo, string layoutName, bool fIncludeLayouts,
 			ISilDataAccess sda, LayoutCache layouts)
 		{
 			int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
@@ -488,7 +487,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layoutName"></param>
 		/// <param name="fIncludeLayouts"></param>
 		/// <returns></returns>
-		public XmlNode GetNodeForPart(string layoutName, bool fIncludeLayouts, int clsid)
+		public XElement GetNodeForPart(string layoutName, bool fIncludeLayouts, int clsid)
 		{
 			return m_layouts.GetNode(clsid, layoutName, fIncludeLayouts);
 		}
@@ -526,7 +525,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo"></param>
-		private void AddCommandIcon(XmlNode frag, IVwEnv vwenv, int hvo)
+		private void AddCommandIcon(XElement frag, IVwEnv vwenv, int hvo)
 		{
 			if (m_CommandIcon == null)
 				m_CommandIcon = (IPicture)OLECvt.ToOLE_IPictureDisp(ResourceHelper.BlueCircleDownArrowForView);
@@ -545,7 +544,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// This phony dependency allows us to regenerate a minimal part of the view when the HasFocus property changes,
 			// or when there is a change in the set of selected objects for which icons should be visible.
-			vwenv.NoteDependency(new int[] { hvoDepends }, new int[] { IsObjectSelectedTag }, 1);
+			vwenv.NoteDependency(new int[] { hvoDepends }, new[] { IsObjectSelectedTag }, 1);
 			if (HasFocus && SelectedObjects.Contains(hvoDepends))
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
@@ -565,7 +564,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override IPicture DisplayPicture(IVwEnv vwenv, int hvo, int tag, int val, int frag)
 		{
 			// It has to be obsolete, since the new system puts DisplayCommand objects in m_idToDisplayCommand,
-			// not XmlNodes.
+			// not XElements.
 			throw new InvalidOperationException("Obsolete system use for 'DisplayPicture' method.");
 		}
 
@@ -848,7 +847,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="hvo"></param>
 		/// <returns></returns>
-		private int GetIntFromNamedProp(string attrName, XmlNode frag, int hvo)
+		private int GetIntFromNamedProp(string attrName, XElement frag, int hvo)
 		{
 			string propName = XmlUtils.GetManditoryAttributeValue(frag, attrName);
 			var parts = propName.Split('.');
@@ -871,7 +870,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo"></param>
-		internal void ProcessMultiLingualChildren(XmlNode frag, IVwEnv vwenv, int hvo)
+		internal void ProcessMultiLingualChildren(XElement frag, IVwEnv vwenv, int hvo)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs == null)
@@ -925,7 +924,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.AddString(tisb.GetString());
 		}
 
-		internal static void DisplayMultiSep(XmlNode frag, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayMultiSep(XElement frag, IVwEnv vwenv, FdoCache cache)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
@@ -954,11 +953,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void OpenOuterParts(List<XmlNode> parts, IVwEnv vwenv, int hvo)
+		protected void OpenOuterParts(List<XElement> parts, IVwEnv vwenv, int hvo)
 		{
-			foreach (XmlNode frag in parts)
+			foreach (var frag in parts)
 			{
-				switch (frag.Name)
+				switch (frag.Name.LocalName)
 				{
 					case "para":
 						{
@@ -1003,7 +1002,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void OpenConcordanceParagraph(IVwEnv vwenv, int hvo, XmlNode frag)
+		private void OpenConcordanceParagraph(IVwEnv vwenv, int hvo, XElement frag)
 		{
 			ProcessProperties(frag, vwenv);
 			int dmpAlign = XmlUtils.GetMandatoryIntegerAttributeValue(frag, "align");
@@ -1017,12 +1016,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="parts"></param>
 		/// <param name="vwenv"></param>
-		protected void CloseOuterParts(List<XmlNode> parts, IVwEnv vwenv)
+		protected void CloseOuterParts(List<XElement> parts, IVwEnv vwenv)
 		{
-			for (int i = parts.Count - 1; i >= 0; --i)
+			for (var i = parts.Count - 1; i >= 0; --i)
 			{
-				XmlNode frag = parts[i];
-				switch (frag.Name)
+				var frag = parts[i];
+				switch (frag.Name.LocalName)
 				{
 					case "para":
 						{
@@ -1068,12 +1067,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="frag"></param>
 		/// <returns></returns>
-		public static bool CanSkipNode(XmlNode frag)
+		public static bool CanSkipNode(XElement frag)
 		{
-			return (frag is XmlComment || frag.Name == "properties" || frag.Name == "dynamicloaderinfo");
+			return (frag.Name == "properties" || frag.Name == "dynamicloaderinfo");
 		}
 
-		private void AddMultipleAlternatives(IEnumerable<int> wsIds, IVwEnv vwenv, int hvo, int flid, XmlNode caller, bool fCurrentHvo)
+		private void AddMultipleAlternatives(IEnumerable<int> wsIds, IVwEnv vwenv, int hvo, int flid, XElement caller, bool fCurrentHvo)
 		{
 			string sep = XmlUtils.GetOptionalAttributeValue(caller, "sep", null);
 			ITsString tssSep = null;
@@ -1130,7 +1129,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Normally AddString is used for labels and such that don't count, but sometimes for
 		/// important things like name of owner.
 		/// </summary>
-		private void AddStringThatCounts(IVwEnv vwenv, ITsString tss, XmlNode caller)
+		private void AddStringThatCounts(IVwEnv vwenv, ITsString tss, XElement caller)
 		{
 			if (vwenv is TestCollectorEnv)
 				(vwenv as TestCollectorEnv).AddTsString(tss);
@@ -1151,8 +1150,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		/// <param name="fEditable"></param>
 		/// <param name="caller"></param>
-		public virtual void ProcessFrag(XmlNode frag, IVwEnv vwenv, int hvo, bool fEditable,
-			XmlNode caller)
+		public virtual void ProcessFrag(XElement frag, IVwEnv vwenv, int hvo, bool fEditable,
+			XElement caller)
 		{
 			// Some nodes are known to be uninteresting.
 			if (CanSkipNode(frag))
@@ -1160,7 +1159,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			try
 			{
-				switch (frag.Name)
+				switch (frag.Name.LocalName)
 				{
 					default:
 						Debug.Assert(false, "unrecognized XML node.");
@@ -1363,7 +1362,7 @@ namespace SIL.FieldWorks.Common.Controls
 							vlWidth.nVal = XmlUtils.GetOptionalIntegerValue(frag, "width", 10000);
 							vlWidth.unit = VwUnit.kunPercent100;
 
-							XmlAttribute xa = frag.Attributes["columns"];
+							var xa = frag.Attribute("columns");
 							if (xa != null && xa.Value == "%ColumnCount")
 							{
 								// This is a kludge currently used only for MoInflAffixTemplate.
@@ -1445,9 +1444,9 @@ namespace SIL.FieldWorks.Common.Controls
 					// we have individual property nodes for everything.
 					case "mod":
 						{
-							int tpt = Convert.ToInt32(frag.Attributes["prop"].Value, 10);
-							int var = Convert.ToInt32(frag.Attributes["var"].Value, 10);
-							int val = Convert.ToInt32(frag.Attributes["val"].Value, 10);
+							int tpt = Convert.ToInt32(frag.Attribute("prop").Value, 10);
+							int var = Convert.ToInt32(frag.Attribute("var").Value, 10);
+							int val = Convert.ToInt32(frag.Attribute("val").Value, 10);
 							vwenv.set_IntProperty(tpt, var, val);
 							break;
 						}
@@ -1510,14 +1509,14 @@ namespace SIL.FieldWorks.Common.Controls
 							if (flid == 0)
 								return; // something badly wrong.
 							int formatFrag = VwBaseVc.kfragGenDateLong;
-							var formatAttr = frag.Attributes["format"];
+							var formatAttr = frag.Attribute("format");
 							if (vwenv is SortCollectorEnv)
 							{
 								formatFrag = VwBaseVc.kfragGenDateSort;
 							}
 							else if (formatAttr != null)
 							{
-								switch (formatAttr.InnerText.ToLowerInvariant())
+								switch (formatAttr.Value.ToLowerInvariant())
 								{
 									case "short":
 										formatFrag = VwBaseVc.kfragGenDateShort;
@@ -1548,7 +1547,7 @@ namespace SIL.FieldWorks.Common.Controls
 							if (itype == CellarPropertyType.Time)
 							{
 								DateTime dt = SilTime.GetTimeProperty(m_sda, hvo, flid);
-								XmlNode dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
+								var dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
 								string format;
 								if (vwenv is SortCollectorEnv)
 									format = System.Globalization.DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
@@ -1571,7 +1570,7 @@ namespace SIL.FieldWorks.Common.Controls
 								{
 									string errorMsg = "Invalid datetime format attribute (" + format + ") in " + e.Source;
 									formattedDateTime = errorMsg;
-									throw new SIL.Utils.ConfigurationException(errorMsg, frag, e);
+									throw new ConfigurationException(errorMsg, frag, e);
 								}
 								ITsStrFactory tsf = m_cache.TsStrFactory;
 								int systemWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
@@ -1584,7 +1583,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
 								throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
-									frag.Name + "  property " + flid + " in " + frag.OuterXml);
+									frag.Name + "  property " + flid + " in " + frag);
 							}
 							break;
 						}
@@ -1612,7 +1611,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "lit":
 						{
 							// Default to UI writing system.
-							string literal = frag.InnerText;
+							string literal = string.Concat(frag.Elements());
 							string sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
 							if (sTranslate.Trim().ToLower() != "do not translate")
 								literal = StringTable.Table.LocalizeLiteralValue(literal);
@@ -1639,7 +1638,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					case "choice":
 						{
-							foreach (XmlNode clause in frag.ChildNodes)
+							foreach (var clause in frag.Elements())
 							{
 								if (clause.Name == "where")
 								{
@@ -1705,17 +1704,17 @@ namespace SIL.FieldWorks.Common.Controls
 						// in certain circumstances, like when a minor entry is the component of a sense of a main entry you need to display
 						// the senses of the subentry. The following code will allow that to be specified in the configuration xml.
 						bool wasIgnoring = ShouldIgnoreGramInfo;
-						if (frag.Attributes != null && frag.Attributes["forceSubentryDisplay"] != null)
+						if (frag.Attribute("forceSubentryDisplay") != null)
 						{
-							ShouldIgnoreGramInfo = !Boolean.Parse(frag.Attributes["forceSubentryDisplay"].Value);
+							ShouldIgnoreGramInfo = !Boolean.Parse(frag.Attribute("forceSubentryDisplay").Value);
 						}
 						ProcessPartRef(frag, hvo, vwenv);
 						ShouldIgnoreGramInfo = wasIgnoring;
 						break;
 					case "sublayout":
 						string layoutName = XmlUtils.GetOptionalAttributeValue(frag, "name", null);
-						XmlNode layout;
-						if (frag.ChildNodes.Count > 0 && layoutName == null)
+						XElement layout;
+						if (frag.Elements().Any() && layoutName == null)
 						{
 							layout = frag;
 						}
@@ -1848,7 +1847,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// but if a singlestyle attribute is present, determine whether to use that style instead.
 		/// 19 July 2011 GJM: singlestyle attribute removed per LT-11598
 		/// </summary>
-		private static string GetParaStyle(XmlNode caller)
+		private static string GetParaStyle(XElement caller)
 		{
 			var result = XmlUtils.GetOptionalAttributeValue(caller, "parastyle", null);
 			//var singleStyle = XmlUtils.GetOptionalAttributeValue(caller, "singlestyle", null);
@@ -1888,7 +1887,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
 		/// outside TryColumnForCustomField().
 		/// </summary>
-		XmlNode m_customFieldNode = null;
+		XElement m_customFieldNode = null;
 
 		/// <summary>
 		/// Determine whether or not the given colSpec refers to a custom field, respective of
@@ -1901,7 +1900,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propWs">the first prop/ws info we could find for the custom field,
 		/// null if customField is invalid for this database.</param>
 		/// <returns></returns>
-		internal bool TryColumnForCustomField(XmlNode colSpec, int rootObjClass, out XmlNode customFieldNode, out PropWs propWs)
+		internal bool TryColumnForCustomField(XElement colSpec, int rootObjClass, out XElement customFieldNode, out PropWs propWs)
 		{
 			propWs = null;
 			// now determine the fields that are needed for this node.
@@ -1930,14 +1929,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parentNode"></param>
 		/// <param name="rootObjClass">the class of the part we are looking for</param>
 		/// <returns></returns>
-		internal XmlNode GetPartFromParentNode(XmlNode parentNode, int rootObjClass)
+		internal XElement GetPartFromParentNode(XElement parentNode, int rootObjClass)
 		{
-			XmlNode partNode = null;
+			XElement partNode;
 			string layout = XmlUtils.GetOptionalAttributeValue(parentNode, "layout");
 			if (layout != null)
 			{
 				// get the part from the layout.
-				partNode = this.GetNodeForPart(layout, false, rootObjClass);
+				partNode = GetNodeForPart(layout, false, rootObjClass);
 			}
 			else
 			{
@@ -1955,11 +1954,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rootObjClass"></param>
 		/// <param name="propWs"></param>
 		/// <returns></returns>
-		internal bool TryFindFirstAtomicField(XmlNode parentNode, int rootObjClass, out PropWs propWs)
+		internal bool TryFindFirstAtomicField(XElement parentNode, int rootObjClass, out PropWs propWs)
 		{
 			propWs = null;
-//			XmlNode partNode = GetPartFromParentNode(parentNode, rootObjClass);
-			NeededPropertyInfo info = DetermineNeededFieldsForSpec(parentNode, rootObjClass);
+			var info = DetermineNeededFieldsForSpec(parentNode, rootObjClass);
 			if (info != null)
 			{
 				// if we have a sequence, step down the first branch till we find the first atomic field.
@@ -1968,9 +1966,9 @@ namespace SIL.FieldWorks.Common.Controls
 			return propWs != null;
 		}
 
-		internal NeededPropertyInfo DetermineNeededFieldsForSpec(XmlNode spec, int rootObjClass)
+		internal NeededPropertyInfo DetermineNeededFieldsForSpec(XElement spec, int rootObjClass)
 		{
-			XmlNode partNode = GetPartFromParentNode(spec, rootObjClass);
+			var partNode = GetPartFromParentNode(spec, rootObjClass);
 			if (partNode != null)
 			{
 				NeededPropertyInfo info = new NeededPropertyInfo(rootObjClass);
@@ -2005,7 +2003,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="caller"></param>
 		/// <param name="info"></param>
-		internal void DetermineNeededFieldsFor(XmlNode frag, XmlNode caller, NeededPropertyInfo info)
+		internal void DetermineNeededFieldsFor(XElement frag, XElement caller, NeededPropertyInfo info)
 		{
 			// Some nodes are known to be uninteresting.
 			if (CanSkipNode(frag))
@@ -2013,7 +2011,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			try
 			{
-				switch (frag.Name)
+				switch (frag.Name.LocalName)
 				{
 					default:
 						// Any cases not handled just do nothing.
@@ -2262,8 +2260,8 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					case "sublayout":
 						string layoutName = XmlUtils.GetOptionalAttributeValue(frag, "name", null);
-						XmlNode layout;
-						if (frag.ChildNodes.Count > 0 && layoutName == null)
+						XElement layout;
+						if (frag.Elements().Any() && layoutName == null)
 						{
 							layout = frag;
 						}
@@ -2336,13 +2334,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="info"></param>
 		/// <returns></returns>
-		private int DetermineNeededFlid(XmlNode frag, NeededPropertyInfo info)
+		private int DetermineNeededFlid(XElement frag, NeededPropertyInfo info)
 		{
 			int flid = 0;
 			try
 			{
 				IFwMetaDataCache mdc = m_sda.MetaDataCache;
-				XmlAttribute xa = frag.Attributes["flid"];
+				var xa = frag.Attribute("flid");
 				if (xa == null)
 				{
 					if (mdc == null)
@@ -2390,7 +2388,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This gives the column we are displaying a chance to override the writing system for its part specification.
 		/// </summary>
 		/// <returns></returns>
-		private int GetWritingSystemForObject(XmlNode frag, int hvo, int flid, int wsDefault)
+		private int GetWritingSystemForObject(XElement frag, int hvo, int flid, int wsDefault)
 		{
 			if (WsForce == 0)
 				return WritingSystemServices.GetWritingSystem(m_cache, m_sda, frag, s_qwsCurrent, hvo, flid, wsDefault).Handle;
@@ -2407,7 +2405,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return WsForce;
 		}
 
-		private void DisplayOtherObjStringAlt(int flid, int ws, IVwEnv vwenv, int hvoTarget, XmlNode caller)
+		private void DisplayOtherObjStringAlt(int flid, int ws, IVwEnv vwenv, int hvoTarget, XElement caller)
 		{
 			var source = IdentifySource ? caller : null;
 			int fragId = GetId(new DisplayStringAltCommand(flid, ws, source), m_idToDisplayCommand, m_displayCommandToId);
@@ -2415,10 +2413,10 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Process a 'part ref' node (frag) for the specified object an env.
-		internal void ProcessPartRef(XmlNode frag, int hvo, IVwEnv vwenv)
+		internal void ProcessPartRef(XElement frag, int hvo, IVwEnv vwenv)
 		{
 			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
-			XmlNode node;
+			XElement node;
 			if (layoutName == "$child")
 			{
 				// The contents are right here. This is mainly used for generated part refs.
@@ -2496,7 +2494,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal string PartRefSetupToProcessChildren(XmlNode frag, XmlNode node, int hvo, IVwEnv vwenv,
+		internal string PartRefSetupToProcessChildren(XElement frag, XElement node, int hvo, IVwEnv vwenv,
 			bool fSingleGramInfoFirst, out string flowType)
 		{
 			string style = XmlUtils.GetOptionalAttributeValue(frag, "style", null);
@@ -2546,7 +2544,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return style;
 		}
 
-		internal void PartRefWrapupAfterProcessChildren(XmlNode frag, IVwEnv vwenv, string flowType, string style)
+		internal void PartRefWrapupAfterProcessChildren(XElement frag, IVwEnv vwenv, string flowType, string style)
 		{
 			InsertLiteralString(frag, vwenv, "after", flowType, null); // don't need default style here, we're inside the main span for the property.
 			if (style != null || flowType != null)
@@ -2576,7 +2574,7 @@ namespace SIL.FieldWorks.Common.Controls
 					(vwenv as ConfiguredExport).EndCssClassIfNeeded(frag);
 		}
 
-		private void SetupSingleGramInfoFirst(XmlNode frag, XmlNode node, int hvo, IVwEnv vwenv)
+		private void SetupSingleGramInfoFirst(XElement frag, XElement node, int hvo, IVwEnv vwenv)
 		{
 			var seq = XmlUtils.GetFirstNonCommentChild(node);
 			if (seq == null || seq.Name != "seq")
@@ -2584,7 +2582,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int flid = GetFlid(seq, hvo);
 			var rghvo = ((ISilDataAccessManaged)vwenv.DataAccess).VecProp(hvo, flid);
 
-			XmlAttribute xaNum;
+			XAttribute xaNum;
 			var fNumber = XmlVcDisplayVec.SetNumberFlagIncludingSingleOption(frag, rghvo.Length, out xaNum);
 			if (!fNumber)
 				return;
@@ -2624,9 +2622,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// Display the first child (item in the vector) in a special mode which suppresses everything except the child
 		// marked singlegraminfofirst, to show the POS.
-		private bool DisplayFirstChildPos(int firstChildHvo, XmlNode parent, IVwEnv vwenv)
+		private bool DisplayFirstChildPos(int firstChildHvo, XElement parent, IVwEnv vwenv)
 		{
-			foreach (XmlNode gramInfoPartRef in parent.ChildNodes)
+			foreach (var gramInfoPartRef in parent.Elements())
 			{
 				if (XmlUtils.GetOptionalBooleanAttributeValue(gramInfoPartRef, "singlegraminfofirst", false))
 				{
@@ -2704,7 +2702,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return true;
 		}
 
-		private void HandleNestedIndentation(XmlNode frag, IVwEnv vwenv)
+		private void HandleNestedIndentation(XElement frag, IVwEnv vwenv)
 		{
 			if (!XmlUtils.GetOptionalBooleanAttributeValue(frag, "indent", false))
 				return;
@@ -2722,13 +2720,13 @@ namespace SIL.FieldWorks.Common.Controls
 				vwenv.set_IntProperty((int) FwTextPropType.ktptLeadingIndent, nVar, nVal);
 		}
 
-		private void DetermineNeededFieldsForPartRef(XmlNode frag, NeededPropertyInfo info)
+		private void DetermineNeededFieldsForPartRef(XElement frag, NeededPropertyInfo info)
 		{
 			string visibility = XmlUtils.GetOptionalAttributeValue(frag, "visibility", "always");
 			if (visibility == "never")
 				return;
 			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
-			XmlNode node;
+			XElement node;
 			if (layoutName == "$child")
 			{
 				// The contents are right here. This is mainly used for generated part refs.
@@ -2744,7 +2742,7 @@ namespace SIL.FieldWorks.Common.Controls
 			DetermineNeededFieldsForChildren(node, frag, info);
 		}
 
-		private void InsertLiteralString(XmlNode frag, IVwEnv vwenv, string attrName, string flowType, string defaultStyle)
+		private void InsertLiteralString(XElement frag, IVwEnv vwenv, string attrName, string flowType, string defaultStyle)
 		{
 			// When showasindentedpara is set true, the before string is displayed elsewhere, and the after
 			// string is not displayed at all.  (Those are the only literal strings that use this method.)
@@ -2815,11 +2813,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="whereFrom"></param>
 		/// <returns></returns>
-		string NodeIdentifier(XmlNode whereFrom)
+		string NodeIdentifier(XElement whereFrom)
 		{
 			var partRef = whereFrom;
 			while (partRef != null && partRef.Name != "part")
-				partRef = partRef.ParentNode;
+				partRef = partRef.Parent;
 			if (partRef == null)
 				return "";
 			Debug.Assert(m_stackPartRef.Count == 0 || partRef == m_stackPartRef[0], "PartRef " + XmlUtils.GetOptionalAttributeValue(partRef,"ref","NoRefFound") + " is not the first in the stack");
@@ -2830,23 +2828,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// See if we have one up the stack that is good.
 				partRef = m_stackPartRef[i++];
 			}
-			//if (XmlUtils.GetOptionalBooleanAttributeValue(partRef, "hideConfig", false))
-			//{
-			//    // No good telling the user about this part ref, he can't select it.
-			//    // See if we have one up the stack that is good.
-			//    for (int i =1; i < m_stackPartRef.Count; i++)
-			//    {
-			//        XmlNode parentPartRef = m_stackPartRef[i];
-			//        if (parentPartRef == partRef)
-			//            continue;
-			//        if (!XmlUtils.GetOptionalBooleanAttributeValue(parentPartRef, "hideConfig", false))
-			//        {
-			//            partRef = parentPartRef;
-			//            break; // got closest parent that is NOT hidden.
-			//        }
-			//    }
-			//}
-			var layout = partRef.ParentNode;
+			var layout = partRef.Parent;
 			var partRefId = XmlUtils.GetOptionalAttributeValue(partRef, "ref");
 			if (partRefId == null)
 			{
@@ -2861,11 +2843,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 
 		/// <summary>
-		/// Pass the string to the vwenv, but first, set a property that identifies the XmlNode from which it was generated.
+		/// Pass the string to the vwenv, but first, set a property that identifies the XElement from which it was generated.
 		/// Using ktptBulNumTxtBef is a kludge. It saves inventing a new property, since bullet/number stuff is not relevant
 		/// to sub-paragraph runs.
 		/// </summary>
-		internal void AddMarkedString(IVwEnv vwenv, XmlNode whereFrom, ITsString tss)
+		internal void AddMarkedString(IVwEnv vwenv, XElement whereFrom, ITsString tss)
 		{
 			if (IdentifySource)
 			{
@@ -2878,11 +2860,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Pass the string to the vwenv, but first, set a property that identifies the XmlNode from which it was generated.
+		/// Pass the string to the vwenv, but first, set a property that identifies the XElement from which it was generated.
 		/// Using ktptBulNumTxtBef is a kludge. It saves inventing a new property, since bullet/number stuff is not relevant
 		/// to sub-paragraph runs.
 		/// </summary>
-		internal void AddMarkedString(IVwEnv vwenv, XmlNode whereFrom, string input, int ws)
+		internal void AddMarkedString(IVwEnv vwenv, XElement whereFrom, string input, int ws)
 		{
 			var bldr = TsIncStrBldrClass.Create();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
@@ -2892,7 +2874,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.AddString(bldr.GetString());
 		}
 
-		internal void MarkSource(IVwEnv vwenv, XmlNode whereFrom)
+		internal void MarkSource(IVwEnv vwenv, XElement whereFrom)
 		{
 			if (!IdentifySource)
 				return;
@@ -2901,7 +2883,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.set_StringProperty((int)FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));
 		}
 
-		internal void MarkSource(ITsPropsBldr tpb, XmlNode whereFrom)
+		internal void MarkSource(ITsPropsBldr tpb, XElement whereFrom)
 		{
 			if (!IdentifySource)
 				return;
@@ -2916,7 +2898,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal ITsString GetDelayedNumber(XmlNode frag, bool fTest)
+		internal ITsString GetDelayedNumber(XElement frag, bool fTest)
 		{
 			ITsString tssNumber = null;
 			if (DelayedNumberExists)
@@ -2935,7 +2917,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return tssNumber;
 		}
 
-		internal void AddStringFromOtherObj(XmlNode frag, int hvoTarget, IVwEnv vwenv, XmlNode caller)
+		internal void AddStringFromOtherObj(XElement frag, int hvoTarget, IVwEnv vwenv, XElement caller)
 		{
 			int flid = GetFlid(frag, hvoTarget);
 			CellarPropertyType itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
@@ -3011,7 +2993,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This depends on whether the caller has filtering information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void AddObject(XmlNode frag, IVwEnv vwenv, int flid, int fragId, XmlNode caller, int hvo)
+		private void AddObject(XElement frag, IVwEnv vwenv, int flid, int fragId, XElement caller, int hvo)
 		{
 			if (caller != null)
 			{
@@ -3084,16 +3066,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This depends on whether the target fragment has delimiter info.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void AddObjectVector(XmlNode frag, IVwEnv vwenv, int flid, int fragId, XmlNode caller)
+		private void AddObjectVector(XElement frag, IVwEnv vwenv, int flid, int fragId, XElement caller)
 		{
-			XmlNode itemDecorationNode;
-			XmlNode sequenceOptionNode;
+			XElement sequenceOptionNode;
 			// seq stuff on the frag node
-			itemDecorationNode = sequenceOptionNode = frag;
+			var itemDecorationNode = sequenceOptionNode = frag;
 			if (XmlUtils.GetOptionalBooleanAttributeValue(itemDecorationNode, "inheritSeps", false))
 				itemDecorationNode = caller;
-			XmlAttribute xaSep = itemDecorationNode == null ? null : itemDecorationNode.Attributes["sep"];
-			XmlAttribute xaNum = itemDecorationNode == null ? null : itemDecorationNode.Attributes["number"];
+			var xaSep = itemDecorationNode == null ? null : itemDecorationNode.Attribute("sep");
+			var xaNum = itemDecorationNode == null ? null : itemDecorationNode.Attribute("number");
 			// Note that we deliberately don't use itemDecorationNode here. "excludeHvo" is not a separator property,
 			// nor configurable, so it belongs on the 'seq' element, not the part ref.
 			var exclude = XmlUtils.GetOptionalAttributeValue(sequenceOptionNode, "excludeHvo", null);
@@ -3202,7 +3183,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache, ISilDataAccess sda, XElement caller)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, caller);
 		}
@@ -3215,7 +3196,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda)
+		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache, ISilDataAccess sda)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, null);
 		}
@@ -3227,7 +3208,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache)
+		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache)
 		{
 			return ConditionPasses(null, frag, hvo, cache, cache.DomainDataByFlid, null);
 		}
@@ -3239,7 +3220,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag">xml node</param>
 		/// <param name="hvo">object hvo</param>
 		/// <param name="sda">The sda.</param>
-		public static void GetActualTarget(XmlNode frag, ref int hvo, ISilDataAccess sda)
+		public static void GetActualTarget(XElement frag, ref int hvo, ISilDataAccess sda)
 		{
 			var target = XmlUtils.GetOptionalAttributeValue(frag, "target", "this");
 			switch (target.ToLower())
@@ -3279,7 +3260,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, FdoCache cache, ISilDataAccess sda, XElement caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3302,7 +3283,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static bool BidiConditionPasses(XmlNode frag, FdoCache cache)
+		private static bool BidiConditionPasses(XElement frag, FdoCache cache)
 		{
 			string sBidi = XmlUtils.GetOptionalAttributeValue(frag, "bidi");
 			if (sBidi != null)
@@ -3328,8 +3309,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache,
-			ISilDataAccess sda, XmlNode caller)
+		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XElement frag, int hvo, FdoCache cache,
+			ISilDataAccess sda, XElement caller)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
 				return false;
@@ -3361,7 +3342,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.NoteDependency(new int[] { hvo }, new int[] { flid }, 1);
 		}
 
-		static private int GetValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private int GetValueFromCache(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
@@ -3370,7 +3351,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return sda.get_IntProp(hvo, flid);
 		}
 
-		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool GetBoolValueFromCache(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
@@ -3387,7 +3368,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool IntEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IntEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			int intValue = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -2);	// -2 might be valid
 			int intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -3);	// -3 might be valid
@@ -3408,7 +3389,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool IntGreaterConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IntGreaterConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			int intValue = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -2);	// -2 might be valid
 			int intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -3);	// -3 might be valid
@@ -3429,7 +3410,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool IntLessConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IntLessConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			int intValue = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -2);	// -2 might be valid
 			int intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -3);	// -3 might be valid
@@ -3450,7 +3431,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool IntMemberOfConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IntMemberOfConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string stringValue = XmlUtils.GetOptionalAttributeValue(frag, "intmemberof");
 			if (stringValue == null)
@@ -3481,7 +3462,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool FlidEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool FlidEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string sFlid = XmlUtils.GetOptionalAttributeValue(frag, "flidequals");
 			if (sFlid == null)
@@ -3503,7 +3484,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool HvoEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool HvoEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string sHvo = XmlUtils.GetOptionalAttributeValue(frag, "hvoequals");
 			if (sHvo == null)
@@ -3554,9 +3535,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool GuidEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool GuidEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
-			XmlAttribute xa = frag.Attributes["guidequals"];
+			var xa = frag.Attribute("guidequals");
 			if (xa == null)
 				return true;
 
@@ -3581,7 +3562,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool BoolEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool BoolEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string boolValue = XmlUtils.GetOptionalAttributeValue(frag, "boolequals", "notFound");	// must be either 'true' or 'false'.
 			if (boolValue != "notFound")
@@ -3610,8 +3591,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		static private bool StringAltEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo,
-			FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		static private bool StringAltEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo,
+			FdoCache cache, ISilDataAccess sda, XElement caller)
 		{
 			string stringAltValue = XmlUtils.GetOptionalAttributeValue(frag, "stringaltequals");
 			if (stringAltValue != null)
@@ -3667,7 +3648,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool StringEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool StringEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string stringValue = XmlUtils.GetOptionalAttributeValue(frag, "stringequals");
 			if (stringValue != null)
@@ -3702,7 +3683,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool LengthConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool LengthConditionsPass(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
 			// Class of object condition passes, if any.
 			int maxlen = XmlUtils.GetOptionalIntegerValue(frag, "lengthatmost", -1);
@@ -3750,7 +3731,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// 	<c>true</c> if [is condition passes] [the specified frag]; otherwise, <c>false</c>.
 		/// </returns>
-		static private bool IsConditionPasses(XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IsConditionPasses(XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string className = XmlUtils.GetOptionalAttributeValue(frag, "is");
 			if (className != null)
@@ -3791,7 +3772,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// 	<c>true</c> if [is conditions pass] [the specified frag]; otherwise, <c>false</c>.
 		/// </returns>
-		static private bool IsConditionsPass(XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool IsConditionsPass(XElement frag, int hvo, ISilDataAccess sda)
 		{
 			if (!IsConditionPasses(frag, hvo, sda))
 				return false;
@@ -3808,7 +3789,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		static private bool AtLeastOneIsConditionPasses(XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool AtLeastOneIsConditionPasses(XElement frag, int hvo, ISilDataAccess sda)
 		{
 			string className = XmlUtils.GetOptionalAttributeValue(frag, "atleastoneis");
 			if (className != null)
@@ -3855,9 +3836,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node">The node.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected VwRule GetRules(XmlNode node)
+		protected VwRule GetRules(XElement node)
 		{
-			XmlAttribute xa = node.Attributes["rules"];
+			var xa = node.Attribute("rules");
 			if (xa == null)
 				return VwRule.kvrlNone;
 			switch (xa.Value)
@@ -3882,9 +3863,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		protected VwAlignment GetAlignment(XmlNode node)
+		protected VwAlignment GetAlignment(XElement node)
 		{
-			XmlAttribute xa = node.Attributes["alignment"];
+			var xa = node.Attribute("alignment");
 			if (xa == null)
 				return VwAlignment.kvaLeft;
 			switch (xa.Value)
@@ -3907,9 +3888,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		protected VwFramePosition GetFramePositions(XmlNode node)
+		protected VwFramePosition GetFramePositions(XElement node)
 		{
-			XmlAttribute xa = node.Attributes["frame"];
+			var xa = node.Attribute("frame");
 			if (xa == null)
 				return VwFramePosition.kvfpVoid; // no frame
 			switch (xa.Value)
@@ -3995,9 +3976,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="defVal"></param>
 		/// <param name="hvo"></param>
 		/// <returns></returns>
-		protected int GetIntVal(XmlNode node, string attr, int defVal, int hvo)
+		protected int GetIntVal(XElement node, string attr, int defVal, int hvo)
 		{
-			XmlAttribute xa = node.Attributes[attr];
+			var xa = node.Attribute(attr);
 			if (xa == null)
 				return defVal;
 			if (xa.Value.IndexOf("%") == 0)
@@ -4028,7 +4009,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flid">The flid.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected bool TryGetFlid(XmlNode frag, int hvo, out int flid)
+		protected bool TryGetFlid(XElement frag, int hvo, out int flid)
 		{
 			flid = 0;
 			try
@@ -4054,7 +4035,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected int GetFlid(XmlNode frag, int hvo)
+		protected int GetFlid(XElement frag, int hvo)
 		{
 			return GetFlid(frag, hvo, m_sda);
 		}
@@ -4066,7 +4047,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		public static int GetFlid(XmlNode frag, int hvo, ISilDataAccess sda)
+		public static int GetFlid(XElement frag, int hvo, ISilDataAccess sda)
 		{
 			return GetFlid(frag, hvo, sda, true);
 		}
@@ -4079,13 +4060,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda"></param>
 		/// <param name="fRequired">a flid value is required, so throw if you can't get one</param>
 		/// <returns></returns>
-		public static int GetFlid(XmlNode frag, int hvo, ISilDataAccess sda, bool fRequired)
+		public static int GetFlid(XElement frag, int hvo, ISilDataAccess sda, bool fRequired)
 		{
 			int flid = 0;
 			try
 			{
 				var mdc = sda.MetaDataCache;
-				XmlAttribute xa = frag.Attributes["flid"];
+				XAttribute xa = frag.Attribute("flid");
 				if (xa == null)
 				{
 					if (mdc == null)
@@ -4192,7 +4173,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// true, if the node refers to a custom field, false if it does not.
 		/// </returns>
-		public bool TryCustomField(ISilDataAccess sda, XmlNode node, int hvo, out int flid)
+		public bool TryCustomField(ISilDataAccess sda, XElement node, int hvo, out int flid)
 		{
 			flid = 0;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(node, "field");
@@ -4220,7 +4201,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else
 				{
-					XmlNode xnParent = node.ParentNode;
+					var xnParent = node.Parent;
 					if (xnParent != null && xnParent.Name == "part")
 					{
 						string sId = XmlUtils.GetAttributeValue(xnParent, "id");
@@ -4240,14 +4221,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// object.
 		/// </summary>
 		/// <returns>-1 (and hvo 0) if some property along the path is empty.</returns>
-		protected static int GetFlidAndHvo(IVwEnv vwenv, XmlNode frag, ref int hvo, ISilDataAccess sda)
+		protected static int GetFlidAndHvo(IVwEnv vwenv, XElement frag, ref int hvo, ISilDataAccess sda)
 		{
 			try
 			{
 
 				int flid = 0;
 				IFwMetaDataCache mdc = sda.MetaDataCache;
-				XmlAttribute xa = frag.Attributes["flid"];
+				var xa = frag.Attribute("flid");
 				if (xa == null)
 				{
 					if (mdc == null)
@@ -4281,15 +4262,10 @@ namespace SIL.FieldWorks.Common.Controls
 								// Can only do this if it doesn't depend on the current object.
 								// (Hence we only do this here where there was an explicit "class" attribute,
 								// not in the branch where we looked up the class on the object.)
-								XmlNode xmldocT = frag;
-								while (xmldocT != null && !(xmldocT is XmlDocument))
-									xmldocT = xmldocT.ParentNode;
-								if (xmldocT != null)
+								var xmldocT = frag;
+								while (xmldocT != null)
 								{
-									XmlDocument xmldoc = (XmlDocument)xmldocT;
-									XmlAttribute xaT = xmldoc.CreateAttribute("flid");
-									xaT.Value = flid.ToString();
-									frag.Attributes.Prepend(xaT);
+									xmldocT = xmldocT.Parent;
 								}
 							}
 						}
@@ -4316,15 +4292,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public string GetLayoutName(XmlNode frag, XmlNode caller)
+		static public string GetLayoutName(XElement frag, XElement caller)
 		{
 			// New approach: find or allocate a unique integer that identifies this layout name.
 			// If there is a caller node, its "param" overrides the layout specified on the
 			// main frag
-			string layoutName = null;
 			if (caller != null)
 			{
-				layoutName = XmlUtils.GetOptionalAttributeValue(caller, "param");
+				var layoutName = XmlUtils.GetOptionalAttributeValue(caller, "param");
 				if (layoutName != null)
 				{
 					if (layoutName.Contains("{0}"))
@@ -4345,7 +4320,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the sub frag id.
 		/// </summary>
-		protected internal int GetSubFragId(XmlNode frag, XmlNode caller)
+		protected internal int GetSubFragId(XElement frag, XElement caller)
 		{
 			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
 			return GetId(new MainCallerDisplayCommand(frag, caller, false, WsForce), m_idToDisplayCommand, m_displayCommandToId);
@@ -4354,7 +4329,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the sub frag id for a sequence. Must retain information about m_stackPartRef in addition to the usual
 		/// </summary>
-		protected int GetSubFragIdSeq(XmlNode frag, XmlNode caller)
+		protected int GetSubFragIdSeq(XElement frag, XElement caller)
 		{
 			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
 			return GetId(new MainCallerDisplayCommandSeq(frag, caller, false, WsForce, m_stackPartRef), m_idToDisplayCommand, m_displayCommandToId);
@@ -4369,7 +4344,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="caller">The caller.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void ProcessChildren(XmlNode frag, IVwEnv vwenv, int hvo, XmlNode caller)
+		public virtual void ProcessChildren(XElement frag, IVwEnv vwenv, int hvo, XElement caller)
 		{
 			ConfiguredExport configuredExport = null;
 
@@ -4390,17 +4365,17 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			foreach (XmlNode node in frag.ChildNodes)
+			foreach (XElement element in frag.Elements())
 			{
-				MainCallerDisplayCommand.PrintNodeTreeStep(hvo, node);
-				ProcessFrag(node, vwenv, hvo, true, caller);
+				MainCallerDisplayCommand.PrintNodeTreeStep(hvo, element);
+				ProcessFrag(element, vwenv, hvo, true, caller);
 			}
 			if (!String.IsNullOrEmpty(css))
 				configuredExport.EndCssClassIfNeeded(frag);
 		}
-		internal virtual void DetermineNeededFieldsForChildren(XmlNode frag, XmlNode caller, NeededPropertyInfo info)
+		internal virtual void DetermineNeededFieldsForChildren(XElement frag, XElement caller, NeededPropertyInfo info)
 		{
-			foreach (XmlNode node in frag.ChildNodes)
+			foreach (var node in frag.Elements())
 			{
 				DetermineNeededFieldsFor(node, caller, info);
 			}
@@ -4414,7 +4389,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void ProcessChildren(XmlNode frag, IVwEnv vwenv, int hvo)
+		public virtual void ProcessChildren(XElement frag, IVwEnv vwenv, int hvo)
 		{
 			ProcessChildren(frag, vwenv, hvo, null);
 		}
@@ -4427,7 +4402,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected int GetColCount(XmlNode frag, int hvo)
+		protected int GetColCount(XElement frag, int hvo)
 		{
 			return GetIntVal(frag, "columns", 2, hvo);
 		}
@@ -4440,19 +4415,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public virtual void ProcessColumnSpecs(XmlNode frag, IVwEnv vwenv, int hvo)
+		public virtual void ProcessColumnSpecs(XElement frag, IVwEnv vwenv, int hvo)
 		{
-			XmlNode columnsElement = frag["columns"];
-			XmlNodeList columns = null;
+			var columnsElement = frag.Element("columns");
+			IEnumerable<XElement> columns = null;
 			if (columnsElement != null)
-				columns = columnsElement.ChildNodes;
+				columns = columnsElement.Elements();
 			int colsSpeced = 0;
 			int colsTotal = GetColCount(frag, hvo);
 			if (columns != null)
 			{
-				foreach (XmlNode node in columns)
+				foreach (var node in columns)
 				{
 					colsSpeced += ProcessColumnSpec(node, vwenv, hvo, colsTotal);
 				}
@@ -4479,13 +4452,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		/// <param name="colsTotal"></param>
 		/// <returns></returns>
-		protected virtual int ProcessColumnSpec(XmlNode node, IVwEnv vwenv, int hvo, int colsTotal)
+		protected virtual int ProcessColumnSpec(XElement node, IVwEnv vwenv, int hvo, int colsTotal)
 		{
 			VwLength vlWidth;
 			vlWidth.nVal = XmlUtils.GetOptionalIntegerValue(node, "width", 1000 / colsTotal);
 			vlWidth.unit = VwUnit.kunPercent100;
 			int ncols = XmlUtils.GetOptionalIntegerValue(node, "count", 1);
-			switch (node.Name)
+			switch (node.Name.LocalName)
 			{
 				case "column":
 					vwenv.MakeColumns(ncols, vlWidth);
@@ -4495,8 +4468,6 @@ namespace SIL.FieldWorks.Common.Controls
 					break;
 				default:
 					ncols = 0;
-					if (!(node is XmlComment))
-						throw new ApplicationException("Only column, group, or XML Comment elements allowed in columns element.");
 					break;
 			}
 			return ncols;
@@ -4509,12 +4480,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag">The frag.</param>
 		/// <param name="vwenv">The vwenv.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void ProcessProperties(XmlNode frag, IVwEnv vwenv)
+		public static void ProcessProperties(XElement frag, IVwEnv vwenv)
 		{
-			XmlNode props = XmlUtils.GetFirstNonCommentChild(frag);
+			var props = XmlUtils.GetFirstNonCommentChild(frag);
 			if (props != null && props.Name == "properties")
 			{
-				foreach (XmlNode node in props.ChildNodes)
+				foreach (var node in props.Elements())
 				{
 					ProcessProperty(node, vwenv);
 				}
@@ -4530,7 +4501,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static string GetPropVal(XmlNode node)
+		public static string GetPropVal(XElement node)
 		{
 			return XmlUtils.GetOptionalAttributeValue(node, "value");
 		}
@@ -4542,9 +4513,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node">The node.</param>
 		/// <param name="vwenv">The vwenv.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void ProcessProperty(XmlNode node, IVwEnv vwenv)
+		public static void ProcessProperty(XElement node, IVwEnv vwenv)
 		{
-			switch (node.Name)
+			switch (node.Name.LocalName)
 			{
 				case "fontfamily":
 					{
@@ -4804,7 +4775,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return val;
 		}
 
-		static int MillipointVal(XmlNode node)
+		static int MillipointVal(XElement node)
 		{
 			return Convert.ToInt32(GetPropVal(node));
 		}
@@ -4814,7 +4785,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		static int OnOffInvert(XmlNode node)
+		static int OnOffInvert(XElement node)
 		{
 			string strVal = GetPropVal(node);
 			int val = (int)FwTextToggleVal.kttvForceOn; // default
@@ -4842,7 +4813,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		static int ColorVal(XmlNode node)
+		static int ColorVal(XElement node)
 		{
 			string val = GetPropVal(node);
 			if (val[0] == '(')
@@ -4857,7 +4828,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Color col = Color.FromName(val);
 			return col.R + (col.B * 256 + col.G) * 256;
 		}
-		static int Alignment(XmlNode node)
+		static int Alignment(XElement node)
 		{
 			string val = GetPropVal(node);
 			switch (val)
@@ -4877,7 +4848,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return (int)FwTextAlign.ktalLeading; // default
 		}
-		static int GetEditable(XmlNode node)
+		static int GetEditable(XElement node)
 		{
 			switch (GetPropVal(node))
 			{
@@ -4920,21 +4891,21 @@ namespace SIL.FieldWorks.Common.Controls
 			// Default does nothing.
 		}
 
-		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo)
+		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
 		{
 			++MainCallerDisplayCommand.displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo);
 			--MainCallerDisplayCommand.displayLevel;
 		}
 
-		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo, XmlNode caller)
+		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo, XElement caller)
 		{
 			++MainCallerDisplayCommand.displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo, caller);
 			--MainCallerDisplayCommand.displayLevel;
 		}
 		// Gather up info about what fields are needed for the specified node.
-		internal void DetermineNeededFieldsForChildren(XmlVc vc, XmlNode node, XmlNode caller,
+		internal void DetermineNeededFieldsForChildren(XmlVc vc, XElement node, XElement caller,
 			NeededPropertyInfo info)
 		{
 			vc.DetermineNeededFieldsForChildren(node, caller, info);
@@ -4943,11 +4914,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 	/// <summary>
 	/// This class implements PerformDisplay by having the VC directly ProcessFrag
-	/// on an XmlNode that it stores.
+	/// on an XElement that it stores.
 	/// </summary>
 	public class NodeDisplayCommand : DisplayCommand
 	{
-		XmlNode m_node;
+		XElement m_node;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -4955,7 +4926,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public NodeDisplayCommand(XmlNode node)
+		public NodeDisplayCommand(XElement node)
 		{
 			m_node = node;
 		}
@@ -4966,7 +4937,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The node.</value>
 		/// ------------------------------------------------------------------------------------
-		public XmlNode Node
+		public XElement Node
 		{
 			get { return m_node; }
 		}
@@ -4977,7 +4948,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (logStream != null)
 			{
 
-				logStream.WriteLine("Display " + hvo + " using " + m_node.OuterXml);
+				logStream.WriteLine("Display " + hvo + " using " + m_node);
 				logStream.IncreaseIndent();
 			}
 
@@ -5035,7 +5006,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public NodeChildrenDisplayCommand(XmlNode node)
+		public NodeChildrenDisplayCommand(XElement node)
 			: base(node)
 		{
 		}
@@ -5083,15 +5054,15 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	[DebuggerDisplay("main={m_mainNode.Name},caller={m_caller.Name}")]
+	[DebuggerDisplay("main={m_mainElement.Name},caller={m_caller.Name}")]
 	internal class MainCallerDisplayCommand : DisplayCommand
 	{
 		// The main node, usually one that has a "layout" attribute; obj or seq.
-		XmlNode m_mainNode;
+		XElement m_mainElement;
 
 		// A calling node, which may (if non-null) have a "param" attribute that overrides
 		// the "layout" one in m_mainNode; part ref.
-		XmlNode m_caller;
+		XElement m_caller;
 
 		// If true, bypass the normal strategy, and call ProcessFrag
 		// using the given hvo and m_mainNode as the fragment.
@@ -5103,20 +5074,20 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private int m_wsForce;
 
-		internal MainCallerDisplayCommand(XmlNode mainNode, XmlNode caller, bool fUserMainAsFrag, int wsForce)
+		internal MainCallerDisplayCommand(XElement mainElement, XElement caller, bool fUserMainAsFrag, int wsForce)
 		{
-			m_mainNode = mainNode;
+			m_mainElement = mainElement;
 			m_caller = caller;
 			m_fUseMainAsFrag = fUserMainAsFrag;
 			m_wsForce = wsForce;
 		}
 
-		internal XmlNode MainNode
+		internal XElement MainElement
 		{
-			get { return m_mainNode; }
+			get { return m_mainElement; }
 		}
 
-		internal XmlNode Caller
+		internal XElement Caller
 		{
 			get { return m_caller; }
 		}
@@ -5132,7 +5103,7 @@ namespace SIL.FieldWorks.Common.Controls
 			MainCallerDisplayCommand other = obj as MainCallerDisplayCommand;
 			if (other == null)
 				return false;
-			return other.m_mainNode == m_mainNode
+			return other.m_mainElement == m_mainElement
 				&& other.m_caller == m_caller
 				&& other.m_fUseMainAsFrag == m_fUseMainAsFrag
 				&& other.m_wsForce == m_wsForce;
@@ -5141,7 +5112,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Make it work sensibly as a hash key.
 		public override int GetHashCode()
 		{
-			return m_mainNode.GetHashCode()
+			return m_mainElement.GetHashCode()
 				+ (m_fUseMainAsFrag ? 1 : 0)
 				+ (m_caller == null ? 0 : m_caller.GetHashCode())
 				+ m_wsForce;
@@ -5152,7 +5123,7 @@ namespace SIL.FieldWorks.Common.Controls
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
 			string layoutName;
-			XmlNode node = GetNodeForChild(out layoutName, fragId, vc, hvo);
+			var node = GetNodeForChild(out layoutName, fragId, vc, hvo);
 			var oldWsForce = vc.WsForce;
 			ISimpleLogger logStream = vc.LogStream;
 			try
@@ -5166,8 +5137,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (logStream != null)
 				{
-					logStream.WriteLine("Display " + hvo + " using layout " + layoutName + " which found " +
-										node.OuterXml);
+					logStream.WriteLine("Display " + hvo + " using layout " + layoutName + " which found " + node);
 					logStream.IncreaseIndent();
 				}
 				string flowType = null;
@@ -5245,7 +5215,7 @@ namespace SIL.FieldWorks.Common.Controls
 				logStream.DecreaseIndent();
 		}
 
-		internal static void PrintNodeTreeStep(int hvo, XmlNode node)
+		internal static void PrintNodeTreeStep(int hvo, XElement node)
 		{
 			//string indent = "";
 			//for(int i = 0; i < displayLevel; ++i)
@@ -5262,14 +5232,14 @@ namespace SIL.FieldWorks.Common.Controls
 			if (clsid == 0)
 				return; // or assert? an object prop should have a dest class.
 			string layoutName;
-			XmlNode node = GetNodeForChildClass(out layoutName, fragId, vc, clsid);
+			var node = GetNodeForChildClass(out layoutName, fragId, vc, clsid);
 			DetermineNeededFieldsForChildren(vc, node, null, info);
 		}
 
-		internal XmlNode GetNodeForChild(out string layoutName, int fragId, XmlVc vc, int hvo)
+		internal XElement GetNodeForChild(out string layoutName, int fragId, XmlVc vc, int hvo)
 		{
-			XmlNode node = null;
-			XmlNode callingFrag = null;
+			XElement node;
+			XElement callingFrag;
 			layoutName = null;
 			layoutName = GetLayoutName(out callingFrag, out node);
 			if (node == null)
@@ -5287,10 +5257,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vc"></param>
 		/// <param name="clsid"></param>
 		/// <returns></returns>
-		internal XmlNode GetNodeForChildClass(out string layoutName, int fragId, XmlVc vc, int clsid)
+		internal XElement GetNodeForChildClass(out string layoutName, int fragId, XmlVc vc, int clsid)
 		{
-			XmlNode node = null;
-			XmlNode callingFrag = null;
+			XElement node = null;
+			XElement callingFrag = null;
 			layoutName = null;
 			layoutName = GetLayoutName(out callingFrag, out node);
 			if (node == null)
@@ -5299,16 +5269,16 @@ namespace SIL.FieldWorks.Common.Controls
 			return node;
 		}
 
-		internal virtual string GetLayoutName(out XmlNode callingFrag, out XmlNode node)
+		internal virtual string GetLayoutName(out XElement callingFrag, out XElement node)
 		{
 			string layoutName = null;
 			node = null;
-			callingFrag = (XmlNode)this.MainNode;
-			if (this.UseMainAsFrag)
+			callingFrag = MainElement;
+			if (UseMainAsFrag)
 				node = callingFrag;
 			else
 			{
-				XmlNode caller = (XmlNode)this.Caller;
+				var caller = Caller;
 				layoutName = XmlVc.GetLayoutName(callingFrag, caller);
 			}
 			return layoutName;
@@ -5321,9 +5291,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class MainCallerDisplayCommandSeq : MainCallerDisplayCommand
 	{
-		private XmlNode[] m_stackPartRef;
-		internal MainCallerDisplayCommandSeq(XmlNode mainNode, XmlNode caller, bool fUserMainAsFrag, int wsForce, List<XmlNode> stackPartRef)
-			: base(mainNode, caller, fUserMainAsFrag, wsForce)
+		private XElement[] m_stackPartRef;
+		internal MainCallerDisplayCommandSeq(XElement mainElement, XElement caller, bool fUserMainAsFrag, int wsForce, List<XElement> stackPartRef)
+			: base(mainElement, caller, fUserMainAsFrag, wsForce)
 		{
 			m_stackPartRef = stackPartRef.ToArray();
 		}
@@ -5386,7 +5356,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
-			XmlNode node = vc.GetNodeForPart(hvo, m_rootLayoutName, true);
+			var node = vc.GetNodeForPart(hvo, m_rootLayoutName, true);
 			ProcessChildren(fragId, vc, vwenv, node, hvo);
 		}
 
@@ -5400,7 +5370,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal virtual void DetermineNeededFieldsForClass(XmlVc vc, int fragId, int clsid, NeededPropertyInfo info)
 		{
-			XmlNode node = vc.GetNodeForPart(m_rootLayoutName, true, clsid);
+			var node = vc.GetNodeForPart(m_rootLayoutName, true, clsid);
 			DetermineNeededFieldsForChildren(vc, node, null, info);
 		}
 
@@ -5415,7 +5385,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return base.GetHashCode() + m_rootLayoutName.GetHashCode();
 		}
 
-		internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo)
+		internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
 		{
 			// If available, apply defaults from 'Normal' to everything.
 			IVwStylesheet styleSheet = m_rootSite.StyleSheet;
@@ -5440,7 +5410,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 		}
 
-		internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo)
+		internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
 		{
 			// Suppress editing for the whole view. Easiest thing is to insert another div.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
@@ -5455,9 +5425,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ReadOnlyConditionalRootDisplayCommand : ReadOnlyRootDisplayCommand
 	{
-		XmlNode m_condition;
+		XElement m_condition;
 		private ISilDataAccess m_sda;
-		public ReadOnlyConditionalRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite, XmlNode condition, ISilDataAccess sda)
+		public ReadOnlyConditionalRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite, XElement condition, ISilDataAccess sda)
 			: base(rootLayoutName, rootSite)
 		{
 			m_condition = condition;
@@ -5500,8 +5470,8 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		int m_ws;
 		int m_tag;
-		private XmlNode m_caller;
-		public DisplayStringAltCommand(int tag, int ws, XmlNode caller)
+		private XElement m_caller;
+		public DisplayStringAltCommand(int tag, int ws, XElement caller)
 		{
 			m_tag = tag;
 			m_ws = ws;
@@ -5610,9 +5580,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ObjLocalCommand : DisplayCommand
 	{
-		XmlNode m_objLocal;
-		XmlNode m_caller;
-		public ObjLocalCommand(XmlNode objLocal, XmlNode caller)
+		XElement m_objLocal;
+		XElement m_caller;
+		public ObjLocalCommand(XElement objLocal, XElement caller)
 		{
 			m_objLocal = objLocal;
 			m_caller = caller;
@@ -5639,7 +5609,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return other.m_caller == m_caller && other.m_objLocal == m_objLocal;
 		}
 
-		int HashOrZero(XmlNode node)
+		int HashOrZero(XElement node)
 		{
 			if (node == null)
 				return 0;

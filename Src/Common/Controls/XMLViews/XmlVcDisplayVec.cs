@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The number part ref that is either current when we call OutputItemNumber, or that
 		/// was current when we set tssDelayedNumber.
 		/// </summary>
-		private XmlNode m_numberPartRef;
+		private XElement m_numberPartRef;
 		int m_hvoDelayedNumber;
 
 		#endregion
@@ -102,9 +102,9 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 
-			XmlNode listDelimitNode; // has the list seps attrs like 'sep'
-			XmlNode specialAttrsNode;  // has the more exotic ones like 'excludeHvo'
-			listDelimitNode = specialAttrsNode = dispInfo.MainNode;
+			XElement listDelimitNode; // has the list seps attrs like 'sep'
+			XElement specialAttrsNode;  // has the more exotic ones like 'excludeHvo'
+			listDelimitNode = specialAttrsNode = dispInfo.MainElement;
 			// 'inheritSeps' attr means to use the 'caller' (the part ref node)
 			// to get the separator information.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "inheritSeps", false))
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string exclude = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "excludeHvo", null);
 			var fFirstOnly = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode, "firstOnly", false);
 
-			XmlAttribute xaNum;
+			XAttribute xaNum;
 			var fNumber = SetNumberFlagIncludingSingleOption(listDelimitNode, chvo, out xaNum);
 
 			ApplySortingIfSpecified(rghvo, specialAttrsNode);
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			// Setup and run actual internal vector loop
-			var xattrSeparator = listDelimitNode.Attributes["sep"];
+			var xattrSeparator = listDelimitNode.Attribute("sep");
 			var fFirst = true; // May actually mean first non-empty.
 			WrapParagraphDisplayCommand tempCommand = null;
 			int tempId = 0;
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// end of Display method
 		}
 
-		private void AddItemEmbellishments(XmlNode listDelimitNode, bool fNumber, int hvo, int ihvo, XmlAttribute xaNum, ITsTextProps ttpNum, bool fDelayNumber, ref ITsString tssDelayedNumber)
+		private void AddItemEmbellishments(XElement listDelimitNode, bool fNumber, int hvo, int ihvo, XAttribute xaNum, ITsTextProps ttpNum, bool fDelayNumber, ref ITsString tssDelayedNumber)
 		{
 			// add the numbering if needed.
 			if (fNumber)
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private ITsString SetBeforeString(XmlNode specialAttrsNode, XmlNode listDelimitNode)
+		private ITsString SetBeforeString(XElement specialAttrsNode, XElement listDelimitNode)
 		{
 			ITsString tssBefore = null;
 			string sBefore = XmlUtils.GetLocalizedAttributeValue(listDelimitNode, "before", null);
@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return tssBefore;
 		}
 
-		private static ITsString ApplyStyleToBeforeString(XmlNode listDelimitNode, ITsString tssBefore)
+		private static ITsString ApplyStyleToBeforeString(XElement listDelimitNode, ITsString tssBefore)
 		{
 			var sStyle = XmlUtils.GetAttributeValue(listDelimitNode, "beforeStyle");
 			if (!String.IsNullOrEmpty(sStyle))
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return tssBefore;
 		}
 
-		private ITsString ApplyDelayedNumber(XmlNode specialAttrsNode, ITsString tssBefore)
+		private ITsString ApplyDelayedNumber(XElement specialAttrsNode, ITsString tssBefore)
 		{
 			var tssNumber = m_viewConstructor.GetDelayedNumber(
 				specialAttrsNode, m_vwEnv is TestCollectorEnv);
@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return tssBefore;
 		}
 
-		private ITsTextProps SetNumberTextProperties(int wsEng, XmlNode listDelimitNode)
+		private ITsTextProps SetNumberTextProperties(int wsEng, XElement listDelimitNode)
 		{
 			ITsTextProps ttpNum;
 			ITsPropsBldr tpb = TsPropsFactoryClass.Create().GetPropsBldr();
@@ -375,10 +375,10 @@ namespace SIL.FieldWorks.Common.Controls
 			return ttpNum;
 		}
 
-		internal static bool SetNumberFlagIncludingSingleOption(XmlNode listDelimitNode, int chvo, out XmlAttribute xaNum)
+		internal static bool SetNumberFlagIncludingSingleOption(XElement listDelimitNode, int chvo, out XAttribute xaNum)
 		{
 			Debug.Assert(listDelimitNode != null, "Node can not be null!");
-			xaNum = listDelimitNode.Attributes["number"];
+			xaNum = listDelimitNode.Attribute("number");
 			var flag = xaNum != null && !String.IsNullOrEmpty(xaNum.Value);
 			if (flag && chvo == 1)
 				flag = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "numsingle", false);
@@ -397,7 +397,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return chvo;
 		}
 
-		private void AddSeparatorIfNeeded(bool fFirst, XmlNode xaSep, XmlNode listDelimitNode, int ws)
+		private void AddSeparatorIfNeeded(bool fFirst, XAttribute xaSep, XElement listDelimitNode, int ws)
 		{
 			if (fFirst || xaSep == null)
 				return;
@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_viewConstructor.AddMarkedString(m_vwEnv, listDelimitNode, sSep, ws);
 		}
 
-		private void SetupParagraph(string sParaStyle, ITsString tssBefore, XmlNode listDelimitNode)
+		private void SetupParagraph(string sParaStyle, ITsString tssBefore, XElement listDelimitNode)
 		{
 			if (!String.IsNullOrEmpty(sParaStyle))
 				m_vwEnv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, sParaStyle);
@@ -467,7 +467,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//}
 		}
 
-		private void ApplySortingIfSpecified(int[] rghvo, XmlNode specialAttrsNode)
+		private void ApplySortingIfSpecified(int[] rghvo, XElement specialAttrsNode)
 		{
 			string sort = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "sort", null);
 			if (sort == null)
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 
 			string layoutName;
-			XmlNode node = command.GetNodeForChild(out layoutName, fragId, m_viewConstructor, hvo);
+			var node = command.GetNodeForChild(out layoutName, fragId, m_viewConstructor, hvo);
 			var keys = XmlViewsUtils.ChildKeys(m_cache, m_sda, node, hvo, Layouts,
 				command.Caller, m_viewConstructor.WsForce);
 			return AreAllKeysEmpty(keys);
@@ -741,8 +741,8 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="delayNumber"></param>
 			/// <param name="xaNum"></param>
 			/// <param name="ttpNum"></param>
-			public WrapParagraphDisplayCommand(int wrappedFragId, XmlVcDisplayVec creator, string paraStyle, ITsString before, XmlNode listDelimitNode,
-				bool number, bool delayNumber, XmlAttribute xaNum, ITsTextProps ttpNum)
+			public WrapParagraphDisplayCommand(int wrappedFragId, XmlVcDisplayVec creator, string paraStyle, ITsString before, XElement listDelimitNode,
+				bool number, bool delayNumber, XAttribute xaNum, ITsTextProps ttpNum)
 			{
 				WrappedFragId = wrappedFragId;
 				m_creator = creator;
@@ -758,11 +758,11 @@ namespace SIL.FieldWorks.Common.Controls
 			private readonly XmlVcDisplayVec m_creator;
 			private string m_paraStyle;
 			private ITsString m_tssBefore;
-			private XmlNode m_listDelimitNode;
+			private XElement m_listDelimitNode;
 			private bool m_numberItems;
 			private bool m_delayNumber;
 			public ITsString DelayedNumber;
-			private XmlAttribute m_xaNum;
+			private XAttribute m_xaNum;
 			private ITsTextProps m_ttpNum;
 
 			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)

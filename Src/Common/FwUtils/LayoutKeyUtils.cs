@@ -3,8 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text.RegularExpressions;
-using System.Xml;
-using SIL.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -67,9 +66,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="partRefNode"></param>
 		/// <returns></returns>
-		public static string GetPossibleLabelSuffix(XmlNode partRefNode)
+		public static string GetPossibleLabelSuffix(XElement partRefNode)
 		{
-			var label = partRefNode.GetOptionalStringAttribute(LabelAttr, string.Empty);
+			var label = Utils.XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty);
 			if (string.IsNullOrEmpty(label))
 				return string.Empty;
 			var regexp = new Regex(LabelRegExString);
@@ -85,9 +84,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="partRefNode"></param>
 		/// <returns></returns>
-		public static string GetPossibleParamSuffix(XmlNode partRefNode)
+		public static string GetPossibleParamSuffix(XElement partRefNode)
 		{
-			var param = partRefNode.GetOptionalStringAttribute(ParamAttr, string.Empty);
+			var param = Utils.XmlUtils.GetOptionalAttributeValue(partRefNode, ParamAttr, string.Empty);
 			if (string.IsNullOrEmpty(param))
 				return string.Empty;
 			var index = param.IndexOf(kcMarkNodeCopy);

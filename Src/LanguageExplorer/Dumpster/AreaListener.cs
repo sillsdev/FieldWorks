@@ -1083,7 +1083,7 @@ namespace LanguageExplorer.Dumpster
 			{
 				foreach (XmlNode node in nodes)
 				{
-					string value = XmlUtils.GetAttributeValue(node, "value", "???");
+					string value = XmlUtils.GetOptionalAttributeValue(node, "value", "???");
 					if (value == toolName)
 						return true;
 				}

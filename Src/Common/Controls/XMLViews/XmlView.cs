@@ -12,8 +12,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected string m_layoutName;
 		/// <summary></summary>
-		protected XmlNode m_xnSpec;
+		protected XElement m_xnSpec;
 		/// <summary></summary>
 		protected XmlVc m_xmlVc;
 		/// <summary></summary>
@@ -125,22 +125,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
 		/// </summary>
 		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="xml">The XML.</param>
-		/// ------------------------------------------------------------------------------------
-		public XmlView(int hvoRoot, string xml)
-		{
-			var docSpec = new XmlDocument();
-			docSpec.LoadXml(xml);
-			InitXmlViewRootSpec(hvoRoot, docSpec["XmlView"]);
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
-		/// </summary>
-		/// <param name="hvoRoot">The hvo root.</param>
 		/// <param name="xnSpec">The xn spec.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlView(int hvoRoot, XmlNode xnSpec)
+		public XmlView(int hvoRoot, XElement xnSpec)
 		{
 			InitXmlViewRootSpec(hvoRoot, xnSpec);
 		}
@@ -171,7 +158,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_sda = sda;
 		}
 
-		private void InitXmlViewRootSpec(int hvoRoot, XmlNode xnSpec)
+		private void InitXmlViewRootSpec(int hvoRoot, XElement xnSpec)
 		{
 			m_hvoRoot = hvoRoot;
 			Debug.Assert(xnSpec != null, "Creating an XMLView with null spec");

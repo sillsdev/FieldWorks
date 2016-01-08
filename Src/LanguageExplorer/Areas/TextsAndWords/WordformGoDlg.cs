@@ -3,7 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -49,8 +50,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Justification = "searchEngine is disposed by the property table.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			var configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
+			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
 			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 

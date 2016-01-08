@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
@@ -80,9 +80,9 @@ namespace LanguageExplorer.Areas.Grammar
 
 			MsaInflectionFeatureListDlgLauncher ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
-			m_flid = MsaInflectionFeatureListDlgLauncherSlice.GetFlid(m_configurationNode, m_obj);
+			m_flid = GetFlid(m_configurationNode, m_obj);
 			if (m_flid != 0)
-				m_fs = MsaInflectionFeatureListDlgLauncherSlice.GetFeatureStructureFromMSA(m_obj, m_flid);
+				m_fs = GetFeatureStructureFromMSA(m_obj, m_flid);
 			else
 			{
 				m_fs = m_obj as IFsFeatStruc;
@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.Grammar
 		}
 
 		/// <summary />
-		protected static int GetFlid(XmlNode node, ICmObject obj)
+		protected static int GetFlid(XElement node, ICmObject obj)
 		{
 			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			int flid = 0;
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <param name="node"></param>
 		/// <param name="obj">object to check; should be an IFsFeatStruc</param>
 		/// <returns>true if the feature structure has content in FeatureSpecs; false otherwise</returns>
-		public static bool ShowSliceForVisibleIfData(XmlNode node, ICmObject obj)
+		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 
 			//FDO.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;

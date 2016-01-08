@@ -5,7 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class GhostReferenceVectorSlice : FieldSlice
 	{
-		public GhostReferenceVectorSlice(FdoCache cache, ICmObject obj, XmlNode configNode)
+		public GhostReferenceVectorSlice(FdoCache cache, ICmObject obj, XElement configNode)
 			: base(new GhostReferenceVectorLauncher(), cache, obj, GetFieldId(cache, configNode))
 		{
 		}
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		private static int GetFieldId(FdoCache cache, XmlNode configurationParameters)
+		private static int GetFieldId(FdoCache cache, XElement configurationParameters)
 		{
 			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostClass"),
 				XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostField"), true);
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				XmlNode parameters = ConfigurationNode.SelectSingleNode("deParams");
+				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 					return "analysis";
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				XmlNode parameters = ConfigurationNode.SelectSingleNode("deParams");
+				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 					return "";
 

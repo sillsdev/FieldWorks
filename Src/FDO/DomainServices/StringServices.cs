@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
@@ -490,6 +491,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Strips the 'magic' prefix that identifies a configurable WS parameter.
 		/// </summary>
 		public static string GetWsSpecWithoutPrefix(XmlNode spec)
+		{
+			return GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(spec, "ws"));
+		}
+
+		/// <summary>
+		/// Strips the 'magic' prefix that identifies a configurable WS parameter.
+		/// </summary>
+		public static string GetWsSpecWithoutPrefix(XElement spec)
 		{
 			return GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(spec, "ws"));
 		}

@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 
-			string paramType = XmlUtils.GetOptionalAttributeValue(m_configurationNode.ParentNode, "paramType");
+			string paramType = XmlUtils.GetOptionalAttributeValue(m_configurationNode.Parent, "paramType");
 			if (paramType == "LiteralString")
 			{
 				// Instead of the parameter being a layout name, it is literal text which will be

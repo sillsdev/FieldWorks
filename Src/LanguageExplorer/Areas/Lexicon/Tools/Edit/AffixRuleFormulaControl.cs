@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		// column that is scheduled to be removed
 		private IPhContextOrVar m_removeCol;
 
-		public AffixRuleFormulaControl(XmlNode configurationNode)
+		public AffixRuleFormulaControl(XElement configurationNode)
 			: base(configurationNode)
 		{
 		}

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -51,8 +50,8 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions)
-			: base(browseViewDefinitions)
+		public RecordBrowseView(XElement browseViewDefinitions, RecordClerk recordClerk)
+			: base(browseViewDefinitions, recordClerk)
 		{
 			Init();
 		}
@@ -341,7 +340,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.ReadParameters();
 			// TODO: Deal with Browse XML file?
-			// They are in the XmlNode: m_configurationParameters.
+			// They are in the XElement: m_configurationParametersElement.
 		}
 
 		protected override void SetupDataContext()
@@ -363,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 				hvo = Clerk.OwningObject.Hvo;
 			// We must update the list if needed BEFORE we create the actual view, otherwise, if it is trying
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
-			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "forceReloadListOnInitOrChangeRoot", false))
+			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "forceReloadListOnInitOrChangeRoot", false))
 			{
 				PropertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
@@ -372,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 				Clerk.UpdateList(false, true);
 			}
 
-			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, m_fakeFlid, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
@@ -457,7 +456,7 @@ namespace SIL.FieldWorks.XWorks
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
@@ -501,7 +500,7 @@ namespace SIL.FieldWorks.XWorks
 
 			string titleStr = "";
 			// See if we have an AlternativeTitle string table id for an alternate title.
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters,
+			string titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement,
 				"altTitleId");
 			if (titleId != null)
 			{
@@ -509,7 +508,7 @@ namespace SIL.FieldWorks.XWorks
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
 				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
-					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+					XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
 					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
@@ -520,8 +519,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (Clerk.OwningObject != null)
 			{
-				if (XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
-					"ShowOwnerShortname"))
+				if (XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					titleStr = Clerk.OwningObject.ShortName;
 				}
@@ -548,8 +546,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If we have a format attribute, format the title accordingly.
-			string sFmt = XmlUtils.GetAttributeValue(m_configurationParameters,
-				"TitleFormat");
+			string sFmt = XmlUtils.GetAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
 				 titleStr = String.Format(sFmt, titleStr);
@@ -599,7 +596,7 @@ namespace SIL.FieldWorks.XWorks
 			// all that the base method currently does is put the class name of the selected object
 			// into our information bar. If we're supposed to be showing the short name of the root
 			// object, that needs to be suppressed.
-			//			if (!XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+			//			if (!XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 			//				base.ShowRecord();
 			//			else
 			//SetInfoBarText();
@@ -835,7 +832,7 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordBrowseActiveView : RecordBrowseView
 	{
 
-		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -81,7 +82,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_vectorRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, displayWs);
 		}
 
-		public override System.Xml.XmlNode ConfigurationNode
+		public override XElement ConfigurationNode
 		{
 			get
 			{

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -23,35 +23,37 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	static public class LegacyConfigurationUtils
 	{
-		internal static void BuildTreeFromLayoutAndParts(XmlNode configurationLayoutsNode, ILayoutConverter converter)
+		internal static void BuildTreeFromLayoutAndParts(XElement configurationLayoutsNode, ILayoutConverter converter)
 		{
-			var layoutTypes = new List<XmlNode>();
-			layoutTypes.AddRange(configurationLayoutsNode.ChildNodes.OfType<XmlNode>().Where(x => x.Name == "layoutType"));
+			var layoutTypes = new List<XElement>();
+			layoutTypes.AddRange(configurationLayoutsNode.Elements().Where(x => x.Name.LocalName == "layoutType"));
 			Debug.Assert(layoutTypes.Count > 0);
-			var xnConfig = layoutTypes[0].SelectSingleNode("configure");
+			var xnConfig = layoutTypes[0].Element("configure");
 			Debug.Assert(xnConfig != null);
 			var configClass = XmlUtils.GetManditoryAttributeValue(xnConfig, "class");
 			foreach (var xn in converter.GetLayoutTypes())
 			{
-				var xnConfigure = xn.SelectSingleNode("configure");
+				var xnConfigure = xn.Element("configure");
 				if (XmlUtils.GetManditoryAttributeValue(xnConfigure, "class") == configClass)
+				{
 					layoutTypes.Add(xn);
+				}
 			}
 			foreach (var xnLayoutType in layoutTypes)
 			{
-				if (xnLayoutType is XmlComment || xnLayoutType.Name != "layoutType")
+				if (xnLayoutType.Name.LocalName != "layoutType")
 					continue;
-				string sLabel = XmlUtils.GetAttributeValue(xnLayoutType, "label");
+				var sLabel = XmlUtils.GetAttributeValue(xnLayoutType, "label");
 				if (sLabel == "$wsName") // if the label for the layout matches $wsName then this is a reversal index layout
 				{
 					string sLayout = XmlUtils.GetAttributeValue(xnLayoutType, "layout");
 					Debug.Assert(sLayout.EndsWith("-$ws"));
 					bool fReversalIndex = true;
-					foreach (XmlNode config in xnLayoutType.ChildNodes)
+					foreach (var config in xnLayoutType.Elements())
 					{
-						if (config is XmlComment || config.Name != "configure")
+						if (config.Name.LocalName != "configure")
 							continue;
-						string sClass = XmlUtils.GetAttributeValue(config, "class");
+						var sClass = XmlUtils.GetAttributeValue(config, "class");
 						if (sClass != "ReversalIndexEntry")
 						{
 							fReversalIndex = false;
@@ -60,42 +62,41 @@ namespace SIL.FieldWorks.XWorks
 					}
 					if (!fReversalIndex)
 						continue;
-					foreach(IReversalIndex ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
+					foreach(var ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
-						CoreWritingSystemDefinition ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-						string sWsTag = ws.Id;
+						var ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+						var sWsTag = ws.Id;
 						converter.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
 						// Create a copy of the layoutType node for the specific writing system.
-						XmlNode xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType,
-																						 ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
-						List<XmlDocConfigureDlg.LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
+						var xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType, ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
+						var rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
 						converter.AddDictionaryTypeItem(xnRealLayout, rgltnStyle);
 					}
 				}
 				else
 				{
-					List<XmlDocConfigureDlg.LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
+					var rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
 					converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
 				}
 			}
 		}
 
-		private static XmlNode CreateWsSpecficLayoutType(XmlNode xnLayoutType, string sWsLabel,
+		private static XElement CreateWsSpecficLayoutType(XElement xnLayoutType, string sWsLabel,
 																		 string sWsLayout, string sWsTag)
 		{
-			XmlNode xnRealLayout = xnLayoutType.Clone();
-			if (xnRealLayout.Attributes != null)
+			var xnRealLayout = xnLayoutType.Clone();
+			if (xnRealLayout.HasAttributes)
 			{
-				xnRealLayout.Attributes["label"].Value = sWsLabel;
-				xnRealLayout.Attributes["layout"].Value = sWsLayout;
-				foreach (XmlNode config in xnRealLayout.ChildNodes)
+				xnRealLayout.Attribute("label").Value = sWsLabel;
+				xnRealLayout.Attribute("layout").Value = sWsLayout;
+				foreach (var config in xnRealLayout.Elements())
 				{
-					if (config is XmlComment || config.Name != "configure")
+					if (config.Name.LocalName != "configure")
 						continue;
-					string sInternalLayout = XmlUtils.GetAttributeValue(config, "layout");
+					var sInternalLayout = XmlUtils.GetAttributeValue(config, "layout");
 					Debug.Assert(sInternalLayout.EndsWith("-$ws"));
-					if (config.Attributes != null)
-						config.Attributes["layout"].Value = sInternalLayout.Replace("$ws", sWsTag);
+					if (config.HasAttributes)
+						config.Attribute("layout").Value = sInternalLayout.Replace("$ws", sWsTag);
 				}
 			}
 			return xnRealLayout;
@@ -104,12 +105,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Configure LayoutType via its child configure nodes
 		/// </summary>
-		internal static List<XmlDocConfigureDlg.LayoutTreeNode> BuildLayoutTree(XmlNode xnLayoutType, ILayoutConverter converter)
+		internal static List<XmlDocConfigureDlg.LayoutTreeNode> BuildLayoutTree(XElement xnLayoutType, ILayoutConverter converter)
 		{
 			var treeNodeList = new List<XmlDocConfigureDlg.LayoutTreeNode>();
-			foreach (XmlNode config in xnLayoutType.ChildNodes)
-			{   // expects a configure element
-				if (config is XmlComment || config.Name != "configure")
+			foreach (var config in xnLayoutType.Elements())
+			{
+				// expects a configure element
+				if (config.Name.LocalName != "configure")
 					continue;
 				var ltn = BuildMainLayout(config, converter);
 				if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
@@ -123,13 +125,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds control tree nodes based on a configure element
 		/// </summary>
-		private static XmlDocConfigureDlg.LayoutTreeNode BuildMainLayout(XmlNode config, ILayoutConverter converter)
+		private static XmlDocConfigureDlg.LayoutTreeNode BuildMainLayout(XElement config, ILayoutConverter converter)
 		{
 			var mainLayoutNode = new XmlDocConfigureDlg.LayoutTreeNode(config, converter, null);
 			converter.SetOriginalIndexForNode(mainLayoutNode);
-			string className = mainLayoutNode.ClassName;
-			string layoutName = mainLayoutNode.LayoutName;
-			XmlNode layout = converter.GetLayoutElement(className, layoutName);
+			var className = mainLayoutNode.ClassName;
+			var layoutName = mainLayoutNode.LayoutName;
+			var layout = converter.GetLayoutElement(className, layoutName);
 			if (layout == null)
 				throw new Exception("Cannot configure layout " + layoutName + " of class " + className + " because it does not exist");
 			mainLayoutNode.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
@@ -140,20 +142,20 @@ namespace SIL.FieldWorks.XWorks
 			return mainLayoutNode;
 		}
 
-		internal static void AddChildNodes(XmlNode layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
+		internal static void AddChildNodes(XElement layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
 			int iNode = iStart;
 			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
-			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
+			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
-			foreach (XmlNode node in nodes)
+			foreach (var node in nodes)
 			{
-				XmlNode subLayout;
-				if (node.Name == "sublayout")
+				if (node.Name.LocalName == "sublayout")
 				{
 					Debug.Assert(!fMerging);
 					string subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
+					XElement subLayout;
 					if (subLayoutName == null)
 					{
 						subLayout = node; // a sublayout lacking a name contains the part refs directly.
@@ -169,14 +171,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Check whether this node has already been added to this parent.  Don't add
 					// it if it's already there!
-					XmlDocConfigureDlg.LayoutTreeNode ltnOld = FindMatchingNode(ltnParent, node);
+					var ltnOld = FindMatchingNode(ltnParent, node);
 					if (ltnOld != null)
 						continue;
-					string sRef = XmlUtils.GetManditoryAttributeValue(node, "ref");
-					XmlNode part = converter.GetPartElement(className, sRef);
+					var sRef = XmlUtils.GetManditoryAttributeValue(node, "ref");
+					var part = converter.GetPartElement(className, sRef);
 					if (part == null && sRef != "$child")
 						continue;
-					bool fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
+					var fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
 					XmlDocConfigureDlg.LayoutTreeNode ltn;
 					var cOrig = 0;
 					if (!fHide)
@@ -214,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 						var fOldAdding = ltn.AddingSubnodes;
 						ltn.AddingSubnodes = true;
 						if (part != null)
-							ProcessChildNodes(part.ChildNodes, className, ltn, converter);
+							ProcessChildNodes(part.Elements(), className, ltn, converter);
 						ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
 						ltn.AddingSubnodes = fOldAdding;
 						if (fHide)
@@ -222,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 							var cNew = ltn.Nodes.Count - cOrig;
 							if(cNew > 1)
 							{
-								var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
+								var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.GetOuterXml());
 								converter.LogConversionError(msg);
 							}
 						}
@@ -243,30 +245,28 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="xmlNodeList"></param>
 		/// <param name="className"></param>
 		/// <param name="ltn"></param>
-		private static void ProcessChildNodes(XmlNodeList xmlNodeList, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
+		private static void ProcessChildNodes(IEnumerable<XElement> xmlNodeList, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
-			foreach (XmlNode xn in xmlNodeList)
+			foreach (var xn in xmlNodeList)
 			{
-				if (xn is XmlComment)
-					continue;
-				if (xn.Name == "obj" || xn.Name == "seq" || xn.Name == "objlocal")
+				if (xn.Name.LocalName == "obj" || xn.Name.LocalName == "seq" || xn.Name.LocalName == "objlocal")
 				{
 					StoreChildNodeInfo(xn, className, ltn, converter);
 				}
 				else
 				{
-					ProcessChildNodes(xn.ChildNodes, className, ltn, converter);
+					ProcessChildNodes(xn.Elements(), className, ltn, converter);
 				}
 			}
 		}
 
-		private static void StoreChildNodeInfo(XmlNode xn, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
+		private static void StoreChildNodeInfo(XElement xn, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
-			string sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
-			XmlNode xnCaller = converter.LayoutLevels.PartRef;
+			var sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
+			var xnCaller = converter.LayoutLevels.PartRef;
 			if (xnCaller == null)
 				xnCaller = ltn.Configuration;
-			bool hideConfig = xnCaller == null ? false : XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
+			var hideConfig = xnCaller != null && XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
 			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
 			// we don't want to configure it at all.
 			if (!ltn.IsTopLevel && !hideConfig)
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 					ltn.ShowComplexFormParaConfig = !String.IsNullOrEmpty(sShowAsIndentedPara);
 				}
 			}
-			bool fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true);
+			var fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true);
 			if (!fRecurse)
 			{
 				// We don't want to recurse forever just because senses have subsenses, which
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 						sClass = mdc.GetClassName(clidDst);
 					if (clidDst == StParaTags.kClassId)
 					{
-						string sClassT = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
+						var sClassT = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
 						if (!String.IsNullOrEmpty(sClassT))
 							sClass = sClassT;
 					}
@@ -342,23 +342,23 @@ namespace SIL.FieldWorks.XWorks
 				sTargetClasses = sClass;
 			string[] rgsClasses = sTargetClasses.Split(new[] { ',', ' ' },
 																	 StringSplitOptions.RemoveEmptyEntries);
-			XmlNode subLayout = null;
-			if(rgsClasses.Length > 0)
+			XElement subLayout = null;
+			if (rgsClasses.Length > 0)
 				subLayout = converter.GetLayoutElement(rgsClasses[0], sLayout);
 
 			if (subLayout != null)
 			{
-				int iStart = ltn.Nodes.Count;
-				int cNodes = subLayout.ChildNodes.Count;
+				var iStart = ltn.Nodes.Count;
+				var cNodes = subLayout.Elements().Count();
 				AddChildNodes(subLayout, ltn, iStart, converter);
 
-				bool fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xn, "repeatedConfig", false);
+				var fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xn, "repeatedConfig", false);
 				if (fRepeatedConfig)
 					return;		// repeats an earlier part element (probably as a result of <if>s)
-				for (int i = 1; i < rgsClasses.Length; i++)
+				for (var i = 1; i < rgsClasses.Length; i++)
 				{
-					XmlNode mergedLayout = converter.GetLayoutElement(rgsClasses[i], sLayout);
-					if (mergedLayout != null && mergedLayout.ChildNodes.Count == cNodes)
+					var mergedLayout = converter.GetLayoutElement(rgsClasses[i], sLayout);
+					if (mergedLayout != null && mergedLayout.Elements().Count() == cNodes)
 					{
 						AddChildNodes(mergedLayout, ltn, iStart, converter);
 					}
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static XmlDocConfigureDlg.LayoutTreeNode FindMatchingNode(XmlDocConfigureDlg.LayoutTreeNode ltn, XmlNode node)
+		private static XmlDocConfigureDlg.LayoutTreeNode FindMatchingNode(XmlDocConfigureDlg.LayoutTreeNode ltn, XElement node)
 		{
 			if (ltn == null || node == null)
 				return null;
@@ -392,27 +392,29 @@ namespace SIL.FieldWorks.XWorks
 			return FindMatchingNode(ltn.Parent as XmlDocConfigureDlg.LayoutTreeNode, node);
 		}
 
-		private static bool NodesMatch(XmlNode first, XmlNode second)
+		private static bool NodesMatch(XElement first, XElement second)
 		{
 			if (first.Name != second.Name)
 				return false;
-			if((first.Attributes == null) && (second.Attributes != null))
+			if((!first.HasAttributes) && (second.HasAttributes))
 				return false;
-			if(first.Attributes == null)
+			if(!first.HasAttributes)
 			{
-				return ChildNodesMatch(first.ChildNodes, second.ChildNodes);
+				return ChildNodesMatch(first.Elements().ToList(), second.Elements().ToList());
 			}
-			if(first.Attributes.Count != second.Attributes.Count)
+			if(first.Attributes().Count() != second.Attributes().Count())
 			{
 				return false;
 			}
 
 			var firstAttSet = new SortedList<string, string>();
 			var secondAttSet = new SortedList<string, string>();
-			for (int i = 0; i < first.Attributes.Count; ++i)
+			var firstAttributes = first.Attributes().ToList();
+			var secondAttributes = second.Attributes().ToList();
+			for (var i = 0; i < firstAttributes.Count; ++i)
 			{
-				firstAttSet.Add(first.Attributes[i].Name, first.Attributes[i].Value);
-				secondAttSet.Add(second.Attributes[i].Name, second.Attributes[i].Value);
+				firstAttSet.Add(firstAttributes[i].Name.LocalName, firstAttributes[i].Value);
+				secondAttSet.Add(secondAttributes[i].Name.LocalName, secondAttributes[i].Value);
 			}
 			using (var firstIter = firstAttSet.GetEnumerator())
 			using (var secondIter = secondAttSet.GetEnumerator())
@@ -432,16 +434,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="firstNodeList"></param>
 		/// <param name="secondNodeList"></param>
 		/// <returns></returns>
-		private static bool ChildNodesMatch(XmlNodeList firstNodeList, XmlNodeList secondNodeList)
+		private static bool ChildNodesMatch(IList<XElement> firstNodeList, IList<XElement> secondNodeList)
 		{
 			if (firstNodeList.Count != secondNodeList.Count)
 				return false;
-			var firstAtSet = new SortedList<string, XmlNode>();
-			var secondAtSet = new SortedList<string, XmlNode>();
-			for (int i = 0; i < firstNodeList.Count; ++i)
+			var firstAtSet = new SortedList<string, XElement>();
+			var secondAtSet = new SortedList<string, XElement>();
+			for (var i = 0; i < firstNodeList.Count; ++i)
 			{
-				firstAtSet.Add(firstNodeList[i].Name, firstNodeList[i]);
-				secondAtSet.Add(secondNodeList[i].Name, secondNodeList[i]);
+				firstAtSet.Add(firstNodeList[i].Name.LocalName, firstNodeList[i]);
+				secondAtSet.Add(secondNodeList[i].Name.LocalName, secondNodeList[i]);
 			}
 			using (var firstIter = firstAtSet.GetEnumerator())
 			using (var secondIter = secondAtSet.GetEnumerator())
@@ -455,12 +457,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal static XmlNode GetLayoutElement(Inventory layouts, string className, string layoutName)
+		internal static XElement GetLayoutElement(Inventory layouts, string className, string layoutName)
 		{
 			return layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });
 		}
 
-		internal static XmlNode GetPartElement(Inventory parts, string className, string sRef)
+		internal static XElement GetPartElement(Inventory parts, string className, string sRef)
 		{
 			return parts.GetElement("part", new[] { className + "-Jt-" + sRef });
 		}

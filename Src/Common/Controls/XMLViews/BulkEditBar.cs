@@ -9,8 +9,8 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private System.ComponentModel.IContainer components;
 
 		IPropertyTable m_propertyTable;
-		XmlNode m_configurationNode = null;
+		XElement m_configurationNode = null;
 		/// <summary>
 		/// Browse viewer
 		/// </summary>
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.Controls
 		bool m_fClickEditIfNot = false;
 		MethodInfo m_miClickEditIf = null;
 		int m_wsClickEditIf = 0;
-		XmlNode m_enableBulkEditTabsNode;
+		XElement m_enableBulkEditTabsNode;
 
 		// These variables are used in computing whether a row can be deleted in Bulk Delete.
 		// (This feature is used in Wordform Bulk Edit.)
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBar(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache)
+		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache)
 			: this()
 		{
 			m_propertyTable = propertyTable;
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Dispose( disposing );
 		}
 
-		internal static GhostParentHelper GetGhostHelper(IFdoServiceLocator locator, XmlNode colSpec)
+		internal static GhostParentHelper GetGhostHelper(IFdoServiceLocator locator, XElement colSpec)
 		{
 			string classDotField = XmlUtils.GetOptionalAttributeValue(colSpec, "ghostListField");
 			if (classDotField == null)
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Here we figure which columns we can bulk edit.
 			int icol = -1; // will increment at start of loop.
-			foreach (XmlNode colSpec in m_bv.ColumnSpecs)
+			foreach (var colSpec in m_bv.ColumnSpecs)
 			{
 				icol++;
 				if (m_beItems[icol] != null)
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Here we figure which columns we can bulk edit.
 			int icol = -1; // will increment at start of loop.
-			foreach (XmlNode colSpec in m_bv.ColumnSpecs)
+			foreach (var colSpec in m_bv.ColumnSpecs)
 			{
 				icol++;
 				BulkEditItem bei = MakeItem(colSpec);
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_itemIndex = -1;
 		}
 
-		int GetFlidFromClassDotName(XmlNode node, string attrName)
+		int GetFlidFromClassDotName(XElement node, string attrName)
 		{
 			return BulkEditBar.GetFlidFromClassDotName(m_cache, node, attrName);
 		}
@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns></returns>
-		internal static int GetFlidFromClassDotName(FdoCache cache, XmlNode node, string attrName)
+		internal static int GetFlidFromClassDotName(FdoCache cache, XElement node, string attrName)
 		{
 			string descriptor = XmlUtils.GetManditoryAttributeValue(node, attrName);
 			return GetFlidFromClassDotName(cache, descriptor);
@@ -526,7 +526,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec"></param>
 		/// <param name="owningClass"></param>
 		/// <param name="property"></param>
-		internal static void GetListInfo(XmlNode colSpec, out string owningClass, out string property)
+		internal static void GetListInfo(XElement colSpec, out string owningClass, out string property)
 		{
 			GetPathInfoFromColumnSpec(colSpec, "list", "LangProject", out owningClass, out property);
 		}
@@ -540,7 +540,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// we'll use this as the default class for that property.</param>
 		/// <param name="owningClass"></param>
 		/// <param name="property"></param>
-		private static void GetPathInfoFromColumnSpec(XmlNode node, string attrName, string defaultOwningClass,
+		private static void GetPathInfoFromColumnSpec(XElement node, string attrName, string defaultOwningClass,
 			out string owningClass, out string property)
 		{
 			string listpath = XmlUtils.GetManditoryAttributeValue(node, attrName);
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		ICmPossibilityList GetNamedList(XmlNode node, string attrName)
+		ICmPossibilityList GetNamedList(XElement node, string attrName)
 		{
 			return GetNamedList(m_cache, node, attrName);
 		}
@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns>Hvo or 0</returns>
-		int GetNamedListHvo(XmlNode node, string attrName)
+		int GetNamedListHvo(XElement node, string attrName)
 		{
 			ICmPossibilityList possList = GetNamedList(node, attrName);
 			return (possList == null) ? 0 : possList.Hvo;
@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns>Hvo or 0</returns>
-		internal static int GetNamedListHvo(FdoCache cache, XmlNode node, string attrName)
+		internal static int GetNamedListHvo(FdoCache cache, XElement node, string attrName)
 		{
 			ICmPossibilityList possList = GetNamedList(cache, node, attrName);
 			return (possList == null) ? (int)SpecialHVOValues.kHvoUninitializedObject : possList.Hvo;
@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns>An ICmPossibilityList (which may be null).</returns>
-		internal static ICmPossibilityList GetNamedList(FdoCache cache, XmlNode node, string attrName)
+		internal static ICmPossibilityList GetNamedList(FdoCache cache, XElement node, string attrName)
 		{
 			string owningClass;
 			string property;
@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return (ICmPossibilityList)result;
 		}
 
-		internal static string GetColumnLabel(XmlNode colSpec)
+		internal static string GetColumnLabel(XElement colSpec)
 		{
 			string colName = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null);
 			if (colName == null)
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "besc gets added to a BulkEditItem and disposed there")]
-		protected virtual BulkEditItem MakeItem(XmlNode colSpec)
+		protected virtual BulkEditItem MakeItem(XElement colSpec)
 		{
 			string beSpec = XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", "");
 			IBulkEditSpecControl besc = null;
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.Common.Controls
 			newCol = fci.ColumnIndex + 1;
 
 			return new ReplaceWithMethod(m_cache, m_bv.SpecialCache, fci.Accessor,
-				m_bv.ColumnSpecs[fci.ColumnIndex] as XmlNode, m_pattern, m_tssReplace);
+				m_bv.ColumnSpecs[fci.ColumnIndex], m_pattern, m_tssReplace);
 		}
 
 		/// <summary>
@@ -1788,7 +1788,7 @@ namespace SIL.FieldWorks.Common.Controls
 			newCol = fci.ColumnIndex + 1;
 
 			return new ClearMethod(m_cache, m_bv.SpecialCache, fci.Accessor,
-				m_bv.ColumnSpecs[fci.ColumnIndex] as XmlNode);
+				m_bv.ColumnSpecs[fci.ColumnIndex]);
 		}
 
 		/// <summary>
@@ -1832,7 +1832,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			ECInterfaces.IEncConverter converter = encConverters[convName];
 			return new TransduceMethod(m_cache, m_bv.SpecialCache, fci.Accessor,
-				m_bv.ColumnSpecs[fci.ColumnIndex] as XmlNode,
+				m_bv.ColumnSpecs[fci.ColumnIndex],
 				fciSrc.Accessor, converter,
 				m_trdNonEmptyTargetControl.TssSeparator, m_trdNonEmptyTargetControl.NonEmptyMode);
 		}
@@ -1866,7 +1866,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			return new BulkCopyMethod(m_cache, m_bv.SpecialCache, fci.Accessor,
-				m_bv.ColumnSpecs[fci.ColumnIndex] as XmlNode,
+				m_bv.ColumnSpecs[fci.ColumnIndex],
 				fciSrc.Accessor,
 				m_bcNonEmptyTargetControl.TssSeparator, m_bcNonEmptyTargetControl.NonEmptyMode);
 		}
@@ -2290,7 +2290,7 @@ namespace SIL.FieldWorks.Common.Controls
 				icol++;
 				if (bei != null && bei.BulkEditControl.CanClearField)
 				{
-					XmlNode colSpec = m_bv.ColumnSpecs[icol] as XmlNode;
+					var colSpec = m_bv.ColumnSpecs[icol];
 					string label = GetColumnLabel(colSpec);
 					TargetFieldItem tfi = null;
 					try
@@ -2863,7 +2863,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <returns></returns>
 			internal static string GetBulkEditBarToolId(BulkEditBar bulkEditBar)
 			{
-				XmlNode configurationNode = bulkEditBar.m_configurationNode;
+				var configurationNode = bulkEditBar.m_configurationNode;
 #if RANDYTODO
 				return XWindow.GetToolIdFromControlConfiguration(configurationNode);
 #else
@@ -2914,9 +2914,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (settingsXml.Length > 0)
 				{
 					// figure out type/class of object to deserialize from xml data.
-					XmlDocument doc = new XmlDocument();
-					doc.LoadXml(settingsXml);
-					string className = doc.DocumentElement.Name;
+					XDocument doc = XDocument.Parse(settingsXml);
+					string className = doc.Root.Name.LocalName;
 					// get the type from the xml itself.
 					Assembly assembly = Assembly.GetExecutingAssembly();
 					// if we can find an existing class/type, we can try to deserialize to it.
@@ -3704,7 +3703,7 @@ namespace SIL.FieldWorks.Common.Controls
 					MessageBox.Show(XMLViewsStrings.ksChooseEditTarget);
 					return;
 				}
-				XmlNode xnField = m_bv.ColumnSpecs[fci.ColumnIndex];
+				var xnField = m_bv.ColumnSpecs[fci.ColumnIndex];
 				string sWs = XmlViewsUtils.FindWsParam(xnField);
 				if (String.IsNullOrEmpty(sWs))
 				{
@@ -3909,7 +3908,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			FieldComboItem newSelection = null;
 			int icol = -1;
-			foreach (XmlNode node in m_bv.ColumnSpecs)
+			foreach (var node in m_bv.ColumnSpecs)
 			{
 				icol++;
 				FieldReadWriter accessor = null;
@@ -4041,7 +4040,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (selectedItem != null)
 			{
 				column = selectedItem.ColumnIndex;
-				XmlNode spec = m_bv.ColumnSpecs[column] as XmlNode;
+				var spec = m_bv.ColumnSpecs[column];
 				m_sClickEditIf = XmlUtils.GetOptionalAttributeValue(spec, "editif");
 				m_wsClickEditIf = 0;
 				if (!String.IsNullOrEmpty(m_sClickEditIf))
@@ -4278,7 +4277,7 @@ namespace SIL.FieldWorks.Common.Controls
 			FieldComboItem selectedItem = m_clickCopyTargetCombo.SelectedItem as FieldComboItem;
 			if (selectedItem != null)
 			{
-				XmlNode spec = m_bv.ColumnSpecs[selectedItem.ColumnIndex] as XmlNode;
+				var spec = m_bv.ColumnSpecs[selectedItem.ColumnIndex];
 				if (m_hvoSelected != 0)
 					CommitChanges(m_hvoSelected, XmlUtils.GetOptionalAttributeValue(spec, "commitChanges"),
 						m_cache, selectedItem.Accessor.WritingSystem);
@@ -4289,7 +4288,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Commit changes for the current hvo if it has a commit changes handler specified.
 		internal static void CommitChanges(int hvo, string commitChanges, FdoCache cache, int ws)
 		{
-			if (commitChanges != null && commitChanges != "" &&
+			if (!string.IsNullOrEmpty(commitChanges) &&
 				cache.ActionHandlerAccessor != null && !cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
 			{
 				var cmo = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
@@ -4453,7 +4452,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="colSpec"></param>
-		void InitForGhostItems(FdoCache cache, XmlNode colSpec);
+		void InitForGhostItems(FdoCache cache, XElement colSpec);
 	}
 
 	/// <summary>
@@ -4715,7 +4714,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected FieldReadWriter m_accessor; // typically the destination accessor, sometimes also the source.
 		ISilDataAccess m_sda;
 		FdoCache m_cache;
-		XmlNode m_nodeSpec; // specification node for the column
+		XElement m_nodeSpec; // specification node for the column
 
 		string m_sEditIf = null;
 		bool m_fEditIfNot = false;
@@ -4723,7 +4722,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_wsEditIf = 0;
 		Dictionary<int, int> m_replacedObjects = new Dictionary<int, int>();
 
-		public DoItMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XmlNode spec)
+		public DoItMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 		{
 			m_cache = cache;
 			m_accessor = accessor;
@@ -4879,7 +4878,7 @@ namespace SIL.FieldWorks.Common.Controls
 		NonEmptyTargetOptions m_options;
 
 		public BulkCopyMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor,
-			XmlNode spec, FieldReadWriter srcAccessor, ITsString tssSep, NonEmptyTargetOptions options)
+			XElement spec, FieldReadWriter srcAccessor, ITsString tssSep, NonEmptyTargetOptions options)
 			: base(cache, sda, dstAccessor, spec)
 		{
 			m_srcAccessor = srcAccessor;
@@ -4951,7 +4950,7 @@ namespace SIL.FieldWorks.Common.Controls
 		ITsString m_tssSep;
 		NonEmptyTargetOptions m_options;
 
-		public TransduceMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor, XmlNode spec, FieldReadWriter srcAccessor,
+		public TransduceMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor, XElement spec, FieldReadWriter srcAccessor,
 			ECInterfaces.IEncConverter converter, ITsString tssSep, NonEmptyTargetOptions options)
 			: base(cache, sda, dstAccessor, spec)
 		{
@@ -5033,7 +5032,7 @@ namespace SIL.FieldWorks.Common.Controls
 		IVwTxtSrcInit m_textSourceInit;
 		IVwTextSource m_ts;
 
-		public ReplaceWithMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XmlNode spec, IVwPattern pattern, ITsString replacement)
+		public ReplaceWithMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec, IVwPattern pattern, ITsString replacement)
 			: base(cache, sda, accessor, spec)
 		{
 			m_pattern = pattern;
@@ -5140,7 +5139,7 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class ClearMethod : DoItMethod
 	{
 		ITsString m_newValue;
-		public ClearMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XmlNode spec)
+		public ClearMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 			: base(cache, sda, accessor, spec)
 		{
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
@@ -5774,7 +5773,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IGhostable Members
 
-		public virtual void InitForGhostItems(FdoCache cache, XmlNode colSpec)
+		public virtual void InitForGhostItems(FdoCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -6182,7 +6181,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 			#region IGhostable Members
 
-		public void InitForGhostItems(FdoCache cache, XmlNode colSpec)
+		public void InitForGhostItems(FdoCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -6218,7 +6217,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public ComplexListChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
+		public ComplexListChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
@@ -6633,7 +6632,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, BulkEditBar bar, XmlNode colSpec) :
+		public SemanticDomainChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, BulkEditBar bar, XElement colSpec) :
 			base(cache, propertyTable, colSpec)
 		{
 			m_suggestButton = new Button();
@@ -6792,7 +6791,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		internal VariantEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
+		internal VariantEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: base(cache, propertyTable, colSpec)
 		{
 		}
@@ -6802,7 +6801,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		Set<int> m_complexEntryRefs = null;
 
-		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XmlNode colSpec)
+		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: base(cache, propertyTable, colSpec)
 		{
 		}
@@ -7139,12 +7138,12 @@ namespace SIL.FieldWorks.Common.Controls
 			else return 0;
 		}
 
-		static public FieldReadWriter Create(XmlNode node, FdoCache cache)
+		static public FieldReadWriter Create(XElement node, FdoCache cache)
 		{
 			return Create(node, cache, 0);
 		}
 
-		static public FieldReadWriter Create(XmlNode node, FdoCache cache, int hvoRootObj)
+		static public FieldReadWriter Create(XElement node, FdoCache cache, int hvoRootObj)
 		{
 			string transduceField = XmlUtils.GetOptionalAttributeValue(node, "transduce");
 			if (string.IsNullOrEmpty(transduceField))
@@ -7212,7 +7211,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IGhostable Members
 
-		public void InitForGhostItems(FdoCache cache, XmlNode colSpec)
+		public void InitForGhostItems(FdoCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -7227,12 +7226,12 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class ManyOnePathSortItemReadWriter : FieldReadWriter, IDisposable
 	{
 		private FdoCache m_cache;
-		private XmlNode m_colSpec;
+		private XElement m_colSpec;
 		private BrowseViewer m_bv;
 		private IStringFinder m_finder;
 		private IApp m_app;
 
-		public ManyOnePathSortItemReadWriter(FdoCache cache, XmlNode colSpec, BrowseViewer bv, IApp app)
+		public ManyOnePathSortItemReadWriter(FdoCache cache, XElement colSpec, BrowseViewer bv, IApp app)
 			: base(cache.DomainDataByFlid)
 		{
 			m_cache = cache;

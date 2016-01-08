@@ -9,13 +9,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;		// controls and etc...
-using System.Xml;
 using SIL.Media;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get any text styles from configuration node (which is now available; it was not at construction)
 		/// </summary>
-		public void FinishInit(XmlNode configurationNode)
+		public void FinishInit(XElement configurationNode)
 		{
 			m_innerView.FinishInit(configurationNode);
 		}

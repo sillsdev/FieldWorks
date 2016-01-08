@@ -5,7 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -84,8 +85,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
 			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
 

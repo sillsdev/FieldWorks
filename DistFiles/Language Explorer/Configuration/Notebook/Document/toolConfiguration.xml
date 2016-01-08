@@ -9,7 +9,6 @@
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
 						<parameters area="notebook" clerk="records" altTitleId="RnGenericRec-Plural" persistContext="Notebk" backColor="White" layout="publishRecord" layoutProperty="NotebookPublicationLayout" editable="false" configureObjectName="Document" findHelpId="khtpFindNotebook">
-							<!--elementDisplayCondition field="ExcludeAsHeadword" boolequals="false"/-->
 							<configureLayouts>
 								<layoutType label="Notebook Records" layout="publishRecord">
 									<configure class="RnGenericRec" label="Record" layout="publishRecord"/>

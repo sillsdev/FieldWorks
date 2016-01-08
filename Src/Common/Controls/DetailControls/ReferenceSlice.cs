@@ -10,8 +10,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
-using System.Xml;
-
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -65,7 +63,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				XmlNode parameters = ConfigurationNode.SelectSingleNode("deParams");
+				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 					return "";
 
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				XmlNode parameters = ConfigurationNode.SelectSingleNode("deParams");
+				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 					return "analysis";
 

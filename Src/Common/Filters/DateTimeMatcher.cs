@@ -3,13 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -269,7 +267,7 @@ namespace SIL.FieldWorks.Filters
 					UnspecificMatching == dtOther.UnspecificMatching) : true);
 		}
 
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "start", m_start.ToString("s", DateTimeFormatInfo.InvariantInfo));
@@ -284,7 +282,7 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_start = DateTime.Parse(XmlUtils.GetManditoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);

@@ -11,9 +11,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
@@ -21,6 +19,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -64,7 +63,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected ISilDataAccessManaged m_sda;
 		/// <summary></summary>
-		protected XmlNode m_nodeSpec;
+		protected XElement m_nodeSpec;
 		/// <summary></summary>
 		internal protected BrowseViewer m_bv;
 		/// <summary> record list supplying browse view content </summary>
@@ -956,7 +955,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					return false;
 				}
-				if (m_nodeSpec.Attributes["editable"] != null)
+				if (m_nodeSpec.Attribute("editable") != null)
 				{
 					bool fEditable = XmlUtils.GetBooleanAttributeValue(m_nodeSpec, "editable");
 					return !fEditable;
@@ -1074,7 +1073,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		public virtual void Init(XElement nodeSpec, int hvoRoot, int fakeFlid,
 			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
@@ -1178,9 +1177,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="spec"></param>
 		/// <returns></returns>
-		internal string[] GetStringList(XmlNode spec)
+		internal string[] GetStringList(XElement spec)
 		{
-			XmlNode stringList = XmlUtils.GetFirstNonCommentChild(spec);
+			var stringList = XmlUtils.GetFirstNonCommentChild(spec);
 			if (stringList == null || stringList.Name != "stringList")
 				return null;
 			return StringTable.Table.GetStringsFromStringListNode(stringList);
@@ -1593,7 +1592,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			switch (XmlUtils.GetAttributeValue(m_nodeSpec, "selectionStyle", null))
+			switch (XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "selectionStyle", string.Empty))
 			{
 				case "all":
 					SelectedRowHighlighting = SelectionHighlighting.all;

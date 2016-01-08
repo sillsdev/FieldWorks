@@ -8,7 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
@@ -41,11 +42,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Tree form.
 		/// </summary>
 		protected DataTree m_dataEntryForm;
-
-		/// <summary>
-		/// Configuration information.
-		/// </summary>
-		protected XmlNode m_configuration;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -95,15 +91,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="dataEntryForm"></param>
 		/// <param name="configuration"></param>
 		/// <returns></returns>
-		public static DTMenuHandler Create(DataTree dataEntryForm, XmlNode configuration)
+		public static DTMenuHandler Create(DataTree dataEntryForm, XElement configuration)
 		{
 			DTMenuHandler h= null;
 			if(configuration !=null)
 			{
-				XmlNode node = configuration.SelectSingleNode("menuHandler/dynamicloaderinfo");
+				var node = configuration.XPathSelectElement("menuHandler/dynamicloaderinfo");
 				if (node != null)
 				{
-					h = (DTMenuHandler) SIL.Utils.DynamicLoader.CreateObject(node);
+					h = (DTMenuHandler)DynamicLoader.CreateObject(node);
 				}
 			}
 			if(h==null)			//no class specified, so just returned a generic DTMenuHandler
@@ -528,12 +524,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		private bool SliceConfiguredForField(XmlNode node, string field)
+		private bool SliceConfiguredForField(XElement node, string field)
 		{
 			if (node != null)
 				return XmlUtils.GetOptionalAttributeValue(node, "field") == field;
-			else
-				return false;
+
+			return false;
 		}
 
 #if RANDYTODO
@@ -1002,8 +998,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// The slice might be invalidated by the MoveOwningSequence, so we get its
 					// values first.  See LT-6670.
-					XmlNode caller = slice.CallerNode;
-					XmlNode config = slice.ConfigurationNode;
+					var caller = slice.CallerNode;
+					var config = slice.ConfigurationNode;
 					int clid = slice.Object.ClassID;
 					Control parent = slice.Parent;
 					// We found it in the sequence, and it isn't already the first.
@@ -1096,8 +1092,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// The slice might be invalidated by the MoveOwningSequence, so we get its
 					// values first.  See LT-6670.
-					XmlNode caller = slice.CallerNode;
-					XmlNode config = slice.ConfigurationNode;
+					var caller = slice.CallerNode;
+					var config = slice.ConfigurationNode;
 					int clid = slice.Object.ClassID;
 					Control parent = slice.Parent;
 					// We found it in the sequence, and it isn't already the last.
@@ -1570,8 +1566,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected ContextMenu MakeSliceContextMenu(Slice slice, bool fHotLinkOnly)//, bool retrieveDoNotShow)
 		{
-			XmlNode configuration =slice.ConfigurationNode;
-			XmlNode caller = slice.CallerNode;
+			var configuration =slice.ConfigurationNode;
+			var caller = slice.CallerNode;
 			string menuId = null;
 			if (caller != null)
 				menuId = ShowContextMenu2Id(caller, fHotLinkOnly);
@@ -1633,12 +1629,12 @@ namespace SIL.FieldWorks.XWorks
 #endif
 		}
 
-		private string ShowContextMenu2Id(XmlNode caller, bool fHotLinkOnly)
+		private string ShowContextMenu2Id(XElement caller, bool fHotLinkOnly)
 		{
 			if (fHotLinkOnly)
 			{
 				string result = XmlUtils.GetOptionalAttributeValue(caller, "hotlinks");
-				if (result != null && result.Length != 0)
+				if (!string.IsNullOrEmpty(result))
 					return result;
 			}
 			return XmlUtils.GetOptionalAttributeValue(caller, "menu");

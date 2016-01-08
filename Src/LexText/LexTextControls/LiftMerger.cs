@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				CmLiftRelation rel = obj as CmLiftRelation;
 				if (rel != null)
 				{
-					string sOrder = XmlUtils.GetAttributeValue(node, "order", null);
+					string sOrder = XmlUtils.GetOptionalAttributeValue(node, "order", null);
 					if (!String.IsNullOrEmpty(sOrder))
 					{
 						int order;

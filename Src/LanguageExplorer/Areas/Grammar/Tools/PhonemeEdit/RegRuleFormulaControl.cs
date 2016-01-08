@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// </summary>
 	internal sealed class RegRuleFormulaControl : RuleFormulaControl
 	{
-		public RegRuleFormulaControl(XmlNode configurationNode)
+		public RegRuleFormulaControl(XElement configurationNode)
 			: base(configurationNode)
 		{
 		}

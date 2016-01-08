@@ -11,15 +11,9 @@
 
 using System;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Xml;
-using System.Collections;
 using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-
-using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -32,7 +26,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Store the Command object that knows what to do.
 		/// </summary>
-		private XmlNode m_cmdNode;
+		private XElement m_cmdNode;
 
 		/// <summary>
 		/// Constructor.
@@ -40,10 +34,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="node">The "deParams" node in some XDE file.</param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "btn gets assigned to Control")]
-		public CommandSlice(XmlNode node)
+		public CommandSlice(XElement node)
 		{
 			Debug.Assert(node != null);
-			XmlNode cmdNode = node["command"];
+			var cmdNode = node.Element("command");
 			Debug.Assert(cmdNode != null);
 			m_cmdNode = cmdNode;
 			Button btn = new Button();
@@ -118,7 +112,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)//grouping nodes do not have a control
 			{
-				Publisher.Publish("RegisterHelpTargetWithId", new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId});
+				Publisher.Publish("RegisterHelpTargetWithId", new object[]{Control, ConfigurationNode.Attribute("label").Value, HelpId});
 			}
 		}
 

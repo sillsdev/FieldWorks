@@ -3,13 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
-using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -17,6 +14,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -206,11 +204,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 				// See if the first child is a sequence we could insert at the start of.
-				XmlNode firstChild = Slice.ConfigurationNode.FirstChild;
+				var firstChild = Slice.ConfigurationNode.Elements().FirstOrDefault();
 				if (firstChild != null && firstChild.Name == "seq")
 				{
 					hvoDstOwner = Slice.Object.Hvo;
-					flidDst = (int)Slice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(Slice.Object.ClassID, firstChild.Attributes["field"].Value, true);
+					flidDst = Slice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(Slice.Object.ClassID, firstChild.Attribute("field").Value, true);
 					ihvoDstStart = 0;
 					if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
 					{

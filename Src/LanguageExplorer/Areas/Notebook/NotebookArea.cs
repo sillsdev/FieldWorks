@@ -9,6 +9,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -25,6 +29,14 @@ namespace LanguageExplorer.Areas.Notebook
 		internal NotebookArea(IToolRepository toolRepository)
 		{
 			m_toolRepository = toolRepository;
+		}
+
+		internal static RecordClerk CreateRecordClerkForAllNotebookAreaTools(FdoCache cache)
+		{
+			var mdc = cache.MetaDataCacheAccessor;
+			var nb = cache.LanguageProject.ResearchNotebookOA;
+			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(nb.ClassID, "AllRecords", false), nb, "AllRecords");
+			return new RecordClerk("records", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 		}
 
 		void FileExportMenu_Click(object sender, EventArgs e)

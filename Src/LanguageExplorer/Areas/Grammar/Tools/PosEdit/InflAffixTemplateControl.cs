@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -47,10 +47,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
-		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XmlNode xnSpec)
+		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XElement xnSpec)
 			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), true)
 		{
-			m_xnSpec = xnSpec["deParams"];
+			m_xnSpec = xnSpec.Element("deParams");
 			Cache = cache;
 			m_template = Cache.ServiceLocator.GetInstance<IMoInflAffixTemplateRepository>().GetObject(m_hvoRoot);
 		}
@@ -174,7 +174,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					m_hvoSlot = hvoSlot;
 #endif
 				m_obj = Cache.ServiceLocator.GetObject(hvo);
-				ShowContextMenu(this, new InflAffixTemplateEventArgs(this, this.m_xnSpec, pt, tag));
+				ShowContextMenu(this, new InflAffixTemplateEventArgs(this, m_xnSpec, pt, tag));
 				return true; // we've handled it
 			}
 		}

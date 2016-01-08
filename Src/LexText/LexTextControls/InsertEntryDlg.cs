@@ -18,7 +18,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Microsoft.Win32;
 using SIL.Collections;
 using SIL.CoreImpl;
@@ -559,8 +560,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			try
 			{
 				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-				var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-				XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+				var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+				var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
 				SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 

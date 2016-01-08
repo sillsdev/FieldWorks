@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
@@ -22,6 +21,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
@@ -71,6 +71,11 @@ namespace SIL.FieldWorks.XWorks
 			base.AccNameDefault = "XmlDocView";		// default accessibility name
 		}
 
+		public XmlDocView(XElement configurationParametersElement, RecordClerk recordClerk)
+			: base(configurationParametersElement, recordClerk)
+		{
+		}
+
 		#region TitleBar Layout Menu
 
 #if RANDYTODO
@@ -94,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
 		{
 			var layoutList = new List<Tuple<string, string>>();
-			layoutList.AddRange(GetBuiltInLayouts(PropertyTable.GetValue<XmlNode>("currentContentControlParameters", null)));
+			layoutList.AddRange(GetBuiltInLayouts(PropertyTable.GetValue<XElement>("currentContentControlParameters", null)));
 			var builtInLayoutList = new List<string>();
 			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
 			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
@@ -102,30 +107,28 @@ namespace SIL.FieldWorks.XWorks
 			return layoutList;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
+		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XElement configNode)
 		{
 			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");
 			// The configureLayouts node doesn't always exist!
 			if (configLayouts != null)
 			{
-				var layouts = configLayouts.ChildNodes;
-				return ExtractLayoutsFromLayoutTypeList(layouts.Cast<XmlNode>());
+				var layouts = configLayouts.Elements();
+				return ExtractLayoutsFromLayoutTypeList(layouts);
 			}
 				return new List<Tuple<string, string>>();
 		}
 
-		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XmlNode> layouts)
+		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XElement> layouts)
 		{
-			return from XmlNode layout in layouts
+			return from XElement layout in layouts
 				   select new Tuple<string, string>(XmlUtils.GetAttributeValue(layout, "label"),
 													XmlUtils.GetAttributeValue(layout, "layout"));
 		}
 
 		private static IEnumerable<Tuple<string, string>> GetUserDefinedDictLayouts(
 			IEnumerable<string> builtInLayouts,
-			IEnumerable<XmlNode> layouts)
+			IEnumerable<XElement> layouts)
 		{
 			var allUserLayoutTypes = ExtractLayoutsFromLayoutTypeList(layouts);
 			var result = new List<Tuple<string, string>>();
@@ -284,7 +287,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_informationBar == null)
 				return;
 
-			var context = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext", "");
+			var context = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "persistContext", "");
 			// SetInfoBarText() was getting run about 4 times just creating one XmlDocView!
 			// To prevent that, add the following guards:
 			if (m_titleStr != null && NoReasonToChangeTitle(context))
@@ -314,8 +317,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If we have a format attribute, format the title accordingly.
-			string sFmt = XmlUtils.GetAttributeValue(m_configurationParameters,
-				"TitleFormat");
+			string sFmt = XmlUtils.GetAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
 				titleStr = String.Format(sFmt, titleStr);
@@ -474,10 +476,9 @@ namespace SIL.FieldWorks.XWorks
 		protected override void ReadParameters()
 		{
 			base.ReadParameters();
-			string backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
-				"backColor", "Window");
+			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "backColor", "Window");
 			BackColor = Color.FromName(backColorName);
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
 
 		public virtual bool OnRecordNavigation(object argument)
@@ -524,7 +525,7 @@ namespace SIL.FieldWorks.XWorks
 				var sel = m_mainView.GetSelectionAtPoint(e.Location, false);
 				if (sel == null)
 					return;
-				if (XmlUtils.FindNode(m_configurationParameters, "configureLayouts") == null)
+				if (XmlUtils.FindNode(m_configurationParametersElement, "configureLayouts") == null)
 					return; // view is not configurable, don't show menu option.
 
 				int hvo, tag, ihvo, cpropPrevious;
@@ -1093,9 +1094,9 @@ namespace SIL.FieldWorks.XWorks
 
 				// Create the main view
 
-				// Review JohnT: should it be m_configurationParameters or .FirstChild?
+				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
 				var app = PropertyTable.GetValue<IFlexApp>("App");
-				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
+				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParametersElement, Clerk.VirtualListPublisher, app,
 					Publication);
 				m_mainView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				m_mainView.Dock = DockStyle.Fill;
@@ -1213,12 +1214,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
 			if(String.IsNullOrEmpty(sProp))
 				sProp = "DictionaryPublicationLayout";
 			using(var dlg = new XmlDocConfigureDlg())
 			{
-				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
+				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet,
 					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)
@@ -1241,17 +1242,15 @@ namespace SIL.FieldWorks.XWorks
 		/// This was done, rather than providing an Init() here in the normal way,
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		protected void InitBase(IPropertyTable propertyTable, XmlNode configurationParameters)
+		protected void InitBase()
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
-			base.m_configurationParameters = configurationParameters;
-
 			ReadParameters();
 
+#if RANDYTODO
 			PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
+#endif
 
 			SetupDataContext();
 			ShowRecord();
@@ -1279,8 +1278,9 @@ namespace SIL.FieldWorks.XWorks
 		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			//Clerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 
-			InitBase(propertyTable, null);
+			InitBase();
 		}
 
 		#endregion
@@ -1391,7 +1391,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public string FindTabHelpId
 		{
-			get { return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "findHelpId", null); }
+			get { return XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "findHelpId", null); }
 		}
 	}
 

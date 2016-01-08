@@ -16,7 +16,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected VectorReferenceVc m_VectorReferenceVc;
 		protected string m_displayWs;
 
-		internal XmlNode ConfigurationNode { get; set; }
+		internal XElement ConfigurationNode { get; set; }
 
 		private string m_textStyle;
 
@@ -113,18 +113,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Get any text styles from configuration node (which is now available; it was not at construction)
 		/// </summary>
 		/// <param name="configurationNode"></param>
-		public void FinishInit(XmlNode configurationNode)
+		public void FinishInit(XElement configurationNode)
 		{
-			if (configurationNode.Attributes != null)
+			var textStyle = configurationNode.Attribute("textStyle");
+			if (textStyle != null)
 			{
-				var textStyle = configurationNode.Attributes["textStyle"];
-				if (textStyle != null)
+				TextStyle = textStyle.Value;
+				if (m_VectorReferenceVc != null)
 				{
-					TextStyle = textStyle.Value;
-					if (m_VectorReferenceVc != null)
-					{
-						m_VectorReferenceVc.TextStyle = textStyle.Value;
-					}
+					m_VectorReferenceVc.TextStyle = textStyle.Value;
 				}
 			}
 		}

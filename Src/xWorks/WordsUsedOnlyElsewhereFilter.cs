@@ -2,10 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
@@ -16,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private FdoCache m_cache;
 
-		public override void Init(FdoCache cache, System.Xml.XmlNode filterNode)
+		public override void Init(FdoCache cache, XElement filterNode)
 		{
 			m_cache = cache;
 			base.Init(cache, filterNode);

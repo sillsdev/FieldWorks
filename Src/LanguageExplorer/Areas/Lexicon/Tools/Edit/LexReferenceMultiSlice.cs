@@ -9,8 +9,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public override void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
+		public override void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent,
 			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
@@ -150,13 +150,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Expansion = DataTree.TreeItemState.ktisExpanded;
 		}
 
-		private void GenerateChildNode(int iChild, XmlNode node, XmlNode caller, int indent,
+		private void GenerateChildNode(int iChild, XElement node, XElement caller, int indent,
 			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			var lr = m_refs[iChild];
 			var lrt = lr.Owner as ILexRefType;
 			string sLabel = lrt.ShortName;
-			if (sLabel == null || sLabel == string.Empty)
+			if (string.IsNullOrEmpty(sLabel))
 				sLabel = lrt.Abbreviation.BestAnalysisAlternative.Text;
 			bool fTreeRoot = true;
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						if (hvoFirst != m_obj.Hvo)
 						{
 							sLabel = lrt.ReverseName.BestAnalysisAlternative.Text;
-							if (sLabel == null || sLabel == string.Empty)
+							if (string.IsNullOrEmpty(sLabel))
 								sLabel = lrt.ReverseAbbreviation.BestAnalysisAlternative.Text;
 							fTreeRoot = false;
 						}
@@ -270,7 +270,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			sXml += " mappingType=\"" + lrt.MappingType + "\" hvoDisplayParent=\"" + m_obj.Hvo + "\"" +
 				" menu=\"" + sMenu + "\"><deParams displayProperty=\"HeadWord\"/></slice>";
-			node.InnerXml = sXml;
+			node.ReplaceNodes(XElement.Parse(sXml));
 			int firstNewSliceIndex = insPos;
 			CreateIndentedNodes(caller, lr, indent, ref insPos, path, reuseMap, node);
 			for (int islice = firstNewSliceIndex; islice < insPos; islice++)
@@ -281,7 +281,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					(child as ILexReferenceSlice).ParentSlice = this;
 				}
 			}
-			node.InnerXml = "";
+			node.RemoveNodes();
 		}
 
 		private ContextMenuStrip m_contextMenuStrip;
@@ -759,9 +759,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
-				XmlNode caller = null;
+				XElement caller = null;
 				if (Key.Length > 1)
-					caller = Key[Key.Length - 2] as XmlNode;
+					caller = Key[Key.Length - 2] as XElement;
 				int insPos = this.IndexInContainer + m_refs.Count;
 				GenerateChildNode(m_refs.Count-1, m_configurationNode, caller, Indent,
 					ref insPos, new ArrayList(Key), new ObjSeqHashMap());
@@ -786,9 +786,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
-				XmlNode caller = null;
+				XElement caller = null;
 				if (Key.Length > 1)
-					caller = Key[Key.Length - 2] as XmlNode;
+					caller = Key[Key.Length - 2] as XElement;
 				int insPos = iSlice + 1;
 				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = DataTree.TreeItemState.ktisExpanded;

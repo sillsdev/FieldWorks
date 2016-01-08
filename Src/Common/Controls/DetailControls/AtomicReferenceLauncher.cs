@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string nullLabel = DetailControlsStrings.ksNullLabel;
 			if (m_configurationNode != null)
 			{
-				System.Xml.XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+				var node = m_configurationNode.Element("deParams");
 				nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel", nullLabel);
 				if (nullLabel == string.Empty)
 					nullLabel = null;

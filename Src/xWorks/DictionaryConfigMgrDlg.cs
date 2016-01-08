@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:DictionaryConfigMgrDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
+		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XElement> configViews, XElement current)
 		{
 			InitializeComponent();
 

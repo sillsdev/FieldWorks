@@ -15,7 +15,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FdoUi
@@ -659,7 +659,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public PosFilter() { }
-		public PosFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public PosFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
@@ -669,7 +669,7 @@ namespace SIL.FieldWorks.FdoUi
 			get { return "external"; }
 		}
 
-		public override bool CompatibleFilter(XmlNode colSpec)
+		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;
@@ -715,7 +715,7 @@ namespace SIL.FieldWorks.FdoUi
 			get { return "external"; }
 		}
 
-		public override bool CompatibleFilter(System.Xml.XmlNode colSpec)
+		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;

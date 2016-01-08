@@ -17,8 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -84,11 +85,9 @@ namespace SIL.FieldWorks.Filters
 		/// In this case we just need to add the sortProperty attribute.
 		/// </summary>
 		/// <param name="node"></param>
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
-			XmlAttribute xaSort = node.OwnerDocument.CreateAttribute("sortProperty");
-			xaSort.Value = m_propertyName;
-			node.Attributes.Append(xaSort);
+			node.Add(new XAttribute("sortProperty", m_propertyName));
 		}
 
 		/// <summary>
@@ -96,7 +95,7 @@ namespace SIL.FieldWorks.Filters
 		/// created by a call to PersistAsXml.
 		/// </summary>
 		/// <param name="node"></param>
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			Init(node);
 		}
@@ -127,9 +126,9 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void Init(XmlNode configuration)
+		protected void Init(XElement configuration)
 		{
-			m_propertyName =XmlUtils.GetManditoryAttributeValue(configuration, "sortProperty");
+			m_propertyName = XmlUtils.GetManditoryAttributeValue(configuration, "sortProperty");
 		}
 
 		/// <summary>
@@ -201,10 +200,10 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache"></param>
 		/// <param name="configuration"></param>
 		/// <returns></returns>
-		static public PropertyRecordSorter Create(FdoCache cache, XmlNode configuration)
+		static public PropertyRecordSorter Create(FdoCache cache, XElement configuration)
 		{
 			PropertyRecordSorter sorter = (PropertyRecordSorter)DynamicLoader.CreateObject(configuration);
-			sorter. Init (configuration);
+			sorter.Init(configuration);
 			return sorter;
 		}
 	}
@@ -226,7 +225,7 @@ namespace SIL.FieldWorks.Filters
 		/// This default implementation does nothing.
 		/// </summary>
 		/// <param name="node"></param>
-		public virtual void PersistAsXml(XmlNode node)
+		public virtual void PersistAsXml(XElement node)
 		{
 		}
 
@@ -235,7 +234,7 @@ namespace SIL.FieldWorks.Filters
 		/// created by a call to PersistAsXml.
 		/// </summary>
 		/// <param name="node"></param>
-		public virtual void InitXml(XmlNode node)
+		public virtual void InitXml(XElement node)
 		{
 		}
 
@@ -397,13 +396,14 @@ namespace SIL.FieldWorks.Filters
 					return m_propertyName;
 				}
 			}
+
 			/// <summary>
 			/// Add to the specified XML node information required to create a new
 			/// object equivalent to yourself. The node already contains information
 			/// sufficient to create an instance of the proper class.
 			/// </summary>
 			/// <param name="node"></param>
-			public void PersistAsXml(XmlNode node)
+			public void PersistAsXml(XElement node)
 			{
 				XmlUtils.AppendAttribute(node, "property", m_propertyName);
 			}
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.Filters
 			/// created by a call to PersistAsXml.
 			/// </summary>
 			/// <param name="node"></param>
-			public void InitXml(XmlNode node)
+			public void InitXml(XElement node)
 			{
 				m_propertyName = XmlUtils.GetManditoryAttributeValue(node, "property");
 			}
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			foreach(RecordSorter rs in m_sorters)
@@ -835,11 +835,11 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_sorters = new ArrayList(node.ChildNodes.Count);
-			foreach (XmlNode child in node.ChildNodes)
+			m_sorters = new ArrayList(node.Elements().Count());
+			foreach (var child in node.Elements())
 			{
 				var obj = DynamicLoader.RestoreFromChild(child, ".");
 				m_sorters.Add(obj);
@@ -1016,9 +1016,9 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
-			base.PersistAsXml (node); // does nothing, but in case needed later...
+			base.PersistAsXml(node); // does nothing, but in case needed later...
 			IPersistAsXml persistComparer = m_comp as IPersistAsXml;
 			if (persistComparer == null)
 				throw new Exception("cannot persist GenRecSorter with comparer class " + m_comp.GetType().AssemblyQualifiedName);
@@ -1032,10 +1032,10 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			XmlNode compNode = node.ChildNodes[0];
+			var compNode = node.Elements().First();
 			if (compNode.Name != "comparer")
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");
 			m_comp = DynamicLoader.RestoreObject(compNode) as IComparer;
@@ -1527,7 +1527,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public void PersistAsXml(XmlNode node)
+		public void PersistAsXml(XElement node)
 		{
 			DynamicLoader.PersistObject(m_finder, node, "finder");
 			DynamicLoader.PersistObject(m_subComp, node, "comparer");
@@ -1543,7 +1543,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public void InitXml(XmlNode node)
+		public void InitXml(XElement node)
 		{
 			m_finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
 			m_subComp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
@@ -1749,7 +1749,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void PersistAsXml(XmlNode node)
+		public void PersistAsXml(XElement node)
 		{
 			DynamicLoader.PersistObject(m_comp, node, "comparer");
 		}
@@ -1760,7 +1760,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void InitXml(XmlNode node)
+		public void InitXml(XElement node)
 		{
 			m_comp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
 		}
@@ -1872,7 +1872,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void PersistAsXml(XmlNode node)
+		public void PersistAsXml(XElement node)
 		{
 			// nothing to do.
 		}
@@ -1883,7 +1883,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void InitXml(XmlNode node)
+		public void InitXml(XElement node)
 		{
 			// Nothing to do
 		}
@@ -2085,7 +2085,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void PersistAsXml(XmlNode node)
+		public void PersistAsXml(XElement node)
 		{
 			XmlUtils.AppendAttribute(node, "ws", m_sWs);
 		}
@@ -2096,7 +2096,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void InitXml(XmlNode node)
+		public void InitXml(XElement node)
 		{
 			m_sWs = XmlUtils.GetManditoryAttributeValue(node, "ws");
 		}
@@ -2225,7 +2225,7 @@ namespace SIL.FieldWorks.Filters
 		/// Persists as XML.
 		/// </summary>
 		/// <param name="node">The node.</param>
-		public void PersistAsXml(XmlNode node)
+		public void PersistAsXml(XElement node)
 		{
 			XmlUtils.AppendAttribute(node, "ws", m_wsId);
 		}
@@ -2234,7 +2234,7 @@ namespace SIL.FieldWorks.Filters
 		/// Inits the XML.
 		/// </summary>
 		/// <param name="node">The node.</param>
-		public void InitXml(XmlNode node)
+		public void InitXml(XElement node)
 		{
 			m_wsId = XmlUtils.GetManditoryAttributeValue(node, "ws");
 		}

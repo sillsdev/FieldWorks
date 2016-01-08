@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Xml;
-using SIL.Utils;
+using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Xml;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -28,10 +28,10 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class LayoutMerger : IOldVersionMerger
 	{
-		private XmlDocument m_dest;
-		private XmlNode m_newMaster;
-		private XmlNode m_oldConfigured;
-		private XmlElement m_output;
+		private XDocument m_dest;
+		private XElement m_newMaster;
+		private XElement m_oldConfigured;
+		private XElement m_output;
 		/// <summary>
 		/// If present, this is the stuff after (and including) the # in the 'oldConfigured' argument to Merge,
 		/// assumed to be common to all relevant parts of 'oldConfigured' (that have a 'param' attribute)
@@ -57,9 +57,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// But we only want to do that ONCE, not for every duplicate of the preceding match node.
 		/// </summary>
 		private Dictionary<string, bool> m_oldPartsFound;
-		private Set<XmlNode> m_insertedMissing; // missing nodes we already inserted.
-		Set<string> m_safeAttrs = new Set<string>(
-			new string[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
+		private HashSet<XElement> m_insertedMissing; // missing nodes we already inserted.
+		readonly HashSet<string> m_safeAttrs = new HashSet<string>(
+			new[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
 				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup" });
 
 		private const string NameAttr = "name";
@@ -73,27 +73,30 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This is the main entry point.
 		/// </summary>
-		public XmlNode Merge(XmlNode newMaster, XmlNode oldConfigured, XmlDocument dest, string oldLayoutSuffix)
+		public XElement Merge(XElement newMaster, XElement oldConfigured, XDocument dest, string oldLayoutSuffix)
 		{
 			// As a result of LT-14650, certain bits of logic regarding copied views and duplicated nodes
 			// were brought inside of the Merge.
 			m_newMaster = newMaster;
 			m_oldConfigured = oldConfigured;
 			m_dest = dest;
-			m_insertedMissing = new Set<XmlNode>();
-			m_output = m_dest.CreateElement(newMaster.Name);
+			m_insertedMissing = new HashSet<XElement>();
+			m_output = new XElement(newMaster.Name);
 			m_layoutParamAttrSuffix = oldLayoutSuffix;
 			CopyAttributes(m_newMaster, m_output);
-			int startIndex = 0;
+			var startIndex = 0;
 			BuildOldConfiguredPartsDicts();
-			while (startIndex < m_newMaster.ChildNodes.Count)
+			var newMasterChildElements = m_newMaster.Elements().ToList();
+			while (startIndex < newMasterChildElements.Count)
 			{
-				XmlNode currentChild = m_newMaster.ChildNodes[startIndex];
+				var currentChild = newMasterChildElements[startIndex];
 				if (IsMergeableNode(currentChild))
 				{
-					int limIndex = startIndex + 1;
-					while (limIndex < m_newMaster.ChildNodes.Count && m_newMaster.ChildNodes[limIndex].Name == currentChild.Name)
+					var limIndex = startIndex + 1;
+					while (limIndex < newMasterChildElements.Count && newMasterChildElements[limIndex].Name == currentChild.Name)
+					{
 						limIndex++;
+					}
 					CopyParts(startIndex, limIndex);
 					startIndex = limIndex;
 				}
@@ -106,19 +109,19 @@ namespace SIL.FieldWorks.Common.Controls
 			return m_output;
 		}
 
-		private XmlNode CopyToOutput(XmlNode source)
+		private XElement CopyToOutput(XElement source)
 		{
-			XmlNode newNode = m_dest.ImportNode(source, true);
-			m_output.AppendChild(newNode);
+			var newNode = source.Clone();
+			m_output.Add(newNode);
 			return newNode;
 		}
 
-		private void FixUpPartRefParamAttrForDupNode(XmlNode partRefNode, string dupKey)
+		private void FixUpPartRefParamAttrForDupNode(XElement partRefNode, string dupKey)
 		{
-			if (string.IsNullOrEmpty(partRefNode.GetOptionalStringAttribute(ParamAttr, string.Empty)))
+			if (string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(partRefNode, ParamAttr, string.Empty)))
 				return; // nothing to do
 
-			var xaParam = partRefNode.Attributes[ParamAttr];
+			var xaParam = partRefNode.Attribute(ParamAttr);
 			string suffix;
 			if (m_partLevelParamAttrSuffix.TryGetValue(dupKey, out suffix))
 			{
@@ -126,12 +129,12 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void FixUpPartRefLabelAttrForDupNode(XmlNode partRefNode, string dupKey)
+		private void FixUpPartRefLabelAttrForDupNode(XElement partRefNode, string dupKey)
 		{
-			if (string.IsNullOrEmpty(partRefNode.GetOptionalStringAttribute(LabelAttr, string.Empty)))
+			if (string.IsNullOrEmpty(Utils.XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty)))
 				return; // nothing to do
 
-			var xaLabel = partRefNode.Attributes[LabelAttr];
+			var xaLabel = partRefNode.Attribute(LabelAttr);
 			string suffix;
 			if (m_labelAttrSuffix.TryGetValue(dupKey, out suffix))
 			{
@@ -139,7 +142,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private bool IsMergeableNode(XmlNode currentChild)
+		private static bool IsMergeableNode(XElement currentChild)
 		{
 			return currentChild.Name == PartNode;
 		}
@@ -147,7 +150,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// For most parts, the key is the ref attribute, but if that is $child, it's a custom field and
 		// the label is the best way to distinguish. This key is used to match elements between
 		// newMaster and oldConfigured nodes.
-		private string GetKey(XmlNode node)
+		private static string GetKey(XElement node)
 		{
 			var key = Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
@@ -160,7 +163,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// parts that have been duplicated too, so we have a second sort of key that also uses the dup attribute.
 		// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
 		// if this one is a duplicate node.
-		private string GetKeyWithDup(XmlNode node)
+		private static string GetKeyWithDup(XElement node)
 		{
 			var key = Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
@@ -174,7 +177,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_partLevelParamAttrSuffix = new Dictionary<string, string>();
 			m_labelAttrSuffix = new Dictionary<string, string>();
 			m_oldPartsFound = new Dictionary<string, bool>();
-			foreach (XmlNode child in m_oldConfigured)
+			foreach (var child in m_oldConfigured.Elements())
 			{
 				if (!IsMergeableNode(child))
 					continue;
@@ -190,16 +193,18 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// Answer true if we want to insert a copy of an output node even though there isn't a match in the current
 		// input range. Currently this requires both that it has a ref of $child and the key doesn't match ANY part node in the input.
-		bool WantToCopyMissingItem(XmlNode node)
+		bool WantToCopyMissingItem(XElement node)
 		{
 			if (Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) != ChildStr)
 				return false;
-			string key = GetKey(node);
+			var key = GetKey(node);
 			if (m_insertedMissing.Contains(node))
 				return false; // don't insert twice!
-			foreach (XmlNode child in m_newMaster.ChildNodes)
+			foreach (var child in m_newMaster.Elements())
+			{
 				if (IsMergeableNode(child) && GetKey(child) == key)
 					return false;
+			}
 			return true;
 		}
 
@@ -207,7 +212,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Copy initial items not in oldConfigured
 			int indexOfFirstNodeWanted = CopyNodesNotInOldConfigured(startIndex, limIndex);
-			foreach (XmlNode oldNode in m_oldConfigured)
+			foreach (var oldNode in m_oldConfigured.Elements())
 			{
 				CopyStuffWantedForNewNode(oldNode, indexOfFirstNodeWanted, limIndex);
 			}
@@ -217,15 +222,16 @@ namespace SIL.FieldWorks.Common.Controls
 		// If we find a node with the same key in the range, copy it, and if the input range
 		// contains following nodes not in output and this is the first copy of the output key, copy them too.
 		// If we don't find an input node to copy, we might copy the output.
-		private void CopyStuffWantedForNewNode(XmlNode oldNode, int indexOfFirstNodeWanted, int limIndex)
+		private void CopyStuffWantedForNewNode(XElement oldNode, int indexOfFirstNodeWanted, int limIndex)
 		{
-			string key = GetKey(oldNode);
-			for (int index = indexOfFirstNodeWanted; index < limIndex; index++)
+			var key = GetKey(oldNode);
+			var newMasterChildElements = m_newMaster.Elements().ToList();
+			for (var index = indexOfFirstNodeWanted; index < limIndex; index++)
 			{
-				XmlNode child = m_newMaster.ChildNodes[index];
+				var child = newMasterChildElements[index];
 				if (GetKey(child) == key)
 				{
-					XmlNode copy = CopyToOutput(child);
+					var copy = CopyToOutput(child);
 					CopySafeAttrs(copy, oldNode);
 					var dupKey = GetKeyWithDup(oldNode);
 					if (dupKey != key)
@@ -252,30 +258,34 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void CheckForAndReattachLayoutParamSuffix(XmlNode workingNode)
+		private void CheckForAndReattachLayoutParamSuffix(XElement workingNode)
 		{
 			if (string.IsNullOrEmpty(m_layoutParamAttrSuffix) ||
-				string.IsNullOrEmpty(workingNode.GetOptionalStringAttribute(ParamAttr, string.Empty)))
+				string.IsNullOrEmpty(Utils.XmlUtils.GetOptionalAttributeValue(workingNode, ParamAttr, string.Empty)))
 				return; // nothing to do
 
-			var xaParam = workingNode.Attributes[ParamAttr];
+			var xaParam = workingNode.Attribute(ParamAttr);
 			xaParam.Value = xaParam.Value + m_layoutParamAttrSuffix;
 		}
 
-		private void ReattachDupSuffixes(XmlNode copy, string dupKey)
+		private void ReattachDupSuffixes(XElement copy, string dupKey)
 		{
 			FixUpPartRefParamAttrForDupNode(copy, dupKey);
 			FixUpPartRefLabelAttrForDupNode(copy, dupKey);
 		}
 
-		private void CopySafeAttrs(XmlNode copy, XmlNode oldConfiguredPartRef)
+		private void CopySafeAttrs(XElement copy, XElement oldConfiguredPartRef)
 		{
 			// Ignore comments
-			if (oldConfiguredPartRef.Attributes == null)
+			if (!oldConfiguredPartRef.HasAttributes)
+			{
 				return;
-			foreach (XmlAttribute xa in oldConfiguredPartRef.Attributes)
-				if (m_safeAttrs.Contains(xa.Name))
-					Utils.XmlUtils.SetAttribute(copy, xa.Name, xa.Value);
+			}
+			foreach (var xa in oldConfiguredPartRef.Attributes())
+			{
+				if (m_safeAttrs.Contains(xa.Name.LocalName))
+					XmlUtils.SetAttribute(copy, xa.Name.LocalName, xa.Value);
+			}
 		}
 
 		/// <summary>
@@ -288,9 +298,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		private int CopyNodesNotInOldConfigured(int index, int limIndex)
 		{
-			while (index < limIndex && !m_oldPartsFound.ContainsKey(GetKey(m_newMaster.ChildNodes[index])))
+			var newMasterChildElements = m_newMaster.Elements().ToList();
+			while (index < limIndex && !m_oldPartsFound.ContainsKey(GetKey(newMasterChildElements[index])))
 			{
-				XmlNode copy = CopyToOutput(m_newMaster.ChildNodes[index]);
+				var copy = CopyToOutput(newMasterChildElements[index]);
 				// Susanna said to preserve the visibility of nodes not in the old version.
 				// If we want to hide them to make the new view more like the 'oldConfigured' one, this is where to do it.
 				//XmlUtils.SetAttribute(copy, "visibility", "never");
@@ -300,14 +311,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return index;
 		}
 
-		private void CopyAttributes(XmlNode source, XmlNode dest)
+		private void CopyAttributes(XElement source, XElement dest)
 		{
 			// Copy all layout attributes from the standard pattern to the output
-			foreach (XmlAttribute attr in source.Attributes)
+			foreach (var attr in source.Attributes())
 			{
-				var xa = m_dest.CreateAttribute(attr.Name);
-				dest.Attributes.Append(xa);
-				xa.Value = attr.Value;
+				var xa = new XAttribute(attr.Name, attr.Value);
+				dest.Add(xa);
 				if (attr.Name == NameAttr && !string.IsNullOrEmpty(m_layoutParamAttrSuffix))
 				{
 					// This suffix also attaches to the 'name' attribute of the layout itself
@@ -315,6 +325,5 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 		}
-
 	}
 }

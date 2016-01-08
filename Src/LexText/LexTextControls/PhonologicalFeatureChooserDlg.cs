@@ -6,7 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -481,8 +482,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void BuildInitialBrowseView()
 		{
-			var configurationParameters = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode toolNode = configurationParameters.SelectSingleNode(
+			var configurationParameters = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var toolNode = configurationParameters.XPathSelectElement(
 				"controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
 
 			m_listPanel.SuspendLayout();

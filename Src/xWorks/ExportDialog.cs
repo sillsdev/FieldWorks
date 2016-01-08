@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
@@ -429,16 +430,16 @@ namespace SIL.FieldWorks.XWorks
 						return null; // nothing to do.
 				}
 			}
-			var collector = new XmlNode[1];
-			var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
+			var collector = new XElement[1];
+			var parameter = new Tuple<string, string, XElement[]>(area, tool, collector);
 			Publisher.Publish("GetContentControlParameters", parameter);
 			var controlNode = collector[0];
 			Debug.Assert(controlNode != null);
-			XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
+			var dynLoaderNode = controlNode.Element("dynamicloaderinfo");
 			var contentAssemblyPath = XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath");
 			var contentClass = XmlUtils.GetAttributeValue(dynLoaderNode, "class");
 			Control mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-			var parameters = controlNode.SelectSingleNode("parameters");
+			var parameters = controlNode.Element("parameters");
 			((IFlexComponent)mainControl).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			InitFromMainControl(mainControl);
 			return mainControl;

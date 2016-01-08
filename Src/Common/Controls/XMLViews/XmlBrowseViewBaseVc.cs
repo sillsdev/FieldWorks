@@ -9,14 +9,14 @@
 // <remarks>
 // </remarks>
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Reflection; // for check-box icons.
+using System.Reflection;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -59,11 +59,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Specifications of columns to display
 		/// </summary>
-		protected List<XmlNode> m_columns = new List<XmlNode>();
+		protected List<XElement> m_columns = new List<XElement>();
 		/// <summary>
 		/// Specs of columns that COULD be displayed, but which have not been selected.
 		/// </summary>
-		protected List<XmlNode> m_possibleColumns;
+		protected List<XElement> m_possibleColumns;
 		/// <summary>// Top-level fake property for list of objects.</summary>
 		protected int m_fakeFlid = 0;
 		/// <summary>// Controls appearance of column for check boxes.</summary>
@@ -197,9 +197,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fakeFlid">The fake flid.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+		public XmlBrowseViewBaseVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{
 			Debug.Assert(xnSpec != null);
@@ -213,7 +211,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string savedCols = m_xbv.m_bv.PropertyTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
-			XmlDocument doc = null;
+			XDocument doc = null;
 			string target = null;
 			if (!string.IsNullOrEmpty(savedCols))
 			{
@@ -222,7 +220,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
 				// default: the columns that have 'width' specified.
-				foreach(XmlNode node in m_possibleColumns)
+				foreach(var node in m_possibleColumns)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
 						m_columns.Add(node);
@@ -230,7 +228,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
+				foreach (var node in doc.Root.XPathSelectElements("//column"))
 				{
 					if (IsValidColumnSpec(node))
 					m_columns.Add(node);
@@ -240,15 +238,14 @@ namespace SIL.FieldWorks.Common.Controls
 			SetupSelectColumn();
 		}
 
-		internal static XmlDocument GetSavedColumns(string savedCols, IPropertyTable propertyTable, string colListId)
+		internal static XDocument GetSavedColumns(string savedCols, IPropertyTable propertyTable, string colListId)
 		{
-			XmlDocument doc;
+			XDocument doc;
 			string target;
 			try
 			{
-				doc = new XmlDocument();
-				doc.LoadXml(savedCols);
-				int version = XmlUtils.GetOptionalIntegerValue(doc.DocumentElement, "version", 0);
+				doc = XDocument.Parse(savedCols);
+				int version = XmlUtils.GetOptionalIntegerValue(doc.Root, "version", 0);
 				if (version != BrowseViewer.kBrowseViewVersion)
 				{
 					// If we can fix problems introduced by a new version, fix them here.
@@ -286,7 +283,7 @@ namespace SIL.FieldWorks.Common.Controls
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
 							propertyTable.SetProperty(colListId, savedCols, true, true);
-							doc.LoadXml(savedCols);
+							doc = XDocument.Parse(savedCols);
 							break;
 						default:
 							if (!s_haveShownDefaultColumnMessage)
@@ -440,7 +437,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected virtual void SetupSelectColumn()
 		{
-			XmlAttribute xa = m_xnSpec.Attributes["selectColumn"];
+			var xa = m_xnSpec.Attribute("selectColumn");
 			m_fShowSelected = xa != null && xa.Value == "true";
 			if (m_fShowSelected)
 			{
@@ -472,12 +469,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public List<XmlNode> ComputePossibleColumns()
+		public List<XElement> ComputePossibleColumns()
 		{
 			XmlVc vc = null;
 			if (ListItemsClass != 0)
 				vc = this;
-			m_possibleColumns = PartGenerator.GetGeneratedChildren(m_xnSpec.SelectSingleNode("columns"),
+			m_possibleColumns = PartGenerator.GetGeneratedChildren(m_xnSpec.Element("columns"),
 						 m_xbv.Cache, vc, (int)ListItemsClass);
 			return m_possibleColumns;
 		}
@@ -522,19 +519,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		internal bool IsValidColumnSpec(XmlNode node)
+		internal bool IsValidColumnSpec(XElement node)
 		{
-			List<XmlNode> possibleColumns = this.PossibleColumnSpecs;
+			List<XElement> possibleColumns = PossibleColumnSpecs;
 			// first, check to see if we can find some part or child node information
 			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
 			// because the custom field has been removed so the parts cannot be generated
-			XmlNode partNode = this.GetPartFromParentNode(node, this.ListItemsClass);
+			var partNode = GetPartFromParentNode(node, ListItemsClass);
 			if (partNode == null)
 				return false;	// invalid node, don't add.
 			bool badCustomField = CheckForBadCustomField(possibleColumns, node);
 			if (badCustomField)
 				return false;	// invalid custom field, don't add.
-			bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
+			bool badReversalIndex = CheckForBadReversalIndex(node);
 			if (badReversalIndex)
 				return false;
 			return true;	// valid as far as we can tell.
@@ -548,12 +545,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="possibleColumns"></param>
 		/// <param name="node"></param>
 		/// <returns>true if this node refers to a nonexistent custom field</returns>
-		private bool CheckForBadCustomField(List<XmlNode> possibleColumns, XmlNode node)
+		private bool CheckForBadCustomField(List<XElement> possibleColumns, XElement node)
 		{
 			// see if this node is based on a layout. If so, get its part
 			PropWs propWs;
-			XmlNode columnForCustomField = null;
-			if (this.TryColumnForCustomField(node, this.ListItemsClass, out columnForCustomField, out propWs))
+			XElement columnForCustomField;
+			if (TryColumnForCustomField(node, ListItemsClass, out columnForCustomField, out propWs))
 			{
 				if (columnForCustomField != null)
 				{
@@ -569,7 +566,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					return true;
 				}
-				else if (propWs != null)
+				if (propWs != null)
 				{
 					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
 					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
@@ -585,13 +582,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 
 
-		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
+		private string GetNewLabelFromMatchingCustomField(List<XElement> possibleColumns, int flid)
 		{
-			foreach (XmlNode possibleColumn in possibleColumns)
+			foreach (var possibleColumn in possibleColumns)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
 				PropWs propWs;
-				XmlNode columnForCustomField;
+				XElement columnForCustomField;
 				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
@@ -609,14 +606,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Check for an invalid reversal index.  (Reversal indexes can be deleted.)
 		/// </summary>
-		/// <param name="possibleColumns"></param>
 		/// <param name="node"></param>
 		/// <returns>true if this node refers to a nonexistent reversal index.</returns>
-		private bool CheckForBadReversalIndex(List<XmlNode> possibleColumns, XmlNode node)
+		private bool CheckForBadReversalIndex(XElement node)
 		{
 			// Look for a child node which is similar to this (value of ws attribute may differ):
 			// <string field="ReversalEntriesText" ws="$ws=es"/>
-			XmlNode child = XmlUtils.FindNode(node, "string");
+			var child = XmlUtils.FindNode(node, "string");
 			if (child != null &&
 				XmlUtils.GetOptionalAttributeValue(child, "field") == "ReversalEntriesText")
 			{
@@ -704,7 +700,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal virtual List<XmlNode> ColumnSpecs
+		internal virtual List<XElement> ColumnSpecs
 		{
 			get
 			{
@@ -716,7 +712,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal List<XmlNode> PossibleColumnSpecs
+		internal List<XElement> PossibleColumnSpecs
 		{
 			get
 			{
@@ -953,7 +949,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
-			XmlNode node = m_columns[icol - 1];
+			var node = m_columns[icol - 1];
 			// Figure out the underlying Right-To-Left value.
 			bool fRightToLeft = false;
 			// Figure out if this column's writing system is audio.
@@ -1063,7 +1059,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						SetForcedWs(node);
 					}
-				XmlNode nodeToProcess = GetColumnNode(node, hvo, m_sda, m_layouts);
+				var nodeToProcess = GetColumnNode(node, hvo, m_sda, m_layouts);
 				ProcessChildren(nodeToProcess, vwenv, hvo, null);
 			}
 				finally
@@ -1096,7 +1092,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_wsBest = 0;
 		}
 
-		private int GetBestHvoAndFlid(int hvo, XmlNode xn, out int flidBest)
+		private int GetBestHvoAndFlid(int hvo, XElement xn, out int flidBest)
 		{
 			// The 'best' ws series needs the hvo and flid in order to work.
 			// Some others (e.g., 'reversal' which require the hvo don't need a flid.
@@ -1107,10 +1103,10 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				var mdc = m_mdc as IFwMetaDataCacheManaged;
 				int objectClid = m_sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				if (xn.ParentNode != null && xn.ParentNode.Name == "obj")
+				if (xn.Parent != null && xn.Parent.Name == "obj")
 				{
 					// Special case: object property, string field is on a derived object.
-					string fieldObj = XmlUtils.GetAttributeValue(xn.ParentNode, "field");
+					string fieldObj = XmlUtils.GetAttributeValue(xn.Parent, "field");
 					if (mdc.FieldExists(objectClid, fieldObj, true))
 					{
 						var flidObj = m_mdc.GetFieldId2(objectClid, fieldObj, true);
@@ -1133,9 +1129,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Passed a column node, determines whether it indicates a forced writing system, and if so sets it.
 		/// </summary>
 		/// <param name="node"></param>
-		private void SetForcedWs(XmlNode node)
+		private void SetForcedWs(XElement node)
 		{
-			string wsSpec = XmlUtils.GetOptionalAttributeValue(node, "ws");
+			var wsSpec = XmlUtils.GetOptionalAttributeValue(node, "ws");
 			if (wsSpec != null)
 			{
 				string realWsSpec = StringServices.GetWsSpecWithoutPrefix(wsSpec);
@@ -1156,7 +1152,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Set the properties of the table cell we are about to create.
 		/// </summary>
-		protected virtual void SetCellProperties(int rowIndex, int icol, XmlNode node, int hvo, IVwEnv vwenv, bool fIsCellActive)
+		protected virtual void SetCellProperties(int rowIndex, int icol, XElement node, int hvo, IVwEnv vwenv, bool fIsCellActive)
 		{
 			// By default we only need to worry about editability for the active row.
 			if (rowIndex == m_xbv.SelectedIndex)
@@ -1183,7 +1179,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void AddPreviewPiles(IVwEnv vwenv, XmlNode node, int icol)
+		private void AddPreviewPiles(IVwEnv vwenv, XElement node, int icol)
 			{
 			// add padding to separate PreviewArrow from other cell contents.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
@@ -1202,7 +1198,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.CloseInnerPile();
 		}
 
-		private void AddPreviewArrow(IVwEnv vwenv, XmlNode node)
+		private void AddPreviewArrow(IVwEnv vwenv, XElement node)
 		{
 			vwenv.OpenParagraph();
 			if (IsWritingSystemRTL(node))
@@ -1293,7 +1289,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fEditable"></param>
 		/// <param name="caller"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void ProcessFrag(XmlNode frag, IVwEnv vwenv, int hvo, bool fEditable, XmlNode caller)
+		public override void ProcessFrag(XElement frag, IVwEnv vwenv, int hvo, bool fEditable, XElement caller)
 		{
 			if (frag.Name == "preview")
 			{
@@ -1323,9 +1319,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="vwenv">The vwenv.</param>
 		/// ------------------------------------------------------------------------------------
-		public void DisplayCell(IManyOnePathSortItem item, XmlNode node, int hvo, IVwEnv vwenv)
+		public void DisplayCell(IManyOnePathSortItem item, XElement node, int hvo, IVwEnv vwenv)
 		{
-			List<XmlNode> outerParts = new List<XmlNode>();
+			List<XElement> outerParts = new List<XElement>();
 			int hvoToDisplay;
 			NodeDisplayCommand dispCommand = XmlViewsUtils.GetDisplayCommandForColumn(item, node, m_mdc,
 				m_sda, m_layouts, out hvoToDisplay, outerParts);
@@ -1354,7 +1350,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private bool IsWritingSystemRTL(XmlNode node)
+		private bool IsWritingSystemRTL(XElement node)
 		{
 			string sWs = XmlViewsUtils.FindWsParam(node);
 			if (sWs == "reversal")
@@ -1384,7 +1380,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		internal virtual bool AllowEdit(int icol, XmlNode node, bool fIsCellActive, int hvo)
+		internal virtual bool AllowEdit(int icol, XElement node, bool fIsCellActive, int hvo)
 		{
 			// Do we want to allow editing in the cell? Irrelevant if it isn't the current row.
 			bool fAllowEdit = false; // a default.
@@ -1447,11 +1443,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return fAllowEdit;
 		}
 
-		private int GetBestWsForNode(XmlNode node, int hvo)
+		private int GetBestWsForNode(XElement node, int hvo)
 		{
 			// look for a writing system ID.
-			XmlAttribute xa = node.Attributes["ws"];
-			XmlNode xn = node;
+			var xa = node.Attribute("ws");
+			var xn = node;
 			if (xa == null)
 				xn = XmlUtils.FindNode(node, "string");
 			var wsBest = 0;
@@ -1493,7 +1489,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return wsBest;
 		}
 
-		private bool NodeBestWsIsVoice(XmlNode node, int hvo)
+		private bool NodeBestWsIsVoice(XElement node, int hvo)
 		{
 			// Figure out if this column's writing system is audio.
 			var fVoice = false;
@@ -1510,7 +1506,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary>
 		/// Given the "column" element that describes a column of a browse view,
-		/// come up with the XmlNode whose children will be the actual parts (or part refs)
+		/// come up with the XElement whose children will be the actual parts (or part refs)
 		/// to use to display the contents.
 		/// </summary>
 		/// <param name="column"></param>
@@ -1518,14 +1514,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda"></param>
 		/// <param name="layouts"></param>
 		/// <returns></returns>
-		public static XmlNode GetColumnNode(XmlNode column, int hvo, ISilDataAccess sda, LayoutCache layouts)
+		public static XElement GetColumnNode(XElement column, int hvo, ISilDataAccess sda, LayoutCache layouts)
 		{
-			XmlNode nodeToProcess = column;
-			string layoutName = XmlUtils.GetOptionalAttributeValue(column, "layout");
+			var nodeToProcess = column;
+			var layoutName = XmlUtils.GetOptionalAttributeValue(column, "layout");
 			if (layoutName != null)
 			{
 				// new approach: display the object using the specified layout.
-				XmlNode nodeInner = GetNodeForPart(hvo, layoutName, true, sda,
+				var nodeInner = GetNodeForPart(hvo, layoutName, true, sda,
 					layouts);
 				if (nodeInner != null)
 					nodeToProcess = nodeInner;
@@ -1818,13 +1814,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool RemoveInvalidColumns()
 		{
-			List<XmlNode> invalidColumns = new List<XmlNode>();
-			for (int i = 0; i < m_columns.Count; ++i)
+			var invalidColumns = new List<XElement>();
+			for (var i = 0; i < m_columns.Count; ++i)
 			{
 				if (!IsValidColumnSpec(m_columns[i]))
 					invalidColumns.Add(m_columns[i]);
 			}
-			for (int i = 0; i < invalidColumns.Count; ++i)
+			for (var i = 0; i < invalidColumns.Count; ++i)
 				m_columns.Remove(invalidColumns[i]);
 			return invalidColumns.Count > 0;
 		}

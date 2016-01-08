@@ -13,12 +13,12 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.Utils;
 using System.Reflection;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="parameters"></param>
-		public EnumComboSlice(FdoCache cache, ICmObject obj, int flid, XmlNode parameters)
+		public EnumComboSlice(FdoCache cache, ICmObject obj, int flid, XElement parameters)
 			: base(new FwOverrideComboBox(), cache, obj, flid)
 		{
 			m_combo = (ComboBox)Control;
@@ -57,12 +57,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
-		void SetForeColor(XmlNode parameters)
+		void SetForeColor(XElement parameters)
 		{
-			XmlNode node = parameters.SelectSingleNode("forecolor");
+			var node = parameters.Element("forecolor");
 			if (node != null)
 			{
-				m_combo.ForeColor = Color.FromName(node.InnerText);
+				m_combo.ForeColor = Color.FromName(node.GetInnerText());
 			}
 		}
 		public override void Install(DataTree parent)
@@ -123,10 +123,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion IDisposable override
 
-		protected void PopulateCombo(XmlNode parameters)
+		protected void PopulateCombo(XElement parameters)
 		{
 			m_combo.Items.Clear();
-			XmlNode node =  parameters.SelectSingleNode("stringList");
+			var node =  parameters.Element("stringList");
 			if (node == null)
 				throw new ApplicationException ("The Enum editor requires a <stringList> element in the <deParams>");
 
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 					String.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
 				m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
-				string sideEffectMethod = XmlUtils.GetAttributeValue(m_configurationNode, "sideEffect", null);
+				string sideEffectMethod = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "sideEffect", null);
 				if (!string.IsNullOrEmpty(sideEffectMethod))
 				{
 					MethodInfo info = Object.GetType().GetMethod(sideEffectMethod);

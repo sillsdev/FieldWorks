@@ -13,7 +13,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -130,18 +130,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Get any text styles from configuration node (which is now available; it was not at construction)
 		/// </summary>
 		/// <param name="configurationNode"></param>
-		public void FinishInit(XmlNode configurationNode)
+		public void FinishInit(XElement configurationNode)
 		{
-			if (configurationNode.Attributes != null)
+			var textStyle = configurationNode.Attribute("textStyle");
+			if (textStyle != null)
 			{
-				var textStyle = configurationNode.Attributes["textStyle"];
-				if (textStyle != null)
+				TextStyle = textStyle.Value;
+				if (m_atomicReferenceVc != null)
 				{
-					TextStyle = textStyle.Value;
-					if (m_atomicReferenceVc != null)
-					{
-						m_atomicReferenceVc.TextStyle = textStyle.Value;
-					}
+					m_atomicReferenceVc.TextStyle = textStyle.Value;
 				}
 			}
 		}

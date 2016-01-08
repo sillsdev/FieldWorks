@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -263,10 +263,9 @@ namespace XMLViewsTests
 				{
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 
-					var frag = new XmlDocument();
-					frag.LoadXml("<p css='some#style' flowType='" + flowType + "'/>");
+					var frag = XDocument.Parse("<p css='some#style' flowType='" + flowType + "'/>");
 
-					exporter.BeginCssClassIfNeeded(frag.DocumentElement);
+					exporter.BeginCssClassIfNeeded(frag.Root);
 					writer.Flush();
 					stream.Seek(0, SeekOrigin.Begin);
 					using (var reader = new StreamReader(stream))

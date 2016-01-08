@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
@@ -23,6 +22,8 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 
@@ -111,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 
 			InitBase(propertyTable, null);
 
-			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue((XmlNode)null, "showDescendantInRoot", false);
+			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue((XElement)null, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
 			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
@@ -373,32 +374,32 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.ReadParameters();
 
-			m_layoutName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layout");
-			m_layoutChoiceField = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutChoiceField");
-			m_titleField = XmlUtils.GetAttributeValue(m_configurationParameters, "titleField");
+			m_layoutName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layout");
+			m_layoutChoiceField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutChoiceField");
+			m_titleField = XmlUtils.GetAttributeValue(m_configurationParametersElement, "titleField");
 			if (!string.IsNullOrEmpty(m_titleField))
 				Cache.DomainDataByFlid.AddNotification(this);
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters, "altTitleId");
+			string titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 				m_titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-			m_printLayout = XmlUtils.GetAttributeValue(m_configurationParameters, "printLayout");
+			m_printLayout = XmlUtils.GetAttributeValue(m_configurationParametersElement, "printLayout");
 		}
 
 		protected override void SetupDataContext()
 		{
-			Debug.Assert(m_configurationParameters != null);
+			Debug.Assert(m_configurationParametersElement != null);
 
 			base.SetupDataContext();
 
 			//this will normally be the same name as the view, e.g. "basicEdit". This plus the name of the vector
 			//should give us a unique context for the dataTree control parameters.
 
-			string persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
+			string persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "persistContext");
 
 			if (persistContext !="")
-				persistContext=m_vectorName+"."+persistContext+".DataTree";
+				persistContext=Clerk.Id+"."+persistContext+".DataTree";
 			else
-				persistContext=m_vectorName+".DataTree";
+				persistContext=Clerk.Id+".DataTree";
 
 			m_dataEntryForm.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
@@ -416,7 +417,7 @@ namespace SIL.FieldWorks.XWorks
 				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
 			//set up the context menu, overriding the automatic menu creator/handler
 
-			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
+			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParametersElement);
 			m_menuHandler.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 
 //			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
@@ -442,15 +443,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
-				string filterPath = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "filterPath");
+				string filterPath = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "filterPath");
 				if (filterPath!= null)
 				{
 #if __MonoCS__
 					// TODO-Linux: fix the data
 					filterPath = filterPath.Replace(@"\", "/");
 #endif
-					var document = new XmlDocument();
-					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
+					var document = XDocument.Load(FwDirectoryFinder.GetCodeFile(filterPath));
 					m_dataEntryForm.SliceFilter = new SliceFilter(document);
 				}
 				else //just set up a minimal filter
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				throw new ConfigurationException ("Could not load the filter.", m_configurationParameters, e);
+				throw new ConfigurationException("Could not load the filter.", m_configurationParametersElement, e);
 			}
 		}
 
@@ -594,10 +594,10 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					return false;
 			}
-			var docViewConfig = FindToolInXMLConfig(toolId);
-			if (docViewConfig == null)
+			var toolInXmlConfig = FindToolInXMLConfig(toolId);
+			if (toolInXmlConfig == null)
 				return false;
-			var innerControlNode = GetToolInnerControlNodeWithRightLayout(docViewConfig);
+			var innerControlNode = GetToolInnerControlNodeWithRightLayout(toolInXmlConfig);
 			if (innerControlNode == null)
 				return false;
 			using (var docView = CreateDocView(innerControlNode))
@@ -626,24 +626,28 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private XmlNode GetToolInnerControlNodeWithRightLayout(XmlNode docViewConfig)
+		private XElement GetToolInnerControlNodeWithRightLayout(XElement docViewConfig)
 		{
-			var paramNode = docViewConfig.SelectSingleNode("control//parameters[@layout = \"" + m_printLayout + "\"]");
+			var paramNode = docViewConfig.XPathSelectElement("control//parameters[@layout = \"" + m_printLayout + "\"]");
 			if (paramNode == null)
 				return null;
-			return paramNode.ParentNode;
+			return paramNode.Parent;
 		}
 
-		private XmlNode FindToolInXMLConfig(string docToolValue)
+		private XElement FindToolInXMLConfig(string docToolValue)
 		{
 			// At this point m_configurationParameters holds the RecordEditView parameter node.
 			// We need to find the tool that has a value attribute matching our input
 			// parameter (docToolValue).
+#if RANDYTODO
 			var path = ".//tools/tool[@value = \""+docToolValue+"\"]";
-			return m_configurationParameters.OwnerDocument.SelectSingleNode(path);
+			return m_configurationParametersElement.Document.XPathSelectElement(path);
+#else
+			return null; // TODO: Find it another way, since there is no tool element now.
+#endif
 		}
 
-		private XmlDocView CreateDocView(XmlNode parentConfigNode)
+		private XmlDocView CreateDocView(XElement parentConfigNode)
 		{
 			Debug.Assert(parentConfigNode != null,
 				"Can't create a view without the XML control configuration.");

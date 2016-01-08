@@ -4,15 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using HvoFlidKey = SIL.FieldWorks.FDO.Application.HvoFlidKey;
-using HvoFlidWSKey = SIL.FieldWorks.FDO.Application.HvoFlidWSKey;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -100,7 +97,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Simpler constructor supplies default args
 		/// </summary>
-		internal XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, XmlNode nodeSpec)
+		internal XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, XElement nodeSpec)
 			: this(domainDataByFlid, XmlUtils.GetOptionalBooleanAttributeValue(nodeSpec, "defaultChecked", true),
 			new Dictionary<int, int>())
 		{

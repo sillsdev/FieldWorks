@@ -2,8 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
 			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
@@ -67,7 +66,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");

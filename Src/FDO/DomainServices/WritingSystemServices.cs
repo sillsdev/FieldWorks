@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
@@ -220,20 +219,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="currentWS">The current WS.</param>
 		/// <param name="wsDefault">The ws default.</param>
 		/// <returns></returns>
-		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int wsDefault)
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XElement frag, CoreWritingSystemDefinition currentWS, int wsDefault)
 		{
 			return GetWritingSystem(cache, frag, currentWS, 0, 0, wsDefault);
 		}
+
 		/// <summary>
 		/// Get the writing system for the specified arguments, using the supplied SDA to interpret hvo and flid.
 		/// </summary>
-		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, ISilDataAccess sda, XmlNode frag, CoreWritingSystemDefinition currentWS,
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, ISilDataAccess sda, XElement frag, CoreWritingSystemDefinition currentWS,
 			int hvo, int flid, int wsDefault)
 		{
 			if (wsDefault == 0)
 				wsDefault = cache.DefaultUserWs;
 			var wsid = wsDefault;
-			var xa = frag.Attributes["ws"];
+			var xa = frag.Attribute("ws");
 			if (xa != null)
 			{
 				// If it has a parameter tag, strip it off.
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Get the writing system for the specified arguments, using the default cache to interpret hvo and flid.
 		/// Consider using the overload that takes an SDA if hvo or flid might be decorator objects/properties.
 		/// </summary>
-		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int hvo, int flid, int wsDefault)
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XElement frag, CoreWritingSystemDefinition currentWS, int hvo, int flid, int wsDefault)
 		{
 			return GetWritingSystem(cache, cache.DomainDataByFlid, frag, currentWS, hvo, flid, wsDefault);
 		}
@@ -269,9 +269,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="cache">The cache.</param>
 		/// <param name="frag">The frag.</param>
 		/// <returns></returns>
-		public static HashSet<int> GetWritingSystems(FdoCache cache, XmlNode frag)
+		public static HashSet<int> GetWritingSystems(FdoCache cache, XElement frag)
 		{
-			var xa = frag.Attributes["ws"];
+			var xa = frag.Attribute("ws");
 			if (xa == null)
 				return new HashSet<int>();
 			// If it has a parameter tag, strip it off.
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvo">object to use in determining 'best' names</param>
 		/// <param name="flid">flid to use in determining 'best' names</param>
 		/// <returns></returns>
-		public static HashSet<int> GetAllWritingSystems(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int hvo, int flid)
+		public static HashSet<int> GetAllWritingSystems(FdoCache cache, XElement frag, CoreWritingSystemDefinition currentWS, int hvo, int flid)
 		{
 			var sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			return GetAllWritingSystems(cache, sWs, currentWS, hvo, flid);

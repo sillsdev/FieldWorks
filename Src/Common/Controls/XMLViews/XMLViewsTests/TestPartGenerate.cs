@@ -2,13 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
@@ -49,9 +46,9 @@ namespace XMLViewsTests
 		/// </summary>
 		/// <param name="items"></param>
 		/// <param name="expected"></param>
-		bool SomeNodeMatches(XmlNode[] items, XmlNode expected)
+		bool SomeNodeMatches(XElement[] items, XElement expected)
 		{
-			foreach(XmlNode node in items)
+			foreach(var node in items)
 				if (TestXmlViewsUtils.NodesMatch(node, expected))
 					return true;
 			return false;
@@ -71,8 +68,7 @@ namespace XMLViewsTests
 		[Test]
 		public void GenerateMlString()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<generate class=\"LexEntry\" fieldType=\"mlstring\" restrictions=\"none\"> "
 					+"<column label=\"$label\"> "
 						+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
@@ -80,7 +76,7 @@ namespace XMLViewsTests
 						+"</seq> "
 					+"</column> "
 				+"</generate>");
-			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
+			var source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
 			Assert.IsNotNull(source);
 
 			PartGenerator generator = new PartGenerator(Cache, source);
@@ -95,41 +91,37 @@ namespace XMLViewsTests
 			Assert.IsTrue(StringArrayIncludes(fields, "SummaryDefinition"));
 			Assert.IsTrue(StringArrayIncludes(fields, "MyRestrictions"));
 
-			XmlNode[] results = generator.Generate();
+			var results = generator.Generate();
 
 			Assert.AreEqual(7, results.Length);
 
-			XmlDocument docExpected = new XmlDocument();
-
 			// LT-6956 : sense the test is calling Generate - add the "originalLabel" attribute.
-			docExpected.LoadXml(
+			var docExpected = XDocument.Parse(
 				"<column label=\"CitationForm\" originalLabel=\"CitationForm\" > "
 					+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
 					+"<string field=\"CitationForm\" ws=\"$ws:analysis\" class=\"LexEntry\"/> "
 					+"</seq> "
 				+"</column>");
-			XmlNode expected = TestXmlViewsUtils.GetRootNode(docExpected, "column");
+			var expected = TestXmlViewsUtils.GetRootNode(docExpected, "column");
 
 			Assert.IsTrue(SomeNodeMatches(results, expected), "CitationForm field is wrong");
 
-			XmlDocument docExpected2 = new XmlDocument();
-			docExpected2.LoadXml(
+			var docExpected2 = XDocument.Parse(
 				"<column label=\"Bibliography\" originalLabel=\"Bibliography\"> "
 				+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
 				+"<string field=\"Bibliography\" ws=\"$ws:analysis\" class=\"LexEntry\"/> "
 				+"</seq> "
 				+"</column>");
-			XmlNode expected2 = TestXmlViewsUtils.GetRootNode(docExpected2, "column");
+			var expected2 = TestXmlViewsUtils.GetRootNode(docExpected2, "column");
 			Assert.IsTrue(SomeNodeMatches(results, expected2), "Bibliography field is wrong");
 
-			XmlDocument docExpected3 = new XmlDocument();
-			docExpected3.LoadXml(
+			var docExpected3 = XDocument.Parse(
 				"<column label=\"MyRestrictions\" originalLabel=\"MyRestrictions\"> "
 				+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
 				+"<string field=\"MyRestrictions\" ws=\"$ws:analysis\" class=\"LexEntry\"/> "
 				+"</seq> "
 				+"</column>");
-			XmlNode expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
+			var expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
 			Assert.IsTrue(SomeNodeMatches(results, expected3), "generated MyRestrictions field is wrong");
 		}
 
@@ -139,8 +131,7 @@ namespace XMLViewsTests
 		[Test]
 		public void GenerateMlCustomString()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<generate class=\"LexEntry\" fieldType=\"mlstring\" restrictions=\"customOnly\"> "
 				+"<column label=\"$label\"> "
 				+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
@@ -148,7 +139,7 @@ namespace XMLViewsTests
 				+"</seq> "
 				+"</column> "
 				+"</generate>");
-			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
+			var source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
 			Assert.IsNotNull(source);
 
 			PartGenerator generator = new PartGenerator(Cache, source);
@@ -157,29 +148,28 @@ namespace XMLViewsTests
 			Assert.AreEqual(1, fields.Length);
 			Assert.IsTrue(StringArrayIncludes(fields, "MyRestrictions"));
 
-			XmlNode[] results = generator.Generate();
+			var results = generator.Generate();
 
 			// SampleCm.xml has three ML attrs on LexEntry
 			Assert.AreEqual(1, results.Length);
 
-			XmlDocument docExpected3 = new XmlDocument();
-			docExpected3.LoadXml(
+			var docExpected3 = XDocument.Parse(
 				"<column label=\"MyRestrictions\" originalLabel=\"MyRestrictions\" > "
 				+"<seq field=\"Senses\" sep=\"$delimiter:commaSpace\"> "
 				+"<string field=\"MyRestrictions\" ws=\"$ws:analysis\" class=\"LexEntry\"/> "
 				+"</seq> "
 				+"</column>");
-			XmlNode expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
+			var expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
 			Assert.IsTrue(SomeNodeMatches(results, expected3));
 		}
 
 		// Return true if there is a node in nodes between min and (lim -1)
 		// that has the specified name and label attributes.
-		bool NameAndLabelOccur(List<XmlNode> nodes, int min, int lim, string name, string label)
+		bool NameAndLabelOccur(List<XElement> nodes, int min, int lim, string name, string label)
 		{
 			for (int i = min; i < lim; i++)
 			{
-				XmlNode node = nodes[i];
+				var node = nodes[i];
 				if (node.Name == name  && XmlUtils.GetOptionalAttributeValue(node, "label") == label)
 					return true;
 			}
@@ -192,8 +182,7 @@ namespace XMLViewsTests
 		[Test]
 		public void GenerateParts()
 		{
-			XmlDocument docSrc = new XmlDocument();
-			docSrc.LoadXml(
+			var docSrc = XDocument.Parse(
 				"<root> "
 					+"<dummy1/> "
 					+"<generate class=\"LexEntry\" fieldType=\"mlstring\" restrictions=\"none\"> "
@@ -210,16 +199,16 @@ namespace XMLViewsTests
 					+"<dummy3/> "
 					+"<dummy4/> "
 				+"</root>");
-			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "root");
+			var source = TestXmlViewsUtils.GetRootNode(docSrc, "root");
 			Assert.IsNotNull(source);
 
-			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(source, Cache);
+			var nodes = PartGenerator.GetGeneratedChildren(source, Cache);
 
 			Assert.AreEqual(1+7+1+7+2, nodes.Count);
-			Assert.AreEqual("dummy1", nodes[0].Name);
-			Assert.AreEqual("dummy2", nodes[1+7].Name);
-			Assert.AreEqual("dummy3", nodes[1+7+1+7].Name);
-			Assert.AreEqual("dummy4", nodes[1+7+1+7+1].Name);
+			Assert.IsTrue("dummy1" == nodes[0].Name);
+			Assert.IsTrue("dummy2" == nodes[1 + 7].Name);
+			Assert.IsTrue("dummy3" == nodes[1 + 7 + 1 + 7].Name);
+			Assert.IsTrue("dummy4" == nodes[1 + 7 + 1 + 7 + 1].Name);
 			Assert.IsTrue(NameAndLabelOccur(nodes, 1, 1+7, "column", "CitationForm"));
 			Assert.IsTrue(NameAndLabelOccur(nodes, 1, 1+7, "column", "Bibliography"));
 			Assert.IsTrue(NameAndLabelOccur(nodes, 1+7+1, 1+7+1+7, "dummyG", "CitationForm"));

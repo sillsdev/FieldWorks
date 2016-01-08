@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -149,13 +149,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Loads the xml configuration for the given tool and returns its configureLayouts child.
 		/// </summary>
-		private XmlNode GetConfigureLayoutsNodeForTool(string tool)
+		private XElement GetConfigureLayoutsNodeForTool(string tool)
 		{
-			var collector = new XmlNode[1];
-			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
+			var collector = new XElement[1];
+			var parameter = new Tuple<string, string, XElement[]>("lexicon", tool, collector);
 			Publisher.Publish("OnGetContentControlParameters", parameter);
 			var controlNode = collector[0];
-			var parameters = controlNode.SelectSingleNode("parameters");
+			var parameters = controlNode.Element("parameters");
 			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
 			return configureLayouts;
 		}
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>ILayoutConverter implementation</summary>
-		public void AddDictionaryTypeItem(XmlNode layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes)
+		public void AddDictionaryTypeItem(XElement layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes)
 		{
 			// layoutNode is expected to look similar to:
 			//<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
@@ -756,7 +756,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region trivial portions of the ILayoutConverter implementation
-		public IEnumerable<XmlNode> GetLayoutTypes()
+		public IEnumerable<XElement> GetLayoutTypes()
 		{
 			return m_layoutInventory.GetLayoutTypes();
 		}
@@ -775,12 +775,12 @@ namespace SIL.FieldWorks.XWorks
 			//Not important for migration
 		}
 
-		public XmlNode GetLayoutElement(string className, string layoutName)
+		public XElement GetLayoutElement(string className, string layoutName)
 		{
 			return LegacyConfigurationUtils.GetLayoutElement(m_layoutInventory, className, layoutName);
 		}
 
-		public XmlNode GetPartElement(string className, string sRef)
+		public XElement GetPartElement(string className, string sRef)
 		{
 			return LegacyConfigurationUtils.GetPartElement(m_partInventory, className, sRef);
 		}

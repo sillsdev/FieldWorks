@@ -251,6 +251,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
       <Link>XML\Notebook\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\browseDialogColumns.xml">
       <Link>XML\Notebook\browseDialogColumns.xml</Link>
@@ -1129,6 +1130,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
+      <Link>XML\Word\Text\toolConfiguration.xml</Link>
+    </Content>
     <Content Include="images\AddScripture.ico" />
     <Content Include="images\Create Entry.ico" />
     <Content Include="images\Create Reversal Entry.ico" />

@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.IO;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace SIL.Utils
 {
@@ -395,6 +396,38 @@ namespace SIL.Utils
 			}
 			int i = 0;
 			foreach(string id in idList)
+			{
+				strings[i++] = GetStringWithXPath(id, groupPath);
+			}
+			return strings;
+		}
+
+		/// <summary>
+		/// look up a list of string IDs and return an array of strings
+		/// </summary>
+		/// <example>
+		///		here, the strings will be looked up at the root level
+		///		<stringList ids="anywhere, somewhere to left, somewhere to right, adjacent to left, adjacent to right"/>
+		/// </example>
+		/// <example>
+		///		here, the strings will be looked up under a nested group
+		///		<stringList group="MoMorphAdhocProhib/adjacency" ids="anywhere, somewhere to left, somewhere to right, adjacent to left, adjacent to right"/>
+		/// </example>
+		/// <param name="node">the name of the node is ignored, only the attributes are read</param>
+		/// <returns></returns>
+		public string[] GetStringsFromStringListNode(XElement node)
+		{
+			string ids = XmlUtils.GetManditoryAttributeValue(node, "ids");
+			string[] idList = ids.Split(',');
+			string[] strings = new string[idList.Length];
+			string groupPath = "";
+			string simplePath = XmlUtils.GetOptionalAttributeValue(node, "group");
+			if (simplePath != null)
+			{
+				groupPath = GetXPathFragmentFromSimpleNotation(simplePath);
+			}
+			int i = 0;
+			foreach (string id in idList)
 			{
 				strings[i++] = GetStringWithXPath(id, groupPath);
 			}

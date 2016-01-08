@@ -4,11 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
 			m_typeComboBox.SelectedIndex = 0;
 
-			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, m_propertyTable.GetValue<XmlNode>("WindowConfiguration")).ToArray());
+			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, m_propertyTable.GetValue<XElement>("WindowConfiguration")).ToArray());
 
 			m_listComboBox.SelectedIndex = 0;
 
@@ -210,36 +210,30 @@ namespace SIL.FieldWorks.XWorks
 			m_wsComboBox.SelectedIndex = 0;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public static List<IdAndString<Guid>> GetListsComboItems(FdoCache cache, XmlNode windowConfiguration)
+		public static List<IdAndString<Guid>> GetListsComboItems(FdoCache cache, XElement windowConfiguration)
 		{
 			var result = new List<IdAndString<Guid>>();
-			var clerks = new Dictionary<string, XmlNode>();
-			foreach (
-				XmlNode elt in
-					windowConfiguration.SelectNodes("//item[@value='lists' or @value='grammar']/parameters/clerks/clerk"))
+			var clerks = new Dictionary<string, XElement>();
+			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/clerks/clerk"))
 			{
-				clerks[elt.Attributes["id"].Value] = elt;
+				clerks[elt.Attribute("id").Value] = elt;
 			}
 			// Key is a list we found, value is an index in result.
 			var resultsByList = new Dictionary<ICmObject, int>();
-			foreach (
-				XmlNode elt in
-					windowConfiguration.SelectNodes("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
+			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
 			{
-				var clerkNode = elt.SelectSingleNode("control/parameters//control/parameters[@clerk]");
+				var clerkNode = elt.XPathSelectElement("control/parameters//control/parameters[@clerk]");
 				if (clerkNode == null)
 					continue;
-				var clerkId = clerkNode.Attributes["clerk"].Value;
-				XmlNode clerk;
+				var clerkId = clerkNode.Attribute("clerk").Value;
+				XElement clerk;
 				if (!clerks.TryGetValue(clerkId, out clerk))
 					continue;
-				var recordList = clerk.SelectSingleNode("recordList");
+				var recordList = clerk.Element("recordList");
 				if (recordList == null)
 					continue;
-				var owner = recordList.Attributes["owner"].Value;
-				var property = recordList.Attributes["property"].Value;
+				var owner = recordList.Attribute("owner").Value;
+				var property = recordList.Attribute("property").Value;
 #if RANDYTODO
 				// TODO: Need another way to get the list, since that static is present now.
 				var list = PossibilityRecordList.GetListFromOwnerAndProperty(cache, owner, property);
@@ -293,41 +287,32 @@ namespace SIL.FieldWorks.XWorks
 		/// This scans through the list of configured layouts for the given class, and returns a
 		/// list of layout names which display the given custom field (as defined by its UserLabel).
 		/// </summary>
-		/// <param name="sFieldLabel"></param>
-		/// <param name="sName"></param>
-		/// <param name="sClassName"></param>
-		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private List<XmlNode> FindAffectedLayouts(string sFieldLabel, string sName, string sClassName)
+		private List<XElement> FindAffectedLayouts(string sFieldLabel, string sName, string sClassName)
 		{
-			var xnlResults = new List<XmlNode>();
-			XmlNodeList xnlLayouts = m_layouts.GetElements("layout", new[] {sClassName});
-			foreach (XmlNode xnLayout in xnlLayouts)
+			var xnlResults = new List<XElement>();
+			var xnlLayouts = m_layouts.GetElements("layout", new[] {sClassName});
+			foreach (var xnLayout in xnlLayouts)
 			{
-				XmlNodeList xnl = xnLayout.SelectNodes("descendant::part[@ref=\"$child\" or @ref=\"Custom\"]");
-				if (xnl != null)
+				var xnl = xnLayout.XPathSelectElements("descendant::part[@ref=\"$child\" or @ref=\"Custom\"]");
+				foreach (var xn in xnl)
 				{
-					foreach (XmlNode xn in xnl)
+					string sRef = XmlUtils.GetOptionalAttributeValue(xn, "ref");
+					if (sRef == "$child")
 					{
-						string sRef = XmlUtils.GetOptionalAttributeValue(xn, "ref");
-						if (sRef == "$child")
+						string sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
+						if (sLabel == sFieldLabel)
 						{
-							string sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
-							if (sLabel == sFieldLabel)
-							{
-								xnlResults.Add(xnLayout);
-								break;
-							}
+							xnlResults.Add(xnLayout);
+							break;
 						}
-						else if (sRef == "Custom")
+					}
+					else if (sRef == "Custom")
+					{
+						string sParam = XmlUtils.GetOptionalAttributeValue(xn, "param");
+						if (sParam == sName)
 						{
-							string sParam = XmlUtils.GetOptionalAttributeValue(xn, "param");
-							if (sParam == sName)
-							{
-								xnlResults.Add(xnLayout);
-								break;
-							}
+							xnlResults.Add(xnLayout);
+							break;
 						}
 					}
 				}
@@ -612,11 +597,11 @@ namespace SIL.FieldWorks.XWorks
 			return xnlLayouts.Count > 0;
 		}
 
-		private static void DeleteMatchingDescendants(XmlNode xnLayout, FieldDescription fd)
+		private static void DeleteMatchingDescendants(XElement xnLayout, FieldDescription fd)
 		{
-			var rgxn = new List<XmlNode>();
+			var rgxn = new List<XElement>();
 
-			foreach (XmlNode xn in xnLayout.ChildNodes)
+			foreach (var xn in xnLayout.Elements())
 			{
 				string sRef = XmlUtils.GetOptionalAttributeValue(xn, "ref");
 				if (sRef == "$child")
@@ -639,8 +624,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			foreach (XmlNode xn in rgxn)
-				xnLayout.RemoveChild(xn);
+			foreach (var xn in rgxn)
+			{
+				xn.Remove();
+			}
 		}
 
 		/// <summary>
@@ -759,8 +746,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (mod.OldLabel != mod.NewLabel)	// maybe the user changed his mind?
 				{
-					List<XmlNode> xnlLayouts = FindAffectedLayouts(mod.OldLabel, null, mod.ClassName);
-					foreach (XmlNode xnLayout in xnlLayouts)
+					var xnlLayouts = FindAffectedLayouts(mod.OldLabel, null, mod.ClassName);
+					foreach (var xnLayout in xnlLayouts)
 					{
 						FixLayoutPartLabels(xnLayout, mod.OldLabel, mod.NewLabel);
 						m_layouts.PersistOverrideElement(xnLayout);
@@ -771,15 +758,15 @@ namespace SIL.FieldWorks.XWorks
 			return didUpdate;
 		}
 
-		private static void FixLayoutPartLabels(XmlNode xnLayout, string sOldLabel, string sNewLabel)
+		private static void FixLayoutPartLabels(XElement xnLayout, string sOldLabel, string sNewLabel)
 		{
-			foreach (XmlNode xn in xnLayout.ChildNodes)
+			foreach (var xn in xnLayout.Elements())
 			{
 				if (XmlUtils.GetOptionalAttributeValue(xn, "ref") == "$child")
 				{
-					foreach (XmlAttribute xa in xn.Attributes)
+					foreach (var xa in xn.Attributes())
 					{
-						if (xa.Name == "label" && xa.Value == sOldLabel)
+						if (xa.Name.LocalName == "label" && xa.Value == sOldLabel)
 						{
 							xa.Value = sNewLabel;
 							break;
@@ -922,7 +909,7 @@ namespace SIL.FieldWorks.XWorks
 				int count = fd.DataOccurrenceCount;
 				if (m_dictModLabels.ContainsKey(fd.Id))
 					sUserLabel = m_dictModLabels[fd.Id].OldLabel;
-				List<XmlNode> xnlLayouts = FindAffectedLayouts(sUserLabel, fd.Name, className);
+				var xnlLayouts = FindAffectedLayouts(sUserLabel, fd.Name, className);
 				string message;
 				if (count != 0 && xnlLayouts.Count != 0)
 				{

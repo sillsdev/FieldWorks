@@ -3,7 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -61,18 +62,18 @@ namespace XMLViewsTests
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
 				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
-				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
-				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				var headwordNode = output.XPathSelectElement("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
 				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
 				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
-				var weatherNode = output.SelectSingleNode("//column[@layout='Weather']");
+				var weatherNode = output.XPathSelectElement("//column[@layout='Weather']");
 				Assert.That(weatherNode, Is.Null);
 				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("EntryHeadwordForFindEntry"));
 				// Should not affect other nodes
-				var unknownNode = output.SelectSingleNode("//column[@layout='Unknown Test']");
+				var unknownNode = output.XPathSelectElement("//column[@layout='Unknown Test']");
 				Assert.That(unknownNode, Is.Not.Null);
-				var abstractFormNode = output.SelectSingleNode("//column[@layout='IsAbstractFormForEntry']");
+				var abstractFormNode = output.XPathSelectElement("//column[@layout='IsAbstractFormForEntry']");
 				Assert.That(abstractFormNode, Is.Not.Null);
 				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "bulkEdit"), Is.EqualTo("booleanOnSubfield"));
 				Assert.That(XmlUtils.GetOptionalAttributeValue(abstractFormNode, "visibility"), Is.EqualTo("dialog"));
@@ -104,9 +105,9 @@ namespace XMLViewsTests
 				VerifyColumn(output, "CustomPossAtomForExample_ExAtom", "field", "LexExampleSentence.$fieldName");
 
 				// version 15
-				var isAHeadwordNode = output.SelectSingleNode("//column[@layout='IsAHeadwordForEntry']");
+				var isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);
-				var publishAsHeadwordNode = output.SelectSingleNode("//column[@layout='PublishAsHeadword']");
+				var publishAsHeadwordNode = output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
 
 				// version 14
@@ -119,21 +120,20 @@ namespace XMLViewsTests
 				"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 				"</root>";
 				output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
-				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
-				isAHeadwordNode = output.SelectSingleNode("//column[@layout='IsAHeadwordForEntry']");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);
-				publishAsHeadwordNode = output.SelectSingleNode("//column[@layout='PublishAsHeadword']");
+				publishAsHeadwordNode = output.XPathSelectElement("//column[@layout='PublishAsHeadword']");
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
 				Assert.That(propertyTable.GetValue("myKey", string.Empty), Contains.Substring("PublishAsHeadword"));
 			}
 		}
 
-		void VerifyColumn(XmlNode output, string layoutName, string attrName, string attrVal)
+		static void VerifyColumn(XDocument output, string layoutName, string attrName, string attrVal)
 		{
-			var node = output.SelectSingleNode("//column[@layout='" + layoutName + "']");
+			var node = output.XPathSelectElement("//column[@layout='" + layoutName + "']");
 			Assert.That(node, Is.Not.Null);
 			Assert.That(XmlUtils.GetOptionalAttributeValue(node, attrName), Is.EqualTo(attrVal));
-
 		}
 	}
 }

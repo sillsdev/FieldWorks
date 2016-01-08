@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -9,10 +9,10 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="xnSpec"></param>
 		/// <param name="fakeFlid"></param>
 		/// <param name="xbv"></param>
-		public XmlRDEBrowseViewVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+		public XmlRDEBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
 			: base(xnSpec, fakeFlid, xbv)
 		{
 			// set the border color
@@ -65,20 +65,20 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Check for the special editable row attributes.
 			// this one is independently optional so we can handle it separately.
-			m_sEditRowMergeMethod = XmlUtils.GetAttributeValue(xnSpec, "editRowMergeMethod", null);
-			XmlAttribute xa = xnSpec.Attributes["editRowModelClass"];
+			m_sEditRowMergeMethod = XmlUtils.GetOptionalAttributeValue(xnSpec, "editRowMergeMethod", null);
+			var xa = xnSpec.Attribute("editRowModelClass");
 			if (xa != null && xa.Value.Length != 0)
 			{
 				m_sEditRowModelClass = xa.Value;
-				xa = xnSpec.Attributes["editRowSaveMethod"];
+				xa = xnSpec.Attribute("editRowSaveMethod");
 				if (xa != null && xa.Value.Length != 0)
 				{
 					m_sEditRowSaveMethod = xa.Value;
-					xa = xnSpec.Attributes["editRowAssembly"];
+					xa = xnSpec.Attribute("editRowAssembly");
 					if (xa != null && xa.Value.Length != 0)
 					{
 						m_sEditRowAssembly = xa.Value;
-						xa = xnSpec.Attributes["editRowClass"];
+						xa = xnSpec.Attribute("editRowClass");
 						if (xa != null && xa.Value.Length != 0)
 						{
 							m_sEditRowClass = xa.Value;
@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// In this subclass all cells need a specific editability, but it depends on whether it's a new
 		/// item or a pre-existing one.
 		/// </summary>
-		protected override void SetCellProperties(int rowIndex, int icol, XmlNode node, int hvo, IVwEnv vwenv, bool fIsCellActive)
+		protected override void SetCellProperties(int rowIndex, int icol, XElement node, int hvo, IVwEnv vwenv, bool fIsCellActive)
 		{
 			SetCellEditability(vwenv, m_editableHvos.Contains(hvo));
 		}
@@ -374,15 +374,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		/// <param name="fEditable"></param>
 		/// <param name="caller"></param>
-		public override void ProcessFrag(XmlNode frag, IVwEnv vwenv, int hvo, bool fEditable, XmlNode caller)
+		public override void ProcessFrag(XElement frag, IVwEnv vwenv, int hvo, bool fEditable, XElement caller)
 		{
-			switch (frag.Name)
+			switch (frag.Name.LocalName)
 			{
 				case @"editrow":
 					// Special keyword for rapid data entry: may have different content in edit row (or if a particular column is displayed)
 					bool wantYesChild = ShouldSuppressNoForOtherColumn(frag) || InEditableRow(vwenv);
 					string wantChild = wantYesChild ? @"yes" : @"no";
-					foreach (XmlNode clause in frag.ChildNodes)
+					foreach (var clause in frag.Elements())
 					{
 						if (clause.Name == wantChild)
 						{
@@ -397,7 +397,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private bool ShouldSuppressNoForOtherColumn(XmlNode frag)
+		private bool ShouldSuppressNoForOtherColumn(XElement frag)
 		{
 			var suppressNoForColumn = XmlUtils.GetOptionalAttributeValue(frag, @"suppressNoForColumn");
 			if (!string.IsNullOrEmpty(suppressNoForColumn))
@@ -497,7 +497,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void AddEditCell(IVwEnv vwenv, IVwCacheDa cda, int i)
 		{
-			XmlNode node = m_columns[i - 1];
+			var node = m_columns[i - 1];
 			// Make a cell and embed an editable virtual string for the column.
 			var editable = XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
 			if (!editable)

@@ -11,9 +11,8 @@
 
 using System;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -42,10 +41,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		private CheckBox m_cb;
-		protected XmlNode m_node;
+		protected XElement m_node;
 		bool m_fToggleValue;
 
-		public CheckboxSlice(FdoCache cache, ICmObject obj, int flid, XmlNode node)
+		public CheckboxSlice(FdoCache cache, ICmObject obj, int flid, XElement node)
 			: base(new CheckBox(), cache, obj, flid)
 		{
 			m_cb = ((CheckBox)this.Control);
@@ -57,13 +56,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			SetToggleValue(node);
 		}
 
-		private void SetToggleValue(XmlNode node)
+		private void SetToggleValue(XElement node)
 		{
 			string sToggle = XmlUtils.GetOptionalAttributeValue(node, "toggleValue", "false");
-			if (sToggle.ToLower() == "true")
-				m_fToggleValue = true;
-			else
-				m_fToggleValue = false;
+			m_fToggleValue = sToggle.ToLower() == "true";
 		}
 
 		/// <summary>
@@ -268,7 +264,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 
 
-		public CheckboxRefreshSlice(FdoCache cache, ICmObject obj, int flid, XmlNode node)
+		public CheckboxRefreshSlice(FdoCache cache, ICmObject obj, int flid, XElement node)
 			: base(cache, obj, flid, node)
 		{
 		}

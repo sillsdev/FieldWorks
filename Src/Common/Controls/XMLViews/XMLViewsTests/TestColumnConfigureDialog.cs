@@ -5,7 +5,7 @@
 // Original author: MarkS 2010-06-29 TestColumnConfigureDialog.cs
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -54,13 +54,12 @@ namespace XMLViewsTests
 			// Create window and populate currentColumns with a few items.
 
 			string currentColumns_data = "<root><column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /><column layout=\"LexemeFormForEntry\" label=\"Lexeme Form\" common=\"true\" width=\"72000\" ws=\"$ws=vernacular\" sortmethod=\"MorphSortKey\" cansortbylength=\"true\" visibility=\"always\" transduce=\"LexEntry.LexemeForm.Form\" transduceCreateClass=\"MoStemAllomorph\" /><column layout=\"GlossesForSense\" label=\"Glosses\" multipara=\"true\" width=\"72000\" ws=\"$ws=analysis\" transduce=\"LexSense.Gloss\" cansortbylength=\"true\" visibility=\"always\" /><column layout=\"GrammaticalInfoFullForSense\" headerlabel=\"Grammatical Info.\" chooserFilter=\"external\" label=\"Grammatical Info. (Full)\" multipara=\"true\" width=\"72000\" visibility=\"always\"><dynamicloaderinfo assemblyPath=\"FdoUi.dll\" class=\"SIL.FieldWorks.FdoUi.PosFilter\" /></column></root>";
-			XmlDocument currentColumns_document = new XmlDocument();
-			currentColumns_document.LoadXml(currentColumns_data);
-			List<XmlNode> currentColumns = currentColumns_document.FirstChild.ChildNodes.Cast<XmlNode>().ToList();
+			var currentColumns_document = XDocument.Parse(currentColumns_data);
+			var currentColumns = currentColumns_document.Root.Elements().ToList();
 
-			List<XmlNode> possibleColumns = new List<XmlNode>();
+			var possibleColumns = new List<XElement>();
 
-			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_propertyTable);
+			var window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_propertyTable);
 			window.FinishInitialization();
 
 			return window;

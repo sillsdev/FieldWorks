@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Diagnostics;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText;
@@ -46,9 +46,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		// Preview related
 		private bool m_previewOn;
-		private XmlNode m_oldOccurrenceColumn = null; // original display of occurrences, when preview off
+		private XElement m_oldOccurrenceColumn = null; // original display of occurrences, when preview off
 		// special preview display of occurrences, with string truncated after occurrence
-		private XmlNode m_previewOccurrenceColumn;
+		private XElement m_previewOccurrenceColumn;
 		private string m_previewButtonText = null; // original text of the button (before changed to e.g. Clear).
 		RespellUndoAction m_respellUndoaction; // created when we do a preview, used when check boxes change.
 
@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// build the concordance, but on FLEx's list, and we can assume all the parts and layouts
 		/// are loaded.
 		/// </summary>
-		internal bool SetDlgInfo(IWfiWordform wf, XmlNode configurationParams)
+		internal bool SetDlgInfo(IWfiWordform wf, XElement configurationParams)
 		{
 			using (var dlg = new ProgressDialogWorkingOn())
 			{
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		internal bool SetDlgInfo(XmlNode configurationParameters)
+		internal bool SetDlgInfo(XElement configurationParameters)
 		{
 			m_wfClerk = PropertyTable.GetValue<RecordClerk>("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return SetDlgInfoPrivate(configurationParameters);
 		}
 
-		private bool SetDlgInfoPrivate(XmlNode configurationParameters)
+		private bool SetDlgInfoPrivate(XElement configurationParameters)
 		{
 			using (new WaitCursor(this))
 			{
@@ -366,12 +366,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			if (m_previewOccurrenceColumn != null)
 				return;
-			var doc = new XmlDocument();
 			var fRtl = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.RightToLeftScript;
 			var insert = "";
 			if (fRtl)
 				insert = "<righttoleft value=\"on\"/>";
-			doc.LoadXml(
+			var doc = XDocument.Parse(
 				  "<column label=\"Occurrence\" width=\"415000\" multipara=\"true\" doNotPersist=\"true\">"
 				+     "<concpara min=\"FakeOccurrence.AdjustedBeginOffset\" lim=\"FakeOccurrence.AdjustedEndOffset\" align=\"144000\">"
 				+         "<properties><editable value=\"false\"/>" + insert + "</properties>"
@@ -379,7 +378,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				+         "<preview ws=\"vernacular\"/>"
 				+     "</concpara>"
 				+ "</column>");
-			m_previewOccurrenceColumn = doc.DocumentElement;
+			m_previewOccurrenceColumn = doc.Root;
 		}
 
 		private void SetSuggestions()

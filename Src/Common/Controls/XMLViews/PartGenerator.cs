@@ -4,9 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -31,7 +32,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The metadata cache
 		/// </summary>
 		protected IFwMetaDataCache m_mdc;
-		XmlNode m_input;
+		XElement m_input;
 		int m_clsid;
 		/// <summary>
 		/// class of item upon which to apply first layout
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///	columnSpec
 		/// </summary>
-		protected XmlNode m_source;
+		protected XElement m_source;
 
 		/// <summary>
 		/// Make a part generator for the specified "generate" element, interpreting names
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="input"></param>
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">class of root object from which column layouts can be computed</param>
-		public PartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		public PartGenerator(FdoCache cache, XElement input, XmlVc vc, int rootClassId)
 		{
 			m_cache = cache;
 			m_mdc = cache.MetaDataCacheAccessor;
@@ -70,7 +71,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="mdc"></param>
 		/// <param name="input"></param>
-		protected virtual void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XmlNode input)
+		protected virtual void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XElement input)
 		{
 			m_className = XmlUtils.GetManditoryAttributeValue(input, "class");
 			m_clsid = mdc.GetClassId(m_className);
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="input"></param>
-		public PartGenerator(FdoCache cache, XmlNode input)
+		public PartGenerator(FdoCache cache, XElement input)
 			: this(cache, input, null, 0)
 		{
 		}
@@ -213,18 +214,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Generate the nodes that the constructor arguments indicate.
 		/// </summary>
 		/// <returns></returns>
-		public virtual XmlNode[] Generate()
+		public virtual XElement[] Generate()
 		{
-			List<int> ids = FieldIds;
-			var result = new XmlNode[ids.Count];
+			var ids = FieldIds;
+			var result = new XElement[ids.Count];
 			for(int iresult = 0; iresult < result.Length; iresult++)
 			{
-				XmlNode output = m_source.Clone();
+				var output = m_source.Clone();
 				result[iresult] = output;
-				int fieldId = ids[iresult];
-				string labelName = m_mdc.GetFieldLabel(fieldId);
-				string fieldName = m_mdc.GetFieldName(fieldId);
-				string className = m_mdc.GetOwnClsName(fieldId);
+				var fieldId = ids[iresult];
+				var labelName = m_mdc.GetFieldLabel(fieldId);
+				var fieldName = m_mdc.GetFieldName(fieldId);
+				var className = m_mdc.GetOwnClsName(fieldId);
 				if (string.IsNullOrEmpty(labelName))
 					labelName = fieldName;
 				// generate parts for any given custom layout
@@ -236,7 +237,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return result;
 		}
 
-		private void SetupWsParams(XmlNode output, int fieldId)
+		private void SetupWsParams(XElement output, int fieldId)
 		{
 			if (fieldId == 0)
 				return;
@@ -279,13 +280,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fieldName"></param>
 		/// <param name="customFieldId"></param>
 		/// <param name="className"></param>
-		protected void ReplaceParamsInAttributes(XmlNode output, string labelName, string fieldName, int customFieldId, string className)
+		protected void ReplaceParamsInAttributes(XElement output, string labelName, string fieldName, int customFieldId, string className)
 		{
 			SetupWsParams(output, customFieldId);
-			ReplaceSubstringInAttr visitorFn = new ReplaceSubstringInAttr("$fieldName", fieldName);
+			var visitorFn = new ReplaceSubstringInAttr("$fieldName", fieldName);
 			XmlUtils.VisitAttributes(output, visitorFn);
 			AppendClassAttribute(output, fieldName, className);
-			ReplaceSubstringInAttr visitorLab = new ReplaceSubstringInAttr("$label", labelName);
+			var visitorLab = new ReplaceSubstringInAttr("$label", labelName);
 			XmlUtils.VisitAttributes(output, visitorLab);
 			if (customFieldId != 0 && m_mdc is IFwMetaDataCacheManaged)
 			{
@@ -308,12 +309,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private static void AppendClassAttribute(XmlNode output, string fieldName, string className)
+		private static void AppendClassAttribute(XElement output, string fieldName, string className)
 		{
 			// Desired node may be a child of a child...  (See LT-6447.)
-			foreach (XmlNode node in output.SelectNodes(".//*"))
+			foreach (var node in output.XPathSelectElements(".//*"))
 			{
 				if (XmlUtils.GetOptionalAttributeValue(node, "field") == fieldName)
 					XmlUtils.AppendAttribute(node, "class", className);
@@ -345,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fieldIdForWs"></param>
 		/// <param name="layoutNode"></param>
 		/// <returns>list of part nodes generated</returns>
-		protected List<XmlNode> GeneratePartsFromLayouts(int layoutClass, string fieldNameForReplace, int fieldIdForWs, ref XmlNode layoutNode)
+		protected List<XElement> GeneratePartsFromLayouts(int layoutClass, string fieldNameForReplace, int fieldIdForWs, ref XElement layoutNode)
 		{
 			if (m_vc == null || layoutClass == 0)
 				return null;
@@ -361,7 +360,7 @@ namespace SIL.FieldWorks.Common.Controls
 				layoutGeneric = layout;
 
 				// first try to substitute the field name to see if we can get an existing part.
-				XmlNode layoutNodeForCustomField = layoutNode.CloneNode(true);
+				var layoutNodeForCustomField = layoutNode.Clone();
 				ReplaceParamsInAttributes(layoutNodeForCustomField, "", fieldNameForReplace, fieldIdForWs, className);
 				layoutSpecific = XmlUtils.GetOptionalAttributeValue(layoutNodeForCustomField, "layout");
 			}
@@ -371,7 +370,7 @@ namespace SIL.FieldWorks.Common.Controls
 				layoutGeneric = "$fieldName";
 				layoutSpecific = layout;
 			}
-			XmlNode partNode = m_vc.GetNodeForPart(layoutSpecific, false, layoutClass);
+			var partNode = m_vc.GetNodeForPart(layoutSpecific, false, layoutClass);
 			if (partNode != null)
 			{
 				// Enhance: Validate existing part!
@@ -390,9 +389,9 @@ namespace SIL.FieldWorks.Common.Controls
 #endif
 			if (partNode != null)
 			{
-				var generatedParts = new List<XmlNode>();
+				var generatedParts = new List<XElement>();
 				// clone the generic node so we can substitute any attributes that need to be substituted.
-				XmlNode generatedPartNode = partNode.CloneNode(true);
+				var generatedPartNode = partNode.Clone();
 				ReplaceParamsInAttributes(generatedPartNode, "", fieldNameForReplace, fieldIdForWs, className);
 				Inventory.GetInventory("parts", m_vc.Cache.ProjectId.Name).AddNodeToInventory(generatedPartNode);
 				generatedParts.Add(generatedPartNode);
@@ -403,19 +402,19 @@ namespace SIL.FieldWorks.Common.Controls
 					partNode = generatedPartNode;
 				}
 
-				XmlNode nextLayoutNode = null;
-				XmlAttribute layoutAttr = partNode.Attributes["layout"];
+				XElement nextLayoutNode = null;
+				var layoutAttr = partNode.Attribute("layout");
 				if (layoutAttr != null && layoutAttr.Value.Contains("$fieldName"))
 					nextLayoutNode = partNode;
-				else if (partNode.ChildNodes.Count > 0)
-					nextLayoutNode = partNode.SelectSingleNode(".//*[contains(@layout, '$fieldName')]");
+				else if (partNode.Elements().Any())
+					nextLayoutNode = partNode.XPathSelectElement(".//*[contains(@layout, '$fieldName')]");
 				if (nextLayoutNode != null)
 				{
 					// now build the new node from its layouts
-					string fieldName = XmlUtils.GetManditoryAttributeValue(nextLayoutNode, "field");
-					int field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
-					int nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
-					List<XmlNode> furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,
+					var fieldName = XmlUtils.GetManditoryAttributeValue(nextLayoutNode, "field");
+					var field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
+					var nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
+					var furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,
 						ref nextLayoutNode);
 					if (furtherGeneratedParts != null)
 						generatedParts.AddRange(furtherGeneratedParts);
@@ -435,7 +434,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string m_newAttrName;
 			string m_newAttrVal;
 			string m_pattern; // dup of base class variable, saves modifying it.
-			List<XmlAttribute> m_targets = new List<XmlAttribute>();
+			List<XAttribute> m_targets = new List<XAttribute>();
 			internal ReplaceAttrAndAppend(string pattern, string replacement, string newAttrName, string newAttrVal)
 				: base(pattern, replacement)
 			{
@@ -444,7 +443,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_pattern = pattern;
 			}
 
-			public override bool Visit(XmlAttribute xa)
+			public override bool Visit(XAttribute xa)
 			{
 				string old = xa.Value;
 				int index = old.IndexOf(m_pattern);
@@ -455,10 +454,11 @@ namespace SIL.FieldWorks.Common.Controls
 				base.Visit(xa); // AFTER we did our test, otherwise, it fails.
 				return false; // continue iterating
 			}
+
 			internal void DoTheAppends()
 			{
-				foreach (XmlAttribute xa in m_targets)
-					XmlUtils.AppendAttribute(xa.OwnerElement, m_newAttrName, m_newAttrVal);
+				foreach (var xa in m_targets)
+					XmlUtils.AppendAttribute(xa.Parent, m_newAttrName, m_newAttrVal);
 			}
 		}
 
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rootClassId">the class of the rootObject used to generate the part</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static internal List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, XmlVc vc, int rootClassId)
+		static internal List<XElement> GetGeneratedChildren(XElement root, FdoCache cache, XmlVc vc, int rootClassId)
 		{
 			return GetGeneratedChildren(root, cache, null, vc, rootClassId);
 		}
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The FDO cache.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache)
+		static public List<XElement> GetGeneratedChildren(XElement root, FdoCache cache)
 		{
 			return GetGeneratedChildren(root, cache, null, 0);
 		}
@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// generated children which match another node in root in all key attributes are omitted.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, string[] keyAttrNames)
+		static public List<XElement> GetGeneratedChildren(XElement root, FdoCache cache, string[] keyAttrNames)
 		{
 			return GetGeneratedChildren(root, cache, keyAttrNames, null, 0);
 		}
@@ -518,18 +518,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">class of the root object used to compute parts/layouts</param>
 		/// <returns></returns>
-		static private List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, string[] keyAttrNames,
+		static private List<XElement> GetGeneratedChildren(XElement root, FdoCache cache, string[] keyAttrNames,
 			XmlVc vc, int rootClassId)
 		{
-			List<XmlNode> result = new List<XmlNode>();
+			List<XElement> result = new List<XElement>();
 			string generateModeForColumns = XmlUtils.GetOptionalAttributeValue(root, "generate");
 			bool m_fGenerateChildPartsForParentLayouts = (generateModeForColumns == "childPartsForParentLayouts");
 
 			// childPartsForParentLayouts
-			foreach(XmlNode child in root.ChildNodes)
+			foreach(var child in root.Elements())
 			{
-				if (child is XmlComment)
-					continue;
 				if (m_fGenerateChildPartsForParentLayouts)
 				{
 					ChildPartGenerator cpg = new ChildPartGenerator(cache, child, vc, rootClassId);
@@ -546,12 +544,12 @@ namespace SIL.FieldWorks.Common.Controls
 					generator = new ObjectValuePartGenerator(cache, child, vc, rootClassId);
 				else
 					generator = new PartGenerator(cache, child, vc, rootClassId);
-				foreach (XmlNode genNode in generator.Generate())
+				foreach (var genNode in generator.Generate())
 				{
 					bool match = false;
 					if (keyAttrNames != null)
 					{
-						foreach (XmlNode matchNode in root.ChildNodes)
+						foreach (var matchNode in root.Elements())
 						{
 							if (MatchNodes(matchNode, genNode, keyAttrNames))
 							{
@@ -574,7 +572,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="genNode"></param>
 		/// <param name="keyAttrNames"></param>
 		/// <returns></returns>
-		static bool MatchNodes(XmlNode matchNode, XmlNode genNode, string[] keyAttrNames)
+		static bool MatchNodes(XElement matchNode, XElement genNode, string[] keyAttrNames)
 		{
 			if (matchNode.Name != genNode.Name)
 				return false;
@@ -594,7 +592,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ChildPartGenerator : PartGenerator
 	{
-		internal ChildPartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		internal ChildPartGenerator(FdoCache cache, XElement input, XmlVc vc, int rootClassId)
 			: base(cache, input, vc, rootClassId)
 		{
 		}
@@ -604,16 +602,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="mdc"></param>
 		/// <param name="input">the column node (not generate node)</param>
-		protected override void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XmlNode input)
+		protected override void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XElement input)
 		{
 			if (input.Name == "generate")
 			{
 				// first column child is the node we want to try to generate.
-				m_source = input.SelectSingleNode("./column");
+				m_source = input.XPathSelectElement("./column");
 				return;
 			}
 			else if (input.Name != "column")
-				throw new ArgumentException("ChildPartGenerator expects input to be column node, not {0}", input.Name);
+				throw new ArgumentException("ChildPartGenerator expects input to be column node, not {0}", input.Name.LocalName);
 			m_source = input;
 			//m_clsid = m_rootClassId;
 			//m_className = mdc.GetClassName(m_rootClassId);
@@ -623,7 +621,7 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		/// <returns></returns>
-		public List<XmlNode> GenerateChildPartsIfNeeded()
+		public List<XElement> GenerateChildPartsIfNeeded()
 		{
 			string fieldName = XmlUtils.GetOptionalAttributeValue(m_source, "layout");
 			return GeneratePartsFromLayouts(m_rootClassId, fieldName, 0, ref m_source);
@@ -642,7 +640,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IOrderedEnumerable<IFsFeatDefn> m_sortedCollection;
 		private string m_objectPath;
 
-		public ObjectValuePartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		public ObjectValuePartGenerator(FdoCache cache, XElement input, XmlVc vc, int rootClassId)
 			: base(cache, input, vc, rootClassId)
 		{
 			m_objectPath = XmlUtils.GetAttributeValue(input, "objectPath");
@@ -661,16 +659,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Generate the nodes that the constructor arguments indicate.
 		/// </summary>
 		/// <returns></returns>
-		public override XmlNode[] Generate()
+		public override XElement[] Generate()
 		{
 			List<int> ids = FieldIds;
-			var result = new XmlNode[m_collectionToGeneratePartsFrom.Count];
+			var result = new XElement[m_collectionToGeneratePartsFrom.Count];
 			int iresult = 0;
 			int fieldId = ids[iresult];
 			// Enhance: generalize this
 			foreach (var fsFeatDefn in m_sortedCollection)
 			{
-				XmlNode output = m_source.Clone();
+				var output = m_source.Clone();
 				result[iresult] = output;
 				string fieldName = fsFeatDefn.Abbreviation.BestAnalysisAlternative.Text;
 				string className = fsFeatDefn.ClassName;

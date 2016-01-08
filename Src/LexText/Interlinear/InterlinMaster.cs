@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.IText
 
 		internal string BookmarkId
 		{
-			get { return m_vectorName ?? ""; }
+			get { return Clerk.Id ?? ""; }
 		}
 
 		/// <summary>
@@ -231,9 +231,9 @@ namespace SIL.FieldWorks.IText
 
 		protected override void SetInfoBarText()
 		{
-			if (m_informationBar != null && m_configurationParameters != null)
+			if (m_informationBar != null && m_configurationParametersElement != null)
 			{
-				string sAltTitle = XmlUtils.GetAttributeValue(m_configurationParameters, "altTitleId");
+				string sAltTitle = XmlUtils.GetAttributeValue(m_configurationParametersElement, "altTitleId");
 				if (!String.IsNullOrEmpty(sAltTitle))
 				{
 					string sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
@@ -1413,7 +1413,7 @@ namespace SIL.FieldWorks.IText
 			// have configuration parameters. Usually, then, there won't be a transaction open,
 			// but play safe, because the call to get the Clerk will crash if we don't have configuration
 			// params.
-			if (m_configurationParameters != null /* && !Cache.DatabaseAccessor.IsTransactionOpen() */)
+			if (m_configurationParametersElement != null /* && !Cache.DatabaseAccessor.IsTransactionOpen() */)
 				Clerk.SaveOnChangeRecord();
 			bool fParsedTextDuringSave = false;
 			// Pane-individual updates; None did anything, I removed them; GJM

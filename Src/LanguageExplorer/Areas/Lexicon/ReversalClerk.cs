@@ -7,7 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -115,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// returns the XmlNode which configures the FormColumn in the BrowseView associated with BulkEdit of ReversalEntries
 		/// </summary>
-		protected XmlNode BrowseViewFormCol
+		protected XElement BrowseViewFormCol
 		{
 			get
 			{
@@ -127,9 +128,8 @@ namespace LanguageExplorer.Areas.Lexicon
 					@"Configuration"),
 					@"Lexicon"),
 					@"ReversalEntriesBulkEdit");
-				var doc = new XmlDocument();
-				doc.Load(Path.Combine(path, @"toolConfiguration.xml"));
-				var columnNode = doc.SelectSingleNode(@"//column[@label='Form']");
+				var doc = XDocument.Load(Path.Combine(path, @"toolConfiguration.xml"));
+				var columnNode = doc.XPathSelectElement(@"//column[@label='Form']");
 				return columnNode;
 			}
 		}
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
 				if (stringFinderComparer != null)
 				{
-					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XmlNode ?? BrowseViewFormCol;
+					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XElement ?? BrowseViewFormCol;
 					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(Cache, colSpec, fakevc,
 						PropertyTable.GetValue<IApp>("App")),
 						stringFinderComparer.SubComparer);

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			}
 		}
 
-		private static int GetFlid(XmlNode node, ICmObject obj)
+		private static int GetFlid(XElement node, ICmObject obj)
 		{
 			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			int flid = 0;
@@ -175,7 +175,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <returns>
 		/// true if the feature structure has content in FeatureSpecs; false otherwise
 		/// </returns>
-		public static bool ShowSliceForVisibleIfData(XmlNode node, ICmObject obj)
+		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 
 			//FDO.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;

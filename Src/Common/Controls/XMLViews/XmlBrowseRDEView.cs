@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="bv">The bv.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		public override void Init(XElement nodeSpec, int hvoRoot, int fakeFlid,
 			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
@@ -258,7 +258,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>True to cancel the window closing, otherwise false.</returns>
 		private bool CleanupPendingEdits()
 		{
-			bool cancelClose = false;
+			var cancelClose = false;
 			ITsString[] rgtss;
 			if (CanGotoNextRow(out rgtss))
 			{
@@ -284,10 +284,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>true if we can proceed to the next row, false otherwise</returns>
 		private bool CanGotoNextRow(out ITsString[] rgtss)
 		{
-			bool fCanGotoNextRow = false;
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var fCanGotoNextRow = false;
+			var columns = m_xbvvc.ColumnSpecs;
 			rgtss = GetColumnStringsFromNewRow();
-			for (int i = 1; i <= columns.Count; ++i)
+			for (var i = 1; i <= columns.Count; ++i)
 			{
 				// We must have a citation form, but definitions are optional. (!?)
 				// Review: Currently we key off the column labels to determine which columns
@@ -297,17 +297,17 @@ namespace SIL.FieldWorks.Common.Controls
 				// an index of strings with any corresponding flids. Here's we'd expect strings
 				// based upon either LexemeForm.Form or LexSense.Definition. We could probably
 				// do this as part of the solution to handling duplicate columns in LT-3763.
-				XmlNode column = columns[i - 1];
-				string columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
-				string[] columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
+				var column = columns[i - 1];
+				var columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
+				var columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
 				// get column label without writing system or extraneous information.
-				string columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);
+				var columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);
 				// true if we find any Word column entry of nonzero length.
 				if (!fCanGotoNextRow &&
 					columnBasicLabel == LocalizeIfPossible("Word") &&
 					rgtss[i - 1].Length > 0)
 				{
-					string s = rgtss[i - 1].Text;
+					var s = rgtss[i - 1].Text;
 					if (s.Trim().Length > 0)
 						fCanGotoNextRow = true;
 				}
@@ -319,13 +319,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			ITsString[] rgtss;
 			ISilDataAccess sda = m_bv.SpecialCache;
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var columns = m_xbvvc.ColumnSpecs;
 			// Conceptual model class.
 			rgtss = new ITsString[columns.Count];
-			for (int i = 1; i <= columns.Count; ++i)
+			for (var i = 1; i <= columns.Count; ++i)
 			{
-				int kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
+				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
 					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				// Get the string for each column.
 				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem,
@@ -339,15 +339,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private void ClearColumnStringsFromNewRow()
 		{
-			XMLViewsDataCache sda = m_bv.SpecialCache;
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var sda = m_bv.SpecialCache;
+			var columns = m_xbvvc.ColumnSpecs;
 			// Conceptual model class.
-			string sCmClass = ((XmlRDEBrowseViewVc) m_xbvvc).EditRowModelClass;
+			var sCmClass = ((XmlRDEBrowseViewVc)m_xbvvc).EditRowModelClass;
 			// Reset the new item row so that the cells are all empty.
-			for (int i = 1; i <= columns.Count; ++i)
+			for (var i = 1; i <= columns.Count; ++i)
 			{
-				int kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
+				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
 					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, Cache.TsStrFactory.MakeString("", wsCol));
 			}
@@ -402,12 +402,12 @@ namespace SIL.FieldWorks.Common.Controls
 					return false;
 			}
 
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 				return false;		// Something is broken!
 
-			ITsString[] rgtss = null;
-			bool retval = true;
+			ITsString[] rgtss;
+			var retval = true;
 			switch (keyPressed)
 			{
 				default:
@@ -566,16 +566,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private void SetSelectionToFirstColumnInNewRow()
 		{
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
-			int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
-			int wsNew = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[0], null,
+			var columns = m_xbvvc.ColumnSpecs;
+			var flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
+			var wsNew = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[0], null,
 				m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
 			{
-				SelLevInfo[] rgvsli = new SelLevInfo[1];
+				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].hvo = XmlRDEBrowseViewVc.khvoNewItem;
 				rgvsli[0].tag = -1;
-				IVwSelection vwsel = m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0,
+				var vwsel = m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0,
 					0, 0, wsNew, false, -1, null, false);
 				if (m_xbvvc.ShowColumnsRTL)
 				{
@@ -754,19 +754,19 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private int CreateObjectFromEntryRow(ITsString[] rgtss)
 		{
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var columns = m_xbvvc.ColumnSpecs;
 
 			// Enhance JohnT: here we assume the class that creates instances is the class created plus "Factory".
 			// We may want to make it a separate attribute of the configuration XML at some point.
-			string factoryClassName = RDEVc.EditRowClass + "Factory";
-			Type factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
-			object factory = Cache.ServiceLocator.GetService(factoryType);
+			var factoryClassName = RDEVc.EditRowClass + "Factory";
+			var factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
+			var factory = Cache.ServiceLocator.GetService(factoryType);
 			System.Reflection.MethodInfo mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
-			object[] parameters = new object[3];
+			var parameters = new object[3];
 			parameters[0] = m_hvoRoot;
 			parameters[1] = columns;
 			parameters[2] = rgtss;
-			int newObjHvo = (int)mi.Invoke(factory, parameters);
+			var newObjHvo = (int)mi.Invoke(factory, parameters);
 			return newObjHvo;
 		}
 
@@ -1061,7 +1061,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (vwsel == null)
 				return false;
 			ISilDataAccess sda = m_bv.SpecialCache;
-			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
+			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 				return false;		// Something is broken!
 

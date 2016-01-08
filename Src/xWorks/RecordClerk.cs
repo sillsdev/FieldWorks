@@ -38,7 +38,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -326,9 +327,9 @@ namespace SIL.FieldWorks.XWorks
 				Debug.Assert(TryClerkProvidingRootObject(out clerkProvidingRootObject),
 					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
 			}
-#endif
 
 			StoreClerkInPropertyTable();
+#endif
 
 			SetupDataContext(false);
 		}
@@ -665,12 +666,18 @@ namespace SIL.FieldWorks.XWorks
 			return fRestoredSorter || fRestoredFilter;
 		}
 
+#if RANDYTODO
+		// TODO: The original system reused a record clerk instance when switching from one tool to another and back.
+		// TODO: So, the clerks were all stuffed into the property table, which then Disposed them all.
+		// TODO: Let's see how far we can go with creating them fresh for each use, and not putting them in the table.
+		// TODO: Not re-using them may end up being an unhappy performance loss for clerks and lists that were sorted and filtered.
 		protected virtual void StoreClerkInPropertyTable()
 		{
 			var property = GetCorrespondingPropertyName(m_id);
 			PropertyTable.SetProperty(property, this, false, false);
 			PropertyTable.SetPropertyDispose(property, true);
 		}
+#endif
 
 		/// <summary>
 		/// True if our clerk is the active clerk.
@@ -3277,7 +3284,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 	public static class ToolConfiguration
 	{
-		static public string GetIdOfTool(XmlNode node)
+		static public string GetIdOfTool(XElement node)
 		{
 			return XmlUtils.GetManditoryAttributeValue(node,"id");
 		}
@@ -3287,14 +3294,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="parameterNode"></param>
 		/// <returns></returns>
-		static public XmlNode GetClerkNodeFromToolParamsNode(XmlNode parameterNode)
+		static public XElement GetClerkNodeFromToolParamsNode(XElement parameterNode)
 		{
 			string clerk = XmlUtils.GetManditoryAttributeValue(parameterNode, "clerk");
 			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
 			// either thorouhly reviewed or reverted before merging with our main codebase.
 			string xpath = String.Format("//clerks/clerk[@id='{0}']",
 				XmlUtils.MakeSafeXmlAttribute(clerk));
-			XmlNode clerkNode = parameterNode.SelectSingleNode(xpath);
+			var clerkNode = parameterNode.XPathSelectElement(xpath);
 			if (clerkNode == null)
 				clerkNode = FindClerkNode(parameterNode, clerk);
 			if (clerkNode == null)
@@ -3307,9 +3314,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private static XmlNode FindClerkNode(XmlNode parameterNode, string clerk)
+		private static XElement FindClerkNode(XElement parameterNode, string clerk)
 		{
-			foreach (XmlNode node in parameterNode.SelectNodes("ancestor::parameters/clerks/clerk"))
+			foreach (var node in parameterNode.XPathSelectElements("ancestor::parameters/clerks/clerk"))
 			{
 				string id = XmlUtils.GetAttributeValue(node, "id");
 				if (id == clerk)
@@ -3318,12 +3325,12 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		static public XmlNode GetDefaultRecordFilterListProvider(XmlNode node)
+		static public XElement GetDefaultRecordFilterListProvider(XElement node)
 		{
 			try
 			{
 				//just define the first one to be the default, for now
-				return node.SelectSingleNode(@"recordFilterListProvider");
+				return node.Element(@"recordFilterListProvider");
 			}
 			catch(Exception)
 			{
@@ -3337,32 +3344,32 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable"></param>
 		/// <param name="parameterNode">The parameter node.</param>
 		/// <returns></returns>
-		static public RecordClerk FindClerk(IPropertyTable propertyTable, XmlNode parameterNode)
+		static public RecordClerk FindClerk(IPropertyTable propertyTable, XElement parameterNode)
 		{
-			XmlNode node = GetClerkNodeFromToolParamsNode(parameterNode);
+			var node = GetClerkNodeFromToolParamsNode(parameterNode);
 			// Set the clerk id if the parent control hasn't already set it.
 			string vectorName = GetIdOfTool(node);
 			return RecordClerk.FindClerk(propertyTable, vectorName);
 		}
 
-		static public XmlNode GetDefaultFilter(XmlNode node)
+		static public XElement GetDefaultFilter(XElement node)
 		{
 			try
 			{
 				//just define the first one to be the default, for now
-				return node.SelectSingleNode(@"filters/filter");
+				return node.XPathSelectElement(@"filters/filter");
 			}
 			catch(Exception)
 			{
 				return null;//no filters defined
 			}
 		}
-		static public XmlNode GetDefaultSorter(XmlNode node)
+		static public XElement GetDefaultSorter(XElement node)
 		{
 			try
 			{
 				//just define the first one to be the default, for now
-				return node.SelectSingleNode(@"sortMethods/sortMethod");
+				return node.XPathSelectElement(@"sortMethods/sortMethod");
 			}
 			catch(Exception)
 			{

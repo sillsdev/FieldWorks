@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -110,7 +109,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		}
 
 		/// <summary />
-		public override void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent, ref int insPos,
+		public override void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent, ref int insPos,
 			ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
@@ -123,7 +122,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			Expansion = Record.ParticipantsOC.Count == 0 ? DataTree.TreeItemState.ktisCollapsedEmpty : DataTree.TreeItemState.ktisExpanded;
 		}
 
-		private void GenerateChildNode(IRnRoledPartic roledPartic, XmlNode node, XmlNode caller, int indent,
+		private void GenerateChildNode(IRnRoledPartic roledPartic, XElement node, XElement caller, int indent,
 			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			var sliceElem = new XElement("slice",
@@ -131,14 +130,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				new XAttribute("field", "Participants"),
 				new XAttribute("editor", "possVectorReference"),
 				new XAttribute("menu", "mnuDataTree-Participants"));
-			foreach (XmlNode childNode in node.ChildNodes)
+			foreach (var childNode in node.Elements())
 			{
-				if (childNode.NodeType != XmlNodeType.Comment)
-					sliceElem.Add(XElement.Parse(childNode.OuterXml));
+				sliceElem.Add(XElement.Parse(childNode.GetOuterXml()));
 			}
-			node.InnerXml = sliceElem.ToString();
+			node.ReplaceNodes(XElement.Parse(sliceElem.ToString()));
 			CreateIndentedNodes(caller, roledPartic, indent, ref insPos, path, reuseMap, node);
-			node.InnerXml = "";
+			node.RemoveNodes();
 		}
 
 		/// <summary>
@@ -147,7 +145,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <param name="node">The node.</param>
 		/// <param name="obj">object to check</param>
 		/// <returns>true if the slice contains data, otherwise false</returns>
-		public static bool ShowSliceForVisibleIfData(XmlNode node, ICmObject obj)
+		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 			// this slice does not have data if the only roled participants object
 			// is the default roled participants and it does not contain any participants
@@ -244,9 +242,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			string displayWs = "analysis vernacular";
 			if (m_configurationNode != null)
 			{
-				XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+				var node = m_configurationNode.Element("deParams");
 				if (node != null)
-					displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
+					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS,
 				DisplayNameProperty, displayWs);
@@ -373,9 +371,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
-				XmlNode caller = null;
+				XElement caller = null;
 				if (Key.Length > 1)
-					caller = Key[Key.Length - 2] as XmlNode;
+					caller = Key[Key.Length - 2] as XElement;
 				int insPos = IndexInContainer + Record.ParticipantsOC.Count - 1;
 				GenerateChildNode(roledPartic, m_configurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
 				Expansion = DataTree.TreeItemState.ktisExpanded;
@@ -397,9 +395,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
-				XmlNode caller = null;
+				XElement caller = null;
 				if (Key.Length > 1)
-					caller = Key[Key.Length - 2] as XmlNode;
+					caller = Key[Key.Length - 2] as XElement;
 				int insPos = iSlice + 1;
 				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = DataTree.TreeItemState.ktisExpanded;

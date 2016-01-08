@@ -9,7 +9,6 @@
 // <remarks>
 // </remarks>
 using System;
-using System.Xml;
 using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -21,6 +20,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -32,12 +32,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// If not found, answer 0.
 		/// If found, answer the ID of the appropriate writing system, or throw exception if not valid.
 		/// </summary>
-		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XmlNode node)
+		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XElement node)
 		{
 			return GetWs(cache, propertyTable, node, "ws");
 		}
 
-		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XmlNode node, string sAttr)
+		private static int GetWs(FdoCache cache, IPropertyTable propertyTable, XElement node, string sAttr)
 		{
 			string wsSpec = XmlUtils.GetOptionalAttributeValue(node, sAttr);
 			if (wsSpec != null)
@@ -84,8 +84,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary></summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
-		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
-			IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XmlNode caller, ObjSeqHashMap reuseMap)
+		public static Slice Create(FdoCache cache, string editor, int flid, XElement node, ICmObject obj,
+			IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
 			switch(editor)
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case "multistring": // first, these are the most common slices.
 					{
 						if (flid == 0)
-							throw new ApplicationException("field attribute required for multistring " + node.OuterXml);
+							throw new ApplicationException("field attribute required for multistring " + node.GetOuterXml());
 						string wsSpec = XmlUtils.GetOptionalAttributeValue(node, "ws");
 						int wsMagic = WritingSystemServices.GetMagicWsIdFromName(wsSpec);
 						if (wsMagic == 0)
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case "string":
 				{
 					if (flid == 0)
-						throw new ApplicationException("field attribute required for basic properties " + node.OuterXml);
+						throw new ApplicationException("field attribute required for basic properties " + node.GetOuterXml());
 					int ws = GetWs(cache, propertyTable, node);
 					if (ws != 0)
 						slice = new StringSlice(obj, flid, ws);
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "enumcombobox":
 				{
-					slice = new EnumComboSlice(cache, obj, flid, node["deParams"]);
+					slice = new EnumComboSlice(cache, obj, flid, node.Element("deParams"));
 					break;
 				}
 				case "referencecombobox":
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "command":
 				{
-					slice = new CommandSlice(node["deParams"]);
+					slice = new CommandSlice(node.Element("deParams"));
 					break;
 				}
 
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
-		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller)
+		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XElement caller)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			int flid = GetCustomFieldFlid(caller, mdc, obj);
@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return slice;
 		}
 
-		static internal int GetCustomFieldFlid(XmlNode caller, IFwMetaDataCache mdc, ICmObject obj)
+		static internal int GetCustomFieldFlid(XElement caller, IFwMetaDataCache mdc, ICmObject obj)
 		{
 			string fieldName = XmlUtils.GetManditoryAttributeValue(caller, "param");
 			// It would be nice to avoid all the possible throws for invalid fields, but hard

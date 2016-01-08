@@ -13,6 +13,7 @@
 
 using System;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.Utils
 {
@@ -37,8 +38,28 @@ namespace SIL.Utils
 		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		public ConfigurationException(string message, XElement node, Exception exInner)
+			: base(message + Environment.NewLine + node, exInner)
+		{
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
 		public ConfigurationException(string message, XmlNode node)
 			: base(message + Environment.NewLine + node.OuterXml)
+		{
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
+		public ConfigurationException(string message, XElement node)
+			: base(message + Environment.NewLine + node)
 		{
 		}
 

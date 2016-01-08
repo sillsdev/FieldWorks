@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
-
+using System.Xml.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -67,7 +67,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
 			XmlUtils.AppendAttribute(node, "min", m_min.ToString());
@@ -80,7 +80,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			m_min = XmlUtils.GetMandatoryIntegerAttributeValue(node, "min");
@@ -189,7 +189,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
 			XmlUtils.AppendAttribute(node, "val", m_val.ToString());
@@ -201,7 +201,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			m_val = XmlUtils.GetMandatoryIntegerAttributeValue(node, "val");

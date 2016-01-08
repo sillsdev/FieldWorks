@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	internal sealed class MetaRuleFormulaControl : RuleFormulaControl
 	{
-		public MetaRuleFormulaControl(XmlNode configurationNode)
+		public MetaRuleFormulaControl(XElement configurationNode)
 			: base(configurationNode)
 		{
 		}

@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -231,7 +232,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			btnCancel.PerformClick();
 		}
 
-		public System.Xml.XmlNode LinkNode { get; set; }
+		public XElement LinkNode { get; set; }
 
 		private void btnCancelSearch_Click(object sender, EventArgs e)
 		{

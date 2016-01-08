@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
@@ -122,11 +121,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (m_configurationNode != null)
 			{
-				XmlNode node = m_configurationNode.SelectSingleNode("deParams");
+				var node = m_configurationNode.Element("deParams");
 				if (node != null)
 				{
-					displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
-					postDialogMessageTrigger = XmlUtils.GetAttributeValue(node, "postChangeMessageTrigger", null);
+					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
+					postDialogMessageTrigger = XmlUtils.GetOptionalAttributeValue(node, "postChangeMessageTrigger", null);
 				}
 			}
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),

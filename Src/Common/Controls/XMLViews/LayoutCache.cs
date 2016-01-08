@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Xml;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -30,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls
 		IFwMetaDataCache m_mdc;
 		readonly Inventory m_layoutInventory;
 		readonly Inventory m_partInventory;
-		readonly Dictionary<Tuple<int, string, bool>, XmlNode> m_map = new Dictionary<Tuple<int, string, bool>, XmlNode>();
+		readonly Dictionary<Tuple<int, string, bool>, XElement> m_map = new Dictionary<Tuple<int, string, bool>, XElement>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -155,13 +154,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fIncludeLayouts">if set to <c>true</c> [f include layouts].</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public XmlNode GetNode(int clsid, string layoutName, bool fIncludeLayouts)
+		public XElement GetNode(int clsid, string layoutName, bool fIncludeLayouts)
 		{
 			Tuple<int, string, bool> key = Tuple.Create(clsid, layoutName, fIncludeLayouts);
 			if (m_map.ContainsKey(key))
 				return m_map[key];
 
-			XmlNode node;
+			XElement node;
 			int classId = clsid;
 			string useName = layoutName ?? "default";
 			string origName = useName;
@@ -301,21 +300,14 @@ namespace SIL.FieldWorks.Common.Controls
 			return new PartOwnershipTree(cache, sortItemProvider, fReturnFirstDecendentOnly);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="sortItemProvider"></param>
-		/// <param name="fReturnFirstDecendentOnly"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		/// <summary />
 		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			var partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
 			m_cache = cache;
 			m_classOwnershipTree = partOwnershipTreeSpec.Element("ClassOwnershipTree");
 			var parentClassPathsToChildren = partOwnershipTreeSpec.Element("ParentClassPathsToChildren");
-			m_parentToChildrenSpecs = XElement.Parse(parentClassPathsToChildren.ToString());
+			m_parentToChildrenSpecs = parentClassPathsToChildren.Clone();
 			// now go through the seq specs and set the "firstOnly" to the requested value.
 			var seqElements = m_parentToChildrenSpecs.Elements("part").Elements("seq");
 			foreach (var xe in seqElements)
@@ -506,9 +498,8 @@ namespace SIL.FieldWorks.Common.Controls
 			var vc = new XmlBrowseViewBaseVc(m_cache, null);
 			var parentItem = new ManyOnePathSortItem(hvoCommonAncestor, null, null);
 			var collector = new XmlBrowseViewBaseVc.ItemsCollectorEnv(null, m_cache, hvoCommonAncestor);
-			var doc = new XmlDocument();
-			doc.LoadXml(pathSpec.ToString());
-			vc.DisplayCell(parentItem, doc.FirstChild, hvoCommonAncestor, collector);
+			var doc = XDocument.Load(pathSpec.ToString());
+			vc.DisplayCell(parentItem, doc.Root.Elements().First(), hvoCommonAncestor, collector);
 			if (collector.HvosCollectedInCell != null && collector.HvosCollectedInCell.Count > 0)
 			{
 				return new HashSet<int>(collector.HvosCollectedInCell);

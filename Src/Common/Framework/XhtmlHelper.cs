@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Framework
 		// of calling GetValidCssClassName. (This is not necessary with fixed strings known not to contain
 		// illegal characters).
 		SortedDictionary<string, List<string>> m_dictClassData = new SortedDictionary<string, List<string>>();
-		SortedDictionary<string, XmlNode> m_mapCssClassToXnode = new SortedDictionary<string, XmlNode>();
+		SortedDictionary<string, XElement> m_mapCssClassToXnode = new SortedDictionary<string, XElement>();
 		SortedDictionary<string, List<string>> m_mapCssToStyleEnv = new SortedDictionary<string, List<string>>();
 		/// <summary>
 		/// Map from the specified class to its base FieldWorks style name.  This is used for
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cssClass"></param>
 		/// <param name="node"></param>
-		public void MapCssClassToXmlNode(string cssClass, XmlNode node)
+		public void MapCssClassToXmlNode(string cssClass, XElement node)
 		{
 			m_mapCssClassToXnode.Add(GetValidCssClassName(cssClass), node);
 		}
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="cssClass"></param>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		public bool TryGetNodeFromCssClass(string cssClass, out XmlNode node)
+		public bool TryGetNodeFromCssClass(string cssClass, out XElement node)
 		{
 			return m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(cssClass), out node);
 		}
@@ -864,15 +864,13 @@ namespace SIL.FieldWorks.Common.Framework
 				m_dictClassData.Remove("xitem");
 			}
 			m_writer.WriteLine();
-			XmlDocument xdoc = new XmlDocument();
-			XmlNode xnDummy = xdoc.CreateElement("dummy");
-			xnDummy.Attributes.Append(xdoc.CreateAttribute("style"));
+			XElement xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
 			foreach (string sClass in m_dictClassData.Keys)
 			{
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
-				XmlNode xn;
+				XElement xn;
 				if (!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
 				{
 					// We probably need to put this out anyway if it's an actual FW style name.
@@ -887,7 +885,7 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 					if (!String.IsNullOrEmpty(sStyle))
 					{
-						xnDummy.Attributes["style"].Value = sStyle;
+						xnDummy.Attribute("style").Value = sStyle;
 						m_mapCssClassToXnode.Add(sClass, xnDummy);
 					}
 				}
@@ -950,7 +948,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteCssComplexForm()
 		{
-			XmlNode xn;
+			XElement xn;
 			List<string> rgsLangs;
 			string style;
 			var fShowAsIndentedPara = false;
@@ -988,7 +986,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void WriteCssSubentry()
 		{
 			m_writer.WriteLine(".subentry {");
-			XmlNode xnSub;
+			XElement xnSub;
 			string style = null;
 			if (m_mapCssClassToXnode.TryGetValue("subentries", out xnSub))
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
@@ -1003,7 +1001,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void WriteCssMinorEntry()
 		{
 			m_writer.WriteLine(".minorentry {");
-			XmlNode xnSub;
+			XElement xnSub;
 			string style = null;
 			if (m_mapCssClassToXnode.TryGetValue("minorentries", out xnSub))
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
@@ -1246,7 +1244,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void ProcessDictionaryCssStyle(string sClass)
 		{
-			XmlNode xn;
+			XElement xn;
 			string sBaseClass;
 			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{
@@ -1840,15 +1838,13 @@ namespace SIL.FieldWorks.Common.Framework
 				m_dictClassData.Remove("xitem");
 			}
 			m_writer.WriteLine();
-			XmlDocument xdoc = new XmlDocument();
-			XmlNode xnDummy = xdoc.CreateElement("dummy");
-			xnDummy.Attributes.Append(xdoc.CreateAttribute("style"));
+			XElement xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
 			foreach (string sClass in m_dictClassData.Keys)
 			{
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
-				XmlNode xn;
+				XElement xn;
 				if (m_dictClassData[sClass].Count > 0 &&
 					!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
 				{
@@ -1864,7 +1860,7 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 					if (!String.IsNullOrEmpty(sStyle))
 					{
-						xnDummy.Attributes["style"].Value = sStyle;
+						xnDummy.Attribute("style").Value = sStyle;
 						m_mapCssClassToXnode.Add(sClass, xnDummy);
 					}
 				}
@@ -1886,7 +1882,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void ProcessNotebookCssStyle(string sClass)
 		{
-			XmlNode xn;
+			XElement xn;
 			string sBaseClass;
 			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{

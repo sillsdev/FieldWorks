@@ -5,7 +5,7 @@
 // Original author: MarkS 2010-08-03 SliceTests.cs
 using System.Collections;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -69,12 +69,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		private static XmlElement CreateXmlElementFromOuterXmlOf(string outerXml)
+		private static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
 		{
-			var document = new XmlDocument();
-			document.LoadXml(outerXml);
-			var element = document.DocumentElement;
-			return element;
+			return XElement.Parse(outerXml);
 		}
 
 		/// <summary>Helper</summary>

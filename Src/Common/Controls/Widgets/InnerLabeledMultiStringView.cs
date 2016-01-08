@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -147,11 +147,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get any text styles from configuration node (which is now available; it was not at construction)
 		/// </summary>
-		public void FinishInit(XmlNode configurationNode)
+		public void FinishInit(XElement configurationNode)
 		{
-			if (configurationNode.Attributes != null)
+			if (configurationNode.HasAttributes)
 			{
-				var textStyle = configurationNode.Attributes["textStyle"];
+				var textStyle = configurationNode.Attribute("textStyle");
 				if (textStyle != null)
 				{
 					TextStyle = textStyle.Value;

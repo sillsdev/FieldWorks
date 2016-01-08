@@ -13,11 +13,11 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
 		// The following variables control features of the chooser dialog.
-		protected System.Xml.XmlNode m_configurationNode = null;
+		protected XElement m_configurationNode = null;
 
 		#endregion // Data Members
 		private ImageList imageList1;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Store or retrieve the XML configuration node associated with the parent slice.
 		/// </summary>
-		public virtual XmlNode ConfigurationNode
+		public virtual XElement ConfigurationNode
 		{
 			get { CheckDisposed(); return m_configurationNode; }
 			set

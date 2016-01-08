@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid">the empty object flid, which this slice is displaying.</param>
 		/// <param name="nodeObjProp">the 'obj' or 'seq' element that requested the ghost</param>
 		/// <param name="cache">The cache.</param>
-		public GhostStringSlice(ICmObject obj, int flid, XmlNode nodeObjProp, FdoCache cache)
+		public GhostStringSlice(ICmObject obj, int flid, XElement nodeObjProp, FdoCache cache)
 			: base(new GhostStringSliceView(obj.Hvo, flid, nodeObjProp, cache), obj, flid)
 		{
 			AccessibleName = "GhostStringSlice";
@@ -76,12 +76,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int m_flidEmptyProp; // the object property whose emptiness causes the ghost to appear.
 			int m_clidDst; // of the class of object we will create (int m_flidEmptyProp) if something is typed in the ghost slice
 			int m_flidStringProp; // the string property of m_clidDst we are simulating.
-			XmlNode m_nodeObjProp; // obj or seq node that requested the ghost.
+			XElement m_nodeObjProp; // obj or seq node that requested the ghost.
 			GhostStringSliceVc m_vc;
 			GhostDaDecorator m_sda;
 			int m_wsToCreate; // default analysis or vernacular ws.
 
-			public GhostStringSliceView(int hvo, int flid, XmlNode nodeObjProp, FdoCache cache)
+			public GhostStringSliceView(int hvo, int flid, XElement nodeObjProp, FdoCache cache)
 			{
 				Cache = cache;
 				m_hvoObj = hvo;
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Figure the type of object we are pretending to be.
 				string dstClass = XmlUtils.GetOptionalAttributeValue(nodeObjProp, "ghostClass");
 				if (dstClass == null)
-					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetDstClsId((int)flid);
+					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetDstClsId(flid);
 				else
 					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetClassId(dstClass);
 
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 
 
-				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), (int)m_clidDst);
+				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), m_clidDst);
 
 				m_rootb.DataAccess = m_sda;
 
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						continue;
 					if ((int)nextKeyItem != hvoNewObj)
 						continue;
-					XmlNode lastKeyNode = slice.Key[slice.Key.Length - 1] as XmlNode;
+					var lastKeyNode = slice.Key[slice.Key.Length - 1] as XElement;
 					if (lastKeyNode == null)
 						continue;
 					if (lastKeyNode.Name != "slice")

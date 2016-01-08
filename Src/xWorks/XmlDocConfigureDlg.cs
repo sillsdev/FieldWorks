@@ -18,14 +18,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class XmlDocConfigureDlg : Form, IFWDisposable, ILayoutConverter
 	{
-		XmlNode m_configurationParameters;
+		XElement m_configurationParameters;
 		string m_defaultRootLayoutName;
 		const string sdefaultStemBasedLayout = "publishStem";
 		FdoCache m_cache;
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Store nodes that need to be persisted as part of a new copy of a whole layout,
 		/// but which don't directly (or indirectly) appear in configuration.
 		/// </summary>
-		readonly List<XmlNode> m_rgxnNewLayoutNodes = new List<XmlNode>();
+		readonly List<XElement> m_rgxnNewLayoutNodes = new List<XElement>();
 
 		private readonly Guid m_unspecComplexFormType;
 		private readonly Guid m_unspecVariantType;
@@ -112,23 +112,23 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal class PartCaller
 		{
-			private readonly XmlNode m_xnPartRef;
-			private readonly XmlNode m_xnLayout;
+			private readonly XElement m_xnPartRef;
+			private readonly XElement m_xnLayout;
 			private readonly bool m_fHidden;
 
-			internal PartCaller(XmlNode layout, XmlNode partref)
+			internal PartCaller(XElement layout, XElement partref)
 			{
 				m_xnLayout = layout;
 				m_xnPartRef = partref;
 				m_fHidden = XmlUtils.GetOptionalBooleanAttributeValue(partref, "hideConfig", false);
 			}
 
-			internal XmlNode PartRef
+			internal XElement PartRef
 			{
 				get { return m_xnPartRef; }
 			}
 
-			internal XmlNode Layout
+			internal XElement Layout
 			{
 				get { return m_xnLayout; }
 			}
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
-		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
+		public void SetConfigDlgInfo(XElement configurationParameters, FdoCache cache,
 			FwStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
 		{
 			CheckDisposed();
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < nodes.Count; ++i)
 			{
 				var ltn = (LayoutTreeNode)nodes[i];
-				if (ltn.Configuration["ref"] == m_current.Configuration["ref"] &&
+				if (ltn.Configuration.Element("ref") == m_current.Configuration.Element("ref") &&
 					ltn.LayoutName == m_current.LayoutName &&
 					ltn.PartName == m_current.PartName)
 				{
@@ -908,9 +908,9 @@ namespace SIL.FieldWorks.XWorks
 			if (xnPart == null)
 				return null;		// shouldn't happen.
 
-			var duplicates = new List<XmlNode>();
+			var duplicates = new List<XElement>();
 			ProcessPartChildrenForDuplication(m_current.ClassName, m_current.Configuration,
-				xnPart.ChildNodes, suffixCode, duplicates);
+				xnPart.Elements(), suffixCode, duplicates);
 			foreach (var xn in duplicates)
 				m_layouts.AddNodeToInventory(xn);
 
@@ -963,33 +963,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Processes any part children for duplication purposes, does nothing on empty xmlNodeLists
+		/// Processes any part children for duplication purposes, does nothing on an empty list of elements
 		/// </summary>
 		/// <param name="className"></param>
 		/// <param name="xnCaller"></param>
-		/// <param name="xmlNodeList"></param>
+		/// <param name="elements"></param>
 		/// <param name="suffixCode"></param>
 		/// <param name="duplicates"></param>
-		private void ProcessPartChildrenForDuplication(string className, XmlNode xnCaller,
-			XmlNodeList xmlNodeList, string suffixCode, List<XmlNode> duplicates)
+		private void ProcessPartChildrenForDuplication(string className, XElement xnCaller,
+			IEnumerable<XElement> elements, string suffixCode, List<XElement> duplicates)
 		{
-			foreach (XmlNode xn in xmlNodeList)
+			foreach (var xn in elements)
 			{
-				if (xn is XmlComment)
-					continue;
-				if (xn.Name == "obj" || xn.Name == "seq" || xn.Name == "objlocal")
+				if (xn.Name.LocalName == "obj" || xn.Name.LocalName == "seq" || xn.Name.LocalName == "objlocal")
 				{
 					ProcessPartChildForDuplication(className, xnCaller, xn, suffixCode, duplicates);
 				}
 				else
 				{
-					ProcessPartChildrenForDuplication(className, xnCaller, xn.ChildNodes, suffixCode, duplicates);
+					ProcessPartChildrenForDuplication(className, xnCaller, xn.Elements(), suffixCode, duplicates);
 				}
 			}
 		}
 
-		private void ProcessPartChildForDuplication(string className, XmlNode xnCaller,
-			XmlNode xnField, string suffixCode, List<XmlNode> duplicates)
+		private void ProcessPartChildForDuplication(string className, XElement xnCaller,
+			XElement xnField, string suffixCode, List<XElement> duplicates)
 		{
 			var sLayoutName = XmlUtils.GetManditoryAttributeValue(xnCaller, "param");
 			var fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "recurseConfig", true);
@@ -1042,13 +1040,13 @@ namespace SIL.FieldWorks.XWorks
 			if (sTargetClasses == null)
 				sTargetClasses = sClass;
 			var rgsClasses = sTargetClasses.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			XmlNode xnLayout = null;
+			XElement xnLayout = null;
 			if (rgsClasses.Length > 0)
 				xnLayout = m_layouts.GetElement("layout", new[] { rgsClasses[0], "jtview", sLayoutName, null });
 
 			if (xnLayout != null)
 			{
-				var cNodes = xnLayout.ChildNodes.Count;
+				var cNodes = xnLayout.Elements().Count();
 				DuplicateLayout(xnLayout.Clone(), suffixCode, duplicates);
 				var fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xnField, "repeatedConfig", false);
 				if (fRepeatedConfig)
@@ -1056,7 +1054,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 1; i < rgsClasses.Length; i++)
 				{
 					var xnMergedLayout = m_layouts.GetElement("layout", new[] { rgsClasses[i], "jtview", sLayoutName, null });
-					if (xnMergedLayout != null && xnMergedLayout.ChildNodes.Count == cNodes)
+					if (xnMergedLayout != null && xnMergedLayout.Elements().Count() == cNodes)
 						DuplicateLayout(xnMergedLayout.Clone(), suffixCode, duplicates);
 				}
 			}
@@ -1083,16 +1081,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="xnLayout">an unmodified clone of the original node</param>
 		/// <param name="suffixCode">tag to append to the name attribute, and param attributes of child nodes</param>
 		/// <param name="duplicates">list to add the modified layout to</param>
-		private void DuplicateLayout(XmlNode xnLayout, string suffixCode, List<XmlNode> duplicates)
+		private void DuplicateLayout(XElement xnLayout, string suffixCode, List<XElement> duplicates)
 		{
 			// It is important for at least one caller that the FIRST node added to duplicates is the copy of xnLayout.
 			duplicates.Add(xnLayout);
 			AdjustAttributeValue(xnLayout, "name", suffixCode);
 			var className = XmlUtils.GetManditoryAttributeValue(xnLayout, "class");
 
-			foreach (XmlNode partref in xnLayout.ChildNodes)
+			foreach (var partref in xnLayout.Elements())
 			{
-				if (partref.Name == "part")
+				if (partref.Name.LocalName == "part")
 				{
 					var param = XmlUtils.GetOptionalAttributeValue(partref, "param");
 					if (!String.IsNullOrEmpty(param))
@@ -1107,7 +1105,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else
 						{
-							ProcessPartChildrenForDuplication(className, partref, xnPart.ChildNodes, suffixCode, duplicates);
+							ProcessPartChildrenForDuplication(className, partref, xnPart.Elements(), suffixCode, duplicates);
 						}
 						AdjustAttributeValue(partref, "param", suffixCode);
 					}
@@ -1122,9 +1120,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void AdjustAttributeValue(XmlNode node, string sAttrName, string suffixCode)
+		private static void AdjustAttributeValue(XElement node, string sAttrName, string suffixCode)
 		{
-			var xa = node.Attributes != null ? node.Attributes[sAttrName] : null;
+			var xa = node.HasAttributes ? node.Attribute(sAttrName) : null;
 			Debug.Assert(xa != null);
 			xa.Value = AdjustLayoutName(xa.Value, suffixCode);
 		}
@@ -1166,8 +1164,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnRestoreDefaults_Click(object sender, EventArgs e)
 		{
 			using (new WaitCursor(this))
@@ -1185,7 +1181,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				foreach (var layoutCopy in layoutCopies)
 				{
-					var copy = layoutCopy as XmlNode;
+					var copy = layoutCopy;
 					layouts.AddNodeToInventory(copy);
 				}
 				m_layouts = layouts;
@@ -1772,11 +1768,11 @@ namespace SIL.FieldWorks.XWorks
 			int idx = m_current.Index;
 			if (idx <= 0)
 				return false;
-			XmlNode xnParent = m_current.HiddenNodeLayout;
+			var xnParent = m_current.HiddenNodeLayout;
 			if (xnParent == null)
 				xnParent = m_current.ParentLayout;
 			LayoutTreeNode ltnPrev = (LayoutTreeNode)m_current.Parent.Nodes[idx-1];
-			XmlNode xnPrevParent = ltnPrev.HiddenNodeLayout;
+			var xnPrevParent = ltnPrev.HiddenNodeLayout;
 			if (xnPrevParent == null)
 				xnPrevParent = ltnPrev.ParentLayout;
 			return xnParent == xnPrevParent;
@@ -1796,11 +1792,11 @@ namespace SIL.FieldWorks.XWorks
 			int idx = m_current.Index;
 			if (idx >= m_current.Parent.Nodes.Count - 1)
 				return false;
-			XmlNode xnParent = m_current.HiddenNodeLayout;
+			var xnParent = m_current.HiddenNodeLayout;
 			if (xnParent == null)
 				xnParent = m_current.ParentLayout;
 			LayoutTreeNode ltnNext = (LayoutTreeNode)m_current.Parent.Nodes[idx+1];
-			XmlNode xnNextParent = ltnNext.HiddenNodeLayout;
+			var xnNextParent = ltnNext.HiddenNodeLayout;
 			if (xnNextParent == null)
 				xnNextParent = ltnNext.ParentLayout;
 			return xnParent == xnNextParent;
@@ -2093,7 +2089,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayStyleControls(fEnabled);
 
 			string sMoreDetail = String.Format(xWorksStrings.ksUsesTheSameConfigurationAs,
-				m_current.Text, m_current.Configuration.Attributes["recurseConfigLabel"] != null ? m_current.Configuration.Attributes["recurseConfigLabel"].Value
+				m_current.Text, m_current.Configuration.Attribute("recurseConfigLabel") != null ? m_current.Configuration.Attribute("recurseConfigLabel").Value
 																								  : m_current.Parent.Text);
 			m_cfgParentNode.Visible = true;
 			m_cfgParentNode.SetDetails(sMoreDetail, m_chkDisplayData.Checked && fEnabled, false);
@@ -2875,7 +2871,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModifiedLayouts()
 		{
-			List<XmlNode> rgxnLayouts = new List<XmlNode>();
+			var rgxnLayouts = new List<XElement>();
 			for (int ici = 0; ici < m_cbDictType.Items.Count; ++ici)
 			{
 				LayoutTypeComboItem ltci = (LayoutTypeComboItem)m_cbDictType.Items[ici];
@@ -2904,7 +2900,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			for (int i = 0; i < rgxnLayouts.Count; ++i)
 				m_layouts.PersistOverrideElement(rgxnLayouts[i]);
-			var layoutsPersisted = new HashSet<XmlNode>(rgxnLayouts);
+			var layoutsPersisted = new HashSet<XElement>(rgxnLayouts);
 			foreach (var xnNewBase in m_rgxnNewLayoutNodes)
 				if (!layoutsPersisted.Contains(xnNewBase)) // don't need to persist a node that got into both lists twice
 					m_layouts.PersistOverrideElement(xnNewBase);
@@ -2931,7 +2927,7 @@ namespace SIL.FieldWorks.XWorks
 			// These are basic values that we need to know for every node.
 			// **Important Note**: In most cases, adding a member variable here means you need to add it to
 			// CopyValuesTo() also, so that a duplicate node will end up with the right values.
-			XmlNode m_xnConfig;
+			XElement m_xnConfig;
 			string m_sLayoutName;
 			string m_sPartName;
 			string m_sClassName;
@@ -2977,23 +2973,23 @@ namespace SIL.FieldWorks.XWorks
 			int m_idxOrig = -1;
 			// **NB**: If you're planning to add a member variable here, see the Important Note above.
 
-			XmlNode m_xnCallingLayout;
-			XmlNode m_xnParentLayout;
+			XElement m_xnCallingLayout;
+			XElement m_xnParentLayout;
 
-			XmlNode m_xnHiddenNode;
-			XmlNode m_xnHiddenParentLayout;
+			XElement m_xnHiddenNode;
+			XElement m_xnHiddenParentLayout;
 
 			/// <summary>
 			/// This node is a hidden child that provides/receives the style name.
 			/// </summary>
-			XmlNode m_xnHiddenChild;
-			XmlNode m_xnHiddenChildLayout;
+			XElement m_xnHiddenChild;
+			XElement m_xnHiddenChildLayout;
 			bool m_fStyleFromHiddenChild;
 			bool m_fHiddenChildDirty;
 
 			readonly List<LayoutTreeNode> m_rgltnMerged = new List<LayoutTreeNode>();
 
-			public LayoutTreeNode(XmlNode config, ILayoutConverter converter, string classParent)
+			public LayoutTreeNode(XElement config, ILayoutConverter converter, string classParent)
 			{
 				m_xnConfig = config;
 				m_sLabel = XmlUtils.GetLocalizedAttributeValue(config, "label", null);
@@ -3010,8 +3006,8 @@ namespace SIL.FieldWorks.XWorks
 					string sRef = XmlUtils.GetManditoryAttributeValue(config, "ref");
 					if(m_sLabel == null && converter.StringTable != null)
 						m_sLabel = converter.StringTable.LocalizeAttributeValue(sRef);
-					if (config.ParentNode != null && config.ParentNode.Name == "layout")
-						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.ParentNode, "name");
+					if (config.Parent != null && config.Parent.Name.LocalName == "layout")
+						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.Parent, "name");
 					else
 						m_sLayoutName = String.Empty;
 					m_sPartName = String.Format("{0}-Jt-{1}", classParent, sRef);
@@ -3045,25 +3041,20 @@ namespace SIL.FieldWorks.XWorks
 							m_sWsType = "vernacular analysis";	// who knows???
 							string refValue = String.Empty;
 							string wsValue = String.Empty;
-							if (config.Attributes != null)
+							if (config.HasAttributes)
 							{
-								refValue = config.Attributes["ref"].Value;
-								wsValue = config.Attributes["ws"].Value;
+								refValue = config.Attribute("ref").Value;
+								wsValue = config.Attribute("ws").Value;
 							}
 							converter.LogConversionError(String.Format("This layout node ({0}) does not specify @wsType "
 								+ "and we couldn't compute something reasonable from @ws='{1}' "
 								+ "so we're setting @wsType to 'vernacular analysis'",
 								refValue, wsValue));
 						}
-							// store the wsType attribute on the node, so that if 'ws' changes to something
-							// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
-							if (config.OwnerDocument != null)
-							{
-							XmlAttribute xa = config.OwnerDocument.CreateAttribute("wsType");
-							xa.Value = m_sWsType;
-								if (config.Attributes != null)
-							config.Attributes.Append(xa);
-						}
+						// store the wsType attribute on the node, so that if 'ws' changes to something
+						// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
+						var xa = new XAttribute("wsType", m_sWsType);
+						config.Add(xa);
 					}
 					m_sWsType = StringServices.GetWsSpecWithoutPrefix(m_sWsType);
 					if (m_sWsType != null && m_sWsLabel == null)
@@ -3288,7 +3279,7 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_xnConfig.Name == "configure" && Level == 0; }
 			}
 
-			public XmlNode Configuration
+			public XElement Configuration
 			{
 				get { return m_xnConfig; }
 			}
@@ -3763,30 +3754,30 @@ namespace SIL.FieldWorks.XWorks
 				get { return false; }
 			}
 
-			internal XmlNode ParentLayout
+			internal XElement ParentLayout
 			{
 				get { return m_xnParentLayout; }
 				set { m_xnParentLayout = value; }
 			}
 
-			internal XmlNode HiddenNode
+			internal XElement HiddenNode
 			{
 				get { return m_xnHiddenNode; }
 				set { m_xnHiddenNode = value; }
 			}
 
-			internal XmlNode HiddenNodeLayout
+			internal XElement HiddenNodeLayout
 			{
 				get { return m_xnHiddenParentLayout; }
 				set { m_xnHiddenParentLayout = value; }
 			}
-			internal XmlNode HiddenChildLayout
+			internal XElement HiddenChildLayout
 			{
 				get { return m_xnHiddenChildLayout; }
 				set { m_xnHiddenChildLayout = value; }
 			}
 
-			internal XmlNode HiddenChild
+			internal XElement HiddenChild
 			{
 				get { return m_xnHiddenChild; }
 				set
@@ -3805,15 +3796,15 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_fHiddenChildDirty; }
 			}
 
-			internal bool GetModifiedLayouts(List<XmlNode> rgxn, List<LayoutTreeNode> topNodes)
+			internal bool GetModifiedLayouts(List<XElement> rgxn, List<LayoutTreeNode> topNodes)
 			{
-				List<XmlNode> rgxnDirtyLayouts = new List<XmlNode>();
+				var rgxnDirtyLayouts = new List<XElement>();
 				for (int i = 0; i < Nodes.Count; ++i)
 				{
 					LayoutTreeNode ltn = (LayoutTreeNode)Nodes[i];
 					if (ltn.GetModifiedLayouts(rgxn, topNodes))
 					{
-						XmlNode xn = ltn.ParentLayout;
+						var xn = ltn.ParentLayout;
 						if (xn != null && !rgxnDirtyLayouts.Contains(xn))
 							rgxnDirtyLayouts.Add(xn);
 						xn = ltn.HiddenChildLayout;
@@ -3842,35 +3833,43 @@ namespace SIL.FieldWorks.XWorks
 						rgxnDirtyLayouts.Add(m_xnParentLayout);
 					}
 				}
-				foreach (XmlNode xnDirtyLayout in rgxnDirtyLayouts)
+				foreach (var xnDirtyLayout in rgxnDirtyLayouts)
 				{
 					// Create a new layout node with all its parts in order.  This is needed
 					// to handle arbitrary reordering and possible addition or deletion of
 					// duplicate nodes.  This is complicated by the presence (or rather absence)
 					// of "hidden" nodes, and by "merged" nodes.
-					XmlNode xnLayout = xnDirtyLayout.Clone();
+					var xnLayout = xnDirtyLayout.Clone();
+					var layoutList = xnLayout.Elements().ToList();
 					if (xnDirtyLayout == m_xnParentLayout && IsTopLevel && OverallLayoutVisibilityChanged())
 						UpdateAttribute(xnLayout, "visibility", Checked ? "always" : "never");
-					if (xnLayout.Attributes != null)
+					if (xnLayout.HasAttributes)
 					{
-						XmlAttribute[] rgxa = new XmlAttribute[xnLayout.Attributes.Count];
-						xnLayout.Attributes.CopyTo(rgxa, 0);
-						List<XmlNode> rgxnGen = new List<XmlNode>();
-						List<int> rgixn = new List<int>();
-						for (int i = 0; i < xnLayout.ChildNodes.Count; ++i)
+						var rgxa = xnLayout.Attributes().ToArray();
+						var rgxnGen = new List<XElement>();
+						var rgixn = new List<int>();
+						for (var i = 0; i < layoutList.Count; ++i)
 						{
-							XmlNode xn = xnLayout.ChildNodes[i];
-							if (xn.Name != "part")
+							var xn = layoutList[i];
+							if (xn.Name.LocalName != "part")
 							{
 								rgxnGen.Add(xn);
 								rgixn.Add(i);
 							}
 						}
 						xnLayout.RemoveAll();
-						for (int i = 0; i < rgxa.Length; ++i)
+						for (var i = 0; i < rgxa.Length; ++i)
 						{
-							if (xnLayout.Attributes != null)
-								xnLayout.Attributes.SetNamedItem(rgxa[i]);
+							var srcAttr = rgxa[i];
+							var attr = xnLayout.Attribute(srcAttr.Name);
+							if (attr == null)
+							{
+								xnLayout.Add(new XAttribute(srcAttr.Name, srcAttr.Value));
+							}
+							else
+							{
+								attr.SetValue(srcAttr.Value);
+							}
 						}
 						if (Level == 0 && !IsTopLevel && xnDirtyLayout == m_xnParentLayout)
 						{
@@ -3880,61 +3879,59 @@ namespace SIL.FieldWorks.XWorks
 									continue;
 								if (fDirty && ltn == this)
 									ltn.StoreUpdatedValuesInConfiguration();
-								xnLayout.AppendChild(ltn.Configuration.CloneNode(true));
+								xnLayout.Add(ltn.Configuration.Clone());
 							}
 						}
 						else
 						{
-							for (int i = 0; i < Nodes.Count; ++i)
+							for (var i = 0; i < Nodes.Count; ++i)
 							{
-								LayoutTreeNode ltn = (LayoutTreeNode) Nodes[i];
+								var ltn = (LayoutTreeNode) Nodes[i];
 								if (ltn.ParentLayout == xnDirtyLayout)
 								{
-									xnLayout.AppendChild(ltn.Configuration.CloneNode(true));
+									xnLayout.Add(ltn.Configuration.Clone());
 								}
 								else if (ltn.HiddenNodeLayout == xnDirtyLayout)
 								{
 									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
-													  BuildXPathFromAttributes(ltn.HiddenNode.Attributes) + "]";
-									if (xnLayout.SelectSingleNode(xpathString) == null)
-										xnLayout.AppendChild(ltn.HiddenNode.CloneNode(true));
+													  BuildXPathFromAttributes(ltn.HiddenNode.Attributes()) + "]";
+									if (xnLayout.XPathSelectElement(xpathString) == null)
+										xnLayout.Add(ltn.HiddenNode.Clone());
 								}
 								else if (ltn.HiddenChildLayout == xnDirtyLayout)
 								{
 									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
-													  BuildXPathFromAttributes(ltn.HiddenChild.Attributes) + "]";
-									if (xnLayout.SelectSingleNode(xpathString) == null)
-										xnLayout.AppendChild(ltn.HiddenChild.CloneNode(true));
+													  BuildXPathFromAttributes(ltn.HiddenChild.Attributes()) + "]";
+									if (xnLayout.XPathSelectElement(xpathString) == null)
+										xnLayout.Add(ltn.HiddenChild.Clone());
 								}
 								else
 								{
-									for (int itn = 0; itn < ltn.MergedNodes.Count; itn++)
+									for (var itn = 0; itn < ltn.MergedNodes.Count; itn++)
 									{
-										LayoutTreeNode ltnMerged = ltn.MergedNodes[itn];
+										var ltnMerged = ltn.MergedNodes[itn];
 										if (ltnMerged.ParentLayout == xnDirtyLayout)
 										{
-											xnLayout.AppendChild(ltnMerged.Configuration.CloneNode(true));
+											xnLayout.Add(ltnMerged.Configuration.Clone());
 											break;
 										}
 									}
 								}
 							}
 						}
-						XmlNode xnRef;
-						for (int i = 0; i < rgxnGen.Count; ++i)
+						layoutList = xnLayout.Elements().ToList();
+						for (var i = 0; i < rgxnGen.Count; ++i)
 						{
-							if (rgixn[i] <= xnLayout.ChildNodes.Count/2)
+							XElement xnRef;
+							if (rgixn[i] <= layoutList.Count / 2)
 							{
-								xnRef = xnLayout.ChildNodes[rgixn[i]];
-								xnLayout.InsertBefore(rgxnGen[i], xnRef);
+								xnRef = layoutList[rgixn[i]];
+								xnRef.AddBeforeSelf(rgxnGen[i]);
 							}
 							else
 							{
-								if (rgixn[i] < xnLayout.ChildNodes.Count)
-									xnRef = xnLayout.ChildNodes[rgixn[i]];
-								else
-									xnRef = xnLayout.LastChild;
-								xnLayout.InsertAfter(rgxnGen[i], xnRef);
+								xnRef = rgixn[i] < layoutList.Count ? layoutList[rgixn[i]] : xnLayout.Elements().Last();
+								xnRef.AddAfterSelf(rgxnGen[i]);
 							}
 						}
 					}
@@ -3948,12 +3945,12 @@ namespace SIL.FieldWorks.XWorks
 				return fDirty || HasMoved || IsNew;
 			}
 
-			private static string BuildXPathFromAttributes(XmlAttributeCollection attributes)
+			private static string BuildXPathFromAttributes(IEnumerable<XAttribute> attributes)
 			{
 				if (attributes == null)
 					return "";
 				string xpath = null;
-				foreach(XmlAttribute attr in attributes)
+				foreach(var attr in attributes)
 				{
 					if(String.IsNullOrEmpty(xpath))
 					{
@@ -3979,30 +3976,28 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 				}
 
-			private static void UpdateAttributeIfDirty(XmlNode xn, string sName, string sValue)
+			private static void UpdateAttributeIfDirty(XElement xn, string sName, string sValue)
 			{
 				var sOldValue = XmlUtils.GetOptionalAttributeValue(xn, sName);
 				if (StringsDiffer(sValue, sOldValue))
 					UpdateAttribute(xn, sName, sValue);
 			}
 
-			private static void UpdateAttribute(XmlNode xn, string sName, string sValue)
+			private static void UpdateAttribute(XElement xn, string sName, string sValue)
 			{
-				if (xn.Attributes == null)
+				if (!xn.HasAttributes)
 					return;
 				Debug.Assert(sName != null);
 				if (sValue == null)
 				{
 					// probably can't happen...
-					xn.Attributes.RemoveNamedItem(sName);
-					//In LayoutTreeNode(XmlNode, StringTable, string) if the flowtype is "div" we can remove "after" and "sep" attributes, so don't assert on them.
-					Debug.Assert(sName == "flowType" || xn.Attributes["flowType"] != null && xn.Attributes["flowType"].Value == "div");		// only values we intentionally delete.
+					xn.Attributes(sName).Remove();
+					//In LayoutTreeNode(XElement, StringTable, string) if the flowtype is "div" we can remove "after" and "sep" attributes, so don't assert on them.
+					Debug.Assert(sName == "flowType" || xn.Attribute("flowType") != null && xn.Attribute("flowType").Value == "div");		// only values we intentionally delete.
 				}
-				else if (xn.OwnerDocument != null)
+				else
 				{
-					var xa = xn.OwnerDocument.CreateAttribute(sName);
-					xa.Value = sValue;
-					xn.Attributes.SetNamedItem(xa);
+					xn.Add(new XAttribute(sName, sValue));
 				}
 			}
 
@@ -4014,7 +4009,7 @@ namespace SIL.FieldWorks.XWorks
 				if (StringsDiffer(sDuplicate, m_sDup))
 				{
 					// Copy Part Node
-					m_xnConfig = m_xnConfig.CloneNode(true);
+					m_xnConfig = m_xnConfig.Clone();
 					UpdateAttribute(m_xnConfig, "label", m_sLabel);
 					UpdateAttribute(m_xnConfig, "dup", m_sDup);
 					if (m_xnHiddenNode != null)
@@ -4025,10 +4020,10 @@ namespace SIL.FieldWorks.XWorks
 						string sNewParam = String.Format("{0}_{1}",
 														XmlUtils.GetManditoryAttributeValue(m_xnHiddenNode, "param"),
 														m_sDup);
-						m_xnHiddenNode = m_xnHiddenNode.CloneNode(true);
+						m_xnHiddenNode = m_xnHiddenNode.Clone();
 						UpdateAttribute(m_xnHiddenNode, "dup", m_sDup);
 						UpdateAttribute(m_xnHiddenNode, "param", sNewParam);
-						m_xnParentLayout = m_xnParentLayout.CloneNode(true);
+						m_xnParentLayout = m_xnParentLayout.Clone();
 						UpdateAttribute(m_xnParentLayout, "name", sNewName);
 						//for (var ipc = 1; ipc < m_hiddenPartCallers.Count; ++ipc)
 						//{
@@ -4040,7 +4035,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					foreach (LayoutTreeNode ltn in m_rgltnMerged)
 					{
-						ltn.m_xnConfig = ltn.m_xnConfig.CloneNode(true);
+						ltn.m_xnConfig = ltn.m_xnConfig.Clone();
 						UpdateAttribute(ltn.m_xnConfig, "label", m_sLabel);
 						UpdateAttribute(ltn.m_xnConfig, "dup", m_sDup);
 					}
@@ -4058,7 +4053,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="xn"></param>
 			/// <returns></returns>
-			private void CopyPartAttributes(XmlNode xn)
+			private void CopyPartAttributes(XElement xn)
 			{
 				string sVisibility = XmlUtils.GetOptionalAttributeValue(xn, "visibility");
 				bool fContentVisible = sVisibility != "never";
@@ -4145,7 +4140,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			private void UpdateSenseConfig(XmlNode xn)
+			private void UpdateSenseConfig(XElement xn)
 			{
 				if (m_fSenseIsPara)
 				{
@@ -4310,7 +4305,7 @@ namespace SIL.FieldWorks.XWorks
 			private readonly string m_sLayout;
 			private List<LayoutTreeNode> m_rgltn;
 
-			public LayoutTypeComboItem(XmlNode xnLayoutType, List<LayoutTreeNode> rgltn)
+			public LayoutTypeComboItem(XElement xnLayoutType, List<LayoutTreeNode> rgltn)
 			{
 				m_sLabel = XmlUtils.GetManditoryAttributeValue(xnLayoutType, "label");
 				m_sLayout = XmlUtils.GetManditoryAttributeValue(xnLayoutType, "layout");
@@ -4339,7 +4334,7 @@ namespace SIL.FieldWorks.XWorks
 				return m_sLabel;
 			}
 
-			internal XmlNode LayoutTypeNode { get; private set; }
+			internal XElement LayoutTypeNode { get; private set; }
 		}
 		#endregion
 
@@ -4433,7 +4428,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CreateConfigurationCopies(IEnumerable<Tuple<string, string, string>> newViewsToCreate)
 		{
-			Dictionary<string, XmlNode> mapLayoutToConfigBase = new Dictionary<string, XmlNode>();
+			var mapLayoutToConfigBase = new Dictionary<string, XElement>();
 			foreach (var xn in(m_cbDictType.Items.OfType<LayoutTypeComboItem>().Select(item => item.LayoutTypeNode)))
 			{
 				if (xn == null)
@@ -4446,7 +4441,7 @@ namespace SIL.FieldWorks.XWorks
 				var code = viewSpec.Item1;
 				var baseLayout = viewSpec.Item2;
 				var label = viewSpec.Item3;
-				XmlNode xnBaseConfig;
+				XElement xnBaseConfig;
 				if (mapLayoutToConfigBase.TryGetValue(baseLayout, out xnBaseConfig))
 					CopyConfiguration(xnBaseConfig, code, label);
 			}
@@ -4459,39 +4454,39 @@ namespace SIL.FieldWorks.XWorks
 		//    "<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
 		//"</layoutType>" +
 		//
-		private void CopyConfiguration(XmlNode xnBaseConfig, string code, string label)
+		private void CopyConfiguration(XElement xnBaseConfig, string code, string label)
 		{
-			var xnNewConfig = xnBaseConfig.CloneNode(true);
+			var xnNewConfig = xnBaseConfig.Clone();
 			//set the version number on the layoutType node to indicate user configured
 // ReSharper disable PossibleNullReferenceException
 // With any xml node that can possibly be copied here we have an owner and attributes
-			var versionAtt = xnNewConfig.OwnerDocument.CreateAttribute("version");
-			versionAtt.Value = LayoutCache.LayoutVersionNumber.ToString();
-			xnNewConfig.Attributes.Append(versionAtt);
+			var versionAtt = new XAttribute("version", LayoutCache.LayoutVersionNumber.ToString());
+			xnNewConfig.Add(versionAtt);
 // ReSharper restore PossibleNullReferenceException
-			Debug.Assert(xnNewConfig.Attributes != null);
-			var xaLabel = xnNewConfig.Attributes["label"];
+			Debug.Assert(xnNewConfig.HasAttributes);
+			var xaLabel = xnNewConfig.Attribute("label");
 			xaLabel.Value = label;
 			UpdateLayoutName(xnNewConfig, "layout", code);
 			// make sure we copy the top-level node if it isn't directly involved in configuration.
-			var className = XmlUtils.GetManditoryAttributeValue(xnBaseConfig.FirstChild, "class");
-			var layoutNameChild = XmlUtils.GetManditoryAttributeValue(xnBaseConfig.FirstChild, "layout");
+			var firstChildElement = xnBaseConfig.Elements().First();
+			var className = XmlUtils.GetManditoryAttributeValue(firstChildElement, "class");
+			var layoutNameChild = XmlUtils.GetManditoryAttributeValue(firstChildElement, "layout");
 			var layoutName = XmlUtils.GetManditoryAttributeValue(xnBaseConfig, "layout");
 			if (layoutName != layoutNameChild)
 			{
 				var xnBaseLayout = m_layouts.GetElement("layout", new[] {className, "jtview", layoutName, null});
 				if (xnBaseLayout != null)
 				{
-					var xnNewBaseLayout = xnBaseLayout.CloneNode(true);
-					Debug.Assert(xnNewBaseLayout.ChildNodes.Count == 1);
+					var xnNewBaseLayout = xnBaseLayout.Clone();
+					Debug.Assert(xnNewBaseLayout.Elements().Count() == 1);
 					UpdateLayoutName(xnNewBaseLayout, "name", code);
-					UpdateLayoutName(xnNewBaseLayout.FirstChild, "param", code);
+					UpdateLayoutName(xnNewBaseLayout.Elements().First(), "param", code);
 					m_layouts.AddNodeToInventory(xnNewBaseLayout);
 					m_rgxnNewLayoutNodes.Add(xnNewBaseLayout);
 				}
 			}
 			MakeSuffixLayout(code, layoutName, className);
-			foreach (XmlNode xn in xnNewConfig.ChildNodes)
+			foreach (var xn in xnNewConfig.Elements())
 			{
 				className = XmlUtils.GetManditoryAttributeValue(xn, "class");
 				layoutName = XmlUtils.GetManditoryAttributeValue(xn, "layout");
@@ -4515,7 +4510,7 @@ namespace SIL.FieldWorks.XWorks
 				if (xnSuffixLayout != null)
 				{
 					var newSuffixLayout = xnSuffixLayout.Clone();
-					DuplicateLayout(newSuffixLayout, "#" + code, new List<XmlNode>());
+					DuplicateLayout(newSuffixLayout, "#" + code, new List<XElement>());
 					m_layouts.AddNodeToInventory(newSuffixLayout);
 					m_rgxnNewLayoutNodes.Add(newSuffixLayout);
 				}
@@ -4532,14 +4527,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CopyAndRenameLayout(string className, string layoutName, string suffixCode)
 		{
 			var xnLayout = m_layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });
 			if (xnLayout != null)
 			{
-				var duplicates = new List<XmlNode>();
+				var duplicates = new List<XElement>();
 				DuplicateLayout(xnLayout.Clone(), suffixCode, duplicates);
 				// This method is used to duplicate the layouts used by one of the top level nodes
 				// of the configuration. I think most of the layout nodes get matched up to tree nodes
@@ -4551,17 +4544,17 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var xn in duplicates)
 				{
 					m_layouts.AddNodeToInventory(xn);
-					var nodes = xn.ChildNodes;
-					if (nodes.Count == 1 && nodes[0].Name == "sublayout")
+					var nodes = xn.Elements().ToList();
+					if (nodes.Count == 1 && nodes[0].Name.LocalName == "sublayout")
 						m_rgxnNewLayoutNodes.Add(xn);
 				}
 			}
 		}
 
-		private static void UpdateLayoutName(XmlNode node, string attrName, string code)
+		private static void UpdateLayoutName(XElement node, string attrName, string code)
 		{
-			Debug.Assert(node.Attributes != null);
-			var xaLayout = node.Attributes[attrName];
+			Debug.Assert(node.HasAttributes);
+			var xaLayout = node.Attribute(attrName);
 			var oldLayout = xaLayout.Value;
 			var idx = oldLayout.IndexOf(Inventory.kcMarkLayoutCopy);
 			if (idx > 0)
@@ -4592,10 +4585,10 @@ namespace SIL.FieldWorks.XWorks
 			m_parts.Reload();
 		}
 
-		private static string GetConfigFilePath(XmlNode xnConfig, string configDir)
+		private static string GetConfigFilePath(XElement xnConfig, string configDir)
 		{
 			var label = XmlUtils.GetManditoryAttributeValue(xnConfig, "label");
-			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.FirstChild, "class");
+			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.Elements().First(), "class");
 			var name = String.Format("{0}_{1}.fwlayout", label, className);
 			return Path.Combine(configDir, name);
 		}
@@ -4707,12 +4700,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region ILayoutConverter methods
-		public void AddDictionaryTypeItem(XmlNode layoutNode, List<LayoutTreeNode> oldNodes)
+		public void AddDictionaryTypeItem(XElement layoutNode, List<LayoutTreeNode> oldNodes)
 		{
 			m_cbDictType.Items.Add(new LayoutTypeComboItem(layoutNode, oldNodes));
 		}
 
-		public IEnumerable<XmlNode> GetLayoutTypes()
+		public IEnumerable<XElement> GetLayoutTypes()
 		{
 			return m_layouts.GetLayoutTypes();
 		}
@@ -4733,12 +4726,12 @@ namespace SIL.FieldWorks.XWorks
 			mainLayoutNode.OriginalIndex = m_tvParts.Nodes.Count;
 		}
 
-		public XmlNode GetLayoutElement(string className, string layoutName)
+		public XElement GetLayoutElement(string className, string layoutName)
 		{
 			return LegacyConfigurationUtils.GetLayoutElement(m_layouts, className, layoutName);
 		}
 
-		public XmlNode GetPartElement(string className, string sRef)
+		public XElement GetPartElement(string className, string sRef)
 		{
 			return LegacyConfigurationUtils.GetPartElement(m_parts, className, sRef);
 		}
@@ -4756,7 +4749,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Add a set of nodes that represent a level in the tree (possibly hidden).
 		/// </summary>
-		public void Push(XmlNode partref, XmlNode layout)
+		public void Push(XElement partref, XElement layout)
 		{
 			m_stackCallers.Add(new XmlDocConfigureDlg.PartCaller(layout, partref));
 		}
@@ -4773,7 +4766,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the most recent part (ref=) node.
 		/// </summary>
-		public XmlNode PartRef
+		public XElement PartRef
 		{
 			get
 			{
@@ -4784,7 +4777,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the most recent layout node.
 		/// </summary>
-		public XmlNode Layout
+		public XElement Layout
 		{
 			get
 			{
@@ -4796,13 +4789,13 @@ namespace SIL.FieldWorks.XWorks
 		/// If the most recent part (ref=) node was "hidden", get the oldest part (ref=)
 		/// on the stack that was hidden.  (This allows multiple levels of hiddenness.)
 		/// </summary>
-		public XmlNode HiddenPartRef
+		public XElement HiddenPartRef
 		{
 			get
 			{
 				if (m_stackCallers.Count > 0)
 				{
-					XmlNode xnHidden = null;
+					XElement xnHidden = null;
 					for (var i = m_stackCallers.Count - 1; i >= 0; --i)
 					{
 						if (m_stackCallers[i].Hidden)
@@ -4821,13 +4814,13 @@ namespace SIL.FieldWorks.XWorks
 		/// layout on the stack that was hidden.  (This allows multiple levels of
 		/// hiddenness.)
 		/// </summary>
-		public XmlNode HiddenLayout
+		public XElement HiddenLayout
 		{
 			get
 			{
 				if (m_stackCallers.Count > 0)
 				{
-					XmlNode xnHidden = null;
+					XElement xnHidden = null;
 					for (var i = m_stackCallers.Count - 1; i >= 0; --i)
 					{
 						if (m_stackCallers[i].Hidden)

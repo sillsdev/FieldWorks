@@ -17,11 +17,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
 using System.Text;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -832,11 +832,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize the behavior from an XML configuration node.
 		/// </summary>
-		/// <param name="configNode"></param>
-		/// <param name="propertyTable"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void InitializeExtras(XmlNode configNode, IPropertyTable propertyTable)
+		public void InitializeExtras(XElement configNode, IPropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -847,13 +843,12 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (configNode == null)
 				return;
-			XmlNode node = configNode.SelectSingleNode("chooserInfo");
+			var node = configNode.Element("chooserInfo");
 			if (node == null)
 				node = GenerateChooserInfoForCustomNode(configNode);
 			if (node != null)
 			{
-				string sTextParam =
-					XmlUtils.GetAttributeValue(node, "textparam", "owner").ToLower();
+				string sTextParam = XmlUtils.GetOptionalAttributeValue(node, "textparam", "owner").ToLower();
 				if (sTextParam != null)
 				{
 					// The default case ("owner") is handled by the caller setting TextParamHvo.
@@ -887,11 +882,11 @@ namespace SIL.FieldWorks.Common.Controls
 				string sText = XmlUtils.GetAttributeValue(node, "text");
 				if (sText != null)
 					InstructionalText = sText;
-				XmlNodeList linkNodes = node.SelectNodes("chooserLink");
+				var linkNodes = node.Elements("chooserLink").ToList();
 				Debug.Assert(linkNodes != null && linkNodes.Count <= 2);
 				for (int i = linkNodes.Count - 1; i >= 0 ; --i)
 				{
-					string sType = XmlUtils.GetAttributeValue(linkNodes[i], "type", "goto").ToLower();
+					string sType = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "type", "goto").ToLower();
 					string sLabel = XmlUtils.GetLocalizedAttributeValue(linkNodes[i], "label", null);
 					switch (sType)
 					{
@@ -949,9 +944,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// for my liking, but it's the only way I could think of to make this adaptable to
 		/// ongoing growth of the system.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private XmlNode GenerateChooserInfoForCustomNode(XmlNode configNode)
+		private XElement GenerateChooserInfoForCustomNode(XElement configNode)
 		{
 			string editor = XmlUtils.GetAttributeValue(configNode, "editor");
 			if (configNode.Name != "slice" || editor != "autoCustom" || m_hvoTextParam == 0)
@@ -971,14 +964,14 @@ namespace SIL.FieldWorks.Common.Controls
 			string itemClass = m_cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
 			// We need to dynamically figure out a tool for this list.
 			string sTool = null;
-			XmlNode chooserNode = null;
-			XmlNode windowConfig = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			XElement chooserNode = null;
+			var windowConfig = m_propertyTable.GetValue<XElement>("WindowConfiguration");
 			if (windowConfig != null)
 			{
 				// The easiest search is through various jump command parameters.
-				foreach (XmlNode xnCommand in windowConfig.SelectNodes("/window/commands/command"))
+				foreach (var xnCommand in windowConfig.Elements("/window/commands/command"))
 				{
-					XmlNode xnParam = xnCommand.SelectSingleNode("parameters");
+					var xnParam = xnCommand.Element("parameters");
 					if (xnParam != null)
 					{
 						if (XmlUtils.GetAttributeValue(xnParam, "className") == itemClass &&
@@ -1006,36 +999,33 @@ namespace SIL.FieldWorks.Common.Controls
 					label, sTool);
 				bldr.AppendLine();
 				bldr.AppendLine("</chooserInfo>");
-				XmlDocument doc = new XmlDocument();
-				doc.LoadXml(bldr.ToString());
-				chooserNode = doc.FirstChild;
+				var doc = XDocument.Parse(bldr.ToString());
+				chooserNode = doc.Root;
 			}
 			return chooserNode;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private string ScanToolsAndClerks(XmlNode windowConfig, string listOwnerClass, string listField)
+		private string ScanToolsAndClerks(XElement windowConfig, string listOwnerClass, string listField)
 		{
-			foreach (XmlNode xnItem in windowConfig.SelectNodes("/window/lists/list/item"))
+			foreach (var xnItem in windowConfig.Elements("/window/lists/list/item"))
 			{
-				foreach (XmlNode xnClerk in xnItem.SelectNodes("parameters/clerks/clerk"))
+				foreach (var xnClerk in xnItem.Elements("parameters/clerks/clerk"))
 				{
 					string sClerkId = XmlUtils.GetAttributeValue(xnClerk, "id");
 					if (String.IsNullOrEmpty(sClerkId))
 						continue;
-					XmlNode xnList = xnClerk.SelectSingleNode("recordList");
+					var xnList = xnClerk.Element("recordList");
 					if (xnList == null)
 						continue;
 					if (XmlUtils.GetAttributeValue(xnList, "owner") == listOwnerClass &&
 						XmlUtils.GetAttributeValue(xnList, "property") == listField)
 					{
-						foreach (XmlNode xnTool in xnItem.SelectNodes("parameters/tools/tool"))
+						foreach (var xnTool in xnItem.Elements("parameters/tools/tool"))
 						{
 							string sTool = XmlUtils.GetAttributeValue(xnTool, "value");
 							if (String.IsNullOrEmpty(sTool))
 								continue;
-							XmlNode xnParam = xnTool.SelectSingleNode("control/parameters/control/parameters");
+							var xnParam = xnTool.Element("control/parameters/control/parameters");
 							if (xnParam == null)
 								continue;
 							string sClerk = XmlUtils.GetAttributeValue(xnParam, "clerk");
@@ -1297,12 +1287,6 @@ namespace SIL.FieldWorks.Common.Controls
 				descFont = userFont;
 			}
 
-#if __MonoCS__
-			var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
-			using (var w = new StreamWriter(tempfile, false))
-			using (var tw = new XmlTextWriter(w))
-			{
-#endif
 			var htmlElem = new XElement("html",
 				new XElement("head",
 					new XElement("title", title)),
@@ -1317,10 +1301,9 @@ namespace SIL.FieldWorks.Common.Controls
 						new XAttribute("face", descFont),
 						new XElement("p", desc))));
 #if __MonoCS__
-			XmlDocument xmlDocument = new XmlDocument();
-			xmlDocument.LoadXml(htmlElem.ToString());
-			xmlDocument.WriteTo(tw);
-			}
+			var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
+			var xDocument = new XDocument(htmlElem);
+			xDocument.Save(tempfile);
 			m_webBrowser.Navigate(tempfile);
 			if (FileUtils.FileExists(tempfile))
 				FileUtils.Delete(tempfile);
@@ -1435,11 +1418,14 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (!m_fFlatList || String.IsNullOrEmpty(sGuiControl))
 				return;
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+#if RANDYTODO
+			// TODO: "WindowConfiguration" won't be available, so some other way of getting the guicontrol node will be needed.
+#endif
+			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
 			if (xnWindow == null)
 				return;
 			string sXPath = string.Format("controls/parameters/guicontrol[@id=\"{0}\"]/parameters", sGuiControl);
-			XmlNode configNode = xnWindow.SelectSingleNode(sXPath);
+			var configNode = xnWindow.XPathSelectElement(sXPath);
 			if (configNode == null)
 				return;
 			m_flvLabels = new FlatListView
@@ -1604,7 +1590,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///
 		/// </summary>
-		protected virtual void AddSimpleLink(string sLabel, string sTool, XmlNode node)
+		protected virtual void AddSimpleLink(string sLabel, string sTool, XElement node)
 		{
 			switch (sTool)
 			{

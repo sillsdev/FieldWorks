@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns></returns>
 		public string GetVisibleWSSPropertyValue()
 		{
-			XmlNode partRef = PartRef();
+			var partRef = PartRef();
 			string singlePropertySequenceValue = XmlUtils.GetOptionalAttributeValue(partRef, "visibleWritingSystems", null);
 			if (singlePropertySequenceValue == null)
 			{
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var wssToDisplay = GetVisibleWritingSystems(singlePropertySequenceValue);
 			if (Key.Length > 0)
 			{
-				XmlNode lastKey = Key[Key.Length - 1] as XmlNode;
+				var lastKey = Key[Key.Length - 1] as XElement;
 				// This is a horrible kludge to implement LT-9620 and catch the fact that we are changing the list
 				// of current pronunciation writing systems, and update the database.
 				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree-Pronunciation")
@@ -448,12 +448,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="wssToDisplay"></param>
 		private void SetWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			XmlNode ourPart = this.PartRef();
+			var ourPart = PartRef();
 			var writingSystemsToDisplay = wssToDisplay == null ? null : wssToDisplay.ToList();
 			foreach (Control c in ContainingDataTree.Slices)
 			{
 				var slice = (Slice) c;
-				XmlNode part = slice.PartRef();
+				var part = slice.PartRef();
 				if (part == ourPart)
 				{
 					((LabeledMultiStringView) slice.Control).WritingSystemsToDisplay = writingSystemsToDisplay;

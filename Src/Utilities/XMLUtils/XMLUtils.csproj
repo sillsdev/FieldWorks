@@ -142,6 +142,7 @@
     <Compile Include="StringTable.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="XElementExtensions.cs" />
     <Compile Include="XmlUtils.cs">
       <SubType>Code</SubType>
     </Compile>

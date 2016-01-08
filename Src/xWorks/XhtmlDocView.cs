@@ -144,10 +144,10 @@ namespace SIL.FieldWorks.XWorks
 		protected override void ReadParameters()
 		{
 			base.ReadParameters();
-			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
+			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement,
 				"backColor", "Window");
 			BackColor = Color.FromName(backColorName);
-			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
 
 		/// <summary>

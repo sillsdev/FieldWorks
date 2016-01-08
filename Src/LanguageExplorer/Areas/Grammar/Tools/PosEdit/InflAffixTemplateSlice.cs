@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
 			bool fVernRTL = wsContainer.DefaultVernacularWritingSystem.RightToLeftScript;
 			bool fAnalRTL = wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript;
-			System.Xml.XmlAttribute xa = ConfigurationNode.Attributes["layout"];
+			var xa = ConfigurationNode.Attribute("layout");
 			// To properly fix LT-6239, we need to consider all four mixtures of directionality
 			// involving the vernacular (table) and analysis (slot name) writing systems.
 			// These four possibilities are marked RTL, LTRinRTL, RTLinLTR, and <nothing>.

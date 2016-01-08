@@ -16,8 +16,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Diagnostics;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private string m_sWsRevIdx = null;
 		Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
 		string m_sActiveParaStyle;
-		Dictionary<XmlNode, string> m_mapXnToCssClass = new Dictionary<XmlNode, string>();
+		Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
 		private XhtmlHelper m_xhtml;
 		private XhtmlHelper.CssType m_cssType = XhtmlHelper.CssType.Dictionary;
 
@@ -1184,7 +1184,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// We are passed both the composite string that a real view would display, and the XML node from
 		/// which we got the spec that indicated we should number this sequence.
 		/// </summary>
-		internal void OutputItemNumber(ITsString tss, XmlNode delimitNode)
+		internal void OutputItemNumber(ITsString tss, XElement delimitNode)
 		{
 			if (m_sFormat != "xhtml")
 			{
@@ -1238,7 +1238,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		}
 
-		internal void BeginCssClassIfNeeded(XmlNode frag)
+		internal void BeginCssClassIfNeeded(XElement frag)
 		{
 			if (m_sFormat != "xhtml")
 				return;
@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				cssClass = XmlUtils.GetOptionalAttributeValue(frag, "css", null);
 				// Note that an emptry string for cssClass means we explicitly don't want to output anything.
-				if (cssClass == null && frag.ParentNode != null && frag.ParentNode.Name == "layout" &&
+				if (cssClass == null && frag.Parent != null && frag.Parent.Name == "layout" &&
 					(XmlUtils.GetOptionalAttributeValue(frag, "before") != null ||
 					 XmlUtils.GetOptionalAttributeValue(frag, "after") != null ||
 					 XmlUtils.GetOptionalAttributeValue(frag, "sep") != null ||
@@ -1255,11 +1255,11 @@ namespace SIL.FieldWorks.Common.Controls
 					 XmlUtils.GetOptionalAttributeValue(frag, "style") != null))
 				{
 					StringBuilder sb = new StringBuilder(
-						XmlUtils.GetOptionalAttributeValue(frag.ParentNode, "class", String.Empty));
+						XmlUtils.GetOptionalAttributeValue(frag.Parent, "class", String.Empty));
 					if (sb.Length > 0)
 					{
 						sb.Append("-");
-						sb.Append(XmlUtils.GetOptionalAttributeValue(frag.ParentNode, "name", String.Empty));
+						sb.Append(XmlUtils.GetOptionalAttributeValue(frag.Parent, "name", String.Empty));
 						sb.Append("-");
 						string sRef = XmlUtils.GetManditoryAttributeValue(frag, "ref");
 						if (sRef == "$child")
@@ -1275,7 +1275,7 @@ namespace SIL.FieldWorks.Common.Controls
 					cssClass += sDup;
 				if (!String.IsNullOrEmpty(cssClass) && !cssClass.StartsWith("$fwstyle="))
 				{
-					XmlNode oldNode;
+					XElement oldNode;
 					if (m_xhtml.TryGetNodeFromCssClass(cssClass, out oldNode))
 					{
 						// Trouble: we have some other node using the same style. This can legitimately happen
@@ -1291,7 +1291,7 @@ namespace SIL.FieldWorks.Common.Controls
 								// another level of duplicate!
 								throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
 									+ ") and writing system (" + wsNew + ") in the same export:"
-									+ Environment.NewLine + oldNode.OuterXml + Environment.NewLine + frag.OuterXml);
+									+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 							}
 							cssClass = tryCssClass; // This is a unique key we will use as the css class for these items.
 						}
@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
 								+ ") in the same export with the same (or no) writing system:"
-								+ Environment.NewLine + oldNode.OuterXml + Environment.NewLine + frag.OuterXml);
+								+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 						}
 					}
 					m_xhtml.MapCssClassToXmlNode(cssClass, frag);
@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private static string GetFlowType(XmlNode frag)
+		private static string GetFlowType(XElement frag)
 		{
 			string flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
 			if (flowType == null)
@@ -1345,7 +1345,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return str.Replace("-", "\\-");
 		}
 
-		internal void EndCssClassIfNeeded(XmlNode frag)
+		internal void EndCssClassIfNeeded(XElement frag)
 		{
 			if (m_sFormat != "xhtml")
 				return;

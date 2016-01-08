@@ -40,10 +40,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// </summary>
 		protected IPublisher m_publisher;
-		/// <summary>
-		/// Optional configuration parameters.
-		/// </summary>
-		//protected XmlNode m_configurationParameters;
 		protected bool m_skipCheck;
 		protected bool m_hasBeenActivated;
 		protected string m_oldSearchKey;

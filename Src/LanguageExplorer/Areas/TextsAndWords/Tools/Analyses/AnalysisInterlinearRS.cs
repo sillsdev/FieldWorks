@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -18,6 +17,7 @@ using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 		private InterlinVc m_vc;
 		private IWfiAnalysis m_wfiAnalysis;
-		private XmlNode m_configurationNode;
+		private XElement m_configurationNode;
 		private OneAnalysisSandbox m_oneAnalSandbox;
 		private IWfiWordform m_wordform;
 		private Rect m_rcPrimary;
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			get
 			{
-				return XmlUtils.GetBooleanAttributeValue(m_configurationNode.SelectSingleNode("deParams"), "editable");
+				return XmlUtils.GetBooleanAttributeValue(m_configurationNode.Element("deParams"), "editable");
 			}
 		}
 
@@ -58,8 +58,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <param name="cache"></param>
 		/// <param name="analysis"></param>
 		/// <param name="configurationNode"></param>
-		public AnalysisInterlinearRs(FdoCache cache, IWfiAnalysis analysis,
-			XmlNode configurationNode) : base(cache)
+		public AnalysisInterlinearRs(FdoCache cache, IWfiAnalysis analysis, XElement configurationNode)
+			: base(cache)
 		{
 			if (analysis == null)
 				throw new ArgumentNullException("analysis");

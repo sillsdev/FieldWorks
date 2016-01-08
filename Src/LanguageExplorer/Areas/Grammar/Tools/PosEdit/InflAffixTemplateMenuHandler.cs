@@ -3,11 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -184,12 +186,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <param name="inflAffixTemplateCtrl"></param>
 		/// <param name="configuration"></param>
 		/// <returns></returns>
-		public static InflAffixTemplateMenuHandler Create(InflAffixTemplateControl inflAffixTemplateCtrl, XmlNode configuration)
+		public static InflAffixTemplateMenuHandler Create(InflAffixTemplateControl inflAffixTemplateCtrl, XElement configuration)
 		{
 			InflAffixTemplateMenuHandler h = null;
 			if(configuration != null)
 			{
-				XmlNode node = configuration.SelectSingleNode("menuHandler");
+				var node = configuration.Element("menuHandler");
 				if (node != null)
 				{
 					h = (InflAffixTemplateMenuHandler) SIL.Utils.DynamicLoader.CreateObject(node);
@@ -264,7 +266,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			CheckDisposed();
 
-			XmlNode configuration = e.ConfigurationNode;
+			var configuration = e.ConfigurationNode;
 			string menuId = XmlUtils.GetOptionalAttributeValue(configuration, "menu");
 
 			//an empty menu attribute means no menu
@@ -392,17 +394,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private System.Collections.Generic.List<FwMenuItem> BuildMenu(string menuId)
 		{
 			System.Collections.Generic.List<FwMenuItem> rgfmi = new System.Collections.Generic.List<FwMenuItem>();
-			XmlNode xnWindow = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			Debug.Assert(xnWindow != null);
-			XmlNode xnMenu = xnWindow.SelectSingleNode("contextMenus/menu[@id=\"" + menuId + "\"]");
-			Debug.Assert(xnMenu != null && xnMenu.ChildNodes != null && xnMenu.ChildNodes.Count > 0);
-			foreach (XmlNode xnItem in xnMenu.ChildNodes)
+			var xnMenu = xnWindow.XPathSelectElement("contextMenus/menu[@id=\"" + menuId + "\"]");
+			Debug.Assert(xnMenu != null && xnMenu.HasElements && xnMenu.Elements().Any());
+			foreach (var xnItem in xnMenu.Elements())
 			{
 				string sCmd = XmlUtils.GetAttributeValue(xnItem, "command");
 				Debug.Assert(!String.IsNullOrEmpty(sCmd));
 				if (String.IsNullOrEmpty(sCmd))
 					continue;
-				XmlNode xn = xnWindow.SelectSingleNode("commands/command[@id=\"" + sCmd + "\"]");
+				var xn = xnWindow.XPathSelectElement("commands/command[@id=\"" + sCmd + "\"]");
 				Debug.Assert(xn != null);
 				if (xn == null)
 					continue;
@@ -460,10 +462,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	class FwMenuItem
 	{
 		ITsString m_tssItem;
-		XmlNode m_xnConfig;
+		XElement m_xnConfig;
 		bool m_fEnabled;
 
-		public FwMenuItem(ITsString tssItem, XmlNode xnConfig, bool fEnabled)
+		public FwMenuItem(ITsString tssItem, XElement xnConfig, bool fEnabled)
 		{
 			m_tssItem = tssItem;
 			m_xnConfig = xnConfig;
@@ -485,7 +487,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			get { return m_fEnabled; }
 		}
 
-		public XmlNode ConfigurationNode
+		public XElement ConfigurationNode
 		{
 			get { return m_xnConfig; }
 		}

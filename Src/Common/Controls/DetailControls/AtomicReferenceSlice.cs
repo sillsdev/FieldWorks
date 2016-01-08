@@ -11,7 +11,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -129,7 +128,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
-			XmlNode deParams = ConfigurationNode.SelectSingleNode("deParams");
+			var deParams = ConfigurationNode.Element("deParams");
 			if (XmlUtils.GetOptionalBooleanAttributeValue(
 				deParams, "changeRequiresRefresh", false))
 			{

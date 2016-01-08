@@ -7,13 +7,14 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -188,8 +189,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
 			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;

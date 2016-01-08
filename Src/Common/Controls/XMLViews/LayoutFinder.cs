@@ -7,7 +7,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Controls
 		internal IFwMetaDataCache m_mdc;
 		internal FdoCache m_cache;
 		internal LayoutCache m_layouts;
-		internal XmlNode m_colSpec;
+		internal XElement m_colSpec;
 		/// <summary/>
 		protected XmlBrowseViewBaseVc m_vc;
 		/// <summary/>
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public LayoutFinder(FdoCache cache, string layoutName, XmlNode colSpec,
+		public LayoutFinder(FdoCache cache, string layoutName, XElement colSpec,
 			IApp app): this()
 		{
 			m_layoutName = layoutName;
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="app">The application.</param>
 		/// <returns>finder for colSpec</returns>
 		/// ------------------------------------------------------------------------------------
-		static public IStringFinder CreateFinder(FdoCache cache, XmlNode colSpec,
+		static public IStringFinder CreateFinder(FdoCache cache, XElement colSpec,
 			XmlBrowseViewBaseVc vc, IApp app)
 		{
 			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.Controls
 //		/// <param name="viewSpec">The view spec.</param>
 //		/// <returns></returns>
 //		/// ------------------------------------------------------------------------------------
-//		XmlNode ExtractFromFlow(XmlNode viewSpec)
+		//		XElement ExtractFromFlow(XElement viewSpec)
 //		{
 //			if (viewSpec == null)
 //				return null;
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.Common.Controls
 					result = StringsFor(hvo, m_colSpec, m_vc.WsForce);
 				if (result == null)
 				{
-					XmlNode layout = XmlVc.GetNodeForPart(hvo, m_layoutName, true, m_sda, m_layouts);
+					var layout = XmlVc.GetNodeForPart(hvo, m_layoutName, true, m_sda, m_layouts);
 					if (layout == null)
 						return new string[0]; // cell will be empty.
 					result = StringsFor(hvo, layout, m_vc.WsForce);
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_mdc, m_sda, m_layouts);
 		}
 
-		private string[] StringsFor(int hvo, XmlNode layout, int wsForce)
+		private string[] StringsFor(int hvo, XElement layout, int wsForce)
 		{
 			return XmlViewsUtils.StringsFor(m_cache, m_cache.DomainDataByFlid, layout, hvo, m_layouts, null, wsForce);
 		}
@@ -407,10 +407,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void PersistAsXml(XmlNode node)
+		public virtual void PersistAsXml(XElement node)
 		{
 			XmlUtils.AppendAttribute(node, "layout", m_layoutName);
-			node.AppendChild(node.OwnerDocument.ImportNode(m_colSpec, true));
+			node.Add(m_colSpec);
 			}
 
 		/// ------------------------------------------------------------------------------------
@@ -419,10 +419,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void InitXml(XmlNode node)
+		public virtual void InitXml(XElement node)
 		{
 			m_layoutName = XmlUtils.GetManditoryAttributeValue(node, "layout");
-			m_colSpec = node.SelectSingleNode("column");
+			m_colSpec = node.Element("column");
 		}
 
 		#endregion
@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
 		public SortMethodFinder(FdoCache cache, string methodName, string layoutName,
-			XmlNode colSpec, IApp app)
+			XElement colSpec, IApp app)
 			: base(cache, layoutName, colSpec, app)
 		{
 			SortMethod = methodName;
@@ -519,12 +519,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="pathIndex">Index of the path.</param>
 		/// <param name="sortedFromEnd">if set to <c>true</c> [sorted from end].</param>
 		/// <returns></returns>
-		private string[] GetKey(XmlNode layout, ICmObject cmo, IManyOnePathSortItem item, int pathIndex, bool sortedFromEnd)
+		private string[] GetKey(XElement layout, ICmObject cmo, IManyOnePathSortItem item, int pathIndex, bool sortedFromEnd)
 		{
 			if (layout == null)
 				return null;
 
-			switch (layout.Name)
+			switch (layout.Name.LocalName)
 			{
 				case "obj":
 					{
@@ -590,15 +590,12 @@ namespace SIL.FieldWorks.Common.Controls
 						string partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
 						if (partref != null)
 						{
-							XmlNode part = XmlVc.GetNodeForPart(cmo.Hvo, partref, true, m_sda, m_layouts);
+							var part = XmlVc.GetNodeForPart(cmo.Hvo, partref, true, m_sda, m_layouts);
 							return GetKey(part, cmo, item, pathIndex, sortedFromEnd);
 						}
 
-						foreach (XmlNode child in layout.ChildNodes)
+						foreach (var child in layout.Elements())
 						{
-							if (child is XmlComment)
-								continue;
-
 							var key = GetKey(child, cmo, item, pathIndex, sortedFromEnd);
 							if (key != null)
 								return key;
@@ -609,11 +606,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return null;
 		}
 
-		private string[] GetChildObjKey(XmlNode layout, int hvo, IManyOnePathSortItem item, int pathIndex, bool sortedFromEnd)
+		private string[] GetChildObjKey(XElement layout, int hvo, IManyOnePathSortItem item, int pathIndex, bool sortedFromEnd)
 		{
 			ICmObject childObj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
 			string layoutName = XmlUtils.GetOptionalAttributeValue(layout, "layout");
-			XmlNode part = XmlVc.GetNodeForPart(hvo, layoutName, true, m_sda, m_layouts);
+			var part = XmlVc.GetNodeForPart(hvo, layoutName, true, m_sda, m_layouts);
 			var key = GetKey(part, childObj, item, pathIndex, sortedFromEnd);
 			if (key != null)
 				return key;
@@ -630,7 +627,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag">The frag.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
-		private int GetFlid(XmlNode frag, int hvo)
+		private int GetFlid(XElement frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag, "class");
 			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
@@ -659,7 +656,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// traverse the part tree from the root, the root object and the root layout node should
 			// be compatible
-			XmlNode layout = XmlVc.GetNodeForPart(item.RootObjectHvo, m_layoutName, true, m_sda, m_layouts);
+			var layout = XmlVc.GetNodeForPart(item.RootObjectHvo, m_layoutName, true, m_sda, m_layouts);
 			var rootObject = item.RootObjectUsing(m_cache);
 			var key = GetKey(layout, rootObject, item, 0, sortedFromEnd);
 			if (key == null)
@@ -755,7 +752,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "sortmethod", m_sMethodName);
@@ -769,7 +766,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			SortMethod = XmlUtils.GetManditoryAttributeValue(node, "sortmethod");
@@ -799,7 +796,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public IntCompareFinder(FdoCache cache, string layoutName, XmlNode colSpec, IApp app)
+		public IntCompareFinder(FdoCache cache, string layoutName, XElement colSpec, IApp app)
 			: base(cache, layoutName, colSpec, app)
 		{
 		}

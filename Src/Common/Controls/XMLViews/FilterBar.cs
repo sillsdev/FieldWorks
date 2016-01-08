@@ -13,7 +13,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -43,7 +44,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ----------------------------------------------------------------------------------------
 	public class FilterSortItem : IFWDisposable
 	{
-		private XmlNode m_viewSpec;
+		private XElement m_viewSpec;
 		private IStringFinder m_finder;
 		private FwComboBox m_combo;
 		private IMatcher m_matcher;
@@ -169,7 +170,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The spec.</value>
 		/// ------------------------------------------------------------------------------------
-		public XmlNode Spec
+		public XElement Spec
 		{
 			get
 			{
@@ -349,9 +350,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// List of FilterSortItems that can also be accessed by the XML spec.
 	/// </summary>
-	internal class FilterSortItems: KeyedCollection<XmlNode, FilterSortItem>
+	internal class FilterSortItems: KeyedCollection<XElement, FilterSortItem>
 	{
-		protected override XmlNode GetKeyForItem(FilterSortItem item)
+		protected override XElement GetKeyForItem(FilterSortItem item)
 		{
 			return item.Spec;
 		}
@@ -363,7 +364,7 @@ namespace SIL.FieldWorks.Common.Controls
 	public class FilterBar : UserControl, IFWDisposable
 	{
 		BrowseViewer m_bv;
-		List<XmlNode> m_columns;
+		List<XElement> m_columns;
 		FilterSortItems m_items;
 		IFwMetaDataCache m_mdc; // m_cache.MetaDataCacheAccessor
 		FdoCache m_cache; // Use minimally, may want to factor out for non-db use.
@@ -391,7 +392,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="spec">The spec (not used).</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterBar(BrowseViewer bv, XmlNode spec, IApp app)
+		public FilterBar(BrowseViewer bv, XElement spec, IApp app)
 		{
 			m_bv = bv;
 			m_columns = m_bv.ColumnSpecs;
@@ -563,7 +564,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var oldItems = m_items ?? new FilterSortItems();
 			m_items = new FilterSortItems();
 			// Here we figure which columns we can filter on.
-			foreach (XmlNode colSpec in m_columns)
+			foreach (var colSpec in m_columns)
 			{
 				if (oldItems.Contains(colSpec))
 				{
@@ -662,7 +663,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="filter">target filter</param>
 		/// <param name="colSpec">column node spec </param>
 		/// <returns>true, if the column node spec can use the filter.</returns>
-		public bool CanActivateFilter(RecordFilter filter, XmlNode colSpec)
+		public bool CanActivateFilter(RecordFilter filter, XElement colSpec)
 		{
 			CheckDisposed();
 
@@ -747,41 +748,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected internal FilterSortItem MakeItem(XmlNode colSpec)
+		protected internal FilterSortItem MakeItem(XElement colSpec)
 		{
 			return MakeLayoutItem(colSpec);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Given a spec that might be some sort of element, or might be something wrapping a flow object
-		/// around that element, return the element. Or, it might be a "frag" element wrapping all of that.
-		/// </summary>
-		/// <param name="viewSpec">The view spec.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		XmlNode ExtractFromFlow(XmlNode viewSpec)
+		static string GetStringAtt(XElement node, string name)
 		{
-			if (viewSpec == null)
-				return null;
-			if (viewSpec.Name == "frag")
-				viewSpec = viewSpec.FirstChild;
-			if (viewSpec.Name == "para" || viewSpec.Name == "div")
-			{
-				if (viewSpec.ChildNodes.Count == 2 && viewSpec.FirstChild.Name == "properties")
-					return viewSpec.ChildNodes[1];
-				else if (viewSpec.ChildNodes.Count == 1)
-					return viewSpec.FirstChild;
-			}
-			return viewSpec; // None of the special flow object cases, use the node itself.
-		}
-
-		string GetStringAtt(XmlNode node, string name)
-		{
-			XmlAttribute xa = node.Attributes[name];
-			if (xa == null)
-				return null;
-			return xa.Value;
+			var xa = node.Attribute(name);
+			return (xa == null) ? null : xa.Value;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -791,7 +766,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected FilterSortItem MakeLayoutItem(XmlNode colSpec)
+		protected FilterSortItem MakeLayoutItem(XElement colSpec)
 		{
 			var result = new FilterSortItem();
 			result.Spec = colSpec; // SetupFsi uses this to get the writing system to use for the combo.
@@ -816,8 +791,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fAtomic">if set to <c>true</c> [f atomic].</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected FilterSortItem MakeOneIndirectItem(XmlNode viewSpec, int flidSeq,
-			XmlNode saSpec, bool fAtomic)
+		protected FilterSortItem MakeOneIndirectItem(XElement viewSpec, int flidSeq,
+			XElement saSpec, bool fAtomic)
 		{
 			string className = GetStringAtt(saSpec, "class");
 			string attrName = GetStringAtt(saSpec, "field");
@@ -849,7 +824,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="saSpec">The sa spec.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected FilterSortItem MakeStringAltItem(XmlNode viewSpec, XmlNode saSpec)
+		protected FilterSortItem MakeStringAltItem(XElement viewSpec, XElement saSpec)
 		{
 			string className = GetStringAtt(saSpec, "class");
 			string attrName = GetStringAtt(saSpec, "field");
@@ -877,7 +852,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="intSpec">The int spec.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		protected FilterSortItem MakeIntItem(XmlNode viewSpec, XmlNode intSpec)
+		protected FilterSortItem MakeIntItem(XElement viewSpec, XElement intSpec)
 		{
 			string className = GetStringAtt(intSpec, "class");
 			string attrName = GetStringAtt(intSpec, "field");
@@ -1078,7 +1053,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
 		{
 			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.
-			var layoutNode = item.Spec.Attributes["layout"] ?? item.Spec.Attributes["label"];
+			var layoutNode = item.Spec.Attribute("layout") ?? item.Spec.Attribute("label");
 			string layout = "";
 			if(layoutNode != null)
 			{
@@ -1761,7 +1736,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "mode", ((int)m_mode).ToString());
@@ -1776,7 +1751,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(node, "mode");
@@ -1791,7 +1766,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool CompatibleFilter(XmlNode colSpec)
+		public virtual bool CompatibleFilter(XElement colSpec)
 		{
 			return BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null)
 				|| BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
@@ -1868,8 +1843,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class ColumnSpecFilter : ListChoiceFilter
 	{
-		XmlNode m_colSpec = null;
-		XmlBrowseViewBaseVc m_vc = null;
+		XElement m_colSpec;
+		XmlBrowseViewBaseVc m_vc;
 
 		/// <summary>
 		/// for persistence.
@@ -1886,7 +1861,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mode"></param>
 		/// <param name="colSpec"></param>
 		/// <param name="targets"></param>
-		public ColumnSpecFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public ColumnSpecFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets)
 		{
 			m_colSpec = colSpec;
@@ -1910,13 +1885,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// eg. persist the column specification
 		/// </summary>
 		/// <param name="node"></param>
-		public override void PersistAsXml(XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			if (m_colSpec != null)
 			{
-				XmlNode colSpecToPersist = node.OwnerDocument.ImportNode(m_colSpec, true);
-				node.AppendChild(colSpecToPersist);
+				node.Add(m_colSpec.Clone());
 			}
 		}
 
@@ -1924,13 +1898,15 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		/// <param name="node"></param>
-		public override void InitXml(XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			// Review: How do we validate this columnSpec is still valid?
-			XmlNode colSpec = node.SelectSingleNode("./column");
-			if(colSpec != null)
-				m_colSpec = colSpec.CloneNode(true);
+			var colSpec = node.XPathSelectElement("./column");
+			if (colSpec != null)
+			{
+				m_colSpec = colSpec.Clone();
+			}
 		}
 
 		/// <summary>
@@ -1972,12 +1948,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
-		public override bool CompatibleFilter(XmlNode colSpec)
+		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;
 			// see if we can compare layout attributes
-			Queue<string> possibleAttributes = new Queue<string>(new string[] {"layout", "subfield", "field"});
+			var possibleAttributes = new Queue<string>(new[] {"layout", "subfield", "field"});
 			return XmlViewsUtils.TryMatchExistingAttributes(colSpec, m_colSpec, ref possibleAttributes);
 		}
 	}
@@ -2026,19 +2002,19 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		public override void PersistAsXml(System.Xml.XmlNode node)
+		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
 			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
 		}
 
-		public override void InitXml(System.Xml.XmlNode node)
+		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
 			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
 		}
 
-		public override bool CompatibleFilter(XmlNode colSpec)
+		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 				return false;
@@ -2063,7 +2039,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IPropertyTable m_propertyTable;
 		FwComboBox m_combo;
 		bool m_fAtomic;
-		XmlNode m_colSpec;
+		XElement m_colSpec;
 		Type m_filterType; // non-null for external fields.
 
 		/// <summary></summary>
@@ -2114,13 +2090,12 @@ namespace SIL.FieldWorks.Common.Controls
 				// This basically duplicates the loading of treeBarHandler properties. Currently, we don't have access
 				// to that information in XMLViews, and even if we did, the information may not be loaded until
 				// the user actually switches to that RecordList.
-				XmlNode windowConfiguration = propertyTable.GetValue<XmlNode>("WindowConfiguration");
+				var windowConfiguration = propertyTable.GetValue<XElement>("WindowConfiguration");
 				string owningClass;
 				string property;
 				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
-				XmlNode recordListNode = windowConfiguration.SelectSingleNode(
-					String.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
-				XmlNode treeBarHandlerNode = recordListNode.ParentNode.SelectSingleNode("treeBarHandler");
+				var recordListNode = windowConfiguration.XPathSelectElement(string.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
+				var treeBarHandlerNode = recordListNode.Parent.XPathSelectElement("treeBarHandler");
 				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(treeBarHandlerNode, "includeAbbr");
 				m_bestWS = XmlUtils.GetOptionalAttributeValue(treeBarHandlerNode, "ws", null);
 			}
@@ -2203,7 +2178,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
 				{
 					ConstructorInfo ci = m_filterType.GetConstructor(
-						new Type[] { typeof(FdoCache), typeof(ListMatchOptions), typeof(int[]), typeof(XmlNode)});
+						new Type[] { typeof(FdoCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement)});
 					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec});
 				}
 				else

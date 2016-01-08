@@ -15,6 +15,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -123,9 +124,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected ISilDataAccessManaged m_sdaSource;
 		/// <summary></summary>
-		protected XmlDocument m_docSpec;
-		/// <summary></summary>
-		protected XmlNode m_xnSpec;
+		protected XElement m_specElement;
 		/// <summary></summary>
 		protected XmlVc m_xmlVc;
 		/// <summary></summary>
@@ -189,19 +188,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
+		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XElement configurationParametersElement, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
 			: base(null)
 		{
 			m_app = app;
 			var useSda = sda;
-			var decoratorSpec = XmlUtils.FindNode(xnSpec, "decoratorClass");
+			var decoratorSpec = XmlUtils.FindElement(configurationParametersElement, "decoratorClass");
 			if (decoratorSpec != null)
 			{
 				// For example, this may create a DictionaryPublicationDecorator.
 				useSda = (ISilDataAccessManaged) DynamicLoader.CreateObject(decoratorSpec,
 					new object[] { cache, sda, flid, publication });
 			}
-			InitXmlViewRootSpec(hvoRoot, flid, xnSpec, useSda);
+			InitXmlViewRootSpec(hvoRoot, flid, configurationParametersElement, useSda);
 		}
 
 		/// <summary>
@@ -229,13 +228,13 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void InitXmlViewRootSpec(int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda)
+		private void InitXmlViewRootSpec(int hvoRoot, int flid, XElement element, ISilDataAccessManaged sda)
 		{
 			m_hvoRoot = hvoRoot;
 			m_mainFlid = flid;
 			m_sdaSource = sda;
-			Debug.Assert(xnSpec != null, "Creating an XMLView with null spec");
-			m_xnSpec = xnSpec;
+			Debug.Assert(element != null, "Creating an XMLView with null spec");
+			m_specElement = element;
 		}
 
 		/// <summary>
@@ -261,8 +260,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xmlVc = null;
 			m_mdc = null;
 			m_sXmlSpec = null;
-			m_docSpec = null;
-			m_xnSpec = null;
+			m_specElement = null;
 		}
 
 		/// <summary>
@@ -321,7 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IVwRootBox rootb = VwRootBoxClass.Create();
 			rootb.SetSite(this);
 
-			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
+			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_specElement, "editable", true);
 			string toolName = PropertyTable.GetValue<string>("currentContentControl");
 			m_fShowFailingItems = PropertyTable.GetValue("ShowFailingItems-" + toolName, false);
 			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
@@ -329,11 +327,11 @@ namespace SIL.FieldWorks.Common.Controls
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
 			// used when the configure dialog handles a shared view.
 			string sLayout = null;
-			string sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty", null);
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_specElement, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
 				sLayout = PropertyTable.GetValue<string>(sProp);
 			if (String.IsNullOrEmpty(sLayout))
-				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
+				sLayout = XmlUtils.GetManditoryAttributeValue(m_specElement, "layout");
 			ISilDataAccess sda = GetSda();
 			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
@@ -361,9 +359,9 @@ namespace SIL.FieldWorks.Common.Controls
 			//return fsda;
 		}
 
-		private XmlNode ItemDisplayCondition
+		private XElement ItemDisplayCondition
 		{
-			get { return m_xnSpec.SelectSingleNode("elementDisplayCondition"); }
+			get { return m_specElement.Element("elementDisplayCondition"); }
 		}
 
 		/// <summary>

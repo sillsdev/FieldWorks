@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -17,6 +16,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.CoreImpl;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FdoUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public PhonologicalFeatureEditor(IPublisher publisher, XmlNode configurationNode)
+		public PhonologicalFeatureEditor(IPublisher publisher, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
@@ -652,7 +652,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache) :
+		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache) :
 			base(bv, spec, propertyTable, cache)
 		{
 			m_operationsTabControl.Controls.Remove(BulkCopyTab);
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.FdoUi
 			TargetCombo.Enabled = e.Enable;
 		}
 
-		protected override BulkEditItem MakeItem(XmlNode colSpec)
+		protected override BulkEditItem MakeItem(XElement colSpec)
 		{
 			BulkEditItem bei = base.MakeItem(colSpec);
 			if (bei == null)
@@ -777,7 +777,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// the sorted, filtered list of objects accessed as property fakeFlid of hvoRoot.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseViewerPhonologicalFeatures(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseViewerPhonologicalFeatures(XElement nodeSpec, int hvoRoot, int fakeFlid,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda)
 		{ }
@@ -791,7 +791,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, IPropertyTable propertyTable, FdoCache cache)
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache)
 		{
 			return new BulkEditBarPhonologicalFeatures(bv, spec, propertyTable, cache);
 		}

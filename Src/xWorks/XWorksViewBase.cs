@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -47,24 +46,14 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Event declaration
 
 		#region Data members
-#if !RANDYTODO
 		/// <summary>
-		/// Get rid of this member.
+		/// The configuration 'parameters' element for the browser view.
 		/// </summary>
-		protected XmlNode m_configurationParameters;
-#endif
-		/// <summary>
-		/// The configuration element for the browser view.
-		/// </summary>
-		protected XElement m_configurationElement;
+		protected XElement m_configurationParametersElement;
 		/// <summary>
 		/// Optional information bar above the main control.
 		/// </summary>
 		protected UserControl m_informationBar;
-		/// <summary>
-		/// Name of the vector we are editing.
-		/// </summary>
-		protected string m_vectorName;
 		/// <summary/>
 		protected int m_fakeFlid; // the list
 		/// <summary>
@@ -174,10 +163,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
-		protected XWorksViewBase(XElement browseViewDefinitions)
+		protected XWorksViewBase(XElement configurationParametersElement, RecordClerk recordClerk)
 			: this()
 		{
-			m_configurationElement = browseViewDefinitions;
+			m_configurationParametersElement = configurationParametersElement;
+			Clerk = recordClerk;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -199,8 +189,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if(components != null)
 					components.Dispose();
-				if (ExistingClerk != null && !m_haveActiveClerk)
-					ExistingClerk.BecomeInactive();
+				if (m_clerk != null && !m_haveActiveClerk)
+				{
+					m_clerk.BecomeInactive();
+					m_clerk.Dispose();
+					m_haveActiveClerk = false;
+				}
 #if RANDYTODO
 			// TODO: Block for now, to not have xWorks take a new dependency on LanguageExplorer
 			// TODO: Expected disposition:
@@ -220,6 +214,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_mpParent = null;
 #endif
+			m_clerk = null;
 
 			base.Dispose( disposing );
 		}
@@ -248,14 +243,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (m_clerk != null)
-					return m_clerk;
-				if (PropertyTable == null)
-					return null; // Avoids a null reference exception, if there is no property table at all.
-				m_haveActiveClerk = false;
-				m_clerk = RecordClerk.FindClerk(PropertyTable, m_vectorName);
-				if (m_clerk != null && m_clerk.IsActiveInGui)
-					m_haveActiveClerk = true;
 				return m_clerk;
 			}
 		}
@@ -264,7 +251,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 #if RANDYTODO
 			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, loadList);
-			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
+			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "allowInsertDeleteRecord", true);
 			return clerk;
 #else
 			return null;
@@ -285,7 +272,6 @@ namespace SIL.FieldWorks.XWorks
 			set
 			{
 				// allow parent controls to pass in the Clerk we want this control to use.
-				m_vectorName = value != null ? value.Id : "";
 				m_clerk = value;
 			}
 		}
@@ -331,12 +317,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-#if RANDYTODO
-				// TODO: a lot will need to be supplied by area/tool that was in the xml.
-				return XmlUtils.GetOptionalAttributeValue( m_configurationParameters, "area", "unknown");
-#else
-				return PropertyTable.GetValue<string>("area");
-#endif
+				return PropertyTable.GetValue<string>("areaChoice");
 			}
 		}
 
@@ -432,13 +413,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string titleStr = "";
 			// See if we have an AlternativeTitle string table id for an alternate title.
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters,
+			string titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement,
 																	  "altTitleId");
 			if(titleId != null)
 			{
 				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
 				if(Clerk.OwningObject != null &&
-					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+					XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable the Reversal Index title bar to show
 					// which reversal index was being shown.
@@ -448,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if(Clerk.OwningObject != null)
 			{
-				if(XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
+				if (XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement,
 																 "ShowOwnerShortname"))
 					titleStr = Clerk.OwningObject.ShortName;
 			}
@@ -477,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 			if (mp == null)
 				return;
 
-			string suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "suppressInfoBar", "false");
+			string suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
 			if (suppress == "ifNotFirst")
 			{
 				mp.ShowFirstPaneChanged += mp_ShowFirstPaneChanged;
@@ -492,10 +473,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void ReadParameters()
 		{
-			XmlNode node = ToolConfiguration.GetClerkNodeFromToolParamsNode(m_configurationParameters);
-			// Set the clerk id if the parent control hasn't already set it.
-			if (String.IsNullOrEmpty(m_vectorName))
-				m_vectorName = ToolConfiguration.GetIdOfTool(node);
 		}
 
 		protected virtual void ShowRecord()
@@ -537,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				string emptyTitleId = XmlUtils.GetAttributeValue(m_configurationParameters, "emptyTitleId");
+				string emptyTitleId = XmlUtils.GetAttributeValue(m_configurationParametersElement, "emptyTitleId");
 				if (!String.IsNullOrEmpty(emptyTitleId))
 				{
 					string titleStr;
@@ -651,7 +628,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// No, as it can be using a config node that is correctly set to false, and we really wanted some other node,
 			// in order to see the menu in the main Lexicon Edit tool.
-			// bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "editable", true);
+			// bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "editable", true);
 
 			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
 			// and the right tool(s).

@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -79,13 +79,13 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class DictionaryConfigTestPresenter : DictionaryConfigManager
 	{
-		private static XmlNode s_firstConfig;
+		private static XElement s_firstConfig;
 		public DictionaryConfigTestPresenter(IDictConfigViewer viewer)
 			: base(viewer, GetConfigs(), s_firstConfig)
 		{
 		}
 
-		private static List<XmlNode> GetConfigs()
+		private static List<XElement> GetConfigs()
 		{
 			const string sConfigs = "<configureLayouts>" +
 									"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
@@ -97,10 +97,9 @@ namespace SIL.FieldWorks.XWorks
 									"<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishRootMinorEntry\"/>" +
 									"</layoutType>" +
 									"</configureLayouts>";
-			var xdoc = new XmlDocument();
-			xdoc.LoadXml(sConfigs);
-			var configs = new List<XmlNode>();
-			foreach (var xn in xdoc.FirstChild.ChildNodes.Cast<XmlNode>().Where(xn => xn.Name == "layoutType"))
+			var xdoc = XDocument.Parse(sConfigs);
+			var configs = new List<XElement>();
+			foreach (var xn in xdoc.Root.Elements().Where(xn => xn.Name.LocalName == "layoutType"))
 			{
 				configs.Add(xn);
 				if (s_firstConfig == null)

@@ -10,6 +10,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 				// ReSharper restore HeuristicUnreachableCode
 			}
-			var linkCommandNode = m_configurationNode.SelectSingleNode("descendant::chooserLink");
+			var linkCommandNode = m_configurationNode.XPathSelectElement("descendant::chooserLink");
 			var chooser = new SemanticDomainsChooser
 				{
 					Cache = m_cache,

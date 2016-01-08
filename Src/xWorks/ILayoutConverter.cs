@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -17,12 +17,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method is called when the entire layout has been converted a tree of LayoutTreeNodes
 		/// </summary>
-		void AddDictionaryTypeItem(XmlNode layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes);
+		void AddDictionaryTypeItem(XElement layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes);
 
 		/// <summary>
 		/// Returns the configuration nodes for all layout types
 		/// </summary>
-		IEnumerable<XmlNode> GetLayoutTypes();
+		IEnumerable<XElement> GetLayoutTypes();
 
 		/// <summary/>
 		FdoCache Cache { get; }
@@ -40,10 +40,10 @@ namespace SIL.FieldWorks.XWorks
 		void SetOriginalIndexForNode(XmlDocConfigureDlg.LayoutTreeNode mainLayoutNode);
 
 		/// <summary/>
-		XmlNode GetLayoutElement(string className, string layoutName);
+		XElement GetLayoutElement(string className, string layoutName);
 
 		/// <summary/>
-		XmlNode GetPartElement(string className, string sRef);
+		XElement GetPartElement(string className, string sRef);
 
 		/// <summary/>
 		void BuildRelationTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn);

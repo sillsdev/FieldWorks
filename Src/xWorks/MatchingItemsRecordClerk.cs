@@ -32,10 +32,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		protected override void StoreClerkInPropertyTable()
-		{
-			// Don't bother storing in the property table.
-		}
+		//protected override void StoreClerkInPropertyTable()
+		//{
+		//	// Don't bother storing in the property table.
+		//}
 
 		/// <summary>
 		/// Set the specified index in the list.

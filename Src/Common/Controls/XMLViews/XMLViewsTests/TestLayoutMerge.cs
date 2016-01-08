@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
@@ -12,18 +12,15 @@ namespace XMLViewsTests
 	[TestFixture]
 	public class TestLayoutMerge: SIL.FieldWorks.Test.TestUtils.BaseTest
 	{
-		void TestMerge(string newMaster, string user, string expectedOutput, string suffix)
+		static void TestMerge(string newMaster, string user, string expectedOutput, string suffix)
 		{
-			var newMasterDoc = new XmlDocument();
-			newMasterDoc.LoadXml(newMaster);
-			var userDoc = new XmlDocument();
-			userDoc.LoadXml(user);
-			var outputDoc = new XmlDocument();
+			var newMasterDoc = XDocument.Parse(newMaster);
+			var userDoc = XDocument.Parse(user);
+			var outputDoc = new XDocument();
 			var merger = new LayoutMerger();
-			XmlNode output = merger.Merge(newMasterDoc.DocumentElement, userDoc.DocumentElement, outputDoc, suffix);
-			var expectedDoc = new XmlDocument();
-			expectedDoc.LoadXml(expectedOutput);
-			Assert.IsTrue(XmlUtils.NodesMatch(output, expectedDoc.DocumentElement));
+			var output = merger.Merge(newMasterDoc.Root, userDoc.Root, outputDoc, suffix);
+			var expectedDoc = XDocument.Parse(expectedOutput);
+			Assert.IsTrue(XmlUtils.NodesMatch(output, expectedDoc.Root));
 		}
 
 		[Test]

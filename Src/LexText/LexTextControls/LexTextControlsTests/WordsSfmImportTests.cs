@@ -72,7 +72,7 @@ namespace LexTextControlsTests
 				using (var reader = new StreamReader(outputStream))
 				{
 					var outputElt = XElement.Load(reader);
-					Assert.That(outputElt.Name.LocalName, Is.EqualTo("document"));
+					Assert.IsTrue(outputElt.Name == "document");
 					var words = outputElt.Elements("word").ToList();
 					Assert.That(words, Has.Count.EqualTo(3));
 
@@ -134,7 +134,7 @@ namespace LexTextControlsTests
 				using (var reader = new StreamReader(outputStream))
 				{
 					var outputElt = XElement.Load(reader);
-					Assert.That(outputElt.Name.LocalName, Is.EqualTo("document"));
+					Assert.IsTrue(outputElt.Name == "document");
 					var words = outputElt.Elements("word").ToList();
 					Assert.That(words, Has.Count.EqualTo(3));
 					{

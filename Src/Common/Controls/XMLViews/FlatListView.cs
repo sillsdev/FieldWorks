@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using System.Linq;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private IPropertyTable m_propertyTable;
-		private XmlNode m_configNode;
+		private XElement m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
 
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="xnConfig">The config node.</param>
 		/// <param name="objs">The objs.</param>
 		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
-			XmlNode xnConfig, IEnumerable<ICmObject> objs)
+			XElement xnConfig, IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();
 			m_cache = cache;
