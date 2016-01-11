@@ -163,10 +163,10 @@
       <HintPath>..\..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.DBus" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\..\Output\Debug\NDesk.DBus.dll</HintPath>
+      <HintPath>..\..\..\Downloads\NDesk.DBus.dll</HintPath>
     </Reference>
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
+      <HintPath>..\..\..\Downloads\ibusdotnet.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>

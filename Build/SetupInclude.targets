@@ -299,6 +299,8 @@
 	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
 	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
 	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
+	  <PkgConfigFileTemplate Include="../Lib/linux/libfieldworks-fdo.template.pc"/>
+	  <PkgConfigFileOutput Include="../Lib/linux/libfieldworks-fdo.pc"/>
   </ItemGroup>
   <!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
@@ -309,6 +311,9 @@
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(PkgConfigFileTemplate)" Symbols="@(VersionSymbols)" Output="@(PkgConfigFileOutput)"
+		Condition="'$(action)'!='clean' And '$(OS)'!='Windows_NT'"/>
+
 	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
   </Target>
 
