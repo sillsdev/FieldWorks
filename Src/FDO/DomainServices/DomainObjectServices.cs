@@ -2462,11 +2462,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				if (!Directory.Exists(newWsFilePath))
 					Directory.CreateDirectory(newWsFilePath);
-				File.Copy(defaultWsFilePath, Path.Combine(newWsFilePath, newRIFileName), true);
-				var xmldoc = XDocument.Load(Path.Combine(newWsFilePath, newRIFileName));
+				var newWsCompleteFilePath = Path.Combine(newWsFilePath, newRIFileName);
+				File.Copy(defaultWsFilePath, newWsCompleteFilePath, false);
+				File.SetAttributes(newWsCompleteFilePath, FileAttributes.Normal);
+				var xmldoc = XDocument.Load(newWsCompleteFilePath);
 				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
 				xElement.Value = curWsLabel;
-				xmldoc.Save(Path.Combine(newWsFilePath, newRIFileName));
+				xmldoc.Save(newWsCompleteFilePath);
 			}
 			//Delete old Configuration File
 			if (!Directory.Exists(newWsFilePath))
