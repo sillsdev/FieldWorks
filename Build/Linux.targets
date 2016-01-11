@@ -296,4 +296,42 @@
 				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
 		<Message Text="Finished building graphite2."/>
 	</Target>
+
+	<!-- Special targets to build for packages on Linux -->
+	<Target Name="build4package" DependsOnTargets="build4package-clean;build4package-fdo;build4package-rest"/>
+
+	<Target Name="build4package-clean" DependsOnTargets="CleanAll">
+		<ItemGroup>
+			<FilesToDelete Include="$(dir-outputBase)/*.*"/>
+		</ItemGroup>
+		<ForceDelete Files="@(FilesToDelete)"/>
+	</Target>
+
+	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;FDO">
+		<ItemGroup>
+			<FilesToCopy Include="$(dir-outputBase)/**"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(dir-outputBase)/FDO"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/Downloads/icu.net.dll.config"
+			DestinationFolder="$(dir-outputBase)/FDO" OverwriteReadOnlyFiles="true"/>
+	</Target>
+
+	<Target Name="build4package-rest" DependsOnTargets="CopyDlls;IcuData;mkall">
+		<ItemGroup>
+			<FdoFiles Include="$(dir-outputBase)/FDO/**"/>
+			<FilesToCopy Include="$(dir-outputBase)/**"
+				Exclude="$(dir-outputBase)/FDO/**"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(FilesToCopy)"
+			DestinationFiles="@(FilesToCopy->'$(dir-outputBase)/FieldWorks/%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<ItemGroup>
+			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/Test*" Exclude="$(dir-outputBase)/FieldWorks/Test*.dll*"/>
+			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/*Tests.dll*"/>
+			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/test*"/>
+			<FilesToDelete Include="@(FdoFiles->'$(dir-outputBase)/FieldWorks/%(RecursiveDir)%(Filename)%(Extension)')"/>
+		</ItemGroup>
+		<ForceDelete Files="@(FilesToDelete)"/>
+	</Target>
 </Project>

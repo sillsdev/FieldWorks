@@ -221,27 +221,30 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Create directories
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install -d $(DESTDIR)/usr/lib/pkgconfig
+	install -d $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.so $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/FDO/*.{dll*,so} $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
+	install -m 644 $(OUT_DIR)/FieldWorks/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/FDO/{*.compmap,components.map} $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
+	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
 	# Install executables and scripts
-	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
+	install $(OUT_DIR)/FieldWorks/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install DistFiles/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install Bin/ReadKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
-	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
+	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
 	install Lib/linux/fieldworks-flex $(DESTDIR)/usr/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
 	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
+	install -m 644 Lib/linux/libfieldworks-fdo.pc $(DESTDIR)/usr/lib/pkgconfig
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
@@ -258,12 +261,14 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
-	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
-	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
-	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
-	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
+	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/lib{xample,patr}$$OTHERWIDTH.so
+	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
+	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
+	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
+	rm -f $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	rm -f $(DESTDIR)/usr/lib/fieldworks/icu.net.*
 
 install-menuentries:
 	# Add to Applications menu
@@ -288,7 +293,7 @@ uninstall-menuentries:
 installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
 	-(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && \
-		../configure --prefix=/usr/lib/fieldworks --libdir=/usr/lib/fieldworks)
+		../configure --prefix=/usr/lib/tmp/FDO/fieldworks --libdir=/usr/lib/tmp/FDO/fieldworks)
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) all
 
 installable-COM-clean:
@@ -698,7 +703,7 @@ Fw-build:
 # downloads dependency dlls. Output md5sum of certificates imported for the record.
 Fw-build-package:
 	(cd $(mktemp -d) && wget -q "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" && md5sum "certdata.txt?raw=1" && mozroots --import --sync --file "certdata.txt?raw=1")
-	(cd $(BUILD_ROOT)/Build && xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release)
+	(cd $(BUILD_ROOT)/Build && xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release)
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
