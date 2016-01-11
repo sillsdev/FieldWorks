@@ -4713,6 +4713,137 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_ComplexFormAndSenseInPara()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+
+			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var revAbbrevNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType",
+				IsEnabled = true,
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions{DisplayEachComplexFormInAParagraph = true},
+				FieldDescription = "Subentries",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var SenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions{DisplayEachSenseInAParagraph = true},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
+				var paracontinuationxpath = string.Format(
+					"div[@class='lexentry']/div[@class='paracontinuation']//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+					complexRefRevAbbr);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(paracontinuationxpath, 1);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ProduceLetHeadOnlyWhenDesired()
+		{
+			var lexentry1 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(lexentry1, "femme", m_wsFr, Cache);
+			var lexentry2 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(lexentry2, "homme", m_wsFr, Cache);
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var SenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions{DisplayEachSenseInAParagraph = true},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, SenseNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var xhtmlPath = Path.GetTempFileName();
+			File.Delete(xhtmlPath);
+			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
+			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			var xpath = "//div[@class='letHead']";
+			try
+			{
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo, lexentry2.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo, lexentry2.Hvo }, null, model, m_mediator, xhtmlPath, cssPath);
+				xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo }, null, model, m_mediator, xhtmlPath, cssPath);
+				xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
+			}
+			finally
+			{
+				File.Delete(xhtmlPath);
+				File.Delete(cssPath);
+			}
+		}
+
 		#region Helpers
 
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
@@ -4777,69 +4908,6 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			return mainEntryNode;
-		}
-
-		[Test]
-		public void GenerateXHTMLForEntry_ComplexFormAndSenseInPara()
-		{
-			var lexentry = CreateInterestingLexEntry(Cache);
-
-			var subentry = CreateInterestingLexEntry(Cache);
-			var subentryRef = CreateComplexForm(lexentry, subentry, true);
-
-			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
-
-			var revAbbrevNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "ReverseAbbr",
-				IsEnabled = true,
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
-			};
-			var refTypeNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LookupComplexEntryType",
-				IsEnabled = true,
-				CSSClassNameOverride = "complexformtypes",
-				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
-			};
-			var subentryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions{DisplayEachComplexFormInAParagraph = true},
-				FieldDescription = "Subentries",
-				IsEnabled = true
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
-			var SenseNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "senses",
-				Label = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions{DisplayEachSenseInAParagraph = true},
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { glossNode }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
-			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
-				XHTMLWriter.Flush();
-				const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
-				var paracontinuationxpath = string.Format(
-					"div[@class='lexentry']/div[@class='paracontinuation']//span[@class='subentries']/span[@class='subentrie']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
-					complexRefRevAbbr);
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(paracontinuationxpath, 1);
-			}
 		}
 
 		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache)

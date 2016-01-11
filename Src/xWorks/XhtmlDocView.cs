@@ -47,14 +47,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			Controls.Add(m_mainView);
 
-			var web = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (web != null)
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser != null)
 			{
 				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
 				if (clerk == "entries" || clerk == "AllReversalEntries")
 				{
-					web.DomClick += OnDomClick;
-					web.DomKeyPress += OnDomKeyPress;
+					browser.DomClick += OnDomClick;
+					browser.DomKeyPress += OnDomKeyPress;
 				}
 			}
 		}
@@ -70,14 +70,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
-			var web = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (web == null)
+			CloseContextMenuIfOpen();
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser == null)
 				return;
-			var element = web.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
+			var element = browser.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
 				return;
 			if (e.Button == GeckoMouseButton.Left)
@@ -87,64 +87,92 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				// Pop up a menu to allow the user to start the document configuration dialog, and
-				// start the dialog at the configuration node indicated by the current element.
-				var classList = new List<string>();
-				for (var elem = element; elem != null; elem = elem.ParentElement)
-				{
-					if (elem.TagName == "body" || elem.TagName == "html")
-						break;
-					var className = elem.GetAttribute("class");
-					if (!String.IsNullOrEmpty(className))
-					{
-						if (className == "letHead")
-							return;
-						classList.Insert(0, className);
-					}
-				}
-				var label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
-				m_contextMenu = new ContextMenuStrip();
-				var item = new ToolStripMenuItem(label);
-				m_contextMenu.Items.Add(item);
-				item.Click += RunConfigureDialogAt;
-				item.Tag = classList;
-				m_contextMenu.Show(web, new Point(e.ClientX, e.ClientY));
-				m_contextMenu.Closed += m_contextMenu_Closed;
-				e.Handled = true;
+				HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
 			}
 		}
 
-		void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		/// <summary>
+		/// Pop up a menu to allow the user to start the document configuration dialog, and
+		/// start the dialog at the configuration node indicated by the current element.
+		/// </summary>
+		/// <remarks>
+		/// This is static so that the method can be shared with XhtmlRecordDocView.
+		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
+			GeckoElement element, Mediator mediator, string configObjectName)
+		{
+			var classList = new List<string>();
+			for (var elem = element; elem != null; elem = elem.ParentElement)
+			{
+				if (elem.TagName == "body" || elem.TagName == "html")
+					break;
+				var className = elem.GetAttribute("class");
+				if (!String.IsNullOrEmpty(className))
+				{
+					if (className == "letHead")
+						return;
+					classList.Insert(0, className);
+				}
+			}
+			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
+			s_contextMenu = new ContextMenuStrip();
+			var item = new ToolStripMenuItem(label);
+			s_contextMenu.Items.Add(item);
+			item.Click += RunConfigureDialogAt;
+			item.Tag = new object[] { mediator, classList };
+			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
+			s_contextMenu.Closed += m_contextMenu_Closed;
+			e.Handled = true;
+		}
+
+		/// <summary>
+		/// Close and delete the context menu if it exists.  This appears to be needed (at least on Linux)
+		/// if the user clicks somewhere in the browser other than the menu.
+		/// </summary>
+		internal static void CloseContextMenuIfOpen()
+		{
+			if (s_contextMenu != null)
+			{
+				s_contextMenu.Close();
+				DisposeContextMenu(null, null);
+			}
+		}
+
+		private static void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			Application.Idle += DisposeContextMenu;
 		}
 
-		void DisposeContextMenu(object sender, EventArgs e)
+		private static void DisposeContextMenu(object sender, EventArgs e)
 		{
 			Application.Idle -= DisposeContextMenu;
-			if (m_contextMenu != null)
+			if (s_contextMenu != null)
 			{
-				m_contextMenu.Dispose();
-				m_contextMenu = null;
+				s_contextMenu.Dispose();
+				s_contextMenu = null;
 			}
 		}
 
 		// Context menu exists just for one invocation (until idle).
-		private ContextMenuStrip m_contextMenu;
+		private static ContextMenuStrip s_contextMenu;
 
-		void RunConfigureDialogAt(object sender, EventArgs e)
+		private static void RunConfigureDialogAt(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem)sender;
-			var classList = item.Tag as List<string>;
-			using (var dlg = new DictionaryConfigurationDlg(m_mediator))
+			var tagObjects = item.Tag as object[];
+			var mediator = tagObjects[0] as Mediator;
+			var classList = tagObjects[1] as List<string>;
+			using (var dlg = new DictionaryConfigurationDlg(mediator))
 			{
-				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
-				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
+				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var controller = new DictionaryConfigurationController(dlg, mediator, clerk != null ? clerk.CurrentObject : null);
 				controller.SetStartingNode(classList);
-				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator));
-				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
+				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
-			m_mediator.SendMessage("MasterRefresh", null);
+			mediator.SendMessage("MasterRefresh", null);
 		}
 
 		public override int Priority

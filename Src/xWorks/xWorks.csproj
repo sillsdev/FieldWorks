@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -438,9 +438,6 @@
     <Compile Include="RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -457,6 +454,9 @@
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">

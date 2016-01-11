@@ -141,6 +141,8 @@ namespace SIL.FieldWorks.XWorks
 		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			// Don't display letter headers if we're showing a preview in the Edit tool.
+			var wantLetterHeaders = entryHvos.Count() > 1 || publicationDecorator != null;
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false))
 			{
@@ -151,7 +153,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					// TODO pH 2014.08: generate only if entry is published (confignode enabled, pubAsMinor, selected complex- or variant-form type)
-					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
+					if (wantLetterHeaders)
+						GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
 					GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 					if (progress != null)
 					{
@@ -1234,8 +1237,13 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("class", "sensenumber");
-			string senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
-				publicationDecorator);
+			string senseNumber;
+			if (publicationDecorator != null)
+				senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
+					publicationDecorator);
+			else
+				senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
+					cache.MainCacheAccessor);
 			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, senseConfigNode);
 			writer.WriteString(formatedSenseNumber);
 			writer.WriteEndElement();

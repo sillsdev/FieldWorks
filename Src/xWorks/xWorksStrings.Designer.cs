@@ -1204,6 +1204,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The dictionary display configuration has not been set..
+        /// </summary>
+        internal static string ksNoConfiguration {
+            get {
+                return ResourceManager.GetString("ksNoConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No List Name.
         /// </summary>
         internal static string ksNoListName {
