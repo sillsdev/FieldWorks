@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -884,5 +884,11 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
     <value>Display each Subentry in a paragraph</value>
+  </data>
+  <data name="ExportingReversalsToWebonary" xml:space="preserve">
+    <value>Exporting entries for {0} reversal.</value>
+  </data>
+  <data name="ExportingReversalsToWebonaryCompleted" xml:space="preserve">
+    <value>Export of reversal completed.</value>
   </data>
 </root>

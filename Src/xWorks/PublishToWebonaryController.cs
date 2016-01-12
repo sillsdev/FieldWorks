@@ -85,21 +85,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (model.Reversals != null)
 			{
-				webonaryView.UpdateStatus("Exporting entries for the Reversal");
 				foreach (var reversal in model.Reversals)
 				{
+					webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
+					var reversalWs = Cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
+					// The reversalWs should always match the Display label of one of the AnalysisWritingSystems, this exception is for future programming errors
+					if (reversalWs == null)
+					{
+						throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
+					}
 					var xhtmlPath = Path.Combine(tempDirectoryToCompress,
-						"reversal_" + reversal.Substring(0, 2).ToLower() + ".xhtml");
+						"reversal_" + reversalWs.RFC5646 + ".xhtml");
 					var cssPath = Path.Combine(tempDirectoryToCompress,
-						"reversal_" + reversal.Substring(0, 2).ToLower() + ".css");
+						"reversal_" + reversalWs.RFC5646 + ".css");
 					int[] entriesToSave;
-					var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave,"Reversal Index");
+					var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave, "Reversal Index");
 					var configurationFile = Mediator.PropertyTable.UserSettingDirectory + @"\ReversalIndex\" + reversal + ".fwdictconfig";
 					var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 					ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, Mediator,
 						xhtmlPath, cssPath, null);
+					webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
 				}
-				webonaryView.UpdateStatus("Export of lexicon completed.");
 			}
 		}
 
@@ -142,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
 					return;
 				}
-				var responseText = System.Text.Encoding.ASCII.GetString(response);
+				var responseText = Encoding.ASCII.GetString(response);
 
 				if (responseText.Contains("Upload successful"))
 				{
