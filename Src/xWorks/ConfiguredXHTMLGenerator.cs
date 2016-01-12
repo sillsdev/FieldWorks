@@ -838,9 +838,14 @@ namespace SIL.FieldWorks.XWorks
 						}
 					case (int)CellarPropertyType.ReferenceAtomic:
 					case (int)CellarPropertyType.OwningAtomic:
+					{
+						var destClassId = cache.MetaDataCacheAccessor.GetDstClsId(customFieldFlid);
+						if (destClassId == StTextTags.kClassId)
 						{
-							return typeof(ICmObject);
+							return typeof (IStText);
 						}
+						return typeof(ICmObject);
+					}
 					case (int)CellarPropertyType.Time:
 						{
 							return typeof(DateTime);

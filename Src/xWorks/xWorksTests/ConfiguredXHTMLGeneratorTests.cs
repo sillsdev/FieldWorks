@@ -1406,6 +1406,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetPropertyTypeForConfigurationNode_StTextReturnsPrimitive()
+		{
+			var fieldName = "CustomMultiPara";
+			using (var customField = new CustomFieldForTest(Cache, fieldName, fieldName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), StTextTags.kClassId, -1,
+			 CellarPropertyType.OwningAtomic, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = fieldName,
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const string customData = @"I am custom data";
+				var locator = Cache.ServiceLocator;
+				// Set custom field data
+				var multiParaHvo = Cache.MainCacheAccessor.MakeNewObject(StTextTags.kClassId, testEntry.Hvo, customField.Flid, -2);
+				var textObject = locator.GetInstance<IStTextRepository>().GetObject(multiParaHvo);
+				var paragraph = locator.GetInstance<IStTxtParaFactory>().Create();
+				textObject.ParagraphsOS.Add(paragraph);
+				paragraph.Contents = Cache.TsStrFactory.MakeString(customData, m_wsFr);
+				//SUT
+				var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache);
+				Assert.AreEqual(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType, type);
+			}
+		}
+
+		[Test]
 		public void IsMinorEntry_ReturnsTrueForMinorEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);

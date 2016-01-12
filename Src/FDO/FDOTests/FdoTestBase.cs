@@ -190,34 +190,35 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// Constructs a custom field using the given arguments and adds it into the Cache.
 			/// </summary>
-			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws, // REVIEW (Hasso) 2014.12: ws is unused
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, string customFieldName, int classId, int destClass, int ws,
 											  CellarPropertyType fieldType, Guid listGuid)
 			{
 				m_customField = new FieldDescription(cache)
-					{
-						Userlabel = customFieldName,
-						HelpString = String.Empty,
-						Class = classId,
-						ListRootId = listGuid,
-						Type = fieldType,
-					};
+				{
+					Userlabel = customFieldLabel,
+					Name = customFieldName,
+					HelpString = String.Empty,
+					Class = classId,
+					ListRootId = listGuid,
+					Type = fieldType,
+					DstCls = destClass,
+					WsSelector = ws
+				};
 				m_customField.UpdateCustomField();
 			}
 
-			/// <summary>Constructs a custom field using the given arguments and adds it into the Cache.</summary>
+			/// <summary>Constructs a custom field using the given arguments and adds it into the Cache with a default destClassId and ws.</summary>
 			public CustomFieldForTest(FdoCache cache, string customFieldLabel, string customFieldName, int classId,
-											  CellarPropertyType fieldType, Guid listGuid)
+											  CellarPropertyType fieldType, Guid listGuid) : this(cache, customFieldLabel, customFieldName, classId, 0, -1, fieldType, listGuid)
 			{
-				m_customField = new FieldDescription(cache)
-					{
-						Userlabel = customFieldLabel,
-						Name = customFieldName,
-						HelpString = String.Empty,
-						Class = classId,
-						ListRootId = listGuid,
-						Type = fieldType,
-					};
-				m_customField.UpdateCustomField();
+			}
+
+			/// <summary>
+			/// Constructs a custom field that includes a writing system selector and adds it into the cach with a default destClassId and using the lable as the name
+			/// </summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, int classId, int ws, CellarPropertyType fieldType,
+				Guid listGuid) : this(cache, customFieldLabel, customFieldLabel, classId, 0, ws, fieldType, listGuid)
+			{
 			}
 
 			/// <summary>
