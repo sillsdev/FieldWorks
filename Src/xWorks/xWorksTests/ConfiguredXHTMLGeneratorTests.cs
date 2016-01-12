@@ -3870,6 +3870,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MultiLineCustomFieldGeneratesContent()
+		{
+			using (
+				var customField = new CustomFieldForTest(Cache, "MultiplelineTest",
+					Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+					CellarPropertyType.OwningAtomic, Guid.Empty))
+			{
+				var memberNode = new ConfigurableDictionaryNode
+				{
+					Label = "Multiple lineTest",
+					FieldDescription = "MultiplelineTest",
+					IsCustomField = true,
+					IsEnabled = true
+				};
+				var rootNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "LexEntry",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode> {memberNode}
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+				var testEntry = CreateInterestingLexEntry(Cache);
+				var text = CreateMultiParaText("Custom string", Cache);
+				// SUT
+				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, text.Hvo);
+				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, rootNode, null, settings));
+					XHTMLWriter.Flush();
+					const string customDataPath =
+						"/div[@class='lexentry']/div/span[text()='First para Custom string'] | /div[@class='lexentry']/div/span[text()='Second para Custom string']";
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 2);
+				}
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_VariantOfReferencedHeadWord()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
@@ -5067,6 +5106,27 @@ namespace SIL.FieldWorks.XWorks
 			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, Cache.TsStrFactory.MakeString("phoneyEnv", m_wsEn));
 
 			return morph;
+		}
+
+		IStText CreateMultiParaText(string content, FdoCache cache)
+		{
+			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			//cache.LangProject.
+			var stText = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			cache.LangProject.InterlinearTexts.Add(stText);
+			text.ContentsOA = stText;
+			var para = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+			stText.ParagraphsOS.Add(para);
+			para.Contents = MakeVernTss("First para " + content, cache);
+			var para1 = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+			stText.ParagraphsOS.Add(para1);
+			para1.Contents = MakeVernTss("Second para " + content, cache);
+			return text.ContentsOA;
+		}
+
+		private ITsString MakeVernTss(string content,FdoCache cache)
+		{
+			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
 		}
 
 		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)

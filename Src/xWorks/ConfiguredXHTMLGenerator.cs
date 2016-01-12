@@ -716,6 +716,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return PropertyType.InvalidProperty;
 			}
+			if(typeof(IStText).IsAssignableFrom(fieldType))
+			{
+				return PropertyType.PrimitiveType;
+			}
 			if (IsCollectionType(fieldType))
 			{
 				return PropertyType.CollectionType;
@@ -1341,7 +1345,6 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-
 			writer.WriteEndElement();
 		}
 
@@ -1616,6 +1619,19 @@ namespace SIL.FieldWorks.XWorks
 					settings.Writer.WriteString(propValueString);
 					settings.Writer.WriteEndElement();
 				}
+			}
+			else if (propertyValue is IStText)
+			{
+				settings.Writer.WriteStartElement("div");
+				foreach (var para in (propertyValue as IStText).ParagraphsOS)
+				{
+					IStTxtPara stp = para as IStTxtPara;
+					if (stp == null)
+						continue;
+					GenerateXHTMLForString(stp.Contents, config, settings, hvo: hvo);
+					settings.Writer.WriteWhitespace(Environment.NewLine);
+				}
+				settings.Writer.WriteEndElement();
 			}
 			else
 			{
