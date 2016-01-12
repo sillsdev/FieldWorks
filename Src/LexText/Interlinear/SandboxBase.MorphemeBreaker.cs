@@ -1047,7 +1047,7 @@ namespace SIL.FieldWorks.IText
 		private void RecreateDelayedSelection(object sender, EventArgs e)
 		{
 			Application.Idle -= RecreateDelayedSelection;
-			if (m_sandbox != null && m_sandbox.RootBox != null)
+			if (m_sandbox != null && m_infoDelayed != null && m_sandbox.RootBox != null)
 			{
 				m_sandbox.RootBox.MakeTextSelection(
 					m_infoDelayed.ihvoRoot,
