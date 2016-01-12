@@ -1900,7 +1900,7 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(Mediator mediator, out int[] entriesToSave)
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(Mediator mediator, out int[] entriesToSave, string dictionaryType = null)
 		{
 			var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
 			if (cache == null)
@@ -1927,7 +1927,7 @@ namespace SIL.FieldWorks.XWorks
 					 select item).FirstOrDefault();
 			}
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(mediator, clerk.VirtualFlid).ToArray();
+			entriesToSave = decorator.GetEntriesToPublish(mediator, clerk.VirtualFlid, dictionaryType).ToArray();
 			return decorator;
 		}
 

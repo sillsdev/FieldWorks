@@ -417,10 +417,14 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmPossibility Publication { get; set; }
 
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
-		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, int virtualFlid)
+		public IEnumerable<int> GetEntriesToPublish(Mediator mediator, int virtualFlid, string dictionaryType = null)
 		{
+			if (dictionaryType == null)
+			{
+				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator);
+			}
 			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
-			switch(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator))
+			switch (dictionaryType)
 			{
 				case "Dictionary":
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
@@ -440,7 +444,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return new int[] { };
 		}
-
 
 		public override int[] VecProp(int hvo, int tag)
 		{

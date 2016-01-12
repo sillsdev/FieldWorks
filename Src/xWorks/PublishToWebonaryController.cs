@@ -37,8 +37,9 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
 			var cssPath = Path.Combine(tempDirectoryToCompress, "configured.css");
 			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave);
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave, "Dictionary");
 			var configuration = model.Configurations[model.SelectedConfiguration];
+
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, Mediator, xhtmlPath, cssPath, null);
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
@@ -80,9 +81,26 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the reversal xhtml and css for the reversals that the user had selected in the dialog
 		/// </summary>
-		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel textbox, IPublishToWebonaryView logTextbox)
+		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
 		{
-			//TODO:Actually export the reversal content into the temp directory
+			if (model.Reversals != null)
+			{
+				webonaryView.UpdateStatus("Exporting entries for the Reversal");
+				foreach (var reversal in model.Reversals)
+				{
+					var xhtmlPath = Path.Combine(tempDirectoryToCompress,
+						"reversal_" + reversal.Substring(0, 2).ToLower() + ".xhtml");
+					var cssPath = Path.Combine(tempDirectoryToCompress,
+						"reversal_" + reversal.Substring(0, 2).ToLower() + ".css");
+					int[] entriesToSave;
+					var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave,"Reversal Index");
+					var configurationFile = Mediator.PropertyTable.UserSettingDirectory + @"\ReversalIndex\" + reversal + ".fwdictconfig";
+					var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
+					ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, Mediator,
+						xhtmlPath, cssPath, null);
+				}
+				webonaryView.UpdateStatus("Export of lexicon completed.");
+			}
 		}
 
 		/// <summary>
