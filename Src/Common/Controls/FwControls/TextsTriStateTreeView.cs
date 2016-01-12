@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_associatedPtText != null)
 			{
 				ScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
-				if (btProject != null && !btProject.IsCheckSumCurrent(book.CanonicalNum,
+				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum,
 					book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{
 					// The BT for this book node is out-of-date with the Paratext BT data

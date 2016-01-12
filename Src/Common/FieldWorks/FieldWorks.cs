@@ -296,6 +296,13 @@ namespace SIL.FieldWorks
 					CoreImpl.Properties.Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
+				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				if (feedbackEnvVar != null)
+				{
+					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
+				}
+
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
 				// Despite its name, Cambell says this is the original intent (I think there may have been
 				// some thought of adding flags one day to control sending more detailed info, but if 'basic

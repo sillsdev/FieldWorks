@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_verb = AddPartOfSpeech("V");
 			m_adj = AddPartOfSpeech("A");
 
-			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding></HC></ParserParameters>";
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 
 			IFsFeatureSystem phFeatSys = Cache.LanguageProject.PhFeatureSystemOA;
 			AddClosedFeature(phFeatSys, "voc", "+", "-");
@@ -249,13 +249,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return inflClass;
 		}
 
-		private IMoInflClass AddInflectiononSubclass(IMoInflClass parent, string name)
+		private void AddInflectiononSubclass(IMoInflClass parent, string name)
 		{
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			parent.SubclassesOC.Add(inflClass);
 			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
 			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
-			return inflClass;
 		}
 
 		private ICmPossibility AddExceptionFeature(string name)
@@ -543,6 +542,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void AffixNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+		}
+
+		[Test]
 		public void DerivationalAffix()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kDeriv, MainPOS = m_verb, SecondaryPOS = m_noun});
@@ -680,6 +689,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void StemNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_verb });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
+		}
+
+		[Test]
 		public void Enclitic()
 		{
 			AddEntry(MoMorphTypeTags.kguidMorphEnclitic, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem});
@@ -692,6 +711,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
+		}
+
+		[Test]
+		public void EncliticAffixAllomorph()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
+			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphEnclitic);
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[1].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule)m_lang.Strata[1].MorphologicalRules[0];
+			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
+
+			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyPlus }));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] { "<stem>", "+ɯd" }));
 		}
 
 		[Test]
@@ -981,6 +1016,42 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void AffixProcessRuleNoMorphTypeSet()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
+			entry.LexemeFormOA.MorphTypeRA = null;
+			entry.ReplaceMoForm(entry.LexemeFormOA, Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create());
+			var allo = (IMoAffixProcess)entry.LexemeFormOA;
+			allo.InputOS.Clear();
+
+			IPhVariable input1 = Cache.ServiceLocator.GetInstance<IPhVariableFactory>().Create();
+			allo.InputOS.Add(input1);
+
+			IMoCopyFromInput output1 = Cache.ServiceLocator.GetInstance<IMoCopyFromInputFactory>().Create();
+			allo.OutputOS.Add(output1);
+			output1.ContentRA = input1;
+
+			IMoInsertPhones output2 = Cache.ServiceLocator.GetInstance<IMoInsertPhonesFactory>().Create();
+			allo.OutputOS.Add(output2);
+			output2.ContentRS.Add(GetBdry(LangProjectTags.kguidPhRuleMorphBdry));
+			output2.ContentRS.Add(GetPhoneme("a"));
+
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule)m_lang.Strata[0].MorphologicalRules[0];
+			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
+
+			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyStar }));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
+				{
+					string.Format("<{0}>", input1.Hvo),
+					"+a"
+				}));
+		}
+
+		[Test]
 		public void InvalidAffixProcessRule()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified});
@@ -991,7 +1062,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
-		public void Variant()
+		public void VariantStem()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
 			ILexEntryInflType type = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
@@ -1013,6 +1084,52 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+		}
+
+		[Test]
+		public void VariantAffix()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			ILexEntryType type = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("ɯt", Cache.DefaultVernWs));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+
+			rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[1];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+		}
+
+		[Test]
+		public void AcceptUnspecifiedGraphemes()
+		{
+			AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ed", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sȧg", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("e"), Is.False);
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("ȧ"), Is.False);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
+			LoadLanguage();
+
+			FeatureStruct fs;
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("e", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("ȧ", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 		}
 	}
 }

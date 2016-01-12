@@ -411,7 +411,13 @@
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
 		<Message Text="Downloading protobuf-net." />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
+		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/CoreOnly/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/ProtoGen/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/Precompile/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/*.txt" />
 
 		<Message Text="Downloading ParaTExt DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
@@ -566,13 +572,6 @@
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- protobuf-net dlls -->
-		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
-		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/net30/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
 		<!-- NUnit dlls -->
 		<Unzip ZipFilename="$(fwrt)/Downloads/NUnit-2.6.4.zip" ToDir="$(fwrt)/Downloads/" />
 		<CreateItem Include="$(fwrt)/Downloads/NUnit-2.6.4/**/*">

@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class ExportDialogTests : BaseTest
 	{
+		#region SemanticDomainXml
 		/// <summary>
 		/// The XML representation of a (tiny) subset of the Semantic Domains list.
 		/// </summary>
@@ -455,6 +456,7 @@ namespace SIL.FieldWorks.XWorks
 			"    </CmPossibilityList>" + Environment.NewLine +
 			"  </SemanticDomainList>" + Environment.NewLine +
 			"</LangProject>" + Environment.NewLine;
+		#endregion SemanticDomainXml
 
 		private FdoCache m_cache;
 
@@ -498,11 +500,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				exportDlg.SetCache(m_cache);
 				var tempPath = Path.GetTempFileName();
-				var fxt = new ExportDialog.FxtType();
-				fxt.m_sXsltFiles = "SemDomQs.xsl";
+				var fxt = new ExportDialog.FxtType { m_sXsltFiles = "SemDomQs.xsl" };
 				var fxtPath = Path.Combine(exportDlg.FxtDirectory, "SemDomQs.xml");
-				var wss = new List<int>();
-				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en"));
+				var wss = new List<int> { m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en") };
 				exportDlg.SetTranslationWritingSystems(wss);
 
 				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
@@ -556,12 +556,9 @@ namespace SIL.FieldWorks.XWorks
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList>();
-			lists.Add(m_cache.LangProject.SemanticDomainListOA);
-			List<int> wses = new List<int>();
-			wses.Add(wsFr);
-			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(
-				lists, wses, null);
+			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			List<int> wses = new List<int> { wsFr };
+			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
 			using (StringWriter w = new StringWriter())
 			{
 				exporter.ExportTranslatedLists(w);
@@ -569,7 +566,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					Assert.IsTrue(r.ReadLine().StartsWith("<Lists date=\""));
+					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
@@ -1077,15 +1074,12 @@ namespace SIL.FieldWorks.XWorks
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			List<ICmPossibilityList> lists = new List<ICmPossibilityList>();
-			lists.Add(m_cache.LangProject.SemanticDomainListOA);
-			List<int> wses = new List<int>();
-			wses.Add(wsFr);
+			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
+			List<int> wses = new List<int> { wsFr };
 			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(
 				lists, wses, null);
 
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-				"Undo test", "Redo test"))
+			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Undo test", "Redo test"))
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
 				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
@@ -1110,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks
 				using (var r = new StringReader(translatedList))
 				{
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					Assert.IsTrue(r.ReadLine().StartsWith("<Lists date=\""));
+					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
@@ -1208,6 +1202,114 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("</ExampleWords>", r.ReadLine());
 					Assert.AreEqual("</CmDomainQ>", r.ReadLine());
 					r.Close();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Addresses LT-16734.
+		/// </summary>
+		[Test]
+		public void ExportTranslatedLists_ExportsReverseAbbrAndGlossAppend()
+		{
+			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
+			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
+
+			int wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
+
+			using (new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			{
+				// Set Irregular Inflectional Variant data.
+				(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[2] as ILexEntryInflType).ReverseAbbr.set_String(wsEn, "reverse abbreviation");
+				(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[2] as ILexEntryInflType).GlossAppend.set_String(wsEn, "gloss append");
+
+				List<ICmPossibilityList> lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
+
+				List<int> wses = new List<int> { wsFr };
+				ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
+				string exportedOutput;
+				using (StringWriter w = new StringWriter())
+				{
+					exporter.ExportTranslatedLists(w);
+					exportedOutput = w.ToString();
+				}
+				using (StringReader r = new StringReader(exportedOutput))
+				{
+					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
+					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
+					Assert.AreEqual("<List owner=\"LexDb\" field=\"VariantEntryTypes\" itemClass=\"LexEntryType\">", r.ReadLine());
+					Assert.AreEqual("<Possibilities>", r.ReadLine());
+					Assert.AreEqual("<LexEntryType guid=\"024b62c9-93b3-41a0-ab19-587a0030219a\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Dialectal Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">dial. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("</LexEntryType>", r.ReadLine());
+					Assert.AreEqual("<LexEntryType guid=\"4343b1ef-b54f-4fa4-9998-271319a6d74c\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Free Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">fr. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("</LexEntryType>", r.ReadLine());
+					Assert.AreEqual("<LexEntryInflType guid=\"01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Irregular Inflectional Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">irr. inf. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<GlossAppend>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">gloss append</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</GlossAppend>", r.ReadLine());
+					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
+					Assert.AreEqual("<LexEntryInflType guid=\"a32f1d1c-4832-46a2-9732-c2276d6547e8\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Plural Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">pl. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
+					Assert.AreEqual("<LexEntryInflType guid=\"837ebe72-8c1d-4864-95d9-fa313c499d78\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Past Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">pst. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
+					Assert.AreEqual("<LexEntryType guid=\"0c4663b3-4d9a-47af-b9a1-c8565d8112ed\">", r.ReadLine());
+					Assert.AreEqual("<Name>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">Spelling Variant</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Name>", r.ReadLine());
+					Assert.AreEqual("<Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">sp. var. of</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("</LexEntryType>", r.ReadLine());
+					Assert.AreEqual("</Possibilities>", r.ReadLine());
+					Assert.AreEqual("</List>", r.ReadLine());
+					Assert.AreEqual("</Lists>", r.ReadLine());
 				}
 			}
 		}

@@ -32,6 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private const string DelReapps = "DelReapps";
 		private const string NotOnClitics = "NotOnClitics";
 		private const string NoDefaultCompounding = "NoDefaultCompounding";
+		private const string AcceptUnspecifiedGraphemes = "AcceptUnspecifiedGraphemes";
 
 		private const string XAmple = "XAmple";
 		private const string MaxNulls = "MaxNulls";
@@ -298,6 +299,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PopulateDataGrid(m_dataGrid1, XAmple);
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[3].Width = 160;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)
@@ -316,6 +318,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				hcElem.Add(new XElement(NoDefaultCompounding, false));
 			if (hcElem.Element(NotOnClitics) == null)
 				hcElem.Add(new XElement(NotOnClitics, true));
+			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
+				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 
 			using (XmlReader reader = parserParamsElem.CreateReader())
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
@@ -360,6 +364,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			tblHC.Columns.Add(DelReapps, typeof(int));
 			tblHC.Columns.Add(NotOnClitics, typeof(bool));
 			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
+			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
 			return tblHC;
 		}
 	}

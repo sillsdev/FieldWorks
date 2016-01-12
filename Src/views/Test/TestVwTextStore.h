@@ -1844,6 +1844,11 @@ namespace TestViews
 		{
 			HVO hvo = 1;
 			PropTag tag = 2;
+			if (m_qrootb.Ptr() == NULL)
+			{
+				cerr << "VwRootBox_PropChanged was skipped because the m_qrootb was null." << endl;
+				return;
+			}
 			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
 			VwTextStoreTestSub* ptxs = new VwTextStoreTestSub(prootb);
 			prootb->m_qvim.Attach(ptxs);

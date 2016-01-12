@@ -1869,23 +1869,23 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private bool SameEntryModTimes(Extensible info)
 		{
-			Guid guid = GetGuidInExtensible(info);
-			ICmObject obj = GetObjectForGuid(guid);
+			var guid = GetGuidInExtensible(info);
+			var obj = GetObjectForGuid(guid);
 			if (obj != null && obj is ILexEntry)
 			{
-				DateTime dtMod = (obj as ILexEntry).DateModified;
-				DateTime dtMod2 = dtMod.ToUniversalTime();
-				DateTime dtModNew = info.ModificationTime.ToUniversalTime();
-				// Only go down to the second -- ignore any millisecond or microsecond granularity.
-				return (dtMod2.Date == dtModNew.Date &&
-					dtMod2.Hour == dtModNew.Hour &&
-					dtMod2.Minute == dtModNew.Minute &&
-					dtMod2.Second == dtModNew.Second);
+				return AreDatesInSameSecond((obj as ILexEntry).DateModified.ToUniversalTime(),
+					info.ModificationTime.ToUniversalTime());
 			}
-			else
-			{
-				return false;
-			}
+			return false;
+		}
+
+		private static bool AreDatesInSameSecond(DateTime objectTime, DateTime liftTime)
+		{
+			// Only go down to the second -- ignore any millisecond or microsecond granularity.
+			return (objectTime.Date == liftTime.Date &&
+					  objectTime.Hour == liftTime.Hour &&
+					  objectTime.Minute == liftTime.Minute &&
+					  objectTime.Second == liftTime.Second);
 		}
 
 		/// <summary>
@@ -2081,8 +2081,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 					MergeIntoExistingSense(ls, sense);
 			}
-			if (entry.DateCreated != default(DateTime))
+			if (entry.DateCreated != default(DateTime)
+				&& !AreDatesInSameSecond(le.DateCreated.ToUniversalTime(), entry.DateCreated.ToUniversalTime()))
+			{
 				le.DateCreated = entry.DateCreated.ToLocalTime();
+			}
 			if (entry.DateModified != default(DateTime))
 				m_rgPendingModifyTimes.Add(new PendingModifyTime(le, entry.DateModified.ToLocalTime()));
 			StoreAnnotationsAndDatesInResidue(le, entry);
