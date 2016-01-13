@@ -1333,31 +1333,11 @@ namespace SIL.FieldWorks.XWorks
 					((FwXApp)m_app).OnMasterRefresh(null);
 
 				ReversalIndexServices.CreateReversalIndexConfigurationFile(m_app.Cache.ServiceLocator.WritingSystemManager,
-					FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
-					dlg.OriginalProjectName, m_app.Cache.LangProject.AnalysisWss);
-				AddNewAnalysisWsReversals(dlg.AnalysisWsList);
+					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
+					dlg.OriginalProjectName);
+				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as IWritingSystem;
+				SetReversalIndexGuid(selectedWsObj);
 			}
-		}
-
-		/// <summary>
-		/// Method which adds the newly created WS in the menu in the blue title bar
-		/// </summary>
-		/// <param name="analysisWsList">Analysis WS CheckedListBox</param>
-		private void AddNewAnalysisWsReversals(CheckedListBox analysisWsList)
-		{
-			var selectedWsObj = analysisWsList.SelectedItem as IWritingSystem;
-			foreach (var wsLang in analysisWsList.Items)
-			{
-
-				var wsObj = wsLang as IWritingSystem;
-				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
-				{
-					UndoableUnitOfWorkHelper.Do("Sample Undo Text", "Sample Redo Text",
-						Cache.ActionHandlerAccessor,
-						() => GetOrCreateWsGuid(wsObj));
-				}
-			}
-			SetReversalIndexGuid(selectedWsObj);
 		}
 
 		/// <summary>
@@ -1370,7 +1350,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
 				{
-					var revGuid = GetOrCreateWsGuid(selectedWsObj);
+					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
 				}
 				else
@@ -1379,18 +1359,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
-		}
-
-		/// <summary>
-		/// Method returns Guid of existing or created writing system
-		/// </summary>
-		/// <param name="wsObj"></param>
-		/// <returns>returns Guid</returns>
-		private Guid GetOrCreateWsGuid(IWritingSystem wsObj)
-		{
-			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
 		}
 
 		/// <summary>

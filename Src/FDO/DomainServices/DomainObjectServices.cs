@@ -2430,11 +2430,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Create configuration file for analysis writing systems in Reversal Index
 		/// </summary>
 		/// <param name="wsMgr">IWritingSystemManager</param>
+		/// <param name="cache">The FDO cache</param>
 		/// <param name="defaultConfigDir">Default Configuration directory</param>
 		/// <param name="projectsDir">Projects directory</param>
 		/// <param name="originalProjectName">Project Name</param>
-		/// <param name="analysisWss">All analysis writing systems, space-delimited list</param>
-		public static void CreateReversalIndexConfigurationFile(IWritingSystemManager wsMgr, string defaultConfigDir, string projectsDir, string originalProjectName, string analysisWss)
+		public static void CreateReversalIndexConfigurationFile(IWritingSystemManager wsMgr, FdoCache cache, string defaultConfigDir, string projectsDir, string originalProjectName)
 		{
 			const string configFileExtension = ".fwdictconfig";
 			const string revIndexDir = "ReversalIndex";
@@ -2447,7 +2447,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				allIndexesFileName + configFileExtension);
 			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, configDir,
 				revIndexDir);
-			var analysisWsArray = analysisWss.Split(' ');
+			var analysisWsArray = cache.LangProject.AnalysisWss.Split(' ');
+			if (!Directory.Exists(newWsFilePath))
+				Directory.CreateDirectory(newWsFilePath);
 			//Create new Configuration File
 			foreach (var curWs in analysisWsArray)
 			{
@@ -2456,19 +2458,24 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
 				wsList.Add(curWsLabel);
-				var newRIFileName = curWsLabel + configFileExtension;
-				if (File.Exists(Path.Combine(newWsFilePath, newRIFileName)))
+				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWsLabel + configFileExtension);
+				if (File.Exists(newWsCompleteFilePath))
 					continue;
 
-				if (!Directory.Exists(newWsFilePath))
-					Directory.CreateDirectory(newWsFilePath);
-				var newWsCompleteFilePath = Path.Combine(newWsFilePath, newRIFileName);
 				File.Copy(defaultWsFilePath, newWsCompleteFilePath, false);
 				File.SetAttributes(newWsCompleteFilePath, FileAttributes.Normal);
 				var xmldoc = XDocument.Load(newWsCompleteFilePath);
 				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
 				xElement.Value = curWsLabel;
 				xmldoc.Save(newWsCompleteFilePath);
+
+				var wsObj = wsMgr.Get(curWs);
+				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
+						cache.ActionHandlerAccessor,
+						() => GetOrCreateWsGuid(wsObj, cache));
+				}
 			}
 			//Delete old Configuration File
 			if (!Directory.Exists(newWsFilePath))
@@ -2477,13 +2484,25 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (var file in files)
 			{
 				var fileName = Path.GetFileNameWithoutExtension(file);
-				if (fileName != allIndexesFileName && !wsList.Any(ws => fileName.Contains(ws)))
+				if (fileName != null && fileName != allIndexesFileName && !wsList.Any(ws => fileName.Contains(ws)))
 				{
 					File.Delete(file);
 				}
 			}
 		}
 
+		/// <summary>
+		/// Method returns Guid of existing or created writing system
+		/// </summary>
+		/// <param name="wsObj">Writing system Object</param>
+		/// <param name="cache">The FDO cache</param>
+		/// <returns>returns Guid</returns>
+		public static Guid GetOrCreateWsGuid(IWritingSystem wsObj, FdoCache cache)
+		{
+			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+		}
 	}
 	#endregion
 }

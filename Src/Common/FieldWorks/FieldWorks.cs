@@ -2978,9 +2978,8 @@ namespace SIL.FieldWorks
 		{
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
-			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr,
-				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
-				cache.LangProject.ShortName, cache.LangProject.AnalysisWss);
+			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr, cache,
+				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, cache.LangProject.ShortName);
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
