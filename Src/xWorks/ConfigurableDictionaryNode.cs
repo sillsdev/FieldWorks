@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,6 +21,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The string table is used to localize strings plucked from the XML.  (Other external
+		/// processing makes the localizations available.)
+		/// </summary>
+		[XmlIgnore]
+		public StringTable StringTable { get; set; }
+
+		/// <summary>
 		/// The non-editable portion of the label to display for this node
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
@@ -32,16 +40,27 @@ namespace SIL.FieldWorks.XWorks
 		public string LabelSuffix { get; set; }
 
 		/// <summary>
-		/// Combination of Label and LabelSuffix, if set.
+		/// Combination of Label and LabelSuffix, if set.  This is localized if at all possible.
 		/// </summary>
 		[XmlIgnore]
 		public string DisplayLabel
 		{
 			get
 			{
-				if (LabelSuffix == null)
-					return Label;
-				return string.Format("{0} ({1})", Label, LabelSuffix);
+				if (StringTable == null)
+				{
+					if (LabelSuffix == null)
+						return Label;
+					return string.Format("{0} ({1})", Label, LabelSuffix);
+				}
+				else
+				{
+					var localLabel = StringTable.LocalizeAttributeValue(Label);
+					if (LabelSuffix == null)
+						return localLabel;
+					var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
+					return string.Format("{0} ({1})", localLabel, localSuffix);
+				}
 			}
 		}
 

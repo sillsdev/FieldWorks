@@ -254,6 +254,8 @@ namespace SIL.FieldWorks.XWorks
 			if (node == null)
 				throw new ArgumentNullException();
 
+			if (_mediator != null && _mediator.StringTbl != null)
+				node.StringTable = _mediator.StringTbl;	// for localization
 			var newTreeNode = new TreeNode(node.DisplayLabel) { Tag = node, Checked = node.IsEnabled };
 
 			var treeView = View.TreeControl.Tree;
