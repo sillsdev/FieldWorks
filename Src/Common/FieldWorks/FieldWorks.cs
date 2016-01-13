@@ -2953,6 +2953,7 @@ namespace SIL.FieldWorks
 					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.Mediator);
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
+				EnsureValidReversalIndexConfigFile(app.Cache);
 			}
 			catch (StartupException ex)
 			{
@@ -2971,6 +2972,16 @@ namespace SIL.FieldWorks
 			fwMainWindow.Activated += FwMainWindowActivated;
 			fwMainWindow.Closing += FwMainWindowClosing;
 			return true;
+		}
+
+		private static void EnsureValidReversalIndexConfigFile(FdoCache cache)
+		{
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
+			cache.DomainDataByFlid.BeginNonUndoableTask();
+			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr,
+				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
+				cache.LangProject.ShortName, cache.LangProject.AnalysisWss);
+			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
 		/// ------------------------------------------------------------------------------------

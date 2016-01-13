@@ -199,9 +199,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				SetReversalIndexGuid(firstGuid);
 			}
-			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr,
-				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
-				cache.LangProject.ShortName, cache.LangProject.AnalysisWss);
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
