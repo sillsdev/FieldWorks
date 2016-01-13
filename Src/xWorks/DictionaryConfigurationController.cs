@@ -330,11 +330,14 @@ namespace SIL.FieldWorks.XWorks
 			View.ManageConfigurations += (sender, args) =>
 			{
 				// show the Configuration Manager dialog
-				using (var dialog = new DictionaryConfigurationManagerDlg())
+				using (var dialog = new DictionaryConfigurationManagerDlg(_mediator.HelpTopicProvider))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
 						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
+					dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_mediator) == "Dictionary"
+						? "khtpDictConfigManager"
+						: "khtpRevIndexConfigManager";
 					dialog.ShowDialog(View as Form);
 				}
 

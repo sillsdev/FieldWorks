@@ -170,6 +170,7 @@ namespace SIL.FieldWorks.XWorks
 				var controller = new DictionaryConfigurationController(dlg, mediator, clerk != null ? clerk.CurrentObject : null);
 				controller.SetStartingNode(classList);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
+				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
 				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
 			mediator.SendMessage("MasterRefresh", null);

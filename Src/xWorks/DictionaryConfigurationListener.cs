@@ -77,6 +77,12 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
+		internal static string GetConfigDialogHelpTopic(Mediator mediator)
+		{
+			return GetDictionaryConfigurationBaseType(mediator) == "Reversal Index"
+				? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
+		}
+
 		/// <summary>
 		/// Get the base (non-localized) name of the area in FLEx being configured, such as Dictionary or Reversal Index.
 		/// </summary>
@@ -182,6 +188,7 @@ namespace SIL.FieldWorks.XWorks
 				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_mediator));
+				dlg.HelpTopic = GetConfigDialogHelpTopic(m_mediator);
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
 			m_mediator.SendMessage("MasterRefresh", null);
@@ -207,21 +214,30 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the current Dictionary configuration file
+		/// Returns the current Dictionary or ReversalIndex configuration file
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
 		public static string GetCurrentConfiguration(Mediator mediator)
 		{
 			string currentConfig = null;
+			var currentTool = GetDictionaryConfigurationBaseType(mediator);
+			var currentDirectoryPart = currentTool == "Dictionary"
+				? DictionaryConfigurationDirectoryName
+				: ReversalIndexConfigurationDirectoryName;
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
 			if(mediator != null && mediator.PropertyTable != null)
 			{
 				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
+				if (!currentConfig.Contains(currentDirectoryPart))
+				{
+					// we've got a config from the other tool
+					currentConfig = string.Empty;
+				}
 				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
 				{
-					string defaultPublication = "Root";
+					string defaultPublication = currentTool == "Dictionary" ? "Root" : "AllReversalIndexes";
 					// If no configuration has yet been selected or the previous selection is invalid,
 					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
 					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)
@@ -229,10 +245,10 @@ namespace SIL.FieldWorks.XWorks
 						defaultPublication = currentConfig.Replace("publish", string.Empty);
 					}
 					// select the project's Root configuration if available; otherwise, select the default Root configuration
-					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, "Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, currentDirectoryPart), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					if(!File.Exists(currentConfig))
 					{
-						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
+						currentConfig = Path.Combine(GetDefaultConfigurationDirectory(currentDirectoryPart), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					}
 					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
 				}

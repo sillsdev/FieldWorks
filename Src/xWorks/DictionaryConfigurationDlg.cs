@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
 using XCore;
@@ -24,6 +25,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public event SwitchConfigurationEvent SwitchConfiguration;
 		Mediator m_mediator;
+
+		private string m_helpTopic;
+		private readonly HelpProvider m_helpProvider;
+		private IHelpTopicProvider m_helpTopicProvider;
+
 		/// <summary>
 		/// When OK or Apply are clicked tell anyone who is listening to do their save.
 		/// </summary>
@@ -39,6 +45,12 @@ namespace SIL.FieldWorks.XWorks
 			manageConfigs_treeDetailButton_split.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
 
+			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			m_helpProvider.SetShowHelp(this, true);
+
 			// Restore the location and size from last time we called this dialog.
 			if (m_mediator != null && m_mediator.PropertyTable != null)
 			{
@@ -51,6 +63,25 @@ namespace SIL.FieldWorks.XWorks
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
+			}
+		}
+
+		internal string HelpTopic
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(m_helpTopic))
+				{
+					m_helpTopic = "khtpConfigureDictionary";
+				}
+				return m_helpTopic;
+			}
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					return;
+				m_helpTopic = value;
+				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			}
 		}
 
@@ -145,6 +176,11 @@ namespace SIL.FieldWorks.XWorks
 		private void applyButton_Click(object sender, EventArgs e)
 		{
 			SaveModel(sender, e);
+		}
+
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
 		}
 
 		private void OnConfigurationChanged(object sender, EventArgs e)

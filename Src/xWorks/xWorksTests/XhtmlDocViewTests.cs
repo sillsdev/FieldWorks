@@ -376,13 +376,17 @@ namespace SIL.FieldWorks.XWorks
 				testPubItem.Name.set_String(enId, testPubName);
 
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
+				var subDir = Path.Combine(Path.GetTempPath(), "Dictionary");
+				Directory.CreateDirectory(subDir); // required by DictionaryConfigurationListener.GetCurrentConfiguration()
 				using(var docView = new TestXmlDocView())
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
-																								  "baz"+DictionaryConfigurationModel.FileExtension)))
+				using(var tempConfigFile = TempFile.WithFilename(
+					Path.Combine(subDir, "baz"+DictionaryConfigurationModel.FileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
 					m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
+					// DictionaryConfigurationListener.GetCurrentConfiguration() now needs to know the currentContentControl too.
+					m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
 					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),

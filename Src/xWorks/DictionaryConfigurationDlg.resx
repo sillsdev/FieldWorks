@@ -340,7 +340,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.29198, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.25896, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>
@@ -379,7 +379,7 @@
     <value>0, 0, 0, 5</value>
   </data>
   <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
-    <value>322, 88</value>
+    <value>322, 87</value>
   </data>
   <data name="m_preview.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -424,7 +424,7 @@
     <value>322, 389</value>
   </data>
   <data name="previewDetailSplit.SplitterDistance" type="System.Int32, mscorlib">
-    <value>88</value>
+    <value>87</value>
   </data>
   <data name="previewDetailSplit.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
