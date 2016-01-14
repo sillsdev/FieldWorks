@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,9 +23,9 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
-	class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Cache is a reference")]
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationMigrator m_migrator;
 		private Mediator m_mediator;
@@ -42,6 +42,14 @@ namespace SIL.FieldWorks.XWorks
 		private const string CustomFieldGenDate = "Custom GenDate";
 		private const string CustomFieldLocation = "Custom Person";
 		private IDisposable m_cf1, m_cf2, m_cf3, m_cf4;
+
+		// Minor Entry Nodes
+		private const string MinorEntryOldLabel = "Minor Entry";
+		private const string MinorEntryComplexLabel = "Minor Entry (Complex Forms)";
+		private const string MinorEntryVariantLabel = "Minor Entry (Variants)";
+		private const string MinorEntryOldXpath = "//ConfigurationItem[@name='" + MinorEntryOldLabel + "']";
+		private const string MinorEntryComplexXpath = "//ConfigurationItem[@name='" + MinorEntryComplexLabel + "']";
+		private const string MinorEntryVariantXpath = "//ConfigurationItem[@name='" + MinorEntryVariantLabel + "']";
 
 		[TestFixtureSetUp]
 		protected void Init()
@@ -109,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ConvertLayoutTreeNodeToConfigNode_MainEntryAndMinorEntryWork()
 		{
 			var oldMainNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Main Entry", ClassName = "LexEntry"};
-			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Minor Entry", ClassName = "LexEntry" };
+			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = MinorEntryOldLabel, ClassName = "LexEntry" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldMainNode));
 			Assert.AreEqual(configNode.Label, oldMainNode.Label, "Label Main Entry root node was not migrated");
@@ -118,9 +126,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ConvertLayoutTreeNodeToConfigNode_MinorEntryWithoutBeforeAfterWorks()
+		public void CopyDefaultsIntoConfigNode_MinorEntryWithoutBeforeAfterWorks()
 		{
-			const string reversalIndexChildNodesPath = "//ConfigurationItem[@name='Minor Entry']/";
 			using (var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntryNodesType = BuildConvertedMinorEntryNodes();
@@ -129,39 +136,179 @@ namespace SIL.FieldWorks.XWorks
 
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryNodesType, defaultMInorEntryNodesType);
 				convertedMinorEntryNodesType.Save();
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "@before");
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "@after");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryComplexXpath + "/@before");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryComplexXpath + "/@after");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@before");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@after");
 			}
 		}
 
-		private DictionaryConfigurationModel BuildConvertedMinorEntryNodes()
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_SplitsMinorEntryNodes(
+			[Values(true, false)] bool isOriginal, [Values(true, false)] bool isComplex, [Values(true, false)] bool isVariant)
+		{
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+				convertedMinorEntryModel.FilePath = convertedModelFile.Path;
+				var meNode = convertedMinorEntryModel.Parts[1];
+				meNode.IsDuplicate = !isOriginal;
+				meNode.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Minor,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption
+						{
+							Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isComplex
+						},
+						new DictionaryNodeListOptions.DictionaryNodeOption
+						{
+							Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isVariant
+						}
+					}
+				};
+
+				// SUT
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryModel, BuildCurrentDefaultMinorEntryNodes());
+				convertedMinorEntryModel.Save();
+
+				var hasComplexNode = isOriginal || isComplex || !isVariant;
+				var hasVariantNode = isOriginal || isVariant || !isComplex;
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, hasComplexNode ? 1 : 0);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, hasVariantNode ? 1 : 0);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryOldXpath, "All old Minor Entry nodes should have been split");
+			}
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_UpdatesLabelAndListId()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			Assert.AreEqual(MinorEntryComplexLabel, convertedMinorEntryNode.Label);
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex,
+				((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId);
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_PreservesOnlyRelevantTypes()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
+				DictionaryNodeListOptions.ListIds.Minor);
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+			var complexTypeGuids = m_migrator.AvailableComplexFormTypes;
+			Assert.AreEqual(complexTypeGuids.Count(), options.Count, "All Complex Form Types should be present");
+			foreach (var option in options)
+			{
+				Assert.That(option.IsEnabled);
+				Assert.That(complexTypeGuids, Contains.Item(option.Id), "Only Complex Form Types should be present");
+			}
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_PreservesSelections()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
+				DictionaryNodeListOptions.ListIds.Minor);
+			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+			// Disable some options
+			for (var i = 0; i < options.Count; i += 2)
+			{
+				options[i].IsEnabled = false;
+			}
+			// Deep clone Complex Types; we'll be testing those
+			var expectedOptions = options.Where(option => m_migrator.AvailableComplexFormTypes.Contains(option.Id))
+				.Select(option => new DictionaryNodeListOptions.DictionaryNodeOption{ Id = option.Id, IsEnabled = option.IsEnabled }).ToList();
+
+			// SUT
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			var resultOptions = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+
+			Assert.AreEqual(expectedOptions.Count, resultOptions.Count);
+			var j = 0;
+			foreach (var option in expectedOptions)
+			{
+				Assert.AreEqual(option.Id, resultOptions[j].Id);
+				Assert.AreEqual(option.IsEnabled, resultOptions[j++].IsEnabled);
+			}
+		}
+
+		private static ConfigurableDictionaryNode EmptyNode { get { return new ConfigurableDictionaryNode{ Label = string.Empty }; } }
+
+		private static DictionaryConfigurationModel BuildConvertedMinorEntryNodes()
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Minor Entry",
+				Label = MinorEntryOldLabel,
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
 				After = "(",
-				Before = ")"
+				Before = ")",
+				DictionaryNodeOptions = new DictionaryNodeListOptions()
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, minorEntryNode }, Version = -1 };
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
 		{
-			var minorEntryNode = new ConfigurableDictionaryNode
+			var complexEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Minor Entry",
+				Label = MinorEntryComplexLabel,
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
 				After = null,
 				Before = null
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+			var variantEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = MinorEntryVariantLabel,
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = null,
+				Before = null
+			};
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode } };
+		}
 
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode } };
+		[Test]
+		public void HasComplexFormTypesSelected_And_HasVariantTypesSelected(
+			[Values(true, false)] bool isUnspecifiedComplexSelected, [Values(true, false)] bool isSpecifiedComplexSelected,
+			[Values(true, false)] bool isUnspecifiedVariantSelected, [Values(true, false)] bool isSpecifiedVariantSelected)
+		{
+			var options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isUnspecifiedComplexSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedComplexSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isUnspecifiedVariantSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedVariantSelected
+				}
+			};
+
+			Assert.AreEqual(isUnspecifiedComplexSelected || isSpecifiedComplexSelected, m_migrator.HasComplexFormTypesSelected(options), "Complex");
+			Assert.AreEqual(isUnspecifiedVariantSelected || isSpecifiedVariantSelected, m_migrator.HasVariantTypesSelected(options), "Variant");
 		}
 
 		///<summary/>
@@ -980,7 +1127,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string HwBetween = "H.between";
 		private const string GlsBetween = "G.between";
 
-		private DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
+		private static DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
 			bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
 		{
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
@@ -1010,8 +1157,7 @@ namespace SIL.FieldWorks.XWorks
 			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord,
-			bool enableGloss)
+		private static DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord, bool enableGloss)
 		{
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadWord, FieldDescription = "HeadWord"};
 			var gloss = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", IsEnabled = enableGloss, FieldDescription = "DefinitionOrGloss"};

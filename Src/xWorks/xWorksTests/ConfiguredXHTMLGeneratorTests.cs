@@ -1672,7 +1672,7 @@ namespace SIL.FieldWorks.XWorks
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
-			AddSingleSubSenseToSense(testEntry, "gloss",testEntry.SensesOS.First());
+			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -5240,7 +5240,7 @@ namespace SIL.FieldWorks.XWorks
 			subSensesTwo.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.2", m_wsEn));
 		}
 
-		private void AddSingleSubSenseToSense(ILexEntry entry, string gloss,ILexSense sense)
+		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
 		{
 			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -5279,7 +5279,7 @@ namespace SIL.FieldWorks.XWorks
 			return morph;
 		}
 
-		IStText CreateMultiParaText(string content, FdoCache cache)
+		private static IStText CreateMultiParaText(string content, FdoCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.
@@ -5295,9 +5295,9 @@ namespace SIL.FieldWorks.XWorks
 			return text.ContentsOA;
 		}
 
-		private ITsString MakeVernTss(string content,FdoCache cache)
+		private static ITsString MakeVernTss(string content, FdoCache cache)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return cache.TsStrFactory.MakeString(content, cache.DefaultVernWs);
 		}
 
 		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
@@ -5338,6 +5338,12 @@ namespace SIL.FieldWorks.XWorks
 
 		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
 		{
+			return GetFullyEnabledListOptions(Cache, listName, isComplex);
+		}
+
+		public static DictionaryNodeOptions GetFullyEnabledListOptions(FdoCache cache,
+			DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
+		{
 			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
 			switch (listName)
 			{
@@ -5345,18 +5351,18 @@ namespace SIL.FieldWorks.XWorks
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType(), XmlViewsUtils.GetGuidForUnspecifiedComplexFormType() }
 							.Select(guid => guid.ToString())
-						.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-						.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
+						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Variant:
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
-						.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Complex:
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
-						.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				default:
 					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));

@@ -109,7 +109,12 @@ namespace SIL.FieldWorks.XWorks
 			[XmlAttribute(AttributeName = "id")]
 			public string Id { get; set; }
 			[XmlAttribute(AttributeName = "isEnabled")]
-			public bool IsEnabled { get; set; } // REVIEW pH 2014.03: do we need this?  isn't everything here enabled by merit of being here?
+			public bool IsEnabled { get; set; }
+
+			public override string ToString()
+			{
+				return string.Format("[{0}] {1}", IsEnabled ? "X" : "_", Id);
+			}
 		}
 
 		[XmlAttribute(AttributeName = "list")]

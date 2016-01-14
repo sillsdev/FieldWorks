@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -246,11 +247,78 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
 		{
-			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], convertedModel.Version);
+			var ver = convertedModel.Version;
+			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver);
 			for(var i = 1; i < convertedModel.Parts.Count; ++i)
 			{
-				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry node
-				CopyDefaultsIntoConfigNode(convertedModel.Parts[i], currentDefaultModel.Parts[1], convertedModel.Version);
+				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry nodes,
+				// split into Complex Forms and Variants
+				var currentDefaultComplexNode = currentDefaultModel.Parts[1];
+				var currentDefaultVariantNode = currentDefaultModel.Parts[2];
+
+				var convertedNode = convertedModel.Parts[i];
+				var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;
+				var hasComplexTypesSelected = HasComplexFormTypesSelected(selectedMinorEntryTypes);
+				var hasVariantTypesSelected = HasVariantTypesSelected(selectedMinorEntryTypes);
+				// We should create a Complex Forms node if this is the original (non-duplicate) node, if the user has selected at least one
+				// Complex Form Type, or if the user has not selected any Types for display--otherwise this node would disappear entirely!
+				var shouldCreateComplexNode = !convertedNode.IsDuplicate || hasComplexTypesSelected || !hasVariantTypesSelected;
+				var shouldCreateVariantNode = !convertedNode.IsDuplicate || hasVariantTypesSelected || !hasComplexTypesSelected;
+				if (shouldCreateComplexNode && shouldCreateVariantNode)
+				{
+					var convertedComplexNode = convertedNode;
+					var convertedVariantNode = convertedNode.DeepCloneUnderSameParent();
+					convertedModel.Parts.Insert(++i, convertedVariantNode);
+					CopyDefaultsIntoMinorEntryNode(convertedComplexNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
+					CopyDefaultsIntoMinorEntryNode(convertedVariantNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
+				}
+				else if (shouldCreateComplexNode)
+				{
+					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
+				}
+				else // if (shouldCreateVariantNode)
+				{
+					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
+				}
+			}
+		}
+
+		internal void CopyDefaultsIntoMinorEntryNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode,
+			DictionaryNodeListOptions.ListIds complexOrVariant, int version)
+		{
+			convertedNode.Label = currentDefaultNode.Label;
+			var nodeOptions = (DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions;
+			nodeOptions.ListId = complexOrVariant;
+			var availableOptions = complexOrVariant == DictionaryNodeListOptions.ListIds.Complex ? AvailableComplexFormTypes : AvailableVariantTypes;
+			nodeOptions.Options = nodeOptions.Options.Where(option => availableOptions.Contains(option.Id)).ToList();
+			CopyDefaultsIntoConfigNode(convertedNode, currentDefaultNode, version);
+		}
+
+		internal bool HasComplexFormTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		{
+			return AvailableComplexFormTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
+		}
+
+		internal IEnumerable<string> AvailableComplexFormTypes
+		{
+			get
+			{
+				return new[] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
+					.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Select(item => item.Guid.ToString()));
+			}
+		}
+
+		internal bool HasVariantTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		{
+			return AvailableVariantTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
+		}
+
+		internal IEnumerable<string> AvailableVariantTypes
+		{
+			get
+			{
+				return new[] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
+					.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Select(item => item.Guid.ToString()));
 			}
 		}
 
