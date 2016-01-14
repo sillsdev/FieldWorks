@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -668,6 +669,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (configNode.IsDuplicate)
 			{
+				configNode.LabelSuffix = Regex.Replace(configNode.LabelSuffix, "[^a-zA-Z0-9+]", "-");
 				classAttribute += "_" + configNode.LabelSuffix;
 			}
 			return classAttribute.ToLower();

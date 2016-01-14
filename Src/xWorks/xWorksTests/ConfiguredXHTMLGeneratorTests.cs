@@ -964,6 +964,99 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithSpaceWorks()
+		{
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsDuplicate = true,
+				LabelSuffix = "Test one",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entryOne = CreateInterestingLexEntry(Cache);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseWithHyphenSuffix = "//span[@class='senses_test-one']/span[@class='senses_test-on']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithPuncWorks()
+		{
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsDuplicate = true,
+				LabelSuffix = "#Test",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entryOne = CreateInterestingLexEntry(Cache);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseWithHyphenSuffix = "//span[@class='senses_-test']/span[@class='senses_-tes']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithMultiPuncWorks()
+		{
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsDuplicate = true,
+				LabelSuffix = "#Test$",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entryOne = CreateInterestingLexEntry(Cache);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseWithHyphenSuffix = "//span[@class='senses_-test-']/span[@class='senses_-test']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_MLHeadWordVirtualPropWorks()
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions

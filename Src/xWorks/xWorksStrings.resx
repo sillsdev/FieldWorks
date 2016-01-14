@@ -747,9 +747,6 @@ Are you sure you want to delete this list?</value>
   <data name="PunctInFieldNameError" xml:space="preserve">
     <value>Please remove the punctuation from the custom field name ("{0}") to allow export and some other functions to work.</value>
   </data>
-  <data name="PunctOrSpaceInSuffixNameError" xml:space="preserve">
-    <value>Please remove the punctuation/space from the suffix name ("{0}") to allow export and some other functions to work.</value>
-  </data>
   <data name="PunctInFieldNameWarning" xml:space="preserve">
     <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
 Do you want to continue with the export?</value>
@@ -854,31 +851,31 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Do you want to continue?</value>
     <comment>whether to continue with the resetting of a configuration</comment>
   </data>
-	<data name="PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+  <data name="PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
     <value>Exporting entries for the {0} publication using the {1} configuration</value>
     <comment>Displayed in the log when exporting to webonary</comment>
   </data>
-	<data name="ExportingEntriesToWebonary" xml:space="preserve">
+  <data name="ExportingEntriesToWebonary" xml:space="preserve">
     <value>Exporting entries for the {0} publication using the {1} configuration</value>
     <comment>Displayed in the log box when exporting to Webonary</comment>
   </data>
-	<data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+  <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
     <value>Export of lexicon completed.</value>
     <comment>Displayed in the log box when exporting to Webonary after all entries are exported</comment>
   </data>
-	<data name="BeginCompressingDataForWebonary" xml:space="preserve">
+  <data name="BeginCompressingDataForWebonary" xml:space="preserve">
     <value>Compressing data before sending to Webonary.</value>
     <comment>Displayed in the log box of PublishToWebonaryDlg when data is being zipped up.</comment>
   </data>
-	<data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+  <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
     <value>Compression complete.</value>
     <comment>Displayed in the PublishToWebonaryDlg log box</comment>
   </data>
-	<data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
+  <data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
     <value>Select All Children</value>
     <comment>Hidden context menu command (Ctrl+Right Click) for selecting a node and all its children in the Configuration Dialog</comment>
   </data>
-	<data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
+  <data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
     <value>Clear All Children</value>
     <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
   </data>

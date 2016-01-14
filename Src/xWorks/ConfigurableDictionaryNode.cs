@@ -282,21 +282,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Change suffix. Must be unique among sibling dictionary items with the same label. It's okay to request to change to the current suffix.
 		/// </summary>
-		public string ChangeSuffix(string newSuffix)
+		public bool ChangeSuffix(string newSuffix)
 		{
 			return ChangeSuffix(newSuffix, Parent.Children);
 		}
 
-		public string ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
+		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
 			if (siblings.Exists(sibling => sibling != this && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
-				return xWorksStrings.FailedToRename;
-
-			if (newSuffix.IndexOfAny(("!@#$%^&*()").ToCharArray()) >= 0 || newSuffix.Trim().Contains(" "))
-				return xWorksStrings.PunctOrSpaceInSuffixNameError;
+				return false;
 
 			LabelSuffix = newSuffix;
-			return string.Empty;
+			return true;
 		}
 
 		/// <summary>

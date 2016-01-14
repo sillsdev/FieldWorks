@@ -1852,6 +1852,87 @@ namespace SIL.FieldWorks.XWorks
 				"expected custom-location>abbreviation rule not generated");
 		}
 
+		[Test]
+		public void GenerateCssForDuplicateConfigNodeWithSpaces()
+		{
+			var noteConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Note",
+				FieldDescription = "Note",
+				IsDuplicate = true,
+				LabelSuffix = "Test One",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { noteConfig }
+			};
+			noteConfig.Parent = entryConfig;
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regexExpected1 = @"\.lexentry>\s\.note_test-one{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+				"expected duplicated config node rename rule not generated");
+		}
+
+		[Test]
+		public void GenerateCssForDuplicateConfigNodeWithPunc()
+		{
+			var noteConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Note",
+				FieldDescription = "Note",
+				IsDuplicate = true,
+				LabelSuffix = "#Test",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { noteConfig }
+			};
+			noteConfig.Parent = entryConfig;
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regexExpected1 = @"\.lexentry>\s\.note_-test{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+				"expected duplicated config node rename rule not generated");
+		}
+
+		[Test]
+		public void GenerateCssForDuplicateConfigNodeWithMultiPunc()
+		{
+			var noteConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Note",
+				FieldDescription = "Note",
+				IsDuplicate = true,
+				LabelSuffix = "#Test#",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { noteConfig }
+			};
+			noteConfig.Parent = entryConfig;
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+				"expected duplicated config node rename rule not generated");
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();
