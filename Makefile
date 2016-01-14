@@ -269,6 +269,10 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
 	rm -f $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	rm -f $(DESTDIR)/usr/lib/fieldworks/icu.net.*
+	# The following files come from DistFiles but are already included in FDO
+	rm $(DESTDIR)/usr/lib/fieldworks/Logos.Utility.dll
+	rm $(DESTDIR)/usr/lib/fieldworks/Microsoft.Practices.ServiceLocation.dll
+	rm $(DESTDIR)/usr/lib/fieldworks/StructureMap.dll
 
 install-menuentries:
 	# Add to Applications menu

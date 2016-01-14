@@ -318,15 +318,17 @@
 	</Target>
 
 	<Target Name="build4package-rest" DependsOnTargets="CopyDlls;IcuData;mkall">
+		<!-- Copy files to FieldWorks subdirectory -->
 		<ItemGroup>
-			<FdoFiles Include="$(dir-outputBase)/FDO/**"/>
 			<FilesToCopy Include="$(dir-outputBase)/**"
 				Exclude="$(dir-outputBase)/FDO/**"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(FilesToCopy)"
 			DestinationFiles="@(FilesToCopy->'$(dir-outputBase)/FieldWorks/%(RecursiveDir)%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Delete files from FieldWorks subdirectory that are also in FDO -->
 		<ItemGroup>
+			<FdoFiles Include="$(dir-outputBase)/FDO/**"/>
 			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/Test*" Exclude="$(dir-outputBase)/FieldWorks/Test*.dll*"/>
 			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/*Tests.dll*"/>
 			<FilesToDelete Include="$(dir-outputBase)/FieldWorks/test*"/>
