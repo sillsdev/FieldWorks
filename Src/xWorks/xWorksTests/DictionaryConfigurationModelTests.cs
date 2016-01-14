@@ -394,9 +394,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ShippedFilesValidateAgainstSchema()
+		public void ShippedFilesValidateAgainstSchema([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
-			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
 			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
@@ -818,6 +818,7 @@ namespace SIL.FieldWorks.XWorks
 			StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
 			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
 		}
+
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)
@@ -828,7 +829,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				schemas.Add("", reader);
 				var document = XDocument.Load(xmlFile);
-				document.Validate(schemas, (sender, args) => Assert.Fail("Model saved as xml did not validate against schema: {0}", args.Message));
+				document.Validate(schemas, (sender, args) =>
+					Assert.Fail("Model saved at {0} did not validate against schema: {1}", xmlFile, args.Message));
 			}
 		}
 

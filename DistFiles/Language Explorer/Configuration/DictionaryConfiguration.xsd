@@ -117,6 +117,7 @@
 		<xs:enumeration value="analysis"/>
 		<xs:enumeration value="both"/>
 		<xs:enumeration value="pronunciation"/>
+		<xs:enumeration value="reversal"/>
 	</xs:restriction>
 </xs:simpleType>
 <xs:simpleType name="listIdType">
