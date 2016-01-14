@@ -535,31 +535,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region List tests
 		[Test]
-		public void FlattenPossibilityList()
-		{
-			ICmPossibilityList theList = null;
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
-				() =>
-				{
-					theList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-					var topItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					theList.PossibilitiesOS.Add(topItem);
-					var secondLevelItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					var thirdLevelItemItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					topItem.SubPossibilitiesOS.Add(secondLevelItem);
-					secondLevelItem.SubPossibilitiesOS.Add(thirdLevelItemItem);
-				});
-
-			Assert.AreEqual(3, DictionaryDetailsController.FlattenPossibilityList(theList.PossibilitiesOS).Count);
-		}
-
-		[Test]
 		public void GetListItems()
 		{
-			var complexCount = DictionaryDetailsController.FlattenPossibilityList(
-				Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS).Count;
-			var variantCount = DictionaryDetailsController.FlattenPossibilityList(
-				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Count;
+			var complexCount = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Count;
+			var variantCount = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Count;
 
 			var listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Complex, complexCount + 1); // +1 for <None> element
 			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[0].Text);

@@ -576,7 +576,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ListViewItem> GetComplexFormTypes()
 		{
-			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoComplexFormType + ">")
 			{
 				Checked = true,
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ListViewItem> GetVariantTypes()
 		{
-			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoVariantType + ">")
 			{
 				Checked = true,
@@ -597,26 +597,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Flattens hierarchy, sorts by name, and converts to ListViewItems</summary>
-		private static List<ListViewItem> FlattenSortAndConvertList(IFdoOwningSequence<ICmPossibility> sequence)
+		private static List<ListViewItem> FlattenSortAndConvertList(ICmPossibilityList sequence)
 		{
-			var result = FlattenPossibilityList(sequence);
+			var result = sequence.ReallyReallyAllPossibilities.ToList(); // flatten list
 			result.Sort(ComparePossibilitiesByName);
 			return result.Select(item => new ListViewItem(item.Name.BestAnalysisVernacularAlternative.Text)
 			{
 				Checked = true,
 				Tag = item.Guid.ToString()
 			}).ToList();
-		}
-
-		internal static List<ICmPossibility> FlattenPossibilityList(IFdoOwningSequence<ICmPossibility> sequence)
-		{
-			var list = sequence.ToList();
-			foreach (var poss in sequence)
-			{
-				// Recurse to get all nested items
-				list.AddRange(FlattenPossibilityList(poss.SubPossibilitiesOS));
-			}
-			return list;
 		}
 
 		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once. It

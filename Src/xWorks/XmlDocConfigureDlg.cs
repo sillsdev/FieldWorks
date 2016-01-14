@@ -619,16 +619,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ICmPossibility> GetSortedFlattenedVariantTypeList()
 		{
-			var result = FlattenPossibilityList(
-				m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
+			var result = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.ToList();
 			result.Sort(ComparePossibilitiesByName);
 			return result;
 		}
 
 		private List<ICmPossibility> GetSortedFlattenedComplexFormTypeList()
 		{
-			var result = FlattenPossibilityList(
-				m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
+			var result = m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToList();
 			result.Sort(ComparePossibilitiesByName);
 			return result;
 		}
@@ -653,17 +651,6 @@ namespace SIL.FieldWorks.XWorks
 				index = 0;
 			}
 			ltn.EntryTypeList[index].Name = m_noVariantTypeLabel;
-		}
-
-		internal static List<ICmPossibility> FlattenPossibilityList(IEnumerable<ICmPossibility> sequence)
-		{
-			var list = sequence.ToList();
-			foreach (var poss in sequence)
-			{
-				// Need to get all nested items
-				list.AddRange(FlattenPossibilityList(poss.SubPossibilitiesOS));
-			}
-			return list;
 		}
 		#endregion // Constructor, Initialization, etc.
 
