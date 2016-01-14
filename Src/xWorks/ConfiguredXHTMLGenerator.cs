@@ -1107,6 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 
 			writer.WriteStartElement(GetElementNameForProperty(config));
 			WriteCollectionItemClassAttribute(config, writer);
+			writer.WriteAttributeString("entryguid", ((ICmObject)item).Owner.Guid.ToString());
 			if (config.Children != null)
 			{
 				foreach (var child in config.Children)
@@ -1117,7 +1118,6 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-
 			writer.WriteEndElement();
 			// close out the sense wrapping
 			if (config.Children.Count != 0)

@@ -2030,6 +2030,49 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_SenseContentWithGuid()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache,
+																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry(Cache);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
+				XHTMLWriter.Flush();
+				const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
+				// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
+			}
+		}
+
 		public void GenerateXHTMLForEntry_ExampleAndTranslationAreGenerated()
 		{
 			var translationNode = new ConfigurableDictionaryNode
