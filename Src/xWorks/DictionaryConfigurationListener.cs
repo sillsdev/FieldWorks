@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -216,15 +216,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Returns the current Dictionary or ReversalIndex configuration file
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <returns></returns>
-		public static string GetCurrentConfiguration(Mediator mediator)
+		public static string GetCurrentConfiguration(Mediator mediator, string currentDirectoryPart = null)
 		{
 			string currentConfig = null;
-			var currentTool = GetDictionaryConfigurationBaseType(mediator);
-			var currentDirectoryPart = currentTool == "Dictionary"
-				? DictionaryConfigurationDirectoryName
-				: ReversalIndexConfigurationDirectoryName;
+			if (currentDirectoryPart == null)
+			{
+				currentDirectoryPart = GetInnermostConfigurationDirectory(mediator);
+			}
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
 			if(mediator != null && mediator.PropertyTable != null)
@@ -237,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
 				{
-					string defaultPublication = currentTool == "Dictionary" ? "Root" : "AllReversalIndexes";
+					string defaultPublication = currentDirectoryPart == DictionaryConfigurationDirectoryName ? "Root" : "AllReversalIndexes";
 					// If no configuration has yet been selected or the previous selection is invalid,
 					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
 					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)

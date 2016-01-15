@@ -1,4 +1,4 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,10 +50,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (!String.IsNullOrEmpty(m_selectedConfiguration))
+				if (!string.IsNullOrEmpty(m_selectedConfiguration))
 					return m_selectedConfiguration;
-				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(Mediator);
-				return Configurations.Values.First(config => pathToCurrentConfiguration.Equals(config.FilePath)).Label;
+				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(Mediator,
+					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
+				return curConfig == null ? null : curConfig.Label;
 			}
 			set { m_selectedConfiguration = value; }
 		}

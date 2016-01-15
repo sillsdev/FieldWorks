@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.XWorks
 				switch (ft)
 				{
 					case FxtTypes.kftConfigured:
-						break;
+						break; // TODO pH 2016.01: set tool here?
 					case FxtTypes.kftReversal:
 						tool = "reversalToolEditComplete";
 						break;
