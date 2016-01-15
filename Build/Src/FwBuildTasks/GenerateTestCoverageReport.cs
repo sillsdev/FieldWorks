@@ -64,7 +64,7 @@ namespace FwBuildTasks
 				StartInfo =
 				{
 					FileName = DotCoverExe,
-					Arguments = "analyse " +  coverPath,
+					Arguments = "cover " +  coverPath,
 					RedirectStandardOutput = true,
 					RedirectStandardError = true,
 					//required to allow redirects
@@ -83,8 +83,8 @@ namespace FwBuildTasks
 
 				Log.LogMessage(MessageImportance.Low, msg);
 
-				if (process.Start())
-					process.WaitForExit(30 * 60 * 000);
+				process.Start();
+				process.WaitForExit(30 * 60 * 1000);
 			}
 			catch (Exception ex)
 			{

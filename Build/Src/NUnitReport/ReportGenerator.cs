@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -213,43 +214,101 @@ namespace NUnitReport
 
 		private void CompileDotCoverReport()
 		{
-			var coveredAssemblies = 0;
-			var coveredStatements = 0;
-			var totalStatements = 0;
-			var coverageMap = new SortedDictionary<string, string>();
-			foreach (var projName in Projects)
-			{
-				var coverResultsFile = BuildCoverReportName(projName);
-				var doc = XDocument.Load(coverResultsFile);
-				var assemblyElement = doc.Root.Descendants("Assembly").FirstOrDefault();
-				if (assemblyElement == null) // some results files have no assembly elements in them
-					continue;
-				coveredStatements += int.Parse(assemblyElement.Attribute("CoveredStatements").Value);
-				totalStatements += int.Parse(assemblyElement.Attribute("TotalStatements").Value);
-				var assemblyKey = string.Format("{0, 2}{1}", int.Parse(assemblyElement.Attribute("CoveragePercent").Value),
-					assemblyElement.Attribute("Name").Value);
-				coverageMap[assemblyKey] = assemblyElement.ToString();
-				++coveredAssemblies;
-			}
-			var commentLine = string.Format("<!-- Coverage stats for {0} Assemblies -->", coveredAssemblies);
-			var fullReport = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine + commentLine + Environment.NewLine
-				+ string.Format("<Root CoveredStatements=\"{0}\" TotalStatements=\"{1}\" CoveragePercent=\"{2}\" ReportType=\"Xml\" DotCoverVersion=\"10.0.1\">",
-					coveredStatements, totalStatements, (int)(coveredStatements * 100.0 / totalStatements)) + Environment.NewLine + GenerateSortedAssemblyReports(coverageMap) + Environment.NewLine + "</Root>";
-			var fullDoc = XDocument.Parse(fullReport);
-			var coverageReportPath = Path.Combine(OutputDir, "CoverageReport.xml");
-			fullDoc.Save(coverageReportPath);
-			Console.WriteLine("Coverage report generated to: {0}", coverageReportPath);
+			string mergeCoverageSettings;
+			var coverageReportPath = CreateMergeCoverageSettingsFile(out mergeCoverageSettings);
+			RunDotCover(mergeCoverageSettings, coverageReportPath);
 		}
 
-		private string GenerateSortedAssemblyReports(SortedDictionary<string, string> coverageMap)
+		private string CreateMergeCoverageSettingsFile(out string mergeCoverageSettings)
 		{
-			var fullReport = "";
-			foreach (var assemblyReport in coverageMap.Values)
+			var mergeCoverageXml = new XDocument();
+			var root = new XElement("ReportParams");
+			mergeCoverageXml.Add(root);
+			foreach (var projName in Projects)
 			{
-				fullReport += assemblyReport;
-				fullReport += Environment.NewLine;
+				var source = new XElement("Source");
+				root.Add(source);
+				var coverResultsFile = BuildCoverReportName(projName);
+				source.Add(new XText(coverResultsFile));
 			}
-			return fullReport;
+			var coverageReportPath = Path.Combine(OutputDir, "MergedCoverageReports.xml");
+			var output = new XElement("Output");
+			root.Add(output);
+			output.Add(new XText(coverageReportPath));
+			mergeCoverageSettings = Path.Combine(OutputDir, "MergeProjectSettings.xml");
+			mergeCoverageXml.Save(mergeCoverageSettings);
+			return coverageReportPath;
+		}
+
+		private string CreateMergedReportSettingsFile(string mergeCoverageSettings)
+		{
+			var coverageReportSettings = new XDocument();
+			var root = new XElement("ReportParams");
+			coverageReportSettings.Add(root);
+			var source = new XElement("Source");
+			root.Add(source);
+			source.Add(new XText(mergeCoverageSettings));
+			var coverageReportPath = Path.Combine(OutputDir, "CoverageResults.xml");
+			var output = new XElement("Output");
+			root.Add(output);
+			output.Add(new XText(coverageReportPath));
+			var coverageResults = Path.Combine(OutputDir, "MergedProjectReportSettings.xml");
+			coverageReportSettings.Save(coverageResults);
+			return coverageResults;
+		}
+
+		private void RunDotCover(string mergeFile, string resultsFile)
+		{
+			var process = new Process
+			{
+				StartInfo =
+				{
+					FileName = "dotcover",
+					Arguments = "merge " + mergeFile,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true,
+					//required to allow redirects
+					UseShellExecute = false,
+					// do not start process in new window
+					CreateNoWindow = true,
+					WorkingDirectory = Path.GetDirectoryName(mergeFile)
+				}
+			};
+			try
+			{
+				process.Start();
+				process.WaitForExit(30 * 60 * 1000);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(String.Format("Got exception starting {0}", process.StartInfo.FileName), ex);
+			}
+			Console.WriteLine("Finished first process, beginning the second.");
+			var combinedReportFile = CreateMergedReportSettingsFile(resultsFile);
+			process = new Process
+			{
+				StartInfo =
+				{
+					FileName = "dotcover",
+					Arguments = "r " + combinedReportFile,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true,
+					//required to allow redirects
+					UseShellExecute = false,
+					// do not start process in new window
+					CreateNoWindow = true,
+					WorkingDirectory = Path.GetDirectoryName(mergeFile)
+				}
+			};
+			try
+			{
+				process.Start();
+				process.WaitForExit(30 * 60 * 1000);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(String.Format("Got exception starting {0}", process.StartInfo.FileName), ex);
+			}
 		}
 
 		private string BuildCoverReportName(string projName)
