@@ -190,5 +190,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				textBoxAfter.Location = new Point(textBoxAfter.Location.X, textBoxAfter.Location.Y - delta);
 			}
 		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			OnResize(null);
+		}
 	}
 }

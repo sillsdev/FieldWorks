@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			//Minor Entry doesn't need Surrounding Context(Before/After)
-			if (convertedNode.Label.IndexOf("Minor Entry", StringComparison.Ordinal) == 0)
+			if (convertedNode.Label.ToLower().StartsWith("minor entry"))
 				convertedNode.After = convertedNode.Before = null;
 
 			// if the new defaults have children and we don't they need to be added

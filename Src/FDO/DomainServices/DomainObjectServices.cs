@@ -2453,7 +2453,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			//Create new Configuration File
 			foreach (var curWs in analysisWsArray)
 			{
-				if (curWs.ToLower().IndexOf("audio", StringComparison.Ordinal) > 0)
+				if (curWs.ToLower().Contains("audio"))
 					continue;
 
 				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;

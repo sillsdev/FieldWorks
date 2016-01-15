@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
 			foreach (var wsObj in currentAnalysisWsList.Where(wsObj => wsObj.DisplayLabel == currWsName))
 			{
-				if (wsObj == null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) >= 0) return;
+				if (wsObj.DisplayLabel.ToLower().Contains("audio")) return;
 
 				var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 				var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
