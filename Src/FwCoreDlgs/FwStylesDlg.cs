@@ -977,7 +977,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the m_btnHelp control.
+		/// Handles a Click event
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event

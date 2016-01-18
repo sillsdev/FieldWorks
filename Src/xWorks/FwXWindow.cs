@@ -4,10 +4,6 @@
 //
 // File: FwXWindow.cs
 // Responsibility: FLEx Team
-//
-// <remarks>
-//	This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
-// </remarks>
 
 using System;
 using System.Linq;
@@ -49,9 +45,8 @@ using NetSparkle;
 
 namespace SIL.FieldWorks.XWorks
 {
-
 	/// <summary>
-	/// Summary description for FwXWindow.
+	/// This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
 	/// </summary>
 	public class FwXWindow : XWindow, IFwMainWnd, ISettings, IRecordListOwner,
 		IMainWindowDelegatedFunctions, IMainWindowDelegateCallbacks, IFindAndReplaceContext
@@ -1830,9 +1825,11 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFormatStyle(object args)
 		{
+			var stylesXmlAccessor = new LexText.FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA);
+
 			ShowStylesDialog(ParaStyleListHelper != null ? ParaStyleListHelper.SelectedStyle.Name : null,
 				CharStyleListHelper != null ? CharStyleListHelper.SelectedStyle.Name : null,
-				null);
+				stylesXmlAccessor.SetPropsToFactorySettings);
 			return true;
 		}
 

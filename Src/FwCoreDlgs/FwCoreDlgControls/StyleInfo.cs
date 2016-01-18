@@ -946,6 +946,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void ResetAllPropertiesToFactoryValues(Action SetFactoryPropertyValues)
 		{
+
 			SetAllPropertiesToInherited();
 			SetFactoryPropertyValues();
 			m_isModified = false;
