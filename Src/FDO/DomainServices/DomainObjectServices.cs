@@ -2477,14 +2477,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						() => GetOrCreateWsGuid(wsObj, cache));
 				}
 			}
-			//Delete old Configuration File
+			//Delete old Configuration Files for WS's that are no longer part of this project
 			if (!Directory.Exists(newWsFilePath))
 				return;
 			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
 			foreach (var file in files)
 			{
 				var fileName = Path.GetFileNameWithoutExtension(file);
-				if (fileName != null && fileName != allIndexesFileName && !wsList.Any(ws => fileName.Contains(ws)))
+				if (fileName != null && !fileName.Contains(allIndexesFileName) && !wsList.Any(ws => fileName.Contains(ws)))
 				{
 					File.Delete(file);
 				}

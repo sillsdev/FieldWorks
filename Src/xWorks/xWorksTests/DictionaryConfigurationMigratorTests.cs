@@ -1611,6 +1611,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		[TestCase("publishReversal", "All Reversal Indexes (original)", "AllReversalIndexes")]
+		[TestCase("publishReversal#All RU93", "Copy of All Reversal Indexes", "Copy of All Reversal Indexes-AllReversalIndexes-#All RU93")]
+		[TestCase("publishReversal-en", "English (original)", "English")]
+		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-English-#Engli704")]
+		public void CopyDefaultsIntoConvertedModel_PicksSensibleNameForReversalIndexes(string oldLayout, string oldLabel, string newFileName)
+		{
+			var node = new ConfigurableDictionaryNode { Label = "Reversal Entry" };
+			var model = new DictionaryConfigurationModel{ Version = -1, Label = oldLabel, Parts = new List<ConfigurableDictionaryNode> { node } };
+			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+			m_migrator.CopyNewDefaultsIntoConvertedModel(oldLayout, model);
+			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
+		}
+
 		private DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
 		{
 			var headwordNode = new ConfigurableDictionaryNode

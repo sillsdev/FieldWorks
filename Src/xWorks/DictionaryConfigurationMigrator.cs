@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
 		/// interfaces, so we store it as a member variable.
 		/// </summary>
-		private string m_configDirSuffixBeingMigrated;
+		internal string m_configDirSuffixBeingMigrated;
 		/// <summary>
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
 		/// Value is Dictionary of custom fields: Key is custom field Label, Value is custom field Name
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and fill in data that we did not convert for some reason. It will use the current shipping
 		/// default model for the layout which the old model used. (eg. publishStem)
 		/// </summary>
-		private void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
+		internal void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
 			if(convertedModel.Version == -1)
 			{
@@ -214,13 +214,13 @@ namespace SIL.FieldWorks.XWorks
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						break;
 					}
-					case "publishReversal" :
+					case "publishReversal":
 					{
 						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 						break;
 					}
-					default :
+					default:
 					{
 						// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
 						// We will write out the new configuration to a file which uses what the user named it but preserving the integer
@@ -238,9 +238,25 @@ namespace SIL.FieldWorks.XWorks
 							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						}
-						else if(layout.StartsWith("publishReversal")) // probably a reversal index for a specific language
+						else if(layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
 						{
-							var customFileName = string.Format("{0}{1}", layout, extension); // TODO pH 2015.07: better name
+							// Label similar to publishReversal-en#Engli704, including one or both suffixes
+							var languageSuffixIndex = layout.IndexOf('-') + 1;
+							string reversalIndex;
+							if (languageSuffixIndex > 0)
+							{
+								var languageCode = customSuffixIndex > 0
+									? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
+									: layout.Substring(languageSuffixIndex);
+								reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
+							}
+							else
+							{
+								reversalIndex = "AllReversalIndexes";
+							}
+							var customFileName = customSuffixIndex > 0
+								? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
+								: string.Format("{0}{1}", reversalIndex, extension);
 							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 						}
