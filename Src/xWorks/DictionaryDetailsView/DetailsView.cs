@@ -88,18 +88,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			set
 			{
+				panelOptions.SuspendLayout();
 				if(m_OptionsView != null)
 				{
 					panelOptions.Controls.Remove(m_OptionsView);
 					m_OptionsView.Dispose();
 				}
 				m_OptionsView = value;
-				if(value != null)
+				if(m_OptionsView != null)
 				{
+					m_OptionsView.Dock = DockStyle.Fill;
+					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
-					value.Dock = DockStyle.Fill;
-					value.Location = new Point(0, 0);
+					panelOptions.Size = new Size (360, 200);
 				}
+				panelOptions.ResumeLayout();
 			}
 		}
 
@@ -172,13 +175,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-			var delta = textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
-			if (delta > 0)
+			int m_OkCancelPanel_Height = 35;
+			var delta = m_OkCancelPanel_Height + textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
+			if (delta <= 0)
 			{
-				var newSize = new Size(panelOptions.Size.Width, panelOptions.Size.Height - delta);
-				if (newSize.Height <= 0)	// sanity check
-					return;
-				panelOptions.Size = newSize;
 				labelStyle.Location = new Point(labelStyle.Location.X, labelStyle.Location.Y - delta);
 				dropDownStyle.Location = new Point(dropDownStyle.Location.X, dropDownStyle.Location.Y - delta);
 				buttonStyles.Location = new Point(buttonStyles.Location.X, buttonStyles.Location.Y - delta);
