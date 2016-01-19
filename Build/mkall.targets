@@ -534,7 +534,7 @@
 						 Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
 	</Target>
 
-	<Target Name="setKeysInHKCU">
+	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)."/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootCodeDir"
