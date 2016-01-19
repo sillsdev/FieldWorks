@@ -327,11 +327,18 @@ namespace SIL.FieldWorks.XWorks
 				Debug.Assert(TryClerkProvidingRootObject(out clerkProvidingRootObject),
 					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
 			}
-
-			StoreClerkInPropertyTable();
 #endif
 
+#if RANDYTODO
+			// TODO: This may need to be restored, if we end up not being able to create a clerk each time it is used.
+			// TODO: It may prove too costly to collect, sort and filter the items each time a clerk is created.
+			StoreClerkInPropertyTable();
+
+			// TODO: In origianl, optimized, version, we don't load the data until the clerk is used in a newly activated window.
 			SetupDataContext(false);
+#else
+			SetupDataContext(true);
+#endif
 		}
 
 		#endregion

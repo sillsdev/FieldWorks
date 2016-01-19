@@ -259,9 +259,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Browse\toolConfiguration.xml">
       <Link>XML\Notebook\Browse\toolConfiguration.xml</Link>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Document\toolConfiguration.xml">
-      <Link>XML\Notebook\Document\toolConfiguration.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
       <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
     </None>
