@@ -219,11 +219,23 @@ manpage-clean:
 
 install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Create directories
+	# NOTE: we create two odd looking directories here (/usr/lib/tmp/FDO... and
+	# /usr/share/tmp/FW...). This is needed to separate the files that go into
+	# libfieldworks-fdo from the files that go into fieldworks-applications. Files in
+	# /usr/share/tmp/FW/fieldworks will go into /usr/share/fieldworks in the
+	# fieldworks-applications package but not at all into the libfieldworks-fdo package,
+	# and files in /usr/lib/tmp/FDO/fieldworks will go into /usr/lib/fieldworks in the
+	# libfieldworks-fdo package but not at all into the fieldworks-applications package.
+	# On the user's machine the files from /usr/lib/tmp/FDO/fieldworks and /usr/lib/fieldworks
+	# will end up in the same directory (/usr/lib/fieldworks), and files from
+	# /usr/share/tmp/FW/fieldworks and /usr/share/fieldworks will end up in
+	# /usr/share/fieldworks.
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/pkgconfig
 	install -d $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
+	install -d $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
@@ -247,9 +259,11 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	install -m 644 Lib/linux/libfieldworks-fdo.pc $(DESTDIR)/usr/lib/pkgconfig
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	# Install content and plug-ins
-	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
+	install -m 644 DistFiles/*.{xml,map,tec,dtd} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Icu54,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
+	install -m 644 DistFiles/*.{pdf,txt,reg} $(DESTDIR)/usr/share/tmp/FW/fieldworks
+	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/tmp/FW/fieldworks
+	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
@@ -257,7 +271,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 		rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
 	# Handle the Converter files
-	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
+	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
@@ -288,7 +302,7 @@ install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
 uninstall: uninstall-menuentries
-	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
+	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/lib/tmp/FDO/fieldworks $(DESTDIR)/usr/share/fieldworks $(DESTDIR)/usr/share/tmp/FW/fieldworks
 
 uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
@@ -688,10 +702,6 @@ Flex-Nant-Build:
 
 Flex-Nant-Run:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe /property:action=test)
-
-## InstallLanguage.exe is redundant now. Included for now to make test results match windows tests.
-##InstallLanguage-Nant:
-##	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe InstallLanguage-nodep)
 
 TE: linktoOutputDebug tlbs-copy teckit externaltargets Te-Nant-Build install install-strings ComponentsMap-nodep Te-Nant-Run
 
