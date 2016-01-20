@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -80,6 +81,8 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
+			if (m_migrator != null)
+				m_migrator.SetTestLogger = null;
 			m_cf1.Dispose();
 			m_cf2.Dispose();
 			m_cf3.Dispose();
@@ -611,8 +614,12 @@ namespace SIL.FieldWorks.XWorks
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsDiscardedForFalseDuplicate()
 		{
 			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1.0", IsDuplicate = true, Label = "A b c D e f" };
+			ConfigurableDictionaryNode configNode;
 			// SUT
-			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
+			}
 			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
 			Assert.IsNullOrEmpty(configNode.LabelSuffix, "suffix incorrectly migrated");
 			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
@@ -958,7 +965,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "New node from base was not merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, "Child", "new node inserted out of order");
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, "Child2", "New node from base was not merged properly");
@@ -979,7 +989,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, convertedChildNodeTwo.Label, "order of old model was not retained");
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, convertedChildNode.Label, "Nodes incorrectly merged");
@@ -999,7 +1012,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -1023,7 +1039,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -1051,7 +1070,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "label was not retained");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
 			Assert.AreEqual(CustomFieldOriginalName, customNode.FieldDescription, "Custom node's Field should have been loaded from the Cache");
@@ -1074,7 +1096,12 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel)); // TODO pH 2014.12: check that an error was reported
+			using (var logger = m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+				Assert.IsTrue(logger.Content.StartsWith(
+					"Could not match 'Truly Custom' in defaults, and it is totally invalid.  Treating it as a custom field, but EXPECT TROUBLE LATER."));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -1097,7 +1124,10 @@ namespace SIL.FieldWorks.XWorks
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
 			// Ensure we don't throw because the parent node's label has been expanded.
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
 			Assert.AreEqual(3, convertedModel.Parts[0].Children.Count, "Nodes incorrectly merged");
 			Assert.IsTrue(customPersonNode.IsCustomField, "Custom atomic list reference field should be flagged as custom");
 			Assert.IsNotNull(customPersonNode.Children, "Custom atomic list reference field should have children (added)");
@@ -1479,7 +1509,10 @@ namespace SIL.FieldWorks.XWorks
 				convertedGrammaticalInfoType.FilePath = convertedModelFile.Path;
 				var defaultGrammaticalInfoType = BuildCurrentDefaultGrammaticalInfoNodes();
 
-				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedGrammaticalInfoType, defaultGrammaticalInfoType);
+				using (m_migrator.SetTestLogger = new SimpleLogger())
+				{
+					m_migrator.CopyNewDefaultsIntoConvertedModel(convertedGrammaticalInfoType, defaultGrammaticalInfoType);
+				}
 				convertedGrammaticalInfoType.Save();
 				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Features']");
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Inflection Features']", 1);

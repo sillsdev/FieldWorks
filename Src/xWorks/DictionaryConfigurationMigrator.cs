@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
-		private readonly SimpleLogger m_logger = new SimpleLogger();
+		private SimpleLogger m_logger;
 		/// <summary>
 		/// The innermost directory of the configurations presently being migrated.
 		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
@@ -63,41 +63,48 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void MigrateOldConfigurationsIfNeeded()
 		{
-			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-			if (ConfigsNeedMigrating())
+			using (m_logger = new SimpleLogger())
 			{
-				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
-					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
+				if (ConfigsNeedMigrating())
+				{
+					m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
+						versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+					var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
-				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
-				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}", DateTime.Now.ToString("h:mm:ss")));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					m_logger.WriteLine("Migrating dictionary configurations");
+					m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
+					Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
+						Cache.ActionHandlerAccessor,
+						() =>
+						{
+							var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
+							LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+						});
+					m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
+						DateTime.Now.ToString("h:mm:ss")));
+					m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+					Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
+						Cache.ActionHandlerAccessor,
+						() =>
+						{
+							var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
+							LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+						});
+				}
+				if (m_logger.HasContent)
+				{
+					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
+						DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					Directory.CreateDirectory(configurationDir);
+					File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+				}
 			}
-			if(m_logger.HasContent)
-			{
-				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
-					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-				Directory.CreateDirectory(configurationDir);
-				File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
-			}
+			m_logger = null;
 		}
 
 		public void LogConversionError(string errorLog)
@@ -123,6 +130,7 @@ namespace SIL.FieldWorks.XWorks
 		/// In the old system, Dictionary and Reversal Index configurations were stored across a hairball of *.fwlayout files. Rather than trying to
 		/// determine what the user has configured, if the user has configured anything, migrate everything.
 		/// </summary>
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal bool ConfigsNeedMigrating()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
@@ -245,6 +253,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
 		{
 			var ver = convertedModel.Version;
@@ -283,6 +292,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal void CopyDefaultsIntoMinorEntryNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode,
 			DictionaryNodeListOptions.ListIds complexOrVariant, int version)
 		{
@@ -294,11 +304,13 @@ namespace SIL.FieldWorks.XWorks
 			CopyDefaultsIntoConfigNode(convertedNode, currentDefaultNode, version);
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal bool HasComplexFormTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
 		{
 			return AvailableComplexFormTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal IEnumerable<string> AvailableComplexFormTypes
 		{
 			get
@@ -308,12 +320,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal bool HasVariantTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
 		{
 			return AvailableVariantTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
 		}
 
-		internal IEnumerable<string> AvailableVariantTypes
+		private IEnumerable<string> AvailableVariantTypes
 		{
 			get
 			{
@@ -562,7 +575,7 @@ namespace SIL.FieldWorks.XWorks
 			return path;
 		}
 
-		internal static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
+		private static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
 		{
 			var path = string.Format("{0} ({1})", child.Label, child.DupString);
 			var node = child;
@@ -694,6 +707,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(XmlDocConfigureDlg.LayoutTreeNode node)
 		{
 			var convertedNode =  new ConfigurableDictionaryNode
@@ -971,5 +985,13 @@ namespace SIL.FieldWorks.XWorks
 			//Not important for migration - Handled separately by the new configuration dialog
 		}
 		#endregion
+
+		/// <summary>
+		/// Only use for tests which don't enter the migrator class at the standard entry point
+		/// </summary>
+		internal SimpleLogger SetTestLogger
+		{
+			set { m_logger = value; }
+		}
 	}
 }

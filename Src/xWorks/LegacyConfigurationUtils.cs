@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// configuration settings to new formats.
 	/// <note>Most of these methods were moved here from the XmlDocConfigureDlg class</note>
 	/// </summary>
-	static public class LegacyConfigurationUtils
+	public static class LegacyConfigurationUtils
 	{
 		internal static void BuildTreeFromLayoutAndParts(XmlNode configurationLayoutsNode, ILayoutConverter converter)
 		{
