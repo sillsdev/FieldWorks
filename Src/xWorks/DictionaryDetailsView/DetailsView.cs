@@ -88,7 +88,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			set
 			{
-				panelOptions.SuspendLayout();
 				if(m_OptionsView != null)
 				{
 					panelOptions.Controls.Remove(m_OptionsView);
@@ -100,9 +99,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_OptionsView.Dock = DockStyle.Fill;
 					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
-					panelOptions.Size = new Size (360, 200);
+					panelOptions.Size = new Size(335, 200);
 				}
-				panelOptions.ResumeLayout();
 			}
 		}
 
@@ -175,8 +173,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-			int m_OkCancelPanel_Height = 35;
-			var delta = m_OkCancelPanel_Height + textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
+			// The DetailsView panel is currently drawing behind the buttonLayoutPanel_Height, which includes the OK Cancel buttons.
+			// To offset the height properly, we need to set this value dependant on whether it is initialized with SurroundingCharsVisible or not.
+			int buttonLayoutPanel_Height = 0;
+			if (!SurroundingCharsVisible)
+				buttonLayoutPanel_Height = 35;
+			var delta = buttonLayoutPanel_Height + textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
 			if (delta <= 0)
 			{
 				labelStyle.Location = new Point(labelStyle.Location.X, labelStyle.Location.Y - delta);

@@ -39,11 +39,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_mediator = mediator;
 			InitializeComponent();
+
 			m_preview.Dock = DockStyle.Fill;
 			m_preview.Location = new Point(0, 0);
 			previewDetailSplit.Panel1.Controls.Add(m_preview);
 			manageConfigs_treeDetailButton_split.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
+			this.MinimumSize = new Size(m_grpConfigurationManagement.Width + 3, manageConfigs_treeDetailButton_split.Height);
 
 			m_helpTopicProvider = mediator.HelpTopicProvider;
 			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
