@@ -253,7 +253,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
