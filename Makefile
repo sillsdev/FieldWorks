@@ -260,7 +260,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{xml,map,tec,dtd} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Icu54,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Icu54,Templates} $(DESTDIR)/usr/share/fieldworks
 	install -m 644 DistFiles/*.{pdf,txt,reg} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/tmp/FW/fieldworks
