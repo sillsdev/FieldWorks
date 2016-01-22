@@ -214,9 +214,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the current Dictionary or ReversalIndex configuration file
+		/// Returns the current Dictionary or ReversalIndex configuration file.  This may cause a redisplay
+		/// of the XHTML view.
 		/// </summary>
 		public static string GetCurrentConfiguration(Mediator mediator, string currentDirectoryPart = null)
+		{
+			return GetCurrentConfiguration(mediator, true, currentDirectoryPart);
+		}
+
+		/// <summary>
+		/// Returns the current Dictionary or ReversalIndex configuration file.  If fUpdate is true, this may
+		/// cause a redisplay of the XHTML view.
+		/// </summary>
+		public static string GetCurrentConfiguration(Mediator mediator, bool fUpdate, string currentDirectoryPart = null)
 		{
 			string currentConfig = null;
 			if (currentDirectoryPart == null)
@@ -248,7 +258,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						currentConfig = Path.Combine(GetDefaultConfigurationDirectory(currentDirectoryPart), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					}
-					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
+					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, fUpdate);
 				}
 			}
 			return currentConfig;

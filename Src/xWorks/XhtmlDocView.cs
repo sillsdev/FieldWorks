@@ -18,6 +18,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -196,14 +197,18 @@ namespace SIL.FieldWorks.XWorks
 			// Grab the selected publication and make sure that we grab a valid configuration for it.
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
-			var pubName = GetCurrentPublication();
-			var currentConfig = GetCurrentConfiguration();
-			var validConfiguration = GetValidConfigurationForPublication(pubName);
-			if(validConfiguration != currentConfig)
-			{
-				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
-			}
+			var validConfiguration = SetCurrentDictionaryPublicationLayout();
 			UpdateContent(PublicationDecorator, validConfiguration);
+		}
+
+		private string SetCurrentDictionaryPublicationLayout()
+		{
+			var pubName = GetCurrentPublication();
+			var currentConfiguration = GetCurrentConfiguration(false);
+			var validConfiguration = GetValidConfigurationForPublication(pubName);
+			if (validConfiguration != currentConfiguration)
+				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, false);
+			return validConfiguration;
 		}
 
 		/// <summary>
@@ -215,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			List<string> inConfig;
 			List<string> notInConfig;
 			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-														GetCurrentConfiguration(),
+														GetCurrentConfiguration(false),
 														out inConfig, out notInConfig);
 			foreach(var pub in inConfig)
 			{
@@ -417,8 +422,8 @@ namespace SIL.FieldWorks.XWorks
 		internal string GetValidConfigurationForPublication(string publication)
 		{
 			if(publication == xWorksStrings.AllEntriesPublication)
-				return GetCurrentConfiguration();
-			var currentConfig = GetCurrentConfiguration();
+				return GetCurrentConfiguration(false);
+			var currentConfig = GetCurrentConfiguration(false);
 			var allConfigurations = GatherBuiltInAndUserConfigurations();
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
@@ -443,24 +448,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "SelectedPublication":
 					var pubDecorator = PublicationDecorator;
-					var pubName = GetCurrentPublication();
-					var currentConfiguration = GetCurrentConfiguration();
-					var validConfiguration = GetValidConfigurationForPublication(pubName);
-					if(validConfiguration != currentConfiguration)
-					{
-						m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
-					}
+					var validConfiguration = SetCurrentDictionaryPublicationLayout();
 					UpdateContent(pubDecorator, validConfiguration);
 					break;
 				case "DictionaryPublicationLayout":
 				case "ReversalIndexPublicationLayout":
-					var currentConfig = GetCurrentConfiguration();
-					currentConfig = GetCurrentConfigForReversalIndex(name, currentConfig);
+					var currentConfig = GetCurrentConfiguration(false);
+					if (name == "ReversalIndexPublicationLayout")
+						currentConfig = GetCurrentConfigForReversalIndex(currentConfig);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if(validPublication != currentPublication)
 					{
-						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
+						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
 					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
@@ -474,19 +474,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
 		/// </summary>
-		/// <param name="name">Name of the property which affected say "ReversalIndexPublicationLayout"</param>
 		/// <param name="currentConfig">Configuration which is from DictionaryPublicationLayout, Which may be default</param>
 		/// <returns></returns>
-		private string GetCurrentConfigForReversalIndex(string name, string currentConfig)
+		private string GetCurrentConfigForReversalIndex(string currentConfig)
 		{
-			if (name != "ReversalIndexPublicationLayout") return currentConfig;
 			var allConfigurations = GatherBuiltInAndUserConfigurations();
 			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
 			var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
 			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
 			{
 				currentConfig = allConfigurations[currentReversalIndex.ShortName];
-				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
+				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, false);
 				SetReversalIndexOnPropertyDlg();
 			}
 			return currentConfig;
@@ -516,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void OnMasterRefresh(object sender)
 		{
-			var currentConfig = GetCurrentConfiguration();
+			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 			if (validPublication != currentPublication)
@@ -579,9 +577,9 @@ namespace SIL.FieldWorks.XWorks
 																			  xWorksStrings.AllEntriesPublication);
 		}
 
-		private string GetCurrentConfiguration()
+		private string GetCurrentConfiguration(bool fUpdate)
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator);
+			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, fUpdate);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator
@@ -620,7 +618,7 @@ namespace SIL.FieldWorks.XWorks
 			var maxViewWidth = Width/2 - kSpaceForMenuButton;
 			var allConfigurations = GatherBuiltInAndUserConfigurations();
 			string curViewName;
-			var currentConfig = GetCurrentConfiguration();
+			var currentConfig = GetCurrentConfiguration(false);
 			if(allConfigurations.ContainsValue(currentConfig))
 			{
 				curViewName = allConfigurations.First(item => item.Value == currentConfig).Key;

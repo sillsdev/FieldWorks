@@ -355,6 +355,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						docView.SetConfigObjectName("Dictionary");
 						docView.SetMediator(m_mediator);
+						m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 						m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
@@ -474,6 +475,7 @@ namespace SIL.FieldWorks.XWorks
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
 					docView.SetConfigObjectName("Dictionary");
+					m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 					m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path);
 					docView.SetMediator(m_mediator);
 					// SUT
