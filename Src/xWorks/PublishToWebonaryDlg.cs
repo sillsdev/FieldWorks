@@ -7,9 +7,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 
@@ -21,7 +24,8 @@ namespace SIL.FieldWorks.XWorks
 	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-
+		private const string reversalType = "Reversal Index";
+		private const string dictionaryType = "Dictionary";
 		private readonly PublishToWebonaryController m_controller;
 
 		/// <summary>
@@ -59,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 				object szWnd = Mediator.PropertyTable.GetValue("PublishToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
-					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
 					ScreenUtils.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
@@ -67,8 +71,65 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
-			// the output log area be the vertically growing control when a user increases the height of the dialog.
+			// the output log area be the vertically growing control when a user increases the height of the dialog
 			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+		}
+
+		private void UpdateEntriesToBePublishedLabel()
+		{
+			var clerk = Mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+			if (clerk != null)
+			{
+				int[] entriesToSave;
+				if (clerk.Id == "entries")
+				{
+					ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave, dictionaryType);
+				}
+				else
+				{
+					GetDictioneryEntriesfromNewClerk(Mediator, dictionaryType, out entriesToSave);
+					clerk.ActivateUI(true);
+				}
+				howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel, entriesToSave.Count(),
+					GetReversalentriesCount());
+			}
+		}
+
+		private int GetReversalentriesCount()
+		{
+			// TODO: we need to add some logic to retrive reversal entry based on Selected publication in future.
+
+			var mCache = (FdoCache)Mediator.PropertyTable.GetValue("cache");
+			var reversalrepo = mCache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
+			return reversalrepo.Select(repo => mCache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
+				.Where(reversalindex => reversalindex != null && GetSelectedReversals().Contains(reversalindex.ShortName))
+				.Sum(reversalindex => reversalindex.AllEntries.Count);
+		}
+
+		private void GetDictioneryEntriesfromNewClerk(Mediator mediator, string clerkType, out int[] entriesToSave)
+		{
+			RecordClerk newclerk = CreateClerkMatchingDictionaryType(mediator, clerkType);
+			newclerk.ActivateUI(true);
+			newclerk.UpdateList(true, true);
+			ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave, clerkType);
+		}
+
+		private RecordClerk CreateClerkMatchingDictionaryType(Mediator m_mediator, string dictionaryType)
+		{
+			XmlNode parameters = null;
+			var area = "lexicon";
+			var tool = "lexiconDictionary";
+			var entriestype = "entries";
+			if (dictionaryType == reversalType)
+			{
+				tool = "reversalToolEditComplete";
+				entriestype = "AllReversalEntries";
+			}
+			var collector = new XmlNode[1];
+			var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
+			m_mediator.SendMessage("GetContentControlParameters", parameter);
+			parameters = collector[0].SelectSingleNode("//parameters[@clerk='" + entriestype + "']");
+			return RecordClerkFactory.CreateClerk(m_mediator, parameters, true);
 		}
 
 		private void PopulatePublicationsList()
@@ -82,6 +143,16 @@ namespace SIL.FieldWorks.XWorks
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			PopulateConfigurationsListBySelectedPublication();
+		}
+
+		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateEntriesToBePublishedLabel();
+		}
+
+		private void reversalsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateEntriesToBePublishedLabel();
 		}
 
 		private void PopulateConfigurationsListBySelectedPublication()
@@ -195,7 +266,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_controller.PublishToWebonary(Model, this);
 		}
-
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{

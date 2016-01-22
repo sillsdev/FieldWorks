@@ -213,6 +213,7 @@ namespace SIL.FieldWorks.XWorks
 			this.configurationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.configurationBox.FormattingEnabled = true;
 			this.configurationBox.Name = "configurationBox";
+			this.configurationBox.SelectedIndexChanged += new System.EventHandler(this.configurationBox_SelectedIndexChanged);
 			// 
 			// publicationBox
 			// 
@@ -250,6 +251,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.reversalsCheckedListBox, "reversalsCheckedListBox");
 			this.reversalsCheckedListBox.FormattingEnabled = true;
 			this.reversalsCheckedListBox.Name = "reversalsCheckedListBox";
+			this.reversalsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.reversalsCheckedListBox_SelectedIndexChanged);
 			// 
 			// PublishToWebonaryDlg
 			// 
