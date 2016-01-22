@@ -616,6 +616,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach(var part in model.Parts)
 			{
+				// Detect a bad configuration file and report it in an intelligable way. We generated bad configs before the migration code was cleaned up
+				// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
+				if (part.FieldDescription == null)
+				{
+					throw new ApplicationException(string.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
+						model.FilePath, part.Label));
+				}
 				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
 				if(part.Children == null)
 					part.Children = new List<ConfigurableDictionaryNode>();
