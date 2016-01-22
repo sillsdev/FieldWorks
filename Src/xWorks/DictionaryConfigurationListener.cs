@@ -214,38 +214,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the current Dictionary or ReversalIndex configuration file.  This may cause a redisplay
-		/// of the XHTML view.
+		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
+		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view.
 		/// </summary>
-		public static string GetCurrentConfiguration(Mediator mediator, string currentDirectoryPart = null)
+		public static string GetCurrentConfiguration(Mediator mediator, string innerConfigDir = null)
 		{
-			return GetCurrentConfiguration(mediator, true, currentDirectoryPart);
+			return GetCurrentConfiguration(mediator, true, innerConfigDir);
 		}
 
 		/// <summary>
-		/// Returns the current Dictionary or ReversalIndex configuration file.  If fUpdate is true, this may
-		/// cause a redisplay of the XHTML view.
+		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
+		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
 		/// </summary>
-		public static string GetCurrentConfiguration(Mediator mediator, bool fUpdate, string currentDirectoryPart = null)
+		public static string GetCurrentConfiguration(Mediator mediator, bool fUpdate, string innerConfigDir = null)
 		{
 			string currentConfig = null;
-			if (currentDirectoryPart == null)
+			if (innerConfigDir == null)
 			{
-				currentDirectoryPart = GetInnermostConfigurationDirectory(mediator);
+				innerConfigDir = GetInnermostConfigurationDirectory(mediator);
 			}
+			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
+			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
 			if(mediator != null && mediator.PropertyTable != null)
 			{
-				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
-				if (!currentConfig.Contains(currentDirectoryPart))
+				currentConfig = mediator.PropertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
+				if(string.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
 				{
-					// we've got a config from the other tool
-					currentConfig = string.Empty;
-				}
-				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
-				{
-					string defaultPublication = currentDirectoryPart == DictionaryConfigurationDirectoryName ? "Root" : "AllReversalIndexes";
+					var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
 					// If no configuration has yet been selected or the previous selection is invalid,
 					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
 					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)
@@ -253,15 +250,31 @@ namespace SIL.FieldWorks.XWorks
 						defaultPublication = currentConfig.Replace("publish", string.Empty);
 					}
 					// select the project's Root configuration if available; otherwise, select the default Root configuration
-					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, currentDirectoryPart), defaultPublication + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, innerConfigDir), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					if(!File.Exists(currentConfig))
 					{
-						currentConfig = Path.Combine(GetDefaultConfigurationDirectory(currentDirectoryPart), defaultPublication + DictionaryConfigurationModel.FileExtension);
+						currentConfig = Path.Combine(GetDefaultConfigurationDirectory(innerConfigDir), defaultPublication + DictionaryConfigurationModel.FileExtension);
 					}
-					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, fUpdate);
+					mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
 				}
 			}
 			return currentConfig;
+		}
+
+		/// <summary>
+		/// Sets the current Dictionary or ReversalIndex configuration file path
+		/// </summary>
+		public static void SetCurrentConfiguration(Mediator mediator, string currentConfig, bool fUpdate = true)
+		{
+			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictionaryConfigurationDirectoryName
+				? "DictionaryPublicationLayout"
+				: "ReversalIndexPublicationLayout";
+			mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+		}
+
+		private static string GetInnerConfigDir(string configFilePath)
+		{
+			return Path.GetFileName(Path.GetDirectoryName(configFilePath));
 		}
 	}
 }

@@ -489,7 +489,7 @@ namespace SIL.FieldWorks.XWorks
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
-			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
+			DictionaryConfigurationListener.SetCurrentConfiguration(_mediator, _model.FilePath);
 		}
 
 		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)

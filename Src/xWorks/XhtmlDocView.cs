@@ -19,7 +19,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -252,8 +251,8 @@ namespace SIL.FieldWorks.XWorks
 			var pubName = GetCurrentPublication();
 			var currentConfiguration = GetCurrentConfiguration(false);
 			var validConfiguration = GetValidConfigurationForPublication(pubName);
-			if (validConfiguration != currentConfiguration)
-				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, false);
+			if(validConfiguration != currentConfiguration)
+				SetCurrentConfiguration(validConfiguration, false);
 			return validConfiguration;
 		}
 
@@ -560,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
 		/// </summary>
-		/// <param name="currentConfig">Configuration which is from DictionaryPublicationLayout, Which may be default</param>
+		/// <param name="currentConfig">Configuration from ReversalIndexPublicationLayout, Which may be default</param>
 		/// <returns></returns>
 		private string GetCurrentConfigForReversalIndex(string currentConfig)
 		{
@@ -570,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
 			{
 				currentConfig = allConfigurations[currentReversalIndex.ShortName];
-				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, false);
+				SetCurrentConfiguration(currentConfig, false);
 				SetReversalIndexOnPropertyDlg();
 			}
 			return currentConfig;
@@ -580,22 +579,19 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
 		/// </summary>
-		private void SetReversalIndexOnPropertyDlg()
+		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
 		{
-			var currWsPath = m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty);
+			var currWsPath = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
 			var currWsName = Path.GetFileNameWithoutExtension(currWsPath);
 			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
-			foreach (var wsObj in currentAnalysisWsList.Where(wsObj => wsObj.DisplayLabel == currWsName))
-			{
-				if (wsObj.DisplayLabel.ToLower().Contains("audio")) return;
-
-				var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-				var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-				Guid revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
-				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
-				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
-				break;
-			}
+			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.DisplayLabel == currWsName);
+			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
+				return;
+			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			var revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+			m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		public void OnMasterRefresh(object sender)
@@ -666,6 +662,11 @@ namespace SIL.FieldWorks.XWorks
 		private string GetCurrentConfiguration(bool fUpdate)
 		{
 			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, fUpdate);
+		}
+
+		private void SetCurrentConfiguration(string currentConfig, bool fUpdate)
+		{
+			DictionaryConfigurationListener.SetCurrentConfiguration(m_mediator, currentConfig, fUpdate);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator

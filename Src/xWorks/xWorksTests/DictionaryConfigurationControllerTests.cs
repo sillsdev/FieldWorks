@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Context
 		private DictionaryConfigurationModel m_model;
@@ -980,13 +980,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mediator = new MockMediator(Cache))
 			{
+				Utils.FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator.Mediator, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
 					_mediator = mediator.Mediator,
 					_model = new DictionaryConfigurationModel
 					{
-						FilePath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "SomeConfigurationFileName")
-					},
+						FilePath = Path.Combine(DictionaryConfigurationListener.GetDefaultConfigurationDirectory("Dictionary"), "SomeConfigurationFileName")
+					}
 				};
 				controller._dictionaryConfigurations = new List<DictionaryConfigurationModel> { controller._model };
 
@@ -994,7 +995,7 @@ namespace SIL.FieldWorks.XWorks
 				controller.SaveModel();
 				var savedPath = mediator.Mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
 				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-				Assert.AreEqual(savedPath, controller._model.FilePath, "Should have saved the path to the selected Configuration Model");
+				Assert.AreEqual(controller._model.FilePath, savedPath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
 				File.Delete(savedPath);
