@@ -86,8 +86,8 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				// Select the entry represented by the current element.  [TODO: LT-xxxxx]
-				e.Handled = true;
+				// Select the entry represented by the current element.  [LT-16982]
+				HandleDomLeftClick(e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -108,6 +108,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
+		{
+			int topLevelHvo;
+			GetClassListFromGeckoElement(element, out topLevelHvo);
+			Clerk.JumpToRecord(topLevelHvo);
+			e.Handled = true;
+		}
+
 		/// <summary>
 		/// Pop up a menu to allow the user to start the document configuration dialog, and
 		/// start the dialog at the configuration node indicated by the current element.
@@ -120,19 +128,8 @@ namespace SIL.FieldWorks.XWorks
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, Mediator mediator, string configObjectName)
 		{
-			var classList = new List<string>();
-			for (var elem = element; elem != null; elem = elem.ParentElement)
-			{
-				if (elem.TagName == "body" || elem.TagName == "html")
-					break;
-				var className = elem.GetAttribute("class");
-				if (!String.IsNullOrEmpty(className))
-				{
-					if (className == "letHead")
-						return;
-					classList.Insert(0, className);
-				}
-			}
+			int dummy;
+			var classList = GetClassListFromGeckoElement(element, out dummy);
 			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
@@ -142,6 +139,39 @@ namespace SIL.FieldWorks.XWorks
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
 			e.Handled = true;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "elem does NOT need to be disposed locally!")]
+		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out int topLevelHvo)
+		{
+			topLevelHvo = FdoCache.kNullHvo;
+			var classList = new List<string>();
+			for (var elem = element; elem != null; elem = elem.ParentElement)
+			{
+				if (elem.TagName == "body" || elem.TagName == "html")
+					break;
+				var className = elem.GetAttribute("class");
+				if (string.IsNullOrEmpty(className))
+					continue;
+				if (className == "letHead")
+					return classList;
+				if (className == "entry" || className == "reversalindexentry")
+					topLevelHvo = GetHvoFromGeckoDomElement(elem);
+				classList.Insert(0, className);
+			}
+			return classList;
+		}
+
+		private static int GetHvoFromGeckoDomElement(GeckoElement element)
+		{
+			if (!element.HasAttribute("id"))
+				return FdoCache.kNullHvo;
+
+			var idVal = element.GetAttribute("id");
+			return !idVal.StartsWith("hvo")
+				? FdoCache.kNullHvo
+				: Convert.ToInt32(element.GetAttribute("id").Substring(3));
 		}
 
 		/// <summary>
