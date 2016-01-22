@@ -266,10 +266,6 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
-	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
-	for LOCALE in $(LOCALIZATIONS); do \
-		rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
-	done
 	# Handle the Converter files
 	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	# Remove unwanted items
@@ -287,6 +283,9 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	rm $(DESTDIR)/usr/lib/fieldworks/Logos.Utility.dll
 	rm $(DESTDIR)/usr/lib/fieldworks/Microsoft.Practices.ServiceLocation.dll
 	rm $(DESTDIR)/usr/lib/fieldworks/StructureMap.dll
+	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
+	rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-*.xml"
+	rm -f "$(DESTDIR)/usr/share/tmp/FW/fieldworks/Language Explorer/Configuration/strings-*.xml"
 
 install-menuentries:
 	# Add to Applications menu
