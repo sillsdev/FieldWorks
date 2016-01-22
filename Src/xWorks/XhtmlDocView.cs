@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -29,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private XWebBrowser m_mainView;
 		private DictionaryPublicationDecorator m_pubDecorator;
+		private string selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
@@ -56,6 +58,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
+					browser.DocumentCompleted += OnDocumentCompleted;
 				}
 			}
 		}
@@ -89,6 +92,19 @@ namespace SIL.FieldWorks.XWorks
 			else if (e.Button == GeckoMouseButton.Right)
 			{
 				HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
+			}
+		}
+
+		/// <summary>
+		/// Set the style attribute on the current entry to color the background after document completed.
+		/// </summary>
+		private void OnDocumentCompleted(object sender, EventArgs e)
+		{
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser != null)
+			{
+				CloseContextMenuIfOpen();
+				SetActiveSelectedEntryOnView(browser);
 			}
 		}
 
@@ -465,9 +481,49 @@ namespace SIL.FieldWorks.XWorks
 					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
+				case "ActiveClerkSelectedObject":
+					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+					if (browser != null)
+					{
+						RemoveStyleFromPreviousSelectedEntryOnView(browser);
+						SetActiveSelectedEntryOnView(browser);
+					}
+					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
+			}
+		}
+
+		/// <summary>
+		/// Remove the style from the previously selected entry.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
+		private void RemoveStyleFromPreviousSelectedEntryOnView(GeckoWebBrowser browser)
+		{
+			if (string.IsNullOrEmpty(selectedObjectID))
+			{
+				return;
+			}
+			var prevSelectedHvo = browser.Document.GetHtmlElementById("hvo" + selectedObjectID);
+			if (prevSelectedHvo != null)
+			{
+				prevSelectedHvo.RemoveAttribute("style");
+			}
+		}
+
+		/// <summary>
+		/// Set the style attribute on the current entry to color the background.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
+		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
+		{
+			var currSelectedHvo = browser.Document.GetHtmlElementById("hvo" + Clerk.CurrentObjectHvo);
+			if (currSelectedHvo != null)
+			{
+				currSelectedHvo.ScrollIntoView(true);
+				currSelectedHvo.SetAttribute("style", "background-color:LightYellow");
+				selectedObjectID = Clerk.CurrentObjectHvo.ToString(CultureInfo.InvariantCulture);
 			}
 		}
 
