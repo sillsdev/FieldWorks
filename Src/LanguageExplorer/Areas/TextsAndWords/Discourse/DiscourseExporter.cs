@@ -10,7 +10,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
-using SIL.FieldWorks.IText;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {

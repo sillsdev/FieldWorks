@@ -3,7 +3,7 @@
 	<tools>
 		<tool label="Academic Domains" value="domainTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-domainTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -14,7 +14,7 @@
 		</tool>
 		<tool label="Anthropology Categories" value="anthroEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-anthroEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -25,7 +25,7 @@
 		</tool>
 		<tool label="Complex Form Types" value="complexEntryTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-complexEntryTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -36,7 +36,7 @@
 		</tool>
 		<tool label="Confidence Levels" value="confidenceEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-confidenceEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -47,7 +47,7 @@
 		</tool>
 		<tool label="Text Chart Markers" value="chartmarkEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-chartmarkEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -58,7 +58,7 @@
 		</tool>
 		<tool label="Text Constituent Chart Templates" value="charttempEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-charttempEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -69,7 +69,7 @@
 		</tool>
 		<tool label="Education Levels" value="educationEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-educationEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -80,7 +80,7 @@
 		</tool>
 		<tool label="Roles" value="roleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-roleEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -91,11 +91,11 @@
 		</tool>
 		<tool label="Feature Types" value="featureTypesAdvancedEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="lists" id="FeatureTypesAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!--this will fill the pane on the left-->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="featureTypesList" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -112,7 +112,7 @@
 					</control>
 					<!--this will fill the pane on the right-->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -125,7 +125,7 @@
 		</tool>
 		<tool label="Genres" value="genresEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-genresEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -136,7 +136,7 @@
 		</tool>
 		<tool label="Lexical Relations" value="lexRefEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-lexRefEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -147,7 +147,7 @@
 		</tool>
 		<tool label="Locations" value="locationsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-locationsEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -158,7 +158,7 @@
 		</tool>
 		<tool label="Publications" value="publicationsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-publicationsEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -169,7 +169,7 @@
 		</tool>
 		<tool label="Morpheme Types" value="morphTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-morphTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -180,7 +180,7 @@
 		</tool>
 		<tool label="People" value="peopleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-peopleEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -191,7 +191,7 @@
 		</tool>
 		<tool label="Positions" value="positionsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-positionsEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -202,7 +202,7 @@
 		</tool>
 		<tool label="Restrictions" value="restrictionsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-restrictionsEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -213,7 +213,7 @@
 		</tool>
 		<tool label="Semantic Domains" value="semanticDomainEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-semanticDomainEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -224,7 +224,7 @@
 		</tool>
 		<tool label="Sense Types" value="senseTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-senseTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -235,7 +235,7 @@
 		</tool>
 		<tool label="Status" value="statusEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-statusEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -247,7 +247,7 @@
 
 		<tool label="Text Markup Tags" value="textMarkupTagsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-textMarkupTagsEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -259,7 +259,7 @@
 
 	<tool label="Translation Types" value="translationTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-translationTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -270,7 +270,7 @@
 		</tool>
 		<tool label="Usages" value="usageTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-usageTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -281,7 +281,7 @@
 		</tool>
 		<tool label="Variant Types" value="variantEntryTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-variantEntryTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -292,7 +292,7 @@
 		</tool>
 		<tool label="Notebook Record Types" value="recTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-recTypeEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -303,7 +303,7 @@
 		</tool>
 		<tool label="Time Of Day" value="timeOfDayEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-timeOfDayEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>

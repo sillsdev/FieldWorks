@@ -1595,7 +1595,7 @@ namespace LanguageExplorer.Impls
 
 	"I think if anything my comment regards a potential design improvement that is
 beyond the scope of this current change. You might want to have a quick look at the
-SIL.FieldWorks.IText.StatisticsView and how it will play into this. You may find nothing
+LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView and how it will play into this. You may find nothing
 that needs to change. I wrote that class way back before I understood how many tentacles
 the xWindow and other 'x' classes had. We needed a very simple view of data that wasn't
 in any of our blessed RecordLists. I wrote this view with the idea that it would be tied

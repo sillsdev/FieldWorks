@@ -40,6 +40,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DistFiles\Aga.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Release\BasicUtils.dll</HintPath>
     </Reference>
@@ -79,6 +83,10 @@
     <Reference Include="FwControls">
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
     </Reference>
+    <Reference Include="FwCoreDlgControls, Version=9.0.0.39649, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FwCoreDlgControls.dll</HintPath>
+    </Reference>
     <Reference Include="FwCoreDlgs, Version=9.0.0.26305, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>
@@ -97,14 +105,30 @@
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="ITextDll, Version=9.0.0.31198, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ITextDll.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.40.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -125,6 +149,30 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="ParatextShared, Version=7.4.100.114, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ParatextShared.dll</HintPath>
+    </Reference>
+    <Reference Include="ScrControls, Version=9.0.0.39656, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ScrControls.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils, Version=9.0.0.39648, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Sfm2Xml, Version=9.0.0.39651, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils, Version=9.0.0.39641, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SIL.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Core.dll</HintPath>
@@ -132,6 +180,10 @@
     <Reference Include="SIL.Lift, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Lift.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -156,6 +208,10 @@
     <Reference Include="SIL.Archiving, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -194,6 +250,7 @@
   <ItemGroup>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\UtilityCatalogInclude.xml">
       <Link>XML\UtilityCatalogInclude.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
@@ -203,18 +260,21 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
       <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\browseDialogColumns.xml">
       <Link>XML\Lexicon\browseDialogColumns.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Browse\toolConfiguration.xml">
       <Link>XML\Lexicon\Browse\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
       <Link>XML\Lexicon\DataTreeInclude.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
       <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Lexicon\Edit\DataEntryFilters\basicFilter.xml</Link>
@@ -227,12 +287,15 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
       <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml">
       <Link>XML\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml">
       <Link>XML\Lexicon\ReversalIndices\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
       <Link>XML\Lists\areaConfiguration.xml</Link>
@@ -245,9 +308,11 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
       <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\ReversalPOSEdit\toolConfiguration.xml">
       <Link>XML\Lists\ReversalPOSEdit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
       <Link>XML\Notebook\areaConfiguration.xml</Link>
@@ -258,9 +323,11 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Browse\toolConfiguration.xml">
       <Link>XML\Notebook\Browse\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
       <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
       <Link>XML\CommonDataTreeInclude.xml</Link>
@@ -297,6 +364,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\reusableBrowseControlConfiguration.xml">
       <Link>XML\Word\reusableBrowseControlConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
       <Link>XML\Parts\Cellar.fwlayout</Link>
@@ -336,9 +404,11 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\toolConfiguration.xml">
       <Link>XML\Lexicon\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
       <Link>XML\Main.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
       <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
@@ -346,15 +416,19 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
       <Link>XML\Word\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
       <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
       <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
       <Link>XML\Word\Text\toolConfigInclude.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -490,6 +564,209 @@
     <Compile Include="Areas\TextsAndWords\ImportWordSetDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\BIRDInterlinearImporter.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseAnalysisHander.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.Designer.cs">
+      <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ClosedFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ClosedFeatureValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.Designer.cs">
+      <DependentUpon>ComplexConcControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcGroupNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcLeafNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcOrNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcParagraphData.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternSda.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcTagDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcTagNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordBdryNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControl.Designer.cs">
+      <DependentUpon>ConcordanceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControlBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceWordList.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConfigureInterlinDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\CreateAllomorphTypeMismatchDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\DuplicateAnalysisFixer.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\DuplicateWordformFixer.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.ApproveAndMove.cs">
+      <DependentUpon>FocusBoxController.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.Designer.cs">
+      <DependentUpon>FocusBoxController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ImageHolder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InflFeatureTreeModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InfoPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterAreaBookmark.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.Designer.cs">
+      <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.Designer.cs">
+      <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporter.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImportDlg.Designer.cs">
+      <DependentUpon>InterlinearImportDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearSfmImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearSfmImportWizard.Designer.cs">
+      <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordClerk.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoices.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMaster.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMaster.Designer.cs">
+      <DependentUpon>InterlinMaster.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterNoTitleBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.Designer.cs">
+      <DependentUpon>InterlinPrintView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.Designer.cs">
+      <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewDataCache.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ITextStrings.Designer.cs">
+      <DependentUpon>ITextStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\LinguaLinksImport.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\LinguaLinksImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\ParseIsCurrentFixer.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\PossibilityComboController.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\RawTextPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearResources.Designer.cs">
+      <DependentUpon>InterlinearResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\Sandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.ComboHandlers.cs">
+      <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.designer.cs">
+      <DependentUpon>SandboxBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.GetRealAnalysisMethod.cs">
+      <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.MorphemeBreaker.cs">
+      <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.SandboxVc.cs">
+      <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SymbolicValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TextsFilterItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\WordBreakGuesser.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.Designer.cs">
+      <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
     <Compile Include="Areas\TextsAndWords\ParserConnection.cs" />
@@ -870,6 +1147,108 @@
       <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.resx">
+      <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.resx">
+      <DependentUpon>ComplexConcControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphDlg.resx">
+      <DependentUpon>ComplexConcMorphDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcTagDlg.resx">
+      <DependentUpon>ComplexConcTagDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcWordDlg.resx">
+      <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ConcordanceControl.resx">
+      <DependentUpon>ConcordanceControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ConfigureInterlinDialog.resx">
+      <DependentUpon>ConfigureInterlinDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\CreateAllomorphTypeMismatchDlg.resx">
+      <DependentUpon>CreateAllomorphTypeMismatchDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.resx">
+      <DependentUpon>EditMorphBreaksDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FocusBoxController.resx">
+      <DependentUpon>FocusBoxController.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ImageHolder.resx">
+      <DependentUpon>ImageHolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InfoPane.resx">
+      <DependentUpon>InfoPane.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocChart.resx">
+      <DependentUpon>InterlinDocChart.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.resx">
+      <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.resx">
+      <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinearImportDlg.resx">
+      <DependentUpon>InterlinearImportDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinearSfmImportWizard.resx">
+      <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinMaster.resx">
+      <DependentUpon>InterlinMaster.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinMasterNoTitleBar.resx">
+      <DependentUpon>InterlinMasterNoTitleBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.resx">
+      <DependentUpon>InterlinPrintView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.resx">
+      <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ITextStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ITextStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\LinguaLinksImportDlg.resx">
+      <DependentUpon>LinguaLinksImportDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinearResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>InterlinearResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\Sandbox.resx">
+      <DependentUpon>Sandbox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.resx">
+      <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\ParserParametersDlg.resx">
       <DependentUpon>ParserParametersDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1129,7 +1508,11 @@
   <ItemGroup>
     <Content Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
       <Link>XML\Word\Text\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </Content>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InvisibleSpaceCursor.cur" />
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\IText.ico" />
+    <Content Include="Areas\TextsAndWords\Interlinear\icons\ZeroWidth.ico" />
     <Content Include="images\AddScripture.ico" />
     <Content Include="images\Create Entry.ico" />
     <Content Include="images\Create Reversal Entry.ico" />

@@ -13,11 +13,11 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses

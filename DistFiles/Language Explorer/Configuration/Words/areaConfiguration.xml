@@ -141,17 +141,17 @@
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
 		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearSfmImportWizard"/>
 			</parameters>
 		</command>
 		<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.WordsSfmImportWizard"/>
 			</parameters>
 		</command>
 		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearImportDlg"/>
 			</parameters>
 		</command>
 	</commands>
@@ -550,7 +550,7 @@
 	<!-- ************************ resources *********************** -->
 	<!-- ********************************************************** -->
 	<resources>
-		<imageList assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ImageHolder" field="buttonImages" size="small"
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ImageHolder" field="buttonImages" size="small"
 			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth, approveAll"/>
 	</resources>
 	<!-- ********************************************************** -->
@@ -599,7 +599,7 @@
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
 				<clerk id="interlinearTexts">
-					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="InterestingTexts">
 						<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
 						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
@@ -608,9 +608,9 @@
 					<sortMethods/>
 				</clerk>
 				<clerk id="concordanceWords">
-					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="Wordforms">
-						<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceWordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceWordList"/>
 						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
 					</recordList>
 					<filters>

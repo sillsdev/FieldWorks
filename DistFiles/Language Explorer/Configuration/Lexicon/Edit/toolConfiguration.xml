@@ -4,12 +4,12 @@
 	<tools>
 		<tool label="Lexicon Edit" value="lexiconEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="lexicon" id="LexItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details"
 					defaultPrintPane="DictionaryPubPreview">
 					<!--this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="lexentryList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -33,10 +33,10 @@
 					</control>
 					<!--this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="DictionaryPubPreview" PaneBarGroupId="PaneBar-LexicalDetail" collapse="162000">
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 								<parameters area="lexicon" id="TestEditMulti" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="60">
 									<!--this will fill the pane on the top right with the dictionary preview-->
 									<include path="../Dictionary/toolConfiguration.xml" query="root/reusableControls/control[@id='DictionaryPubPreviewControl']"/>

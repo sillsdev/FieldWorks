@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -14,7 +15,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.IText;
 using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords

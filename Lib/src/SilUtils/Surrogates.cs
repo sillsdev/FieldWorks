@@ -33,7 +33,7 @@ namespace SIL.Utils
 
 		/// <summary>
 		/// Return a full 32-bit character value from the surrogate pair.
-		///  This was copied from SIL.FieldWorks.IText
+		///  This was copied from LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="ch1"></param>
 		/// <param name="ch2"></param>
@@ -45,7 +45,7 @@ namespace SIL.Utils
 		}
 		/// <summary>
 		/// Whether the character is the first of a surrogate pair.
-		///  This was copied from SIL.FieldWorks.IText
+		///  This was copied from LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="ch">The character</param>
 		/// <returns></returns>
@@ -55,7 +55,7 @@ namespace SIL.Utils
 		}
 		/// <summary>
 		/// Whether the character is the second of a surrogate pair.
-		///  This was copied from SIL.FieldWorks.IText
+		///  This was copied from LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="ch">The character</param>
 		/// <returns></returns>
@@ -67,7 +67,7 @@ namespace SIL.Utils
 		}
 		/// <summary>
 		/// Increment an index into a string, allowing for surrogates.
-		/// This was copied from SIL.FieldWorks.IText
+		/// This was copied from LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="st"></param>
 		/// <param name="ich"></param>

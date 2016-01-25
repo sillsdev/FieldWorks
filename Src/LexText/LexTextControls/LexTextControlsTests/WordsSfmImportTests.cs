@@ -19,7 +19,7 @@ using Sfm2Xml;
 namespace LexTextControlsTests
 {
 	/// <summary>
-	/// These are largely adapted from the tests in SIL.FieldWorks.IText.InterlinSfmImportTests
+	/// These are largely adapted from the tests in LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 	/// </summary>
 	[TestFixture]
 	public class WordsSfmImportTests : BaseTest
@@ -167,7 +167,7 @@ namespace LexTextControlsTests
 		}
 
 		/// <summary>
-		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
+		/// NOTE: Copied from LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 		/// </summary>
 		/// <returns></returns>
 		private WritingSystemManager GetWsf()
@@ -180,7 +180,7 @@ namespace LexTextControlsTests
 		}
 
 		/// <summary>
-		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
+		/// NOTE: Copied from LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 		/// </summary>
 		/// <param name="wsObj"></param>
 		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)

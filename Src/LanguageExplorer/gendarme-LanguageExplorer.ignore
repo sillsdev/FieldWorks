@@ -7,6 +7,11 @@ R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 T: SIL.FieldWorks.FDO.FdoCache LanguageExplorer.Areas.TextsAndWords.Discourse.AdvancedMTDialogLogic
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.DiscourseExporter
 
+# variables are passed in and should be disposed by parent
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.ChooseAnalysisHandler
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinVc
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/SandboxVc
+
 # reference only
 T: System.Windows.Forms.Form
 T: LanguageExplorer.Dumpster.ReversalListener
@@ -20,6 +25,11 @@ T: LanguageExplorer.Dumpster.ParserListener
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to other object and disposed there
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinTaggingChild::AddListToMenu(System.Windows.Forms.ToolStrip,SIL.FieldWorks.FDO.ICmPossibility)
+M: LanguageExplorer.Areas.TextsAndWords.Interlinear.IComboHandler LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/InterlinComboHandler::MakeCombo(SIL.CoreImpl.IHelpTopicProvider,System.Int32,LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
+
 # variable is added to Controls and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildTopStuffUI()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildBottomStuffUI()
@@ -99,6 +109,17 @@ M: System.Void LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLaunche
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
 M: System.Boolean LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
 M: System.Void LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetSuggestions()
+M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase::IsInGlossMode()
+M: System.String LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMorphForm::EditMorphBreaks()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMissingEntry::CreateNewEntry(System.Boolean,SIL.FieldWorks.FDO.ILexEntry&,SIL.FieldWorks.FDO.IMoForm&,SIL.FieldWorks.FDO.ILexSense&)
+M: System.Int32 LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMissingEntry::RunAddNewSenseDlg(SIL.FieldWorks.Common.COMInterfaces.ITsString,SIL.FieldWorks.FDO.ILexEntry)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMissingEntry::OnSelectVariantOf(System.Object,System.EventArgs)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMissingEntry::RunAddNewAllomorphDlg()
+# Linux
+M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/<Import>*::<>*()
+# Windows
+M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/<>*::<Import>*()
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView::InitializeFlexComponent(SIL.CoreImpl.IPropertyTable,SIL.CoreImpl.IPublisher,SIL.CoreImpl.ISubscriber)
 
 # added to collection and disposed there
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()
@@ -119,6 +140,9 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootLau
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicLauncher::HandleChooser()
 M: System.Void LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorLauncher::HandleChooser()
 
+# TODO: Not sure how this menu gets disposed
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinDocForAnalysis::InterlinDocForAnalysis_RightMouseClickedEvent(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
+
 # FwRegistrySettings disposed in Dispose method.
 M: System.Void LanguageExplorer.Impls.LexTextApp::.ctor(SIL.FieldWorks.Common.Framework.IFieldWorksManager,SIL.CoreImpl.IHelpTopicProvider,SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 
@@ -128,6 +152,14 @@ M: System.Boolean LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetDlgInfo(
 # GetEnumerator() returns an object
 M: System.Collections.IEnumerator LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalEntryGoDlg.ReversalEntrySearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator LanguageExplorer.Areas.TextsAndWords.WordformGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMaster/<FindControls>*`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator LanguageExplorer.Areas.TextsAndWords.Interlinear.ComplexConcControl/<GetAllNodes>*::System.Collections.IEnumerable.GetEnumerator()
+
+# Factory method, will be disposed in caller
+M: LanguageExplorer.Areas.TextsAndWords.Interlinear.IAnalysisControlInternal LanguageExplorer.Areas.TextsAndWords.Interlinear.FocusBoxController::CreateNewSandbox(SIL.FieldWorks.FDO.DomainServices.AnalysisOccurrence)
+
+# Disposed in object's Close() method
+M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase::HandleRightClickOnObject(System.Int32,XCore.IxCoreColleague)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
@@ -156,6 +188,17 @@ T: LanguageExplorer.Areas.TextsAndWords.WordImporter
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MakeCellsMethod
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic
 T: LanguageExplorer.Areas.TextsAndWords.Discourse.MaxStringWidthForChartColumn
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.FocusBoxController/UndoRedoApproveAnalysis
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinLineChoices
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/CreateAndInsertStText
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/UndoableCreateAndInsertStText
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterAreaBookmark
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinVc/DisplayWordBundleMethod
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearExporter
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.LinguaLinksImport
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/GetRealAnalysisMethod
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/MorphemeBreaker
+T: LanguageExplorer.Areas.TextsAndWords.Interlinear.WordBreakGuesser
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

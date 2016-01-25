@@ -53,7 +53,7 @@
 		</command>
 		<command id="CmdImportLinguaLinksData" label="_LinguaLinks Data..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.LinguaLinksImportDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.LinguaLinksImportDlg"/>
 			</parameters>
 		</command>
 		<command id="CmdPublishToWebonary" label="Publish to _Webonary..." message="PublishToWebonary"/>
@@ -415,7 +415,7 @@ XmlDocView users:
   		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
 InterlinMaster user:
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml(16):
-  		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMaster"/>
+  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMaster"/>
 			<item command="CmdFindAndReplaceText" defaultVisible="true"/> Disposition: Not global, so let areas/tools add/remove the menu.
 			<item command="CmdReplaceText" defaultVisible="true"/> Disposition: Not global, so let areas/tools add/remove the menu. Same users as CmdFindAndReplaceText -->
 			<item label="-" translate="do not translate"/>
@@ -721,7 +721,6 @@ InterlinMaster user:
 	or remove or reorder images. The names given here in the labels list correspond to the images in the list, in order.
 	This is the only place a particular image is associated with a particular name.-->
 	<resources>
-		<imageList assemblyPath="xCore.dll" class="XCore.IconHolder" field="largeImages" size="large" labels="Ticker"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="largeImages" size="large"
 			labels="BrowseView, EditView, DocumentView, NoFilter, DefaultSort, GenericTool, GenericTool2, folder-lexicon, folder-lists, folder-texts, folder-words, folder-grammar"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small"
@@ -764,7 +763,6 @@ InterlinMaster user:
 		</listener>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
-		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->
 	<!-- ************************ defaultProperties *********************** -->

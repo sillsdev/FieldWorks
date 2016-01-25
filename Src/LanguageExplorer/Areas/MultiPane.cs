@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas
 	/// If the mediator has a property called id_ShowFirstPane (e.g., LexEntryAndEditor_ShowFirstPane),
 	/// it will control the visibility of the first pane (visible if the property is true).
 	/// </summary>
-	internal sealed class MultiPane : CollapsingSplitContainer, IMainContentControl
+	internal class MultiPane : CollapsingSplitContainer, IMainContentControl
 	{
 		/// <summary />
 		internal event EventHandler ShowFirstPaneChanged;

@@ -3,7 +3,7 @@
 	<tools>
 		<tool label="Bulk Edit Wordforms" value="bulkEditWordforms" icon="BrowseView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters id="WordformsEdit">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>

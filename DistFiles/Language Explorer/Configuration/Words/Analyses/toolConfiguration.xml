@@ -3,7 +3,7 @@
 	<tools>
 		<tool label="Word Analyses" value="Analyses" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="textsWords" id="WordsAndAnalysesMultiPane" splitterBarOrientation="vertical" firstLabel="WordList" secondLabel="SingleWord">
 					<!-- Control 1: Left, browse view of (filtered) wordforms. -->
 					<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']">
@@ -17,7 +17,7 @@
 					</include>
 					<!-- Control 2: Right, Detail view of wordform selected in Control 1.  PaneBarGroupId="PaneBar-WordsDetail" -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="EntriesList" collapse="180000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>

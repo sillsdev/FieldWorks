@@ -567,10 +567,10 @@ namespace LanguageExplorerTests.TextsAndWords
 			doc.LoadXml(
 			"<virtuals>"
 				+"<virtual modelclass=\"StTxtPara\" virtualfield=\"Segments\">"
-				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ParagraphSegmentsVirtualHandler\"/>"
+				+"<dynamicloaderinfo assemblyPath=\"LanguageExplorer.dll\" class=\"LanguageExplorer.Areas.TextsAndWords.Interlinear.ParagraphSegmentsVirtualHandler\"/>"
 				+"</virtual>"
 				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"OccurrencesInTexts\" destinationClass=\"CmBaseAnnotation\">"
-				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.OccurrencesInTextsVirtualHandler\"/>"
+				+"<dynamicloaderinfo assemblyPath=\"LanguageExplorer.dll\" class=\"LanguageExplorer.Areas.TextsAndWords.Interlinear.OccurrencesInTextsVirtualHandler\"/>"
 				+"</virtual>"
 				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanApprovedAnalyses\" computeeverytime=\"true\">"
 				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
@@ -594,7 +594,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
 				+"</virtual>"
 				+"<virtual modelclass=\"WordformInventory\" virtualfield=\"ConcordanceWords\" destinationClass=\"WfiWordform\">"
-				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ConcordanceWordsVirtualHandler\"/>"
+				+"<dynamicloaderinfo assemblyPath=\"LanguageExplorer.dll\" class=\"LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceWordsVirtualHandler\"/>"
 				+"</virtual>"
 			+"</virtuals>");
 			BaseVirtualHandler.InstallVirtuals(doc.DocumentElement, Cache);

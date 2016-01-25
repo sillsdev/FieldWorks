@@ -518,7 +518,7 @@ namespace LanguageExplorer.Dumpster
 			var doc = new XmlDocument();
 			doc.LoadXml(
 				"<control>"
-				+ "<dynamicloaderinfo assemblyPath=\"xCore.dll\" class=\"XCore.PaneBarContainer\"/>"
+				+ "<dynamicloaderinfo assemblyPath=\"LanguageExplorer.dll\" class=\"LanguageExplorer.Controls.PaneBarContainer\"/>"
 				+ "<parameters PaneBarGroupId=\"PaneBar-ShowHiddenFields-"+ toolName + "\" collapse=\"144000\">"
 				+   "<control>"
 				+     "<dynamicloaderinfo assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.RecordEditView\"/>"

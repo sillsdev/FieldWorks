@@ -10,9 +10,12 @@ using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Controls
 {
+#if RANDYTODO
+	// TODO: Can this be moved now that TE is mostly gone?
+#endif
 	/// <summary>
 	/// FilterTextsDialog bundles both texts and, when appropriate,
-	/// This file cannot be moved to the ITextDll: ../Src/LexText/Interlinear because that
+	/// This file cannot be moved to the LanguageExplorer: ../Src/LanguageExplorer/Areas/TextsAndWords/Interlinear because that
 	/// dll is referenced by SIL.FieldWorks.TE and would create a circular reference.
 	/// It can't be moved to FwControls either for a similar reason - ScrControls uses FwControls!
 	/// This class uses TE to make sure the scriptures are properly initialized for use.

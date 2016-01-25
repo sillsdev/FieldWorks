@@ -4,7 +4,7 @@
 	<tools>
 		<tool label="Category Edit" value="posEdit" icon="EditView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-posEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -17,7 +17,7 @@
 		</tool>
 		<tool id="CategoryBrowse" label="Categories Browse" value="categoryBrowse" icon="BrowseView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters id="POSList">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -38,11 +38,11 @@
 		</tool>
 		<tool id="CompoundRuleEdit" label="Compound Rules" value="compoundRuleAdvancedEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="CompoundRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="CompoundRuleList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
@@ -62,7 +62,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -77,11 +77,11 @@
 		</tool>
 		<tool id="PhonemeEdit" label="Phonemes" value="phonemeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonemeItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="PhonemeList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -103,7 +103,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonemeEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -116,11 +116,11 @@
 		</tool>
 		<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonologicalFeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="PhonologicalFeaturesList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -138,7 +138,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -152,7 +152,7 @@
 		</tool>
 		<tool label="Bulk Edit Phoneme Features" value="bulkEditPhonemes" icon="BrowseView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters id="PhonemesBulkEdit">
 					<control>
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes"/>
@@ -185,11 +185,11 @@
 		</tool>
 		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="NaturalClassItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="NaturalClassList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -206,7 +206,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-naturalClassEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView" emptyTitleId="No-PhNCSegments"/>
@@ -219,11 +219,11 @@
 		</tool>
 		<tool id="EnvironmentEdit" label="Environments" value="EnvironmentEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="EnvironmentItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="EnvironmentList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -239,7 +239,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-EnvironmentEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -252,11 +252,11 @@
 		</tool>
 		<tool id="PhonologicalRuleEdit" label="Phonological Rules" value="PhonologicalRuleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonologicalRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="PhonologicalRuleList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
@@ -273,7 +273,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -286,11 +286,11 @@
 		</tool>
 		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibitionRuleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="AdhocCoprohibItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="AdhocCoprohibList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -308,7 +308,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-AdhocCoprohibEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -321,11 +321,11 @@
 		</tool>
 		<tool label="Inflection Features" value="featuresAdvancedEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="FeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="FeaturesList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -343,7 +343,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-featuresAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -356,11 +356,11 @@
 		</tool>
 		<tool label="Exception &quot;Features&quot;" value="ProdRestrictEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="ProductivityRestrictionItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
 					<!-- this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="ProdRestrictList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -376,7 +376,7 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-ProdRestrictEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
@@ -392,7 +392,7 @@
 		</tool>
 		<tool label="Problems" value="lexiconProblems" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-lexiconProblems" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>

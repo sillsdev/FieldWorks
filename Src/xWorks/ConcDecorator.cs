@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This is used by the ConcordanceControl (in ITextDll), which in various ways comes up with a list of
+		/// This is used by the ConcordanceControl (in LanguageExplorer), which in various ways comes up with a list of
 		/// occurrences to display in a concordance browse view. Often the occurrences made in this way do
 		/// not have a meaningful Index, but we are not using that here. We make a dummy HVO for the root
 		/// as well as the items, if we don't already have one.

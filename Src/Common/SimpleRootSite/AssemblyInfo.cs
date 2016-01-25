@@ -9,5 +9,5 @@ using System.Runtime.CompilerServices;
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ITextDllTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("LanguageExplorerTests")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("SimpleRootSiteTests")]

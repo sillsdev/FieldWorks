@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.IText;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {

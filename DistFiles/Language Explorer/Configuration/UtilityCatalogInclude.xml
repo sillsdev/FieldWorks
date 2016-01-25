@@ -4,9 +4,9 @@
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.ParserAnalysisRemover"/>
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.ErrorFixer"/>
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.WriteAllObjectsUtility"/>
-	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.DuplicateWordformFixer"/>
-	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.DuplicateAnalysisFixer"/>
-	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ParseIsCurrentFixer"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.DuplicateWordformFixer"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.DuplicateAnalysisFixer"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ParseIsCurrentFixer"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.DeleteEntriesSensesWithoutInterlinearization"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexEntryInflTypeConverter"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexEntryTypeConverter"/>

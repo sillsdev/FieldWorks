@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <reusableControls>
 	<control id="TextPaneBarList">
-		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 		<parameters id="textsChooser">
 			<control>
 				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -10,7 +10,7 @@
 					editable="false">
 					<columns>
 						<column label="Title" width="144000" chooserFilter="special">
-							<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.TextsFilterItem"/>
+							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem"/>
 							<string field="Title" ws="$ws=best vernoranal"/>
 						</column>
 						<column label="Abbreviation" visibility="menu" width="72000">

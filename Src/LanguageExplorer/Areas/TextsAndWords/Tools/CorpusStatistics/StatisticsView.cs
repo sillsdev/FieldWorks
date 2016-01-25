@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.IText;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 

@@ -2010,6 +2010,11 @@ namespace SIL.FieldWorks.XWorks
 			Cache.DomainDataByFlid.RemoveNotification(this);
 		}
 
+#if RANDYTODO
+		// TODO: Odds are high that this won't need to be refactored, as suggested, but simply removed.
+		// TODO: My plan is to not have the clerk fret about whether it should, or should not,
+		// TODO: mess with the record tree bar, since the ITool implementation will know if one was used, or not.
+#endif
 		/// <summary>
 		/// tells whether this RecordClerk object should be updating the record tree bar when its list changes
 		/// </summary>
@@ -2023,7 +2028,7 @@ namespace SIL.FieldWorks.XWorks
 		/// note: PLEASE REFACTOR: If this method is causing problems again please re-factor.
 		/// This code has proven to cause bugs elsewhere and is handling things in a non-obvious way.
 		/// Ideally this whole property would be removed or re-written and the original problem fixed in a different way.
-		/// Some code in SIL.FieldWorks.IText.InfoPane.InitializeInfoView() is a patch to unwanted side effects of this method.
+		/// Some code in LanguageExplorer.Areas.TextsAndWords.Interlinear.InfoPane.InitializeInfoView() is a patch to unwanted side effects of this method.
 		/// Naylor, Thomson 12-2011
 		///
 		/// This property was added when we ran into the following problem: when a user added a new entry

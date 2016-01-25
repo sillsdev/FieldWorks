@@ -234,7 +234,7 @@
     <value>htmlControl_Instructions</value>
   </data>
   <data name="&gt;&gt;htmlControl_Instructions.Type" xml:space="preserve">
-    <value>XCore.HtmlControl, xCore, Version=8.0.5.23767, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.FwUtils.HtmlControl, FwUtils, Version=8.0.5.23767, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;htmlControl_Instructions.Parent" xml:space="preserve">
     <value>$this</value>

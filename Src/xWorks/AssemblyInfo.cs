@@ -10,4 +10,3 @@ using System.Runtime.CompilerServices;
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: InternalsVisibleTo("xWorksTests")]
 [assembly: InternalsVisibleTo("LanguageExplorer")]
-[assembly: InternalsVisibleTo("ITextDll")]

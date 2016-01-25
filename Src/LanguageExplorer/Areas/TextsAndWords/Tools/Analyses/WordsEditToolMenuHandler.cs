@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.IText;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses

@@ -11,11 +11,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.IText;
 using SIL.Utils;
 using SIL.CoreImpl;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
@@ -32,9 +32,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	/// <remarks>
-	/// This class is created by Reflection by ITextDll.dll's  SIL.FieldWorks.IText.InterlinMaster.
-	/// </remarks>
 	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IFlexComponent, IStyleSheet
 	{
 		#region Member Variables

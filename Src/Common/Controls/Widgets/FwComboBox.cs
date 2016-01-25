@@ -2615,7 +2615,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					{
 						return false;
 					}
-					else if (c.GetType().ToString() == "SIL.FieldWorks.IText.Sandbox")
+					else if (c.GetType().ToString() == "LanguageExplorer.Areas.TextsAndWords.Interlinear.Sandbox")
 					{
 						//Size lbSize = m_listbox.Bounds;
 						int x1Pos = MiscUtils.LoWord(m.LParam);	// LOWORD(m.LParam);

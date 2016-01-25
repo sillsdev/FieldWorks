@@ -48,24 +48,6 @@ namespace LanguageExplorerTests.Lexicon
 			}
 		}
 
-#if RANDYTODO
-		// TODO: Can't make reversal stuff, without a reversal in the new world order.
-		// TODO: The responsibility for making one now rests with the client, not the clerk/list world.
-		[Test]
-		public void PropertyTableIdReturnsNullIfNoActiveReversalIndex()
-		{
-			IPublisher publisher;
-			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
-			using (var recordList = new TestReversalRecordList())
-			{
-				recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
-				Assert.Null(recordList.GetPropertyTableId(FieldName));
-			}
-		}
-#endif
-
 		class TestReversalRecordList : AllReversalEntriesRecordList
 		{
 			internal TestReversalRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)

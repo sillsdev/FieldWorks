@@ -64,6 +64,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FDOTests.dll</HintPath>
     </Reference>
+    <Reference Include="FwControls, Version=9.0.0.39649, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
+    </Reference>
     <Reference Include="FwCoreDlgs, Version=9.0.0.22997, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>
@@ -76,12 +80,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ITextDll, Version=9.0.0.26705, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ITextDll.dll</HintPath>
-    </Reference>
     <Reference Include="LanguageExplorer">
       <HintPath>..\..\Output\Release\LanguageExplorer.dll</HintPath>
+    </Reference>
+    <Reference Include="LexTextControls, Version=9.0.0.39653, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\LexTextControls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,6 +118,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SimpleRootSite.dll</HintPath>
     </Reference>
+    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+    </Reference>
+    <Reference Include="Sfm2Xml, Version=9.0.0.39651, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils, Version=9.0.0.39641, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SharedScrUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -123,6 +151,10 @@
     <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Widgets, Version=9.0.0.39650, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils, Version=9.0.0.26687, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -144,14 +176,15 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\FDO\FDOTests\FwSetupFixtureClass.cs">
+      <Link>Interlinear\FwSetupFixtureClass.cs</Link>
+    </Compile>
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="AreaRepositoryTests.cs" />
     <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
     <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
     <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Discourse\ConstituentChartTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Discourse\ConstituentChartTests.cs" />
     <Compile Include="Discourse\DiscourseExportTests.cs" />
     <Compile Include="Discourse\DiscourseTestHelper.cs" />
     <Compile Include="Discourse\InMemoryDiscourseTestBase.cs" />
@@ -166,6 +199,22 @@
     <Compile Include="Discourse\TestCCLogic.cs" />
     <Compile Include="Dumpster\FlexBridgeListenerTests.cs" />
     <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
+    <Compile Include="Interlinear\AddWordsToLexiconTests.cs" />
+    <Compile Include="Interlinear\BIRDFormatImportTests.cs" />
+    <Compile Include="Interlinear\ComboHandlerTests.cs" />
+    <Compile Include="Interlinear\ComplexConcPatternModelTests.cs" />
+    <Compile Include="Interlinear\ImportInterlinearAnalysesTests.cs" />
+    <Compile Include="Interlinear\InterlinDocForAnalysisTests.cs" />
+    <Compile Include="Interlinear\InterlinearExporterTests.cs" />
+    <Compile Include="Interlinear\InterlinLineChoicesTests.cs" />
+    <Compile Include="Interlinear\InterlinMasterTests.cs" />
+    <Compile Include="Interlinear\InterlinSfmImportTests.cs" />
+    <Compile Include="Interlinear\InterlinTaggingTests.cs" />
+    <Compile Include="Interlinear\MorphemeBreakerTests.cs" />
+    <Compile Include="Interlinear\SandboxBaseTests.cs" />
+    <Compile Include="Interlinear\ShowSpaceDecoratorTests.cs" />
+    <Compile Include="Interlinear\TestTaggingChild.cs" />
+    <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -185,6 +234,20 @@
   <ItemGroup>
     <None Include="BuildInclude.targets" />
     <None Include="gendarme-LanguageExplorerTests.ignore" />
+    <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestWordAlignedXLingPap.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-OrizabaLesson2.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-OrizabaLesson2WordAlignedXLingPap.xml" />
+    <None Include="Interlinear\ExportTestFiles\Phase1-SETepehuanCorn.xml" />
+    <None Include="Interlinear\ExportTestFiles\SETepehuanCornSingleListExample.xml" />
+    <None Include="Interlinear\ExportTestFiles\SETepehuanCornWordsAppendix.xml" />
+    <Content Include="Interlinear\InterlinearExporterTests.xml" />
+    <Content Include="Interlinear\ParagraphParserTestTexts.xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

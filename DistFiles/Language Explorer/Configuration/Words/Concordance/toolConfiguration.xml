@@ -2,17 +2,17 @@
 <root>
 	<clerks>
 		<clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
-			<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.OccurrencesOfSelectedUnit"/>
 			<recordList class="LangProject" field="ConcOccurrences">
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.MatchingConcordanceItems"/>
 				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>
 		<clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
-			<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.OccurrencesOfSelectedUnit"/>
 			<recordList class="LangProject" field="ConcOccurrences">
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.MatchingConcordanceItems"/>
 				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
 			</recordList>
 			<sortMethods/>
@@ -28,25 +28,25 @@
 	<tools>
 		<tool label="Concordance" value="concordance" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceContainer"/>
 				<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList">
 					<!--this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 						<parameters area="textsWords" id="LineAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
 							<!-- this will fill the top of the left side -->
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="concordanceControl" collapse="110000">
 									<control>
-										<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceControl"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceControl"/>
 										<parameters id="concordanceControl" clerk="OccurrencesOfSelectedUnit"/>
 									</control>
 								</parameters>
 							</control>
 							<!-- this will fill the bottom of the left side -->
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="wordOccurrenceList" collapse="180000">
 									<control>
 										<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -61,10 +61,10 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="ITextControl" collapse="144000">
 							<control>
-								<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMasterNoTitleBar"/>
 								<parameters id="ITextControl" editable="true" clerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true"
 									suppressAutoCreate="true" altTitleId="Concordance-Context"/>
 							</control>
@@ -75,26 +75,26 @@
 		</tool>
 		<tool label="Complex Concordance" value="complexConcordance" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceContainer"/>
 				<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList"
 					defaultFocusControl="ComplexConcControl">
 					<!--this will fill the pane on the left -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 						<parameters area="textsWords" id="PatternAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
 							<!-- this will fill the top of the left side -->
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="complexConcordanceControl" collapse="110000">
 									<control>
-										<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ComplexConcControl"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ComplexConcControl"/>
 										<parameters id="complexConcordanceControl" clerk="complexConcOccurrencesOfSelectedUnit"/>
 									</control>
 								</parameters>
 							</control>
 							<!-- this will fill the bottom of the left side -->
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="wordOccurrenceList" collapse="180000">
 									<control>
 										<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
@@ -109,10 +109,10 @@
 					</control>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="ITextControl" collapse="144000">
 							<control>
-								<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMasterNoTitleBar"/>
 								<parameters id="ITextControl" editable="true" clerk="complexConcOccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed"
 									hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
 							</control>
@@ -123,16 +123,16 @@
 		</tool>
 		<tool label="Word List Concordance" value="wordListConcordance" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList">
 					<!--this will fill the pane on the left -->
 					<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']"/>
 					<!-- this will fill the pane on the right -->
 					<control>
-						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="wordOccurrenceList" collapse="180000">
 							<control>
-								<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 								<parameters area="textsWords" id="LineAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
 									<!-- this will fill the top of the right side -->
 									<control>
@@ -144,7 +144,7 @@
 									</control>
 									<!-- this will fill the bottom of the right side -->
 									<control>
-										<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMasterNoTitleBar"/>
 										<parameters id="wordOccurrenceList" editable="true" clerk="OccurrencesOfSelectedWordform" hideTitleContents="true"
 											treeBarAvailability="NotMyBusiness" suppressAutoCreate="true"/>
 									</control>
