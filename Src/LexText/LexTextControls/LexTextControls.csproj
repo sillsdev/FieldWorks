@@ -259,6 +259,9 @@
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
+    <Reference Include="FwCoreDlgControls">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

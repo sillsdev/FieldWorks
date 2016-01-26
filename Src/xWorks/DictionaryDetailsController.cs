@@ -708,7 +708,8 @@ namespace SIL.FieldWorks.XWorks
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
 			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
-				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
+				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider,
+				(new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
 			LoadStylesLists_ResetComboxBox();
 			RefreshPreview();
 		}

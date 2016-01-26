@@ -1274,7 +1274,8 @@ namespace SIL.FieldWorks.XWorks
 				m_callbacks != null ? m_callbacks.MaxStyleLevelToShow : 0,
 				m_callbacks != null ? m_callbacks.HvoAppRootObject : 0,
 				m_cache, this, ((IApp)m_mediator.PropertyTable.GetValue("App")),
-				m_mediator.HelpTopicProvider);
+				m_mediator.HelpTopicProvider,
+				(new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
 		}
 
 		/// <summary>

@@ -203,9 +203,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="owner">parent window</param>
 		/// <param name="app"></param>
 		/// <param name="helpTopicProvider"></param>
+		/// <param name="setPropsToFactorySettings">Method to be called if user requests to reset a style to factory settings.</param>
 		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle,
 			FwStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, FdoCache cache,
-			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider)
+			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider,
+			Action<StyleInfo> setPropsToFactorySettings)
 		{
 			var sci = combo.SelectedItem as StyleComboItem;
 			string charStyleName = combo.SelectedItem as string;
@@ -243,6 +245,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = false;
+				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
 				if (stylesDlg.ShowDialog(owner) == DialogResult.OK &&
 					((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
 					 (stylesDlg.ChangeType & StyleChangeType.Added) > 0))
