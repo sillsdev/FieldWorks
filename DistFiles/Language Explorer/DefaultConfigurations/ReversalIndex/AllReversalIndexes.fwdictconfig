@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" version="-1" lastModified="2015-12-17" allPublications="true">
   <ConfigurationItem name="Reversal Entry" isEnabled="true" field="ReversalIndexEntry">
-	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Dictionary-Headword" between=" " after=" " field="ReversalForm">
+	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 	  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		<Option id="reversal" isEnabled="true" />
 	  </WritingSystemOptions>
@@ -19,8 +19,8 @@
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
-	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  <ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
+	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
@@ -586,8 +586,8 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Dictionary-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
-		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Dictionary-Headword" between=" " after=" " field="ReversalForm">
+	<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
+		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 				<Option id="reversal" isEnabled="true" />
 			</WritingSystemOptions>

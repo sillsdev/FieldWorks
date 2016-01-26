@@ -5,8 +5,8 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2015-11-23" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
-	<markup version="C0584FE8-A04E-401A-A115-264C9875EF2B">
+<Styles date="2016-01-25" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
+	<markup version="4831DC54-CBF2-4C47-A5C7-D0512F54EDE3">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -96,21 +96,21 @@
 			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
 		</tag>
 		<tag id="Dictionary-Context" guid="89670D4F-71D4-4878-B2FF-815E45512BE1" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Base style for Before/After/Between content in the Dictionary view.</usage>
+			<usage wsId="en">Base style for Before/After/Between content in Dictionary and Reversal views.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-		</tag>
-		<tag id="Dictionary-Normal" guid="7A194E30-4C8C-4934-83AD-B12ECC47A768" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Base style for everything in the Dictionary view.</usage>
-			<help category="Flex_Dictionary_Styles"/>
-			<font/>
-			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
 		</tag>
 		<tag id="Dictionary-Continuation" guid="E552C059-F04A-4672-8943-0F36F9F63536" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Style for all main entry content which follows an intermediate paragraph</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="0 pt" hanging="0 pt" spaceBefore="0 pt"/>
+		</tag>
+		<tag id="Dictionary-Normal" guid="7A194E30-4C8C-4934-83AD-B12ECC47A768" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Base style for everything in the Dictionary view.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
 		</tag>
 		<tag id="Dictionary-Pictures" guid="92E5DC56-317A-461D-A179-E9E005D6612A" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">The paragraph of pictures that follows the main paragraph (if there are pictures).</usage>
@@ -187,6 +187,22 @@
 			<usage wsId="en">Used for the definition and/or gloss in a classified dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font />
+		</tag>
+		<tag id="Reversal-Headword" guid="25D17A96-4130-49C5-8F2B-497C1953556A" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">The reversal form at the start of a reversal entry.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Reversal-Subentry" guid="501C3363-065D-465A-BAAD-15D0787F9DED" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Each paragraph of Subentry information that is added to a reversal entry if there are subentries.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+		</tag>
+		<tag id="Reversal-Vernacular" guid="282F9AE7-D4DC-4C9B-93B5-413A7D3986B1" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for items in reversal entries that contain vernacular text.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font italic="true"/>
 		</tag>
 		<tag id="UiElement" guid="4D6CFFC4-254E-4EF7-B26B-41AAB4BFBF48" userlevel="1" context="internal" type="character" use="special">
 			<usage wsId="en">This is a special style used for certain parts of the FieldWorks user interface. You should not normally modify it.</usage>
