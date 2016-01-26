@@ -494,6 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_bulletsTab.UpdateForStyle(styleInfo);
 				m_borderTab.UpdateForStyle(styleInfo);
 			}
+			m_generalTab.UpdateForStyle(styleInfo);
 		}
 
 		/// ------------------------------------------------------------------------------------
