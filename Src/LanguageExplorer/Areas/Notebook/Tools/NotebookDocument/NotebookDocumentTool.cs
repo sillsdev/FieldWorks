@@ -94,13 +94,25 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_configurationDocument = XDocument.Parse("<parameters area='notebook' altTitleId='RnGenericRec-Plural' persistContext='Notebk' backColor='White' layout='publishRecord' layoutProperty='NotebookPublicationLayout' editable='false' configureObjectName='Document' findHelpId='khtpFindNotebook'>" + Environment.NewLine +
-"<configureLayouts>" + Environment.NewLine +
-"<layoutType label='Notebook Records' layout='publishRecord'>" + Environment.NewLine +
-"<configure class='RnGenericRec' label='Record' layout='publishRecord'/>" + Environment.NewLine +
-"</layoutType>" + Environment.NewLine +
-"</configureLayouts>" + Environment.NewLine +
-"</parameters>");
+			_configurationDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
+				new XElement("parameters",
+					new XAttribute("area", "notebook"),
+					new XAttribute("altTitleId", "RnGenericRec-Plural"),
+					new XAttribute("persistContext", "notebook"),
+					new XAttribute("backColor", "White"),
+					new XAttribute("layout", "publishRecord"),
+					new XAttribute("layoutProperty", "NotebookPublicationLayout"),
+					new XAttribute("editable", "false"),
+					new XAttribute("configureObjectName", "Document"),
+					new XAttribute("findHelpId", "khtpFindNotebook"),
+					new XElement("configureLayouts",
+						new XElement("layoutType",
+							new XAttribute("label", "Notebook Records"),
+							new XAttribute("layout", "publishRecord"),
+							new XElement("configure",
+								new XAttribute("class", "RnGenericRec"),
+								new XAttribute("label", "Record"),
+								new XAttribute("layout", "publishRecord"))))));
 			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
 			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			_paneBarContainer = PaneBarContainerFactory.Create(

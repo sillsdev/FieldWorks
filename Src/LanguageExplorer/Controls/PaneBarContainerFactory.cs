@@ -5,6 +5,7 @@
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
 {
@@ -34,6 +35,11 @@ namespace LanguageExplorer.Controls
 			{
 				var asFlexComponent = (IFlexComponent) mainChildControl;
 				asFlexComponent.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			}
+			if (mainChildControl is IPaneBarUser)
+			{
+				var asPaneBarUser = (IPaneBarUser)mainChildControl;
+				asPaneBarUser.MainPaneBar = newPaneBarContainer.PaneBar;
 			}
 			parentControl.Controls.Add(newPaneBarContainer);
 			parentControl.ResumeLayout();

@@ -629,6 +629,9 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Content Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
+      <Link>XML\strings-en.xml</Link>
+    </Content>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.ApproveAndMove.cs">

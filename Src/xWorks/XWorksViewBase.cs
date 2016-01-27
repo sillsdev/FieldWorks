@@ -291,7 +291,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				// suppressInfoBar
 				m_informationBar = value as UserControl;
 			}
 		}

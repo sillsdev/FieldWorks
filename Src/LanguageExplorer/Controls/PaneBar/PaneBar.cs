@@ -2,18 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.PaneBar
 {
-#if RANDYTODO
-	// TODO: This needs to be put into PaneBarContainer, which is currently in CoreImpl.
-	// TODO: That is fine, but PaneBarContainer can't then create it directly, but we have to feed it into PaneBarContainer as IPaneBar.
-#endif
 	/// <summary>
 	/// Bar used to hold various controls, such as links, above the main content pane on the right of FLEx.
 	/// </summary>
@@ -21,6 +17,9 @@ namespace LanguageExplorer.Controls.PaneBar
 	{
 		private Hashtable m_propertiesToWatch = new Hashtable();
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public PaneBar()
 		{
 			InitializeComponent();
@@ -31,11 +30,26 @@ namespace LanguageExplorer.Controls.PaneBar
 		#region Implementation of IPaneBar
 
 		/// <summary>
+		/// Set the text of the pane bar.
+		/// </summary>
+		public override string Text
+		{
+			set
+			{
+				m_panelMain.Text = value;
+				m_panelMain.Refresh();
+			}
+		}
+
+		/// <summary>
 		/// Refresh the pane bar display.
 		/// </summary>
 		public void RefreshPane()
 		{
-			throw new NotImplementedException();
+			foreach (var panelButton in m_panelMain.Controls.OfType<PanelButton>())
+			{
+				panelButton.UpdateDisplay();
+			}
 		}
 
 		#endregion
