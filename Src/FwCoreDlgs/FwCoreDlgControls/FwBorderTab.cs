@@ -540,6 +540,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 				if (IsInherited((Control)sender) && ChangedToUnspecified != null)
 					ChangedToUnspecified(this, EventArgs.Empty);
+				// Enable style reset ability immediately by causing the stye to be IsModified.
+				SaveToInfo(m_currentStyleInfo);
 			}
 
 			m_pnlBorderPreview.Refresh();

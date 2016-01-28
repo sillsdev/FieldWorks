@@ -183,6 +183,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_nudIndentBy.Enabled = (index == kFirstLineIndex || index == kHangingIndex) && !IsInherited(m_cboSpecialIndentation);
 			}
 			m_pnlPreview.Refresh();
+
+			if (!m_dontUpdateInheritance)
+			{
+				// Enable style reset ability immediately by causing the stye to be IsModified.
+				SaveToInfo(m_currentStyleInfo);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
