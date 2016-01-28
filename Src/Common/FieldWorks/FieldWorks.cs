@@ -761,8 +761,8 @@ namespace SIL.FieldWorks
 				}
 				catch (Exception ex)
 				{
-					Debug.Fail("Got exception in FieldWorks.ExisitingProcess", ex.Message);
-					Logger.WriteEvent("Got exception in FieldWorks.ExisitingProcess: ");
+					Debug.Fail("Got exception in FieldWorks.ExistingProcess", ex.Message);
+					Logger.WriteEvent("Got exception in FieldWorks.ExistingProcess: ");
 					Logger.WriteError(ex);
 				}
 				return existingProcesses;
