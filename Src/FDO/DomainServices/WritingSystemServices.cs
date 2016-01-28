@@ -1479,7 +1479,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				wsIds =
 					(from item in wsIds select (item.Equals(origWsId, StringComparison.OrdinalIgnoreCase) ? newWsId : item)).ToArray();
 			}
-			var newVal = string.Join(" ", wsIds);
+			var newVal = string.Join(" ", wsIds.Where(x => x != null));
 			cache.DomainDataByFlid.set_UnicodeProp(obj.Hvo, flid, newVal.Length == 0 ? null : newVal);
 		}
 

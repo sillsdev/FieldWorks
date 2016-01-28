@@ -2447,7 +2447,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				allIndexesFileName + configFileExtension);
 			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, configDir,
 				revIndexDir);
-			var analysisWsArray = cache.LangProject.AnalysisWss.Split(' ');
+			var analysisWsArray = cache.LangProject.AnalysisWss.Trim().Replace("  "," ").Split(' ');
 			if (!Directory.Exists(newWsFilePath))
 				Directory.CreateDirectory(newWsFilePath);
 			//Create new Configuration File
