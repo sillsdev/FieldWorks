@@ -38,6 +38,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public event EventHandler ChangedToUnspecified;
 
+		/// <summary>
+		/// Fires when a change is made on this tab to style data.
+		/// </summary>
+		public event EventHandler StyleDataChanged;
+
 		private const int kLineHeight = 5;
 		private const int kLineSpacing = 2;
 		private const int kmptPerPixel = 3000;
@@ -188,6 +193,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				// Enable style reset ability immediately by causing the stye to be IsModified.
 				SaveToInfo(m_currentStyleInfo);
+
+				if (StyleDataChanged != null)
+					StyleDataChanged(this, null);
 			}
 		}
 

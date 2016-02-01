@@ -188,6 +188,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Select the current paragraph style in the list (or fall back to Normal)
 			CurrentStyle = (!string.IsNullOrEmpty(paraStyleName)) ? paraStyleName : normalStyleName;
+
+			m_fontTab.StyleDataChanged += OnStyleDataChanged;
+			m_paragraphTab.StyleDataChanged += OnStyleDataChanged;
+			m_bulletsTab.StyleDataChanged += OnStyleDataChanged;
+			m_borderTab.StyleDataChanged += OnStyleDataChanged;
 		}
 
 		/// <summary>
@@ -470,10 +475,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				EnsureParagraphStyleTabs();
 
 			UpdateTabsForStyle(styleInfo);
-
-			// Enable/disable the delete button based on the style being built-in
-			m_btnDelete.Enabled = !styleInfo.IsBuiltIn;
 			m_btnCopy.Enabled = styleInfo.CanInheritFrom;
+			RefreshDeleteAndResetButton();
+		}
+
+		private void RefreshDeleteAndResetButton()
+		{
+			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
+			// Depending on how we got here (like in the middle of Deleting and then
+			// selecting a new style), there might not be a currently selected style.
+			// Handle that situation gracefully.
+			if (selectedItem == null)
+			{
+				m_btnDelete.Enabled = false;
+				return;
+			}
+
+			StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
+			if (styleInfo == null)
+			{
+				m_btnDelete.Enabled = false;
+				return;
+			}
+
+			if (IsStyleUserCreated(styleInfo))
+			{
+				m_btnDelete.Text = "&Delete";
+				m_btnDelete.Enabled = true;
+			}
+			else
+			{
+				m_btnDelete.Text = "&Reset";
+				m_btnDelete.Enabled = IsCurrentStyleResettable();
+			}
+		}
+
+		/// <summary>
+		/// Is the style created by the user, as opposed to a style that ships with FW?
+		/// </summary>
+		private bool IsStyleUserCreated(StyleInfo styleInfo)
+		{
+			return !styleInfo.IsBuiltIn;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -507,7 +549,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			RemoveParagraphStyleTabs();
 			if (m_tabControl.TabPages.Contains(m_tbFont))
 				m_tabControl.TabPages.Remove(m_tbFont);
-			m_btnDelete.Enabled = false;
+			RefreshDeleteAndResetButton();
 			m_btnCopy.Enabled = false;
 		}
 
@@ -558,7 +600,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleListHelper.Refresh();
 			if (m_lstStyles.SelectedValue == null)
 			{
-				m_btnDelete.Enabled = false;
+				RefreshDeleteAndResetButton();
 				m_btnCopy.Enabled = false;
 				// Treat a non-existent style (from an empty list) as a character
 				// style -- hide several tab pages, and force the General tab.
@@ -691,6 +733,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the m_btnDelete control.
+		/// Note that this contol might be being used for Delete or Reset depending
+		/// on the context.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void m_btnDelete_Click(object sender, EventArgs e)
@@ -699,6 +743,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_styleListHelper.SelectedStyle == null)
 				return;
 			StyleInfo style = (StyleInfo)m_styleListHelper.SelectedStyle.StyleInfo;
+
+			if (IsStyleUserCreated(style))
+			{
+				DeleteStyle(style);
+				return;
+			}
+
+			if (IsCurrentStyleResettable())
+				ResetStyle(style);
+		}
+
+		private void DeleteStyle(StyleInfo style)
+		{
 			if (style.IsBuiltIn)
 				return;
 
@@ -726,7 +783,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				m_cboTypes.SelectedIndex = 1; // All Styles
 				CurrentStyle = m_oldStyle;
-				m_btnDelete.Enabled = false;
+				RefreshDeleteAndResetButton();
 				m_btnCopy.Enabled = false;
 			}
 		}
@@ -946,16 +1003,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		void contextMenuStyles_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			resetToolStripMenuItem.Enabled = IsCurrentStyleResettable();
+		}
+
+		/// <summary>
+		/// Can this FwStylesDialog reset the currently selected style?
+		/// </summary>
+		private bool IsCurrentStyleResettable()
+		{
 			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
 			if (SetPropsToFactorySettings == null || selectedItem.StyleInfo == null ||
 				!(selectedItem.StyleInfo is StyleInfo))
 			{
-				resetToolStripMenuItem.Enabled = false;
+				return false;
 			}
 			else
 			{
 				StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
-				resetToolStripMenuItem.Enabled = (styleInfo.RealStyle != null &&
+				return (styleInfo.RealStyle != null &&
 					styleInfo.RealStyle.IsBuiltIn && styleInfo.IsModified);
 			}
 		}
@@ -992,6 +1057,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
 			Debug.Assert(selectedItem.StyleInfo != null && selectedItem.StyleInfo is StyleInfo);
 			StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
+			ResetStyle(styleInfo);
+		}
+
+		private void ResetStyle(StyleInfo styleInfo)
+		{
 			Debug.Assert(styleInfo.RealStyle != null && styleInfo.RealStyle.IsBuiltIn &&
 				styleInfo.RealStyle.IsModified);
 			SetPropsToFactorySettings(styleInfo);
@@ -1193,6 +1263,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tabControl.TabPages.Remove(m_tbParagraph);
 		}
 
+		/// <summary>
+		/// Handles the event of style information being changed by the dialog.
+		/// (Like if the user clicks Bold on the Font tab or changes Indentation on the Paragraph tab.)
+		/// </summary>
+		private void OnStyleDataChanged(object sender, EventArgs args)
+		{
+			RefreshDeleteAndResetButton();
+		}
 		#endregion
 	}
 	#endregion // FwStylesDlg class
