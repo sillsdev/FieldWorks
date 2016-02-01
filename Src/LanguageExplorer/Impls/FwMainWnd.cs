@@ -84,7 +84,6 @@ namespace LanguageExplorer.Impls
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing = 0;
-		private SidePane _sidePane;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
@@ -499,12 +498,8 @@ namespace LanguageExplorer.Impls
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
-			_sidePane = new SidePane(_leftPanel, SidePaneItemAreaStyle.List)
-			{
-				Dock = DockStyle.Fill,
-				TabStop = true,
-				TabIndex = 0
-			};
+			_sidePane.TabStop = true;
+			_sidePane.TabIndex = 0;
 
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;

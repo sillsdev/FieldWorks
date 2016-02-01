@@ -107,7 +107,8 @@ namespace LanguageExplorerTests.SilSidePaneTests
 		public void SetUp()
 		{
 			_parent = new Panel();
-			_sidePane = new SidePane(_parent);
+			_sidePane = new SidePane();
+			_parent.Controls.Add(_sidePane);
 		}
 
 		/// <summary>Runs after each test</summary>
@@ -150,7 +151,11 @@ namespace LanguageExplorerTests.SilSidePaneTests
 		public void SetUp()
 		{
 			_parent = new Panel();
-			_sidePane = new SidePane(_parent, ItemAreaStyle);
+			_sidePane = new SidePane
+			{
+				ItemAreaStyle = ItemAreaStyle
+			};
+			_parent.Controls.Add(_sidePane);
 		}
 
 		/// <summary>Runs after each test</summary>
@@ -168,7 +173,7 @@ namespace LanguageExplorerTests.SilSidePaneTests
 			Justification = "containingControl is a reference")]
 		public void ContainingControlTest()
 		{
-			Control containingControl = _sidePane.ContainingControl;
+			Control containingControl = _sidePane.Parent;
 			Assert.IsNotNull(containingControl);
 			Assert.AreSame(containingControl, _parent);
 		}
@@ -602,13 +607,15 @@ namespace LanguageExplorerTests.SilSidePaneTests
 				container.Dock = DockStyle.Fill;
 				container.SplitterWidth = 100;
 				window.Controls.Add(container);
-				using (SidePane sidepane = new SidePane(container.Panel1, ItemAreaStyle))
+				using (SidePane sidepane = new SidePane())
 				{
+					sidepane.ItemAreaStyle = ItemAreaStyle;
+					container.Panel1.Controls.Add(sidepane);
 					// Add a tab and a lot of items
 					Tab tab = new Tab("tabname");
 					sidepane.AddTab(tab);
 					for (int i = 0; i < 50; ++i)
-						sidepane.AddItem(tab, new Item("item" + i.ToString()));
+						sidepane.AddItem(tab, new Item("item" + i));
 
 					try
 					{

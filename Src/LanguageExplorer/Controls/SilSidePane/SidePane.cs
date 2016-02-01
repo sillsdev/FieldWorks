@@ -11,11 +11,6 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
-#if RANDYTODO
-	// TODO: Have SidePane be used as the main control in the left side of the main splitter.
-	// TODO: As it is used now, it is created by then dumps its contents into
-	// TODO: _containingControl (see constructor and its Init method).
-#endif
 	/// <summary>
 	/// SidePane is the main class for clients to use of the SilSidePane library.
 	/// SidePane is intended to be placed on the side of an application, and
@@ -37,7 +32,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		//     tab area
 		//       tabs (conceptually, which correspond to tab widgets (OutlookBarButton))
 
-		private Control _containingControl;
 		private OutlookBar _tabArea; // Bottom area containing the tabs
 		// Contains the item areas. Needed since later dynamically adding an OutlookButtonPanel
 		// with DockStyle.Fill directly to the parent container doesn't properly layout. So
@@ -71,43 +65,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 		internal delegate void TabClickedEventHandler(Tab tabClicked);
 
 		/// <summary>
-		/// Control containing this SidePane
-		/// </summary>
-		internal Control ContainingControl
-		{
-			get { return _containingControl; }
-		}
-
-		/// <summary>
 		/// Style of the item area
 		/// </summary>
 		internal SidePaneItemAreaStyle ItemAreaStyle
 		{
 			get;
-			private set;
+			set;
 		}
 
 		/// <summary>
-		/// Constructor. containingControl is the control, such as a SplitContainer.Panel1, upon which
-		/// the tabs and items of this SidePane will be shown.
-		/// Defaults to ItemAreaStyle of Buttons.
+		/// Default Constructor.
 		/// </summary>
-		internal SidePane(Control containingControl)
+		public SidePane()
 		{
-			Init(containingControl);
-		}
-
-		/// <summary>
-		/// Style of the item area
-		/// </summary>
-		/// <param name="containingControl"></param>
-		/// <param name="itemAreaStyle">
-		/// SidePaneItemAreaStyle to use for this sidepane's item area
-		/// </param>
-		internal SidePane(Control containingControl, SidePaneItemAreaStyle itemAreaStyle)
-			: this(containingControl)
-		{
-			ItemAreaStyle = itemAreaStyle;
+			Init();
+			ItemAreaStyle = SidePaneItemAreaStyle.Buttons;
 		}
 
 		/// <summary></summary>
@@ -124,10 +96,8 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Set up this SidePane for use, adding its components to containingControl.
 		/// </summary>
-		private void Init(Control containingControl)
+		private void Init()
 		{
-			_containingControl = containingControl;
-
 			_banner = new Banner
 				{
 					Text = "",
@@ -156,9 +126,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 			_tabArea.ButtonClicked += new OutlookBar.ButtonClickedEventHandler(HandleTabAreaButtonClicked);
 
 			// Controls must be added in the right order to lay out properly
-			_containingControl.Controls.Add(_itemAreaContainer);
-			_containingControl.Controls.Add(_banner);
-			_containingControl.Controls.Add(_tabArea);
+			Controls.Add(_itemAreaContainer);
+			Controls.Add(_banner);
+			Controls.Add(_tabArea);
+			Dock = DockStyle.Fill;
 		}
 
 		/// <summary>

@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		private static string MakeSafeFilePath(string filePath)
 		{
-			if (Unicode.CheckForNonAsciiCharacters(filePath))
+			if (Utils.Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);

@@ -93,13 +93,13 @@ namespace LanguageExplorer.Impls
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
-			this._leftPanel = new System.Windows.Forms.Panel();
 			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelArea = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
+			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -742,7 +742,7 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.AccessibleName = "CollapsingSplitContainer";
 			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
 			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mainContainer.FirstControl = this._leftPanel;
+			this.mainContainer.FirstControl = this._sidePane;
 			this.mainContainer.FirstLabel = "";
 			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.mainContainer.IsInitializing = false;
@@ -751,7 +751,7 @@ namespace LanguageExplorer.Impls
 			// 
 			// mainContainer.Panel1
 			// 
-			this.mainContainer.Panel1.Controls.Add(this._leftPanel);
+			this.mainContainer.Panel1.Controls.Add(this._sidePane);
 			this.mainContainer.Panel1MinSize = 16;
 			// 
 			// mainContainer.Panel2
@@ -761,23 +761,16 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.SecondControl = this._rightPanel;
 			this.mainContainer.SecondLabel = "";
 			this.mainContainer.Size = new System.Drawing.Size(697, 381);
+			this.mainContainer.SplitterDistance = 126;
 			this.mainContainer.TabIndex = 0;
 			this.mainContainer.TabStop = false;
-			// 
-			// _leftPanel
-			// 
-			this._leftPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._leftPanel.Location = new System.Drawing.Point(0, 0);
-			this._leftPanel.Name = "_leftPanel";
-			this._leftPanel.Size = new System.Drawing.Size(50, 381);
-			this._leftPanel.TabIndex = 1;
 			// 
 			// _rightPanel
 			// 
 			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._rightPanel.Location = new System.Drawing.Point(0, 0);
 			this._rightPanel.Name = "_rightPanel";
-			this._rightPanel.Size = new System.Drawing.Size(643, 381);
+			this._rightPanel.Size = new System.Drawing.Size(567, 381);
 			this._rightPanel.TabIndex = 1;
 			// 
 			// _statusbar
@@ -817,6 +810,14 @@ namespace LanguageExplorer.Impls
 			this.statusBarPanelRecordNumber.MinWidth = 40;
 			this.statusBarPanelRecordNumber.Name = "statusBarPanelRecordNumber";
 			this.statusBarPanelRecordNumber.Text = "RecordNumber";
+			// 
+			// sidePane1
+			// 
+			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._sidePane.Location = new System.Drawing.Point(0, 0);
+			this._sidePane.Name = "sidePane1";
+			this._sidePane.Size = new System.Drawing.Size(126, 381);
+			this._sidePane.TabIndex = 1;
 			// 
 			// FwMainWnd
 			// 
@@ -931,7 +932,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem selectAllToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator2;
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
-		private Panel _leftPanel;
 		private Panel _rightPanel;
+		private Controls.SilSidePane.SidePane _sidePane;
 	}
 }
