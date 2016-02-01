@@ -1645,6 +1645,18 @@ namespace SIL.FieldWorks.FDO
 		/// possibility names of each level)</param>
 		/// -----------------------------------------------------------------------------------
 		ICmPossibility FindOrCreatePossibility(string possibilityPath, int ws, bool fFullPath);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the name of the possibility by name only. Does not create a new one if it
+		/// doesn't exist. Acts like FindOrCreatePossibility with fFullPath = false.
+		/// </summary>
+		/// <param name="possList">The possibility list to search for the given name</param>
+		/// <param name="possibilityPath">name of the possibility path NOT delimited
+		/// by ORCs</param>
+		/// <param name="ws">writing system</param>
+		/// -----------------------------------------------------------------------------------
+		ICmPossibility FindPossibilityByName(IFdoOwningSequence<ICmPossibility> possList, string possibilityPath, int ws);
 	}
 
 	/// <summary>
