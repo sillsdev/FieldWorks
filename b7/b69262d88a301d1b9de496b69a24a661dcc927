@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: MarkS <marksvc@gmail.com>
+Submitted-at: Mon, 01 Feb 2016 23:39:45 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3749
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
