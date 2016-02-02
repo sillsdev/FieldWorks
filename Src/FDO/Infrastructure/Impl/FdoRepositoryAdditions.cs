@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return m_classesWithNewInstancesThisSession.Contains(classId);
 		}
 
-		private SimpleBag<ICmObject> m_focusedObjects;
+		private SimpleBag<ICmObject> m_focusedObjects = new SimpleBag<ICmObject>();
 
 		/// <summary>
 		/// See interface defn.

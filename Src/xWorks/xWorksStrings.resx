@@ -891,4 +891,27 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="PublicationEntriesLabel" xml:space="preserve">
     <value>Pressing Publish will send {0} entries and {1} reversal entries to Webonary.</value>
   </data>
+	<data name="ksGeneratingDisplayFragments" xml:space="preserve">
+    <value>Generating the display fragments for individual entries</value>
+    <comment>message displayed on progress report dialog</comment>
+  </data>
+	<data name="ksArrangingDisplayFragments" xml:space="preserve">
+    <value>Putting the display fragments together with the letter headers</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+	<data name="ksGeneratingStyleInfo" xml:space="preserve">
+    <value>Generating the styles information</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+	<data name="ksErrorDisplayingPublication" xml:space="preserve">
+    <value>Cannot generate the display the current publication</value>
+  </data>
+	<data name="ksObtainingEntriesToDisplay" xml:space="preserve">
+    <value>Obtaining the list of entries to display</value>
+    <comment>this message is displayed in a progress report dialog</comment>
+  </data>
+	<data name="ksPreparingPublicationDisplay" xml:space="preserve">
+    <value>Preparing to display the publication view</value>
+    <comment>this is the title for a progress report dialog</comment>
+  </data>
 </root>

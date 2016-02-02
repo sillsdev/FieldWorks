@@ -5007,7 +5007,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "MLHeadWord",
 				Label = "Headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				CSSClassNameOverride = "entry",
@@ -5046,6 +5046,65 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo }, null, model, m_mediator, xhtmlPath, cssPath);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
+			}
+			finally
+			{
+				File.Delete(xhtmlPath);
+				File.Delete(cssPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ProducesHeadersAndEntriesInOrder()
+		{
+			var firstAEntry = CreateInterestingLexEntry(Cache);
+			var firstAHeadword = "alpha1";
+			var secondAHeadword = "alpha2";
+			var bHeadword = "beta";
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			var secondAEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr, Cache);
+			var bEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var xhtmlPath = Path.GetTempFileName();
+			File.Delete(xhtmlPath);
+			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
+			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			var letterHeaderXPath = "//div[@class='letHead']";
+			try
+			{
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
+				// There should be only 2 letter headers if both a entries are generated in order
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 2);
+				var firstHeadwordLoc = xhtml.IndexOf(firstAHeadword);
+				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword);
+				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword);
+				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
+				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc  && secondHeadwordLoc < thirdHeadwordLoc,
+					"Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
 			}
 			finally
 			{

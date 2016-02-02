@@ -623,11 +623,41 @@ namespace SIL.FieldWorks.XWorks
 		private void UpdateContent(DictionaryPublicationDecorator publicationDecorator, string configurationFile)
 		{
 			SetInfoBarText();
-			if(String.IsNullOrEmpty(configurationFile))
+			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
+			if (String.IsNullOrEmpty(configurationFile))
 			{
-				m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", xWorksStrings.NoConfigsMatchPub);
-				return;
+				htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
 			}
+			else
+			{
+				using (new WaitCursor(this.ParentForm))
+				{
+					using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
+					{
+						progressDlg.AllowCancel = false;
+						progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
+						var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
+						if (xhtmlPath != null)
+						{
+							m_mainView.Url = new Uri(xhtmlPath);
+							m_mainView.Refresh (WebBrowserRefreshOption.Completely);
+							return;
+						}
+					}
+				}
+			}
+			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
+			return;
+		}
+
+		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
+		{
+			if (args.Length != 2)
+				return null;
+			var publicationDecorator = (DictionaryPublicationDecorator)args[0];
+			var configurationFile = (string)args[1];
+			if (progress != null)
+				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
@@ -636,9 +666,18 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
 			var cssPath = basePath + ".css";
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath);
-			m_mainView.Url = new Uri(xhtmlPath);
-			m_mainView.Refresh(WebBrowserRefreshOption.Completely);
+			var start = DateTime.Now;
+			if (progress != null)
+			{
+				progress.Minimum = 0;
+				var entryCount = entriesToPublish.Count();
+				progress.Maximum = entryCount + 1 + entryCount / 100;
+				progress.Position++;
+			}
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath, progress);
+			var end = DateTime.Now;
+			System.Diagnostics.Debug.WriteLine(String.Format("saving xhtml/css took {0}", end - start));
+			return xhtmlPath;
 		}
 
 		/// <summary>

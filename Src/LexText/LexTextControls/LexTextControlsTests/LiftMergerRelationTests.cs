@@ -876,8 +876,10 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, legSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
 			Assert.AreEqual(3, legSense.LexSenseReferences.First().TargetsRS.Count,
 								 "Incorrect number of targets in the leg sense.");
+			// body and leg both have only one LexReference
 			Assert.AreEqual(bodySense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Body and Leg should match.");
-			Assert.AreEqual(armSense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Arm and Leg should match.");
+			// arm has two LexReferences and leg has one LexReference
+			CollectionAssert.Contains(armSense.LexSenseReferences, legSense.LexSenseReferences.First(), "Arm LexReferences should include the single Leg LexReference");
 		}
 
 		// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)

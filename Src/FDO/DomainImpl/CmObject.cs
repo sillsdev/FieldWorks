@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Colletions and Sequences which have not been fully fluffed may not be included. (A potential source is included
 		/// iff it has a pointer to the actual object, rather than one to its ObjectId.)
 		/// </summary>
-		internal SimpleBag<IReferenceSource> m_incomingRefs;
+		internal SimpleBag<IReferenceSource> m_incomingRefs = new SimpleBag<IReferenceSource>();
 
 		#endregion Data Members
 
@@ -3545,7 +3545,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Ensure that all objects that refer to this one are properly inclued in its m_incomingRefs collection.
+		/// Ensure that all objects that refer to this one are properly included in its m_incomingRefs collection.
 		/// </summary>
 		public void EnsureCompleteIncomingRefs()
 		{
