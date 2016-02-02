@@ -1029,7 +1029,7 @@
 	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-  <ConfigurationItem name="Minor Entry (Complex Forms)" style="Dictionary-Minor" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
+	<ConfigurationItem name="Minor Entry (Complex Forms)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
 	<ListTypeOptions list="minor">
 	  <Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 	  <Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -2074,7 +2074,7 @@
 	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-  <ConfigurationItem name="Minor Entry (Variants)" style="Dictionary-Minor" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
+	<ConfigurationItem name="Minor Entry (Variants)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
 	<ListTypeOptions list="minor">
 	  <Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 	  <Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>

@@ -1080,7 +1080,7 @@
 	  </ConfigurationItem>
 	</ConfigurationItem>
   </ConfigurationItem>
-  <ConfigurationItem name="Minor Entry" isEnabled="true" style="Dictionary-Minor" field="LexEntry" cssClassNameOverride="minorentry">
+	<ConfigurationItem name="Minor Entry" isEnabled="true" style="Dictionary-Minor" styleType="paragraph" field="LexEntry" cssClassNameOverride="minorentry">
 	<ListTypeOptions list="minor">
 	  <Option id="" isEnabled="false" />
 	</ListTypeOptions>

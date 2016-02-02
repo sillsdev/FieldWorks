@@ -88,7 +88,8 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			View.SetStyles(m_charStyles, m_node.Style, m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph);
+			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
 			if (Options != null)
@@ -356,7 +357,6 @@ namespace SIL.FieldWorks.XWorks
 				// Complex Forms are the only List type that make use of the Display Option CheckBox below the list
 				listOptionsView.DisplayOptionCheckBoxVisible = false;
 			}
-
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
 			{
@@ -365,7 +365,6 @@ namespace SIL.FieldWorks.XWorks
 					View.SetStyles(m_paraStyles, m_node.Style, true);
 				}
 			}
-
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
 			{
 				listOptionsView.ListViewVisible = false;

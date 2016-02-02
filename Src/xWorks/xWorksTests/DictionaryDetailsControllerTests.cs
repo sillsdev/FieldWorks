@@ -413,6 +413,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node);
 			AssertShowingCharacterStyles(controller.View);
 
@@ -431,6 +432,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node); // SUT
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
@@ -459,6 +461,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			// SUT
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node);
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
