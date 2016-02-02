@@ -2409,6 +2409,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (WsForce < 0) // magic.
 			{
 				// Forced magic ws. Find the corresponding actual WS.
+				if (WsForce == WritingSystemServices.kwsReversalIndex && m_wsReversal > 0)
+					return m_wsReversal;	// we know this one locally.
 				int wsActual;
 				WritingSystemServices.GetMagicStringAlt(m_cache, m_sda, WsForce, hvo, flid, false, out wsActual);
 				// If the magic ws doesn't get changed properly, use the default.

@@ -189,15 +189,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			// Set up for the reversal index combo box or dropdown menu.
-			Guid firstGuid = Guid.Empty;
-			List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-			if (reversalIds.Count > 0)
-				firstGuid = reversalIds[0].Guid;
-			else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
-				firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
-			if (firstGuid != Guid.Empty)
+			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			var currentReversalIndex = cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+			if (currentReversalIndex == null)
 			{
-				SetReversalIndexGuid(firstGuid);
+				// We haven't established the reversal index yet.  Choose the first one available.
+				Guid firstGuid = Guid.Empty;
+				List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+				if (reversalIds.Count > 0)
+					firstGuid = reversalIds[0].Guid;
+				else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+					firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
+				if (firstGuid != Guid.Empty)
+				{
+					SetReversalIndexGuid(firstGuid);
+				}
 			}
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}

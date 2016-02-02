@@ -986,11 +986,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					break;
 				}
 				case(kwsReversalIndex):
-				case(kwsAllReversalIndex):
 				{
-					retWs = defaultReversalWs;
+					// We need the current reversal writing system, not the default one! (see LT-16851)
+					if (flid != 0 && hvo != 0)
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
+					if (retWs == 0)
+						retWs = defaultReversalWs;
 					break;
 				}
+				case(kwsAllReversalIndex):
+					retWs = defaultReversalWs;
+					break;
 				default:
 					retWs = ws;
 					break;
