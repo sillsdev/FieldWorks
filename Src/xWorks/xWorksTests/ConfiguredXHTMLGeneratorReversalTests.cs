@@ -13,6 +13,8 @@ using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
 
@@ -216,6 +218,55 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferringSenses()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
+				Children = new List<ConfigurableDictionaryNode> {glossNode},
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+					},
+					DisplayWritingSystemAbbreviations = false,
+				},
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingEnglishReversalEntry();
+			AddSenseToReversaEntry(testEntry, "second gloss", m_wsEn, Cache);
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseNumberOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
+				const string senseNumberTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
+				//This assert is dependent on the specific entry data created in CreateInterestingEnglishReversalEntry
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+			}
+		}
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -232,6 +283,12 @@ namespace SIL.FieldWorks.XWorks
 			var riEntry = revIndex.FindOrCreateReversalEntry("ReversalForm");
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			return riEntry;
+		}
+		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, FdoCache cache)
+		{
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
+			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			entry.SensesOS[0].Gloss.set_String(wsId, gloss);
 		}
 	}
 }

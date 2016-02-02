@@ -1115,11 +1115,13 @@ namespace SIL.FieldWorks.XWorks
 			if (isSameGrammaticalInfo)
 				InsertGramInfoBeforeSenses(settings, lastGrammaticalInfo, langId);
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
+			int reversalcount=0;
 			foreach (var item in senseCollection)
 			{
 				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
 					continue;
-				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo);
+				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo,
+					++reversalcount);
 			}
 		}
 
@@ -1206,7 +1208,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "writer is a reference")]
 		private static void GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo)
+			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo,int reversalcount=0)
 		{
 			var writer = settings.Writer;
 			if (config.Children.Count != 0)
@@ -1214,8 +1216,11 @@ namespace SIL.FieldWorks.XWorks
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				writer.WriteStartElement("span");
 				writer.WriteAttributeString("class", "sensecontent");
-				GenerateSenseNumberSpanIfNeeded(config, writer, item, settings.Cache,
-														  publicationDecorator, isSingle);
+				if (config.FieldDescription != "ReferringSenses")
+					GenerateSenseNumberSpanIfNeeded(config, writer, item, settings.Cache,
+						publicationDecorator, isSingle);
+				else
+					GenerateReversalSenseNumberSpanIfNeeded(config, settings.Writer, isSingle, reversalcount);
 			}
 
 			writer.WriteStartElement(GetElementNameForProperty(config));
@@ -1367,6 +1372,20 @@ namespace SIL.FieldWorks.XWorks
 				senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
 					cache.MainCacheAccessor);
 			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, senseConfigNode);
+			writer.WriteString(formatedSenseNumber);
+			writer.WriteEndElement();
+		}
+		private static void GenerateReversalSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, XmlWriter writer,
+																	bool isSingle, int senseNumber)
+		{
+			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
+				return;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return;
+			writer.WriteStartElement("span");
+			writer.WriteAttributeString("class", "sensenumber");
+			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber.ToString(), senseConfigNode);
 			writer.WriteString(formatedSenseNumber);
 			writer.WriteEndElement();
 		}
