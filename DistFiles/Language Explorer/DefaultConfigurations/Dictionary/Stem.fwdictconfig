@@ -1029,15 +1029,8 @@
 	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-	<ConfigurationItem name="Minor Entry (Complex Forms)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
-	<ListTypeOptions list="minor">
-	  <Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
-	  <Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
-	  <Option isEnabled="true"  id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
-	  <Option isEnabled="true"  id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c"/>
-	  <Option isEnabled="true"  id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
-	  <Option isEnabled="true"  id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
-	  <Option isEnabled="true"  id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
+  <ConfigurationItem name="Main Entry (Complex Forms)" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
+	<ListTypeOptions list="complex">
 	  <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 	  <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 	  <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1250,7 +1243,7 @@
 		<Option id="analysis" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Senses" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
+	<ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 	  <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
@@ -2074,8 +2067,8 @@
 	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-	<ConfigurationItem name="Minor Entry (Variants)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
-	<ListTypeOptions list="minor">
+  <ConfigurationItem name="Minor Entry (Variants)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
+	<ListTypeOptions list="variant">
 	  <Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 	  <Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
 	  <Option isEnabled="true"  id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -2083,13 +2076,6 @@
 	  <Option isEnabled="true"  id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
 	  <Option isEnabled="true"  id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 	  <Option isEnabled="true"  id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
-	  <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
-	  <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
-	  <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
-	  <Option isEnabled="true"  id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
-	  <Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
-	  <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
-	  <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	</ListTypeOptions>
 	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
