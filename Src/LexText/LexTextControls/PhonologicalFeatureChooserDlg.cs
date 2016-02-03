@@ -493,9 +493,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			int[] featureHvos = sortedFeatureHvos.ToArray();
 			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
 #if RANDYTODO
-			// TODO: call Init Flex Comp after creating BrowseViewer,
+			// TODO: call Init Flex Comp after creating BrowseViewer.
+			// TODO: Call FinishInitialization on m_bvList and feed it PhonologicalFeaturePublisher.ListFlid for the 'madeUpFieldIdentifier' parameter.
 #endif
-			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, null, m_sda);
+			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, m_cache, null, m_sda);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			m_bvList.ScrollBar.ValueChanged += ScrollBar_ValueChanged;
 			m_bvList.Scroller.Scroll += ScrollBar_Scroll;

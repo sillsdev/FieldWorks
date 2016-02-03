@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
+					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, m_madeUpFieldIdentifier, this);
 				}
 				return base.Vc;
 			}
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnKeyDown(e);
 			if (ReadOnlySelect && !e.Handled && m_selectedIndex != -1)
 			{
-				int cobj = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				switch (e.KeyCode)
 				{
 					case Keys.Down:
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								vwSelWord.GetSelectionString(out tssWord, " ");
 								tssWord = StripTrailingNewLine(tssWord);
-								hvoNewSelRow = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid,
+								hvoNewSelRow = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier,
 																						newSelectedIndex);
 								int hvoObj, tag, ws;
 								bool fAssocPrev;
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (oldIndex >= 0 && oldIndex != m_selectedIndex &&
 				m_hvoRoot > 0 && oldHvoRoot == m_hvoRoot)
 			{
-				var newCount = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				var newCount = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				if (oldIndex < newCount)
 					SelectedIndex = oldIndex;
 			}

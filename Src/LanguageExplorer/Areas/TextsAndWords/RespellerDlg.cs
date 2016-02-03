@@ -254,8 +254,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_btnPreviewClear.Click += m_btnPreviewClear_Click;
 
 				var specialMdc = m_specialSda.MetaDataCache;
-				int fakeFlid = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
-				int[] concordanceItems = m_specialSda.VecProp(m_srcwfiWordform.Hvo, fakeFlid);
+				int madeUpFieldIdentifier = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
+				int[] concordanceItems = m_specialSda.VecProp(m_srcwfiWordform.Hvo, madeUpFieldIdentifier);
 				// (Re)set selected state in cache, so default behavior of checked is used.
 				foreach (var concId in concordanceItems)
 				{

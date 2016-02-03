@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 			if(m_treebarAvailability!=TreebarAvailability.NotMyBusiness)
 				Clerk.ActivateUI(m_treebarAvailability == TreebarAvailability.Required);//nb optional would be a bug here
 
-			m_fakeFlid = Clerk.VirtualFlid;
+			m_madeUpFieldIdentifier = Clerk.VirtualFlid;
 		}
 
 		/// <summary>

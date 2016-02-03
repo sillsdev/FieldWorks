@@ -57,9 +57,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_hvoRoot;
 		/// <summary></summary>
-		protected int m_fakeFlid;
+		protected int m_madeUpFieldIdentifier;
 		/// <summary>
-		/// the sda in which looking up m_fakeFlid as a property of m_hvoRoot works.
+		/// the sda in which looking up m_madeUpFieldIdentifier as a property of m_hvoRoot works.
 		/// </summary>
 		protected ISilDataAccessManaged m_sda;
 		/// <summary></summary>
@@ -170,11 +170,11 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var logger = new SimpleLogger())
 			{
 				m_xbvvc.LogStream = logger;
-				int cv = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				int cv = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				if (cv > 0)
 				{
 					int hvoObjSel = m_sda.get_VecItem(m_hvoRoot,
-													  m_fakeFlid, m_selectedIndex < 0 ? 0 : m_selectedIndex);
+													  m_madeUpFieldIdentifier, m_selectedIndex < 0 ? 0 : m_selectedIndex);
 					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 					Update(); // causes the PropChanged to actually invoke the VC.
 				}
@@ -205,14 +205,14 @@ namespace SIL.FieldWorks.Common.Controls
 				m_selectedIndex = -1;
 			}
 
-			int chvo = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+			int chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 			if (m_selectedIndex >= chvo)
 			{
 				m_selectedIndex = chvo - 1;
 			}
 			if (m_selectedIndex >= 0)
 			{
-				int hvoNewObj = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, m_selectedIndex);
+				int hvoNewObj = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, m_selectedIndex);
 						DoSelectAndScroll(hvoNewObj, m_selectedIndex);
 			}
 			//Enhance: if all the RefreshDisplay work has been done for all the descendants then return true here.
@@ -233,11 +233,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (SelectedIndex < 0)
 					return 0;
-				if (m_sda.get_VecSize(m_hvoRoot, m_fakeFlid) <= SelectedIndex)
+				if (m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier) <= SelectedIndex)
 				{
 					return 0; // The only time this happens is during refresh.
 				}
-				return m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, SelectedIndex);
+				return m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, SelectedIndex);
 			}
 		}
 
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				return m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				return m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 			}
 		}
 
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				int oldIndex = m_selectedIndex;
 
-				int cobj = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				Debug.Assert((cobj == 0 && value == -1) || (cobj > 0 && value >= 0), "The new index must be -1, if there are no items in the list, or the new value must be zero, or greater.");
 				Debug.Assert(value < cobj, "You cannot set the index to a value greater then number of objects.");
 
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.Common.Controls
 						SelectionChangedEvent(this, new FwObjectSelectionEventArgs(hvoObjNewSel, value));
 						// Recalculate the vector size since somebody somewhere may have deleted something.
 						// See LT-6884 for an example.
-						cobj = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+						cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 					}
 				}
 
@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (oldIndex >= 0 && oldIndex < cobj)
 				{
 					// Turn off the highlighting of the old item.
-					int hvoObjOldSel = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, oldIndex);
+					int hvoObjOldSel = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, oldIndex);
 					try
 					{
 						m_rootb.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else if (m_selectedIndex > 0)
 				{
-					int cobj = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+					int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 					Debug.Assert(m_selectedIndex >= cobj);
 					m_selectedIndex = cobj - 1;
 					hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
@@ -473,10 +473,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (index < 0)
 				return 0;
-			int cobj = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+			int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 			if (cobj == 0 || index >= cobj)
 				return 0;
-			return m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, index);
+			return m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
 		}
 
 		/// <summary>
@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int hvoRoot, tag, ihvo, cpropPrevious;
 				IVwPropertyStore vps;
 				sel.PropInfo(fEndPoint, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
-				if (tag != m_fakeFlid) // not sure how this could happen, but the precaution was in an earlier version.
+				if (tag != m_madeUpFieldIdentifier) // not sure how this could happen, but the precaution was in an earlier version.
 					return -1;
 				return ihvo;
 			}
@@ -934,7 +934,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_selectedIndex >= 0 && m_rootb != null)
 				{
 					int hvoObjSel = m_sda.get_VecItem(m_hvoRoot,
-						m_fakeFlid, m_selectedIndex);
+						m_madeUpFieldIdentifier, m_selectedIndex);
 					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 				}
 			}
@@ -997,14 +997,14 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bv.AdjustColumnWidths(false);
 				// The old index and selected object must be wrong by now, so reset them.
 				m_hvoOldSel = 0;
-				int chvo = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				int chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				if (chvo == 0)
 				{
 					m_selectedIndex = -1;
 				}
 				else
 				{
-					int hvo = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, 0);
+					int hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, 0);
 					if (hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
@@ -1018,7 +1018,7 @@ namespace SIL.FieldWorks.Common.Controls
 								x.UpdateList(true);
 							}
 						}
-						chvo = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+						chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 						if (chvo == 0)
 							m_selectedIndex = -1;
 						else
@@ -1040,7 +1040,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				return m_fakeFlid;
+				return m_madeUpFieldIdentifier;
 			}
 		}
 
@@ -1069,11 +1069,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="nodeSpec">The node spec.</param>
 		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="fakeFlid">The fake flid.</param>
+		/// <param name="madeUpFieldIdentifier">The made up field identifier.</param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		public virtual void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
 			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
@@ -1082,7 +1082,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Debug.Assert(m_nodeSpec == null || m_nodeSpec == nodeSpec, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
 
 			m_hvoRoot = hvoRoot;
-			m_fakeFlid = fakeFlid;
+			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
 			if (m_nodeSpec == null)
 				m_nodeSpec = nodeSpec;
 			m_bv = bv;
@@ -1474,7 +1474,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// between the top of an IP and the top of the rectangle that encloses the whole object.
 					SelLevInfo[] rgvsli = new SelLevInfo[1];
 					rgvsli[0].ihvo = m_iTopOfScreenObjectForScrollPosition;
-					rgvsli[0].tag = m_fakeFlid;
+					rgvsli[0].tag = m_madeUpFieldIdentifier;
 					sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 					if (sel == null)
 					{
@@ -1526,7 +1526,7 @@ namespace SIL.FieldWorks.Common.Controls
 		internal bool RestoreScrollPosition(int irow)
 		{
 			if (irow < 0 ||
-				irow > m_sda.get_VecSize(m_hvoRoot, m_fakeFlid))
+				irow > m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier))
 			{
 				// we weren't able to save a scroll position for some reason, or the position we saved is
 				// out of range following whatever changed, so we can't restore.
@@ -1538,7 +1538,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				SelLevInfo[] rgvsli = new SelLevInfo[1];
 				rgvsli[0].ihvo = irow;
-				rgvsli[0].tag = m_fakeFlid;
+				rgvsli[0].tag = m_madeUpFieldIdentifier;
 				IVwSelection sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 				if (sel == null)
 				{
@@ -1618,7 +1618,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			return m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, index);
+			return m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
 		}
 
 		internal Rectangle LocationOfSelectedRow()
@@ -1675,7 +1675,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SelLevInfo[] rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = index;
 			rgvsli[0].cpropPrevious = 0;
-			rgvsli[0].tag = m_fakeFlid;
+			rgvsli[0].tag = m_madeUpFieldIdentifier;
 			IVwSelection selRow = null;
 			try
 			{
@@ -1760,7 +1760,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SelLevInfo[] rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = index;
 			rgvsli[0].cpropPrevious = 0;
-			rgvsli[0].tag = m_fakeFlid;
+			rgvsli[0].tag = m_madeUpFieldIdentifier;
 			IVwSelection vwselNew = null;
 			bool isEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_nodeSpec, "editable", true);
 			bool fInstalledNewSelection = false;

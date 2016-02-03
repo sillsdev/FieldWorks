@@ -320,7 +320,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		public abstract void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
 
-		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				bool fEnable = CanFakeIt(hvo);
 				if (fEnable)
-					m_sda.SetString(hvo, tagFakeFlid, tss);
+					m_sda.SetString(hvo, tagMadeUpFieldIdentifier, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

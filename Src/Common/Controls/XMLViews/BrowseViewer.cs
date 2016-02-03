@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 
 			// TODO: Add any initialization after the InitForm call
-			base.AccNameDefault = "BrowseViewer";	// default accessibility name
+			AccNameDefault = "BrowseViewer";	// default accessibility name
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -848,13 +848,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The sortItemProvider is typically the RecordList that impelements sorting and
 		/// filtering of the items we are displaying.
 		/// The data access passed typically is a decorator for the one in the cache, adding
-		/// the sorted, filtered list of objects accessed as property fakeFlid of hvoRoot.
+		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseViewer(XElement nodeSpec, int hvoRoot,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda);
+			ContructorSurrogate(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}
 
 		/// <summary>
@@ -868,11 +868,9 @@ namespace SIL.FieldWorks.Common.Controls
 		static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache
 			= new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
 
-		internal void ContructorSurrogate(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		private void ContructorSurrogate(XElement nodeSpec, int hvoRoot,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			CheckDisposed();
-
 			m_nodeSpec = nodeSpec;
 			m_cache = cache;
 			Tuple<Dictionary<int, int>, bool> selectedInfo;
@@ -902,15 +900,25 @@ namespace SIL.FieldWorks.Common.Controls
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			m_sortItemProvider = sortItemProvider;
-			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
-#if RANDYTODO
-			// TODO: Before this is called, it will need to call InitializeFlexComponent, or PropertyTable will be null.
-			// TODO: so, this method name (ContructorSurrogate) needs to be renamed and delayed.
-#endif
-			CreateBrowseViewClass(hvoRoot, fakeFlid, PropertyTable);
+		}
+
+		/// <summary>
+		/// Finish initializing the class.
+		/// </summary>
+		public void FinishInitialization(int hvoRoot, int madeUpFieldIdentifier)
+		{
+			m_xbv.Init(m_nodeSpec, hvoRoot, madeUpFieldIdentifier, m_cache, this);
+			m_xbv.SelectionChangedEvent += OnSelectionChanged;
+			m_xbv.SelectedIndexChanged += m_xbv_SelectedIndexChanged;
+			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
+			// RootSite if its cache isn't set before we add it to its parent.
+			// This is now handled in the above Init method.
+			//m_xbv.Cache = m_cache;
+			AddControl(m_xbv);
+
 			// This would eventually get set in the startup process later, but we need it at least by the time
 			// we make the filter bar so the LayoutCache exists.
-			BrowseView.Vc.Cache = cache;
+			BrowseView.Vc.Cache = Cache;
 			BrowseView.Vc.DataAccess = m_specialCache;
 			m_scrollContainer.SuspendLayout();
 			//
@@ -938,7 +946,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Size = new Size(400, 304);
 			if (ColumnIndexOffset() > 0)
 			{
-				ColumnHeader ch = new ColumnHeader {Text = ""};
+				ColumnHeader ch = new ColumnHeader { Text = "" };
 				m_lvHeader.Columns.Add(ch);
 			}
 
@@ -1286,23 +1294,6 @@ namespace SIL.FieldWorks.Common.Controls
 			ColumnHeader ch = new ColumnHeader();
 			ch.Text = label;
 			return ch;
-		}
-
-		private void CreateBrowseViewClass(int hvoRoot, int fakeFlid, IPropertyTable propertyTable)
-		{
-			if (m_nodeSpec.Attribute("editRowModelClass") != null)
-				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
-			else
-				m_xbv = new XmlBrowseView();
-			m_xbv.InitializeFlexComponent(propertyTable, Publisher, Subscriber); // BEFORE the init that makes the VC...that needs the ID.
-			m_xbv.Init(m_nodeSpec, hvoRoot, fakeFlid, m_cache, this);
-			m_xbv.SelectionChangedEvent += new FwSelectionChangedEventHandler(OnSelectionChanged);
-			m_xbv.SelectedIndexChanged += new EventHandler(m_xbv_SelectedIndexChanged);
-			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
-			// RootSite if its cache isn't set before we add it to its parent.
-			// This is now handled in the above Init method.
-			//m_xbv.Cache = m_cache;
-			AddControl(m_xbv);
 		}
 
 		bool m_fSavedSelectionsDuringFilterChange = false;
@@ -1927,7 +1918,7 @@ namespace SIL.FieldWorks.Common.Controls
 				get
 				{
 					if (m_xbvvc == null)
-						m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
+						m_xbvvc = new OneColumnXmlBrowseViewVc(m_nodeSpec, m_madeUpFieldIdentifier, this);
 					return m_xbvvc;
 				}
 			}
@@ -2030,8 +2021,8 @@ namespace SIL.FieldWorks.Common.Controls
 				return -1;
 			}
 
-			public OneColumnXmlBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
-				: base(xnSpec, fakeFlid, xbv)
+			public OneColumnXmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+				: base(xnSpec, madeUpFieldIdentifier, xbv)
 			{
 			}
 		}
@@ -3763,7 +3754,16 @@ namespace SIL.FieldWorks.Common.Controls
 			Publisher = publisher;
 			Subscriber = subscriber;
 
-			m_xbv.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
+			if (m_nodeSpec.Attribute("editRowModelClass") != null)
+			{
+				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
+			}
+			else
+			{
+				m_xbv = new XmlBrowseView();
+			}
+			m_xbv.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_xbv.AccessibleName = "BrowseViewer";
 		}
 
@@ -4055,10 +4055,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see><cref>T:BrowseActiveViewer</cref></see> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseActiveViewer(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseActiveViewer(XElement nodeSpec, int hvoRoot,
 								  FdoCache cache, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda)
+			: base(nodeSpec, hvoRoot, cache, sortItemProvider, sda)
 		{
 
 		}

@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: It may prove too costly to collect, sort and filter the items each time a clerk is created.
 			StoreClerkInPropertyTable();
 
-			// TODO: In origianl, optimized, version, we don't load the data until the clerk is used in a newly activated window.
+			// TODO: In original, optimized, version, we don't load the data until the clerk is used in a newly activated window.
 			SetupDataContext(false);
 #else
 			SetupDataContext(true);

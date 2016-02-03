@@ -51,11 +51,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 		#endregion
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseViewerPhonologicalFeatures(nodeSpec,
-						 hvoRoot, fakeFlid,
+						 hvoRoot,
 						 cache, sortItemProvider, sda);
 			viewer.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			return viewer;

@@ -318,9 +318,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			MockFwXWindow m_wnd = null;
 
-			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int madeUpFieldIdentifier, FdoCache cache,
 				Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
-				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
+				: base(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
 			{
 				m_wnd = m_propertyTable.GetValue<MockFwXWindow>("window");
 				m_xbv.MakeRoot(); // needed to process OnRecordNavigation
@@ -465,12 +465,12 @@ namespace SIL.FieldWorks.XWorks
 
 		protected class RecordBrowseViewForTests : RecordBrowseView
 		{
-			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
 				FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
 				var app = propertyTable.GetValue<MockFwXApp>("App");
 				propertyTable.SetProperty("FeedbackInfoProvider", app, false, true);
-				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache,
+				return new BrowseViewerForTests(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache,
 					mediator, propertyTable,
 					sortItemProvider, sda);
 			}
@@ -1378,7 +1378,7 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
-		#endregion BulkEditEntries tests
+	#endregion BulkEditEntries tests
 	}
 
 	/// <summary>
@@ -1502,7 +1502,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				IsDisposed = true;
 			}
-			#endregion
+	#endregion
 
 			protected abstract void FirstBehavior();
 

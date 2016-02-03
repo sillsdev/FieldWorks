@@ -74,8 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			InitBase(propertyTable, null);
-			m_browseViewer.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			InitBase(PropertyTable, m_configurationParametersElement);
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
 			// or the record clerk resets its current object,
@@ -371,7 +370,9 @@ namespace SIL.FieldWorks.XWorks
 				Clerk.UpdateList(false, true);
 			}
 
-			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, m_fakeFlid, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_browseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
@@ -456,11 +457,11 @@ namespace SIL.FieldWorks.XWorks
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
-						 hvoRoot, fakeFlid,
+						 hvoRoot,
 						 cache, sortItemProvider, sda);
 		}
 
@@ -832,11 +833,11 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordBrowseActiveView : RecordBrowseView
 	{
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,
-						 hvoRoot, fakeFlid,
+						 hvoRoot,
 						 cache, sortItemProvider, sda);
 			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
 			return viewer;

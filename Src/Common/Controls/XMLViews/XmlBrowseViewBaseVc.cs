@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected List<XElement> m_possibleColumns;
 		/// <summary>// Top-level fake property for list of objects.</summary>
-		protected int m_fakeFlid = 0;
+		protected int m_madeUpFieldIdentifier = 0;
 		/// <summary>// Controls appearance of column for check boxes.</summary>
 		protected bool m_fShowSelected;
 		/// <summary></summary>
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public XmlBrowseViewBaseVc() : base() // We don't have a string table.
 		{
-			m_fakeFlid = 0;
+			m_madeUpFieldIdentifier = 0;
 		}
 
 		/// <summary>
@@ -194,10 +194,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="T:XmlBrowseViewBaseVc"/> class.
 		/// </summary>
 		/// <param name="xnSpec">The xn spec.</param>
-		/// <param name="fakeFlid">The fake flid.</param>
+		/// <param name="madeUpFieldIdentifier">The fake flid.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlBrowseViewBaseVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+		public XmlBrowseViewBaseVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{
 			Debug.Assert(xnSpec != null);
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_columns.Add(node);
 			}
 			}
-			m_fakeFlid = fakeFlid;
+			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
 			SetupSelectColumn();
 		}
 
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			Debug.Assert(cache != null);
 
-			m_fakeFlid = 0;
+			m_madeUpFieldIdentifier = 0;
 			Cache = cache;	// sets m_mdc and m_layouts as well as m_cache.
 			if (sda != null)
 				DataAccess = sda;
@@ -1073,7 +1073,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int level = vwenv.EmbeddingLevel;
 				int hvoDum, tag, ihvo;
 				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
-				Debug.Assert(tag == m_fakeFlid);
+				Debug.Assert(tag == m_madeUpFieldIdentifier);
 				IManyOnePathSortItem item = m_sortItemProvider.SortItemAt(ihvo);
 				if (item != null)
 				DisplayCell(item, node, hvo, vwenv);	// (Original) cell contents
@@ -1549,7 +1549,7 @@ namespace SIL.FieldWorks.Common.Controls
 						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 						if (obj is IReversalIndex)
 							m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
-						vwenv.AddLazyVecItems(m_fakeFlid, this, kfragListItem);
+						vwenv.AddLazyVecItems(m_madeUpFieldIdentifier, this, kfragListItem);
 					}
 					break;
 				case kfragListItemInner:

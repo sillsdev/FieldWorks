@@ -31,15 +31,15 @@ namespace LanguageExplorer.Controls
 				Dock = DockStyle.Fill
 			};
 			newPaneBarContainer.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			if (mainChildControl is IFlexComponent)
-			{
-				var asFlexComponent = (IFlexComponent) mainChildControl;
-				asFlexComponent.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			}
 			if (mainChildControl is IPaneBarUser)
 			{
 				var asPaneBarUser = (IPaneBarUser)mainChildControl;
 				asPaneBarUser.MainPaneBar = newPaneBarContainer.PaneBar;
+			}
+			if (mainChildControl is IFlexComponent)
+			{
+				var asFlexComponent = (IFlexComponent) mainChildControl;
+				asFlexComponent.InitializeFlexComponent(propertyTable, publisher, subscriber);
 			}
 			parentControl.Controls.Add(newPaneBarContainer);
 			parentControl.ResumeLayout();

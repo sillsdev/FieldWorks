@@ -54,11 +54,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="xnSpec"></param>
-		/// <param name="fakeFlid"></param>
-		/// <param name="xbv"></param>
-		public XmlRDEBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
-			: base(xnSpec, fakeFlid, xbv)
+		public XmlRDEBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+			: base(xnSpec, madeUpFieldIdentifier, xbv)
 		{
 			// set the border color
 			BorderColor = SystemColors.ControlDark;

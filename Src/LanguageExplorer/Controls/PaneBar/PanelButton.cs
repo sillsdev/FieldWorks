@@ -11,7 +11,7 @@ namespace LanguageExplorer.Controls.PaneBar
 {
 	internal class PanelButton : PanelExtension
 	{
-		private bool mouseOverControl = false;
+		private bool _mouseOverControl = false;
 
 		public PanelButton()
 		{
@@ -30,25 +30,6 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			//Tag = choice;
 			SetLabel();
-		}
-
-		/// <summary>
-		/// Is what we are displaying affected by Property: <paramref name="name"/>?
-		/// </summary>
-		/// <param name="name">Property name to be checked.</param>
-		/// <returns></returns>
-		public bool IsRelatedProperty(string name)
-		{
-#if RANDYTODO
-			//for now, only handles Boolean properties
-			BoolPropertyChoice choice = this.Tag as XCore.BoolPropertyChoice;
-			if (choice == null)
-				return false;
-
-			return choice.BoolPropertyName == name;
-#else
-			return false;
-#endif
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -70,7 +51,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			}
 
 			// Simulate a mouse enter or leave event to get the correct highlighting
-			if (mouseOverControl)
+			if (_mouseOverControl)
 				this.panelButton_MouseEnter(null, null);
 			else
 				this.panelButton_MouseLeave(null, null);
@@ -137,7 +118,7 @@ namespace LanguageExplorer.Controls.PaneBar
 
 		private void panelButton_MouseEnter(object sender, EventArgs e)
 		{
-			mouseOverControl = true;
+			_mouseOverControl = true;
 
 #if RANDYTODO
 			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
@@ -159,7 +140,7 @@ namespace LanguageExplorer.Controls.PaneBar
 
 		private void panelButton_MouseLeave(object sender, EventArgs e)
 		{
-			mouseOverControl = false;
+			_mouseOverControl = false;
 
 #if RANDYTODO
 			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;

@@ -79,8 +79,9 @@ namespace SIL.FieldWorks.Common.Controls
 			StoreData(objs);
 #if RANDYTODO
 			// TODO: Call InitializeFlexComponent on m_bvList.
+			// TODO: Call FinishInitialization on m_bvList and feed it ObjectListFlid for the 'madeUpFieldIdentifier' parameter.
 #endif
-			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache,
+			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, m_cache,
 				null, m_listPublisher)
 			{
 				Location = new Point(0, 0),

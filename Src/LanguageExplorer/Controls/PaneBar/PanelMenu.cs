@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls.PaneBar
 {
+	/// <summary>
+	/// PaneBar control that displays a context menu.
+	/// </summary>
 	internal class PanelMenu : PanelExtension
 	{
 		public PanelMenu()

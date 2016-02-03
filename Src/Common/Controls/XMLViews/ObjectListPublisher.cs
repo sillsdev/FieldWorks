@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// The base value for fake flids.
 		/// </summary>
-		public const int MinFakeFlid = 89999000;
+		public const int MinMadeUpFieldIdentifier = 89999000;
 		/// <summary>
 		/// The (fixed) tag used to retrieve the owning property.
 		/// </summary>
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SendPropChanged(hvo, m_flid, ivMin, cvIns, cvDel);
 		}
 
-		internal int FakeFlid
+		internal int MadeUpFieldIdentifier
 		{
 			get { return m_flid; }
 		}
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (flid == ObjectListPublisher.OwningFlid)
 					return m_publisher.m_owningDestClass;
-				if (flid == m_publisher.FakeFlid && flid >= ObjectListPublisher.MinFakeFlid)
+				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= ObjectListPublisher.MinMadeUpFieldIdentifier)
 					return 0;
 				return base.GetDstClsId(flid);
 			}
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (flid == ObjectListPublisher.OwningFlid)
 					return m_publisher.m_owningFieldName;
-				if (flid == m_publisher.FakeFlid && flid >= ObjectListPublisher.MinFakeFlid)
+				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= ObjectListPublisher.MinMadeUpFieldIdentifier)
 					return String.Empty;
 
 				return base.GetFieldName(flid);
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (flid == ObjectListPublisher.OwningFlid)
 					return m_publisher.m_owningClassName;
-				else if (flid == m_publisher.FakeFlid && flid >= ObjectListPublisher.MinFakeFlid)
+				else if (flid == m_publisher.MadeUpFieldIdentifier && flid >= ObjectListPublisher.MinMadeUpFieldIdentifier)
 					return String.Empty;
 				else
 					return base.GetOwnClsName(flid);
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (flid == ObjectListPublisher.OwningFlid)
 					return (int)CellarPropertyType.OwningSequence;
-				else if (flid == m_publisher.FakeFlid && flid >= ObjectListPublisher.MinFakeFlid)
+				else if (flid == m_publisher.MadeUpFieldIdentifier && flid >= ObjectListPublisher.MinMadeUpFieldIdentifier)
 					return (int)CellarPropertyType.OwningSequence;
 				else
 					return base.GetFieldType(flid);
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.Common.Controls
 			public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 			{
 				if (bstrClassName == m_publisher.m_owningClassName && bstrFieldName == m_publisher.m_owningFieldName)
-					return m_publisher.FakeFlid;
+					return m_publisher.MadeUpFieldIdentifier;
 				return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 			}
 		}

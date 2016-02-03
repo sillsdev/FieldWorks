@@ -2094,10 +2094,19 @@ namespace SIL.FieldWorks.Common.Controls
 				string owningClass;
 				string property;
 				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
+#if RANDYTODO
+				// TODO: "recordListNode" is a child of "clerk" elements.
+				// TODO: "treeBarHandlerNode" is an optional sibling of "recordListNode".
 				var recordListNode = windowConfiguration.XPathSelectElement(string.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
 				var treeBarHandlerNode = recordListNode.Parent.XPathSelectElement("treeBarHandler");
 				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(treeBarHandlerNode, "includeAbbr");
 				m_bestWS = XmlUtils.GetOptionalAttributeValue(treeBarHandlerNode, "ws", null);
+#else
+				// TODO: Notebook browse views have no "treeBarHandlerNode", so go with the defaults for that tool.
+				// TODO: Worry about other tools later on, probably with an overloaded constructor with the two values.
+				m_includeAbbr = false;
+				m_bestWS = null;
+#endif
 			}
 			else
 			{

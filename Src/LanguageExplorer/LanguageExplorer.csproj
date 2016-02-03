@@ -248,6 +248,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\NotebookBrowseParameters.xml" />
+    <Content Include="Resources\NotebookDocumentParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
     <None Include="..\..\DistFiles\Language Explorer\Configuration\UtilityCatalogInclude.xml">
       <Link>XML\UtilityCatalogInclude.xml</Link>
       <SubType>Designer</SubType>
@@ -317,9 +322,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
       <Link>XML\Notebook\areaConfiguration.xml</Link>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\browseDialogColumns.xml">
-      <Link>XML\Notebook\browseDialogColumns.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Browse\toolConfiguration.xml">
       <Link>XML\Notebook\Browse\toolConfiguration.xml</Link>
@@ -543,6 +545,11 @@
     </Compile>
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RoledParticipantsSlice.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Notebook\Tools\NotebookResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NotebookResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\PhEnvStrRepresentationSlice.cs">
       <SubType>UserControl</SubType>
@@ -1129,6 +1136,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorLauncher.resx">
       <DependentUpon>AdhocCoProhibVectorLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Notebook\Tools\NotebookResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotebookResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\RecordBar.resx">

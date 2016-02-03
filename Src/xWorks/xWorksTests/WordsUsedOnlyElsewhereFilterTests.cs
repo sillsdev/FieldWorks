@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override int get_IntProp(int hvo, int tag)
 		{
-			if (tag == FakeMdc.kfakeFlid)
+			if (tag == FakeMdc.kMadeUpFieldIdentifier)
 			{
 				int result;
 				HvoToOccurrenceCount.TryGetValue(hvo, out result);
@@ -132,11 +132,11 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		internal const int kfakeFlid = 5887;
+		internal const int kMadeUpFieldIdentifier = 5887;
 		public override int GetFieldId2(int luClid, string bstrFieldName, bool fIncludeBaseClasses)
 		{
 			if (bstrFieldName == "OccurrenceCount")
-				return kfakeFlid;
+				return kMadeUpFieldIdentifier;
 			return base.GetFieldId2(luClid, bstrFieldName, fIncludeBaseClasses);
 		}
 	}

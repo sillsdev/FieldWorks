@@ -4,10 +4,13 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 {
@@ -16,6 +19,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	/// </summary>
 	internal sealed class NotebookBrowseTool : ITool
 	{
+		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 
 		#region Implementation of IPropertyTableProvider
@@ -88,10 +92,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			_configurationDocument = XDocument.Parse(NotebookResources.NotebookBrowseParameters);
+			_configurationDocument.Root.Add(XElement.Parse(NotebookResources.NotebookBrowseColumnDefinitions));
+			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
+			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				PropertyTable, Publisher, Subscriber,
 				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				new RecordBrowseView(_configurationDocument.Root, recordClerk));
 		}
 
 		/// <summary>

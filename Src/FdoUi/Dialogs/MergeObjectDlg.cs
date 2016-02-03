@@ -151,15 +151,18 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			var configurationParameters = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
-			const int kfakeFlid = 8999958;
-			ObjectListPublisher sda = new ObjectListPublisher((ISilDataAccessManaged)m_cache.DomainDataByFlid , kfakeFlid);
+			const int kMadeUpFieldIdentifier = 8999958;
+			ObjectListPublisher sda = new ObjectListPublisher((ISilDataAccessManaged)m_cache.DomainDataByFlid , kMadeUpFieldIdentifier);
 
 			int[] hvos = (from obj in mergeCandidates select obj.Hvo).ToArray();
 			for (int i = 0; i < mergeCandidates.Count; i++)
 				m_candidates[mergeCandidates[i].Hvo] = mergeCandidates[i];
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
-			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, null, sda)
+#if RANDYTODO
+			// TODO: Call FinishInitialization on m_bvMergeOptions and feed it ObjectListPublisher.OwningFlid for the 'madeUpFieldIdentifier' parameter.
+#endif
+			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, m_cache, null, sda)
 			{
 				StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
 			};

@@ -185,7 +185,6 @@
 			</clerks>
 			<tools>
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
-				<include path="Browse/toolConfiguration.xml" query="root/tools/*"/>
 			</tools>
 		</parameters>
 	</item>

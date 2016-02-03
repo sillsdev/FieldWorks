@@ -90,17 +90,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="nodeSpec">The node spec.</param>
 		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="fakeFlid">The fake flid.</param>
+		/// <param name="madeUpFieldIdentifier">The made up field identifier.</param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="bv">The bv.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		public override void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
 			FdoCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
-			// Use the ones in fakeFlid, and any we create.
-			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, bv);
+			// Use the ones in madeUpFieldIdentifier, and any we create.
+			base.Init(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache, bv);
 		}
 
 		#endregion Construction, initialization, and disposal.
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_madeUpFieldIdentifier, this);
 				}
 				return base.Vc;
 			}
@@ -817,14 +817,14 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							if ((bool)mi.Invoke(target, parameters))
 							{
-								// The sense was deleted as a duplicate; get rid of it from our fakeflid, too.
+								// The sense was deleted as a duplicate; get rid of it from our madeUpFieldIdentifier, too.
 								ISilDataAccessManaged sda = m_bv.SpecialCache;
-								int[] oldList = sda.VecProp(m_hvoRoot, m_fakeFlid);
+								int[] oldList = sda.VecProp(m_hvoRoot, m_madeUpFieldIdentifier);
 								for (int i = 0; i < oldList.Length; i++)
 								{
 									if (oldList[i] == hvoSense)
 									{
-										m_bv.SpecialCache.Replace(m_hvoRoot, m_fakeFlid, i, i+1, new int[0], 0);
+										m_bv.SpecialCache.Replace(m_hvoRoot, m_madeUpFieldIdentifier, i, i+1, new int[0], 0);
 									}
 								}
 							}
@@ -847,8 +847,8 @@ namespace SIL.FieldWorks.Common.Controls
 						RDEVc.EditRowMergeMethod, RDEVc.EditRowClass), error);
 				}
 				RDEVc.EditableObjectsClear();
-				int cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, m_fakeFlid);
-				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, m_fakeFlid, 0, cobj, cobj);
+				int cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, m_madeUpFieldIdentifier, 0, cobj, cobj);
 			}
 			finally
 			{
@@ -879,7 +879,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var index = GetRowIndexFromSelection(sel, false);
 			if (index < 0)
 				 return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-			int hvo = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, index);
+			int hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
 			// It would sometimes work to jump to one of the editable objects.
 			// But sometimes one of them will get destroyed when we switch away from this view
 			// (e.g., because there is already a similar sense to which we can just add this semantic domain).

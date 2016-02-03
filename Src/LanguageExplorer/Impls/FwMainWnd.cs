@@ -500,6 +500,7 @@ namespace LanguageExplorer.Impls
 			mainContainer.SuspendLayout();
 			_sidePane.TabStop = true;
 			_sidePane.TabIndex = 0;
+			_sidePane.ItemAreaStyle = SidePaneItemAreaStyle.List;
 
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;

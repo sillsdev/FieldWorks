@@ -759,7 +759,7 @@ namespace SIL.FieldWorks.XWorks
 				return Clerk.CurrentIndex; // no tricks.
 			if (Clerk.CurrentObjectHvo == 0)
 				return -1;
-			var items = sda.VecProp(m_hvoOwner, m_fakeFlid);
+			var items = sda.VecProp(m_hvoOwner, m_madeUpFieldIdentifier);
 			// Search for the indicated item, working back from the place we expect it to be.
 			// This is efficient, because usually only a few items are filtered and it will be close.
 			// Also, currently the decorator only removes items, so we won't find it at a larger index.
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.XWorks
 			int index = Math.Min(Clerk.CurrentIndex, items.Length - 1);
 			while (index >= 0 && items[index] != target)
 				index--;
-			if (index < 0 && sda.get_VecSize(m_hvoOwner, m_fakeFlid) > 0)
+			if (index < 0 && sda.get_VecSize(m_hvoOwner, m_madeUpFieldIdentifier) > 0)
 				return 0; // can we do better? The object selected in other views is hidden in this.
 			return index;
 		}
@@ -1027,7 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 						rgvsli[i].ihvo = indexes[i];
 						rgvsli[i].tag = levelFlid;
 					}
-					rgvsli[rgvsli.Length-1].tag = m_fakeFlid;
+					rgvsli[rgvsli.Length-1].tag = m_madeUpFieldIdentifier;
 					rootb.MakeTextSelInObj(0, rgvsli.Length, rgvsli, rgvsli.Length, rgvsli, false, false, false, true, true);
 					m_mainView.ScrollSelectionIntoView(rootb.Selection, VwScrollSelOpts.kssoBoth);
 
@@ -1065,7 +1065,7 @@ namespace SIL.FieldWorks.XWorks
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (clerk.RequestedLoadWhileSuppressed)
 					clerk.UpdateList(false);
-				m_fakeFlid = clerk.VirtualFlid;
+				m_madeUpFieldIdentifier = clerk.VirtualFlid;
 				if (clerk.OwningObject != null)
 				{
 					m_hvoOwner = clerk.OwningObject.Hvo;
@@ -1096,7 +1096,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
 				var app = PropertyTable.GetValue<IFlexApp>("App");
-				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParametersElement, Clerk.VirtualListPublisher, app,
+				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, Clerk.VirtualListPublisher, app,
 					Publication);
 				m_mainView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 				m_mainView.Dock = DockStyle.Fill;

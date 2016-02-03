@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected UserControl m_informationBar;
 		/// <summary/>
-		protected int m_fakeFlid; // the list
+		protected int m_madeUpFieldIdentifier; // the list
 		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.

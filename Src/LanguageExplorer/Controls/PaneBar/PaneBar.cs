@@ -11,9 +11,17 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace LanguageExplorer.Controls.PaneBar
 {
 	/// <summary>
-	/// Bar used to hold various controls, such as links, above the main content pane on the right of FLEx.
+	/// Blue bar used to hold various controls, such as links, above main content panes on the right (of the side bar) of FLEx.
+	///
+	/// This class has one, and only one, child control, which is an instance of "PanelExtension" ("m_panelMain" data member).
+	/// "m_panelMain" can then have one, or more, child controls, which are also instances of "PanelExtension", or one of its subclasses.
+	///
+	/// If the "Show Hidden Fields" checkbox is present, it is always on the far right.
+	///
+	/// The context menu is almost always on the far left, except the Lexicon Dictionary tool has two of them,
+	/// in which case they are far left and far right.
 	/// </summary>
-	internal partial class PaneBar : UserControl, IPaneBar
+	internal sealed partial class PaneBar : UserControl, IPaneBar
 	{
 		private Hashtable m_propertiesToWatch = new Hashtable();
 

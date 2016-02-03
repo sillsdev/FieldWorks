@@ -4484,15 +4484,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is called when the preview button is clicked. The control is passed
 		/// the list of currently active (filtered and checked) items. It should cache
 		/// tagEnabled to zero for any objects that can't be
-		/// modified. For ones that can, it should set the string property tagFakeFlid
+		/// modified. For ones that can, it should set the string property tagMadeUpFieldIdentifier
 		/// to the value to show in the 'modified' fields.
 		/// </summary>
 		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagFakeFlid">The tag fake flid.</param>
+		/// <param name="tagMadeUpFieldIdentifier">The tag fake flid.</param>
 		/// <param name="tagEnabled">The tag enabled.</param>
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
-		void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state);
+		void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state);
 
 		/// <summary>
 		/// True if the editor can set a value that will make the field 'clear'.
@@ -4520,10 +4520,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
 		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagFakeFlid">The tag fake flid.</param>
+		/// <param name="tagMadeUpFieldIdentifier">The tag fake flid.</param>
 		/// <param name="tagEnabled">The tag enabled.</param>
 		/// <param name="state">The state.</param>
-		void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state);
+		void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state);
 	}
 
 	/// <summary>
@@ -4766,11 +4766,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// for each item in the set. Disable items that can't be set.
 		/// </summary>
 		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagFakeFlid">The tag fake flid.</param>
+		/// <param name="tagMadeUpFieldIdentifier">The tag made up field identifier.</param>
 		/// <param name="tagEnable">The tag enable.</param>
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -4785,7 +4785,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				bool fEnable = OkToChange(hvo);
 				if (fEnable)
-					m_sda.SetString(hvo, tagFakeFlid, NewValue(hvo));
+					m_sda.SetString(hvo, tagMadeUpFieldIdentifier, NewValue(hvo));
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -5382,7 +5382,7 @@ namespace SIL.FieldWorks.Common.Controls
 				((int)val == (int)SpellingStatusStates.correct));
 		}
 
-		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			int val = ((IntComboItem) m_combo.SelectedItem).Value;
 			ITsString tssVal = m_cache.TsStrFactory.MakeString(m_combo.SelectedItem.ToString(),
@@ -5415,7 +5415,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 					fEnable = m_sda.get_IntProp(hvoItem, m_flid) != val;
 				if (fEnable)
-					m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
+					m_sda.SetString(hvoItem, tagMadeUpFieldIdentifier, tssVal);
 				m_sda.SetInt(hvoItem, tagEnabled, (fEnable ? 1 : 0));
 			}
 		}
@@ -5522,7 +5522,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		}
 
-		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
 			ITsString tssVal = TsStringUtils.MakeTss(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
@@ -5549,7 +5549,7 @@ namespace SIL.FieldWorks.Common.Controls
 					int valOld = m_sda.get_IntProp(hvoItem, m_flidSub);
 					bool fEnable = valOld != val;
 					if (fEnable)
-						m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
+						m_sda.SetString(hvoItem, tagMadeUpFieldIdentifier, tssVal);
 					m_sda.SetInt(hvoItem, tagEnabled, (fEnable ? 1 : 0));
 				}
 			}
@@ -5569,7 +5569,7 @@ namespace SIL.FieldWorks.Common.Controls
 					int valOld = GetValueOfField(m_sda, hvoField);
 					bool fEnable = valOld != val;
 					if (fEnable)
-						m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
+						m_sda.SetString(hvoItem, tagMadeUpFieldIdentifier, tssVal);
 					m_sda.SetInt(hvoItem, tagEnabled, (fEnable ? 1 : 0));
 				}
 			}
@@ -5735,7 +5735,7 @@ namespace SIL.FieldWorks.Common.Controls
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -5764,7 +5764,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -5950,16 +5950,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is called when the preview button is clicked. The control is passed
 		/// the list of currently active (filtered and checked) items. It should cache
 		/// tagEnabled to zero for any objects that can't be
-		/// modified. For ones that can, it should set the string property tagFakeFlid
+		/// modified. For ones that can, it should set the string property tagMadeUpFieldIdentifier
 		/// to the value to show in the 'modified' fields.
 		/// </summary>
 		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagFakeFlid">The tag fake flid.</param>
+		/// <param name="tagMadeUpFieldIdentifier">The tag made up field identifier.</param>
 		/// <param name="tagEnabled">The tag enabled.</param>
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
 		/// ------------------------------------------------------------------------------------
-		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled,
 			ProgressState state)
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -5997,7 +5997,7 @@ namespace SIL.FieldWorks.Common.Controls
 					fEnable = hvoOld != hvoSel;
 				}
 				if (fEnable)
-					m_sda.SetString(hvoItem, tagFakeFlid, item.AsTss);
+					m_sda.SetString(hvoItem, tagMadeUpFieldIdentifier, item.AsTss);
 				m_sda.SetInt(hvoItem, tagEnabled, (fEnable ? 1 : 0));
 			}
 		}
@@ -6017,7 +6017,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -6420,7 +6420,7 @@ namespace SIL.FieldWorks.Common.Controls
 			});
 		}
 
-		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled,
 			ProgressState state)
 		{
 			var chosenObjs = m_chosenObjs;
@@ -6447,7 +6447,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						if (newVal != chosenObjs)
 							tssVal = BuildValueString(newVal);
-						m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
+						m_sda.SetString(hvoItem, tagMadeUpFieldIdentifier, tssVal);
 					}
 				}
 				m_sda.SetInt(hvoItem, tagEnabled, (fEnable ? 1 : 0));
@@ -6457,7 +6457,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public virtual void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public virtual void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new NotImplementedException();
 		}
@@ -6698,7 +6698,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public override void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			m_doingSuggest = true;
 			ChosenObjects = new List<ICmObject>(0);
@@ -6709,7 +6709,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Should be the only time we need to loop through all the Semantic Domains
 			m_searchCache.InitializeCache();
 			m_suggestionCache = new Dictionary<int, List<ICmObject>>();
-			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+			base.FakeDoit(itemsToChange, tagMadeUpFieldIdentifier, tagEnabled, state);
 			if (SomeChangesAreWaiting(itemsToChange, tagEnabled))
 				EnableButtonsIfChangesWaiting();
 		}
@@ -6719,10 +6719,10 @@ namespace SIL.FieldWorks.Common.Controls
 			return itemsToChange.Any() && itemsToChange.Any(hvo => DataAccess.get_IntProp(hvo, tagEnabled) == 1);
 		}
 
-		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			m_doingSuggest = false;
-			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+			base.FakeDoit(itemsToChange, tagMadeUpFieldIdentifier, tagEnabled, state);
 		}
 
 		protected override void m_launcher_Click(object sender, EventArgs e)
@@ -6824,10 +6824,10 @@ namespace SIL.FieldWorks.Common.Controls
 			return !m_complexEntryRefs.Contains(hvoItem);
 		}
 
-		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			m_complexEntryRefs = null;	// reset the filtered entry refs cache.
-			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+			base.FakeDoit(itemsToChange, tagMadeUpFieldIdentifier, tagEnabled, state);
 		}
 
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
@@ -7049,7 +7049,7 @@ namespace SIL.FieldWorks.Common.Controls
 			idsToDel.Add(origForm.Hvo);
 		}
 
-		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled,
 			ProgressState state)
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -7080,7 +7080,7 @@ namespace SIL.FieldWorks.Common.Controls
 				//bool fEnable = fAffix == fSelAffix && hvoMorphType != hvoSelMorphType;
 				bool fEnable = hvoMorphType != hvoSelMorphType;
 				if (fEnable)
-					m_sda.SetString(hvoLexEntry, tagFakeFlid, item.AsTss);
+					m_sda.SetString(hvoLexEntry, tagMadeUpFieldIdentifier, item.AsTss);
 				m_sda.SetInt(hvoLexEntry, tagEnabled, (fEnable ? 1 : 0));
 				i++;
 			}

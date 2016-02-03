@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Data members
 
-		private const int ListFlid = ObjectListPublisher.MinFakeFlid + 1111;
+		private const int ListFlid = ObjectListPublisher.MinMadeUpFieldIdentifier + 1111;
 
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.Controls
 #if RANDYTODO
 			// TODO: Call InitializeFlexComponent on m_bvMatches.
 #endif
-			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache,
+			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, m_cache,
 				null, m_listPublisher);
 			m_bvMatches.SuspendLayout();
 			m_bvMatches.Location = new Point(0, 0);

@@ -438,11 +438,11 @@ namespace SIL.FieldWorks.FdoUi
 			throw new NotImplementedException();
 		}
 
-		public void ClearPreviousPreviews(IEnumerable<int> itemsToChange, int tagFakeFlid)
+		public void ClearPreviousPreviews(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier)
 		{
 			foreach (int hvo in itemsToChange)
 			{
-				m_sda.RemoveMultiBaseStrings(hvo, tagFakeFlid);
+				m_sda.RemoveMultiBaseStrings(hvo, tagMadeUpFieldIdentifier);
 			}
 		}
 
@@ -451,10 +451,10 @@ namespace SIL.FieldWorks.FdoUi
 		/// for each item in the set. Disable items that can't be set.
 		/// </summary>
 		/// <param name="itemsToChange"></param>
-		/// <param name="tagFakeFlid"></param>
+		/// <param name="tagMadeUpFieldIdentifier"></param>
 		/// <param name="tagEnable"></param>
 		/// <param name="state"></param>
-		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				bool fEnable = IsItemEligible(m_sda, hvo, selectedObject, labelToShow);
 				if (fEnable)
-					m_sda.SetString(hvo, tagFakeFlid, tss);
+					m_sda.SetString(hvo, tagMadeUpFieldIdentifier, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -774,12 +774,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// The sortItemProvider is typically the RecordList that impelements sorting and
 		/// filtering of the items we are displaying.
 		/// The data access passed typically is a decorator for the one in the cache, adding
-		/// the sorted, filtered list of objects accessed as property fakeFlid of hvoRoot.
+		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseViewerPhonologicalFeatures(XElement nodeSpec, int hvoRoot, int fakeFlid,
+		public BrowseViewerPhonologicalFeatures(XElement nodeSpec, int hvoRoot,
 			FdoCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, sortItemProvider, sda)
+			: base(nodeSpec, hvoRoot, cache, sortItemProvider, sda)
 		{ }
 
 

@@ -37,11 +37,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="xnSpec"></param>
-		/// <param name="fakeFlid"></param>
-		/// <param name="xbv"></param>
-		public XmlBrowseViewVc(XElement xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
-			: base(xnSpec, fakeFlid, xbv)
+		public XmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+			: base(xnSpec, madeUpFieldIdentifier, xbv)
 		{
 		}
 	}

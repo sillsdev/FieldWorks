@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
 		private readonly Dictionary<int, RecordClerk> m_recordClerks = new Dictionary<int, RecordClerk>(3);
 		private XMLViewsDataCache m_specialSda;
-		private int m_currentSourceFakeFlid;
+		private int m_currentSourceMadeUpFieldIdentifier;
 
 		private ConcDecorator ConcSda
 		{
@@ -646,16 +646,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
-						m_currentSourceFakeFlid = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceFakeFlid);
+						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
 						break;
 					case WfiAnalysisTags.kClassId:
-						m_currentSourceFakeFlid = specialMdc.GetFieldId2(WfiAnalysisTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceFakeFlid);
+						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiAnalysisTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
 						break;
 					case WfiGlossTags.kClassId:
-						m_currentSourceFakeFlid = specialMdc.GetFieldId2(WfiGlossTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceFakeFlid);
+						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiGlossTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
 						break;
 				}
 				// (Re)set selected state in cache, so default behavior of checked is used.
@@ -729,7 +729,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					var concSda = ConcSda;
 					var originalValues = new Dictionary<int, IParaFragment>();
-					foreach (var originalHvo in concSda.VecProp(src.Hvo, m_currentSourceFakeFlid))
+					foreach (var originalHvo in concSda.VecProp(src.Hvo, m_currentSourceMadeUpFieldIdentifier))
 						originalValues.Add(originalHvo, concSda.OccurrenceFromHvo(originalHvo));
 					foreach (var fakeHvo in checkedItems)
 					{
