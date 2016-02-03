@@ -20,7 +20,7 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
