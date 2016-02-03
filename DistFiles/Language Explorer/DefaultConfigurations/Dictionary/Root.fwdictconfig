@@ -2157,7 +2157,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2198,7 +2198,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3257,7 +3257,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3298,7 +3298,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
