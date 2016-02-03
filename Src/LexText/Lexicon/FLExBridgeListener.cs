@@ -394,6 +394,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				File.Delete(dictConfigSchemaTempPath);
 			}
 			File.Copy(dictConfigSchemaPath, dictConfigSchemaTempPath);
+			File.SetAttributes(dictConfigSchemaTempPath, FileAttributes.Normal);
 			return new TempFile(dictConfigSchemaTempPath, true);
 		}
 
