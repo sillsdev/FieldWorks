@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
-										: GetPropertyTypeForConfigurationNode(config, cache);
+										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
 			switch (typeForNode)
 			{
 				case (PropertyType.CollectionType):
@@ -812,14 +812,32 @@ namespace SIL.FieldWorks.XWorks
 		private static Dictionary<ConfigurableDictionaryNode, PropertyType> _configNodeToTypeMap = new Dictionary<ConfigurableDictionaryNode, PropertyType>();
 
 		/// <summary>
+		/// Get the property type for a configuration node.  There is no other data available but the node itself.
+		/// </summary>
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config)
+		{
+			return GetPropertyTypeForConfigurationNode(config, null, null);
+		}
+
+		/// <summary>
+		/// Get the property type for a configuration node, using a cache to help out if necessary.
+		/// </summary>
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache)
+		{
+			return GetPropertyTypeForConfigurationNode(config, null, cache);
+		}
+
+		/// <summary>
 		/// This method will reflectively return the type that represents the given configuration node as
 		/// described by the ancestry and FieldDescription and SubField properties of each node in it.
 		/// </summary>
 		/// <returns></returns>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache = null)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, FdoCache cache = null)
 		{
 			Type parentType;
 			var fieldType = GetTypeForConfigurationNode(config, cache, out parentType);
+			if (fieldType == null)
+				fieldType = fieldTypeFromData;
 			return GetPropertyTypeFromReflectedTypes(fieldType, parentType);
 		}
 
@@ -1709,9 +1727,11 @@ namespace SIL.FieldWorks.XWorks
 					hvo = ((ILexEntryRef)field).OwningEntry.Hvo;
 				else if (field is ISenseOrEntry)
 					hvo = ((ISenseOrEntry)field).EntryHvo;
+				else if (field is ILexSense)
+					hvo = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Hvo;
 				else
-					Debug.WriteLine("Need to find Entry Hvo for {0}",
-						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name);
+					Debug.WriteLine(String.Format("Need to find Entry Hvo for {0}",
+						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name));
 			}
 
 			if (propertyValue is ITsString)

@@ -190,8 +190,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Set up for the reversal index combo box or dropdown menu.
 			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
-			var currentReversalIndex = cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-			if (currentReversalIndex == null)
+			if (reversalIndexGuid == Guid.Empty)
 			{
 				// We haven't established the reversal index yet.  Choose the first one available.
 				Guid firstGuid = Guid.Empty;
@@ -409,7 +408,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
-			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
+			// exist, code elsewhere will make up for it.
+			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
+				ri.ShortName + DictionaryConfigurationModel.FileExtension);
 			m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
 
 			ICmObject newOwningObj = NewOwningObject(ri);

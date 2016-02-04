@@ -3741,20 +3741,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_MLOwnerOutlineNameFlid = Cache.MetaDataCache.GetFieldId("LexSense", "MLOwnerOutlineName", false);
 		}
 
-		internal IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
+		public IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
 		{
 			get
 			{
 				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
 					LexEntryRefTags.kflidComponentLexemes);
+				// We need to use an actual List<> here instead of using yield so that code that calls
+				// this property by reflection can figure out the type of the returned value.
+				var list = new List<ILexEntryRef>();
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
-					if (sequence == null)
-						continue;
-					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
-						yield return sequence.MainObject as ILexEntryRef;
+					if (sequence != null && sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
+						list.Add(sequence.MainObject as ILexEntryRef);
 				}
+				return list;
 			}
 		}
 

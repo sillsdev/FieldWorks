@@ -221,6 +221,21 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferringSenses()
 		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Owner",
+				SubField = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+					}
+				},
+				IsEnabled = true,
+			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
@@ -233,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ReferringSenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> {glossNode},
+				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode},
 				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -263,8 +278,14 @@ namespace SIL.FieldWorks.XWorks
 				const string senseNumberOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 				const string senseNumberTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 				//This assert is dependent on the specific entry data created in CreateInterestingEnglishReversalEntry
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+				var xhtml = XHTMLStringBuilder.ToString();
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+
+				const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='1']]";
+				const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='2']]";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
 			}
 		}
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
