@@ -1132,8 +1132,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int count = senseCollection.Cast<object>().Count();
 			if (count > 1) return false;
-			Debug.Assert(senseCollection is ICollection<ILexSense>);
-			int subcount = (senseCollection as ICollection<ILexSense>).Select(s => s.SensesOS.Count).FirstOrDefault();
+			Debug.Assert(senseCollection is IEnumerable<ILexSense>);
+			int subcount = (senseCollection as IEnumerable<ILexSense>).Select(s => s.SensesOS.Count).FirstOrDefault();
 			return subcount == 0;
 		}
 
