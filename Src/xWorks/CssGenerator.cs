@@ -555,7 +555,11 @@ namespace SIL.FieldWorks.XWorks
 					if (configNode.DictionaryNodeOptions != null)
 					{
 						// Rule added for all span tag which only having WritingSystems attribute
-						betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+						if (configNode.DisplayLabel == "Headword")
+							betweenSelector = String.Format("{0}> {1}>{2}+{2}:not('style'):before", parentSelector, collectionSelector, " span");
+						else
+							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
 					rules.Add(betweenRule);
