@@ -123,7 +123,6 @@
 <xs:simpleType name="listIdType">
 	<xs:restriction base="xs:string">
 		<xs:enumeration value="none"/>
-		<xs:enumeration value="minor"/>
 		<xs:enumeration value="complex"/>
 		<xs:enumeration value="variant"/>
 		<xs:enumeration value="sense"/>
