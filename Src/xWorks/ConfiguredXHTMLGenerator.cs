@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
 				foreach (var entryAndXhtml in entryContents)
 				{
-					if (wantLetterHeaders)
+					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, cache);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
