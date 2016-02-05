@@ -42,6 +42,12 @@ namespace SIL.FieldWorks.XWorks
 		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, Mediator mediator)
 		{
 			InitializeComponent();
+
+			// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
+			var additionalMinimumHeightForMono = 26;
+			if (MiscUtils.IsUnix)
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + additionalMinimumHeightForMono);
+
 			m_controller = controller;
 			Mediator = mediator;
 			Model = model;
@@ -69,6 +75,7 @@ namespace SIL.FieldWorks.XWorks
 					StartPosition = FormStartPosition.Manual;
 				}
 			}
+
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
