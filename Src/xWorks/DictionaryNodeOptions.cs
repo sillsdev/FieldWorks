@@ -85,7 +85,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public enum ListIds
 		{
-			// REVIEW (Hasso) 2014.04: One instance of Complex Forms doesn't display the list in the old dialog. This may not be needed.
 			// Since None=0, it is the default selected if nothing is specified in the xml
 			[XmlEnum("none")]
 			None = 0,

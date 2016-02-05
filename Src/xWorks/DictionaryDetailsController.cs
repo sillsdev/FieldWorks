@@ -357,6 +357,7 @@ namespace SIL.FieldWorks.XWorks
 				// Complex Forms are the only List type that make use of the Display Option CheckBox below the list
 				listOptionsView.DisplayOptionCheckBoxVisible = false;
 			}
+			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
 			{
@@ -388,10 +389,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				listOptionsView.AvailableItems = availableOptions;
-
-				// Prevent events from firing while the view is being initialized
-				listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 			}
+
+			// Prevent events from firing while the view is being initialized
+			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 
 			View.OptionsView = listOptionsView as UserControl;
 		}
@@ -400,7 +401,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
 
-			if (m_node.FieldDescription == "Subentries")
+			if (m_node.FieldDescription == "Subentries" || m_node.FieldDescription == "SubentriesOS")
 			{
 				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplaySubentriesInParagraphs;
 			}
@@ -413,12 +414,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return (o, args) =>
 			{
-				listOptionsView.UpClicked += (sender, e) =>
-					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
-				listOptionsView.DownClicked += (sender, e) =>
-					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
-				listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
-				listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
+				if (listOptions.ListId != DictionaryNodeListOptions.ListIds.None)
+				{
+					listOptionsView.UpClicked += (sender, e) =>
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
+					listOptionsView.DownClicked += (sender, e) =>
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
+					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
+					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
+				}
 
 				var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
 				if (complexFormOptions != null)
@@ -426,6 +430,7 @@ namespace SIL.FieldWorks.XWorks
 					listOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
 					{
 						complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.DisplayOptionCheckBoxChecked;
+						m_node.Style = ParagraphStyleForSubentries(complexFormOptions.DisplayEachComplexFormInAParagraph, m_node.FieldDescription);
 						ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 						RefreshPreview();
 					};
@@ -433,6 +438,15 @@ namespace SIL.FieldWorks.XWorks
 
 				listOptionsView.Load -= ListEventHandlerAdder(listOptionsView, listOptions);
 			};
+		}
+
+		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
+		{
+			return showInParagraph
+				? field == "SubentriesOS" // only Reversal Subentries use SubentriesOS
+					? "Reversal-Subentry"
+					: "Dictionary-Subentry"
+				: null;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
@@ -857,7 +871,7 @@ namespace SIL.FieldWorks.XWorks
 			senseOptions.DisplayEachSenseInAParagraph = senseOptionsView.SenseInPara;
 			// If we are not showing each sense in a paragraph then the paragraph style should no longer be in the configuration.
 			// The default style "Dictionary-Sense" will be used if the user turns this option on.
-			m_node.Style = !senseOptions.DisplayEachSenseInAParagraph ? null : "Dictionary-Sense";
+			m_node.Style = senseOptions.DisplayEachSenseInAParagraph ? "Dictionary-Sense" : null;
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
 			RefreshPreview();
 		}
