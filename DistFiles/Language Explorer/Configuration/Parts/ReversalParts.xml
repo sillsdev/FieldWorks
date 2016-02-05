@@ -7,7 +7,7 @@
 				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryChangeHandler"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
-			<slice attr="ReversalForm" field="ReversalForm" label="Form" editor="CustomWithParams"
+			<slice attr="ReversalForm" field="ReversalForm" label="Reversal Form" editor="CustomWithParams"
 				assemblyPath="LexEdDll.dll"
 				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryFormSlice"
 				menu="mnuDataTree-Help"/>
@@ -16,12 +16,12 @@
 			<string field="ReversalForm" ws="reversal"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-PartOfSpeech" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Reversal Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
 		<part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
-			<slice field="ReferringSenses" label="Senses" menu="mnuReorderVector" reorder="true"
+			<slice field="ReferringSenses" label="Referenced Senses" menu="mnuReorderVector" reorder="true"
 				editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RevEntrySensesCollectionReferenceSlice" >
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
 			</slice>
