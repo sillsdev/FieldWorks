@@ -743,6 +743,13 @@ namespace SIL.FieldWorks.XWorks
 			if (node.PartName == "LexEntry-Jt-StemMinorComponentsConfig")
 				convertedNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 
+			// Custom fields were implicitly marked in the old configuration files.  Decode the implicit marking.  See LT-17032.
+			if (node.Configuration != null && node.Configuration.Attributes != null)
+			{
+				var attr = node.Configuration.Attributes["ref"];
+				convertedNode.IsCustomField = (attr != null && attr.Value == "$child");
+			}
+
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
 			{

@@ -1955,6 +1955,25 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");
 		}
 
+		[Test]
+		public void TestMigrateCustomFieldNode()
+		{
+			var xdoc0 = new System.Xml.XmlDocument();
+			xdoc0.LoadXml("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
+			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.DocumentElement, m_migrator, "LexSense");
+			var newTypeNode0 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode0);
+			Assert.IsFalse(newTypeNode0.IsCustomField, "A normal field should not be marked as custom after conversion");
+			Assert.IsTrue(newTypeNode0.IsEnabled, "A normal field should be enabled properly.");
+			Assert.AreEqual("Scientific Name", newTypeNode0.Label, "A normal field copies its label properly during conversion");
+			var xdoc1 = new System.Xml.XmlDocument();
+			xdoc1.LoadXml("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
+			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.DocumentElement, m_migrator, "LexSense");
+			var newTypeNode1 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode1);
+			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
+			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
+			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
+		}
+
 		#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
