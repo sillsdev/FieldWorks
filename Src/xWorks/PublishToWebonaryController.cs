@@ -117,7 +117,9 @@ namespace SIL.FieldWorks.XWorks
 			// TODO use specified site with respect to webonary domain, rather than using value
 			// for current testing. eg $siteName.webonary.org/something or
 			// www.webonary.org/$sitename/wp-json/something .
-			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
+			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
+			server = string.IsNullOrEmpty(server) ? "192.168.33.10" : server;
+			var targetURI = string.Format("http://{0}/{1}/wp-json/webonary/import", server, siteName);
 			return targetURI;
 		}
 
