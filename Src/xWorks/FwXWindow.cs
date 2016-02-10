@@ -1225,11 +1225,8 @@ namespace SIL.FieldWorks.XWorks
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var controller = new PublishToWebonaryController
-			{
-				Cache = cache,
-				Mediator = mediator
-			};
+			var controller = new PublishToWebonaryController(cache, mediator);
+
 			var model = new PublishToWebonaryModel(mediator)
 			{
 				Reversals = reversals,

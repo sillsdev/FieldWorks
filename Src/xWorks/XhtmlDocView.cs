@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			var titleStr = GetBaseTitleStringFromConfig();
 			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_mediator) == "Reversal Index";
-			if (isReversalIndex && Clerk.OwningObject.ShortName != null)
+			if (isReversalIndex && Clerk.OwningObject != null && Clerk.OwningObject.ShortName != null)
 				titleStr = Clerk.OwningObject.ShortName;
 			if (titleStr == string.Empty)
 			{

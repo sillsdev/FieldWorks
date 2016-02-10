@@ -2037,7 +2037,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Tell the RecordClerk that it may now be the new master of the tree bar, if it is not a dependent clerk.
 		/// Use DeactivatedGui to tell RecordClerk that it's not currently being used in a Gui.
 		/// </summary>
-		virtual public void ActivateUI(bool useRecordTreeBar)
+		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			m_fIsActiveInGui = true;
 			CheckDisposed();
@@ -2052,6 +2052,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			if (!updateStatusBar)
+				return;
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
 		}
@@ -3199,7 +3201,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class TemporaryRecordClerk : RecordClerk
 	{
-		public override void ActivateUI(bool useRecordTreeBar)
+		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			// by default, we won't publish that we're the "ActiveClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.

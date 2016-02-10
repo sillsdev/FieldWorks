@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -323,6 +323,7 @@
     <Compile Include="DictionaryDetailsView\ParagraphOptionsView.Designer.cs">
       <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryExportService.cs" />
     <Compile Include="IDictionaryListOptionsView.cs" />
     <Compile Include="DictionaryDetailsView\SenseOptionsView.cs">
       <SubType>UserControl</SubType>
@@ -384,7 +385,7 @@
     <Compile Include="ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
-	<Compile Include="FlexStylesXmlAccessor.cs" />
+    <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="FwXApp.cs">
       <SubType>Code</SubType>
     </Compile>

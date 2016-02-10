@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
@@ -228,36 +229,51 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static string GetCurrentConfiguration(Mediator mediator, bool fUpdate, string innerConfigDir = null)
 		{
-			string currentConfig = null;
+			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
+			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
+			if (mediator == null || mediator.PropertyTable == null)
+				return null;
 			if (innerConfigDir == null)
 			{
 				innerConfigDir = GetInnermostConfigurationDirectory(mediator);
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
-			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
-			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
-			if(mediator != null && mediator.PropertyTable != null)
+			var currentConfig = mediator.PropertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
+			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
+				return currentConfig;
+			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
+			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
+			var projectConfigDir = GetProjectConfigurationDirectory(mediator, innerConfigDir);
+			// If no configuration has yet been selected or the previous selection is invalid,
+			// and the value is "publishSomething", try to use the new "Something" config
+			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
 			{
-				currentConfig = mediator.PropertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
-				if(string.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
+				var selectedPublication = currentConfig.Replace("publish", string.Empty);
+				if (!isDictionary)
 				{
-					var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
-					// If no configuration has yet been selected or the previous selection is invalid,
-					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
-					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)
-					{
-						defaultPublication = currentConfig.Replace("publish", string.Empty);
-					}
-					// select the project's Root configuration if available; otherwise, select the default Root configuration
-					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, innerConfigDir), defaultPublication + DictionaryConfigurationModel.FileExtension);
-					if(!File.Exists(currentConfig))
-					{
-						currentConfig = Path.Combine(GetDefaultConfigurationDirectory(innerConfigDir), defaultPublication + DictionaryConfigurationModel.FileExtension);
-					}
-					mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+					var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
+					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
+				}
+				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration
+				currentConfig = Path.Combine(projectConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
+				if(!File.Exists(currentConfig))
+				{
+					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
 				}
 			}
+			if (!File.Exists(currentConfig))
+			{
+				// select the project's Root configuration if available; otherwise, select the default Root configuration
+				currentConfig = Path.Combine(projectConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
+				if (!File.Exists(currentConfig))
+				{
+					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
+				}
+			}
+			Debug.Assert(File.Exists(currentConfig));
+			mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
 			return currentConfig;
 		}
 
