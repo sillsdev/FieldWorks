@@ -285,14 +285,14 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/fw-8.2.tcbuildtag</ChorusDownloadUrl>
-		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/fw-8.2.tcbuildtag</ChorusDownloadUrl>
-		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/fw-8.2.tcbuildtag</PalasoDownloadUrl>
-		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/fw-8.2.tcbuildtag</PalasoDownloadUrl>
+		<!-- ChorusWin32v25nostrongCont is the chorus-2.5 branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/.lastSuccessful</ChorusDownloadUrl>
+		<!-- ChorusPrecise64v25Cont is the chorus-2.5 branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/.lastSuccessful</ChorusDownloadUrl>
+		<!-- PalasoWin32v26nostrongCont is the libpalaso-2.6 branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/.lastSuccessful</PalasoDownloadUrl>
+		<!-- PalasoPrecise64v26Cont is the libpalaso-2.6 branch build of Palaso for Linux development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/.lastSuccessful</PalasoDownloadUrl>
 		<!-- bt399 is the GeckoFX 29 build for Windows -->
 		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/fw-8.2.tcbuildtag</GeckoDownloadUrl>
 		<!-- bt400 is the XULRunner 29 build for Windows -->
@@ -321,7 +321,7 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading pinned artifacts from Palaso master build."/>
+		<Message Text="Downloading artifacts from Palaso libpalaso-2.6 branch build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
@@ -366,7 +366,7 @@
 		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading pinned artifacts from Chorus master build."/>
+		<Message Text="Downloading artifacts from Chorus chorus-2.5 branch build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
