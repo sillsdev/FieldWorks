@@ -691,11 +691,17 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_MakesSpanForRA()
 		{
+			var gramInfoAbbrev = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "InterlinearAbbrTSS",
+				IsEnabled = true
+			};
 			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "MorphoSyntaxAnalysis",
-				IsEnabled = true
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoAbbrev }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
@@ -726,6 +732,53 @@ namespace SIL.FieldWorks.XWorks
 				XHTMLWriter.Flush();
 				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CmObjectWithNoEnabledChildrenSkipsSpan()
+		{
+			var gramInfoAbbrev = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "InterlinearAbbrTSS",
+				IsEnabled = false
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoAbbrev } // There are no enabled children, so this span should be skipped
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
 			}
 		}
 

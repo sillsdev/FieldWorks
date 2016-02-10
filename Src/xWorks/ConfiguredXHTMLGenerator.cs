@@ -1486,12 +1486,14 @@ namespace SIL.FieldWorks.XWorks
 			// Don't export if there is no such data
 			if (propertyValue == null)
 				return;
-			writer.WriteStartElement("span");
-			// Rely on configuration to handle adjusting the classname for "RA" or "OA" model properties
-			var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
-			writer.WriteAttributeString("class", fieldDescription);
-			if (config.Children != null)
+			if (config.Children != null && config.Children.Any(node => node.IsEnabled))
 			{
+				writer.WriteStartElement("span");
+				// Rely on configuration to handle adjusting the classname for "RA" or "OA" model properties
+				var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
+				writer.WriteAttributeString("class", fieldDescription);
+				// Hack to avoid self-closing tags which can cause problems in Webonary
+				writer.WriteRaw("");
 				foreach (var child in config.Children)
 				{
 					if (child.IsEnabled)
@@ -1499,8 +1501,8 @@ namespace SIL.FieldWorks.XWorks
 						GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
 					}
 				}
+				writer.WriteEndElement();
 			}
-			writer.WriteEndElement();
 		}
 
 		/// <summary>
