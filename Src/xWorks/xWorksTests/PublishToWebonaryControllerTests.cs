@@ -85,6 +85,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			base.FixtureTeardown();
 			Dispose();
 		}
