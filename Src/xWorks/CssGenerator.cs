@@ -532,9 +532,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
+			// results if we use baseSelection in handling before and after content.  See LT-17048.
+			string simpleSelector;
 			if(parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
+				simpleSelector = SelectBareClassName(configNode);
 				GenerateFlowResetForBaseNode(baseSelection, rules);
 			}
 			else
@@ -565,6 +569,7 @@ namespace SIL.FieldWorks.XWorks
 					rules.Add(betweenRule);
 				}
 				baseSelection = parentSelector + "> " + SelectClassName(configNode, cache);
+				simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
@@ -572,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(baseSelection, ":before") };
+				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":before") };
 				rules.Add(beforeRule);
 			}
 			if(!String.IsNullOrEmpty(configNode.After))
@@ -581,7 +586,7 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(baseSelection, ":after") };
+				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":after") };
 				rules.Add(afterRule);
 			}
 			return rules;
@@ -622,6 +627,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, FdoCache cache = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			return SelectClassName(configNode, type);
+		}
+
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredXHTMLGenerator.PropertyType type)
+		{
 			switch(type)
 			{
 				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
@@ -652,6 +662,23 @@ namespace SIL.FieldWorks.XWorks
 			var collectionItem = GetClassAttributeForConfig(configNode);
 			collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
 			return collectionItem;
+		}
+
+		/// <summary>
+		/// For collection type nodes, generates a selector on the collection as a whole.  For all other nodes,
+		/// calls SelectClassName to generate the selector.
+		/// </summary>
+		/// <remarks>
+		/// Perhaps SelectClassName should have been changed, but that's a rather far reaching change.  Using the
+		/// output of this method for :before and :after rules in the css is sufficient to fix the bug reported in
+		/// LT-17048.  A better name might be nice, but this one is fairly descriptive.
+		/// </remarks>
+		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, FdoCache cache = null)
+		{
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+				return "." + GetClassAttributeForConfig(configNode);
+			return SelectClassName(configNode, type);
 		}
 
 		/// <summary>

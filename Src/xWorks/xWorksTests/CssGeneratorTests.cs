@@ -250,7 +250,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense:after"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
+			Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:after"));
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:last-child:after"));
 		}
 
@@ -1957,6 +1958,69 @@ namespace SIL.FieldWorks.XWorks
 			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected duplicated config node rename rule not generated");
+		}
+
+		[Test]
+		public void GenerateCssForCollectionBeforeAndAfter()
+		{
+			var pronunciationConfig = new ConfigurableDictionaryNode
+			{
+				Before = "[",
+				After = "]",
+				Between = " ",
+				Label = "Pronunciation",
+				FieldDescription = "Form",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions {
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "pronunciation", IsEnabled = true } }
+				},
+				IsEnabled = true
+			};
+			var pronunciationsConfig = new ConfigurableDictionaryNode
+			{
+				Before = "{Pron: ",
+				Between = ", ",
+				After = "} ",
+				Label = "Pronunciations",
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { pronunciationConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				Style = "Dictionary-Normal",
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions { PargraphStyle = "Dictionary-Normal", ContinuationParagraphStyle="Dictionary-Continuation" },
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsConfig }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+
+			var regexItem1 = ".entry> .pronunciations .pronunciation> .form> span\\+ span:before\\{\\s*content:' ';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexItem1, RegexOptions.Singleline).Success, "expected collection item between rule is generated");
+
+			var regexItem2 = ".entry> .pronunciations .pronunciation> .form span:first-child:before\\{\\s*content:'\\[';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexItem2, RegexOptions.Singleline).Success, "expected collection item before rule is generated");
+
+			var regexItem3 = ".entry> .pronunciations .pronunciation> .form span:last-child:after\\{\\s*content:'\\]';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexItem3, RegexOptions.Singleline).Success, "expected collection item after rule is generated");
+
+			var regexCollection1 = ".entry .pronunciations> .pronunciation\\+ .pronunciation:before\\{\\s*content:', ';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexCollection1, RegexOptions.Singleline).Success, "expected collection between rule is generated");
+
+			// The following two checks test the fix for LT-17048.  The preceding four checks should be the same before and after the fix.
+			var regexCollection2 = ".entry> .pronunciations:before\\{\\s*content:'\\{Pron: ';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexCollection2, RegexOptions.Singleline).Success, "expected collection before rule is generated");
+
+			var regexCollection3 = ".entry> .pronunciations:after\\{\\s*content:'\\} ';\\s*\\}";
+			Assert.IsTrue(Regex.Match(cssResult, regexCollection3, RegexOptions.Singleline).Success, "expected collection after rule is generated");
 		}
 
 		private TestStyle GenerateEmptyStyle(string name)
