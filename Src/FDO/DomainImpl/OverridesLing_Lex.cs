@@ -9372,12 +9372,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		private ICmObject Item { get; set; }
 
-		public int EntryHvo
+		public Guid EntryGuid
 		{
 			get
 			{
 				var entry = Item as ILexEntry;
-				return entry != null ? entry.Hvo : ((ILexSense)Item).Entry.Hvo;
+				return entry != null ? entry.Guid : ((ILexSense)Item).Entry.Guid;
 			}
 		}
 

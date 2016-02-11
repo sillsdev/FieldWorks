@@ -227,6 +227,7 @@ namespace SIL.FieldWorks.XWorks
 			innerCount = Math.Min(innerCount, actionCount);
 			using (var countDown = new CountdownEvent(innerCount))
 			{
+				// ReSharper disable AccessToDisposedClosure
 				// Note that the loop index variable i cannot be used in an action defined as a closure.  So we have to define all the
 				// possible closures explicitly to achieve the parallelism reliably.  (Remember your theoretical computer science lessons
 				// about lambda expressions and the various ways that variables are bound.  For some of us, that's been over 40 years!)
@@ -246,6 +247,7 @@ namespace SIL.FieldWorks.XWorks
 				Action currentAction13 = () => { try { for (var j = 13; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
 				Action currentAction14 = () => { try { for (var j = 14; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
 				Action currentAction15 = () => { try { for (var j = 15; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				// ReSharper restore AccessToDisposedClosure
 				var threads = new List<Thread>(innerCount);
 				for (int i = 0; i < innerCount; ++i)
 				{
@@ -367,7 +369,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
-		/// <param name="configuration"><remarks>this configuration node must match the entry type</remarks></param>
+		/// <remarks>the configuration node must match the entry type</remarks>
 		internal static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (settings == null || entry == null || configuration == null)
@@ -389,7 +391,7 @@ namespace SIL.FieldWorks.XWorks
 
 			settings.Writer.WriteStartElement("div");
 			WriteClassNameAttribute(settings.Writer, configuration);
-			settings.Writer.WriteAttributeString("id", "hvo" + entry.Hvo);
+			settings.Writer.WriteAttributeString("id", "g" + entry.Guid);
 			foreach (var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
@@ -573,7 +575,7 @@ namespace SIL.FieldWorks.XWorks
 						var fileProperty = propertyValue as ICmFile;
 						if (fileProperty != null)
 						{
-							var audioId = "hvo" + fileProperty.Hvo;
+							var audioId = "g" + fileProperty.Guid;
 							GenerateXHTMLForAudioFile(fileProperty.ClassName, settings.Writer, audioId,
 								GenerateSrcAttributeFromFilePath(fileProperty, settings.UseRelativePaths ? "AudioVisual" : null, settings), "\u25B6");
 						}
@@ -689,7 +691,7 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			writer.WriteAttributeString("src", srcAttribute);
-			writer.WriteAttributeString("id", "hvo" + pictureFile.Hvo);
+			writer.WriteAttributeString("id", "g" + pictureFile.Guid);
 			writer.WriteEndElement();
 		}
 		/// <summary>
@@ -1057,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 			// Don't export if there is no such data
 			if (moForm == null)
 				return;
-			GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Owner.Hvo);
+			GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Owner.Guid);
 			if (config.Children != null && config.Children.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
@@ -1315,11 +1317,11 @@ namespace SIL.FieldWorks.XWorks
 					{
 						settings.Writer.WriteStartElement("span");
 						WriteClassNameAttribute(settings.Writer, child);
-						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Hvo : ((ILexSense)collectionOwner).Owner.Hvo;
+						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Owner.Guid;
 						// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
 						// If someone ever uses a "Sequence" type lexical relation, should the current item
 						// be displayed in its location in the sequence?  Just asking...
-						foreach(var target in reference.ConfigTargets.Where(x => x.EntryHvo != ownerHvo))
+						foreach(var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerHvo))
 						{
 							GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
 							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
@@ -1717,21 +1719,21 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="settings"></param>
 		private static void GenerateXHTMLForValue(object field, object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
-			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's HVO
+			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's GUID
 			// so we can generate a link to the main or minor entry for this headword.
-			var hvo = 0;
+			var guid = Guid.Empty;
 			if (config.CSSClassNameOverride == "headword")
 			{
 				if (field is ILexEntry)
-					hvo = ((ILexEntry)field).Hvo;
+					guid = ((ILexEntry)field).Guid;
 				else if (field is ILexEntryRef)
-					hvo = ((ILexEntryRef)field).OwningEntry.Hvo;
+					guid = ((ILexEntryRef)field).OwningEntry.Guid;
 				else if (field is ISenseOrEntry)
-					hvo = ((ISenseOrEntry)field).EntryHvo;
+					guid = ((ISenseOrEntry)field).EntryGuid;
 				else if (field is ILexSense)
-					hvo = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Hvo;
+					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
 				else
-					Debug.WriteLine(String.Format("Need to find Entry Hvo for {0}",
+					Debug.WriteLine(String.Format("Need to find Entry Guid for {0}",
 						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name));
 			}
 
@@ -1741,13 +1743,13 @@ namespace SIL.FieldWorks.XWorks
 				{
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
-					GenerateXHTMLForString((ITsString)propertyValue, config, settings, hvo: hvo);
+					GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
 					settings.Writer.WriteEndElement();
 				}
 			}
 			else if (propertyValue is IMultiStringAccessor)
 			{
-				GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, hvo);
+				GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
 			}
 			else if (propertyValue is int)
 			{
@@ -1763,14 +1765,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
-				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, hvo);
+				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
 			}
 			else if (propertyValue is String)
 			{
 				var propValueString = (String)propertyValue;
 				if (!String.IsNullOrEmpty(propValueString))
 				{
-					Debug.Assert(hvo == 0, "we have a hvo; make a link!");
+					Debug.Assert(guid == Guid.Empty, "we have a guid; make a link!");
 					// write out Strings something like: <span class="foo">Bar</span>
 					settings.Writer.WriteStartElement("span");
 					WriteClassNameAttribute(settings.Writer, config);
@@ -1786,7 +1788,7 @@ namespace SIL.FieldWorks.XWorks
 					IStTxtPara stp = para as IStTxtPara;
 					if (stp == null)
 						continue;
-					GenerateXHTMLForString(stp.Contents, config, settings, hvo: hvo);
+					GenerateXHTMLForString(stp.Contents, config, settings, guid);
 					settings.Writer.WriteWhitespace(Environment.NewLine);
 				}
 				settings.Writer.WriteEndElement();
@@ -1814,12 +1816,18 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteEndElement();
 		}
 
+		private static void GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
+			GeneratorSettings settings)
+		{
+			GenerateXHTMLForStrings(multiStringAccessor, config, settings, Guid.Empty);
+		}
+
 		/// <summary>
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
 		private static void GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, int hvo = 0)
+			GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -1846,7 +1854,7 @@ namespace SIL.FieldWorks.XWorks
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
 					if (wsId == 0)
-						throw new ArgumentException(string.Format("Writing system requested that is not known in local store: {0}", option.Id), "option");
+						throw new ArgumentException(string.Format("Writing system requested that is not known in local store: {0}", option.Id), "config");
 					bestString = multiStringAccessor.get_String(wsId);
 				}
 				else
@@ -1855,7 +1863,7 @@ namespace SIL.FieldWorks.XWorks
 					// use the method in the multi-string to get the right string and set wsId to the used one
 					bestString = multiStringAccessor.GetAlternativeOrBestTss(wsId, out wsId);
 				}
-				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, hvo);
+				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, guid);
 			}
 			settings.Writer.WriteEndElement();
 		}
@@ -1865,7 +1873,7 @@ namespace SIL.FieldWorks.XWorks
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiAccessorBase
 		/// </summary>
 		private static void GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
-																			ConfigurableDictionaryNode config, GeneratorSettings settings, int hvo)
+																			ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -1895,7 +1903,7 @@ namespace SIL.FieldWorks.XWorks
 																					owningObject.Hvo, multiStringAccessor.Flid, (IWritingSystem)defaultWs);
 				}
 				var requestedString = multiStringAccessor.get_String(wsId);
-				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, hvo);
+				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid);
 			}
 			settings.Writer.WriteEndElement();
 		}
@@ -1903,7 +1911,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "writer is a reference. cache is a reference.")]
 		private static void GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
-			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, int hvo)
+			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid)
 		{
 			var writer = settings.Writer;
 			var cache = settings.Cache;
@@ -1920,13 +1928,19 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteEndElement();
 			}
 			var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
-			GenerateXHTMLForString(requestedString, config, settings, wsName, hvo);
+			GenerateXHTMLForString(requestedString, config, settings, guid, wsName);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "writer is a reference")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "writer is a reference")]
 		private static void GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
-													GeneratorSettings settings, string writingSystem = null, int hvo = 0)
+			GeneratorSettings settings, string writingSystem = null)
+		{
+			GenerateXHTMLForString(fieldValue, config, settings, Guid.Empty, writingSystem);
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "writer is a reference")]
+		private static void GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
+			GeneratorSettings settings, Guid guid, string writingSystem = null)
 		{
 			var writer = settings.Writer;
 			if (writingSystem != null && writingSystem.Contains("audio"))
@@ -1946,10 +1960,10 @@ namespace SIL.FieldWorks.XWorks
 				//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
 				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
 
-				if (hvo > 0)
+				if (guid != Guid.Empty)
 				{
 					settings.Writer.WriteStartElement("a");
-					settings.Writer.WriteAttributeString("href", "#hvo" + hvo);
+					settings.Writer.WriteAttributeString("href", "#g" + guid);
 				}
 				if (fieldValue.RunCount > 1)
 				{
@@ -1977,7 +1991,7 @@ namespace SIL.FieldWorks.XWorks
 					writer.WriteString(fieldValue.Text);
 					writer.WriteEndElement();
 				}
-				if (hvo > 0)
+				if (guid != Guid.Empty)
 				{
 					settings.Writer.WriteEndElement(); // </a>
 				}

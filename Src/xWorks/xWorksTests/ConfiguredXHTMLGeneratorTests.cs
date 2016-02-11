@@ -407,8 +407,8 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwo = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryTwo, "SecondHeadword", m_wsFr, Cache);
 			entryTwo.SensesOS.Clear();
-			var entryOneId = entryOne.Hvo;
-			var entryTwoId = entryTwo.Hvo;
+			var entryOneId = entryOne.Guid;
+			var entryTwoId = entryTwo.Guid;
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -419,9 +419,9 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				var entryOneHasSensesSpan = "/TESTWRAPPER/div[@class='lexentry' and @id='hvo" + entryOneId + "']/span[@class='senses']";
-				var entryTwoExists = "/TESTWRAPPER/div[@class='lexentry' and @id='hvo" + entryTwoId + "']";
-				var entryTwoHasNoSensesSpan = "/TESTWRAPPER/div[@class='lexentry' and @id='hvo" + entryTwoId + "']/span[@class='senses']";
+				var entryOneHasSensesSpan = "/TESTWRAPPER/div[@class='lexentry' and @id='g" + entryOneId + "']/span[@class='senses']";
+				var entryTwoExists = "/TESTWRAPPER/div[@class='lexentry' and @id='g" + entryTwoId + "']";
+				var entryTwoHasNoSensesSpan = "/TESTWRAPPER/div[@class='lexentry' and @id='g" + entryTwoId + "']/span[@class='senses']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryOneHasSensesSpan, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryTwoExists, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryTwoHasNoSensesSpan, 0);
@@ -444,7 +444,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, settings));
 				XHTMLWriter.Flush();
-				var entryExists = "/div[@class='entry' and @id='hvo" + entry.Hvo + "']";
+				var entryExists = "/div[@class='entry' and @id='g" + entry.Guid + "']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryExists, 1);
 			}
 		}

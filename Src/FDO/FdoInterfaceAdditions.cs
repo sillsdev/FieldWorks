@@ -5902,9 +5902,9 @@ namespace SIL.FieldWorks.FDO
 	public interface ISenseOrEntry
 	{
 		/// <summary>
-		/// The Hvo if LexEntry; the owning entry's Hvo if LexSense
+		/// The Guid if LexEntry; the owning entry's Guid if LexSense
 		/// </summary>
-		int EntryHvo { get; }
+		Guid EntryGuid { get; }
 
 		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
