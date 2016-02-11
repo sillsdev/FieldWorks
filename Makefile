@@ -284,8 +284,10 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	rm $(DESTDIR)/usr/lib/fieldworks/Microsoft.Practices.ServiceLocation.dll
 	rm $(DESTDIR)/usr/lib/fieldworks/StructureMap.dll
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
-	rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-*.xml"
-	rm -f "$(DESTDIR)/usr/share/tmp/FW/fieldworks/Language Explorer/Configuration/strings-*.xml"
+	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
+	rm -f $(DESTDIR)/usr/share/tmp/FW/fieldworks/Language\ Explorer/Configuration/strings-*.xml
+	# Except we still want strings-en.xml :-)
+	install -m 644 DistFiles/Linux/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration
 
 install-menuentries:
 	# Add to Applications menu
