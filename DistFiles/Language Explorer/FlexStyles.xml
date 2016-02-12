@@ -218,7 +218,7 @@
 		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Used for homograph numbers</usage>
 			<help category="Flex_Dictionary_Styles"/>
-			<font subscript="true" bold="true" size="8 pt"/>
+			<font subscript="true" bold="true"/>
 		</tag>
 		<tag id="Sense-Reference-Number" guid="23EFA4CC-0347-4FC1-A33D-57B57EE852F9" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Used for sense numbers in cross-references</usage>

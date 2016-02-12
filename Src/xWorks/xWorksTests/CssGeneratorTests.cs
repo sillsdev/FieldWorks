@@ -2198,24 +2198,26 @@ namespace SIL.FieldWorks.XWorks
 			switch (superscript)
 			{
 				case (FwSuperscriptVal.kssvSub):
-					{
-						Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
-						break;
-					}
+				{
+					Assert.That(css, Contains.Substring("font-size:58%"), "subscript did not affect size");
+					Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
+					break;
+				}
 				case (FwSuperscriptVal.kssvSuper):
-					{
-						Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
-						break;
-					}
+				{
+					Assert.That(css, Contains.Substring("font-size:58%"), "superscript did not affect size");
+					Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
+					break;
+				}
 				case (FwSuperscriptVal.kssvOff):
+				{
+					//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
+					if (css.Contains("vertical-align"))
 					{
-						//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
-						if (css.Contains("vertical-align"))
-						{
-							Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
-						}
-						break;
+						Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
 					}
+					break;
+				}
 			}
 		}
 

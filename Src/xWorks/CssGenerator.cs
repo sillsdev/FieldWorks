@@ -1007,7 +1007,9 @@ namespace SIL.FieldWorks.XWorks
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
 			var fontProp = new Property(propName);
-			string subSuperVal = "inherit";
+			var sizeProp = new Property("font-size");
+			sizeProp.Term = new PrimitiveTerm(UnitType.Ident, "58%"); //58% is what OpenOffice does
+			var subSuperVal = "inherit";
 			switch(fontValue)
 			{
 				case (FwSuperscriptVal.kssvSub):
@@ -1028,6 +1030,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			fontProp.Term = new PrimitiveTerm(UnitType.Ident, subSuperVal);
 			declaration.Add(fontProp);
+			declaration.Add(sizeProp);
 		}
 
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
