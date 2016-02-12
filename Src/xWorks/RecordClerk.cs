@@ -2309,6 +2309,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void JumpToRecord(Guid jumpToGuid)
+		{
+			JumpToRecord(jumpToGuid, false);
+		}
+
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange)
+		{
+			ICmObject obj;
+			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
+				JumpToRecord(obj.Hvo, suppressFocusChange);
+		}
+
 		public void JumpToRecord(int jumpToHvo)
 		{
 			JumpToRecord(jumpToHvo, false);

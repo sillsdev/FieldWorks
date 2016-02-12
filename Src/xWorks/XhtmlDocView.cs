@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private XWebBrowser m_mainView;
 		private DictionaryPublicationDecorator m_pubDecorator;
-		private string selectedObjectID = string.Empty;
+		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
@@ -109,9 +109,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
 		{
-			int topLevelHvo;
-			GetClassListFromGeckoElement(element, out topLevelHvo);
-			Clerk.JumpToRecord(topLevelHvo);
+			Guid topLevelGuid;
+			GetClassListFromGeckoElement(element, out topLevelGuid);
+			if (topLevelGuid != Guid.Empty)
+				Clerk.JumpToRecord(topLevelGuid);
 			e.Handled = true;
 		}
 
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, Mediator mediator, string configObjectName)
 		{
-			int dummy;
+			Guid dummy;
 			var classList = GetClassListFromGeckoElement(element, out dummy);
 			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
 			s_contextMenu = new ContextMenuStrip();
@@ -142,9 +143,9 @@ namespace SIL.FieldWorks.XWorks
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "elem does NOT need to be disposed locally!")]
-		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out int topLevelHvo)
+		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid)
 		{
-			topLevelHvo = FdoCache.kNullHvo;
+			topLevelGuid = Guid.Empty;
 			var classList = new List<string>();
 			for (var elem = element; elem != null; elem = elem.ParentElement)
 			{
@@ -154,23 +155,21 @@ namespace SIL.FieldWorks.XWorks
 				if (string.IsNullOrEmpty(className))
 					continue;
 				if (className == "letHead")
-					return classList;
-				if (className == "entry" || className == "reversalindexentry")
-					topLevelHvo = GetHvoFromGeckoDomElement(elem);
+					break;
+				if (className == "entry" || className == "minorentrycomplex" || className == "minorentryvariant" || className == "reversalindexentry")
+					topLevelGuid = GetGuidFromGeckoDomElement(elem);
 				classList.Insert(0, className);
 			}
 			return classList;
 		}
 
-		private static int GetHvoFromGeckoDomElement(GeckoElement element)
+		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
 		{
 			if (!element.HasAttribute("id"))
-				return FdoCache.kNullHvo;
+				return Guid.Empty;
 
 			var idVal = element.GetAttribute("id");
-			return !idVal.StartsWith("hvo")
-				? FdoCache.kNullHvo
-				: Convert.ToInt32(element.GetAttribute("id").Substring(3));
+			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));
 		}
 
 		/// <summary>
@@ -530,14 +529,14 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void RemoveStyleFromPreviousSelectedEntryOnView(GeckoWebBrowser browser)
 		{
-			if (string.IsNullOrEmpty(selectedObjectID))
+			if (string.IsNullOrEmpty(m_selectedObjectID))
 			{
 				return;
 			}
-			var prevSelectedHvo = browser.Document.GetHtmlElementById("hvo" + selectedObjectID);
-			if (prevSelectedHvo != null)
+			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
+			if (prevSelectedByGuid != null)
 			{
-				prevSelectedHvo.RemoveAttribute("style");
+				prevSelectedByGuid.RemoveAttribute("style");
 			}
 		}
 
@@ -547,12 +546,15 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
-			var currSelectedHvo = browser.Document.GetHtmlElementById("hvo" + Clerk.CurrentObjectHvo);
-			if (currSelectedHvo != null)
+			if (Clerk.CurrentObject == null)
+				return;
+			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
+			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
+			if (currSelectedByGuid != null)
 			{
-				currSelectedHvo.ScrollIntoView(true);
-				currSelectedHvo.SetAttribute("style", "background-color:LightYellow");
-				selectedObjectID = Clerk.CurrentObjectHvo.ToString(CultureInfo.InvariantCulture);
+				currSelectedByGuid.ScrollIntoView(true);
+				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
+				m_selectedObjectID = currentObjectGuid;
 			}
 		}
 
