@@ -406,6 +406,7 @@ namespace SIL.FieldWorks.XWorks
 				// Details may need to be enabled or disabled
 				RefreshPreview();
 				View.TreeControl.Tree.SelectedNode = FindTreeNode(node, View.TreeControl.Tree.Nodes);
+				BuildAndShowOptions(node, mediator);
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
