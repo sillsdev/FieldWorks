@@ -226,12 +226,20 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "Owner",
 				SubField = "MLHeadWord",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				DictionaryNodeOptions = new ReferringSenseOptions()
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+						}
+					},
+					SenseOptions = new DictionaryNodeSenseOptions
+					{
+						NumberEvenASingleSense = true,
+						NumberingStyle = "%A"
 					}
 				},
 				IsEnabled = true,
@@ -284,8 +292,10 @@ namespace SIL.FieldWorks.XWorks
 
 				const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='1']]";
 				const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='2']]";
+				const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='A']";
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 2);
 			}
 		}
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()

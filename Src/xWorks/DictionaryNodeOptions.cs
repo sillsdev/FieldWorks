@@ -18,6 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
 	[XmlInclude(typeof(DictionaryNodeParagraphOptions))]
+	[XmlInclude(typeof(ReferringSenseOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -40,6 +41,26 @@ namespace SIL.FieldWorks.XWorks
 				property.SetValue(target, originalValue, null);
 			}
 			return target;
+		}
+	}
+
+	public class ReferringSenseOptions : DictionaryNodeOptions
+	{
+		[XmlElement(ElementName = "WritingSystemOptions")]
+		public DictionaryNodeWritingSystemOptions WritingSystemOptions { get; set; }
+
+		[XmlElement(ElementName = "SenseOptions")]
+		public DictionaryNodeSenseOptions SenseOptions { get; set; }
+
+		public ReferringSenseOptions()
+		{
+			SenseOptions = new DictionaryNodeSenseOptions();
+			WritingSystemOptions=new DictionaryNodeWritingSystemOptions();
+		}
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new ReferringSenseOptions());
 		}
 	}
 

@@ -114,6 +114,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// todo: loading options here once UX has been worked out
 				}
+				else if (Options is ReferringSenseOptions)
+				{
+					LoadListSenseOptions(Options as ReferringSenseOptions);
+				}
 				else
 				{
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
@@ -147,6 +151,113 @@ namespace SIL.FieldWorks.XWorks
 			View.ResumeLayout();
 		}
 
+		private void LoadListSenseOptions(ReferringSenseOptions listOptions)
+		{
+			string numberingStyles = "x";
+			var listOptionsView = new ListSenseOptionView
+			{
+				DisplayOptionCheckBoxVisible = true,
+				BeforeText = listOptions.SenseOptions.BeforeNumber,
+				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(),
+				NumberingStyle = listOptions.SenseOptions.NumberingStyle,
+				AfterText = listOptions.SenseOptions.AfterNumber,
+				NumberSingleSense = listOptions.SenseOptions.NumberEvenASingleSense,
+				ShowGrammarFirst = listOptions.SenseOptions.ShowSharedGrammarInfoFirst,
+				SenseInPara = false,
+				DisplayOptionCheckBoxChecked = listOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations,
+			};
+			if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
+				{
+					View.SetStyles(m_paraStyles, m_node.Style, true);
+				}
+			// load character Style (number) and paragraph Style (sense)
+			listOptionsView.SetStyles(m_charStyles, listOptions.SenseOptions.NumberStyle);
+			View.SetStyles(m_paraStyles, m_node.Style, true);
+
+			// (dis)actviate appropriate parts of the view
+			listOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(listOptions.SenseOptions.NumberingStyle);
+			ToggleViewForShowInPara(listOptions.SenseOptions.DisplayEachSenseInAParagraph);
+
+			// Register eventhandlers
+			listOptionsView.BeforeTextChanged += (sender, e) => { listOptions.SenseOptions.BeforeNumber = listOptionsView.BeforeText; RefreshPreview(); };
+			var senseoptions = listOptions.SenseOptions;
+			listOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseoptions, listOptionsView);
+			listOptionsView.AfterTextChanged += (sender, e) => { senseoptions.AfterNumber = listOptionsView.AfterText; RefreshPreview(); };
+			listOptionsView.NumberStyleChanged += (sender, e) => { senseoptions.NumberStyle = listOptionsView.NumberStyle; RefreshPreview(); };
+			// ReSharper disable ImplicitlyCapturedClosure
+			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
+			listOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, listOptionsView.NumberStyle);
+			// ReSharper restore ImplicitlyCapturedClosure
+			listOptionsView.NumberSingleSenseChanged += (sender, e) =>
+			{
+				senseoptions.NumberEvenASingleSense = listOptionsView.NumberSingleSense;
+				RefreshPreview();
+			};
+			listOptionsView.ShowGrammarFirstChanged += (sender, e) =>
+			{
+				senseoptions.ShowSharedGrammarInfoFirst = listOptionsView.ShowGrammarFirst;
+				RefreshPreview();
+			};
+			listOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseoptions, listOptionsView);
+
+			var wsOptions = listOptions.WritingSystemOptions;
+			var availableWSs = LoadAvailableWsList(wsOptions);
+
+			listOptionsView.AvailableItems = availableWSs;
+
+			// Displaying WS Abbreviations is available only when multiple WS's are selected.
+			listOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
+
+			// Prevent events from firing while the view is being initialized
+			listOptionsView.Load += WritingSystemEventHandlerAdder(listOptionsView, wsOptions);
+			// add listOptionsView to the DetailsView
+
+			View.OptionsView = listOptionsView as UserControl;
+		}
+
+		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
+		{
+			// Find and add available and selected Writing Systems
+			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
+			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
+
+			bool atLeastOneWsChecked = false;
+			// Check if the default WS is selected (it will be the one and only)
+			if (selectedWSs.Count() == 1)
+			{
+				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
+				if (selectedWsDefaultId < 0)
+				{
+					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
+					if (defaultWsItem != null)
+					{
+						defaultWsItem.Checked = true;
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			if (!atLeastOneWsChecked)
+			{
+				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
+				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
+				foreach (var ws in selectedWSs)
+				{
+					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
+					if (selectedItem != null && availableWSs.Remove(selectedItem))
+					{
+						selectedItem.Checked = true;
+						availableWSs.Insert(insertionIdx++, selectedItem);
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
+			if (!atLeastOneWsChecked)
+				availableWSs[0].Checked = true;
+			return availableWSs;
+		}
 		private void OnViewOnAfterTextChanged(object sender, EventArgs e)
 		{
 			AfterTextChanged();
@@ -199,45 +310,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
 
-			// Find and add available and selected Writing Systems
-			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
-			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
-
-			bool atLeastOneWsChecked = false;
-			// Check if the default WS is selected (it will be the one and only)
-			if (selectedWSs.Count() == 1)
-			{
-				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
-				if (selectedWsDefaultId < 0)
-				{
-					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
-					if (defaultWsItem != null)
-					{
-						defaultWsItem.Checked = true;
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			if (!atLeastOneWsChecked)
-			{
-				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
-				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
-				foreach (var ws in selectedWSs)
-				{
-					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
-					if (selectedItem != null && availableWSs.Remove(selectedItem))
-					{
-						selectedItem.Checked = true;
-						availableWSs.Insert(insertionIdx++, selectedItem);
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
-			if (!atLeastOneWsChecked)
-				availableWSs[0].Checked = true;
+			var availableWSs = LoadAvailableWsList(wsOptions);
 
 			wsOptionsView.AvailableItems = availableWSs;
 
@@ -809,6 +882,10 @@ namespace SIL.FieldWorks.XWorks
 				(Options as DictionaryNodeWritingSystemOptions).Options = options;
 			else if (Options is DictionaryNodeListOptions)
 				(Options as DictionaryNodeListOptions).Options = options;
+			else if (Options is ReferringSenseOptions)
+			{
+				(Options as ReferringSenseOptions).WritingSystemOptions.Options = options;
+			}
 			else
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 

@@ -317,6 +317,12 @@
     <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.Designer.cs">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\ParagraphOptionsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -509,6 +515,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ListSenseOptionView.resx">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\ParagraphOptionsView.resx">
       <DependentUpon>ParagraphOptionsView.cs</DependentUpon>

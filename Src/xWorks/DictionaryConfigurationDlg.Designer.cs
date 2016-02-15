@@ -51,7 +51,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageConfigurations = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
-			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
 			this.m_preview = new Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -59,6 +58,7 @@ namespace SIL.FieldWorks.XWorks
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageConfigs_treeDetailButton_split)).BeginInit();
 			this.manageConfigs_treeDetailButton_split.Panel1.SuspendLayout();
 			this.manageConfigs_treeDetailButton_split.Panel2.SuspendLayout();
@@ -162,11 +162,6 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this.tree_Detail_Split.Panel2.Controls.Add(this.previewDetailSplit);
 			// 
-			// treeControl
-			// 
-			resources.ApplyResources(this.treeControl, "treeControl");
-			this.treeControl.Name = "treeControl";
-			// 
 			// previewDetailSplit
 			// 
 			resources.ApplyResources(this.previewDetailSplit, "previewDetailSplit");
@@ -219,6 +214,11 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.Name = "okButton";
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// treeControl
+			// 
+			resources.ApplyResources(this.treeControl, "treeControl");
+			this.treeControl.Name = "treeControl";
 			// 
 			// DictionaryConfigurationDlg
 			// 

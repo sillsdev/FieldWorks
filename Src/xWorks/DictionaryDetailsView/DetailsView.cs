@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_OptionsView.Dock = DockStyle.Fill;
 					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
-					panelOptions.Size = new Size(335, 200);
+					panelOptions.Size = new Size(335, 330);
 				}
 			}
 		}

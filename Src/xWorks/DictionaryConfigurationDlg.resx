@@ -331,7 +331,7 @@
     <value>0, 0</value>
   </data>
   <data name="treeControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>302, 389</value>
+    <value>302, 556</value>
   </data>
   <data name="treeControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -340,7 +340,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.25896, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.35565, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>
@@ -379,7 +379,7 @@
     <value>0, 0, 0, 5</value>
   </data>
   <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
-    <value>322, 87</value>
+    <value>322, 124</value>
   </data>
   <data name="m_preview.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -421,10 +421,10 @@
     <value>1</value>
   </data>
   <data name="previewDetailSplit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>322, 389</value>
+    <value>322, 556</value>
   </data>
   <data name="previewDetailSplit.SplitterDistance" type="System.Int32, mscorlib">
-    <value>87</value>
+    <value>124</value>
   </data>
   <data name="previewDetailSplit.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -454,7 +454,7 @@
     <value>1</value>
   </data>
   <data name="tree_Detail_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>628, 389</value>
+    <value>628, 556</value>
   </data>
   <data name="tree_Detail_Split.SplitterDistance" type="System.Int32, mscorlib">
     <value>302</value>
@@ -634,10 +634,10 @@
     <value>1</value>
   </data>
   <data name="treeDetail_Button_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>628, 425</value>
+    <value>628, 592</value>
   </data>
   <data name="treeDetail_Button_Split.SplitterDistance" type="System.Int32, mscorlib">
-    <value>389</value>
+    <value>556</value>
   </data>
   <data name="treeDetail_Button_Split.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -667,7 +667,7 @@
     <value>1</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>628, 499</value>
+    <value>628, 666</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.SplitterDistance" type="System.Int32, mscorlib">
     <value>70</value>
@@ -694,7 +694,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>634, 505</value>
+    <value>634, 672</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>350, 515</value>

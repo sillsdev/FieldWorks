@@ -149,7 +149,12 @@ namespace SIL.FieldWorks.XWorks
 				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 				return listView.Items.Cast<ListViewItem>().ToList();
 			}
-
+			public NumberingStyleComboItem GetSelectedNumberingStyleItems()
+			{
+				IDictionarySenseOptionsView listSenseOptionsView = OptionsView as IDictionarySenseOptionsView;
+				var listView = (ComboBox)ReflectionHelper.GetField(listSenseOptionsView, "dropDownNumberingStyle");
+				return (NumberingStyleComboItem) listView.SelectedItem;
+			}
 			public void Dispose()
 			{
 				Dispose(true);
@@ -201,6 +206,11 @@ namespace SIL.FieldWorks.XWorks
 		private static IDictionaryListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
 			return (view as TestDictionaryDetailsView).OptionsView as IDictionaryListOptionsView;
+		}
+
+		private static IDictionarySenseOptionsView GetListSenseOptionsView(IDictionaryDetailsView view)
+		{
+			return (view as TestDictionaryDetailsView).OptionsView as IDictionarySenseOptionsView;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
@@ -895,6 +905,35 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		public void LoadListSenseOptions_LoadWsListAndSenseNumberingStyle()
+		{
+			var wsOptions = new ReferringSenseOptions()
+			{
+				WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+				{
+					Options = ListOfEnabledDNOsFromStrings(new List<string> {"en", "fr"}),
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
+					DisplayWritingSystemAbbreviations = true
+				},
+				SenseOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false, NumberingStyle = "%d" }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			using (var view = controller.View)
+			{
+				// Verify setup
+				var listViewItems = GetListViewItems(view);
+				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should be exactly two items checked initially");
+				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
+				Assert.AreEqual("fr", listViewItems.Last(item => item.Checked).Tag, "French should be checked.");
+
+				var numberingstyle = (view as TestDictionaryDetailsView).GetSelectedNumberingStyleItems();
+
+				Assert.AreEqual("1  2  3", numberingstyle.Label);
+			}
+		}
 		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{

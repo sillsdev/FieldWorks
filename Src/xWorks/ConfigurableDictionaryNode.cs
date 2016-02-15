@@ -167,6 +167,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
 		[XmlElement("ParagraphOptions", typeof(DictionaryNodeParagraphOptions))]
+		[XmlElement("ReferringSenseOptions", typeof(ReferringSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>

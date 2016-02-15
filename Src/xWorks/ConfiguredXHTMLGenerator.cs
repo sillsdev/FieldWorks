@@ -1876,6 +1876,11 @@ namespace SIL.FieldWorks.XWorks
 																			ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var refersenseoptions = config.DictionaryNodeOptions as ReferringSenseOptions;
+			if (refersenseoptions != null)
+			{
+				wsOptions = refersenseoptions.WritingSystemOptions;
+			}
 			if (wsOptions == null)
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
@@ -1905,6 +1910,27 @@ namespace SIL.FieldWorks.XWorks
 				var requestedString = multiStringAccessor.get_String(wsId);
 				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid);
 			}
+			if (refersenseoptions != null)
+			{
+				GenerateReferringSenseNumber(owningObject, config, settings, refersenseoptions);
+			}
+			settings.Writer.WriteEndElement();
+		}
+
+		private static void GenerateReferringSenseNumber(ICmObject owningObject, ConfigurableDictionaryNode config,
+			GeneratorSettings settings, ReferringSenseOptions refersenseoptions)
+		{
+			var senseOptions = refersenseoptions.SenseOptions;
+			if (senseOptions == null || (!senseOptions.NumberEvenASingleSense))
+				return;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return;
+			settings.Writer.WriteStartElement("span");
+			settings.Writer.WriteAttributeString("class", "referringsensenumber");
+			string senseNumber = settings.Cache.GetOutlineNumber(owningObject, LexSenseTags.kflidSenses, false, true,
+					settings.Cache.MainCacheAccessor);
+			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, config);
+			settings.Writer.WriteString(formatedSenseNumber);
 			settings.Writer.WriteEndElement();
 		}
 
