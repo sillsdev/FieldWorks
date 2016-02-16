@@ -156,8 +156,16 @@ namespace SIL.FieldWorks.XWorks
 					continue;
 				if (className == "letHead")
 					break;
-				if (className == "entry" || className == "minorentrycomplex" || className == "minorentryvariant" || className == "reversalindexentry")
-					topLevelGuid = GetGuidFromGeckoDomElement(elem);
+				if (elem.TagName == "div")
+				{
+						// handle original configuration nodes
+					if (className == "entry" || className == "minorentrycomplex" || className == "minorentryvariant" || className == "reversalindexentry" ||
+						// handle duplicated configuration nodes
+						className.StartsWith("entry_") || className.StartsWith("minorentrycomplex_") || className.StartsWith("minorentryvariant_") || className.StartsWith("reversalindexentry_"))
+					{
+						topLevelGuid = GetGuidFromGeckoDomElement(elem);
+					}
+				}
 				classList.Insert(0, className);
 			}
 			return classList;
