@@ -1132,7 +1132,9 @@ namespace SIL.FieldWorks.XWorks
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, senseCollection, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo)
-				InsertGramInfoBeforeSenses(settings, lastGrammaticalInfo, langId);
+				InsertGramInfoBeforeSenses(senseCollection.Cast<ILexSense>().First(),
+					config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
+					publicationDecorator, settings);
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			int reversalcount=0;
 			foreach (var item in senseCollection)
@@ -1156,15 +1158,13 @@ namespace SIL.FieldWorks.XWorks
 			return subcount == 0;
 		}
 
-		private static void InsertGramInfoBeforeSenses(GeneratorSettings settings, string lastGrammaticalInfo, string langId)
+		private static void InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("class", "sharedgrammaticalinfo");
-			writer.WriteStartElement("span");
-			writer.WriteAttributeString("lang", langId);
-			writer.WriteString(lastGrammaticalInfo);
-			writer.WriteEndElement();
+			GenerateXHTMLForFieldByReflection(item, gramInfoNode, publicationDecorator, settings);
 			writer.WriteEndElement();
 		}
 

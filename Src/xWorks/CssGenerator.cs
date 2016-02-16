@@ -329,24 +329,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
-				var blockDeclaration = new StyleDeclaration();
-
-				blockDeclaration.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Attribute, "italic") });
-				var sensesCssClass = GetClassAttributeForConfig(configNode);
-				var sensesSelector = baseSelection.Substring(0,
-					baseSelection.LastIndexOf(sensesCssClass, StringComparison.Ordinal) + sensesCssClass.Length);
-				var blockRule1 = new StyleRule(blockDeclaration)
+				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" ."));
+				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA"))
 				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule1);
-
-				blockDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
-				var blockRule2 = new StyleRule(blockDeclaration)
-				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo:after", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule2);
+					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", mediator);
+				}
 			}
 		}
 
@@ -628,7 +615,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-
 				if(!String.IsNullOrEmpty(configNode.Between))
 				{
 					// content is generated before each item which follows an item of the same name

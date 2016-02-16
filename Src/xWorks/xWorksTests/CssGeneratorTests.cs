@@ -1008,13 +1008,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_SenseShowGramInfoFirstWorks()
 		{
+			GenerateStyle("Dictionary-Contrasting");
+			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" };
+			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" };
+			var gramInfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				Label = "Gram. Info.",
+				Children = new List<ConfigurableDictionaryNode> { pos, inflectionClass },
+				Style = "Dictionary-Contrasting"
+			};
 			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true },
-				Children = new List<ConfigurableDictionaryNode> { gloss }
+				Children = new List<ConfigurableDictionaryNode> { gramInfo, gloss }
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
@@ -1029,8 +1039,10 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses>\s*\.sharedgrammaticalinfo\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success,
-				"Style for sharedgrammaticalinfo not placed correctly");
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra"));
+			Assert.IsTrue(Regex.Match(cssResult,
+				@"\.lexentry>\s*\.senses\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				RegexOptions.Singleline).Success, "Style for sharedgrammaticalinfo not placed correctly");
 		}
 
 		[Test]
