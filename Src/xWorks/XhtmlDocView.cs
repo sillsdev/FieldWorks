@@ -128,14 +128,14 @@ namespace SIL.FieldWorks.XWorks
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, Mediator mediator, string configObjectName)
 		{
-			Guid dummy;
-			var classList = GetClassListFromGeckoElement(element, out dummy);
+			Guid topLevelGuid;
+			var classList = GetClassListFromGeckoElement(element, out topLevelGuid);
 			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { mediator, classList };
+			item.Tag = new object[] { mediator, classList, topLevelGuid };
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
 			e.Handled = true;
@@ -209,10 +209,17 @@ namespace SIL.FieldWorks.XWorks
 			var tagObjects = item.Tag as object[];
 			var mediator = tagObjects[0] as Mediator;
 			var classList = tagObjects[1] as List<string>;
+			var guid = (Guid)tagObjects[2];
 			using (var dlg = new DictionaryConfigurationDlg(mediator))
 			{
+				var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
 				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
-				var controller = new DictionaryConfigurationController(dlg, mediator, clerk != null ? clerk.CurrentObject : null);
+				ICmObject current = null;
+				if (guid != Guid.Empty && cache != null)
+					current = cache.ServiceLocator.GetObject(guid);
+				else if (clerk != null)
+					current = clerk.CurrentObject;
+				var controller = new DictionaryConfigurationController(dlg, mediator, current);
 				controller.SetStartingNode(classList);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
