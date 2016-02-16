@@ -4,10 +4,12 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 {
@@ -16,6 +18,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// </summary>
 	internal sealed class CategoryBrowseTool : ITool
 	{
+		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 
 		#region Implementation of IPropertyTableProvider
@@ -86,10 +89,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
+			var recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
+			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				PropertyTable, Publisher, Subscriber,
 				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				new RecordBrowseView(_configurationDocument.Root, recordClerk));
 		}
 
 		/// <summary>

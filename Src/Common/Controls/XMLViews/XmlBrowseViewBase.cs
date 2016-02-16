@@ -56,6 +56,16 @@ namespace SIL.FieldWorks.Common.Controls
 		protected XmlBrowseViewBaseVc m_xbvvc;
 		/// <summary></summary>
 		protected int m_hvoRoot;
+#if RANDYTODO
+		/*
+		// TODO: Sort out that flid business to see if they are real model properties, virtual properties of real classes, or simply made-for-views-code flids.
+		// TODO: Then, can a case be made to name it better?
+
+		JasonN: "I had one thought about the fakeFlid stuff, I liked your general re-naming better but in the BrowseView locality isn't it always a listFlid? If we can make any of the variables that are always a list id have a name that indicates that it would help some poor future developers. Otherwise I'm happy with the change now. Actually I'm happy with the change now anyhow, that's just what I was thinking. (I reviewed it hours ago but I hadn't seen the name change yet)."
+		RR: "Some times they are real properties, but other times they are not, depending on the tool."
+		JasonN: "Yeah, I think they are sometimes real, and sometimes made up, but always pointing at a list. (In the BrowseViewer)"
+		*/
+#endif
 		/// <summary></summary>
 		protected int m_madeUpFieldIdentifier;
 		/// <summary>

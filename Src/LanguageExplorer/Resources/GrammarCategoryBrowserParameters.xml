@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true" editable="false">
+<!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
+ so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
+	<columns>
+		<column label="Name" width="16%" layout="Name" ws="$ws=best analysis" field="Name"/>
+		<column label="Abbreviation" width="16%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+		<column label="Description" width="17%" layout="Description" ws="$ws=best analysis" field="Description"/>
+		<column label="Subcategory" width="17%" multipara="true" layout="SubPOS"/>
+		<column label="Inflection Classes" width="17%" multipara="true" layout="inflClassesBest"/>
+		<column label="Default Inflection Class" width="17%" layout="defaultInflClassBest"/>
+	</columns>
+</parameters>

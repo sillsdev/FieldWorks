@@ -8,7 +8,10 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -27,6 +30,19 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal LexiconArea(IToolRepository toolRepository)
 		{
 			m_toolRepository = toolRepository;
+		}
+
+		internal static RecordClerk CreateBasicClerkForLexiconArea(FdoCache cache)
+		{
+			var mdc = cache.MetaDataCacheAccessor;
+			var lexDb = cache.LanguageProject.LexDbOA;
+			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(lexDb.ClassID, "Entries", false), lexDb, "Entries");
+			var sorters = new Dictionary<string, PropertyRecordSorter>
+			{
+				{RecordClerk.kDefault, new PropertyRecordSorter("ShortName")},
+				{"PrimaryGloss", new PropertyRecordSorter("PrimaryGloss")}
+			};
+			return new RecordClerk("entries", recordList, sorters, null, false, false);
 		}
 
 		#region Implementation of IPropertyTableProvider

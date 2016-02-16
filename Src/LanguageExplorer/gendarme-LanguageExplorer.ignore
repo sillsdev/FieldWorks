@@ -77,6 +77,8 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms.Bulk
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.InterlinearSlice::FinishInit()
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.AnalysisInterlinearRs::MakeRoot()
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Notebook.NotebookArea::CreateRecordClerkForAllNotebookAreaTools(SIL.FieldWorks.FDO.FdoCache)
+M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lexicon.LexiconArea::CreateBasicClerkForLexiconArea(SIL.FieldWorks.FDO.FdoCache)
+M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Grammar.GrammarArea::CreateBrowseClerkForGrammarArea(SIL.CoreImpl.IPropertyTable,System.Boolean)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)

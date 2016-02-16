@@ -30,38 +30,33 @@ namespace SIL.FieldWorks.XWorks
 {
 
 	/// <summary>
-	/// Responsible for populating the XCore tree bar with the records.
+	/// Responsible for populating the tree bar with the records.
 	/// </summary>
 	public abstract class RecordBarHandler : IFWDisposable
 	{
 		protected IPropertyTable m_propertyTable;
-		protected FdoCache m_cache; // initialized with mediator.
+		protected FdoCache m_cache;
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
-
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
-		protected bool m_fOutOfDate = false;
+		protected bool m_fOutOfDate;
 
-		static public RecordBarHandler Create(IPropertyTable propertyTable, XmlNode toolConfiguration)
+		/// <summary />
+		protected RecordBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 		{
-			RecordBarHandler handler;
-			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
-			if (node == null)
-			{
-				handler = new RecordBarListHandler();
-			}
-			else
-			{
-				handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			}
-			handler.Init(propertyTable, node);
-			return handler;
+			if (propertyTable == null) throw new ArgumentNullException("propertyTable");
+
+			m_propertyTable = propertyTable;
+			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_expand = expand;
+			m_hierarchical = hierarchical;
+			m_includeAbbr = includeAbbr;
+			m_bestWS = bestWS;
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -77,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -156,22 +151,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void Init(IPropertyTable propertyTable, XmlNode node)
-		{
-			CheckDisposed();
-
-			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
-
-			if (node != null)
-			{
-				m_hierarchical = XmlUtils.GetBooleanAttributeValue(node, "hierarchical");
-				m_expand = XmlUtils.GetBooleanAttributeValue(node, "expand");
-				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(node, "includeAbbr");
-				m_bestWS = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
-			}
-		}
-
 		public void PopulateRecordBarIfNeeded(RecordList list)
 		{
 			CheckDisposed();
@@ -190,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_propertyTable.GetValue<bool>("ShowRecordList");
+				return true;
 			}
 		}
 
@@ -205,6 +184,14 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class PossibilityTreeBarHandler : TreeBarHandler
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PossibilityTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
+		{
+		}
+
 		protected override string GetDisplayPropertyName
 		{
 			get
@@ -234,8 +221,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 #if RANDYTODO
-			if (IsShowing)
-				window.TreeBarControl.HideHeaderControl();
+			window.TreeBarControl.HideHeaderControl();
 #endif
 		}
 
@@ -351,13 +337,9 @@ namespace SIL.FieldWorks.XWorks
 		readonly Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
 
 		//must have a constructor with no parameters, to use with the dynamic loader.
-		protected TreeBarHandler()
+		public TreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
-		}
-
-		internal override void Init(IPropertyTable propertyTable, XmlNode node)
-		{
-			base.Init(propertyTable, node);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 		}

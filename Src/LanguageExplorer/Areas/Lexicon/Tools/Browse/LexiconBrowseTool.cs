@@ -4,10 +4,13 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 {
@@ -16,6 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	/// </summary>
 	internal sealed class LexiconBrowseTool : ITool
 	{
+		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 
 		#region Implementation of IPropertyTableProvider
@@ -88,10 +92,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+			_configurationDocument = XDocument.Parse(LexiconResources.LexiconBrowseParameters);
+			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
+			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
+			_configurationDocument.Root.Add(columnsElement);
+			var recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
+			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				PropertyTable, Publisher, Subscriber,
 				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				new RecordBrowseView(_configurationDocument.Root, recordClerk));
 		}
 
 		/// <summary>

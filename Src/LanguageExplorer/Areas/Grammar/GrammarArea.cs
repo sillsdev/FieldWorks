@@ -7,6 +7,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Grammar
 {
@@ -24,6 +28,15 @@ namespace LanguageExplorer.Areas.Grammar
 		internal GrammarArea(IToolRepository toolRepository)
 		{
 			m_toolRepository = toolRepository;
+		}
+
+		internal static RecordClerk CreateBrowseClerkForGrammarArea(IPropertyTable propertyTable, bool includeTreeBarHandler)
+		{
+			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
+			return includeTreeBarHandler
+				? new RecordClerk("categories", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, new PossibilityTreeBarHandler(propertyTable, true, true, false, "best analorvern"))
+				: new RecordClerk("categories", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 		}
 
 		#region Implementation of IPropertyTableProvider

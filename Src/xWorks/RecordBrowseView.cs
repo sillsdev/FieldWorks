@@ -563,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// ShowRecord is called by InitBase,
 			// but it isn't set up enough to do anything at that call.
-			// Out own Init method needs to call it again.
+			// Our own Init method needs to call it again.
 			// Either that, or we can try initializing the browse viewer, before calling InitBase,
 			// but that may be worse.
 			if (!m_fullyInitialized || m_suppressShowRecord)

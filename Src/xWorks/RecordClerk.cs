@@ -33,6 +33,7 @@
 			 * it's probably because the current content control is not including it in its list of message targets.
 			*/
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -63,6 +64,14 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class RecordClerk : IFWDisposable, IFlexComponent, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
 	{
+		/// <summary>
+		/// Display for required default sorter.
+		/// </summary>
+		public const string kDefault = "Default";
+		/// <summary>
+		/// All of the sorters for the clerk.
+		/// </summary>
+		protected Dictionary<string, PropertyRecordSorter> m_allSorters;
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
 
 		protected readonly string m_id;
@@ -173,6 +182,32 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="id">Clerk id/name.</param>
 		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="sorters">The record sorters for the clerk.</param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		internal RecordClerk(string id, RecordList recordList, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		{
+			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException("id");
+			if (recordList == null) throw new ArgumentNullException("recordList");
+			if (sorters == null) throw new ArgumentNullException("sorters");
+
+			m_id = id;
+			m_list = recordList;
+			m_list.Clerk = this;
+			m_allSorters = sorters;
+			m_defaultSorter = sorters[kDefault];
+			m_defaultSortLabel = kDefault;
+			m_defaultFilter = defaultFilter; // Null is fine.
+			m_allowDeletions = allowDeletions;
+			m_shouldHandleDeletion = shouldHandleDeletion;
+		}
+
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
 		/// <param name="defaultSorter">The default record sorter.</param>
 		/// <param name="defaultSortLabel"></param>
 		/// <param name="defaultFilter">The default filter to use.</param>
@@ -185,6 +220,25 @@ namespace SIL.FieldWorks.XWorks
 			if (filterProvider == null) throw new ArgumentNullException("filterProvider");
 
 			m_filterProvider = filterProvider;
+		}
+
+		/// <summary>
+		/// Contructor.
+		/// </summary>
+		/// <param name="id">Clerk id/name.</param>
+		/// <param name="recordList">Record list for the clerk.</param>
+		/// <param name="defaultSorter">The default record sorter.</param>
+		/// <param name="defaultSortLabel"></param>
+		/// <param name="defaultFilter">The default filter to use.</param>
+		/// <param name="allowDeletions"></param>
+		/// <param name="shouldHandleDeletion"></param>
+		/// <param name="recordBarHandler"></param>
+		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordBarHandler recordBarHandler)
+			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		{
+			if (recordBarHandler == null) throw new ArgumentNullException("recordBarHandler");
+
+			m_recordBarHandler = recordBarHandler;
 		}
 
 		/// <summary>

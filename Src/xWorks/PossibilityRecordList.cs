@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructor for a list that is owned or not.
 		/// </summary>
 		internal PossibilityRecordList(ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList)
-			: base(decorator, true, 0, ownedPossibilityList, string.Empty)
+			: base(decorator, true, 0, ownedPossibilityList, "PossibilitiesOS")
 		{
 			ConstructorCommon();
 		}

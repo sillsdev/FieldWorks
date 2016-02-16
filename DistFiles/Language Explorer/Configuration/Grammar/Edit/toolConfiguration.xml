@@ -15,27 +15,6 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="CategoryBrowse" label="Categories Browse" value="categoryBrowse" icon="BrowseView">
-			<control>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
-				<parameters id="POSList">
-					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-						<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true"
-							editable="false">
-							<columns>
-								<column label="Name" width="16%" layout="Name" ws="$ws=best analysis" field="Name"/>
-								<column label="Abbreviation" width="16%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
-								<column label="Description" width="17%" layout="Description" ws="$ws=best analysis" field="Description"/>
-								<column label="Subcategory" width="17%" multipara="true" layout="SubPOS"/>
-								<column label="Inflection Classes" width="17%" multipara="true" layout="inflClassesBest"/>
-								<column label="Default Inflection Class" width="17%" layout="defaultInflClassBest"/>
-							</columns>
-						</parameters>
-					</control>
-				</parameters>
-			</control>
-		</tool>
 		<tool id="CompoundRuleEdit" label="Compound Rules" value="compoundRuleAdvancedEdit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>

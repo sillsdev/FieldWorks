@@ -22,8 +22,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected Dictionary<int, ListViewItem> m_hvoToListViewItemTable = new Dictionary<int, ListViewItem>();
 
-		//must have a constructor with no parameters, to use with the dynamic loader.
-		public RecordBarListHandler()
+		public RecordBarListHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
 		}
 

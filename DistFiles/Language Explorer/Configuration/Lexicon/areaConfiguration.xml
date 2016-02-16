@@ -329,14 +329,6 @@
 			</panels>
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
-				<clerk id="entries">
-					<recordList owner="LexDb" property="Entries"/>
-					<filters/>
-					<sortMethods>
-						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
-					</sortMethods>
-				</clerk>
 				<clerk id="AllReversalEntries">
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalEntryClerk"/>
 					<recordList owner="ReversalIndex" property="AllEntries">
@@ -455,7 +447,6 @@
 			</clerks>
 			<tools>
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
-				<include path="Browse/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Dictionary/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="RDE/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="ReversalIndices/toolConfiguration.xml" query="root/tools/*"/>
