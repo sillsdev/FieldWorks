@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (configNode.Parent != null && configNode.Parent.CSSClassNameOverride != null && configNode.Parent.FieldDescription.Equals("LexEntry"))
 			{
-				if (configNode.CheckForPrevParaNodeSibling(configNode))
+				if (configNode.CheckForPrevParaNodeSibling())
 				{
 					baseSelection = baseSelection.Contains(".paracontinuation")
 						? baseSelection
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!String.IsNullOrEmpty(configNode.Style))
 				{
 					//Generate the rules for the default font info
-					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode, mediator));
 					if (showingParagraph)
 						rule = AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
 				}
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.XWorks
 				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
 				styleSheet.Rules.Add(afterRule);
 			}
-			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
+			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
 				var senseParaDeclaration = GetOnlyParagraphStyle(styleDeclaration);
@@ -311,9 +311,9 @@ namespace SIL.FieldWorks.XWorks
 				//Generate the style for field following last sense
 				var rule = new StyleRule();
 				if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
-					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".sense");
+					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, configNode, ".sense");
 				else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
-					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, ".referringsense");
+					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, configNode, ".referringsense");
 
 				styleSheet.Rules.Add(rule);
 			}
@@ -417,11 +417,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="baseSelection">base class tree</param>
 		/// <param name="mediator">mediator to get the styles</param>
+		/// <param name="configNode"></param>
 		/// <param name="classname">preceding class name</param>
-		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator,
-			string classname)
+		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator, ConfigurableDictionaryNode configNode, string classname)
 		{
-			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, mediator);
+			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, configNode, mediator);
 			var rule = new StyleRule(styledeclaration)
 			{
 				Value =
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks
 				// Don't remove any character level settings since paragraphs can have their own character level
 				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
 				// But do remove any settings that apply only to ":before" formatting.
-				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
+				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
 				{
 					if (blockDeclaration.Properties[i].Name == "content")
@@ -817,15 +817,32 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, Mediator mediator)
 		{
+			return GenerateCssStyleFromFwStyleSheet(styleName, wsId, null, mediator);
+		}
+
+		/// <summary>
+		/// Generates a css StyleDeclaration for the requested FieldWorks style.
+		/// <remarks>internal to facilitate separate unit testing.</remarks>
+		/// </summary>
+		/// <param name="styleName"></param>
+		/// <param name="wsId">writing system id</param>
+		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
+		/// <param name="mediator"></param>
+		/// <returns></returns>
+		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, Mediator mediator)
+		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			var hangingIndent = 0.0f;
 			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
 				return declaration;
 			}
-			BaseStyleInfo projectStyle = styleSheet.Styles[styleName];
+			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+			var ancestorMargin = 0.0f;
+			var hangingIndent = 0.0f;
+			if(exportStyleInfo.IsParagraphStyle && node != null)
+				ancestorMargin = CalculateParagraphMarginFromAncestors(node, styleSheet);
 			if(exportStyleInfo.HasAlignment)
 			{
 				declaration.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.Alignment.AsCssString()) });
@@ -872,15 +889,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
+			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorMargin != 0)
 			{
 				var leadingIndent = 0.0f;
 				if (exportStyleInfo.HasLeadingIndent)
 				{
 					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
 				}
-				leadingIndent -= hangingIndent;
-				declaration.Add(new Property("padding-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
+				leadingIndent -= ancestorMargin + hangingIndent;
+				declaration.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{
@@ -923,6 +940,53 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return declaration;
+		}
+
+		private static float CalculateParagraphMarginFromAncestors(ConfigurableDictionaryNode currentNode, FwStyleSheet styleSheet)
+		{
+			var parentNode = currentNode;
+			do
+			{
+				parentNode = parentNode.Parent;
+				if (parentNode == null)
+					return 0.0f;
+			} while (!IsParagraphStyle(parentNode, styleSheet));
+
+			var projectStyle = styleSheet.Styles[GetParagraphStyleNameFromNode(parentNode, currentNode.CheckForPrevParaNodeSibling())];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+			var styleMargin = 0.0f;
+			if (exportStyleInfo.HasFirstLineIndent)
+			{
+				// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
+				var firstLineIndentValue = MilliPtToPt(exportStyleInfo.FirstLineIndent);
+				if (firstLineIndentValue < 0.0f)
+					styleMargin = firstLineIndentValue;
+			}
+			if (exportStyleInfo.HasLeadingIndent || styleMargin < 0.0f)
+			{
+				var leadingIndent = 0.0f;
+				if (exportStyleInfo.HasLeadingIndent)
+					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
+				styleMargin = leadingIndent - styleMargin;
+			}
+			return styleMargin;
+		}
+
+		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, FwStyleSheet styleSheet)
+		{
+			var style = GetParagraphStyleNameFromNode(node);
+			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
+		}
+
+		private static string GetParagraphStyleNameFromNode(ConfigurableDictionaryNode node, bool isContinuation = false)
+		{
+			var paragraphOptions = node.DictionaryNodeOptions as DictionaryNodeParagraphOptions;
+			if (isContinuation && paragraphOptions != null)
+				return paragraphOptions.ContinuationParagraphStyle;
+			var style = !string.IsNullOrEmpty(node.Style)
+				? node.Style
+				: paragraphOptions == null ? null : paragraphOptions.PargraphStyle;
+			return style;
 		}
 
 		/// <summary>

@@ -275,20 +275,134 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForStyleName_ParagraphPaddingWorks()
+		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_NoParent_Works()
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, null, m_mediator);
 			// Indent values are converted into pt values on export
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + LeadingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + LeadingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-bottom:" + PadBottom / 1000 + "pt"));
 		}
 
 		[Test]
-		public void GenerateCssForStyleName_HangingIndentWithExistingPaddingWorks()
+		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_ParentOverrideWorks()
+		{
+			var childIndent = 15 * 1000;
+			var parentStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteParentOverrideParent");
+			var childStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteParentOverrideChild");
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, childIndent);
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = childStyle.Name,
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Style = parentStyle.Name,
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entry });
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_mediator);
+			// Indent values are converted into pt values on export
+			// LeadingIndent is the value generated for the parent (24).
+			// In order for the child to have a correct indent (15) it must overcome the larger indent of the parent by a negative amount
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + (childIndent - LeadingIndent) / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-bottom:" + PadBottom / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_ChildEqualToParentResultsInZeroMargin()
+		{
+			var parentStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteParentOverrideParent");
+			var childStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteParentOverrideChild");
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = childStyle.Name,
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions { PargraphStyle = parentStyle.Name},
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entry });
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_mediator);
+			// Indent values are converted into pt values on export
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + 0 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-bottom:" + PadBottom / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_GrandParentAndParentWork()
+		{
+			var grandParentStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteGrandPooBah");
+			var parentStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteParental");
+			var childStyle = GenerateParagraphStyle("ParagraphMarginAbsoluteKiddo");
+			grandParentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 5 * 1000);
+			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 12 * 1000);
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 20 * 1000);
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subSenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = childStyle.Name,
+				IsEnabled = true
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { subSenses },
+				Style = parentStyle.Name,
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions { PargraphStyle = grandParentStyle.Name },
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entry });
+			// In order to generate the correct indentation at each level we should see 5pt margin for each style
+			//SUT
+			var gpDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandParentStyle.Name, CssGenerator.DefaultStyle, entry, m_mediator);
+			Assert.That(gpDeclaration.ToString(), Contains.Substring("margin-left:5pt"), "Grandparent margin incorrectly generated");
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, senses, m_mediator);
+			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:7pt"), "Parent margin incorrectly generated");
+			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_mediator);
+			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:8pt"), "Child margin incorrectly generated");
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_HangingIndentWithExistingMargin_NoParentWorks()
 		{
 			var hangingIndent = -15 * 1000;
 			var testStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging");
@@ -296,12 +410,88 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_mediator);
 			// Indent values are converted into pt values on export
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + (LeadingIndent - hangingIndent) / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - hangingIndent) / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
 		}
 
 		[Test]
-		public void GenerateCssForStyleName_HangingIndentWithNoPaddingWorks()
+		public void GenerateCssForStyleName_HangingIndentWithExistingMargin_ParentOverrideWorks()
+		{
+			var parentHangingIndent = -8 * 1000;
+			var childHangingIndent = -10 * 1000;
+			var childStyleName = "Dictionary-Paragraph-Padding-Hanging-Child";
+			var parentStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging-Parent");
+			var childStyle = GenerateParagraphStyle(childStyleName);
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = childStyle.Name,
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Style = parentStyle.Name,
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entry });
+			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, parentHangingIndent);
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
+			//SUT
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, entry, m_mediator);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyleName, CssGenerator.DefaultStyle, senses, m_mediator);
+			// Indent values are converted into pt values on export
+			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - parentHangingIndent) / 1000 + "pt"));
+			Assert.That(parentDeclaration.ToString(), Contains.Substring("text-indent:" + parentHangingIndent / 1000 + "pt"));
+
+			Assert.That(childDeclaration.ToString(), Contains.Substring("text-indent:" + childHangingIndent / 1000 + "pt"));
+			// The child margin should be the negation of the parent adjusted margin plus the LeadingIndent less the childs hanging indent
+			var adjustedChildIndent = parentHangingIndent - childHangingIndent;
+			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:" + adjustedChildIndent / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_ParentMargin_DoesNotAffectCharacterStyle()
+		{
+			var childStyle = GenerateStyle("HeadWordStyle");
+			var parentStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging-Parent");
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr", IsEnabled = true,}
+				},
+				DisplayWritingSystemAbbreviations = true
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = wsOpts,
+				Style = childStyle.Name,
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Style = parentStyle.Name,
+				Children = new List<ConfigurableDictionaryNode> { headword },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entry });
+			//SUT
+			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_mediator);
+			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_HangingIndentWithNoMarginWorks()
 		{
 			var hangingIndent = -15 * 1000;
 			var testStyle = GenerateEmptyParagraphStyle("Dictionary-Paragraph-Hanging-No-Padding");
@@ -309,7 +499,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_mediator);
 			// Indent values are converted into pt values on export
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + -hangingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + -hangingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
 		}
 
@@ -1101,6 +1291,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
+
 		[Test]
 		public void GenerateCssForConfiguration_DictionaryContinuation()
 		{
@@ -1117,7 +1308,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "lexentry",
-				Children = new List<ConfigurableDictionaryNode> { senses }
+				Children = new List<ConfigurableDictionaryNode> { senses },
 			};
 
 			var model = new DictionaryConfigurationModel();
@@ -1128,7 +1319,95 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""),
 				Contains.Substring(
 					".lexentry> .senses ~ .paracontinuation{font-family:'foofoo',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;background-color:#008000;}"));
-			}
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_AbsolutePositioning_DictionaryContinuationWorks()
+		{
+			var normal = GenerateParagraphStyle("Dictionary-Normal");
+			var continuation = GenerateParagraphStyle("Dictionary-Continuation");
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions {  PargraphStyle = normal.Name, ContinuationParagraphStyle = continuation.Name}
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT - Because Normal and Continuation both have the same leading specified continuation should end up with 0pt margin to be correct in context
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Is.StringMatching(@"\.lexentry>\s*\.senses\s*~\s*\.paracontinuation\{.*margin-left:0pt.*\}"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_AbsolutePositioning_FollowingDictionaryContinuationWorks()
+		{
+			var normal = GenerateParagraphStyle("Dictionary-Normal");
+			var continuation = GenerateParagraphStyle("Dictionary-Continuation");
+			var subEntryStyle = GenerateParagraphStyle("Dictionary-SubEntry");
+			normal.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 10 * 1000);
+			continuation.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 15 * 1000);
+			subEntryStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, 5 * 1000);
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType",
+				CSSClassNameOverride = "complexformtypes",
+				IsEnabled = true
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true},
+				Style = subEntryStyle.Name,
+				FieldDescription = "Subentries",
+				CSSClassNameOverride = "subs",
+				IsEnabled = true
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses, subentryNode },
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions { PargraphStyle = normal.Name, ContinuationParagraphStyle = continuation.Name },
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+
+			var normalCss = CssGenerator.GenerateCssStyleFromFwStyleSheet(normal.Name, CssGenerator.DefaultStyle,
+				entry, m_mediator);
+			Assert.That(normalCss.ToString(), Is.StringContaining("margin-left:10pt"), "Normal margin should be 10pt");
+
+			var continuationCss = CssGenerator.GenerateCssStyleFromFwStyleSheet(continuation.Name, CssGenerator.DefaultStyle, senses, m_mediator);
+			Assert.That(continuationCss.ToString(), Is.StringContaining("margin-left:5pt"), "Continuation margin should be 5pt, e.g. 5 more than normal");
+
+			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet(subEntryStyle.Name, CssGenerator.DefaultStyle, subentryNode, m_mediator);
+			Assert.That(cssResult.ToString(), Is.StringContaining("margin-left:-10pt"), "SubEntry margin should be -10pt, 10 less than continuation");
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_SenseParaStyleNotApplyToFirstSense()
 		{
@@ -1621,7 +1900,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*padding-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
 							  "Generate Dictionary-Normal Paragraph Style not generated.");
 		}
 
@@ -1647,11 +1926,9 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { testEntryNode });
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*padding-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
 							  "Generate Dictionary-Minor Paragraph Style not generated.");
 		}
-
-
 
 		private TestStyle GenerateStyle(string name)
 		{
@@ -1663,9 +1940,18 @@ namespace SIL.FieldWorks.XWorks
 			fontInfo.m_bold.ExplicitValue = true;
 			fontInfo.m_fontSize.ExplicitValue = FontSize;
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			m_styleSheet.Styles.Add(style);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
+		}
+
+		private void SafelyAddStyleToSheetAndTable(string name, TestStyle style)
+		{
+			if (m_styleSheet.Styles.Contains(name))
+				m_styleSheet.Styles.Remove(name);
+			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
+			m_owningTable.Add(name, style);
 		}
 
 		private void GenerateBulletStyle(string name)
@@ -1686,12 +1972,7 @@ namespace SIL.FieldWorks.XWorks
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
 			style.SetDefaultFontInfo(fontInfo1);
 
-			if (m_styleSheet.Styles.Count > 0)
-				m_styleSheet.Styles.RemoveAt(0);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
 		private TestStyle GenerateSenseStyle(string name)
@@ -1708,8 +1989,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceBefore, 0, PadTop);
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceAfter, 0, PadBottom);
-			m_styleSheet.Styles.Add(style);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
 		}
 
@@ -2069,12 +2349,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptAlign, 0, (int)ParagraphAlignment);
 			// Line space setting (set to double space)
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvRelative, DoubleSpace);
-			if (m_styleSheet.Styles.Count > 0)
-				m_styleSheet.Styles.RemoveAt(0);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
 		}
 
@@ -2114,12 +2389,7 @@ namespace SIL.FieldWorks.XWorks
 				m_fontSize = { ExplicitValue = FontSize }
 			};
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			if (m_styleSheet.Styles.Count > 0)
-				m_styleSheet.Styles.RemoveAt(0);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
 		/// <summary>
@@ -2129,8 +2399,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			if (m_styleSheet.Styles.Count > 0)
-				m_styleSheet.Styles.RemoveAt(0);
+			if (m_styleSheet.Styles.Contains(name))
+				m_styleSheet.Styles.Remove(name);
 			m_styleSheet.Styles.Add(style);
 			if (m_owningTable.ContainsKey(name))
 				m_owningTable.Remove(name);

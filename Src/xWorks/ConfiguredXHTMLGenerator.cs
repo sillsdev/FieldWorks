@@ -395,13 +395,13 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
-				if (config.CheckForParaNodesEnabled(config) && !config.CheckForPrevParaNodeSibling(config))
+				if (config.CheckForParaNodesEnabled() && !config.CheckForPrevParaNodeSibling())
 				{
 					settings.Writer.WriteStartElement("div");
 					settings.Writer.WriteAttributeString("class", "paracontinuation");
 				}
 			}
-			if (configuration.Children.Any(x => x.CheckForParaNodesEnabled(x)))
+			if (configuration.Children.Any(x => x.CheckForParaNodesEnabled()))
 			{
 				settings.Writer.WriteEndElement();
 			}
