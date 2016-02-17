@@ -1118,44 +1118,40 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable senseCollection)
 		{
 			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
-			int excluded = 0;
-			foreach (var item in senseCollection)
+			var filteredSenseCollection = new List<ILexSense>();
+			foreach (ILexSense item in senseCollection)
 			{
-				Debug.Assert(item is ILexSense);
-				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
-					++excluded;
+				Debug.Assert(item != null);
+				if (publicationDecorator != null && publicationDecorator.IsExcludedObject(item.Hvo))
+					continue;
+				filteredSenseCollection.Add(item);
 			}
-			int count = senseCollection.Cast<object>().Count();
-			if (excluded == count)
+			if (filteredSenseCollection.Count == 0)
 				return;
-			var isSingle = IsSingleSense(publicationDecorator, senseCollection);
+			var isSingle = IsSingleSense(filteredSenseCollection);
 			string lastGrammaticalInfo, langId;
-			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, senseCollection, out lastGrammaticalInfo, out langId);
+			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo)
-				InsertGramInfoBeforeSenses(senseCollection.Cast<ILexSense>().First(),
+				InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
 					config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
 					publicationDecorator, settings);
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			int reversalcount=0;
-			foreach (var item in senseCollection)
+			foreach (var item in filteredSenseCollection)
 			{
-				if (publicationDecorator != null && publicationDecorator.IsExcludedObject((item as ILexSense).Hvo))
-					continue;
 				GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo,
 					++reversalcount);
 			}
 		}
 
 		/// <summary>
-		/// This method will Check for single sense
+		/// This method will Check for single sense (including no subsenses of the one sense)
 		/// </summary>
-		private static bool IsSingleSense(DictionaryPublicationDecorator publicationDecorator, IEnumerable senseCollection)
+		private static bool IsSingleSense(List<ILexSense> filteredSenseCollection)
 		{
-			int count = senseCollection.Cast<object>().Count();
+			var count = filteredSenseCollection.Count;
 			if (count > 1) return false;
-			Debug.Assert(senseCollection is IEnumerable<ILexSense>);
-			int subcount = (senseCollection as IEnumerable<ILexSense>).Select(s => s.SensesOS.Count).FirstOrDefault();
-			return subcount == 0;
+			return filteredSenseCollection.First().SensesOS.Count == 0;
 		}
 
 		private static void InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,

@@ -560,6 +560,100 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.String(xhtmlString).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfoPath, 1);
 			}
 		}
+		[Test]
+		public void GenerateXHTMLForEntry_TwoSensesWithSameInfo_ThirdSenseNotPublished_ShowGramInfoFirst()
+		{
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				ShowSharedGrammarInfoFirst = true
+			};
+			var categoryInfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				Label = "Category Info.",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>(),
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "msa",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { categoryInfo }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos1 = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			var pos2 = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos1);
+			posSeq.Add(pos2);
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			msa.PartOfSpeechRA = pos1;
+			msa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Noun");
+
+			// Add second sense; same msa
+			AddSenseToEntry(entry, "second sense", m_wsEn, Cache);
+			var secondMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			var secondSense = entry.SensesOS[1];
+			entry.MorphoSyntaxAnalysesOC.Add(secondMsa);
+			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+			secondMsa.PartOfSpeechRA = pos1;
+
+			// Add third sense; different msa
+			AddSenseToEntry(entry, "third sense", m_wsEn, Cache);
+			var thirdMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			var thirdSense = entry.SensesOS[2];
+			entry.MorphoSyntaxAnalysesOC.Add(thirdMsa);
+			thirdSense.MorphoSyntaxAnalysisRA = thirdMsa;
+			thirdMsa.PartOfSpeechRA = pos2;
+			thirdMsa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Verb");
+
+			// Setup publication
+			// If the 3rd sense with the different msa is NOT published in the Main Dictionary
+			// then when we generate XHTML for Main Dictionary, the shared grammatical info
+			// (shared between the other two senses) should cause the gramm. info to be
+			// put out front.
+			var mainDict = CreatePublicationType("Main Dictionary");
+			thirdSense.DoNotPublishInRC.Add(mainDict);
+
+			// create decorator
+			var mainDictionaryDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged) Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, mainDict);
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, mainDictionaryDecorator, settings));
+				XHTMLWriter.Flush();
+				const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
+				const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msa']/span[@class='mlpartofspeech']";
+				var xhtmlString = XHTMLStringBuilder.ToString();
+				AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
+				AssertThatXmlIn.String(xhtmlString).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfoPath, 1);
+			}
+		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_TwoSensesWithDifferentGramInfoShowInfoInSenses()
