@@ -521,19 +521,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
 
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			var options = (DictionaryNodeComplexFormOptions)configNode.DictionaryNodeOptions;
 			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
-		}
-
-		///<summary>Root-based Minor Entry - Components should use character styles. See LT-15834.</summary>
-		[Test]
-		public void ConvertLayoutTreeNodeToConfigNode_ComponentUsesCharStyles()
-		{
-			var node = new MockLayoutTreeNode { m_partName = "LexEntry-Jt-StemMinorComponentsConfig" };
-
-			// SUT
-			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
-			Assert.That(configNode.StyleType, Is.EqualTo(ConfigurableDictionaryNode.StyleTypes.Character), "Need to use character styles for Component");
 		}
 
 		///<summary/>
@@ -876,6 +865,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].CSSClassNameOverride, parentOverride, "CssClassNameOverride for parent node not migrated");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].CSSClassNameOverride, childOverride, "CssClassNameOverride for child not migrated");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_StyleTypeIsMigrated()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var convertedChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1" };
+			var convertedChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode1, convertedChildNode2 };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			const ConfigurableDictionaryNode.StyleTypes parentOverride = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			const ConfigurableDictionaryNode.StyleTypes child1Override = ConfigurableDictionaryNode.StyleTypes.Character;
+			const ConfigurableDictionaryNode.StyleTypes defaultStyleType = ConfigurableDictionaryNode.StyleTypes.Default;
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = parentOverride };
+			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override };
+			var baseChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" }; // Child2 will have the default StyleType
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1, baseChildNode2 };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "CssClassNameOverride for parent node not migrated");
+			Assert.AreEqual(child1Override, convertedModel.Parts[0].Children[0].StyleType, "CssClassNameOverride for child 1 not migrated");
+			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "CssClassNameOverride for child 2 should not be set");
 		}
 
 		///<summary/>

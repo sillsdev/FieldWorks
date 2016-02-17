@@ -366,10 +366,11 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
+			convertedNode.SubField = currentDefaultNode.SubField;
 			if (convertedNode.DictionaryNodeOptions == null)
 				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
+			convertedNode.StyleType = currentDefaultNode.StyleType;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
-			convertedNode.SubField = currentDefaultNode.SubField;
 
 			if(version == -1 && IsReferencedEntriesNode(convertedNode))
 			{
@@ -738,10 +739,6 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = node.Checked,
 				DictionaryNodeOptions = CreateOptionsFromLayoutTreeNode(node)
 			};
-
-			// Root-based Minor Entry - Components should use character styles. See LT-15834.
-			if (node.PartName == "LexEntry-Jt-StemMinorComponentsConfig")
-				convertedNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 
 			// Custom fields were implicitly marked in the old configuration files.  Decode the implicit marking.  See LT-17032.
 			if (node.Configuration != null && node.Configuration.Attributes != null)
