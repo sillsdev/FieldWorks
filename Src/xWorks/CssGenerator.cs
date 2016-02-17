@@ -143,13 +143,18 @@ namespace SIL.FieldWorks.XWorks
 																			  string baseSelection,
 																			  Mediator mediator)
 		{
+			// If we are displaying this node in a paragraph then we should generate the selector for the content in the continuation paragraph
+			if (configNode.CheckForParaNodesEnabled())
+			{
+				var intermediateRule = GenerateRuleforContentFollowIntermediatePara(baseSelection + "> " + SelectBareClassName(configNode), mediator, configNode);
+				styleSheet.Rules.Add(intermediateRule);
+			}
+			// If we are part of a continuation paragraph modify the base selector to include the div
 			if (configNode.Parent != null && configNode.Parent.CSSClassNameOverride != null && configNode.Parent.FieldDescription.Equals("LexEntry"))
 			{
 				if (configNode.CheckForPrevParaNodeSibling())
 				{
-					baseSelection = baseSelection.Contains(".paracontinuation")
-						? baseSelection
-						: String.Concat(baseSelection, " .paracontinuation");
+					baseSelection = baseSelection.Contains(".paracontinuation") ? baseSelection : string.Concat(baseSelection, " .paracontinuation");
 				}
 			}
 			var rule = new StyleRule();
@@ -310,11 +315,6 @@ namespace SIL.FieldWorks.XWorks
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
 				//Generate the style for field following last sense
 				var rule = new StyleRule();
-				if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
-					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, configNode, ".sense");
-				else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
-					rule = GenerateRuleforContentFollowIntermediatePara(baseSelection, mediator, configNode, ".referringsense");
-
 				styleSheet.Rules.Add(rule);
 			}
 			else
@@ -419,13 +419,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator">mediator to get the styles</param>
 		/// <param name="configNode"></param>
 		/// <param name="classname">preceding class name</param>
-		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator, ConfigurableDictionaryNode configNode, string classname)
+		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator, ConfigurableDictionaryNode configNode)
 		{
 			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, configNode, mediator);
 			var rule = new StyleRule(styledeclaration)
 			{
-				Value =
-					string.Format("{0}~ .paracontinuation",baseSelection.Substring(0, baseSelection.LastIndexOf(classname, StringComparison.Ordinal)))
+				Value = string.Format("{0} ~ .paracontinuation", baseSelection)
 			};
 			return rule;
 		}

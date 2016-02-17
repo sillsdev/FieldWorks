@@ -1303,12 +1303,14 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
 				Children = new List<ConfigurableDictionaryNode> { gloss },
+				IsEnabled = true
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "lexentry",
 				Children = new List<ConfigurableDictionaryNode> { senses },
+				IsEnabled = true
 			};
 
 			var model = new DictionaryConfigurationModel();
@@ -1316,9 +1318,54 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""),
-				Contains.Substring(
-					".lexentry> .senses ~ .paracontinuation{font-family:'foofoo',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;background-color:#008000;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Is.StringMatching(@"\.lexentry>\s*\.senses\s*~\s*\.paracontinuation{.*}"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_DictionaryContinuationNoSenses()
+		{
+			GenerateParagraphStyle("Dictionary-Continuation");
+			var subEntryStyle = GenerateParagraphStyle("Dictionary-Subentry");
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType",
+				CSSClassNameOverride = "complexformtypes",
+				IsEnabled = true
+			};
+			var subentryNodeCopy = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				Style = subEntryStyle.Name,
+				FieldDescription = "Subentries",
+				Label = "Sub Entries",
+				LabelSuffix = "1",
+				CSSClassNameOverride = "subs",
+				IsEnabled = true
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				Style = subEntryStyle.Name,
+				FieldDescription = "Subentries",
+				CSSClassNameOverride = "subs",
+				IsEnabled = true
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { subentryNode, subentryNodeCopy },
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Is.StringMatching(@"\.lexentry>\s*\.subs\s*~\s*\.paracontinuation{.*}"));
 		}
 
 		[Test]
@@ -1333,13 +1380,15 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
 				Children = new List<ConfigurableDictionaryNode> { gloss },
+				IsEnabled = true
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "lexentry",
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				DictionaryNodeOptions = new DictionaryNodeParagraphOptions {  PargraphStyle = normal.Name, ContinuationParagraphStyle = continuation.Name}
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions {  PargraphStyle = normal.Name, ContinuationParagraphStyle = continuation.Name},
+				IsEnabled = true
 			};
 
 			var model = new DictionaryConfigurationModel();
