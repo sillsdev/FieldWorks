@@ -616,7 +616,7 @@ namespace SIL.FieldWorks.XWorks
 			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-			if (validPublication != currentPublication)
+			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
 			{
 				m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
