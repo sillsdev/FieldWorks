@@ -2049,6 +2049,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return overridesString.ToString();
 		}
 		#endregion
+
+		/// <summary>
+		/// If the based on style name is set then set the actual based on style member to the item in the styleInfoCollection
+		/// </summary>
+		public void SetBasedOnStyle(FwStyleSheet.StyleInfoCollection styleInfoCollection)
+		{
+			if (string.IsNullOrEmpty(m_basedOnStyleName) || m_basedOnStyleName == Name)
+			{
+				return;
+			}
+			if (styleInfoCollection.Contains(m_basedOnStyleName))
+			{
+				m_basedOnStyle = styleInfoCollection[m_basedOnStyleName];
+			}
+		}
 	}
 	#endregion
 }
