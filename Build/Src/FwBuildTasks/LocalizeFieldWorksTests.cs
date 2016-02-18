@@ -269,6 +269,37 @@ namespace FwBuildTasks
 				});
 		}
 
+		[Test]
+		public void DoIt_SourceOnly()
+		{
+			m_sut.Build = "SourceOnly";
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True);
+			var stringsEsPath = m_sut.StringsXmlPath("es");
+			Assert.That(File.Exists(stringsEsPath));
+
+			// The Assembly Linker should not be run for source-only
+			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void DoIt_BinaryOnly()
+		{
+			// Setup
+			m_sut.Build = "SourceOnly";
+			m_sut.Execute();
+
+			// Execute
+			m_sut.Build = "BinaryOnly";
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True);
+
+			// The Assembly Linker should be run (once for each desired project) with expected arguments.
+			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(4));
+		}
+
 		private void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources )
 		{
 			string locale = "es";

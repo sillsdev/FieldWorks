@@ -16,39 +16,59 @@ using Task = Microsoft.Build.Utilities.Task;
 namespace FwBuildTasks
 {
 	/// <summary>
-	/// This class implements a complex process required to generate various resource DLLs for the localization of fieldworks.
-	/// The main input of the process is a set of files kept under ww/Localizations following the pattern messages.[locale].po, which
-	/// contain translations of the many English strings in FieldWorks for the specified [locale] (e.g., fr, es).
+	/// This class implements a complex process required to generate various resource DLLs for
+	/// the localization of fieldworks. The main input of the process is a set of files kept
+	/// under Localizations following the pattern messages.[locale].po, which contain
+	/// translations of the many English strings in FieldWorks for the specified [locale]
+	/// (e.g., fr, es).
 	///
-	/// We first apply some sanity checks, making sure String.Format markers like {0}, {1} etc have not been obviously mangled in translation.
+	/// We first apply some sanity checks, making sure String.Format markers like {0}, {1} etc
+	/// have not been obviously mangled in translation.
 	///
-	/// The first stage of the process applies these substitutions to certain strings in DistFiles/Language Explorer/Configuration/strings-en.txt to produce
+	/// The first stage of the process applies these substitutions to certain strings in
+	/// DistFiles/Language Explorer/Configuration/strings-en.txt to produce
 	/// a strings-[locale].txt for each locale (in the same place).
 	///
-	/// The second stage generates a resources.dll for each (non-test) project under Src, in Output/[config]/[locale]/[project].resources.dll. For example,
-	/// in a release build (config), for the FDO project, for the French locale, it will generate Output/release/fr/FDO.resources.dll.
+	/// The second stage generates a resources.dll for each (non-test) project under Src, in
+	/// Output/[config]/[locale]/[project].resources.dll. For example, in a release build
+	/// (config), for the FDO project, for the French locale, it will generate
+	/// Output/release/fr/FDO.resources.dll.
 	///
-	/// The second stage involves multiple steps to get to the resources DLL (done in parallel for each locale).
-	/// - First we generate a lookup table (for an XSLT) which contains a transformation of the .PO file, Output/[locale].xml, e.g., Output/fr.xml.
+	/// The second stage involves multiple steps to get to the resources DLL (done in parallel
+	/// for each locale).
+	/// - First we generate a lookup table (for an XSLT) which contains a transformation of the
+	///   .PO file, Output/[locale].xml, e.g., Output/fr.xml.
 	/// - For each non-test project,
 	///     - for each .resx file in the project folder or a direct subfolder
-	///         - apply an xslt, Build/LocalizeResx.xsl, to [path]/File.resx, producing Output[path]/[namespace].File.Strings.[locale].resx. (resx files are internally xml)
-	///             (LocalizeResx.xsl includes the Output/fr.xml file created in the first step and uses it to translate appropriate items in the resx.)
-	///             (Namespace is the fully qualified namespace of the project, which is made part of the filename.)
-	///         - run an external program, resgen, which converts the resx to a .resources file in the same location, with otherwise the same name.
-	///     - run an external program, al (assembly linker) which assembles all the .resources files into the final localized resources.dll
+	///         - apply an xslt, Build/LocalizeResx.xsl, to [path]/File.resx, producing
+	///           Output[path]/[namespace].File.Strings.[locale].resx. (resx files are
+	///           internally xml)
+	///           (LocalizeResx.xsl includes the Output/fr.xml file created in the first step
+	///           and uses it to translate appropriate items in the resx.)
+	///           (Namespace is the fully qualified namespace of the project, which is made
+	///           part of the filename.)
+	///         - run an external program, resgen, which converts the resx to a .resources file
+	///           in the same location, with otherwise the same name.
+	///     - run an external program, al (assembly linker) which assembles all the .resources
+	///       files into the final localized resources.dll
 	/// </summary>
 	public class LocalizeFieldWorks : Task
 	{
 		public LocalizeFieldWorks()
 		{
 			Config = "Release"; // a suitable default.
+			Build = "All";
 		}
 		/// <summary>
 		/// The directory in which it all happens, corresponding to the main ww directory in source control.
 		/// </summary>
 		[Required]
 		public string RootDirectory { get; set; }
+
+		/// <summary>
+		/// What to build: Valid values are: SourceOnly, BinaryOnly, All
+		/// </summary>
+		public string Build { get; set; }
 
 		/// <summary>
 		/// The configuration we want to build (typically Release or Debug).
@@ -107,6 +127,16 @@ namespace FwBuildTasks
 		internal string RealBldFolder
 		{
 			get { return Path.Combine(RealFwRoot, BldFolderName); }
+		}
+
+		internal bool BuildSource
+		{
+			get { return Build != "BinaryOnly"; }
+		}
+
+		internal bool BuildBinaries
+		{
+			get { return Build != "SourceOnly"; }
 		}
 
 		/// <summary>
@@ -362,6 +392,14 @@ namespace FwBuildTasks
 	/// </summary>
 	public class Localizer
 	{
+		private class ResourceInfo
+		{
+			public string ProjectFolder;
+			public List<string> ResXFiles;
+			public string RootNameSpace;
+			public string AssemblyName;
+		}
+
 		public Localizer(string currentFile, LocalizeFieldWorks parent)
 		{
 			m_parentTask = parent;
@@ -407,12 +445,15 @@ namespace FwBuildTasks
 		{
 			try
 			{
-				if (!CheckForPoFileProblems())
-					return;
+				if (m_parentTask.BuildSource)
+				{
+					if (!CheckForPoFileProblems())
+						return;
 
-				CreateStringsXml();
+					CreateStringsXml();
 
-				CreateXmlMappingFromPo();
+					CreateXmlMappingFromPo();
+				}
 
 				List<string> projectFolders;
 				if (!GetProjectFolders(out projectFolders))
@@ -447,14 +488,14 @@ namespace FwBuildTasks
 			}
 		}
 
-		string ExtractVersion(string line)
+		private string ExtractVersion(string line)
 		{
 			int start = line.IndexOf("\"", StringComparison.Ordinal);
 			int end = line.LastIndexOf("\"", StringComparison.Ordinal);
 			return line.Substring(start + 1, end - start - 1);
 		}
 
-		private void ProcessProject(string projectFolder)
+		private static List<string> GetResXFiles(string projectFolder)
 		{
 			var resxFiles = Directory.GetFiles(projectFolder, "*.resx").ToList();
 			// include child folders, one level down, which do not have their own .csproj.
@@ -464,76 +505,132 @@ namespace FwBuildTasks
 					continue;
 				resxFiles.AddRange(Directory.GetFiles(childFolder, "*.resx"));
 			}
-			if (resxFiles.Count == 0)
-				return; // nothing to localize; in particular we should NOT call al with no inputs.
+			return resxFiles;
+		}
+
+		private static ResourceInfo GetResourceInfo(string projectFolder)
+		{
 			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
 			XDocument doc = XDocument.Load(projectFile);
 			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
-			string rootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value;
-			string assemblyName = doc.Descendants(ns + "AssemblyName").First().Value;
-			var embedResources = new List<EmbedInfo>();
-			foreach (string resxFile in resxFiles)
+
+			var resxFiles = GetResXFiles(projectFolder);
+			if (resxFiles.Count == 0)
+				return null;
+
+			var resourceInfo = new ResourceInfo {
+				ProjectFolder = projectFolder,
+				ResXFiles = resxFiles,
+				RootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value,
+				AssemblyName = doc.Descendants(ns + "AssemblyName").First().Value
+			};
+
+			return resourceInfo;
+		}
+
+		private void LocalizeResx(ResourceInfo resourceInfo, string resxPath)
+		{
+			var localizedResxPath = GetLocalizedResxPath(resourceInfo, resxPath);
+			Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
+			var stylesheet = Path.Combine(m_parentTask.RealBldFolder, "LocalizeResx.xsl");
+			var parameters = new List<BuildUtils.XsltParam>();
+			parameters.Add(new BuildUtils.XsltParam { Name = "lang", Value = Locale });
+			// The output directory that the transform wants is not the one where it will write
+			// the file, but the base Output directory, where it expects to find that we have
+			// written the XML version of the PO file, [locale].xml.
+			parameters.Add(new BuildUtils.XsltParam { Name = "outputdir", Value = m_parentTask.OutputFolder });
+			//parameters.Add(new XsltParam() { Name = "verbose", Value = "true" });
+			BuildUtils.ApplyXslt(stylesheet, resxPath, localizedResxPath, parameters);
+		}
+
+		private void CreateSources(ResourceInfo resourceInfo)
+		{
+			foreach (string resxFile in resourceInfo.ResXFiles)
 			{
-				string localizedResxPath = LocalizeResx(resxFile, rootNameSpace, projectFolder);
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Creating source for {0}", resxFile);
+				LocalizeResx(resourceInfo, resxFile);
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Done creating source for {0}", resxFile);
+			}
+		}
+
+		private void CreateResourceAssemblies(ResourceInfo resourceInfo)
+		{
+			if (resourceInfo.ResXFiles.Count == 0)
+				return; // nothing to localize; in particular we should NOT call al with no inputs.
+
+			var embedResources = new List<EmbedInfo>();
+			foreach (string resxFile in resourceInfo.ResXFiles)
+			{
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Creating assembly for {0}", resxFile);
+				string localizedResxPath = GetLocalizedResxPath(resourceInfo, resxFile);
 				string localizedResourcePath = Path.ChangeExtension(localizedResxPath, ".resources");
 				try
 				{
-					m_parentTask.RunResGen(localizedResourcePath, localizedResxPath, Path.GetDirectoryName(resxFile));
-					embedResources.Add(new EmbedInfo(localizedResourcePath, Path.GetFileName(localizedResourcePath)));
+					m_parentTask.RunResGen(localizedResourcePath, localizedResxPath,
+						Path.GetDirectoryName(resxFile));
+					embedResources.Add(new EmbedInfo(localizedResourcePath,
+						Path.GetFileName(localizedResourcePath)));
 				}
 				catch (Exception ex)
 				{
-					LogError(String.Format("Error occurred while processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
+					LogError(String.Format("Error occurred while processing {0} for {1}: {2}",
+						Path.GetFileName(resourceInfo.ProjectFolder), Locale, ex.Message));
 				}
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Done creating assembly for {0}", resxFile);
 			}
-			var resourceFileName = assemblyName + ".resources.dll";
+			var resourceFileName = resourceInfo.AssemblyName + ".resources.dll";
 			var mainDllFolder = Path.Combine(m_parentTask.OutputFolder, m_parentTask.Config);
 			var localDllFolder = Path.Combine(mainDllFolder, Locale);
 			string resourceDll = Path.Combine(localDllFolder, resourceFileName);
 			string culture = LocaleIsSupported ? Locale : String.Empty;
 			try
 			{
-				m_parentTask.RunAssemblyLinker(resourceDll, culture, FileVersion, InformationVersion, Version, embedResources);
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Running AL for {0}", resourceDll);
+				m_parentTask.RunAssemblyLinker(resourceDll, culture, FileVersion,
+					InformationVersion, Version, embedResources);
+				m_parentTask.Log.LogMessage(MessageImportance.Low, "Done running AL for {0}", resourceDll);
 			}
 			catch (Exception ex)
 			{
-				LogError(String.Format("Error occurred while processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
+				LogError(String.Format("Error occurred while processing {0} for {1}: {2}",
+					Path.GetFileName(resourceInfo.ProjectFolder), Locale, ex.Message));
 			}
 		}
 
-		private string LocalizeResx(string resxPath, string rootNamespace, string projectFolder)
+		private void ProcessProject(string projectFolder)
 		{
-			string partialDir = Path.GetDirectoryName(resxPath.Substring(m_parentTask.SrcFolder.Length));
-			string projectPartialDir = projectFolder.Substring(m_parentTask.SrcFolder.Length);
-			string outputFolder = Path.Combine(m_parentTask.OutputFolder, Locale) + partialDir;
+			var resourceInfo = GetResourceInfo(projectFolder);
+			if (resourceInfo == null || resourceInfo.ResXFiles.Count == 0)
+				return; // nothing to localize; in particular we should NOT call al with no inputs.
+
+			if (m_parentTask.BuildSource)
+				CreateSources(resourceInfo);
+
+			if (m_parentTask.BuildBinaries)
+				CreateResourceAssemblies(resourceInfo);
+		}
+
+		private string GetLocalizedResxPath(ResourceInfo resourceInfo, string resxPath)
+		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
+			string partialDir = Path.GetDirectoryName(resxPath.Substring(m_parentTask.SrcFolder.Length));
+			string projectPartialDir = resourceInfo.ProjectFolder.Substring(m_parentTask.SrcFolder.Length);
+			string outputFolder = Path.Combine(m_parentTask.OutputFolder, Locale) + partialDir;
 			// This is the relative path from the project folder to the resx file folder.
 			// It needs to go into the file name if not empty, but with a dot instead of folder separator.
 			string subFolder = "";
 			if (partialDir.Length > projectPartialDir.Length)
 				subFolder = Path.GetFileName(partialDir) + ".";
-			string fileName = rootNamespace + "." + subFolder + resxFileName + "." + Locale + ".resx";
-			Directory.CreateDirectory(outputFolder);
-			var stylesheet = Path.Combine(m_parentTask.RealBldFolder, "LocalizeResx.xsl");
-			var localizedResxPath = Path.Combine(outputFolder, fileName);
-			var parameters = new List<BuildUtils.XsltParam>();
-			parameters.Add(new BuildUtils.XsltParam { Name = "lang", Value = Locale });
-			// The output directory that the transform wants is not the one where it will write the file, but the base
-			// Output directory, where it expects to find that we have written the XML version of the PO file, [locale].xml.
-			parameters.Add(new BuildUtils.XsltParam { Name = "outputdir", Value = m_parentTask.OutputFolder });
-			//parameters.Add(new XsltParam() { Name = "verbose", Value = "true" });
-			BuildUtils.ApplyXslt(stylesheet, resxPath, localizedResxPath, parameters);
-			return localizedResxPath;
+			string fileName = resourceInfo.RootNameSpace + "." + subFolder + resxFileName + "." +
+				Locale + ".resx";
+			return Path.Combine(outputFolder, fileName);
 		}
-
 
 		internal bool GetProjectFolders(out List<string> projectFolders)
 		{
 			var root = m_parentTask.SrcFolder;
 			projectFolders = new List<string>();
-			if (!CollectInterestingProjects(root, projectFolders))
-				return false;
-			return true;
+			return CollectInterestingProjects(root, projectFolders);
 		}
 
 		/// <summary>
@@ -541,7 +638,9 @@ namespace FwBuildTasks
 		/// </summary>
 		/// <param name="root"></param>
 		/// <param name="projectFolderCollector"></param>
-		/// <returns></returns>
+		/// <returns><c>true</c> if the <paramref name="root"/> directory and it's subdirectories
+		/// contain exactly 0 or 1 .csproj files per directory, <c>false</c> if there are two or
+		/// more projects.</returns>
 		private bool CollectInterestingProjects(string root, List<string> projectFolderCollector)
 		{
 			if (root.EndsWith("Tests"))
@@ -555,7 +654,7 @@ namespace FwBuildTasks
 				if (!CollectInterestingProjects(subfolder, projectFolderCollector))
 					return false;
 			}
-			//for Mono 10.4, Directory.EnumerateFiles(...) seems to see only writeable files???
+			//for Mono 2.10.4, Directory.EnumerateFiles(...) seems to see only writeable files???
 			//var projectFiles = Directory.EnumerateFiles(root, "*.csproj");
 			var projectFiles = Directory.GetFiles(root, "*.csproj");
 			if (projectFiles.Count() > 1)
