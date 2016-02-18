@@ -403,7 +403,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (configuration.Children.Any(x => x.CheckForParaNodesEnabled()))
 			{
-				settings.Writer.WriteEndElement();
+				// In case there is no content this will avoid a self-closing tag which troubles webonary (because it is technically invalid xhtml)
+				settings.Writer.WriteRaw("");
+				settings.Writer.WriteFullEndElement();
 			}
 			settings.Writer.WriteEndElement(); // </div>
 		}
@@ -1498,7 +1500,7 @@ namespace SIL.FieldWorks.XWorks
 						GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
 					}
 				}
-				writer.WriteEndElement();
+				writer.WriteFullEndElement();
 			}
 		}
 

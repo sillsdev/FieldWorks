@@ -5134,6 +5134,47 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_ContinuationParagraphWithEmtpyContentDoesNotGenerateSelfClosingTag()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				FieldDescription = "Subentries",
+				IsEnabled = true
+			};
+			var SenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
+				Assert.That(XHTMLStringBuilder.ToString(), Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*/>"),
+					"Empty Self closing tag generated after senses in paragraph");
+			}
+		}
+
+		[Test]
 		public void SavePublishedHtmlWithStyles_ProduceLetHeadOnlyWhenDesired()
 		{
 			var lexentry1 = CreateInterestingLexEntry(Cache);
