@@ -845,10 +845,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
-			var ancestorMargin = 0.0f;
 			var hangingIndent = 0.0f;
+
+			// Tuple ancestorIndents used for ancestor components leadingIndent and hangingIndent.
+			var ancestorIndents = new Tuple<float, float>(0.0f, 0.0f);
 			if(exportStyleInfo.IsParagraphStyle && node != null)
-				ancestorMargin = CalculateParagraphMarginFromAncestors(node, styleSheet);
+				ancestorIndents = CalculateParagraphIndentsFromAncestors(node, styleSheet, ancestorIndents);
+
 			if(exportStyleInfo.HasAlignment)
 			{
 				declaration.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.Alignment.AsCssString()) });
@@ -881,10 +884,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
 				var firstLineIndentValue = MilliPtToPt(exportStyleInfo.FirstLineIndent);
+
 				if (firstLineIndentValue < 0.0f)
 				{
 					hangingIndent = firstLineIndentValue;
 				}
+
 				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, firstLineIndentValue) } );
 			}
 			if(exportStyleInfo.HasKeepTogether)
@@ -895,14 +900,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorMargin != 0)
+			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.Item2 < 0.0f)
 			{
 				var leadingIndent = 0.0f;
 				if (exportStyleInfo.HasLeadingIndent)
 				{
 					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
 				}
+
+				var ancestorMargin = ancestorIndents.Item1 - ancestorIndents.Item2;
 				leadingIndent -= ancestorMargin + hangingIndent;
+
 				declaration.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
@@ -948,34 +956,34 @@ namespace SIL.FieldWorks.XWorks
 			return declaration;
 		}
 
-		private static float CalculateParagraphMarginFromAncestors(ConfigurableDictionaryNode currentNode, FwStyleSheet styleSheet)
+		private static Tuple<float,float> CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
+			FwStyleSheet styleSheet, Tuple<float,float> ancestorIndents)
 		{
 			var parentNode = currentNode;
 			do
 			{
 				parentNode = parentNode.Parent;
 				if (parentNode == null)
-					return 0.0f;
+					return ancestorIndents;
 			} while (!IsParagraphStyle(parentNode, styleSheet));
 
 			var projectStyle = styleSheet.Styles[GetParagraphStyleNameFromNode(parentNode, currentNode.CheckForPrevParaNodeSibling())];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
-			var styleMargin = 0.0f;
-			if (exportStyleInfo.HasFirstLineIndent)
-			{
-				// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
-				var firstLineIndentValue = MilliPtToPt(exportStyleInfo.FirstLineIndent);
-				if (firstLineIndentValue < 0.0f)
-					styleMargin = firstLineIndentValue;
-			}
-			if (exportStyleInfo.HasLeadingIndent || styleMargin < 0.0f)
-			{
-				var leadingIndent = 0.0f;
-				if (exportStyleInfo.HasLeadingIndent)
-					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
-				styleMargin = leadingIndent - styleMargin;
-			}
-			return styleMargin;
+
+			return new Tuple<float, float>(GetLeadingIndent(exportStyleInfo),
+				GetHangingIndentIfAny(exportStyleInfo));
+		}
+
+		private static float GetHangingIndentIfAny(ExportStyleInfo exportStyleInfo)
+		{
+			// Handles both first-line and hanging indent: hanging indent represented as a negative first-line indent value
+			return exportStyleInfo.HasFirstLineIndent && exportStyleInfo.FirstLineIndent < 0 ?
+				MilliPtToPt(exportStyleInfo.FirstLineIndent) : 0.0f;
+		}
+
+		private static float GetLeadingIndent(ExportStyleInfo exportStyleInfo)
+		{
+			return exportStyleInfo.HasLeadingIndent ? MilliPtToPt(exportStyleInfo.LeadingIndent) : 0.0f;
 		}
 
 		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, FwStyleSheet styleSheet)
