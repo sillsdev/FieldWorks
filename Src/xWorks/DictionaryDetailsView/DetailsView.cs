@@ -17,9 +17,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// </summary>
 	public partial class DetailsView : UserControl, IDictionaryDetailsView
 	{
+		// These are needed to make up for deficiencies in Anchoring to the Bottom in Linux/Mono.
+		readonly int m_deltaStyleLabel;
+		readonly int m_deltaStyleCombo;
+		readonly int m_deltaTextBoxLabel;
+		readonly int m_deltaTextBox;
+
 		public DetailsView()
 		{
 			InitializeComponent();
+
+			// Capture the initial offsets to use in updating when our Height changes.
+			m_deltaStyleLabel = this.Height - labelStyle.Location.Y;
+			m_deltaStyleCombo = this.Height - dropDownStyle.Location.Y;
+			m_deltaTextBoxLabel = this.Height - labelAfter.Location.Y;
+			m_deltaTextBox = this.Height - textBoxAfter.Location.Y;
 
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
@@ -99,9 +111,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_OptionsView.Dock = DockStyle.Fill;
 					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
-					panelOptions.Size = new Size(335, 330);
+					// Set the initial size to whatever is available.
+					SetPanelOptionsSize ();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Set the size of the panelOptions control to match what is available.
+		/// </summary>
+		private void SetPanelOptionsSize()
+		{
+			panelOptions.Size = new Size(this.Width - 10, this.Height - (m_deltaStyleLabel + 10));
 		}
 
 		public event EventHandler StyleSelectionChanged
@@ -173,23 +194,35 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-			// The DetailsView panel is currently drawing behind the buttonLayoutPanel_Height, which includes the OK Cancel buttons.
-			// To offset the height properly, we need to set this value dependant on whether it is initialized with SurroundingCharsVisible or not.
-			int buttonLayoutPanel_Height = 0;
-			if (!SurroundingCharsVisible)
-				buttonLayoutPanel_Height = 35;
-			var delta = buttonLayoutPanel_Height + textBoxBefore.Location.Y + textBoxBefore.Size.Height - this.Size.Height;
-			if (delta <= 0)
+			// We can't know our initial size until we have a parent.  Without this check, the bottom of the edit
+			// boxes was being cut off sometimes on Linux due to premature relocation.
+			if (this.Parent == null)
+				return;
+			var desiredY = this.Height - m_deltaStyleLabel;
+			if (labelStyle.Location.Y != desiredY)
 			{
-				labelStyle.Location = new Point(labelStyle.Location.X, labelStyle.Location.Y - delta);
-				dropDownStyle.Location = new Point(dropDownStyle.Location.X, dropDownStyle.Location.Y - delta);
-				buttonStyles.Location = new Point(buttonStyles.Location.X, buttonStyles.Location.Y - delta);
-				labelBefore.Location = new Point(labelBefore.Location.X, labelBefore.Location.Y - delta);
-				textBoxBefore.Location = new Point(textBoxBefore.Location.X, textBoxBefore.Location.Y - delta);
-				labelBetween.Location = new Point(labelBetween.Location.X, labelBetween.Location.Y - delta);
-				textBoxBetween.Location = new Point(textBoxBetween.Location.X, textBoxBetween.Location.Y - delta);
-				labelAfter.Location = new Point(labelAfter.Location.X, labelAfter.Location.Y - delta);
-				textBoxAfter.Location = new Point(textBoxAfter.Location.X, textBoxAfter.Location.Y - delta);
+				labelStyle.Location = new Point(labelStyle.Location.X, desiredY);
+				SetPanelOptionsSize();
+			}
+			desiredY = this.Height - m_deltaStyleCombo;
+			if (dropDownStyle.Location.Y != desiredY)
+			{
+				dropDownStyle.Location = new Point(dropDownStyle.Location.X, desiredY);
+				buttonStyles.Location = new Point(buttonStyles.Location.X, desiredY);
+			}
+			desiredY = this.Height - m_deltaTextBoxLabel;
+			if (labelAfter.Location.Y != desiredY)
+			{
+				labelBefore.Location = new Point(labelBefore.Location.X, desiredY);
+				labelBetween.Location = new Point(labelBetween.Location.X, desiredY);
+				labelAfter.Location = new Point(labelAfter.Location.X, desiredY);
+			}
+			desiredY = this.Height - m_deltaTextBox;
+			if (textBoxAfter.Location.Y != desiredY)
+			{
+				textBoxBefore.Location = new Point(textBoxBefore.Location.X, desiredY);
+				textBoxBetween.Location = new Point(textBoxBetween.Location.X, desiredY);
+				textBoxAfter.Location = new Point(textBoxAfter.Location.X, desiredY);
 			}
 		}
 

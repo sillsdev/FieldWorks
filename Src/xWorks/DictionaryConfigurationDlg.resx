@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -452,6 +452,9 @@
   </data>
   <data name="&gt;&gt;tree_Detail_Split.Panel2.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="tree_Detail_Split.Panel2MinSize" type="System.Int32, mscorlib">
+    <value>320</value>
   </data>
   <data name="tree_Detail_Split.Size" type="System.Drawing.Size, System.Drawing">
     <value>628, 556</value>

@@ -113,6 +113,7 @@ namespace SIL.FieldWorks.XWorks
 				else if (Options is DictionaryNodePictureOptions)
 				{
 					// todo: loading options here once UX has been worked out
+					View.OptionsView = null;
 				}
 				else if (Options is ReferringSenseOptions)
 				{
