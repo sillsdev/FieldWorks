@@ -72,6 +72,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public const int kwsLim = -18;
 
 		/// <summary>
+		/// Somebody has to tell us the current reversal writing system, or we don't have a clue.
+		/// </summary>
+		/// <value>The current reversal writing system identifier.</value>
+		public static int CurrentReversalWsId { get; set; }
+
+		/// <summary>
 		/// Gets text properties used to display the abbreviation of a writing system in a multi-string editor.
 		/// Currently this is mainly used in detail views in Harvest, where we don't want to use the blue color
 		/// that is the default in DN and perhaps elsewhere. The ControlDarkDark color is chosen to match
@@ -988,7 +994,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				case(kwsReversalIndex):
 				{
 					// We need the current reversal writing system, not the default one! (see LT-16851)
-					if (flid != 0 && hvo != 0)
+					if (CurrentReversalWsId > 0)
+						retWs = CurrentReversalWsId;
+					else if (flid != 0 && hvo != 0)
 						retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
 					if (retWs == 0)
 						retWs = defaultReversalWs;

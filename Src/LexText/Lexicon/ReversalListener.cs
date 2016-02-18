@@ -408,6 +408,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
+			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
+			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
+
 			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
 			// exist, code elsewhere will make up for it.
 			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
