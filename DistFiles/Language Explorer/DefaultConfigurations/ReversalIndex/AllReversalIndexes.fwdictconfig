@@ -25,7 +25,7 @@
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
-		<SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%O" numberAfter=") " numberSingleSense="true" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
+		<SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore=" " numberingStyle="%O" numberAfter="" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
 		</ReferringSenseOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Owner" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
