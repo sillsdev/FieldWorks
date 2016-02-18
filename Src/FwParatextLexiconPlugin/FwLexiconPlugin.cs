@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -76,6 +77,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
 			}
 			Icu.InitIcuDataDir();
+			Sldr.Initialize();
 
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
@@ -285,6 +287,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						m_fdoCacheCache.Clear();
 					}
 				}
+
+				Sldr.Cleanup();
 
 				m_activationContext.Dispose();
 				m_activationContext = null;

@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-
+using SIL.WritingSystems;
 
 namespace FDOBrowser
 {
@@ -22,11 +22,14 @@ namespace FDOBrowser
 			Application.SetCompatibleTextRenderingDefault(false);
 			// initialize ICU
 			Icu.InitIcuDataDir();
+			Sldr.Initialize();
 			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
 			using (var form = new FDOBrowserForm())
 			{
 				Application.Run(form);
 			}
+
+			Sldr.Cleanup();
 		}
 	}
 }

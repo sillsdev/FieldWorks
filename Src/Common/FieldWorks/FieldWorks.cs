@@ -50,6 +50,7 @@ using SIL.Reporting;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
+using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using FileUtils = SIL.Utils.FileUtils;
@@ -271,6 +272,9 @@ namespace SIL.FieldWorks
 
 				// initialize ICU
 				Icu.InitIcuDataDir();
+
+				// initialize the SLDR
+				Sldr.Initialize();
 
 				// initialize Palaso keyboarding
 				KeyboardController.Initialize();
@@ -3414,6 +3418,8 @@ namespace SIL.FieldWorks
 			}
 
 			KeyboardController.Shutdown();
+
+			Sldr.Cleanup();
 
 			GracefullyShutDown();
 
