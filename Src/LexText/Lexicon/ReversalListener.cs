@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 										@"ReversalEntriesBulkEdit");
 				var doc = new XmlDocument();
 				doc.Load(Path.Combine(path, @"toolConfiguration.xml"));
-				var columnNode = doc.SelectSingleNode(@"//column[@label='Form']");
+				var columnNode = doc.SelectSingleNode(@"//column[@label='Reversal Form']");
 				return columnNode;
 			}
 		}
