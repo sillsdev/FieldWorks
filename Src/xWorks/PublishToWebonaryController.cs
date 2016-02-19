@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 			// www.webonary.org/$sitename/wp-json/something .
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
 			server = string.IsNullOrEmpty(server) ? "192.168.33.10" : server;
-			return string.Format("http://{0}/{1}/wp-json/webonary/import", server, siteName);
+			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, PublishToWebonaryModel model, IPublishToWebonaryView view)
