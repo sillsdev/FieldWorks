@@ -150,12 +150,9 @@ namespace SIL.FieldWorks.XWorks
 				styleSheet.Rules.Add(intermediateRule);
 			}
 			// If we are part of a continuation paragraph modify the base selector to include the div
-			if (configNode.Parent != null && configNode.Parent.CSSClassNameOverride != null && configNode.Parent.FieldDescription.Equals("LexEntry"))
+			if (configNode.Parent != null && configNode.Parent.Parent == null && configNode.CheckForPrevParaNodeSibling())
 			{
-				if (configNode.CheckForPrevParaNodeSibling())
-				{
-					baseSelection = baseSelection.Contains(".paracontinuation") ? baseSelection : string.Concat(baseSelection, " .paracontinuation");
-				}
+				baseSelection = baseSelection.Contains(".paracontinuation") ? baseSelection : string.Concat(baseSelection, " .paracontinuation");
 			}
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
