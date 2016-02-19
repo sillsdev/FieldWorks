@@ -191,10 +191,10 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			// Check result for before and after rules equivalent to .subentries .subentrie .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentrie>\\s*\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
+			// Check result for before and after rules equivalent to .subentries .subentry .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentry>\\s*\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentrie>\\s\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentry>\\s\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -1105,7 +1105,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .subentries .subentrie> .complexformtypes .complexformtype> .reverseabbr span"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .subentries .subentry> .complexformtypes .complexformtype> .reverseabbr span"));
 		}
 
 		[Test]
@@ -1192,7 +1192,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .subentries .subentrie> .headword"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .subentries .subentry> .headword"));
 		}
 
 		[Test]
@@ -1585,7 +1585,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", RegexOptions.Singleline).Success,
-							  "Between selector not generated.");
+				"Between selector not generated.{0}{0}{1}", Environment.NewLine, cssResult);
 		}
 
 		[Test]
@@ -1702,7 +1702,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}", RegexOptions.Singleline).Success,
-							  "Between selector with format not generated.");
+				 "Between selector with format not generated.{0}{0}{1}", Environment.NewLine, cssResult);
 		}
 
 		/// <summary>
@@ -2151,32 +2151,32 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
+			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected subentrie rule not generated");
-			var regexExpected2 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\scontent:'\\25A0';[^}]*font-size:14pt;[^}]*color:Green;[^}]*}";
+				"expected subentry rule not generated");
+			var regexExpected2 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\scontent:'\\25A0';[^}]*font-size:14pt;[^}]*color:Green;[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
-				"expected subentrie:before rule not generated");
+				"expected subentry:before rule not generated");
 			// Check that the bullet info values occur only in the :before section, and that the primary values
 			// do not occur in the :before section.
-			var regexUnwanted1 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\scontent:'\\25A0';[^}]*}";
+			var regexUnwanted1 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\scontent:'\\25A0';[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted1, RegexOptions.Singleline).Success,
-				"subentrie rule has unwanted content value");
-			var regexUnwanted2 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\sfont-size:14pt;[^}]*}";
+				"subentry rule has unwanted content value");
+			var regexUnwanted2 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\sfont-size:14pt;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted2, RegexOptions.Singleline).Success,
-				"subentrie rule has unwanted font-size value");
-			var regexUnwanted3 = @"\.lexentry>\s\.subentries\s\.subentrie{[^}]*\scolor:Green;[^}]*}";
+				"subentry rule has unwanted font-size value");
+			var regexUnwanted3 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\scolor:Green;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted3, RegexOptions.Singleline).Success,
-				"subentrie rule has unwanted color value");
-			var regexUnwanted4 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\sfont-size:12pt;[^}]*}";
+				"subentry rule has unwanted color value");
+			var regexUnwanted4 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\sfont-size:12pt;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted4, RegexOptions.Singleline).Success,
-				"subentrie:before rule has unwanted font-size value");
-			var regexUnwanted5 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\scolor:#F00;[^}]*}";
+				"subentry:before rule has unwanted font-size value");
+			var regexUnwanted5 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\scolor:#F00;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted5, RegexOptions.Singleline).Success,
-				"subentrie:before rule has unwanted color value");
-			var regexUnwanted6 = @"\.lexentry>\s\.subentries\s\.subentrie:before{[^}]*\sdisplay:block;[^}]*}";
+				"subentry:before rule has unwanted color value");
+			var regexUnwanted6 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\sdisplay:block;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted6, RegexOptions.Singleline).Success,
-				"subentrie:before rule has unwanted display value");
+				"subentry:before rule has unwanted display value");
 		}
 
 		[Test]

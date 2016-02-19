@@ -1477,8 +1477,7 @@ namespace SIL.FieldWorks.XWorks
 			return roman;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "writer is a reference")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "writer is a reference")]
 		private static void GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
@@ -1504,16 +1503,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		///  Write out the class element to use in the span for the individual items in the collection
-		/// </summary>
-		/// <param name="config"></param>
-		/// <param name="writer"></param>
+		/// <summary>Write the class element in the span for an individual item in the collection</summary>
 		private static void WriteCollectionItemClassAttribute(ConfigurableDictionaryNode config, XmlWriter writer)
 		{
-			var collectionName = CssGenerator.GetClassAttributeForConfig(config);
-			// chop the pluralization off the parent class
-			writer.WriteAttributeString("class", collectionName.Substring(0, collectionName.Length - 1).ToLower());
+			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForCollectionItem(config));
 		}
 
 		/// <summary>

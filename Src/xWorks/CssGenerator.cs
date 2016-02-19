@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.XWorks
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
-					var itemSelector = GetSelectorForCollectionItem(configNode);
+					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					if (configNode.DictionaryNodeOptions != null)
@@ -704,7 +704,7 @@ namespace SIL.FieldWorks.XWorks
 				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
-					return "." + GetClassAttributeForConfig(configNode) + GetSelectorForCollectionItem(configNode);
+					return string.Format(".{0} .{1}", GetClassAttributeForConfig(configNode), GetClassAttributeForCollectionItem(configNode));
 				}
 				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
 				{
@@ -724,11 +724,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static string GetSelectorForCollectionItem(ConfigurableDictionaryNode configNode)
+		/// <summary>
+		/// Generate the singular of the collection name: drop the final character ('s') or handle "entries" => "entry" or "analyses" to "analysis"
+		/// </summary>
+		internal static string GetClassAttributeForCollectionItem(ConfigurableDictionaryNode configNode)
 		{
-			var collectionItem = GetClassAttributeForConfig(configNode);
-			collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
-			return collectionItem;
+			var classNameBase = GetClassAttributeBase(configNode).ToLower();
+			string singularBase;
+			if(classNameBase.EndsWith("entries"))
+				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
+			else if (classNameBase.EndsWith("analyses"))
+				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
+			else
+				singularBase = classNameBase.Remove(classNameBase.Length - 1);
+			return singularBase + GetClassAttributeDupSuffix(configNode).ToLower();
 		}
 
 		/// <summary>
@@ -752,25 +761,26 @@ namespace SIL.FieldWorks.XWorks
 		/// Generates a class name for the given configuration for use by Css and XHTML.
 		/// Uses SubField and CSSClassNameOverride attributes where found
 		/// </summary>
-		/// <param name="configNode"></param>
-		/// <returns></returns>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			// write out the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
-			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert those to hyphens,
+			return (GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower();
+		}
+
+		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)
+		{
+			// use the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
+			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert spaces to hyphens,
 			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
-			var classAttribute = configNode.FieldDescription.Replace(' ', '-') +
-										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("_" + configNode.SubField));
-			if(!String.IsNullOrEmpty(configNode.CSSClassNameOverride))
-			{
-					classAttribute = configNode.CSSClassNameOverride;
-			}
-			if (configNode.IsDuplicate)
-			{
-				configNode.LabelSuffix = Regex.Replace(configNode.LabelSuffix, "[^a-zA-Z0-9+]", "-");
-				classAttribute += "_" + configNode.LabelSuffix;
-			}
-			return classAttribute.ToLower();
+			return string.IsNullOrEmpty(configNode.CSSClassNameOverride)
+				? configNode.FieldDescription.Replace(' ', '-') + (string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField)
+				: configNode.CSSClassNameOverride;
+		}
+
+		private static string GetClassAttributeDupSuffix(ConfigurableDictionaryNode configNode)
+		{
+			return configNode.IsDuplicate
+				? "_" + (configNode.LabelSuffix = Regex.Replace(configNode.LabelSuffix, "[^a-zA-Z0-9+]", "-"))
+				: string.Empty;
 		}
 
 		internal static StyleDeclaration GetOnlyCharacterStyle(StyleDeclaration fullStyleDeclaration)
