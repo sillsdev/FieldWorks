@@ -33,7 +33,7 @@
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciations" isEnabled="true" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
+	  <ConfigurationItem name="Pronunciations" isEnabled="false" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
 		<ConfigurationItem name="Pronunciation" isEnabled="true" before="[" between=" " after="] " field="Form">
 		  <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 			<Option id="pronunciation" isEnabled="true" />
@@ -54,7 +54,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants (of Entry)" isEnabled="true" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -113,7 +113,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants (of Sense)" isEnabled="true" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants (of Sense)" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
 		<ConfigurationItem name="Type" isEnabled="true" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -181,7 +181,7 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Source" isEnabled="false" after=" " field="Source" />
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Cross References" isEnabled="true" between="; " after=". " field="Owner" subField="MinimalLexReferences">
+	  <ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Owner" subField="MinimalLexReferences">
 		<ListTypeOptions list="entry">
 		  <Option id="b79ba420-ea5e-11de-8f71-0013722f8dec" isEnabled="true" />
 		</ListTypeOptions>
@@ -208,7 +208,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Primary Entry References" isEnabled="true" before="(" between=", " after=") " field="EntryRefsWithThisMainSense">
+	  <ConfigurationItem name="Primary Entry References" isEnabled="false" before="(" between=", " after=") " field="EntryRefsWithThisMainSense">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes">
 		  <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -280,7 +280,7 @@
 		<ConfigurationItem name="Inflection Features" isEnabled="false" after=" " field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
 		<ConfigurationItem name="Exception Features" isEnabled="false" after=" " field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" isEnabled="true" style="Dictionary-Contrasting" before="(" after=") " field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" isEnabled="false" style="Dictionary-Contrasting" before="(" after=") " field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 			<Option id="reversal" isEnabled="true" />
@@ -344,7 +344,7 @@
 		  <Option id="reversal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" isEnabled="true" between="; " after=". " field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" isEnabled="false" between="; " after=". " field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option id="b7862f14-ea5e-11de-8d47-0013722f8dec" isEnabled="true" />
 		  <Option id="b7921ac2-ea5e-11de-880d-0013722f8dec" isEnabled="true" />
@@ -481,9 +481,6 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subsenses" isEnabled="false" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%O" numberAfter=") " numberSingleSense="true" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  </ConfigurationItem>
 	  <ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
 		<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		  <Option id="reversal" isEnabled="true" />
@@ -530,7 +527,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="Owner" subField="DateCreated" />
 	  <ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="Owner" subField="DateModified" />
-	  <ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="true" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -559,7 +556,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms (of Sense)" isEnabled="true" between=" " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms (of Sense)" isEnabled="false" between=" " after=" " field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -620,7 +617,7 @@
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciations" isEnabled="true" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
+	  <ConfigurationItem name="Pronunciations" isEnabled="false" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
 		<ConfigurationItem name="Pronunciation" isEnabled="true" before="[" between=" " after="] " field="Form">
 		  <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 			<Option id="pronunciation" isEnabled="true" />
@@ -641,7 +638,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants (of Entry)" isEnabled="true" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -700,7 +697,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants (of Sense)" isEnabled="true" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants (of Sense)" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
 		<ConfigurationItem name="Type" isEnabled="true" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -768,7 +765,7 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Source" isEnabled="false" after=" " field="Source" />
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Cross References" isEnabled="true" between="; " after=". " field="Owner" subField="MinimalLexReferences">
+	  <ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Owner" subField="MinimalLexReferences">
 		<ListTypeOptions list="entry">
 		  <Option id="b79ba420-ea5e-11de-8f71-0013722f8dec" isEnabled="true" />
 		</ListTypeOptions>
@@ -795,7 +792,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Primary Entry References" isEnabled="true" before="(" between=", " after=") " field="EntryRefsWithThisMainSense">
+	  <ConfigurationItem name="Primary Entry References" isEnabled="false" before="(" between=", " after=") " field="EntryRefsWithThisMainSense">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes">
 		  <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -867,7 +864,7 @@
 		<ConfigurationItem name="Inflection Features" isEnabled="false" after=" " field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
 		<ConfigurationItem name="Exception Features" isEnabled="false" after=" " field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" isEnabled="true" style="Dictionary-Contrasting" before="(" after=") " field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" isEnabled="false" style="Dictionary-Contrasting" before="(" after=") " field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 			<Option id="reversal" isEnabled="true" />
@@ -931,7 +928,7 @@
 		  <Option id="reversal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" isEnabled="true" between="; " after=". " field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" isEnabled="false" between="; " after=". " field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option id="b7862f14-ea5e-11de-8d47-0013722f8dec" isEnabled="true" />
 		  <Option id="b7921ac2-ea5e-11de-880d-0013722f8dec" isEnabled="true" />
@@ -1068,9 +1065,6 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subsenses" isEnabled="false" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%O" numberAfter=") " numberSingleSense="true" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  </ConfigurationItem>
 	  <ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
 		<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		  <Option id="reversal" isEnabled="true" />
@@ -1117,7 +1111,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="Owner" subField="DateCreated" />
 	  <ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="Owner" subField="DateModified" />
-	  <ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="true" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1146,7 +1140,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms (of Sense)" isEnabled="true" between=" " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms (of Sense)" isEnabled="false" between=" " after=" " field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
