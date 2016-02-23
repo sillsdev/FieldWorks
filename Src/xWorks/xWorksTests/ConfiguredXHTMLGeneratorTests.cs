@@ -1892,7 +1892,7 @@ namespace SIL.FieldWorks.XWorks
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
-			AddSubSenseToSense(testEntry, "second gloss");
+			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -1971,7 +1971,7 @@ namespace SIL.FieldWorks.XWorks
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
-			AddSubSenseToSense(testEntry, "second gloss");
+			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -2049,7 +2049,7 @@ namespace SIL.FieldWorks.XWorks
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
-			AddSubSenseToSense(testEntry, "second gloss");
+			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -2114,7 +2114,7 @@ namespace SIL.FieldWorks.XWorks
 
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
-			AddSubSenseToSense(testEntry, "second gloss");
+			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
@@ -5284,7 +5284,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
 				var xhtml = File.ReadAllText(xhtmlPath);
-				System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
+				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// There should be only 2 letter headers if both a entries are generated in order
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 2);
 				var firstHeadwordLoc = xhtml.IndexOf(firstAHeadword);
@@ -5293,6 +5293,170 @@ namespace SIL.FieldWorks.XWorks
 				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
 				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc  && secondHeadwordLoc < thirdHeadwordLoc,
 					"Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
+			}
+			finally
+			{
+				File.Delete(xhtmlPath);
+				File.Delete(cssPath);
+			}
+		}
+
+		[Test]
+		public void CheckSubsenseOutput()
+		{
+			var posNoun = CreatePartOfSpeech("noun", "n");
+			var posAdj = CreatePartOfSpeech("adjective", "adj");
+
+			var firstHeadword = "homme";
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, firstHeadword, m_wsFr, Cache);
+			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
+			var msa1 = CreateMSA(firstEntry, posNoun);
+			firstEntry.SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+			firstEntry.SensesOS[0].SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+
+			var secondHeadword = "femme";
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, secondHeadword, m_wsFr, Cache);
+			AddSenseAndTwoSubsensesToEntry(secondEntry, "woman");
+			var msa2 = CreateMSA(secondEntry, posNoun);
+			foreach (var sense in secondEntry.SensesOS)
+			{
+				sense.MorphoSyntaxAnalysisRA = msa2;
+				foreach (var sub in sense.SensesOS)
+					sub.MorphoSyntaxAnalysisRA = msa2;
+			}
+
+			var thirdHeadword = "bon";
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, thirdHeadword, m_wsFr, Cache);
+			AddSenseAndTwoSubsensesToEntry(thirdEntry, "good");
+			var msa3 = CreateMSA(thirdEntry, posAdj);
+			foreach (var sense in thirdEntry.SensesOS)
+			{
+				sense.MorphoSyntaxAnalysisRA = msa3;
+				foreach (var sub in sense.SensesOS)
+					sub.MorphoSyntaxAnalysisRA = msa3;
+			}
+			var msa4 = CreateMSA(thirdEntry, posNoun);
+			thirdEntry.SensesOS[1].SensesOS[1].MorphoSyntaxAnalysisRA = msa4;
+
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+
+			var subCategNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> {  }
+			};
+			var subGramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subCategNode }
+			};
+			var subGlossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subGramInfoNode, subGlossNode }
+			};
+			var categNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="analysis", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { categNode }
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode, glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senseNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			var xhtmlPath = Path.GetTempFileName();
+			File.Delete(xhtmlPath);
+			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
+			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			var letterHeaderXPath = "//div[@class='letHead']";
+			try
+			{
+				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
+				// SUT
+				const string allCategsPath = "//span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en']";
+				const string firstCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				const string secondCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				const string thirdCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
+				const string fourthCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
+				const string fifthCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(allCategsPath, 5);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(firstCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(secondCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(thirdCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fourthCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fifthCategPath, 1);
 			}
 			finally
 			{
@@ -5473,7 +5637,7 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
 		}
 
-		private void AddSubSenseToSense(ILexEntry entry, string gloss)
+		private void AddSenseAndTwoSubsensesToEntry(ILexEntry entry, string gloss)
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
@@ -5632,6 +5796,24 @@ namespace SIL.FieldWorks.XWorks
 			var regex = new Regex(regexQuery);
 			var matches = regex.Matches(haystack);
 			Assert.That(matches.Count, Is.EqualTo(requiredNumberOfMatches), "Unexpected number of matches");
+		}
+
+		public IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
+		{
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos);
+			pos.Name.set_String(m_wsEn, name);
+			pos.Abbreviation.set_String(m_wsEn, abbr);
+			return pos;
+		}
+
+		public IMoMorphSynAnalysis CreateMSA(ILexEntry entry, IPartOfSpeech pos)
+		{
+			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			msa.PartOfSpeechRA = pos;
+			return msa;
 		}
 		#endregion Helpers
 	}

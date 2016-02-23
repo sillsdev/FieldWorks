@@ -1059,6 +1059,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide subsense grammatical info if same as parent.
+        /// </summary>
+        internal static string ksHideGramInfoIfSameAsParent {
+            get {
+                return ResourceManager.GetString("ksHideGramInfoIfSameAsParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}: {1}.
         /// </summary>
         internal static string ksHierarchyLabel {
@@ -1330,6 +1339,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Number even a single subsense.
+        /// </summary>
+        internal static string ksNumberSingleSubsense {
+            get {
+                return ResourceManager.GetString("ksNumberSingleSubsense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Obtaining the list of entries to display.
         /// </summary>
         internal static string ksObtainingEntriesToDisplay {
@@ -1580,6 +1598,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksSorting {
             get {
                 return ResourceManager.GetString("ksSorting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subsense Number Configuration.
+        /// </summary>
+        internal static string ksSubsenseNumberConfig {
+            get {
+                return ResourceManager.GetString("ksSubsenseNumberConfig", resourceCulture);
             }
         }
         

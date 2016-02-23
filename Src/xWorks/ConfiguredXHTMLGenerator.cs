@@ -1130,10 +1130,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (filteredSenseCollection.Count == 0)
 				return;
+			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
 			var isSingle = IsSingleSense(filteredSenseCollection);
 			string lastGrammaticalInfo, langId;
-			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, out lastGrammaticalInfo, out langId);
-			if (isSameGrammaticalInfo)
+			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
+			if (isSameGrammaticalInfo && !isSubsense)
 				InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
 					config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
 					publicationDecorator, settings);
@@ -1166,60 +1167,85 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteEndElement();
 		}
 
-		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable collection, out string lastGrammaticalInfo, out string langId)
+		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable<ILexSense> collection, bool isSubsense,
+			out string lastGrammaticalInfo, out string langId)
 		{
-			lastGrammaticalInfo = "";
-			langId = "";
-			var requestedString = string.Empty;
+			lastGrammaticalInfo = String.Empty;
+			langId = String.Empty;
 			var isSameGrammaticalInfo = false;
 			if (config.FieldDescription == "SensesOS")
 			{
 				var senseNode = (DictionaryNodeSenseOptions) config.DictionaryNodeOptions;
-				if (senseNode == null) return false;
+				if (senseNode == null)
+					return false;
 				if (senseNode.ShowSharedGrammarInfoFirst)
 				{
-					foreach (var item in collection)
+					if (isSubsense)
 					{
-						var owningObject = (ICmObject)item;
-						var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
-						langId = defaultWs.Id;
-						var entryType = item.GetType();
-						var grammaticalInfo = config.Children.FirstOrDefault(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled));
-						if (grammaticalInfo == null) return false;
-						var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
-						var propertyValue = property.GetValue(item, new object[] {});
-						if (propertyValue == null) return false;
-						var child = grammaticalInfo.Children.FirstOrDefault(e => (e.IsEnabled && e.Children.Count == 0));
-						if (child == null) return false;
-						entryType = propertyValue.GetType();
-						property = entryType.GetProperty(child.FieldDescription);
-						propertyValue = property.GetValue(propertyValue, new object[] {});
-						if (propertyValue is ITsString)
-						{
-							ITsString fieldValue = (ITsString) propertyValue;
-							requestedString = fieldValue.Text;
-						}
-						else
-						{
-							IMultiAccessorBase fieldValue = (IMultiAccessorBase) propertyValue;
-							var bestStringValue = fieldValue.BestAnalysisAlternative.Text;
-							if(bestStringValue != fieldValue.NotFoundTss.Text)
-								requestedString = bestStringValue;
-						}
-						if (string.IsNullOrEmpty(lastGrammaticalInfo))
-							lastGrammaticalInfo = requestedString;
-						else if (requestedString == lastGrammaticalInfo)
-						{
-							isSameGrammaticalInfo = true;
-						}
-						else
-						{
+						// Add the owning sense to the collection that we want to check.
+						var objs = new List<ILexSense>();
+						objs.AddRange(collection);
+						if (objs.Count == 0 || !(objs[0].Owner is ILexSense))
 							return false;
-						}
+						objs.Add((ILexSense)objs[0].Owner);
+						if (!CheckIfAllGramInfoTheSame(config, objs, ref isSameGrammaticalInfo, ref lastGrammaticalInfo, ref langId))
+							return false;
+					}
+					else
+					{
+						if (!CheckIfAllGramInfoTheSame(config, collection, ref isSameGrammaticalInfo, ref lastGrammaticalInfo, ref langId))
+							return false;
 					}
 				}
 			}
 			return isSameGrammaticalInfo && !string.IsNullOrEmpty(lastGrammaticalInfo);
+		}
+
+		private static bool CheckIfAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable<ILexSense> collection,
+			ref bool isSameGrammaticalInfo, ref string lastGrammaticalInfo, ref string langId)
+		{
+			foreach (var item in collection)
+			{
+				var requestedString = string.Empty;
+				var owningObject = (ICmObject) item;
+				var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
+				langId = defaultWs.Id;
+				var entryType = item.GetType();
+				var grammaticalInfo =
+					config.Children.FirstOrDefault(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled));
+				if (grammaticalInfo == null) return false;
+				var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
+				var propertyValue = property.GetValue(item, new object[] {});
+				if (propertyValue == null) return false;
+				var child = grammaticalInfo.Children.FirstOrDefault(e => (e.IsEnabled && e.Children.Count == 0));
+				if (child == null) return false;
+				entryType = propertyValue.GetType();
+				property = entryType.GetProperty(child.FieldDescription);
+				propertyValue = property.GetValue(propertyValue, new object[] {});
+				if (propertyValue is ITsString)
+				{
+					ITsString fieldValue = (ITsString) propertyValue;
+					requestedString = fieldValue.Text;
+				}
+				else
+				{
+					IMultiAccessorBase fieldValue = (IMultiAccessorBase) propertyValue;
+					var bestStringValue = fieldValue.BestAnalysisAlternative.Text;
+					if (bestStringValue != fieldValue.NotFoundTss.Text)
+						requestedString = bestStringValue;
+				}
+				if (string.IsNullOrEmpty(lastGrammaticalInfo))
+					lastGrammaticalInfo = requestedString;
+				else if (requestedString == lastGrammaticalInfo)
+				{
+					isSameGrammaticalInfo = true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

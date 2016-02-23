@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					LoadSenseOptions(Options as DictionaryNodeSenseOptions);
+					LoadSenseOptions(Options as DictionaryNodeSenseOptions, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
@@ -363,16 +363,16 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
-		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
+		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
 			string numberingStyles = "x";
-			if (m_node.DisplayLabel == "Senses")
+			if (!isSubsense)
 			{
 				numberingStyles = "%O";
 			}
-			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView
+			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(), // load available list before setting value

@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			return (view as TestDictionaryDetailsView).OptionsView as IDictionaryListOptionsView;
 		}
 
-		private static IDictionarySenseOptionsView GetListSenseOptionsView(IDictionaryDetailsView view)
+		private static IDictionarySenseOptionsView GetSenseOptionsView(IDictionaryDetailsView view)
 		{
 			return (view as TestDictionaryDetailsView).OptionsView as IDictionarySenseOptionsView;
 		}
@@ -902,6 +902,113 @@ namespace SIL.FieldWorks.XWorks
 
 				Assert.IsTrue(optionsView.DisplayOptionCheckBoxChecked, "DisplayOption checkbox should be checked.");
 				Assert.IsTrue(optionsView.DisplayOptionCheckBoxEnabled, "DisplayOption checkbox should be enabled.");
+			}
+		}
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		public void LoadSenseOptions_ChecksRightBoxes()
+		{
+			var subSenseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%A",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var senseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSenseConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { senseConfig }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entryConfig });
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(senseConfig);
+			using (var view = controller.View)
+			{
+				var optionsView = GetSenseOptionsView(view);
+				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
+				Assert.IsTrue(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Sense");
+				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Sense");
+				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Sense");
+				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
+				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Sense");
+				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for show common gram info first for Senses");
+				// controls are private, so work around that limitation.
+				var realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				var controlsChecked = 0;
+				foreach (Control control in realView.Controls)
+				{
+					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
+					{
+						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has the right Text for Sense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
+					{
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara is enabled and visible for Sense");
+						++controlsChecked;
+					}
+				}
+				Assert.AreEqual(2, controlsChecked, "Checked two controls for Sense");
+			}
+
+			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller2.LoadNode(subSenseConfig);
+			using (var view = controller2.View)
+			{
+				var optionsView = GetSenseOptionsView(view);
+				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
+				Assert.IsFalse(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Subsense");
+				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Subsense");
+				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Subsense");
+				Assert.AreEqual("%A", optionsView.NumberingStyle, "proper numbering style loads for Subsense");
+				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Subsense");
+				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for hide common gram info for Subsenses");
+				// controls are private, so work around that limitation.
+				var realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				var controlsChecked = 0;
+				foreach (Control control in realView.Controls)
+				{
+					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
+					{
+						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has the right Text for Subsense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
+					{
+						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxSenseInPara is disabled and invisible for Subsense");
+						++controlsChecked;
+					}
+				}
+				Assert.AreEqual(2, controlsChecked, "Checked two controls for Subsense");
 			}
 		}
 

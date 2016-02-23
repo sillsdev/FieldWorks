@@ -914,4 +914,13 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Preparing to display the publication view</value>
     <comment>this is the title for a progress report dialog</comment>
   </data>
+	<data name="ksSubsenseNumberConfig" xml:space="preserve">
+    <value>Subsense Number Configuration</value>
+  </data>
+	<data name="ksNumberSingleSubsense" xml:space="preserve">
+    <value>Number even a single subsense</value>
+  </data>
+	<data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
+    <value>Hide subsense grammatical info if same as parent</value>
+  </data>
 </root>
