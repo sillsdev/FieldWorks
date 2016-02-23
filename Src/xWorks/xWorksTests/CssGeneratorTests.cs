@@ -55,10 +55,37 @@ namespace SIL.FieldWorks.XWorks
 		private const int DoubleSpace = 2 * 10000;	// Relative line heights are in multiples of 10000.
 		private const float CssDoubleSpace = 2.0F;
 
+		[TestFixtureSetUp]
+		protected void Init()
+		{
+			FwRegistrySettings.Init();
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, m_configFilePath);
+			m_window.Init(Cache); // initializes Mediator values
+			m_mediator = m_window.Mediator;
+			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
+
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+		}
+
+		[TestFixtureTearDown]
+		protected void TearDown()
+		{
+			m_application.Dispose();
+			m_mediator.Dispose();
+			FwRegistrySettings.Release();
+		}
+
 		[SetUp]
 		public void ResetAssemblyFile()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			if (!m_styleSheet.Styles.Contains("FooStyle"))
+			{
+				GenerateNormalStyle("FooStyle");
+			}
 		}
 
 		[Test]
@@ -75,6 +102,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "MLHeadWord",
 				Label = "Headword",
 				CSSClassNameOverride = "mainheadword",
+				Style = "FooStyle",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -726,6 +754,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "HeadWord",
 				CSSClassNameOverride = "tailwind",
+				Style = "FooStyle",
 				IsEnabled = true
 			};
 			var testParentNode = new ConfigurableDictionaryNode
@@ -768,6 +797,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
+				Style = "FooStyle",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" }),
 				IsEnabled = true
 			};
@@ -1008,13 +1038,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_GramInfoFieldsWork()
 		{
-			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" };
-			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" };
+			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech", Style = "FooStyle" };
+			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass", Style = "FooStyle" };
 			var slots = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Slots",
 				Children =
-					new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Name" } }
+					new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Name", Style = "FooStyle" } }
 			};
 			var gramInfo = new ConfigurableDictionaryNode
 			{
@@ -1043,12 +1073,13 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlpartofspeech"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlinflectionclass"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .slots .slot> .name"));
+			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
 
 		[Test]
 		public void GenerateCssForConfiguration_VariantPronunciationFormWorks()
 		{
-			var pronunciationForm = new ConfigurableDictionaryNode { FieldDescription = "Form" };
+			var pronunciationForm = new ConfigurableDictionaryNode { FieldDescription = "Form", Style = "FooStyle" };
 			var pronunciations = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwningEntry",
@@ -1082,6 +1113,7 @@ namespace SIL.FieldWorks.XWorks
 			var revAbbrevNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
+				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
@@ -1111,7 +1143,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_SenseComplexFormsNotSubEntriesHeadWord()
 		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord" };
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", Style = "FooStyle", CSSClassNameOverride = "HeadWord" };
 			var complexformsnotsubentries = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
@@ -1142,7 +1174,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ComplexFormsEachInOwnParagraph()
 		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord" };
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", Style = "FooStyle", CSSClassNameOverride = "HeadWord" };
 			var complexForms = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
@@ -1168,7 +1200,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_SenseSubEntriesHeadWord()
 		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var form = new ConfigurableDictionaryNode { FieldDescription = "HeadWord", Style = "FooStyle" };
 			var subentries = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Subentries",
@@ -1208,7 +1240,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { pos, inflectionClass },
 				Style = "Dictionary-Contrasting"
 			};
-			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
@@ -1246,6 +1278,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexemeFormOA",
 				Label = "Lexeme Form",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" }),
+				Style = "FooStyle",
 				IsEnabled = true
 			};
 			var entry = new ConfigurableDictionaryNode
@@ -1268,7 +1301,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_SenseDisplayInParaWorks()
 		{
-			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
@@ -1290,6 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
 
 		[Test]
@@ -1461,7 +1495,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForConfiguration_SenseParaStyleNotApplyToFirstSense()
 		{
 			GenerateStyle("Sense-List");
-			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
@@ -1515,7 +1549,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
 		{
 			GenerateStyle("Dictionary-RevSenseNum");
-			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
@@ -1536,6 +1570,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses .referringsense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
 
 		[Test]
@@ -1823,29 +1858,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
 							  "float not cleared at entry");
 		}
-
-		[TestFixtureSetUp]
-		protected void Init()
-		{
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
-		}
-
-		[TestFixtureTearDown]
-		protected void TearDown()
-		{
-			m_application.Dispose();
-			m_mediator.Dispose();
-			FwRegistrySettings.Release();
-		}
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{
@@ -2089,9 +2101,12 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{\s*?}";
-			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
-							  "Sense List style did not generate a specific match.");
+			var regExNotexpected = @".lexentry>\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before";
+			Assert.IsFalse(Regex.Match(cssResult, regExNotexpected, RegexOptions.Singleline).Success,
+							  "Sense List style should not generate a match, since it is not a bulleted style.");
+			var regExExpected = @".lexentry>\s.senses\s>\s.sensecontent\s\+\s.sensecontent";
+			Assert.IsTrue(Regex.Match(cssResult, regExExpected, RegexOptions.Singleline).Success,
+				"Sense List style should generate a match.");
 		}
 
 		[Test]
@@ -2186,15 +2201,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "Name",
 				FieldDescription = "Name",
+				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var abbrConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Abbreviation", FieldDescription = "Abbreviation", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
+				Label = "Abbreviation",
+				FieldDescription = "Abbreviation",
+				Style = "FooStyle",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var customConfig = new ConfigurableDictionaryNode
 			{
 				Label = "Custom Location", FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle",
 				Children = new List<ConfigurableDictionaryNode> { nameConfig, abbrConfig }
 			};
 			var entryConfig = new ConfigurableDictionaryNode
@@ -2229,6 +2249,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "Test One",
+				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var entryConfig = new ConfigurableDictionaryNode
@@ -2256,6 +2277,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test",
+				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var entryConfig = new ConfigurableDictionaryNode
@@ -2283,6 +2305,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test#",
+				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var entryConfig = new ConfigurableDictionaryNode
@@ -2368,8 +2391,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			m_styleSheet.Styles.Add(style);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
 		}
 
@@ -2410,20 +2432,14 @@ namespace SIL.FieldWorks.XWorks
 			// Padding style settings
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
-			if (m_styleSheet.Styles.Count > 0)
-				m_styleSheet.Styles.RemoveAt(0);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
 		private TestStyle GenerateEmptyParagraphStyle(string name)
 		{
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = true };
-			m_styleSheet.Styles.Add(style);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
 		}
 
@@ -2448,12 +2464,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var fontInfo = new FontInfo();
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			if (m_styleSheet.Styles.Contains(name))
-				m_styleSheet.Styles.Remove(name);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
+			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
 		private void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)

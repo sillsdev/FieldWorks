@@ -211,8 +211,11 @@ namespace SIL.FieldWorks.XWorks
 							wsOptions.DisplayWritingSystemAbbreviations);
 					}
 				}
-				styleSheet.Rules.AddRange(beforeAfterSelectors);
-				styleSheet.Rules.Add(rule);
+				var filteredBefBetAftSelectors = CheckRangeOfRulesForEmpties(beforeAfterSelectors);
+				if (filteredBefBetAftSelectors.Count() > 0)
+					styleSheet.Rules.AddRange(filteredBefBetAftSelectors);
+				if (!IsEmptyRule(rule))
+					styleSheet.Rules.Add(rule);
 			}
 			if(configNode.Children == null)
 				return;
@@ -221,6 +224,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, mediator);
 			}
+		}
+
+		private static bool IsEmptyRule(StyleRule rule)
+		{
+			return rule.Declarations.All(decl => string.IsNullOrWhiteSpace(decl.ToString()));
+		}
+
+		private static IEnumerable<StyleRule> CheckRangeOfRulesForEmpties(IEnumerable<StyleRule> rules)
+		{
+			return rules.Where(rule => !IsEmptyRule(rule));
 		}
 
 		/// <summary>
@@ -261,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
 			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
-			styleSheet.Rules.AddRange(beforeAfterSelectors);
+			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
@@ -272,7 +285,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, mediator));
 			}
-			styleSheet.Rules.Add(senseNumberRule);
+			if (!IsEmptyRule(senseNumberRule))
+				styleSheet.Rules.Add(senseNumberRule);
 			if(!String.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
@@ -308,11 +322,9 @@ namespace SIL.FieldWorks.XWorks
 					// Apply the paragraph style information to all but the first sense
 					Value = string.Format("{0} + {1} > .sense", senseContentSelector, ".sensecontent")
 				};
-				styleSheet.Rules.Add(senseCharRule);
+				if (!IsEmptyRule(senseCharRule))
+					styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
-				//Generate the style for field following last sense
-				var rule = new StyleRule();
-				styleSheet.Rules.Add(rule);
 			}
 			else
 			{
@@ -321,7 +333,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Value = string.Format(baseSelection)
 				};
-				styleSheet.Rules.Add(senseContentRule);
+				if (!IsEmptyRule(senseContentRule))
+					styleSheet.Rules.Add(senseContentRule);
 			}
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
@@ -348,7 +361,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, mediator));
 			}
-			styleSheet.Rules.Add(senseNumberRule);
+			if (!IsEmptyRule(senseNumberRule))
+				styleSheet.Rules.Add(senseNumberRule);
 			if (!String.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
@@ -365,11 +379,12 @@ namespace SIL.FieldWorks.XWorks
 				styleSheet.Rules.Add(afterRule);
 			}
 			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
-				// Generate the style information specifically for senses
-				var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
+			// Generate the style information specifically for senses
+			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
 				{
 					Value = string.Format(baseSelection)
 				};
+			if (!IsEmptyRule(senseContentRule))
 				styleSheet.Rules.Add(senseContentRule);
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
@@ -406,7 +421,7 @@ namespace SIL.FieldWorks.XWorks
 						wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations);
 				}
 			}
-			styleSheet.Rules.AddRange(beforeAfterSelectors);
+			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
 		}
 
 		/// <summary>
@@ -449,7 +464,8 @@ namespace SIL.FieldWorks.XWorks
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 				}
-				styleSheet.Rules.Add(bulletRule);
+				if (!IsEmptyRule(bulletRule))
+					styleSheet.Rules.Add(bulletRule);
 			}
 		}
 
@@ -516,7 +532,8 @@ namespace SIL.FieldWorks.XWorks
 				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
 				if (!String.IsNullOrEmpty(configNode.Style))
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator));
-				styleSheet.Rules.Add(wsRule);
+				if (!IsEmptyRule(wsRule))
+					styleSheet.Rules.Add(wsRule);
 			}
 		}
 
@@ -584,7 +601,8 @@ namespace SIL.FieldWorks.XWorks
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumWidth)
 				});
 			}
-			styleSheet.Rules.Add(pictureRule);
+			if (!IsEmptyRule(pictureRule))
+				styleSheet.Rules.Add(pictureRule);
 		}
 
 		/// <summary>
