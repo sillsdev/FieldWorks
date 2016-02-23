@@ -223,8 +223,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Owner",
-				SubField = "MLHeadWord",
+				FieldDescription = "MLOwnerOutlineName",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new ReferringSenseOptions()
 				{
@@ -298,6 +297,79 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 2);
 			}
 		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_VernacularFormWithSubSences()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLOwnerOutlineName",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new ReferringSenseOptions()
+				{
+					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					{
+						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+						}
+					},
+					SenseOptions = new DictionaryNodeSenseOptions
+					{
+						NumberEvenASingleSense = true,
+						NumberingStyle = "%O"
+					}
+				},
+				IsEnabled = true,
+			};
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode },
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+					},
+					DisplayWritingSystemAbbreviations = false,
+				},
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingEnglishReversalEntry();
+			AddSingleSubSenseToSense(testEntry, "second gloss", m_wsEn, Cache);
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+
+				var xhtml = XHTMLStringBuilder.ToString();
+
+				const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='1.1']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 1);
+			}
+		}
+
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -320,6 +392,80 @@ namespace SIL.FieldWorks.XWorks
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			entry.SensesOS[0].Gloss.set_String(wsId, gloss);
+		}
+
+		private static void AddSingleSubSenseToSense(IReversalIndexEntry riEntry, string gloss, int wsId, FdoCache cache)
+		{
+			CreateSubsenseModel(cache);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
+			var sense = entry.SensesOS.First();
+			sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
+			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			sense.SensesOS.Add(subSensesOne);
+			var subGloss = "subgloss ";
+			subSensesOne.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(subGloss + "1.1", wsId));
+			entry.SensesOS[0].SensesOS[0].Gloss.set_String(wsId, subGloss);
+			entry.SensesOS.First().SensesOS[0].ReversalEntriesRC.Add(riEntry);
+		}
+
+		private static void CreateSubsenseModel(FdoCache Cache)
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%O",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 		}
 	}
 }
