@@ -488,8 +488,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						actualWS = defUserWs;
 					break;
 				case "reversal":
-					var reversalIndexEntryWritingSystem = GetReversalIndexEntryWritingSystem(cache, hvoObj, wsDefault);
-					actualWS = reversalIndexEntryWritingSystem == null ? 0 : reversalIndexEntryWritingSystem.Handle;
+					if (CurrentReversalWsId > 0)
+					{
+						actualWS = CurrentReversalWsId;
+					}
+					else
+					{
+						var reversalIndexEntryWritingSystem = GetReversalIndexEntryWritingSystem(cache, hvoObj, wsDefault);
+						actualWS = reversalIndexEntryWritingSystem == null ? 0 : reversalIndexEntryWritingSystem.Handle;
+					}
 					break;
 				case "analysis vernacular":
 				case "av":
