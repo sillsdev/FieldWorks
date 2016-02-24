@@ -101,28 +101,36 @@ namespace SIL.FieldWorks.XWorks
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
 			// Handle changes to the lists of complex form types and variant types.
-			MergeCustomVariantOrComplexTypesIntoDictionaryModel(cache, this);
+			MergeTypesIntoDictionaryModel(cache, this);
 			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
 			EnsureValidStylesInModel(cache);
 		}
 
-		public static void MergeCustomVariantOrComplexTypesIntoDictionaryModel(FdoCache cache, DictionaryConfigurationModel model)
+		public static void MergeTypesIntoDictionaryModel(FdoCache cache, DictionaryConfigurationModel model)
 		{
 			var complexTypes = new SIL.Utils.Set<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 				complexTypes.Add(pos.Guid);
 			complexTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 			foreach (var node in model.Parts)
-				FixComplexOrVariantTypes(node, complexTypes, DictionaryNodeListOptions.ListIds.Complex);
+				FixTypeList(node, complexTypes, DictionaryNodeListOptions.ListIds.Complex);
 			var variantTypes = new SIL.Utils.Set<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 				variantTypes.Add(pos.Guid);
 			variantTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedVariantType());
 			foreach (var node in model.Parts)
-				FixComplexOrVariantTypes(node, variantTypes, DictionaryNodeListOptions.ListIds.Variant);
+				FixTypeList(node, variantTypes, DictionaryNodeListOptions.ListIds.Variant);
+			var referenceTypes = new SIL.Utils.Set<Guid>();
+			if (cache.LangProject.LexDbOA.ReferencesOA != null)
+			{
+				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
+					referenceTypes.Add(pos.Guid);
+				foreach (var node in model.Parts)
+					FixTypeList(node, referenceTypes, DictionaryNodeListOptions.ListIds.Sense);
+			}
 		}
 
-		private static void FixComplexOrVariantTypes(ConfigurableDictionaryNode node, SIL.Utils.Set<Guid> possibilities, DictionaryNodeListOptions.ListIds listId)
+		private static void FixTypeList(ConfigurableDictionaryNode node, SIL.Utils.Set<Guid> possibilities, DictionaryNodeListOptions.ListIds listId)
 		{
 			if (node == null || possibilities == null)
 				return;
@@ -134,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
-					FixComplexOrVariantTypes(child, possibilities, listId);
+					FixTypeList(child, possibilities, listId);
 			}
 		}
 

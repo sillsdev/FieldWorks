@@ -13,6 +13,7 @@ using System.Xml.Schema;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.TestUtilities;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -1111,7 +1112,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			try
 			{
-				DictionaryConfigurationModel.MergeCustomVariantOrComplexTypesIntoDictionaryModel(Cache, model);
+				DictionaryConfigurationModel.MergeTypesIntoDictionaryModel(Cache, model);
 				var opts1 = (variantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
 				// We have options for the standard six variant types (including the last three shown above, plus one for the
 				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
@@ -1130,6 +1131,74 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void CheckNewAndDeletedReferenceTypes()
+		{
+			var lexicalRelationNode = new ConfigurableDictionaryNode
+			{
+				Label = "Lexical Relations",
+				FieldDescription = "LexSenseReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					},
+				},
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> {lexicalRelationNode}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
+				{
+					PargraphStyle = "Dictionary-Normal",
+					ContinuationParagraphStyle = "Dictionary-Continuation"
+				},
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var newType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
+			// SUT
+			try
+			{
+				DictionaryConfigurationModel.MergeTypesIntoDictionaryModel(Cache, model);
+				var opts1 = (lexicalRelationNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
+				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(newType);
+			}
+		}
+
 		private ILexEntryType CreateNewVariantType(string name)
 		{
 			ILexEntryType poss = null;
@@ -1143,11 +1212,38 @@ namespace SIL.FieldWorks.XWorks
 			return poss;
 		}
 
+		ILexRefType MakeRefType(string name, string reverseName, int mapType)
+		{
+			ILexRefType result = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+					Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
+				result.Name.AnalysisDefaultWritingSystem = AnalysisTss(name);
+				if (reverseName != null)
+					result.ReverseName.AnalysisDefaultWritingSystem = AnalysisTss(reverseName);
+				result.MappingType = mapType;
+			});
+			return result;
+		}
+		private ITsString AnalysisTss(string form)
+		{
+			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+		}
 		private void RemoveNewVariantType(ILexEntryType newType)
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 					Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Remove(newType);
+			});
+		}
+		private void RemoveNewReferenceType(ILexRefType newType)
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Remove(newType);
 			});
 		}
 	}
