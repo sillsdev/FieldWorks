@@ -709,7 +709,7 @@ Fw-build-package:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
 		&& md5sum certdata.txt \
-		&& mozroots --machine --sync --file certdata.txt
+		&& mozroots --import --sync --file certdata.txt
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
