@@ -362,10 +362,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static bool IsMinorEntry(ICmObject entry)
 		{
-			// owning an ILexEntryRef denotes a minor entry (Complex* or Variant Form)
+			// owning an ILexEntryRef denotes a minor entry (Complex Forms* or Variants)
+			// * In Stem-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
 			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
-			// TODO pH 2014.08: *Owning a LexEntryRef denotes a minor entry only in those configs that display complex forms as subentries
-			// TODO				(Root, Bart?, and their descendants) or if the reftype is Variant Form
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>

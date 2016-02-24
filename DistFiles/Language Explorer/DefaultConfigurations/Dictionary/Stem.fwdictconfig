@@ -987,8 +987,7 @@
 	  </ConfigurationItem>
 	</ConfigurationItem>
   </ConfigurationItem>
-  <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-  <ConfigurationItem name="Main Entry (Complex Forms)" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentrycomplex">
+  <ConfigurationItem name="Main Entry (Complex Forms)" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="mainentrycomplex">
 	<ListTypeOptions list="complex">
 	  <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 	  <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -2063,6 +2062,16 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
+	  </ConfigurationItem>
+	</ConfigurationItem>
+	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <PictureOptions minimumHeight="0" maximumHeight="1" minimumWidth="0" maximumWidth="0" pictureLocation="right" stackPictures="false" />
+	  <ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Sense Number" after=" " isEnabled="true" field="SenseNumberTSS" cssClassNameOverride="sensenumber"/>
+	  <ConfigurationItem name="Caption" between=" " isEnabled="true" field="Caption">
+		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true"/>
+		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
   </ConfigurationItem>

@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Minor Entry Nodes
 		private const string MinorEntryOldLabel = "Minor Entry";
+		private const string MainEntryComplexLabel = "Main Entry (Complex Forms)";
 		private const string MinorEntryComplexLabel = "Minor Entry (Complex Forms)";
 		private const string MinorEntryVariantLabel = "Minor Entry (Variants)";
 		private const string MinorEntryOldXpath = "//ConfigurationItem[@name='" + MinorEntryOldLabel + "']";
@@ -146,6 +147,62 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@before");
 				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@after");
 			}
+		}
+
+		/// <summary>
+		/// In Stem-Based dictionaries, Complex Forms are displayed as Main Entries. Ensure that the converted configuration for
+		/// Main Entry is also used for the new Main Entry (Complex Forms) node.
+		/// </summary>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_TreatsComplexAsMainForStem()
+		{
+			const string beforeMainHeadword = "Main Headword: ";
+			var convertedModel = BuildConvertedMinorEntryNodes();
+			var convertedMainNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Headword",
+						Before = beforeMainHeadword
+					}
+				}
+			};
+			convertedModel.Parts[0] = convertedMainNode;
+
+			var currentDefaultModel = BuildCurrentDefaultMinorEntryNodes();
+			currentDefaultModel.FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension;
+			currentDefaultModel.Parts[1].Label = MainEntryComplexLabel;
+			var currentDefaultMainNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry", FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Headword",
+						FieldDescription = "MLHeadWord"
+					}
+				}
+			};
+			currentDefaultModel.Parts[0] = currentDefaultMainNode;
+
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");
+			convertedMainNode = convertedModel.Parts[0];
+			Assert.AreEqual("Main Entry", convertedMainNode.Label);
+			Assert.AreEqual("LexEntry", convertedMainNode.FieldDescription, "Main Field");
+			Assert.AreEqual(beforeMainHeadword, convertedMainNode.Children[0].Before, "Before Main Headword");
+			convertedMainNode = convertedModel.Parts[1];
+			Assert.AreEqual(MainEntryComplexLabel, convertedMainNode.Label);
+			Assert.AreEqual("LexEntry", convertedMainNode.FieldDescription, "Main (Complex) Field");
+			Assert.AreEqual(currentDefaultModel.Parts[1].Style, convertedMainNode.Style);
+			Assert.AreEqual(beforeMainHeadword, convertedMainNode.Children[0].Before, "Before Main (Complex) Headword");
+			var convertedVariantNode = convertedModel.Parts[2];
+			Assert.AreEqual(MinorEntryVariantLabel, convertedVariantNode.Label);
+			Assert.AreEqual("LexEntry", convertedVariantNode.FieldDescription, "Minor (Variant) Field");
 		}
 
 		[Test]
@@ -270,17 +327,22 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = MinorEntryComplexLabel,
 				FieldDescription = "LexEntry",
+				Style = "Dictionary-Minor",
 				IsEnabled = true,
-				After = null,
-				Before = null
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Headword",
+						FieldDescription = "MLHeadWord"
+					}
+				}
 			};
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = MinorEntryVariantLabel,
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
-				After = null,
-				Before = null
 			};
 			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode } };
 		}
@@ -1113,7 +1175,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 				Assert.IsTrue(logger.Content.StartsWith(
-					"Could not match 'Truly Custom' in defaults, and it is totally invalid.  Treating it as a custom field, but EXPECT TROUBLE LATER."));
+					"Could not match 'Truly Custom' in defaults. It may have been valid in a previous version, but is no longer. It will be removed next time the model is loaded."));
 			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
