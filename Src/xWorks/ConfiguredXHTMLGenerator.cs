@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingDisplayFragments;
 				// Generate all the document fragments (in parallel)
-				SpawnEntryGenerationThreadsAndWait(entryActions);
+				SpawnEntryGenerationThreadsAndWait(entryActions, progress);
 				// Generate the letter headers and insert the document fragments into the full xhtml file
 				if (progress != null)
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
@@ -248,12 +248,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static bool IsCanceling(IThreadedProgress progress)
+		{
+			return progress != null && progress.IsCanceling;
+		}
+
 		/// <summary>
 		/// This method uses a ThreadPool to execute the given actions in parallel.
 		/// It waits for all the actions to complete and then returns.
 		/// </summary>
 		/// <param name="actions"></param>
-		private static void SpawnEntryGenerationThreadsAndWait(List<Action> actions)
+		private static void SpawnEntryGenerationThreadsAndWait(List<Action> actions, IThreadedProgress progress)
 		{
 			int actionCount = actions.Count;
 			//This code works in the program, but fails in the unit tests on Windows (but succeeds on Linux unit tests).
@@ -282,22 +287,22 @@ namespace SIL.FieldWorks.XWorks
 				// Note that the loop index variable i cannot be used in an action defined as a closure.  So we have to define all the
 				// possible closures explicitly to achieve the parallelism reliably.  (Remember your theoretical computer science lessons
 				// about lambda expressions and the various ways that variables are bound.  For some of us, that's been over 40 years!)
-				Action currentAction00 = () => { try { for (var j = 0; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction01 = () => { try { for (var j = 1; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction02 = () => { try { for (var j = 2; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction03 = () => { try { for (var j = 3; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction04 = () => { try { for (var j = 4; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction05 = () => { try { for (var j = 5; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction06 = () => { try { for (var j = 6; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction07 = () => { try { for (var j = 7; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction08 = () => { try { for (var j = 8; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction09 = () => { try { for (var j = 9; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction10 = () => { try { for (var j = 10; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction11 = () => { try { for (var j = 11; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction12 = () => { try { for (var j = 12; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction13 = () => { try { for (var j = 13; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction14 = () => { try { for (var j = 14; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction15 = () => { try { for (var j = 15; j < actionCount; j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction00 = () => { try { for (var j = 0; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction01 = () => { try { for (var j = 1; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction02 = () => { try { for (var j = 2; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction03 = () => { try { for (var j = 3; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction04 = () => { try { for (var j = 4; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction05 = () => { try { for (var j = 5; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction06 = () => { try { for (var j = 6; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction07 = () => { try { for (var j = 7; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction08 = () => { try { for (var j = 8; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction09 = () => { try { for (var j = 9; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction10 = () => { try { for (var j = 10; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction11 = () => { try { for (var j = 11; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction12 = () => { try { for (var j = 12; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction13 = () => { try { for (var j = 13; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction14 = () => { try { for (var j = 14; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
+				Action currentAction15 = () => { try { for (var j = 15; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
 				// ReSharper restore AccessToDisposedClosure
 				var threads = new List<Thread>(innerCount);
 				for (int i = 0; i < innerCount; ++i)

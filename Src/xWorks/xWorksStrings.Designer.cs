@@ -1411,6 +1411,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click Cancel to stop loading publication view.
+        /// </summary>
+        internal static string ksCancelingPublicationLabel {
+            get {
+                return ResourceManager.GetString("ksCancelingPublicationLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prohibited Movement.
         /// </summary>
         internal static string ksProhibitedMovement {

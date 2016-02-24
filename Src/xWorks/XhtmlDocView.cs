@@ -668,18 +668,24 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				using (new WaitCursor(this.ParentForm))
+				using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
 				{
-					using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
+					progressDlg.AllowCancel = true;
+					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
+					progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
+					var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
+					if (xhtmlPath != null)
 					{
-						progressDlg.AllowCancel = false;
-						progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
-						var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
-						if (xhtmlPath != null)
+						if (progressDlg.IsCanceling)
+						{
+							m_mediator.SendMessage("SetToolFromName", "lexiconEdit");
+						}
+						else
 						{
 							m_mainView.Url = new Uri(xhtmlPath);
-							m_mainView.Refresh (WebBrowserRefreshOption.Completely);
-							return;
+							m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 						}
+						return;
 					}
 				}
 			}

@@ -10,6 +10,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -59,6 +60,8 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 
 			Message = string.Empty;
+			lblCancel.AutoSize = false;
+			lblCancel.Text = string.Empty;
 			m_fRestartable = false;
 			if (owner == null)
 				StartPosition = FormStartPosition.CenterScreen;
@@ -239,12 +242,13 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				return btnCancel.Visible;
+				return btnCancel.Visible && lblCancel.Visible;
 			}
 			set
 			{
 				CheckDisposed();
 				btnCancel.Visible = value;
+				lblCancel.Visible = value;
 
 				if (Visible && value)
 				{
@@ -271,6 +275,29 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 				btnCancel.Text = value;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a label for Canceling button.
+		/// </summary>
+		/// <returns>The status message</returns>
+		/// ------------------------------------------------------------------------------------
+		public string CancelLabelText
+		{
+			get
+			{
+				CheckDisposed();
+				return lblCancel.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				lblCancel.Text = value;
+				Size sz = new Size(lblCancel.Width, int.MaxValue);
+				sz = TextRenderer.MeasureText(lblCancel.Text, lblCancel.Font, sz, TextFormatFlags.WordBreak);
+				lblCancel.Height = sz.Height;
 			}
 		}
 
