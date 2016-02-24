@@ -2934,6 +2934,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case CellarPropertyType.GenDate:
 					if (newValue == null)
 						newValue = new GenDate();
+					else if (newValue is int)
+						newValue = GetGenDateFromInt((int)newValue);
 					else if (!(newValue is GenDate))
 						throw new ArgumentException("Can't set GenDate property to non-GenDate value.");
 					break;
