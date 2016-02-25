@@ -101,6 +101,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReversalEntryBulkEditTests.cs" />
     <Compile Include="SortReversalSubEntriesTests.cs" />
+    <Compile Include="CircularRefBreakerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Controls\XMLViews\XMLViews.csproj">

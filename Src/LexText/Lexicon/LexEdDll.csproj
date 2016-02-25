@@ -290,6 +290,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CircularRefBreaker.cs" />
     <Compile Include="DeleteEntriesSensesWithoutInterlinearization.cs">
       <SubType>Code</SubType>
     </Compile>
