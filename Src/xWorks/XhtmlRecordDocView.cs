@@ -88,12 +88,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var baseName = XhtmlDocView.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
-				var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
-				Directory.CreateDirectory(Path.GetDirectoryName(basePath));
-				var xhtmlPath = basePath + "-Preview.xhtml";
-				var cssPath = basePath + "-Preview.css";
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { cmo.Hvo }, null, configuration, m_mediator, xhtmlPath, cssPath);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, m_mediator);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

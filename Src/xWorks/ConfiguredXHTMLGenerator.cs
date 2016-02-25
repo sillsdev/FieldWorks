@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
+using FileUtils = SIL.Utils.FileUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -135,13 +136,60 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteEndElement(); //</html>
 		}
 
+		private static string GetPreferredPreviewPath(DictionaryConfigurationModel config, FdoCache cache, bool isSingleEntryPreview)
+		{
+			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", cache.ProjectId.Name);
+			FileUtils.EnsureDirectoryExists(basePath);
+
+			var confName = XhtmlDocView.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(config.FilePath));
+			var fileName = isSingleEntryPreview ? confName + "-Preview" : confName;
+			return Path.Combine(basePath, fileName);
+		}
+
+		/// <summary>
+		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
+		/// </summary>
+		/// <returns>The path to the XHTML file</returns>
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator,
+			DictionaryConfigurationModel configuration, Mediator mediator, IThreadedProgress progress = null)
+		{
+			var preferredPath = GetPreferredPreviewPath(configuration, (FdoCache)mediator.PropertyTable.GetValue("cache"), entryHvos.Length == 1);
+			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
+			try
+			{
+				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, configuration, mediator, xhtmlPath, progress);
+			}
+			catch (IOException ioEx)
+			{
+				// LT-17118: we should no longer be loading previews twice in a row, and each project gets its own tmp dir, but despite
+				// our best efforts, we are previewing the same Config in the same Project two times "at once." Find a unique name.
+				for (var i = 0; ioEx != null; ++i)
+				{
+					ioEx = null;
+					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
+					try
+					{
+						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, configuration, mediator, xhtmlPath, progress);
+					}
+					catch (IOException e)
+					{
+						ioEx = e; // somebody's way too busy; go around again
+					}
+				}
+				Debug.WriteLine("{0}.xhtml was locked; preview saved to {1} instead", preferredPath, xhtmlPath);
+			}
+			return xhtmlPath;
+		}
+
 		/// <summary>
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
+		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator,
+			DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
+			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool.
 			var wantLetterHeaders = entryCount > 1 || publicationDecorator != null;

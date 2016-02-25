@@ -664,7 +664,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
-			return;
 		}
 
 		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
@@ -678,22 +677,17 @@ namespace SIL.FieldWorks.XWorks
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
-			var baseName = MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
-			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
-			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
-			var xhtmlPath = basePath + ".xhtml";
-			var cssPath = basePath + ".css";
 			var start = DateTime.Now;
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = entriesToPublish.Count();
+				var entryCount = entriesToPublish.Length;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath, progress);
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, progress);
 			var end = DateTime.Now;
-			System.Diagnostics.Debug.WriteLine(String.Format("saving xhtml/css took {0}", end - start));
+			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
 			return xhtmlPath;
 		}
 

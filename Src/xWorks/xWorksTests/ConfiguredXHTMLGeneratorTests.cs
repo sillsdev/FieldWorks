@@ -5212,33 +5212,32 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			var xhtmlPath = Path.GetTempFileName();
-			File.Delete(xhtmlPath);
-			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
-			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var xpath = "//div[@class='letHead']";
+			string xhtmlPath = null;
+			const string xpath = "//div[@class='letHead']";
 			try
 			{
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo, lexentry2.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { lexentry1.Hvo, lexentry2.Hvo }, pubEverything, model, m_mediator);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo, lexentry2.Hvo }, null, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { lexentry1.Hvo, lexentry2.Hvo }, null, model, m_mediator);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { lexentry1.Hvo }, pubEverything, model, m_mediator);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { lexentry1.Hvo }, null, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { lexentry1.Hvo }, null, model, m_mediator);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
 			}
 			finally
 			{
-				File.Delete(xhtmlPath);
-				File.Delete(cssPath);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 			}
 		}
 
@@ -5275,14 +5274,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			var xhtmlPath = Path.GetTempFileName();
-			File.Delete(xhtmlPath);
-			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
-			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var letterHeaderXPath = "//div[@class='letHead']";
+			string xhtmlPath = null;
+			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_mediator);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// There should be only 2 letter headers if both a entries are generated in order
@@ -5296,8 +5292,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				File.Delete(xhtmlPath);
-				File.Delete(cssPath);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 			}
 		}
 
@@ -5433,14 +5428,11 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			var xhtmlPath = Path.GetTempFileName();
-			File.Delete(xhtmlPath);
-			xhtmlPath = Path.ChangeExtension(xhtmlPath, "xhtml");
-			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			string xhtmlPath = null;
 			var letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new int[] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, pubEverything, model, m_mediator, xhtmlPath, cssPath);
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, pubEverything, model, m_mediator);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// SUT
@@ -5460,12 +5452,40 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				File.Delete(xhtmlPath);
-				File.Delete(cssPath);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_DoesNotThrowIfFileIsLocked()
+		{
+			var entries = new int[0];
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
+			var preferredPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator); // to get the preferred path
+			var actualPath = preferredPath;
+			try
+			{
+				using (new StreamWriter(preferredPath)) // lock the preferred path
+				{
+					Assert.DoesNotThrow(() => actualPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator));
+				}
+				Assert.AreNotEqual(preferredPath, actualPath, "Should have saved to a different path.");
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(preferredPath);
+				DeleteTempXhtmlAndCssFiles(actualPath);
 			}
 		}
 
 		#region Helpers
+		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
+		{
+			if(string.IsNullOrEmpty(xhtmlPath))
+				return;
+			File.Delete(xhtmlPath);
+			File.Delete(Path.ChangeExtension(xhtmlPath, "css"));
+		}
 
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()

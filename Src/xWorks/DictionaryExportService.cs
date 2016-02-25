@@ -69,12 +69,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			int[] entriesToSave;
 			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath, progress);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_mediator, xhtmlPath, progress);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
