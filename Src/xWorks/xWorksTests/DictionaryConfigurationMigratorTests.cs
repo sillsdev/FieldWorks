@@ -171,6 +171,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 			convertedModel.Parts[0] = convertedMainNode;
+			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
 
 			var currentDefaultModel = BuildCurrentDefaultMinorEntryNodes();
 			currentDefaultModel.FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension;
@@ -188,6 +189,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 			currentDefaultModel.Parts[0] = currentDefaultMainNode;
+			DictionaryConfigurationModel.SpecifyParents(currentDefaultModel.Parts);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");

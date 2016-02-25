@@ -400,9 +400,9 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			//Minor Entry doesn't need Surrounding Context(Before/After)
-			if (convertedNode.Label.ToLower().StartsWith("minor entry"))
-				convertedNode.After = convertedNode.Before = null;
+			// top-level nodes (Main, Minor, and Reversal Index Entry) don't need Surrounding Characters (Before, Between, After)
+			if (convertedNode.Parent == null)
+				convertedNode.After = convertedNode.Between = convertedNode.Before = null;
 
 			// if the new defaults have children and we don't they need to be added
 			if(convertedNode.Children == null && currentDefaultNode.Children != null &&

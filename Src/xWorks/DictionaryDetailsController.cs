@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.XWorks
 			view.Visible = true;
 			view.StylesVisible = true;
 			view.Enabled = IsAllParentsChecked(node);
-			view.SurroundingCharsVisible = node.Label != null && !node.Label.ToLower().StartsWith("minor entry");
+			view.SurroundingCharsVisible = node.Parent != null; // top-level nodes don't need Surrounding Characters (Before, Between, After)
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>

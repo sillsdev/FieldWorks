@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,18 +12,17 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
 using XCore;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class DictionaryDetailsControllerTests : XWorksAppTestBase, IDisposable
+	public class DictionaryDetailsControllerTests : XWorksAppTestBase, IDisposable
 	{
 		private Mediator m_mediator;
 		private FwStyleSheet m_styleSheet;
@@ -626,41 +625,36 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(testNode);
+			Assert.False(controller.View.SurroundingCharsVisible, "Context should start hidden");
 			testNode = new ConfigurableDictionaryNode
 			{
-				Label = "Subentries",
-				Style = "Dictionary-Subentry",
 				IsEnabled = true,
-				DictionaryNodeOptions =
-					new DictionaryNodeWritingSystemOptions()
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				Parent = testNode
 			};
 			controller.LoadNode(testNode);
-			Assert.True(controller.View.SurroundingCharsVisible, "Context should now be visibled");
+			Assert.True(controller.View.SurroundingCharsVisible, "Context should now be visible");
 			controller.View.Dispose();
 		}
 
 		[Test]
-		public void LoadNode_ContextIsHideOnNodeSwitch()
+		public void LoadNode_ContextIsHiddenOnNodeSwitch()
 		{
 			var testNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions =
-					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(testNode);
+			Assert.True(controller.View.SurroundingCharsVisible, "Context should start visible");
 			testNode = new ConfigurableDictionaryNode
 			{
-				Label = "Subentries",
-				Style = "Dictionary-Subentry",
 				IsEnabled = true,
-				DictionaryNodeOptions =
-					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
 			};
 			controller.LoadNode(testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
@@ -688,10 +682,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void LoadNode_LoadingParagraphOptionsViewOnMainEntry()
 		{
-			var paraOptions = new DictionaryNodeParagraphOptions();
+			var paraOptions = new DictionaryNodeParagraphOptions
 			{
-				paraOptions.PargraphStyle = "Dictionary-Normal";
-				paraOptions.ContinuationParagraphStyle = "Dictionary-Continuation";
+				PargraphStyle = "Dictionary-Normal",
+				ContinuationParagraphStyle = "Dictionary-Continuation"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
