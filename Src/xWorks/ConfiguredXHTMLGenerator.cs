@@ -1909,7 +1909,7 @@ namespace SIL.FieldWorks.XWorks
 			if (wsOptions.DisplayWritingSystemAbbreviations)
 			{
 				writer.WriteStartElement("span");
-				writer.WriteAttributeString("class", "writingsystemprefix");
+				writer.WriteAttributeString("class", CssGenerator.WritingSystemPrefix);
 				var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 				writer.WriteString(prefix);
 				writer.WriteEndElement();
@@ -1943,46 +1943,42 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				//use the passed in writing system unless null
-				//otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
+				// use the passed in writing system unless null
+				// otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
 				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
-
-				if (guid != Guid.Empty)
+				for (int i = 0; i < fieldValue.RunCount; i++)
 				{
-					settings.Writer.WriteStartElement("a");
-					settings.Writer.WriteAttributeString("href", "#g" + guid);
-				}
-				if (fieldValue.RunCount > 1)
-				{
-					for (int i = 0; i < fieldValue.RunCount; i++)
-					{
-						var text = fieldValue.get_RunText(i);
-						var props = fieldValue.get_Properties(i);
-						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-						writer.WriteStartElement("span");
-						// TODO: In case of multi-writingsystem ITsSring, update WS for each run
-						writer.WriteAttributeString("lang", writingSystem);
-						if (!String.IsNullOrEmpty(style))
-						{
-							var css_style = CssGenerator.GenerateCssStyleFromFwStyleSheet(style, settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.Mediator);
-							writer.WriteAttributeString("style", css_style.ToString());
-						}
-						writer.WriteString(text);
-						writer.WriteEndElement();
-					}
-				}
-				else
-				{
-					writer.WriteStartElement("span");
-					writer.WriteAttributeString("lang", writingSystem);
-					writer.WriteString(fieldValue.Text);
-					writer.WriteEndElement();
-				}
-				if (guid != Guid.Empty)
-				{
-					settings.Writer.WriteEndElement(); // </a>
+					var text = fieldValue.get_RunText(i);
+					var props = fieldValue.get_Properties(i);
+					var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+					GenerateSpanWithPossibleLink(settings, writingSystem, writer, style, text, guid);
 				}
 			}
+		}
+
+		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
+			string text, Guid linkDestination)
+		{
+			writer.WriteStartElement("span");
+			// TODO: In case of multi-writingsystem ITsSring, update WS for each run
+			writer.WriteAttributeString("lang", writingSystem);
+			if (!String.IsNullOrEmpty(style))
+			{
+				var css_style = CssGenerator.GenerateCssStyleFromFwStyleSheet(style,
+					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.Mediator);
+				writer.WriteAttributeString("style", css_style.ToString());
+			}
+			if (linkDestination != Guid.Empty)
+			{
+				settings.Writer.WriteStartElement("a");
+				settings.Writer.WriteAttributeString("href", "#g" + linkDestination);
+			}
+			writer.WriteString(text);
+			if (linkDestination != Guid.Empty)
+			{
+				settings.Writer.WriteEndElement(); // </a>
+			}
+			writer.WriteEndElement();
 		}
 
 		/// <summary>

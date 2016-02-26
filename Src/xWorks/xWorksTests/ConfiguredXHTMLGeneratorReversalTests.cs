@@ -98,16 +98,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ReversalForm",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] {"en"}),
-				Label = "Reversal Form",
-				IsEnabled = true
+				Label = "Reversal Form"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { reversalFormNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
 			var entry = CreateInterestingEnglishReversalEntry();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
@@ -188,19 +186,17 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr"}
 					},
 					DisplayWritingSystemAbbreviations = false
-				},
-				IsEnabled = true
+				}
 			};
 			var reversalNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { formNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			CssGeneratorTests.SetParentsAndEnabled(reversalNode);
 			var rie = CreateInterestingFrenchReversalEntry() as IReversalIndexEntry;
 			var entryHeadWord = rie.ReferringSenses.First().Entry.HeadWord;
 
@@ -232,7 +228,7 @@ namespace SIL.FieldWorks.XWorks
 						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
 						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 						}
 					},
 					SenseOptions = new DictionaryNodeSenseOptions
@@ -240,23 +236,21 @@ namespace SIL.FieldWorks.XWorks
 						NumberEvenASingleSense = true,
 						NumberingStyle = "%A"
 					}
-				},
-				IsEnabled = true,
+				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
 				}
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode},
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -265,15 +259,14 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false,
 				},
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { formNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSenseToReversaEntry(testEntry, "second gloss", m_wsEn, Cache);
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -289,8 +282,8 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
 
-				const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='1']]";
-				const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='2']]";
+				const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='1']]/a[text()='Citation']";
+				const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='2']]/a[text()='Citation']";
 				const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='A']";
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
@@ -312,7 +305,7 @@ namespace SIL.FieldWorks.XWorks
 						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
 						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 						}
 					},
 					SenseOptions = new DictionaryNodeSenseOptions
@@ -320,23 +313,21 @@ namespace SIL.FieldWorks.XWorks
 						NumberEvenASingleSense = true,
 						NumberingStyle = "%O"
 					}
-				},
-				IsEnabled = true,
+				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
 				}
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -345,15 +336,14 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false,
 				},
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { formNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSingleSubSenseToSense(testEntry, "second gloss", m_wsEn, Cache);
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -410,12 +400,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void CreateSubsenseModel(FdoCache Cache)
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
 				}
 			};
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
@@ -439,14 +428,13 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -454,18 +442,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
 		}
 	}
 }

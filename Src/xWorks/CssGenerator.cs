@@ -30,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryContinuation = "Dictionary-Continuation";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
+		internal const string WritingSystemPrefix = "writingsystemprefix";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
@@ -48,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
-			foreach(var configNode in model.Parts)
+			foreach(var configNode in model.Parts.Where(x => x.IsEnabled))
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}
@@ -204,23 +205,15 @@ namespace SIL.FieldWorks.XWorks
 					{
 						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 					}
-					if (wsOptions.Options.Count(s => s.IsEnabled) > 1)
-					{
-						GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
-						GenerateCssForBetweenContentWithMultipleWs(ref beforeAfterSelectors, baseSelection, configNode.Between,
-							wsOptions.DisplayWritingSystemAbbreviations);
-					}
 				}
-				var filteredBefBetAftSelectors = CheckRangeOfRulesForEmpties(beforeAfterSelectors);
-				if (filteredBefBetAftSelectors.Count() > 0)
-					styleSheet.Rules.AddRange(filteredBefBetAftSelectors);
+				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
 				if (!IsEmptyRule(rule))
 					styleSheet.Rules.Add(rule);
 			}
 			if(configNode.Children == null)
 				return;
 			//Recurse into each child
-			foreach(var child in configNode.Children)
+			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, mediator);
 			}
@@ -234,35 +227,6 @@ namespace SIL.FieldWorks.XWorks
 		private static IEnumerable<StyleRule> CheckRangeOfRulesForEmpties(IEnumerable<StyleRule> rules)
 		{
 			return rules.Where(rule => !IsEmptyRule(rule));
-		}
-
-		/// <summary>
-		/// Generate CSS for Between rule for multiple writingsystem selection
-		/// </summary>
-		/// <param name="beforeAfterSelectors">before/after/between StyleRules in IEnumerable</param>
-		/// <param name="baseSelection">BaseSelection for the between content</param>
-		/// <param name="betweenContent">Between content value</param>
-		/// <param name="isDisplayWSChecked">True when display writing system checkbox is checked</param>
-		private static void GenerateCssForBetweenContentWithMultipleWs(ref IEnumerable<StyleRule> beforeAfterSelectors, string baseSelection, string betweenContent, bool isDisplayWSChecked)
-		{
-			if(!isDisplayWSChecked) return;
-
-			////Rule added for "writingsystemprefix" class to insert "between" content only when more than one writingsystem selected.
-			var wsRule1 = new StyleRule { Value = baseSelection + ".writingsystemprefix:not(:first-child):before" };
-			wsRule1.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, betweenContent) });
-
-			var beforeAfterList = beforeAfterSelectors.ToList();
-			var betweenSelectorIndex = beforeAfterList.FindIndex(x => x.Value.Contains("span+ span:before"));
-			if (betweenSelectorIndex < 0) return;
-			beforeAfterList[betweenSelectorIndex] = wsRule1;
-			beforeAfterSelectors = beforeAfterList;
-		}
-
-		private static void GenerateCssForFieldWithMultipleWs(StyleSheet styleSheet, string baseSelection)
-		{
-			var glossRule = new StyleRule {Value = baseSelection + ":not(:last-child):after"};
-			glossRule.Declarations.Properties.Add(new Property("content") {Term = new PrimitiveTerm(UnitType.String, " ")});
-			styleSheet.Rules.Add(glossRule);
 		}
 
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
@@ -340,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
 				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" ."));
-				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA"))
+				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
 					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", mediator);
 				}
@@ -413,12 +377,6 @@ namespace SIL.FieldWorks.XWorks
 				if (wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations)
 				{
 					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
-				}
-				if (wsOptions.WritingSystemOptions.Options.Count(s => s.IsEnabled) > 1)
-				{
-					GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
-					GenerateCssForBetweenContentWithMultipleWs(ref beforeAfterSelectors, baseSelection, configNode.Between,
-						wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations);
 				}
 			}
 			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
@@ -523,7 +481,7 @@ namespace SIL.FieldWorks.XWorks
 																	StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			foreach(var ws in wsOptions.Options)
+			foreach(var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
 				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
@@ -539,7 +497,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateCssForWritingSystemPrefix(StyleSheet styleSheet, string baseSelection)
 		{
-			var wsRule1 = new StyleRule {Value = baseSelection + ".writingsystemprefix"};
+			var wsRule1 = new StyleRule {Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
 			wsRule1.Declarations.Properties.Add(new Property("font-style") {Term = new PrimitiveTerm(UnitType.Attribute, "normal")});
 			wsRule1.Declarations.Properties.Add(new Property("font-size") {Term = new PrimitiveTerm(UnitType.Point, 10)});
 			styleSheet.Rules.Add(wsRule1);
@@ -643,9 +601,10 @@ namespace SIL.FieldWorks.XWorks
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					if (configNode.DictionaryNodeOptions != null)
 					{
-						// Rule added for all span tag which only having WritingSystems attribute
-						if (configNode.DisplayLabel == "Headword")
-							betweenSelector = String.Format("{0}> {1}>{2}+{2}:not('style'):before", parentSelector, collectionSelector, " span");
+						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
+						if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations && wsOptions.Options.Count(x => x.IsEnabled) > 1)
+							betweenSelector = String.Format("{0}> {1}> span.{2} + span:not(:last-child):after", parentSelector, collectionSelector, WritingSystemPrefix);
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 
@@ -729,6 +688,7 @@ namespace SIL.FieldWorks.XWorks
 					return " img"; // Pictures are written out as img tags
 				}
 				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
+				case ConfiguredXHTMLGenerator.PropertyType.MoFormType:
 				{
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
