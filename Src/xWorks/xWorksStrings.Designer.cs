@@ -1096,6 +1096,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inspect entry.
+        /// </summary>
+        internal static string ksInspect {
+            get {
+                return ResourceManager.GetString("ksInspect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence..
         /// </summary>
         internal static string ksInvalidFieldInFilterOrSorter {

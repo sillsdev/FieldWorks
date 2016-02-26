@@ -467,6 +467,12 @@
     <Compile Include="XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="XmlDiagnosticsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XmlDiagnosticsDlg.Designer.cs">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -576,6 +582,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\App.ico" />
+    <EmbeddedResource Include="XmlDiagnosticsDlg.resx">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="XmlDocConfigureDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>

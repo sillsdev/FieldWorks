@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
 		{
-			var dictMinorRule = new StyleRule {Value = "div.minorentry"};
+			var dictMinorRule = new StyleRule {Value = "div.minorentry"}; // REVIEW (Hasso) 2016.02: minorentry is no longer a valid class name
 			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, mediator);
 			dictMinorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictMinorStyle));
 			styleSheet.Rules.Add(dictMinorRule);

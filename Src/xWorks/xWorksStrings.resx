@@ -639,6 +639,10 @@ Are you sure you want to delete this list?</value>
     <value>Configure {0} View...</value>
     <comment>Sole item in right-click menu in Dictionary view</comment>
   </data>
+  <data name="ksInspect" xml:space="preserve">
+    <value>Inspect entry</value>
+    <comment>Second item in ctrl-right-click menu in Dictionary view</comment>
+  </data>
   <data name="ksCtrlClickJumpTooltip" xml:space="preserve">
     <value>Ctrl+Click to jump</value>
     <comment>Message shows in Dictionary view when mouse is over a link to another entry.</comment>
