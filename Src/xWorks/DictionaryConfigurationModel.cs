@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -108,50 +109,74 @@ namespace SIL.FieldWorks.XWorks
 
 		public static void MergeTypesIntoDictionaryModel(FdoCache cache, DictionaryConfigurationModel model)
 		{
-			var complexTypes = new SIL.Utils.Set<Guid>();
+			var complexTypes = new Set<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 				complexTypes.Add(pos.Guid);
-			complexTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
-			foreach (var node in model.Parts)
-				FixTypeList(node, complexTypes, DictionaryNodeListOptions.ListIds.Complex);
-			var variantTypes = new SIL.Utils.Set<Guid>();
+			complexTypes.Add(Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
+			var variantTypes = new Set<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 				variantTypes.Add(pos.Guid);
-			variantTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedVariantType());
-			foreach (var node in model.Parts)
-				FixTypeList(node, variantTypes, DictionaryNodeListOptions.ListIds.Variant);
-			var referenceTypes = new SIL.Utils.Set<Guid>();
+			variantTypes.Add(Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedVariantType());
+			var referenceTypes = new Set<Guid>();
 			if (cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
-				foreach (var node in model.Parts)
-				{
-					FixTypeList(node, referenceTypes, DictionaryNodeListOptions.ListIds.Sense);
-					FixTypeList(node, referenceTypes, DictionaryNodeListOptions.ListIds.Entry);
-				}
+			}
+			foreach (var part in model.Parts)
+			{
+				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes);
 			}
 		}
 
-		private static void FixTypeList(ConfigurableDictionaryNode node, SIL.Utils.Set<Guid> possibilities, DictionaryNodeListOptions.ListIds listId)
+		private static void FixTypeListOnNode(ConfigurableDictionaryNode node, Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes)
 		{
-			if (node == null || possibilities == null)
-				return;
-
-			var option = node.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (option != null && option.ListId == listId)
-				FixOptionsAccordingToCurrentTypes(option.Options, possibilities);
-
+			if (node.DictionaryNodeOptions is DictionaryNodeListOptions)
+			{
+				var listOptions = (DictionaryNodeListOptions)node.DictionaryNodeOptions;
+				switch (listOptions.ListId)
+				{
+					case DictionaryNodeListOptions.ListIds.Complex:
+					{
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes);
+						break;
+					}
+					case DictionaryNodeListOptions.ListIds.Variant:
+					{
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes);
+						break;
+					}
+					case DictionaryNodeListOptions.ListIds.Entry:
+					{
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						break;
+					}
+					case DictionaryNodeListOptions.ListIds.Sense:
+					{
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						break;
+					}
+					case DictionaryNodeListOptions.ListIds.Minor:
+					{
+						var complexAndVariant = complexTypes.Union(variantTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant);
+						break;
+					}
+					default:
+					break;
+				}
+			}
+			//Recurse into child nodes and fix the type lists on them
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
-					FixTypeList(child, possibilities, listId);
+					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes);
 			}
 		}
 
-		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, SIL.Utils.Set<Guid> possibilities)
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, Set<Guid> possibilities)
 		{
-			var currentGuids = new SIL.Utils.Set<Guid>();
+			var currentGuids = new Set<Guid>();
 			foreach (var opt in options)
 			{
 				Guid guid;
@@ -165,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 					options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = true });
 			}
 			// remove options that no longer exist
-			for (int i = options.Count - 1; i >= 0; --i)
+			for (var i = options.Count - 1; i >= 0; --i)
 			{
 				Guid guid;
 				if (Guid.TryParse(options[i].Id, out guid) && !possibilities.Contains(guid))
