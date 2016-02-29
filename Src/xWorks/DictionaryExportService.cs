@@ -55,15 +55,35 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// TODO (Hasso) 2016.02: honor reversalName (LT-17011)
 		public void ExportReversalContent(string xhtmlPath, string reversalName = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
 			{
+				var originalReversalIndexGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				if (reversalName != null)
+				{
+					// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
+					// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
+					// right reversal content to be exported, fixing LT-17011.
+					var reversalIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+						.FirstOrDefault(repo => repo.ShortName == reversalName);
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", reversalIndex.Guid.ToString());
+					if (clerk != null)
+						clerk.OnPropertyChanged("ReversalIndexGuid");
+				}
+
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
+
+				if (originalReversalIndexGuid != null && originalReversalIndexGuid != m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null))
+				{
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", originalReversalIndexGuid.ToString());
+					if (clerk != null)
+						clerk.OnPropertyChanged("ReversalIndexGuid");
+				}
 			}
 		}
 
