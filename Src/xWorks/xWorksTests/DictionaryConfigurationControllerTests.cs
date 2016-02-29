@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -1042,7 +1043,9 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				m_treeControl.Dispose();
+					if (DetailsView != null && !DetailsView.IsDisposed)
+						DetailsView.Dispose();
+					m_treeControl.Dispose();
 			}
 #pragma warning disable 67
 			public event EventHandler ManageConfigurations;
@@ -1120,6 +1123,55 @@ namespace SIL.FieldWorks.XWorks
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+		}
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "The mediator is disposed by the window.")]
+		public void TestStateOfNodeIsChanged()
+		{
+			FwXApp application;
+			FwXWindow window;
+			Mediator mediator;
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mainheadword",
+				IsEnabled = true
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+			};
+			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+				var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, application.DefaultConfigurationPathname);
+				window = new MockFwXWindow(application, m_configFilePath);
+				((MockFwXWindow)window).Init(Cache); // initializes Mediator values
+
+				window.Mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+				window.LoadUI(m_configFilePath);
+				mediator = window.Mediator;
+
+				var dcc = new DictionaryConfigurationController(testView, mediator, entryWithHeadword);
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				//SUT
+				Assert.IsTrue(DictionaryConfigurationController.IsDirty, "State of the node is changed");
+
+				application.Dispose();
+				window.Dispose();
+			}
 		}
 
 		[Test]

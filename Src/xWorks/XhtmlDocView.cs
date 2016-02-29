@@ -233,7 +233,8 @@ namespace SIL.FieldWorks.XWorks
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
 				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
-			mediator.SendMessage("MasterRefresh", null);
+			if (!DictionaryConfigurationController.IsDirty)
+				mediator.SendMessage("MasterRefresh", null);
 		}
 
 		public override int Priority

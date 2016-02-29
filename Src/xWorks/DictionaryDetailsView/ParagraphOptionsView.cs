@@ -32,6 +32,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>Populate the Paragraph Style dropdown</summary>
 		public void SetParaStyles(List<StyleComboItem> styles, string selectedStyle)
 		{
+			// In unit tests we may not have any styles, do not crash
+			if (styles.Count == 0) return;
 			dropDownParaStyle.Items.Clear();
 			dropDownParaStyle.Items.AddRange(styles.ToArray());
 			dropDownParaStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.
@@ -48,6 +50,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>Populate the Continuation Paragraph Style dropdown</summary>
 		public void SetContParaStyles(List<StyleComboItem> styles, string selectedStyle)
 		{
+			// In unit tests we may not have any styles, do not crash
+			if (styles.Count == 0) return;
 			dropDownContParaStyle.Items.Clear();
 			dropDownContParaStyle.Items.AddRange(styles.ToArray());
 			dropDownContParaStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.

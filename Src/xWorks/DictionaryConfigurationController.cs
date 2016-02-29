@@ -71,6 +71,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal string _defaultConfigDir;
 
+		public static bool IsDirty;
+
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 		/// Populate _dictionaryConfigurations with available models.
@@ -202,6 +204,7 @@ namespace SIL.FieldWorks.XWorks
 			//_mediator should be null only for unit tests which don't need styles
 			if (_mediator != null && _previewEntry != null && _previewEntry.IsValidObject)
 			{
+				IsDirty = true;
 				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model,
 					_allEntriesPublicationDecorator, _mediator);
 			}
@@ -432,6 +435,7 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 			SelectCurrentConfiguration();
+			IsDirty = false;
 		}
 
 		public void SelectModelFromManager(DictionaryConfigurationModel model)
@@ -478,8 +482,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
-			SaveModel();
-			RefreshView(); // REVIEW (Hasso) 2014.11: refreshing here is beneficial only if some configuration change fails to refresh the preview
+			if (IsDirty)
+			{
+				SaveModel();
+				RefreshView();// REVIEW (Hasso) 2014.11: refreshing here is beneficial only if some configuration change fails to refresh the preview
+			}
 		}
 
 		internal void SaveModel()

@@ -192,7 +192,8 @@ namespace SIL.FieldWorks.XWorks
 				dlg.HelpTopic = GetConfigDialogHelpTopic(m_mediator);
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
-			m_mediator.SendMessage("MasterRefresh", null);
+			if (!DictionaryConfigurationController.IsDirty)
+				m_mediator.SendMessage("MasterRefresh", null);
 			return true; // message handled
 		}
 
