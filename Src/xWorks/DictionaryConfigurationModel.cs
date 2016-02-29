@@ -126,7 +126,10 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
 				foreach (var node in model.Parts)
+				{
 					FixTypeList(node, referenceTypes, DictionaryNodeListOptions.ListIds.Sense);
+					FixTypeList(node, referenceTypes, DictionaryNodeListOptions.ListIds.Entry);
+				}
 			}
 		}
 
