@@ -773,34 +773,52 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ClassMappingOverrides_ApplyAtRoot()
 		{
+			// Code that prevents empty output requires subnodes to generate anything.
+			var subNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				IsEnabled = true,
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }),
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
 			var testNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				Label = "Bow, Bolo, Ect",
 				IsEnabled = true,
 				CSSClassNameOverride = "Bolo",
-				Children = new List<ConfigurableDictionaryNode>()
+				Children = new List<ConfigurableDictionaryNode> { subNode }
 			};
+			subNode.Parent = testNode;
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { testNode }
 			};
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("homme", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
+
 			var xhtmResult = new StringBuilder();
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
+				XHTMLWriter.WriteStartElement("body");
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+				var content = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
+				XHTMLWriter.WriteRaw(content);
+				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
+				var result = xhtmResult.ToString();
 				const string positiveTest = "//*[@class='bolo']";
 				const string negativeTest = "//*[@class='lexentry']";
-				AssertThatXmlIn.String(xhtmResult.ToString()).HasNoMatchForXpath(negativeTest);
-				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 			}
 		}
 
@@ -833,17 +851,13 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
-			var xhtmResult = new StringBuilder();
-			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
-				XHTMLWriter.Flush();
-				const string positiveTest = "//*[@class='tailwind']";
-				const string negativeTest = "//*[@class='headword']";
-				AssertThatXmlIn.String(xhtmResult.ToString()).HasNoMatchForXpath(negativeTest);
-				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
-			}
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
+			const string positiveTest = "//*[@class='tailwind']";
+			const string negativeTest = "//*[@class='headword']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
 
 		[Test]
@@ -879,15 +893,11 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
-			var xhtmResult = new StringBuilder();
-			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, XHTMLWriter, false, false, null);
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
-				XHTMLWriter.Flush();
-				const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
-				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
-			}
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
+			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
 
 		[Test]
