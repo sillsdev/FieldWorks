@@ -22,6 +22,3 @@ using SIL.Utils.Attributes;
 
 // Allow creating COM objects from manifest file
 [assembly: CreateComObjectsFromManifest]
-
-// Set ICU_DATA environment variable
-[assembly: SetIcuDataEnvironmentVariable]

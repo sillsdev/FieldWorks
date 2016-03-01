@@ -1,11 +1,13 @@
 ﻿using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Keyboarding;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
 	[TestFixture]
-	public class SimpleRootSiteTests
+	public class SimpleRootSiteTests : BaseTest
 	{
 		[Test]
 		public void GetWSForInputMethod_GetsMatchingWSByInputMethod()

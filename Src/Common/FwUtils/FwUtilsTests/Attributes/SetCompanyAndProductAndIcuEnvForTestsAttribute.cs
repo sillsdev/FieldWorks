@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
-	public class SetCompanyAndProductForTestsAttribute: TestActionAttribute
+	public class SetCompanyAndProductAndIcuEnvForTestsAttribute: TestActionAttribute
 	{
 		/// <summary/>
 		public override void BeforeTest(TestDetails testDetails)
@@ -29,6 +29,26 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			base.BeforeTest(testDetails);
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+				return;
+
+			var icuDirValueName = @"Icu54DataDir";
+			using(var userKey = RegistryHelper.CompanyKey)
+			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
+			{
+				string dir = null;
+				if (userKey != null && userKey.GetValue(icuDirValueName) != null)
+				{
+					dir = userKey.GetValue(icuDirValueName, dir) as string;
+				}
+				else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
+				{
+
+					dir = machineKey.GetValue(icuDirValueName, dir) as string;
+				}
+				if (!string.IsNullOrEmpty(dir))
+					Environment.SetEnvironmentVariable("ICU_DATA", dir);
+			}
 		}
 	}
 }
