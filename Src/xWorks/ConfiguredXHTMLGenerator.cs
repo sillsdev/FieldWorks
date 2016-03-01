@@ -593,7 +593,7 @@ namespace SIL.FieldWorks.XWorks
 				var subProp = subType.GetProperty(config.SubField);
 				if (subProp == null)
 				{
-					Debug.WriteLine(String.Format("Issue with finding {0} for {1}", config.SubField, subType));
+					Debug.WriteLine(String.Format("Issue with finding (subField) {0} for (subType) {1}", config.SubField, subType));
 					return String.Empty;
 				}
 				propertyValue = subProp.GetValue(propertyValue, new object[] { });
@@ -1467,7 +1467,8 @@ namespace SIL.FieldWorks.XWorks
 
 						// Prefix the SubField with "Reverse" just long enough to generate XHTML for this node.
 						var subField = child.SubField;
-						child.SubField = "Reverse" + subField;
+						if (!subField.StartsWith("Reverse"))
+							child.SubField = "Reverse" + subField;
 						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
 						child.SubField = subField;
 					}
