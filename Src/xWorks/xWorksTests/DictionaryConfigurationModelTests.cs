@@ -40,6 +40,12 @@ namespace SIL.FieldWorks.XWorks
 			XmlCloseTagsFromRoot;
 		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
+		[TestFixtureSetUp]
+		public void DictionaryConfigModelFixtureSetup()
+		{
+			CreateStandardStyles();
+		}
+
 		[Test]
 		public void Load_LoadsBasicsAndDetails()
 		{
@@ -146,6 +152,7 @@ namespace SIL.FieldWorks.XWorks
 				XmlOpenTagsThruHeadword, @"
 				<ListTypeOptions list=""variant"">
 					<Option isEnabled=""true"" id=""b0000000-c40e-433e-80b5-31da08771344""/>
+					<Option isEnabled=""true"" id=""abcdef01-2345-6789-abcd-ef0123456789""/>
 					<Option isEnabled=""true"" id=""024b62c9-93b3-41a0-ab19-587a0030219a""/>
 					<Option isEnabled=""true"" id=""4343b1ef-b54f-4fa4-9998-271319a6d74c""/>
 					<Option isEnabled=""true"" id=""01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c""/>
@@ -165,6 +172,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsInstanceOf(typeof(DictionaryNodeListOptions), testNodeOptions);
 			var listOptions = (DictionaryNodeListOptions)testNodeOptions;
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
+			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
+			// "No Variant Type".  The second guid does not exist, so it gets removed from the list.
 			Assert.AreEqual(7, listOptions.Options.Count);
 			Assert.AreEqual(7, listOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", listOptions.Options[0].Id);
@@ -181,6 +190,7 @@ namespace SIL.FieldWorks.XWorks
 					<Option isEnabled=""true""  id=""a0000000-dd15-4a03-9032-b40faaa9a754""/>
 					<Option isEnabled=""true""  id=""1f6ae209-141a-40db-983c-bee93af0ca3c""/>
 					<Option isEnabled=""true""  id=""73266a3a-48e8-4bd7-8c84-91c730340b7d""/>
+					<Option isEnabled=""true""  id=""abcdef01-2345-6789-abcd-ef0123456789""/>
 				</ComplexFormOptions>",
 				XmlCloseTagsFromHeadword
 			}))
@@ -195,11 +205,47 @@ namespace SIL.FieldWorks.XWorks
 			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, cfOptions.ListId);
 			Assert.IsTrue(cfOptions.DisplayEachComplexFormInAParagraph);
-			Assert.AreEqual(3, cfOptions.Options.Count);
-			Assert.AreEqual(3, cfOptions.Options.Count(option => option.IsEnabled));
+			// There are six complex form types by default in the language project.  (The second and third
+			// guids above are used by two of those default types.)  Ones that are missing in the configuration
+			// data are added in, ones that the configuration has but which don't exist in the language project
+			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
+			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
+			Assert.AreEqual(7, cfOptions.Options.Count);
+			Assert.AreEqual(7, cfOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", cfOptions.Options[0].Id);
 		}
 
+		[Test]
+		public void Load_LoadsReferringSenseOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+			<ReferringSenseOptions>
+				<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
+					<Option isEnabled=""true""  id=""vernacular""/>
+				</WritingSystemOptions>
+				<SenseOptions displayEachSenseInParagraph=""true"" numberStyle=""bold"" numberBefore=""("" numberAfter="") ""
+						numberingStyle=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>
+			</ReferringSenseOptions>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			// The following assertions are based on the specific test data loaded from the file
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(ReferringSenseOptions), testNodeOptions);
+			var cfOptions = (ReferringSenseOptions)testNodeOptions;
+			Assert.IsTrue(cfOptions.SenseOptions.DisplayEachSenseInAParagraph);
+			Assert.AreEqual("%O", cfOptions.SenseOptions.NumberingStyle);
+			Assert.AreEqual("(", cfOptions.SenseOptions.BeforeNumber);
+			Assert.AreEqual(") ", cfOptions.SenseOptions.AfterNumber);
+			Assert.AreEqual("bold", cfOptions.SenseOptions.NumberStyle);
+		}
 		[Test]
 		public void Load_NoListSpecifiedResultsInNone()
 		{
@@ -388,9 +434,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ShippedFilesValidateAgainstSchema()
+		public void ShippedFilesValidateAgainstSchema([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
-			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
 			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
@@ -812,6 +858,7 @@ namespace SIL.FieldWorks.XWorks
 			StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
 			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
 		}
+
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)
@@ -822,7 +869,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				schemas.Add("", reader);
 				var document = XDocument.Load(xmlFile);
-				document.Validate(schemas, (sender, args) => Assert.Fail("Model saved as xml did not validate against schema: {0}", args.Message));
+				document.Validate(schemas, (sender, args) =>
+					Assert.Fail("Model saved at {0} did not validate against schema: {1}", xmlFile, args.Message));
 			}
 		}
 
@@ -905,6 +953,202 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
+		}
+
+		[Test]
+		public void IsMainEntry_NullArgument_Throws()
+		{
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsMainEntry(null));
+		}
+
+		[Test]
+		public void IsMainEntry_MainEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode));
+		}
+
+		[Test]
+		public void IsMainEntry_MinorEntry_False()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(minorEntryNode));
+		}
+
+		[Test]
+		public void IsMainEntry_OtherEntry_False()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			var someNode = new ConfigurableDictionaryNode{ FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode));
+		}
+
+		[Test]
+		public void EnsureValidStylesInModelRemovesMissingStyles()
+		{
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberStyle = "Green-Dictionary-SenseNumber",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = "Orange-Sense-Paragraph"
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
+				{
+					PargraphStyle = "Dictionary-Normal",
+					ContinuationParagraphStyle = "Dictionary-Continuation"
+				},
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			model.EnsureValidStylesInModel(Cache);
+			//SUT
+			Assert.AreEqual("Dictionary-Normal", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).PargraphStyle, "Existing style should remain.");
+			Assert.AreEqual("Dictionary-Continuation", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).ContinuationParagraphStyle, "Existing style should remain.");
+			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
+			Assert.IsNull((senseNode.DictionaryNodeOptions as DictionaryNodeSenseOptions).NumberStyle, "Missing style should be removed.");
+		}
+
+		private void CreateStandardStyles()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				CreateStyle(fact, "Dictionary-Normal", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);		// needed by EnsureValidStylesInModelRemovesMissingStyles
+				CreateStyle(fact, "Dictionary-Continuation", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
+				CreateStyle(fact, "Sense-Paragraph", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
+				CreateStyle(fact, "Dictionary-SenseNumber", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);
+				CreateStyle(fact, "Dictionary-Headword", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
+				CreateStyle(fact, "bold", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
+			});
+		}
+
+		private void CreateStyle(IStStyleFactory fact, string name, SIL.FieldWorks.Common.COMInterfaces.StyleType type)
+		{
+			var st = fact.Create();
+			Cache.LangProject.StylesOC.Add(st);
+			st.Name = name;
+			st.Type = type;
+		}
+
+		[Test]
+		public void CheckNewAndDeleteddVariantTypes()
+		{
+			var minorEntryVariantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+					},
+				},
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms",
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+					},
+				},
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
+				{
+					PargraphStyle = "Dictionary-Normal",
+					ContinuationParagraphStyle = "Dictionary-Continuation"
+				},
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode, minorEntryVariantNode },
+			};
+			var newType = CreateNewVariantType("Absurd Variant");
+			// SUT
+			try
+			{
+				DictionaryConfigurationModel.MergeCustomVariantOrComplexTypesIntoDictionaryModel(Cache, model);
+				var opts1 = (variantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
+				// We have options for the standard six variant types (including the last three shown above, plus one for the
+				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
+				Assert.AreEqual(8, opts1.Count, "Properly merged variant types to options list in major entry child node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[6].Id, "New type appears near end of options list in major entry child node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[7].Id, "'No Variant Type' type appears at end of options list in major entry child node");
+				var opts2 = (minorEntryVariantNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
+				Assert.AreEqual(8, opts2.Count, "Properly merged variant types to options list in minor entry top node");
+				Assert.AreEqual(newType.Guid.ToString(), opts2[6].Id, "New type appears near end of options list in minor entry top node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[7].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra variant type.
+				RemoveNewVariantType(newType);
+			}
+		}
+
+		private ILexEntryType CreateNewVariantType(string name)
+		{
+			ILexEntryType poss = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
+				poss = fact.Create();
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(poss);
+				poss.Name.SetAnalysisDefaultWritingSystem(name);
+			});
+			return poss;
+		}
+
+		private void RemoveNewVariantType(ILexEntryType newType)
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+					Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Remove(newType);
+			});
 		}
 	}
 }

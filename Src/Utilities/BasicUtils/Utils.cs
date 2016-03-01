@@ -884,6 +884,8 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static bool CanWriteKey(this RegistryKey key)
 		{
+			if (key == null)
+				return false;
 			try
 			{
 				(new RegistryPermission(RegistryPermissionAccess.Write, key.Name)).Demand();
@@ -891,7 +893,7 @@ namespace SIL.Utils
 			}
 			catch
 			{
-				// Ignore any errors and return false. One user was getting NullReferenceException here.
+				// Ignore any errors and return false.
 			}
 			return false;
 		}

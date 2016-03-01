@@ -1,16 +1,18 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using XCore;
+using SIL.Utils;
+using SIL.Windows.Forms;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,13 +22,12 @@ namespace SIL.FieldWorks.XWorks
 	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-
 		private readonly PublishToWebonaryController m_controller;
 
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
 		/// </summary>
-		protected Mediator Mediator { get; set; }
+		protected PropertyTable PropertyTable { get; set; }
 
 		public PublishToWebonaryDlg()
 		{
@@ -37,6 +38,12 @@ namespace SIL.FieldWorks.XWorks
 		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, PropertyTable propertyTable)
 		{
 			InitializeComponent();
+
+			// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
+			var additionalMinimumHeightForMono = 26;
+			if (MiscUtils.IsUnix)
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + additionalMinimumHeightForMono);
+
 			m_controller = controller;
 			Model = model;
 			LoadFromModel();
@@ -50,26 +57,66 @@ namespace SIL.FieldWorks.XWorks
 				{}
 			};
 
+			// Restore the location and size from last time we called this dialog.
+			if (PropertyTable != null)
+			{
+				object locWnd = PropertyTable.GetValue<object>("PublishToWebonaryDlg_Location");
+				object szWnd = PropertyTable.GetValue<object>("PublishToWebonaryDlg_Size");
+				if (locWnd != null && szWnd != null)
+				{
+					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
+					ScreenHelper.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
+			}
+
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
-			// the output log area be the vertically growing control when a user increases the height of the dialog.
+			// the output log area be the vertically growing control when a user increases the height of the dialog
 			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+		}
+
+		private void UpdateEntriesToBePublishedLabel()
+		{
+			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel,
+				m_controller.CountDictionaryEntries(), m_controller.CountReversalIndexEntries(GetSelectedReversals()));
 		}
 
 		private void PopulatePublicationsList()
 		{
-			foreach(var pub in Model.Publications)
+			foreach (var pub in Model.Publications)
 			{
 				publicationBox.Items.Add(pub);
 			}
 		}
 
-		private void PopulateConfigurationsList()
+		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			foreach(var config in Model.Configurations.Keys)
+			PopulateConfigurationsListBySelectedPublication();
+		}
+
+		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateEntriesToBePublishedLabel();
+		}
+
+		private void reversalsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateEntriesToBePublishedLabel();
+		}
+
+		private void PopulateConfigurationsListBySelectedPublication()
+		{
+			var selectedConfiguration =
+				Model.Configurations.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			configurationBox.Items.Clear();
+			foreach (var config in selectedConfiguration)
 			{
-				configurationBox.Items.Add(config);
+				configurationBox.Items.Add(config.Value.Label);
 			}
+			if (selectedConfiguration.Count > 0)
+				configurationBox.SelectedIndex = 0;
 		}
 
 		private void PopulateReversalsCheckboxList()
@@ -88,7 +135,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Load the contents of the drop down and checkbox list controls
 				PopulatePublicationsList();
-				PopulateConfigurationsList();
 				PopulateReversalsCheckboxList();
 
 				if(Model.RememberPassword)
@@ -99,6 +145,14 @@ namespace SIL.FieldWorks.XWorks
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
 				SetSelectedReversals(Model.SelectedReversals);
+				if (!String.IsNullOrEmpty(Model.SelectedPublication))
+				{
+					publicationBox.SelectedItem = Model.SelectedPublication;
+				}
+				else
+				{
+					publicationBox.SelectedIndex = 0;
+				}
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
 					configurationBox.SelectedItem = Model.SelectedConfiguration;
@@ -107,20 +161,12 @@ namespace SIL.FieldWorks.XWorks
 				{
 					configurationBox.SelectedIndex = 0;
 				}
-				if(!String.IsNullOrEmpty(Model.SelectedPublication))
-				{
-					publicationBox.SelectedItem = Model.SelectedPublication;
-				}
-				else
-				{
-					publicationBox.SelectedIndex = 0;
-				}
 			}
 		}
 
 		private void SaveToModel()
 		{
-			Model.RememberPassword = rememberPasswordCheckbox.Checked ? true : false;
+			Model.RememberPassword = rememberPasswordCheckbox.Checked;
 			Model.Password = webonaryPasswordTextbox.Text;
 			Model.UserName = webonaryUsernameTextbox.Text;
 			Model.SiteName = webonarySiteNameTextbox.Text;
@@ -172,7 +218,6 @@ namespace SIL.FieldWorks.XWorks
 			m_controller.PublishToWebonary(Model, this);
 		}
 
-
 		private void helpButton_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
@@ -187,6 +232,22 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SaveToModel();
 		}
+
+		/// <summary>
+		/// Save the location and size for next time.
+		/// </summary>
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			if (PropertyTable != null)
+			{
+				PropertyTable.SetProperty("PublishToWebonaryDlg_Location", Location, false);
+				PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Location", true);
+				PropertyTable.SetProperty("PublishToWebonaryDlg_Size", Size, false);
+				PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Size", true);
+			}
+			base.OnClosing(e);
+		}
+
 	}
 
 	/// <summary>

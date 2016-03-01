@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStem">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech"/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinor">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor"/>
+	</layout>
+</LayoutInventory>

@@ -783,8 +783,13 @@
 			<item label="Sorted By Length" boolProperty="SortedByLength"/>
 		</menu>
 		<menu id="PaneBar-ReversalIndicesMenu">
-			<menu id="ReversalIndexPaneMenu" label="_Reversal Indexes" list="ReversalIndexList" behavior="singlePropertyAtomicValue" property="ReversalIndexGuid" icon="MenuWidget"/>
+			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdConfigureDictionary"/>
+			</menu>
 		</menu>
+
 		<menu id="mnuEnvReferenceChoices">
 			<item command="CmdJumpToEnvironmentList"/>
 			<item command="CmdShowEnvironmentErrorMessage"/>

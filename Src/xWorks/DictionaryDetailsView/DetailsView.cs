@@ -17,9 +17,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// </summary>
 	public partial class DetailsView : UserControl, IDictionaryDetailsView
 	{
+		// These are needed to make up for deficiencies in Anchoring to the Bottom in Linux/Mono.
+		readonly int m_deltaStyleLabel;
+		readonly int m_deltaStyleCombo;
+		readonly int m_deltaTextBoxLabel;
+		readonly int m_deltaTextBox;
+
 		public DetailsView()
 		{
 			InitializeComponent();
+
+			// Capture the initial offsets to use in updating when our Height changes.
+			m_deltaStyleLabel = this.Height - labelStyle.Location.Y;
+			m_deltaStyleCombo = this.Height - dropDownStyle.Location.Y;
+			m_deltaTextBoxLabel = this.Height - labelAfter.Location.Y;
+			m_deltaTextBox = this.Height - textBoxAfter.Location.Y;
 
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
@@ -94,13 +106,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_OptionsView.Dispose();
 				}
 				m_OptionsView = value;
-				if(value != null)
+				if(m_OptionsView != null)
 				{
+					m_OptionsView.Dock = DockStyle.Fill;
+					m_OptionsView.Location = new Point(0, 0);
 					panelOptions.Controls.Add(m_OptionsView);
-					value.Dock = DockStyle.Fill;
-					value.Location = new Point(0, 0);
+					// Set the initial size to whatever is available.
+					SetPanelOptionsSize ();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Set the size of the panelOptions control to match what is available.
+		/// </summary>
+		private void SetPanelOptionsSize()
+		{
+			panelOptions.Size = new Size(this.Width - 10, this.Height - (m_deltaStyleLabel + 10));
 		}
 
 		public event EventHandler StyleSelectionChanged
@@ -158,6 +180,56 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					break;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Adjust size or position of controls if needed.  This is needed only on Linux, and then only occasionally,
+		/// according to https://jira.sil.org/browse/LT-16836.  But the code below is safe for all situations so it's
+		/// conditioned only on the presence of the overflow bug.
+		/// </summary>
+		/// <remarks>
+		/// No doubt there's a subtle Mono library bug behind the occasional wierdness that this addresses, but I'm
+		/// not sure it's worth the probably protracted effort to chase it down and fix it.
+		/// </remarks>
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			// We can't know our initial size until we have a parent.  Without this check, the bottom of the edit
+			// boxes was being cut off sometimes on Linux due to premature relocation.
+			if (this.Parent == null)
+				return;
+			var desiredY = this.Height - m_deltaStyleLabel;
+			if (labelStyle.Location.Y != desiredY)
+			{
+				labelStyle.Location = new Point(labelStyle.Location.X, desiredY);
+				SetPanelOptionsSize();
+			}
+			desiredY = this.Height - m_deltaStyleCombo;
+			if (dropDownStyle.Location.Y != desiredY)
+			{
+				dropDownStyle.Location = new Point(dropDownStyle.Location.X, desiredY);
+				buttonStyles.Location = new Point(buttonStyles.Location.X, desiredY);
+			}
+			desiredY = this.Height - m_deltaTextBoxLabel;
+			if (labelAfter.Location.Y != desiredY)
+			{
+				labelBefore.Location = new Point(labelBefore.Location.X, desiredY);
+				labelBetween.Location = new Point(labelBetween.Location.X, desiredY);
+				labelAfter.Location = new Point(labelAfter.Location.X, desiredY);
+			}
+			desiredY = this.Height - m_deltaTextBox;
+			if (textBoxAfter.Location.Y != desiredY)
+			{
+				textBoxBefore.Location = new Point(textBoxBefore.Location.X, desiredY);
+				textBoxBetween.Location = new Point(textBoxBetween.Location.X, desiredY);
+				textBoxAfter.Location = new Point(textBoxAfter.Location.X, desiredY);
+			}
+		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			OnResize(null);
 		}
 	}
 }

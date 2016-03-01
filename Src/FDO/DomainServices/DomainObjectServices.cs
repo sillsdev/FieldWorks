@@ -10,7 +10,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Application;
@@ -2415,6 +2417,93 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			IsDisposed = true;
 		}
 	#endregion
+	}
+	#endregion
+
+	#region ReversalIndexServices class
+	/// <summary>
+	/// Utility services relating to Reversal Indexes
+	/// </summary>
+	public static class ReversalIndexServices
+	{
+
+		/// <summary>
+		/// Create configuration file for analysis writing systems in Reversal Index
+		/// </summary>
+		/// <param name="wsMgr">IWritingSystemManager</param>
+		/// <param name="cache">The FDO cache</param>
+		/// <param name="defaultConfigDir">Default Configuration directory</param>
+		/// <param name="projectsDir">Projects directory</param>
+		/// <param name="originalProjectName">Project Name</param>
+		public static void CreateReversalIndexConfigurationFile(WritingSystemManager wsMgr, FdoCache cache, string defaultConfigDir, string projectsDir, string originalProjectName)
+		{
+			const string configFileExtension = ".fwdictconfig";
+			const string revIndexDir = "ReversalIndex";
+			const string configDir = "ConfigurationSettings";
+			const string allIndexesFileName = "AllReversalIndexes";
+			const string dictConfigElement = "DictionaryConfiguration";
+
+			var wsList = new List<string>();
+			var defaultWsFilePath = Path.Combine(defaultConfigDir, revIndexDir,
+				allIndexesFileName + configFileExtension);
+			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, configDir,
+				revIndexDir);
+			var analysisWsArray = cache.LangProject.AnalysisWss.Trim().Replace("  "," ").Split(' ');
+			if (!Directory.Exists(newWsFilePath))
+				Directory.CreateDirectory(newWsFilePath);
+			//Create new Configuration File
+			foreach (var curWs in analysisWsArray)
+			{
+				if (curWs.ToLower().Contains("audio"))
+					continue;
+
+				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
+				wsList.Add(curWsLabel);
+				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWsLabel + configFileExtension);
+				if (File.Exists(newWsCompleteFilePath))
+					continue;
+
+				File.Copy(defaultWsFilePath, newWsCompleteFilePath, false);
+				File.SetAttributes(newWsCompleteFilePath, FileAttributes.Normal);
+				var xmldoc = XDocument.Load(newWsCompleteFilePath);
+				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
+				xElement.Value = curWsLabel;
+				xmldoc.Save(newWsCompleteFilePath);
+
+				var wsObj = wsMgr.Get(curWs);
+				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
+						cache.ActionHandlerAccessor,
+						() => GetOrCreateWsGuid(wsObj, cache));
+				}
+			}
+			//Delete old Configuration Files for WS's that are no longer part of this project
+			if (!Directory.Exists(newWsFilePath))
+				return;
+			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
+			foreach (var file in files)
+			{
+				var fileName = Path.GetFileNameWithoutExtension(file);
+				if (fileName != null && !fileName.Contains(allIndexesFileName) && !wsList.Any(ws => fileName.Contains(ws)))
+				{
+					File.Delete(file);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Method returns Guid of existing or created writing system
+		/// </summary>
+		/// <param name="wsObj">Writing system Object</param>
+		/// <param name="cache">The FDO cache</param>
+		/// <returns>returns Guid</returns>
+		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, FdoCache cache)
+		{
+			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+		}
 	}
 	#endregion
 }

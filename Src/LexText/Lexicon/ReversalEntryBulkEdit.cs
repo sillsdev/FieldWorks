@@ -84,7 +84,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				try
 				{
-					mediator.SendMessage("InsertReversalIndex_FORCE", null);
 					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 				}
 				catch

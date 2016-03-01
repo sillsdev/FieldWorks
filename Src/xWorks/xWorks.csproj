@@ -321,6 +321,19 @@
     <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.Designer.cs">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.Designer.cs">
+      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryExportService.cs" />
     <Compile Include="IDictionaryListOptionsView.cs" />
     <Compile Include="DictionaryDetailsView\SenseOptionsView.cs">
       <SubType>UserControl</SubType>
@@ -340,6 +353,7 @@
     <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
+    <Compile Include="IDictionaryParagraphOptionsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
@@ -381,6 +395,7 @@
     <Compile Include="ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="FwXApp.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -435,9 +450,6 @@
     <Compile Include="RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -454,6 +466,9 @@
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
@@ -504,6 +519,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ListSenseOptionView.resx">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ParagraphOptionsView.resx">
+      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>

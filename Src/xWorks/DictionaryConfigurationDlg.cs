@@ -4,10 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.Windows.Forms;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,20 +24,67 @@ namespace SIL.FieldWorks.XWorks
 		public event EventHandler ManageConfigurations;
 
 		public event SwitchConfigurationEvent SwitchConfiguration;
+		PropertyTable m_propertyTable;
+
+		private string m_helpTopic;
+		private readonly HelpProvider m_helpProvider;
+		private IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
 		/// When OK or Apply are clicked tell anyone who is listening to do their save.
 		/// </summary>
 		public event EventHandler SaveModel;
 
-		public DictionaryConfigurationDlg()
+		public DictionaryConfigurationDlg(PropertyTable propertyTable)
 		{
+			m_propertyTable = propertyTable;
 			InitializeComponent();
+
 			m_preview.Dock = DockStyle.Fill;
 			m_preview.Location = new Point(0, 0);
 			previewDetailSplit.Panel1.Controls.Add(m_preview);
 			manageConfigs_treeDetailButton_split.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
+			this.MinimumSize = new Size(m_grpConfigurationManagement.Width + 3, manageConfigs_treeDetailButton_split.Height);
+
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			m_helpProvider.SetShowHelp(this, true);
+
+			// Restore the location and size from last time we called this dialog.
+			if (m_propertyTable != null)
+			{
+				object locWnd = m_propertyTable.GetValue<object>("DictionaryConfigurationDlg_Location");
+				object szWnd = m_propertyTable.GetValue<object>("DictionaryConfigurationDlg_Size");
+				if (locWnd != null && szWnd != null)
+				{
+					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					ScreenHelper.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
+			}
+		}
+
+		internal string HelpTopic
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(m_helpTopic))
+				{
+					m_helpTopic = "khtpConfigureDictionary";
+				}
+				return m_helpTopic;
+			}
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					return;
+				m_helpTopic = value;
+				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			}
 		}
 
 		public DictionaryConfigurationTreeControl TreeControl
@@ -129,12 +180,32 @@ namespace SIL.FieldWorks.XWorks
 			SaveModel(sender, e);
 		}
 
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+		}
+
 		private void OnConfigurationChanged(object sender, EventArgs e)
 		{
 			SwitchConfiguration(sender, new SwitchConfigurationEventArgs
 			{
 				ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
 			});
+		}
+
+		/// <summary>
+		/// Save the location and size for next time.
+		/// </summary>
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, false);
+				m_propertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Location", true);
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, false);
+				m_propertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Size", true);
+			}
+			base.OnClosing(e);
 		}
 	}
 }

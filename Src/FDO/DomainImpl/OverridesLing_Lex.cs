@@ -2458,7 +2458,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Virtual property allows Headword to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor MLHeadWord
+		public IMultiAccessorBase MLHeadWord
 		{
 			get
 			{
@@ -3125,6 +3125,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		public IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get { throw new NotImplementedException("hard-coded in ConfiguredXHTMLGenerator"); } }
+
+		/// <summary>
 		/// If this entry is a complex one, the primary lexemes (under which it is shown as a subentry).
 		/// Otherwise empty.
 		/// No PropChanged support as yet.
@@ -3735,20 +3741,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_MLOwnerOutlineNameFlid = Cache.MetaDataCache.GetFieldId("LexSense", "MLOwnerOutlineName", false);
 		}
 
-		internal IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
+		public IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
 		{
 			get
 			{
 				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
 					LexEntryRefTags.kflidComponentLexemes);
+				// We need to use an actual List<> here instead of using yield so that code that calls
+				// this property by reflection can figure out the type of the returned value.
+				var list = new List<ILexEntryRef>();
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
-					if (sequence == null)
-						continue;
-					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
-						yield return sequence.MainObject as ILexEntryRef;
+					if (sequence != null && sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
+						list.Add(sequence.MainObject as ILexEntryRef);
 				}
+				return list;
 			}
 		}
 
@@ -9364,12 +9372,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		private ICmObject Item { get; set; }
 
-		public int EntryHvo
+		public Guid EntryGuid
 		{
 			get
 			{
 				var entry = Item as ILexEntry;
-				return entry != null ? entry.Hvo : ((ILexSense)Item).Entry.Hvo;
+				return entry != null ? entry.Guid : ((ILexSense)Item).Entry.Guid;
 			}
 		}
 

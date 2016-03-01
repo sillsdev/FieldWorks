@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -18,6 +20,7 @@ using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -153,12 +156,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_mediator.AddColleague(this);
 
 			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<CoreWritingSystemDefinition>();
 			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
-				var ws = cache.ServiceLocator.WritingSystemManager.get_Engine(rev.WritingSystem);
-				usedWses.Add((CoreWritingSystemDefinition) ws);
+				usedWses.Add(wsMgr.Get(rev.WritingSystem));
 				if (rev.PartsOfSpeechOA == null)
 					rev.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				rev.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
@@ -175,7 +178,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					corruptReversalIndices.Add(rev);
 					continue;
 				}
-				CoreWritingSystemDefinition revWs = cache.ServiceLocator.WritingSystemManager.Get(rev.WritingSystem);
+				var revWs = wsMgr.Get(rev.WritingSystem);
 				// TODO WS: is DisplayLabel the right thing to use here?
 				rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
 			}
@@ -187,15 +190,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			// Set up for the reversal index combo box or dropdown menu.
-			Guid firstGuid = Guid.Empty;
-			List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-			if (reversalIds.Count > 0)
-				firstGuid = reversalIds[0].Guid;
-			else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
-				firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
-			if (firstGuid != Guid.Empty)
+			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
+			if (reversalIndexGuid == Guid.Empty)
 			{
-				SetReversalIndexGuid(firstGuid);
+				// We haven't established the reversal index yet.  Choose the first one available.
+				Guid firstGuid = Guid.Empty;
+				List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+				if (reversalIds.Count > 0)
+					firstGuid = reversalIds[0].Guid;
+				else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+					firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
+				if (firstGuid != Guid.Empty)
+				{
+					SetReversalIndexGuid(firstGuid);
+				}
 			}
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
@@ -323,52 +331,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			display.List.Clear();
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var lp = m_propertyTable.GetValue<FdoCache>("cache").LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)
-			//IReversalIndex riOwner = this.IReversalIndex;
-			foreach (IReversalIndex ri in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
+			// But only for analysis wss
+			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC
+										  where lp.AnalysisWss.Contains(ri.WritingSystem)
+										  select ri)
 			{
 				display.List.Add(ri.ShortName, ri.Guid.ToString(), null, null);
 			}
 			display.List.Sort();
 			return true; // We handled this, no need to ask anyone else.
 		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument"></param>
-		public virtual bool OnInsertReversalIndex_FORCE(object argument)
-		{
-			CheckDisposed();
-
-			Guid newGuid = CreateNewReversalIndex(false);
-			if (newGuid != Guid.Empty)
-			{
-				SetReversalIndexGuid(newGuid);
-			}
-			return true;
-		}
-
-		private Guid CreateNewReversalIndex(bool allowCancel)
-		{
-			using (var dlg = new CreateReversalIndexDlg())
-			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
-				dlg.Init(cache, allowCancel);
-				// Don't bother if all languages already have a reversal index!
-				if (dlg.PossibilityCount > 0)
-				{
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						int hvo = dlg.NewReversalIndexHvo;
-						return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).Guid;
-					}
-				}
-			}
-			return Guid.Empty;
-		}
-
 		#endregion Reversal Index Combo
 
 		/// <summary>
@@ -435,7 +409,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
-			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
+			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
+
+			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
+			// exist, code elsewhere will make up for it.
+			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
+				ri.ShortName + DictionaryConfigurationModel.FileExtension);
 			m_propertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true);
 
 			ICmObject newOwningObj = NewOwningObject(ri);
@@ -464,7 +444,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 										@"ReversalEntriesBulkEdit");
 				var doc = new XmlDocument();
 				doc.Load(Path.Combine(path, @"toolConfiguration.xml"));
-				var columnNode = doc.SelectSingleNode(@"//column[@label='Form']");
+				var columnNode = doc.SelectSingleNode(@"//column[@label='Reversal Form']");
 				return columnNode;
 			}
 		}
@@ -632,19 +612,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return Guid.Empty;
 			if (Cache.LanguageProject.LexDbOA == null)
 				return Guid.Empty;
-			using (CreateReversalIndexDlg dlg = new CreateReversalIndexDlg())
-			{
-				dlg.Init(Cache);
-				// Don't bother if all languages already have a reversal index!
-				if (dlg.PossibilityCount > 0)
-				{
-					if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-					{
-						int hvo = dlg.NewReversalIndexHvo;
-						return Cache.ServiceLocator.GetObject(hvo).Guid;
-					}
-				}
-			}
 			return Guid.Empty;
 		}
 

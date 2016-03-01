@@ -14,12 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 
 // Add additional methods/properties to domain object in this file.
@@ -1244,6 +1245,15 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase MLHeadWord
+		{
+			get;
+		}
+
 		/// <summary/>
 		IMoMorphType PrimaryMorphType
 		{
@@ -1320,6 +1330,12 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntryRef> ComplexFormEntryRefs { get; }
+
+		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get; }
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
@@ -5868,9 +5884,9 @@ namespace SIL.FieldWorks.FDO
 	public interface ISenseOrEntry
 	{
 		/// <summary>
-		/// The Hvo if LexEntry; the owning entry's Hvo if LexSense
+		/// The Guid if LexEntry; the owning entry's Guid if LexSense
 		/// </summary>
-		int EntryHvo { get; }
+		Guid EntryGuid { get; }
 
 		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense

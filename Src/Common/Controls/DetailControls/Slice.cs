@@ -748,7 +748,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Control != null && Control is INotifyControlInCurrentSlice)
+			if (Control != null && Control is INotifyControlInCurrentSlice && !BeingDiscarded)
 				(Control as INotifyControlInCurrentSlice).SliceIsCurrent = isCurrent;
 			if (TreeNode != null)
 				TreeNode.Invalidate();
@@ -3020,6 +3020,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual void AboutToDiscard()
 		{
 			CheckDisposed();
+			BeingDiscarded = true;	// Remember that we're going away in case we need to know this for subsequent method calls.
 		}
+
+		/// <summary>
+		/// Flag whether this slice is in the process of being thrown away.
+		/// </summary>
+		private bool BeingDiscarded { get; set; }
 	}
 }

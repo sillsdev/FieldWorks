@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2014-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,6 +72,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public const int kwsFirstVernOrNamed = -17;
 		/// <summary> One beyond the last magic value.</summary>
 		public const int kwsLim = -18;
+
+		/// <summary>
+		/// Somebody has to tell us the current reversal writing system, or we don't have a clue.
+		/// </summary>
+		/// <value>The current reversal writing system identifier.</value>
+		public static int CurrentReversalWsId { get; set; }
 
 		/// <summary>
 		/// Gets text properties used to display the abbreviation of a writing system in a multi-string editor.
@@ -988,11 +994,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					break;
 				}
 				case(kwsReversalIndex):
-				case(kwsAllReversalIndex):
 				{
-					retWs = defaultReversalWs;
+					// We need the current reversal writing system, not the default one! (see LT-16851)
+					if (CurrentReversalWsId > 0)
+						retWs = CurrentReversalWsId;
+					else if (flid != 0 && hvo != 0)
+						retWs = GetStringFromWsCollection(out retTss, writingSystems.CurrentAnalysisWritingSystems, hvo, flid, sda);
+					if (retWs == 0)
+						retWs = defaultReversalWs;
 					break;
 				}
+				case(kwsAllReversalIndex):
+					retWs = defaultReversalWs;
+					break;
 				default:
 					retWs = ws;
 					break;
@@ -1483,7 +1497,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				wsIds =
 					(from item in wsIds select (item.Equals(origWsId, StringComparison.OrdinalIgnoreCase) ? newWsId : item)).ToArray();
 			}
-			var newVal = string.Join(" ", wsIds);
+			var newVal = string.Join(" ", wsIds.Where(x => x != null));
 			cache.DomainDataByFlid.set_UnicodeProp(obj.Hvo, flid, newVal.Length == 0 ? null : newVal);
 		}
 

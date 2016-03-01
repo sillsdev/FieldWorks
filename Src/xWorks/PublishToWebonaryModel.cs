@@ -1,4 +1,4 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -49,10 +49,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (!String.IsNullOrEmpty(m_selectedConfiguration))
+				if (!string.IsNullOrEmpty(m_selectedConfiguration))
 					return m_selectedConfiguration;
-				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
-				return Configurations.Values.First(config => pathToCurrentConfiguration.Equals(config.FilePath)).Label;
+				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable,
+					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
+				return curConfig == null ? null : curConfig.Label;
 			}
 			set { m_selectedConfiguration = value; }
 		}
@@ -93,6 +95,8 @@ namespace SIL.FieldWorks.XWorks
 			return decryptMe;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "projectSettings is a reference")]
 		private void LoadFromSettings()
 		{
 			if(!string.IsNullOrEmpty(CoreImpl.Properties.Settings.Default.WebonaryPass))
@@ -110,6 +114,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "projectSettings is a reference")]
 		internal void SaveToSettings()
 		{
 			CoreImpl.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;

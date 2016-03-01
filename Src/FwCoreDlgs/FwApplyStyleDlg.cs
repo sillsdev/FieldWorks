@@ -214,14 +214,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, helpTopic);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the m_btnHelp control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void m_mnuResetStyle_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show("About to reset " + m_lstStyles.SelectedItem);

@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.XWorks
 		private void OnShowDialog(object sender, EventArgs eventArgs)
 		{
 			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
+			_view.configurationsListView.BeforeLabelEdit += OnBeforeLabelEdit;
 			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.copyButton.Click += OnCopyConfiguration;
@@ -167,6 +168,13 @@ namespace SIL.FieldWorks.XWorks
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
 			else
 				_view.configurationsListView.Items[0].Selected = true;
+		}
+
+		private void OnBeforeLabelEdit(object sender, LabelEditEventArgs args)
+		{
+			_view.copyButton.Enabled = false;
+			_view.removeButton.Enabled = false;
+			_view.closeButton.Enabled = false;
 		}
 
 		/// <summary>
@@ -190,6 +198,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.Enabled = true;
 			_view.copyButton.Enabled = true;
 			_view.removeButton.Enabled = true;
+			_view.closeButton.Enabled = true;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{

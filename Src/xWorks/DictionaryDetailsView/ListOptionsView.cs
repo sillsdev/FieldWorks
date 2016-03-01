@@ -27,6 +27,28 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			buttonDown.Image = (Image)resources.GetObject("moveDown.Image");
 		}
 
+#if __MonoCS__
+		/// <summary>
+		/// Adjust the location of the checkBoxDisplayOption and the height of the listView properly as the
+		/// size of the ListOptionsView changes.  (The Mono runtime library does not do this properly for some
+		/// reason even though the Anchor values and initial Location and Size values are reasonable.  See
+		/// https://jira.sil.org/browse/LT-16437 "[Linux] 'Display WS abbreviations' check box is missing on
+		/// 'Dictionary configure' view dialog box".)
+		/// </summary>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			if (checkBoxDisplayOption.Location.Y + checkBoxDisplayOption.Height > this.Height)
+			{
+				var checkBoxTop = this.Height - checkBoxDisplayOption.Height;
+				checkBoxDisplayOption.Location = new Point(checkBoxDisplayOption.Location.X, checkBoxTop);
+				var listViewBottom = checkBoxTop - 3;	// Allow a little space between the listview and checkbox.
+				if (listView.Location.Y + listView.Height > listViewBottom)
+					listView.Size = new Size(listView.Width, listViewBottom - listView.Location.Y);
+			}
+		}
+#endif
+
 		//
 		// User configuration properties
 		//

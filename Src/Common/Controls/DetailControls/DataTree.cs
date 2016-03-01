@@ -769,26 +769,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void Reset()
 		{
 			CheckDisposed();
-			// Get rid of all the slices...makes sure none of them can keep focus (e.g., see LT-11348)
-			var slices = Slices.ToArray();
-			foreach (var slice in slices) //inform all the slices they are about to be discarded, remove the trees handler from them
+			var savedLayoutState = m_layoutState;
+			m_layoutState = LayoutStates.klsClearingAll;
+			try
 			{
-				slice.AboutToDiscard();
-				slice.SplitCont.SplitterMoved -= slice_SplitterMoved;
-			}
-			Controls.Clear(); //clear the controls
-			Slices.Clear(); //empty the slices collection
-			foreach (var slice in slices) //make sure the slices don't think they are active, dispose them
-			{
-				slice.SetCurrentState(false);
-				slice.Dispose();
-			}
-			m_currentSlice = null; //no more current slice
-			// A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
-			if (m_tooltip != null)
-				m_tooltip.RemoveAll();
+				// Get rid of all the slices...makes sure none of them can keep focus (e.g., see LT-11348)
+				var slices = Slices.ToArray();
+				foreach (var slice in slices) //inform all the slices they are about to be discarded, remove the trees handler from them
+				{
+					slice.AboutToDiscard();
+					slice.SplitCont.SplitterMoved -= slice_SplitterMoved;
+				}
+				Controls.Clear(); //clear the controls
+				Slices.Clear(); //empty the slices collection
+				foreach (var slice in slices) //make sure the slices don't think they are active, dispose them
+				{
+					slice.SetCurrentState(false);
+					slice.Dispose();
+				}
+				m_currentSlice = null; //no more current slice
+				// A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
+				if (m_tooltip != null)
+					m_tooltip.RemoveAll();
 
-			m_root = null;
+				m_root = null;
+			}
+			finally
+			{
+				m_layoutState = savedLayoutState;
+			}
 		}
 
 		private void ResetRecordListUpdater()

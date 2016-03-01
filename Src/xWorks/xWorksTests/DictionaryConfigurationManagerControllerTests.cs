@@ -314,11 +314,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
-			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root.xml");
+			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + DictionaryConfigurationModel.FileExtension);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "shipped root default configuration file contents", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
-			configurationToDelete.FilePath = Path.Combine("whateverdir","Root.xml");
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + DictionaryConfigurationModel.FileExtension);
 			configurationToDelete.Label = "customizedLabel";
 
 			var pathToConfiguration = configurationToDelete.FilePath;
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.XWorks
 			var configuration = new DictionaryConfigurationModel
 			{
 				Label = "configuration",
-				FilePath = Path.Combine("whateverdir", "somefile.xml")
+				FilePath = Path.Combine("whateverdir", "somefile" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 			var configuration = new DictionaryConfigurationModel
 			{
 				Label = "configuration",
-				FilePath = Path.Combine("whateverdir", "Root.xml")
+				FilePath = Path.Combine("whateverdir", "Root" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT

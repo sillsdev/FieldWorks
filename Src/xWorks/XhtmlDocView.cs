@@ -4,13 +4,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
@@ -25,6 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private XWebBrowser m_mainView;
 		private DictionaryPublicationDecorator m_pubDecorator;
+		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -44,6 +49,193 @@ namespace SIL.FieldWorks.XWorks
 				Clerk.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
+
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser != null)
+			{
+				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
+				if (clerk == "entries" || clerk == "AllReversalEntries")
+				{
+					browser.DomClick += OnDomClick;
+					browser.DomKeyPress += OnDomKeyPress;
+					browser.DocumentCompleted += OnDocumentCompleted;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Handle a key press in the web browser displaying the xhtml. [TODO: LT-xxxxx]
+		/// </summary>
+		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
+		{
+			System.Diagnostics.Debug.WriteLine(String.Format(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e));
+		}
+
+		/// <summary>
+		/// Handle a mouse click in the web browser displaying the xhtml.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
+		private void OnDomClick(object sender, DomMouseEventArgs e)
+		{
+			CloseContextMenuIfOpen();
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser == null)
+				return;
+			var element = browser.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
+			if (element == null || element.TagName == "html")
+				return;
+			if (e.Button == GeckoMouseButton.Left)
+			{
+				// Select the entry represented by the current element.  [LT-16982]
+				HandleDomLeftClick(e, element);
+			}
+			else if (e.Button == GeckoMouseButton.Right)
+			{
+				HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
+			}
+		}
+
+		/// <summary>
+		/// Set the style attribute on the current entry to color the background after document completed.
+		/// </summary>
+		private void OnDocumentCompleted(object sender, EventArgs e)
+		{
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser != null)
+			{
+				CloseContextMenuIfOpen();
+				SetActiveSelectedEntryOnView(browser);
+			}
+		}
+
+		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
+		{
+			Guid topLevelGuid;
+			GetClassListFromGeckoElement(element, out topLevelGuid);
+			if (topLevelGuid != Guid.Empty)
+				Clerk.JumpToRecord(topLevelGuid);
+			e.Handled = true;
+		}
+
+		/// <summary>
+		/// Pop up a menu to allow the user to start the document configuration dialog, and
+		/// start the dialog at the configuration node indicated by the current element.
+		/// </summary>
+		/// <remarks>
+		/// This is static so that the method can be shared with XhtmlRecordDocView.
+		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
+			GeckoElement element, Mediator mediator, string configObjectName)
+		{
+			Guid topLevelGuid;
+			var classList = GetClassListFromGeckoElement(element, out topLevelGuid);
+			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
+			s_contextMenu = new ContextMenuStrip();
+			var item = new ToolStripMenuItem(label);
+			s_contextMenu.Items.Add(item);
+			item.Click += RunConfigureDialogAt;
+			item.Tag = new object[] { mediator, classList, topLevelGuid };
+			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
+			s_contextMenu.Closed += m_contextMenu_Closed;
+			e.Handled = true;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "elem does NOT need to be disposed locally!")]
+		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid)
+		{
+			topLevelGuid = Guid.Empty;
+			var classList = new List<string>();
+			for (var elem = element; elem != null; elem = elem.ParentElement)
+			{
+				if (elem.TagName == "body" || elem.TagName == "html")
+					break;
+				var className = elem.GetAttribute("class");
+				if (string.IsNullOrEmpty(className))
+					continue;
+				if (className == "letHead")
+					break;
+				if (elem.TagName == "div")
+				{
+						// handle original configuration nodes
+					if (className == "entry" || className == "minorentrycomplex" || className == "minorentryvariant" || className == "reversalindexentry" ||
+						// handle duplicated configuration nodes
+						className.StartsWith("entry_") || className.StartsWith("minorentrycomplex_") || className.StartsWith("minorentryvariant_") || className.StartsWith("reversalindexentry_"))
+					{
+						topLevelGuid = GetGuidFromGeckoDomElement(elem);
+					}
+				}
+				classList.Insert(0, className);
+			}
+			return classList;
+		}
+
+		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
+		{
+			if (!element.HasAttribute("id"))
+				return Guid.Empty;
+
+			var idVal = element.GetAttribute("id");
+			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));
+		}
+
+		/// <summary>
+		/// Close and delete the context menu if it exists.  This appears to be needed (at least on Linux)
+		/// if the user clicks somewhere in the browser other than the menu.
+		/// </summary>
+		internal static void CloseContextMenuIfOpen()
+		{
+			if (s_contextMenu != null)
+			{
+				s_contextMenu.Close();
+				DisposeContextMenu(null, null);
+			}
+		}
+
+		private static void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		{
+			Application.Idle += DisposeContextMenu;
+		}
+
+		private static void DisposeContextMenu(object sender, EventArgs e)
+		{
+			Application.Idle -= DisposeContextMenu;
+			if (s_contextMenu != null)
+			{
+				s_contextMenu.Dispose();
+				s_contextMenu = null;
+			}
+		}
+
+		// Context menu exists just for one invocation (until idle).
+		private static ContextMenuStrip s_contextMenu;
+
+		private static void RunConfigureDialogAt(object sender, EventArgs e)
+		{
+			var item = (ToolStripMenuItem)sender;
+			var tagObjects = item.Tag as object[];
+			var propertyTable = tagObjects[0] as PropertyTable;
+			var mediator = tagObjects[1] as Mediator;
+			var classList = tagObjects[2] as List<string>;
+			var guid = (Guid)tagObjects[3];
+			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
+			{
+				var cache = propertyTable.GetValue<FdoCache>("cache");
+				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				ICmObject current = null;
+				if (guid != Guid.Empty && cache != null)
+					current = cache.ServiceLocator.GetObject(guid);
+				else if (clerk != null)
+					current = clerk.CurrentObject;
+				var controller = new DictionaryConfigurationController(dlg, propertyTable, current);
+				controller.SetStartingNode(classList);
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
+				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
+				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
+			}
+			mediator.SendMessage("MasterRefresh", null);
 		}
 
 		public override int Priority
@@ -66,14 +258,18 @@ namespace SIL.FieldWorks.XWorks
 			// Grab the selected publication and make sure that we grab a valid configuration for it.
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
-			var pubName = GetCurrentPublication();
-			var currentConfig = GetCurrentConfiguration();
-			var validConfiguration = GetValidConfigurationForPublication(pubName);
-			if(validConfiguration != currentConfig)
-			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
-			}
+			var validConfiguration = SetCurrentDictionaryPublicationLayout();
 			UpdateContent(PublicationDecorator, validConfiguration);
+		}
+
+		private string SetCurrentDictionaryPublicationLayout()
+		{
+			var pubName = GetCurrentPublication();
+			var currentConfiguration = GetCurrentConfiguration(false);
+			var validConfiguration = GetValidConfigurationForPublication(pubName);
+			if(validConfiguration != currentConfiguration)
+				SetCurrentConfiguration(validConfiguration, false);
+			return validConfiguration;
 		}
 
 		/// <summary>
@@ -85,7 +281,7 @@ namespace SIL.FieldWorks.XWorks
 			List<string> inConfig;
 			List<string> notInConfig;
 			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-														GetCurrentConfiguration(),
+														GetCurrentConfiguration(false),
 														out inConfig, out notInConfig);
 			foreach(var pub in inConfig)
 			{
@@ -287,8 +483,8 @@ namespace SIL.FieldWorks.XWorks
 		internal string GetValidConfigurationForPublication(string publication)
 		{
 			if(publication == xWorksStrings.AllEntriesPublication)
-				return GetCurrentConfiguration();
-			var currentConfig = GetCurrentConfiguration();
+				return GetCurrentConfiguration(false);
+			var currentConfig = GetCurrentConfiguration(false);
 			var allConfigurations = GatherBuiltInAndUserConfigurations();
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
@@ -313,24 +509,30 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "SelectedPublication":
 					var pubDecorator = PublicationDecorator;
-					var pubName = GetCurrentPublication();
-					var currentConfiguration = GetCurrentConfiguration();
-					var validConfiguration = GetValidConfigurationForPublication(pubName);
-					if(validConfiguration != currentConfiguration)
-					{
-						m_propertyTable.SetProperty("DictionaryPublicationLayout", validConfiguration, true);
-					}
+					var validConfiguration = SetCurrentDictionaryPublicationLayout();
 					UpdateContent(pubDecorator, validConfiguration);
 					break;
 				case "DictionaryPublicationLayout":
-					var currentConfig = GetCurrentConfiguration();
+				case "ReversalIndexPublicationLayout":
+					var currentConfig = GetCurrentConfiguration(false);
+					if (name == "ReversalIndexPublicationLayout")
+						currentConfig = GetCurrentConfigForReversalIndex(currentConfig);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if(validPublication != currentPublication)
 					{
-						m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
+						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
+					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
+					break;
+				case "ActiveClerkSelectedObject":
+					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+					if (browser != null)
+					{
+						RemoveStyleFromPreviousSelectedEntryOnView(browser);
+						SetActiveSelectedEntryOnView(browser);
+					}
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
@@ -338,12 +540,85 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Remove the style from the previously selected entry.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
+		private void RemoveStyleFromPreviousSelectedEntryOnView(GeckoWebBrowser browser)
+		{
+			if (string.IsNullOrEmpty(m_selectedObjectID))
+			{
+				return;
+			}
+			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
+			if (prevSelectedByGuid != null)
+			{
+				prevSelectedByGuid.RemoveAttribute("style");
+			}
+		}
+
+		/// <summary>
+		/// Set the style attribute on the current entry to color the background.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
+		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
+		{
+			if (Clerk.CurrentObject == null)
+				return;
+			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
+			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
+			if (currSelectedByGuid != null)
+			{
+				currSelectedByGuid.ScrollIntoView(true);
+				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
+				m_selectedObjectID = currentObjectGuid;
+			}
+		}
+
+		/// <summary>
+		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
+		/// </summary>
+		/// <param name="currentConfig">Configuration from ReversalIndexPublicationLayout, Which may be default</param>
+		/// <returns></returns>
+		private string GetCurrentConfigForReversalIndex(string currentConfig)
+		{
+			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
+			var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
+			{
+				currentConfig = allConfigurations[currentReversalIndex.ShortName];
+				SetCurrentConfiguration(currentConfig, false);
+				SetReversalIndexOnPropertyDlg();
+			}
+			return currentConfig;
+		}
+
+
+		/// <summary>
+		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
+		/// </summary>
+		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
+		{
+			var currWsPath = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+			var currWsName = Path.GetFileNameWithoutExtension(currWsPath);
+			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
+			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.DisplayLabel == currWsName);
+			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
+				return;
+			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+			var revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
+			m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
+			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+		}
+
 		public void OnMasterRefresh(object sender)
 		{
-			var currentConfig = GetCurrentConfiguration();
+			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-			if (validPublication != currentPublication)
+			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
 			{
 				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
@@ -367,21 +642,72 @@ namespace SIL.FieldWorks.XWorks
 		private void UpdateContent(DictionaryPublicationDecorator publicationDecorator, string configurationFile)
 		{
 			SetInfoBarText();
-			if(String.IsNullOrEmpty(configurationFile))
+			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
+			if (String.IsNullOrEmpty(configurationFile))
 			{
-				m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", xWorksStrings.NoConfigsMatchPub);
-				return;
+				htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
 			}
+			else
+			{
+				using (new WaitCursor(this.ParentForm))
+				{
+					using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
+					{
+						progressDlg.AllowCancel = false;
+						progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
+						var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
+						if (xhtmlPath != null)
+						{
+							m_mainView.Url = new Uri(xhtmlPath);
+							m_mainView.Refresh (WebBrowserRefreshOption.Completely);
+							return;
+						}
+					}
+				}
+			}
+			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
+			return;
+		}
+
+		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
+		{
+			if (args.Length != 2)
+				return null;
+			var publicationDecorator = (DictionaryPublicationDecorator)args[0];
+			var configurationFile = (string)args[1];
+			if (progress != null)
+				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk);
-			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", Path.GetFileNameWithoutExtension(configurationFile));
+			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
+			var baseName = MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
+			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
 			var cssPath = basePath + ".css";
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath);
-			m_mainView.Url = new Uri(xhtmlPath);
-			m_mainView.Refresh(WebBrowserRefreshOption.Completely);
+			var start = DateTime.Now;
+			if (progress != null)
+			{
+				progress.Minimum = 0;
+				var entryCount = entriesToPublish.Count();
+				progress.Maximum = entryCount + 1 + entryCount / 100;
+				progress.Position++;
+			}
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath, progress);
+			var end = DateTime.Now;
+			System.Diagnostics.Debug.WriteLine(String.Format("saving xhtml/css took {0}", end - start));
+			return xhtmlPath;
+		}
+
+		/// <summary>
+		/// Interpreting the xhtml, gecko doesn't load css files with a # character in it.  (probably because it carries meaning in a URL)
+		/// It's probably safe to assume that : and ? characters would also cause problems.
+		/// </summary>
+		public static string MakeFilenameSafeForHtml(string name)
+		{
+			if (name == null)
+				return String.Empty;
+			return name.Replace('#', '-').Replace('?', '-').Replace(':', '-');
 		}
 
 		private string GetCurrentPublication()
@@ -391,9 +717,14 @@ namespace SIL.FieldWorks.XWorks
 			 xWorksStrings.AllEntriesPublication);
 		}
 
-		private string GetCurrentConfiguration()
+		private string GetCurrentConfiguration(bool fUpdate)
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable);
+			return DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, fUpdate);
+		}
+
+		private void SetCurrentConfiguration(string currentConfig, bool fUpdate)
+		{
+			DictionaryConfigurationListener.SetCurrentConfiguration(m_propertyTable, currentConfig, fUpdate);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator
@@ -432,7 +763,7 @@ namespace SIL.FieldWorks.XWorks
 			var maxViewWidth = Width/2 - kSpaceForMenuButton;
 			var allConfigurations = GatherBuiltInAndUserConfigurations();
 			string curViewName;
-			var currentConfig = GetCurrentConfiguration();
+			var currentConfig = GetCurrentConfiguration(false);
 			if(allConfigurations.ContainsValue(currentConfig))
 			{
 				curViewName = allConfigurations.First(item => item.Value == currentConfig).Key;
@@ -454,20 +785,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(m_informationBar == null)
 				return;
-
 			var titleStr = GetBaseTitleStringFromConfig();
-			if(titleStr == string.Empty)
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable) == "Reversal Index";
+			if (isReversalIndex && Clerk.OwningObject != null && Clerk.OwningObject.ShortName != null)
+				titleStr = Clerk.OwningObject.ShortName;
+			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				return;
 			}
-			// Set the configuration part of the title
-			SetConfigViewTitle();
-			//Set the publication part of the title
-			var pubNameTitlePiece = GetCurrentPublication();
-			if(pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
-				pubNameTitlePiece = xWorksStrings.ksAllEntries;
-			titleStr = pubNameTitlePiece + " " + titleStr;
+			if (!isReversalIndex)
+			{
+				// Set the configuration part of the title
+				SetConfigViewTitle();
+				//Set the publication part of the title
+				var pubNameTitlePiece = GetCurrentPublication();
+				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
+					pubNameTitlePiece = xWorksStrings.ksAllEntries;
+				titleStr = pubNameTitlePiece + " " + titleStr;
+			}
 			((IPaneBar)m_informationBar).Text = titleStr;
 		}
 

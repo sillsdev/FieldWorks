@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -31,14 +32,14 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Inventory m_partInventory;
 		private Mediator m_mediator;
 		private readonly PropertyTable m_propertyTable;
-		private readonly SimpleLogger m_logger = new SimpleLogger();
+		private SimpleLogger m_logger;
 		/// <summary>
 		/// The innermost directory of the configurations presently being migrated.
 		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
 		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
 		/// interfaces, so we store it as a member variable.
 		/// </summary>
-		private string m_configDirSuffixBeingMigrated;
+		internal string m_configDirSuffixBeingMigrated;
 		/// <summary>
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
 		/// Value is Dictionary of custom fields: Key is custom field Label, Value is custom field Name
@@ -65,41 +66,48 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void MigrateOldConfigurationsIfNeeded()
 		{
-			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-			if (ConfigsNeedMigrating())
+			using (m_logger = new SimpleLogger())
 			{
-				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
-					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
+				if (ConfigsNeedMigrating())
+				{
+					m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
+						versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+					var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
-				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
-				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}", DateTime.Now.ToString("h:mm:ss")));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					m_logger.WriteLine("Migrating dictionary configurations");
+					m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
+					Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
+						Cache.ActionHandlerAccessor,
+						() =>
+						{
+							var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
+							LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+						});
+					m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
+						DateTime.Now.ToString("h:mm:ss")));
+					m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+					Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
+						Cache.ActionHandlerAccessor,
+						() =>
+						{
+							var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
+							LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+						});
+				}
+				if (m_logger.HasContent)
+				{
+					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
+						DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					Directory.CreateDirectory(configurationDir);
+					File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+				}
 			}
-			if(m_logger.HasContent)
-			{
-				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
-					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-				Directory.CreateDirectory(configurationDir);
-				File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
-			}
+			m_logger = null;
 		}
 
 		public void LogConversionError(string errorLog)
@@ -125,6 +133,7 @@ namespace SIL.FieldWorks.XWorks
 		/// In the old system, Dictionary and Reversal Index configurations were stored across a hairball of *.fwlayout files. Rather than trying to
 		/// determine what the user has configured, if the user has configured anything, migrate everything.
 		/// </summary>
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal bool ConfigsNeedMigrating()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
@@ -183,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and fill in data that we did not convert for some reason. It will use the current shipping
 		/// default model for the layout which the old model used. (eg. publishStem)
 		/// </summary>
-		private void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
+		internal void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
 			if(convertedModel.Version == -1)
 			{
@@ -208,14 +217,13 @@ namespace SIL.FieldWorks.XWorks
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						break;
 					}
-					case "publishReversal" :
+					case "publishReversal":
 					{
 						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-						// TODO:
-						//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
-						return;
+						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+						break;
 					}
-					default :
+					default:
 					{
 						// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
 						// We will write out the new configuration to a file which uses what the user named it but preserving the integer
@@ -233,13 +241,27 @@ namespace SIL.FieldWorks.XWorks
 							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						}
-						else if(layout.StartsWith("publishReversal")) // probably a reversal index for a specific language
+						else if(layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
 						{
-							var customFileName = string.Format("{0}{1}", layout, extension); // TODO pH 2015.07: better name
+							// Label similar to publishReversal-en#Engli704, including one or both suffixes
+							var languageSuffixIndex = layout.IndexOf('-') + 1;
+							string reversalIndex;
+							if (languageSuffixIndex > 0)
+							{
+								var languageCode = customSuffixIndex > 0
+									? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
+									: layout.Substring(languageSuffixIndex);
+								reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
+							}
+							else
+							{
+								reversalIndex = "AllReversalIndexes";
+							}
+							var customFileName = customSuffixIndex > 0
+								? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
+								: string.Format("{0}{1}", reversalIndex, extension);
 							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-							return;
-							// TODO:
-							//currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 						}
 						else
 							throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
@@ -250,13 +272,85 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
 		{
-			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], convertedModel.Version);
+			var ver = convertedModel.Version;
+			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver);
 			for(var i = 1; i < convertedModel.Parts.Count; ++i)
 			{
-				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry node
-				CopyDefaultsIntoConfigNode(convertedModel.Parts[i], currentDefaultModel.Parts[1], convertedModel.Version);
+				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry nodes,
+				// split into Complex Forms and Variants
+				var currentDefaultComplexNode = currentDefaultModel.Parts[1];
+				var currentDefaultVariantNode = currentDefaultModel.Parts[2];
+
+				var convertedNode = convertedModel.Parts[i];
+				var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;
+				var hasComplexTypesSelected = HasComplexFormTypesSelected(selectedMinorEntryTypes);
+				var hasVariantTypesSelected = HasVariantTypesSelected(selectedMinorEntryTypes);
+				// We should create a Complex Forms node if this is the original (non-duplicate) node, if the user has selected at least one
+				// Complex Form Type, or if the user has not selected any Types for display--otherwise this node would disappear entirely!
+				var shouldCreateComplexNode = !convertedNode.IsDuplicate || hasComplexTypesSelected || !hasVariantTypesSelected;
+				var shouldCreateVariantNode = !convertedNode.IsDuplicate || hasVariantTypesSelected || !hasComplexTypesSelected;
+				if (shouldCreateComplexNode && shouldCreateVariantNode)
+				{
+					var convertedComplexNode = convertedNode;
+					var convertedVariantNode = convertedNode.DeepCloneUnderSameParent();
+					convertedModel.Parts.Insert(++i, convertedVariantNode);
+					CopyDefaultsIntoMinorEntryNode(convertedComplexNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
+					CopyDefaultsIntoMinorEntryNode(convertedVariantNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
+				}
+				else if (shouldCreateComplexNode)
+				{
+					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
+				}
+				else // if (shouldCreateVariantNode)
+				{
+					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
+				}
+			}
+		}
+
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
+		internal void CopyDefaultsIntoMinorEntryNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode,
+			DictionaryNodeListOptions.ListIds complexOrVariant, int version)
+		{
+			convertedNode.Label = currentDefaultNode.Label;
+			var nodeOptions = (DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions;
+			nodeOptions.ListId = complexOrVariant;
+			var availableOptions = complexOrVariant == DictionaryNodeListOptions.ListIds.Complex ? AvailableComplexFormTypes : AvailableVariantTypes;
+			nodeOptions.Options = nodeOptions.Options.Where(option => availableOptions.Contains(option.Id)).ToList();
+			CopyDefaultsIntoConfigNode(convertedNode, currentDefaultNode, version);
+		}
+
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
+		internal bool HasComplexFormTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		{
+			return AvailableComplexFormTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
+		}
+
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
+		internal IEnumerable<string> AvailableComplexFormTypes
+		{
+			get
+			{
+				return new[] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
+					.Union(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Select(item => item.Guid.ToString()));
+			}
+		}
+
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
+		internal bool HasVariantTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		{
+			return AvailableVariantTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
+		}
+
+		private IEnumerable<string> AvailableVariantTypes
+		{
+			get
+			{
+				return new[] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
+					.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Select(item => item.Guid.ToString()));
 			}
 		}
 
@@ -269,17 +363,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(convertedNode.Label != currentDefaultNode.Label)
 			{
-				throw new ArgumentException("Cannot merge two nodes that do not match.");
+				// This check is necessary to handle splitting "Minor Entries" to
+				// "Minor Entries (Complex Forms)" and "Minor Entries (Variants)".
+				if (!currentDefaultNode.Label.StartsWith(convertedNode.Label + " "))
+					throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
-			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 			convertedNode.SubField = currentDefaultNode.SubField;
+			if (convertedNode.DictionaryNodeOptions == null)
+				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
+			convertedNode.StyleType = currentDefaultNode.StyleType;
+			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 
 			if(version == -1 && IsReferencedEntriesNode(convertedNode))
 			{
 				ConvertReferencedEntries(convertedNode, currentDefaultNode);
 				return;
 			}
+
+			//Minor Entry doesn't need Surrounding Context(Before/After)
+			if (convertedNode.Label.ToLower().StartsWith("minor entry"))
+				convertedNode.After = convertedNode.Before = null;
 
 			// if the new defaults have children and we don't they need to be added
 			if(convertedNode.Children == null && currentDefaultNode.Children != null &&
@@ -296,31 +400,40 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var child in convertedNode.Children)
 				{
 					var pathStringToNode = BuildPathStringFromNode(child);
-					if (version == -1) // Some configuration nodes had name changes in the new verison
-					{
-						if (child.Label == "Components" && child.Parent.Label == "Component References")
-							child.Label = "Referenced Entries";
-					}
+					child.Label = HandleChildNodeRenaming(version, child);
 					// Attempt to find a matching node from the current default model from which to copy defaults
 					ConfigurableDictionaryNode matchFromBase;
 					if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
 						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
 					else
 					{
-						// This node does not match anything in the shipping defaults; it is probably a custom field
-						m_logger.WriteLine(string.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
-						m_logger.IncreaseIndent();
-						SetupCustomFieldNameDictionaries();
+						// This node does not match anything in the shipping defaults; it may be a custom field, or it may
+						// have been overlooked before, or we may have garbage.  See https://jira.sil.org/browse/LT-16735.
 						var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
-						Dictionary<string, string> cfLabelToName;
-						SetupCustomField(child,
-							// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
-							(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
-								? cfLabelToName
-								: null);
-						// REVIEW (Hasso) 2014:12: If we have a top-level Custom Field with no matching Custom Field in this dictionary,
-						// should we alert the user with a yellow screen?
-						m_logger.DecreaseIndent();
+						bool isCustom;
+						if (IsFieldValid(child.Label, parentType, out isCustom))
+						{
+							if (isCustom)
+							{
+								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it is a valid custom field.", pathStringToNode));
+								SetNodeAsCustom(child, parentType);
+							}
+							else
+							{
+								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it actually exists in the model.", pathStringToNode));
+								if (child.FieldDescription == null)
+									child.FieldDescription = child.Label;
+							}
+						}
+						else
+						{
+							// REVIEW (Hasso) 2014:12: If we have a top-level Custom Field with no matching Custom Field in this dictionary,
+							// should we alert the user with a yellow screen?
+							// manual intervention with a text editor may be needed.  :-( :-(
+							m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, and it is totally invalid.  Treating it as a custom field, but EXPECT TROUBLE LATER.", pathStringToNode));
+							// Treat this as a custom field so that unit tests will pass.
+							SetNodeAsCustom(child, parentType);
+						}
 					}
 				}
 				//remove all the matches from default list
@@ -336,6 +449,82 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
+		}
+
+		private void SetNodeAsCustom(ConfigurableDictionaryNode child, string parentType)
+		{
+			m_logger.IncreaseIndent();
+			SetupCustomFieldNameDictionaries();
+			Dictionary<string, string> cfLabelToName;
+			SetupCustomField(child,
+				// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
+				(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
+					? cfLabelToName
+					: null);
+			m_logger.DecreaseIndent();
+		}
+
+		/// <summary>
+		/// Check whether the given field is valid for the given type (class/interface).  Also set an output flag for whether
+		/// it is a custom field.
+		/// </summary>
+		private bool IsFieldValid(string field, string type, out bool isCustom)
+		{
+			isCustom = false;
+			try
+			{
+				// Convert an interface type name to a class type name if necessary.
+				if (type.StartsWith("I") && Char.IsUpper(type[1]))
+					type = type.Substring(1);
+				var metaDataCache = Cache.MetaDataCacheAccessor;
+				var clsid = metaDataCache.GetClassId(type);
+				if (clsid == 0)
+					return false;
+				var flid = metaDataCache.GetFieldId2(clsid, field, true);
+				if (flid == 0)
+					return false;
+				isCustom = Cache.GetIsCustomField(flid);
+			}
+			catch
+			{
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Some configuration nodes had name changes in the new verison
+		/// </summary>
+		private string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
+		{
+			var result = child.Label;
+			if (version == -1)
+			{
+				if (child.Label == "Components" && child.Parent.Label == "Component References")
+					result = "Referenced Entries";
+				// Don't rename Components -> Complex Form Type -> Abbreviation,
+				// but do rename Subentries -> CFT -> Abbreviations to Reverse Abbreviation
+				if (child.Label == "Abbreviation" && child.Parent.Label == "Complex Form Type" &&
+					child.Parent.Parent.Label == "Subentries") // not renamed in "Components CFTs"
+					result = "Reverse Abbreviation";
+
+				if (child.Label == "Features" && child.Parent.Label == "Grammatical Info.")
+					result = "Inflection Features";
+
+				if (child.Label == "Form" && child.Parent.Label == "Reversal Entry")
+					result = "Reversal Form";
+
+				if (child.Label == "Category" && child.Parent.Label == "Reversal Entry")
+					result = "Reversal Category";
+
+				if (child.Label == "Referenced Senses" && child.Parent.Label == "Reversal Entry")
+					result = "Vernacular Form";
+
+				if (child.Label == "Type" && child.Parent.Label == "Variants (of Entry)")
+					result = "Variant Type";
+
+			}
+			return result;
 		}
 
 		/// <summary>
@@ -406,7 +595,7 @@ namespace SIL.FieldWorks.XWorks
 			return path;
 		}
 
-		internal static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
+		private static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
 		{
 			var path = string.Format("{0} ({1})", child.Label, child.DupString);
 			var node = child;
@@ -469,16 +658,76 @@ namespace SIL.FieldWorks.XWorks
 				node.FieldDescription = node.Label;
 			}
 
+			var metaDataCache = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
 				{
 					m_logger.WriteLine(string.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
 					SetupCustomField(child, null);
+					// Children should be not marked as custom unless we know they are.
+					int field = GetFieldIdForNode(child, metaDataCache);
+					if (field != 0)
+						child.IsCustomField = metaDataCache.IsCustom(field);
+					else
+						child.IsCustomField = false;
+				}
+			}
+			else
+			{
+				int field = GetFieldIdForNode(node, metaDataCache);
+				if (field != 0)
+				{
+					var listId = metaDataCache.GetFieldListRoot(field);
+					if (listId != Guid.Empty)
+						DictionaryConfigurationController.AddFieldsForPossibilityList(node);
+					var type = metaDataCache.GetFieldType(field);
+					// Create the proper node options object.
+					switch (type)
+					{
+						case (int) CellarPropertyType.ReferenceCollection:
+						case (int) CellarPropertyType.ReferenceSequence:
+							if (listId != Guid.Empty)
+								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							break;
+						case (int)CellarPropertyType.OwningCollection:
+						case (int)CellarPropertyType.OwningSequence:
+							break;
+						case (int) CellarPropertyType.MultiUnicode:
+						case (int) CellarPropertyType.MultiString:
+							node.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions();
+							break;
+						case (int)CellarPropertyType.ReferenceAtomic:
+							if (listId != Guid.Empty)
+								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							break;
+						case (int)CellarPropertyType.OwningAtomic:
+							break;
+						case (int)CellarPropertyType.GenDate:
+						case (int)CellarPropertyType.Time:
+							break;
+						case (int)CellarPropertyType.String:
+							break;
+					}
 				}
 			}
 		}
 
+		private int GetFieldIdForNode(ConfigurableDictionaryNode node, IFwMetaDataCacheManaged metaDataCache)
+		{
+			try
+			{
+				var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(node.Parent, Cache);
+				var flid = metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
+				return flid;
+			}
+			catch (Exception)
+			{
+				return 0;
+			}
+		}
+
+		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(XmlDocConfigureDlg.LayoutTreeNode node)
 		{
 			var convertedNode =  new ConfigurableDictionaryNode
@@ -494,9 +743,12 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = CreateOptionsFromLayoutTreeNode(node)
 			};
 
-			// Root-based Minor Entry - Components should use character styles. See LT-15834.
-			if (node.PartName == "LexEntry-Jt-StemMinorComponentsConfig")
-				convertedNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			// Custom fields were implicitly marked in the old configuration files.  Decode the implicit marking.  See LT-17032.
+			if (node.Configuration != null && node.Configuration.Attributes != null)
+			{
+				var attr = node.Configuration.Attributes["ref"];
+				convertedNode.IsCustomField = (attr != null && attr.Value == "$child");
+			}
 
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
@@ -756,5 +1008,13 @@ namespace SIL.FieldWorks.XWorks
 			//Not important for migration - Handled separately by the new configuration dialog
 		}
 		#endregion
+
+		/// <summary>
+		/// Only use for tests which don't enter the migrator class at the standard entry point
+		/// </summary>
+		internal SimpleLogger SetTestLogger
+		{
+			set { m_logger = value; }
+		}
 	}
 }

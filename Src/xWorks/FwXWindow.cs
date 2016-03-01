@@ -4,10 +4,6 @@
 //
 // File: FwXWindow.cs
 // Responsibility: FLEx Team
-//
-// <remarks>
-//	This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
-// </remarks>
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +16,7 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -48,9 +45,8 @@ using NetSparkle;
 
 namespace SIL.FieldWorks.XWorks
 {
-
 	/// <summary>
-	/// Summary description for FwXWindow.
+	/// This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
 	/// </summary>
 	public class FwXWindow : XWindow, IFwMainWnd, ISettings, IRecordListOwner,
 		IMainWindowDelegatedFunctions, IMainWindowDelegateCallbacks, IFindAndReplaceContext
@@ -1200,11 +1196,8 @@ namespace SIL.FieldWorks.XWorks
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var controller = new PublishToWebonaryController
-			{
-				Cache = cache,
-				PropertyTable = propertyTable
-			};
+			var controller = new PublishToWebonaryController(cache, propertyTable, mediator);
+
 			var model = new PublishToWebonaryModel(propertyTable)
 			{
 				Reversals = reversals,
@@ -1298,7 +1291,34 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
+
+				ReversalIndexServices.CreateReversalIndexConfigurationFile(m_app.Cache.ServiceLocator.WritingSystemManager,
+					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
+					dlg.OriginalProjectName);
+				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as CoreWritingSystemDefinition;
+				SetReversalIndexGuid(selectedWsObj);
 			}
+		}
+
+		/// <summary>
+		/// Method which set the index to the WS property
+		/// </summary>
+		/// <param name="selectedWsObj">selected writing system</param>
+		private void SetReversalIndexGuid(CoreWritingSystemDefinition selectedWsObj)
+		{
+			if (selectedWsObj != null)
+			{
+				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
+					m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
+				}
+				else
+				{
+					m_propertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString(), true);
+				}
+			}
+			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		/// <summary>
@@ -1320,8 +1340,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return oldName;
 		}
-
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1774,9 +1792,11 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFormatStyle(object args)
 		{
+			var stylesXmlAccessor = new LexText.FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA);
+
 			ShowStylesDialog(ParaStyleListHelper != null ? ParaStyleListHelper.SelectedStyle.Name : null,
 				CharStyleListHelper != null ? CharStyleListHelper.SelectedStyle.Name : null,
-				null);
+				stylesXmlAccessor.SetPropsToFactorySettings);
 			return true;
 		}
 
@@ -2147,7 +2167,6 @@ namespace SIL.FieldWorks.XWorks
 				if (this.OwnedForms.Length > 0 && this.OwnedForms[0] is FwFindReplaceDlg)
 					this.OwnedForms[0].Close();
 			}
-
 			base.OnPropertyChanged(name);
 		}
 

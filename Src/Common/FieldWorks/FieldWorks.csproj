@@ -204,9 +204,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <None Condition="'$(OS)'=='Windows_NT'" Include="..\..\..\Downloads\Geckofx-Core.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

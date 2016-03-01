@@ -1,9 +1,6 @@
 ﻿// Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ExportDialogTests.cs
-// Responsibility: mcconnel
 
 using System;
 using System.IO;
@@ -1219,9 +1216,16 @@ namespace SIL.FieldWorks.XWorks
 
 			using (new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
 			{
-				// Set Irregular Inflectional Variant data.
-				(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[2] as ILexEntryInflType).ReverseAbbr.set_String(wsEn, "reverse abbreviation");
-				(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[2] as ILexEntryInflType).GlossAppend.set_String(wsEn, "gloss append");
+				// Set data to test.
+				for (int i = 0; i < m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Count; i++)
+				{
+					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i]  as ILexEntryInflType;
+					if (possibility == null)
+						continue;
+
+					possibility.ReverseAbbr.set_String(wsEn, string.Format("reverse abbreviation {0}", i));
+					possibility.GlossAppend.set_String(wsEn, string.Format("gloss append {0}", i));
+				}
 
 				List<ICmPossibilityList> lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
 
@@ -1269,11 +1273,11 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
 					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 2</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</ReverseAbbr>", r.ReadLine());
 					Assert.AreEqual("<GlossAppend>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"en\">gloss append</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">gloss append 2</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</GlossAppend>", r.ReadLine());
 					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
@@ -1286,6 +1290,14 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"en\">pl. var. of</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 3</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<GlossAppend>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">gloss append 3</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</GlossAppend>", r.ReadLine());
 					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
 					Assert.AreEqual("<LexEntryInflType guid=\"837ebe72-8c1d-4864-95d9-fa313c499d78\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
@@ -1296,6 +1308,14 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"en\">pst. var. of</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 4</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseAbbr>", r.ReadLine());
+					Assert.AreEqual("<GlossAppend>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">gloss append 4</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</GlossAppend>", r.ReadLine());
 					Assert.AreEqual("</LexEntryInflType>", r.ReadLine());
 					Assert.AreEqual("<LexEntryType guid=\"0c4663b3-4d9a-47af-b9a1-c8565d8112ed\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());

@@ -153,7 +153,12 @@ namespace SIL.FieldWorks.XWorks
 				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 				return listView.Items.Cast<ListViewItem>().ToList();
 			}
-
+			public NumberingStyleComboItem GetSelectedNumberingStyleItems()
+			{
+				IDictionarySenseOptionsView listSenseOptionsView = OptionsView as IDictionarySenseOptionsView;
+				var listView = (ComboBox)ReflectionHelper.GetField(listSenseOptionsView, "dropDownNumberingStyle");
+				return (NumberingStyleComboItem) listView.SelectedItem;
+			}
 			public void Dispose()
 			{
 				Dispose(true);
@@ -205,6 +210,11 @@ namespace SIL.FieldWorks.XWorks
 		private static IDictionaryListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
 			return (view as TestDictionaryDetailsView).OptionsView as IDictionaryListOptionsView;
+		}
+
+		private static IDictionarySenseOptionsView GetListSenseOptionsView(IDictionaryDetailsView view)
+		{
+			return (view as TestDictionaryDetailsView).OptionsView as IDictionarySenseOptionsView;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
@@ -325,6 +335,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CheckIsAllParentsChecked_MinorAndMajorEntries()
+		{
+			var minorEntryTypes = new ConfigurableDictionaryNode
+			{
+				// Should this be something else?
+				FieldDescription = "VariantType",
+				Label = "VariantType",
+				IsEnabled = true
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode>(),
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { minorEntryTypes },
+				FieldDescription = "MinorEntry",
+				IsEnabled = true
+			};
+
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(mainEntryNode);
+			Assert.AreEqual(true, controller.IsAllParentsChecked(mainEntryNode));
+
+			controller.LoadNode(minorEntryNode);
+			// LT-16459 if IsAllParentsChecked returns false, Minor Entry types are all disabled
+			Assert.AreEqual(true, controller.IsAllParentsChecked(minorEntryNode));
+
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void CheckIsAnyParentsUnchecked()
 		{
 			var pronunciation = new ConfigurableDictionaryNode
@@ -378,6 +427,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node);
 			AssertShowingCharacterStyles(controller.View);
 
@@ -396,6 +446,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node); // SUT
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
@@ -424,6 +475,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			// SUT
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(node);
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
@@ -500,31 +552,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region List tests
 		[Test]
-		public void FlattenPossibilityList()
-		{
-			ICmPossibilityList theList = null;
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
-				() =>
-				{
-					theList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-					var topItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					theList.PossibilitiesOS.Add(topItem);
-					var secondLevelItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					var thirdLevelItemItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					topItem.SubPossibilitiesOS.Add(secondLevelItem);
-					secondLevelItem.SubPossibilitiesOS.Add(thirdLevelItemItem);
-				});
-
-			Assert.AreEqual(3, DictionaryDetailsController.FlattenPossibilityList(theList.PossibilitiesOS).Count);
-		}
-
-		[Test]
 		public void GetListItems()
 		{
-			var complexCount = DictionaryDetailsController.FlattenPossibilityList(
-				Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS).Count;
-			var variantCount = DictionaryDetailsController.FlattenPossibilityList(
-				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Count;
+			var complexCount = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Count;
+			var variantCount = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Count;
 
 			var listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Complex, complexCount + 1); // +1 for <None> element
 			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[0].Text);
@@ -655,6 +686,28 @@ namespace SIL.FieldWorks.XWorks
 			var optionlessNode = new ConfigurableDictionaryNode();
 			controller.LoadNode(optionlessNode);
 			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
+			controller.View.Dispose();
+		}
+
+		[Test]
+		public void LoadNode_LoadingParagraphOptionsViewOnMainEntry()
+		{
+			var paraOptions = new DictionaryNodeParagraphOptions();
+			{
+				paraOptions.PargraphStyle = "Dictionary-Normal";
+				paraOptions.ContinuationParagraphStyle = "Dictionary-Continuation";
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = paraOptions,
+				IsEnabled = true
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(mainEntryNode);
+			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Paragraph OptionsView Test failed, OptionsView shoud not be null");
+			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).StylesVisible, "Paragraph OptionsView Test failed, StylesVisible shoud not be true");
+			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).SurroundingCharsVisible, "Paragraph OptionsView Test failed, SurroundingCharsVisible shoud not be true");
 			controller.View.Dispose();
 		}
 
@@ -856,6 +909,35 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		public void LoadListSenseOptions_LoadWsListAndSenseNumberingStyle()
+		{
+			var wsOptions = new ReferringSenseOptions()
+			{
+				WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+				{
+					Options = ListOfEnabledDNOsFromStrings(new List<string> {"en", "fr"}),
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
+					DisplayWritingSystemAbbreviations = true
+				},
+				SenseOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false, NumberingStyle = "%d" }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			using (var view = controller.View)
+			{
+				// Verify setup
+				var listViewItems = GetListViewItems(view);
+				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should be exactly two items checked initially");
+				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
+				Assert.AreEqual("fr", listViewItems.Last(item => item.Checked).Tag, "French should be checked.");
+
+				var numberingstyle = (view as TestDictionaryDetailsView).GetSelectedNumberingStyleItems();
+
+				Assert.AreEqual("1  2  3", numberingstyle.Label);
+			}
+		}
 		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{

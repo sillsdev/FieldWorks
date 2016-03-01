@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
-		public const string FileExtension = ".xml";
+		public const string FileExtension = ".fwdictconfig";
 
 		/// <summary>
 		/// Trees of dictionary elements
@@ -97,6 +97,109 @@ namespace SIL.FieldWorks.XWorks
 					Publications = LoadPublicationsSafe(model, cache);
 			}
 			SpecifyParents(Parts);
+			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
+			// The "Merge" method handles both additions and deletions.
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
+			// Handle changes to the lists of complex form types and variant types.
+			MergeCustomVariantOrComplexTypesIntoDictionaryModel(cache, this);
+			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
+			EnsureValidStylesInModel(cache);
+		}
+
+		public static void MergeCustomVariantOrComplexTypesIntoDictionaryModel(FdoCache cache, DictionaryConfigurationModel model)
+		{
+			var complexTypes = new SIL.Utils.Set<Guid>();
+			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
+				complexTypes.Add(pos.Guid);
+			complexTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
+			foreach (var node in model.Parts)
+				FixComplexOrVariantTypes(node, complexTypes, DictionaryNodeListOptions.ListIds.Complex);
+			var variantTypes = new SIL.Utils.Set<Guid>();
+			foreach (var pos in cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
+				variantTypes.Add(pos.Guid);
+			variantTypes.Add(SIL.FieldWorks.Common.Controls.XmlViewsUtils.GetGuidForUnspecifiedVariantType());
+			foreach (var node in model.Parts)
+				FixComplexOrVariantTypes(node, variantTypes, DictionaryNodeListOptions.ListIds.Variant);
+		}
+
+		private static void FixComplexOrVariantTypes(ConfigurableDictionaryNode node, SIL.Utils.Set<Guid> possibilities, DictionaryNodeListOptions.ListIds listId)
+		{
+			if (node == null || possibilities == null)
+				return;
+
+			var option = node.DictionaryNodeOptions as DictionaryNodeListOptions;
+			if (option != null && option.ListId == listId)
+				FixOptionsAccordingToCurrentTypes(option.Options, possibilities);
+
+			if (node.Children != null)
+			{
+				foreach (var child in node.Children)
+					FixComplexOrVariantTypes(child, possibilities, listId);
+			}
+		}
+
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, SIL.Utils.Set<Guid> possibilities)
+		{
+			var currentGuids = new SIL.Utils.Set<Guid>();
+			foreach (var opt in options)
+			{
+				Guid guid;
+				if (Guid.TryParse(opt.Id, out guid))	// can be empty string
+					currentGuids.Add(guid);
+			}
+			// add types that do not exist already
+			foreach (var type in possibilities)
+			{
+				if (!currentGuids.Contains(type))
+					options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = true });
+			}
+			// remove options that no longer exist
+			for (int i = options.Count - 1; i >= 0; --i)
+			{
+				Guid guid;
+				if (Guid.TryParse(options[i].Id, out guid) && !possibilities.Contains(guid))
+					options.RemoveAt(i);
+			}
+		}
+
+		internal void EnsureValidStylesInModel(FdoCache cache)
+		{
+			var styles = new Dictionary<string, IStStyle>();
+			foreach (var style in cache.LangProject.StylesOC)
+				styles.Add(style.Name, style);
+			foreach (var part in this.Parts)
+				EnsureValidStylesInConfigNodes(part, styles);
+		}
+
+		private void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
+		{
+			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+				node.Style = null;
+			if (node.DictionaryNodeOptions != null)
+				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
+			if (node.Children != null)
+			{
+				foreach (var child in node.Children)
+					EnsureValidStylesInConfigNodes(child, styles);
+			}
+		}
+
+		private void EnsureValidStylesInNodeOptions(DictionaryNodeOptions options, Dictionary<string, IStStyle> styles)
+		{
+			if (options is DictionaryNodeParagraphOptions)
+			{
+				var paraOptions = options as DictionaryNodeParagraphOptions;
+				if (!String.IsNullOrEmpty(paraOptions.PargraphStyle) && !styles.ContainsKey(paraOptions.PargraphStyle))
+					paraOptions.PargraphStyle = null;
+				if (!String.IsNullOrEmpty(paraOptions.ContinuationParagraphStyle) && !styles.ContainsKey(paraOptions.ContinuationParagraphStyle))
+					paraOptions.ContinuationParagraphStyle = null;
+			}
+			else if (options is DictionaryNodeSenseOptions)
+			{
+				var senseOptions = options as DictionaryNodeSenseOptions;
+				if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+					senseOptions.NumberStyle = null;
+			}
 		}
 
 		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)
@@ -192,6 +295,21 @@ namespace SIL.FieldWorks.XWorks
 		public override string ToString()
 		{
 			return Label;
+		}
+
+		/// <summary>
+		/// If node is a Main Entry node.
+		/// </summary>
+		/// <remarks>
+		/// Other things to check could include FieldDescription == "LexEntry" and Parent == null.
+		/// </remarks>
+		internal static bool IsMainEntry(ConfigurableDictionaryNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			if (node.CSSClassNameOverride == "entry")
+				return true;
+			return false;
 		}
 	}
 }

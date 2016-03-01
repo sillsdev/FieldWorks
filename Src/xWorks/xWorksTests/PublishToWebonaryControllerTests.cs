@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,6 +22,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -86,6 +87,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -136,14 +138,16 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryExportsXhtmlAndCss()
 		{
-			var controller = new PublishToWebonaryController { Cache = Cache, PropertyTable = m_propertyTable };
+			var controller = SetUpController();
 			var mockView = SetUpView();
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode>();
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>()
+			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
@@ -266,7 +270,7 @@ namespace SIL.FieldWorks.XWorks
 			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
 			var inputFile = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
 			var response = client.UploadFile(targetURI, inputFile);
-			var responseText = System.Text.Encoding.ASCII.GetString(response);
+			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
 		}
 		#endregion
@@ -274,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg();
 			var model = new PublishToWebonaryModel(m_propertyTable);
 			Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
@@ -286,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -303,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -320,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsSuccess()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -338,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsErrorsInProcessingData()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -363,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void UploadToWebonaryHandlesNetworkErrors()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 			var view = new MockWebonaryDlg();
 			var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
 
@@ -458,9 +462,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var query = string.Format(".*{0}.*nsupported.*", tiffFilename);
-				Assert.True(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
+				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
 				query = string.Format(".*{0}.*nsupported.*", jpegFilename);
-				Assert.False(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
+				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
 
 				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, ".*nsupported.*").Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
 			}
@@ -512,7 +516,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public PublishToWebonaryController SetUpController()
 		{
-			return new PublishToWebonaryController { Cache = Cache, PropertyTable = m_propertyTable };
+			return new PublishToWebonaryController(Cache, m_propertyTable, m_mediator);
 		}
 
 		internal class MockWebonaryDlg : IPublishToWebonaryView
@@ -526,17 +530,14 @@ namespace SIL.FieldWorks.XWorks
 
 			public void PopulatePublicationsList(IEnumerable<string> publications)
 			{
-				;
 			}
 
 			public void PopulateConfigurationsList(IEnumerable<string> configurations)
 			{
-				;
 			}
 
 			public void PopulateReversalsCheckboxList(IEnumerable<string> reversals)
 			{
-				;
 			}
 
 			public PublishToWebonaryModel Model { get; set; }
@@ -549,9 +550,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public string UploadURI { get; set; }
 
-			public MockPublishToWebonaryController() : base()
-			{
-			}
+			public MockPublishToWebonaryController(FdoCache cache, PropertyTable propertyTable, Mediator mediator) : base(cache, propertyTable, mediator) { }
 
 			internal override string DestinationURI(string siteName)
 			{

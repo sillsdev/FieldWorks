@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as FwStyleSheet,
-				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider);
+				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider, null);
 		}
 
 		//private void tbElementName_TextChanged(object sender, EventArgs e)

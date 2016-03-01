@@ -966,7 +966,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 
-			using (var featChooser = new LexText.Controls.PhonologicalFeatureChooserDlg())
+			using (var featChooser = new SIL.FieldWorks.LexText.Controls.PhonologicalFeatureChooserDlg())
 			{
 				var ctxt = (IPhSimpleContextNC) CurrentContext;
 				var natClass = (IPhNCFeatures) ctxt.FeatureStructureRA;
