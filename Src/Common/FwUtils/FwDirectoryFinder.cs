@@ -315,15 +315,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
 			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
-			using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine) // REVIEW (Hasso) 2016.03: get key only if needed.
 			{
-				var registryKey = userKey;
 				if (userKey == null || userKey.GetValue(registryValue) == null)
-				{
-					registryKey = machineKey;
-				}
-
-				return GetDirectory(registryKey, registryValue, defaultDir);
+					return GetDirectoryLocalMachine(registryValue, defaultDir);
+				return GetDirectory(userKey, registryValue, defaultDir);
 			}
 		}
 
