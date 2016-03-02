@@ -586,35 +586,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument"></param>
-		public virtual void OnInsertReversalIndex(object argument)
-		{
-			CheckDisposed();
-
-			Guid newGuid = CreateNewReversalIndex();
-			if (newGuid != Guid.Empty)
-			{
-				ChangeOwningObject(newGuid);
-				var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
-				if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
-					SetReversalIndexGuid(newGuid);
-			}
-		}
-
-		private Guid CreateNewReversalIndex()
-		{
-			if (Cache == null)
-				return Guid.Empty;
-			if (Cache.LanguageProject == null)
-				return Guid.Empty;
-			if (Cache.LanguageProject.LexDbOA == null)
-				return Guid.Empty;
-			return Guid.Empty;
-		}
-
-		/// <summary>
 		/// This is enabled whenever the ReversalClerk is active.
 		/// </summary>
 		/// <param name="commandObject"></param>
