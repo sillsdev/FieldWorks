@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" version="-1" lastModified="2015-12-17" allPublications="true">
   <ConfigurationItem name="Reversal Entry" isEnabled="true" field="ReversalIndexEntry">
 	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
@@ -196,10 +196,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="MLHeadWord" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" field="HeadWord" cssClassNameOverride="headword">
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -222,17 +219,14 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimaryLexemesRS">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="HeadWordReversalName">
+		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="ReversalName">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
@@ -816,7 +810,7 @@
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="HeadWordReversalName">
+		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="ReversalName">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>

@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
 			m_publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
 			m_headwordRefFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordRef", false);
-			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordReversal", false);
+			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ReversalName", false);
 			m_reversalNameFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "ReversalName", false);
 			Publication = publication;
 			BuildExcludedObjects();

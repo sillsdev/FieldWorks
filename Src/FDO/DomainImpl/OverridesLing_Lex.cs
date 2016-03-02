@@ -2479,14 +2479,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Virtual property allows HeadWordReversal to be read through cache.
+		/// Virtual property allows ReversalName to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor HeadWordReversal
+		public VirtualStringAccessor ReversalName
 		{
 			get
 			{
-				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryHeadWordReversal, HeadWordReversalForWs);
+				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryReversalName, HeadWordReversalForWs);
 			}
 		}
 
@@ -9394,14 +9394,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public IMultiAccessorBase HeadWordReversalName
+		public IMultiAccessorBase ReversalName
 		{
 			get
 			{
 				var entry = Item as LexEntry;
 				if(entry != null)
 				{
-					return entry.HeadWordReversal;
+					return entry.ReversalName;
 				}
 				var sense = Item as LexSense;
 				if(sense != null)

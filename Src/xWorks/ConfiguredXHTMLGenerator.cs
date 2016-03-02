@@ -501,7 +501,8 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will use reflection to pull data out of the given object based on the given configuration and
 		/// write out appropriate XHTML.
 		/// </summary>
-		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings,
+			bool fUseReverseSubField = false)
 		{
 			if (!config.IsEnabled)
 			{
@@ -583,7 +584,10 @@ namespace SIL.FieldWorks.XWorks
 				var property = entryType.GetProperty(config.FieldDescription);
 				if (property == null)
 				{
-					Debug.WriteLine(String.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType));
+#if DEBUG
+					var msg = String.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType);
+					ShowConfigDebugInfo(msg, config);
+#endif
 					return String.Empty;
 				}
 				propertyValue = property.GetValue(field, new object[] { });
@@ -597,10 +601,14 @@ namespace SIL.FieldWorks.XWorks
 			if (!String.IsNullOrEmpty(config.SubField))
 			{
 				var subType = propertyValue.GetType();
-				var subProp = subType.GetProperty(config.SubField);
+				var subField = fUseReverseSubField ? "Reverse" + config.SubField : config.SubField;
+				var subProp = subType.GetProperty(subField);
 				if (subProp == null)
 				{
-					Debug.WriteLine(String.Format("Issue with finding (subField) {0} for (subType) {1}", config.SubField, subType));
+#if DEBUG
+					var msg = String.Format("Issue with finding (subField) {0} for (subType) {1}", subField, subType);
+					ShowConfigDebugInfo(msg, config);
+#endif
 					return String.Empty;
 				}
 				propertyValue = subProp.GetValue(propertyValue, new object[] { });
@@ -662,6 +670,26 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return bldr.ToString();
 		}
+
+#if DEBUG
+		private static HashSet<ConfigurableDictionaryNode> s_reportedNodes = new HashSet<ConfigurableDictionaryNode>();
+
+		private static void ShowConfigDebugInfo(string msg, ConfigurableDictionaryNode config)
+		{
+			lock (s_reportedNodes)
+			{
+				Debug.WriteLine(msg);
+				if (s_reportedNodes.Contains(config))
+					return;
+				s_reportedNodes.Add(config);
+				while (config != null)
+				{
+					Debug.WriteLine(String.Format("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? ""));
+					config = config.Parent;
+				}
+			}
+		}
+#endif
 
 		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue)
 		{
@@ -1494,13 +1522,8 @@ namespace SIL.FieldWorks.XWorks
 						// If there is no override, override with the default before changing the SubField.
 						if(string.IsNullOrEmpty(child.CSSClassNameOverride))
 							child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
-
-						// Prefix the SubField with "Reverse" just long enough to generate XHTML for this node.
-						var subField = child.SubField;
-						if (!subField.StartsWith("Reverse"))
-							child.SubField = "Reverse" + subField;
-						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
-						child.SubField = subField;
+						// Flag to prepend "Reverse" to child.SubField when it is used.
+						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, true);
 					}
 					else
 					{

@@ -5912,9 +5912,9 @@ namespace SIL.FieldWorks.FDO
 		ITsString HeadWord { get; }
 
 		/// <summary>
-		/// HeadWordReversal if LexEntry, ReversalName if LexSense
+		/// ReversalName from either LexEntry or LexSense
 		/// </summary>
-		IMultiAccessorBase HeadWordReversalName { get; }
+		IMultiAccessorBase ReversalName { get; }
 
 		/// <summary>
 		/// The SummaryDefinition property if wrapping LexEntry, or null for LexSense
