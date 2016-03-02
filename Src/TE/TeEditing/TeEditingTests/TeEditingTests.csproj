@@ -202,12 +202,12 @@
     <Reference Include="UIAutomationProvider">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UIAutomationTypes">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\UIAutomationTypes.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="TeViewConstructors, Version=4.3.0.19234, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

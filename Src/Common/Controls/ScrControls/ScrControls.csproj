@@ -182,8 +182,8 @@
     <Reference Include="XMLUtils, Version=7.1.0.17244, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

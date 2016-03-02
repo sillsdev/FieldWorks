@@ -97,8 +97,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

@@ -16,7 +16,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
-using SIL.Reporting;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

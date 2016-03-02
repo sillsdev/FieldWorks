@@ -287,10 +287,10 @@
       <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationProvider">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UIAutomationTypes">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>

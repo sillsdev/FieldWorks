@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 #if !__MonoCS__
-using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
+using Rect = System.Windows.Rect;
 #endif
 using System.Windows.Forms;
 using NUnit.Framework;

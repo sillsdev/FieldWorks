@@ -8,10 +8,9 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-
+using System.IO;
 #if __MonoCS__
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 #endif
 using SIL.CoreImpl;

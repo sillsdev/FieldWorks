@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using SIL.Utils;
-using SIL.Reporting;
+using Palaso.Reporting;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {

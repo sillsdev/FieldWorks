@@ -131,9 +131,6 @@
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
-    </Reference>
     <Reference Include="PalasoUIWindowsForms">
       <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
