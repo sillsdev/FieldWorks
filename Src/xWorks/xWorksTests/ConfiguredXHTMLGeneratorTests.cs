@@ -2753,6 +2753,80 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_LexicalRelationsSortbyNodeOptionsOrder()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var compareReferencedEntry = CreateInterestingLexEntry(Cache);
+			var etymologyReferencedEntry = CreateInterestingLexEntry(Cache);
+			const string comRefTypeName = "Compare";
+			const string comRefTypeRevName = "cp";
+			const string etyRefTypeName = "Etymology";
+			const string etyRefTypeRevName = "ety";
+			CreateLexicalReference(mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
+			CreateLexicalReference(mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
+			var comRefType =
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+					poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
+			var etyRefType =
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+					poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
+			Assert.IsNotNull(comRefType);
+			Assert.IsNotNull(etyRefType);
+
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options =
+						DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { etyRefType.Guid + ":f", comRefType.Guid + ":f" })
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			var fwdNameFirstXpath = string.Format(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
+				etyRefTypeName);
+			var fwdNameSecondXpath = string.Format(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference'and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
+				comRefTypeName);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameFirstXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameSecondXpath, 1);
+			crossReferencesNode.DictionaryNodeOptions = new DictionaryNodeListOptions
+			{
+				ListId = DictionaryNodeListOptions.ListIds.Entry,
+				Options =
+					DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
+			};
+			var resultAfterChange = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			var fwdNameChangedFirstXpath = string.Format(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
+				comRefTypeName);
+			var fwdNameChangedSecondXpath = string.Format(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
+				etyRefTypeName);
+			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedFirstXpath, 1);
+			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedSecondXpath, 1);
+		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesAsymmetricRelationsProperly()

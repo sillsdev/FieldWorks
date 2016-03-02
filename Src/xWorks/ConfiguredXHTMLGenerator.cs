@@ -581,6 +581,7 @@ namespace SIL.FieldWorks.XWorks
 					return String.Empty;
 				}
 				propertyValue = property.GetValue(field, new object[] { });
+				GetSortedReferencePropertyValue(config, ref propertyValue);
 			}
 			// If the property value is null there is nothing to generate
 			if (propertyValue == null)
@@ -654,6 +655,29 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return bldr.ToString();
+		}
+
+		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue)
+		{
+			var lexreferences = propertyValue as List<ILexReference>;
+			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			if (options != null && lexreferences != null)
+			{
+				var sortedReferences = new List<ILexReference>();
+				foreach (var option in options.Options)
+				{
+					foreach (var reference in lexreferences)
+					{
+						if (option.Id.Contains(reference.OwnerType.Guid.ToString()))
+						{
+							if (!sortedReferences.Contains(reference))
+								sortedReferences.Add(reference);
+							break;
+						}
+					}
+				}
+				propertyValue = sortedReferences;
+			}
 		}
 
 		/// <summary/>
