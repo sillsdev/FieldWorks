@@ -184,6 +184,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
+			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(m_mediator))
 			{
 				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
@@ -191,8 +192,9 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_mediator));
 				dlg.HelpTopic = GetConfigDialogHelpTopic(m_mediator);
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
+				refreshNeeded = controller.HasSavedAnyChanges;
 			}
-			if (!DictionaryConfigurationController.IsDirty)
+			if (refreshNeeded)
 				m_mediator.SendMessage("MasterRefresh", null);
 			return true; // message handled
 		}

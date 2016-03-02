@@ -222,6 +222,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediator = (Mediator)tagObjects[0];
 			var classList = (List<string>)tagObjects[1];
 			var guid = (Guid)tagObjects[2];
+			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(mediator))
 			{
 				var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
@@ -236,8 +237,9 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
 				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
+				refreshNeeded = controller.HasSavedAnyChanges;
 			}
-			if (!DictionaryConfigurationController.IsDirty)
+			if (refreshNeeded)
 				mediator.SendMessage("MasterRefresh", null);
 		}
 

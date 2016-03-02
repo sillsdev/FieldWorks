@@ -166,18 +166,21 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			ManageConfigurations(sender, e);
+			if (ManageConfigurations != null)
+				ManageConfigurations(sender, e);
 		}
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			SaveModel(sender, e);
+			if (SaveModel != null)
+				SaveModel(sender, e);
 			Close();
 		}
 
 		private void applyButton_Click(object sender, EventArgs e)
 		{
-			SaveModel(sender, e);
+			if (SaveModel != null)
+				SaveModel(sender, e);
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
@@ -187,10 +190,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnConfigurationChanged(object sender, EventArgs e)
 		{
-			SwitchConfiguration(sender, new SwitchConfigurationEventArgs
-			{
-				ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
-			});
+			if(SwitchConfiguration != null)
+				SwitchConfiguration(sender, new SwitchConfigurationEventArgs
+				{
+					ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
+				});
 		}
 
 		/// <summary>

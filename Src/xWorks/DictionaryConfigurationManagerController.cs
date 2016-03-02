@@ -157,12 +157,11 @@ namespace SIL.FieldWorks.XWorks
 			_view.removeButton.Click += OnDeleteConfiguration;
 			_view.Closing += (sndr, e) =>
 			{
-				if (SelectedConfiguration != null)
+				if (SelectedConfiguration != null && Finished != null)
 					Finished(SelectedConfiguration);
 			};
 
 			// Select the correct configuration
-
 			var selectedConfigIdx = _configurations.FindIndex(config => config == _currentConfig);
 			if(selectedConfigIdx >= 0)
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;

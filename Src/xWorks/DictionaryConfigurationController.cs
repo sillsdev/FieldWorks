@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -71,7 +71,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal string _defaultConfigDir;
 
-		public static bool IsDirty;
+		private bool m_isDirty;
+
+		/// <summary>
+		/// Whether any changes have been saved, including changes to the Configs, which Config is the current Config, changes to Styles, etc.,
+		/// that require the preview to be updated.
+		/// </summary>
+		public bool HasSavedAnyChanges { get; private set; }
 
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
@@ -199,15 +205,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
-		private void RefreshPreview()
+		private void RefreshPreview(bool isChangeInDictionaryModel = true)
 		{
 			//_mediator should be null only for unit tests which don't need styles
-			if (_mediator != null && _previewEntry != null && _previewEntry.IsValidObject)
-			{
-				IsDirty = true;
-				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model,
-					_allEntriesPublicationDecorator, _mediator);
-			}
+			if (_mediator == null || _previewEntry == null || !_previewEntry.IsValidObject)
+				return;
+			if (isChangeInDictionaryModel)
+				m_isDirty = true;
+			else
+				HasSavedAnyChanges = true;
+			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
 		}
 
 		/// <summary>
@@ -322,8 +329,7 @@ namespace SIL.FieldWorks.XWorks
 			_mediator = mediator;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
-																										(ISilDataAccessManaged)cache.MainCacheAccessor,
-																										cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+				(ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
 			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator), cache);
 			View = view;
@@ -332,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 			LoadDictionaryConfigurations();
 			LoadLastDictionaryConfiguration();
 			PopulateTreeView();
-			View.ManageConfigurations += (sender, args) =>
+			View.ManageConfigurations += (sender, args) => // TODO pH 2016.02: IsDirty on ManagerDlg
 			{
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(_mediator.HelpTopicProvider))
@@ -355,8 +361,10 @@ namespace SIL.FieldWorks.XWorks
 			View.SaveModel += SaveModelHandler;
 			View.SwitchConfiguration += (sender, args) =>
 			{
+				if (_model == args.ConfigurationPicked)
+					return;
 				_model = args.ConfigurationPicked;
-				RefreshView();
+				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
@@ -435,7 +443,7 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 			SelectCurrentConfiguration();
-			IsDirty = false;
+			HasSavedAnyChanges = m_isDirty = false;
 		}
 
 		public void SelectModelFromManager(DictionaryConfigurationModel model)
@@ -482,11 +490,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
-			if (IsDirty)
-			{
+			if (m_isDirty)
 				SaveModel();
-				RefreshView();// REVIEW (Hasso) 2014.11: refreshing here is beneficial only if some configuration change fails to refresh the preview
-			}
 		}
 
 		internal void SaveModel()
@@ -498,6 +503,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
 			DictionaryConfigurationListener.SetCurrentConfiguration(_mediator, _model.FilePath);
+			HasSavedAnyChanges = true;
+			m_isDirty = false;
 		}
 
 		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)
@@ -521,6 +528,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DetailsController = new DictionaryDetailsController(new DetailsView(), mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
+				DetailsController.ExternalDialogMadeChanges += (sender, e) => RefreshPreview(false);
 			}
 			DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;
@@ -583,8 +591,7 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfiguration()
 		{
 			View.SelectConfiguration(_model);
-			SaveModel();
-			RefreshView();
+			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 
 		/// <summary>
@@ -744,8 +751,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
 		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="className"></param>
 		/// <param name="customFieldMap">existing custom field map for performance, method will build one if none given</param>
-		/// <returns></returns>
 		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(FdoCache cache, string className,
 			Dictionary<string, List<int>> customFieldMap = null)
 		{

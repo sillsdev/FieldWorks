@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,6 +43,9 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
+
+		/// <summary>Fired whenever an external dialog makes changes that require the dictionary preview can be refreshed</summary>
+		public event EventHandler ExternalDialogMadeChanges;
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
 		{
@@ -213,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 			listOptionsView.Load += WritingSystemEventHandlerAdder(listOptionsView, wsOptions);
 			// add listOptionsView to the DetailsView
 
-			View.OptionsView = listOptionsView as UserControl;
+			View.OptionsView = listOptionsView;
 		}
 
 		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
@@ -786,10 +789,18 @@ namespace SIL.FieldWorks.XWorks
 		#endregion LoadModel
 
 		#region HandleChanges
-		private void RefreshPreview()
+		private void RefreshPreview(bool isChangeInDictionaryModel = true)
 		{
-			if (DetailsModelChanged != null)
-				DetailsModelChanged(m_node, new EventArgs());
+			if (isChangeInDictionaryModel)
+			{
+				if (DetailsModelChanged != null)
+					DetailsModelChanged(m_node, new EventArgs());
+			}
+			else
+			{
+				if (ExternalDialogMadeChanges != null)
+					ExternalDialogMadeChanges(m_node, new EventArgs());
+			}
 		}
 
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
@@ -798,7 +809,10 @@ namespace SIL.FieldWorks.XWorks
 				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider,
 				(new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
 			LoadStylesLists_ResetComboxBox();
-			RefreshPreview();
+			RefreshPreview(false); // REVIEW (Hasso) 2016.03: we do not currently check whether anything actually changed in the Styles dlg.
+			// REVIEW (cont): LoadStylesLists_ResetComboBox updates the Style combo, triggering a RefreshPreview(true),
+			// REVIEW (cont):   which registers that changes [could] have been made that need to be saved.
+			// REVIEW (cont): RefreshPreview(false) registers that changes [could] have been made and already saved to the Styles
 		}
 
 		private void BeforeTextChanged()
@@ -956,17 +970,18 @@ namespace SIL.FieldWorks.XWorks
 		#endregion SenseChanges
 
 		#region ParagrahChanges
+		// REVIEW (Hasso) 2016.03: Aren't these comboboxes always disabled? Refreshing is good, but do we need to update and enable these combos?
 		private void ParaStyleChanged(DictionaryNodeParagraphOptions paraOptions, IDictionaryParagraphOptionsView paraOptionsView)
 		{
 			paraOptions.PargraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(paraOptions.PargraphStyle);
+			paraOptionsView.StyleCombosEnabled = !string.IsNullOrEmpty(paraOptions.PargraphStyle);
 			RefreshPreview();
 		}
 
 		private void ContParaStyleChanged(DictionaryNodeParagraphOptions contParaOptions, IDictionaryParagraphOptionsView paraOptionsView)
 		{
 			contParaOptions.ContinuationParagraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(contParaOptions.PargraphStyle);
+			paraOptionsView.StyleCombosEnabled = !string.IsNullOrEmpty(contParaOptions.PargraphStyle);
 			RefreshPreview();
 		}
 		#endregion

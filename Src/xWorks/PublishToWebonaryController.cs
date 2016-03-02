@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (responseText.Contains("Upload successful"))
 				{
-					if (responseText.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0)
+					if (!responseText.Contains("error"))
 					{
 						view.UpdateStatus("Upload successful. " +
 							"Preparing your data for publication. " +

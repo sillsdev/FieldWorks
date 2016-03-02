@@ -4,25 +4,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 using XCore;
+
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
 	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Context
+		#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
+		private FwXApp m_application;
+		private FwXWindow m_window;
+		private Mediator m_mediator;
 
 		[SetUp]
 		public void Setup()
@@ -30,12 +35,38 @@ namespace SIL.FieldWorks.XWorks
 			m_model = new DictionaryConfigurationModel();
 		}
 
-		[TearDown]
-		public void TearDown()
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
 		{
+			FwRegistrySettings.Init(); // This is needed for the MockFwXApp to initialize properly
+			base.FixtureSetup();
 
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_mediator = m_window.Mediator;
+			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
 		}
-		#endregion
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			if (m_application != null && !m_application.IsDisposed)
+			{
+				m_application.Dispose();
+				m_application = null;
+			}
+			if (m_window != null && !m_window.IsDisposed)
+			{
+				m_window.Dispose(); // also disposes m_mediator
+				m_window = null;
+				m_mediator = null;
+			}
+			FwRegistrySettings.Release();
+			base.FixtureTeardown();
+		}
+		#endregion Setup and Teardown
 
 		/// <summary>
 		/// This test verifies that PopulateTreeView builds a TreeView that has the same structure as the model it is based on
@@ -981,7 +1012,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mediator = new MockMediator(Cache))
 			{
-				Utils.FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator.Mediator, "Dictionary"));
+				FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator.Mediator, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
 					_mediator = mediator.Mediator,
@@ -1041,16 +1072,25 @@ namespace SIL.FieldWorks.XWorks
 			public void SelectConfiguration(DictionaryConfigurationModel configuration)
 			{ }
 
+			public void DoSaveModel()
+			{
+				if (SaveModel != null)
+				{
+					SaveModel(null, null);
+				}
+			}
+
 			public void Dispose()
 			{
 					if (DetailsView != null && !DetailsView.IsDisposed)
 						DetailsView.Dispose();
 					m_treeControl.Dispose();
 			}
-#pragma warning disable 67
-			public event EventHandler ManageConfigurations;
 
 			public event EventHandler SaveModel;
+
+#pragma warning disable 67
+			public event EventHandler ManageConfigurations;
 
 			public event SwitchConfigurationEvent SwitchConfiguration;
 #pragma warning restore 67
@@ -1086,8 +1126,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
 
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
-				dcc._previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache);
+				var dcc = new DictionaryConfigurationController
+				{
+					View = testView, _model = m_model,
+					_previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache)
+				};
 
 				CreateALexEntry(Cache);
 				Assert.AreEqual(0, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count,
@@ -1126,13 +1169,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "The mediator is disposed by the window.")]
-		public void TestStateOfNodeIsChanged()
+		public void MakingAChangeAndSavingSetsHasChangesFlag()
 		{
-			FwXApp application;
-			FwXWindow window;
-			Mediator mediator;
-
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -1154,23 +1192,82 @@ namespace SIL.FieldWorks.XWorks
 				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-				var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, application.DefaultConfigurationPathname);
-				window = new MockFwXWindow(application, m_configFilePath);
-				((MockFwXWindow)window).Init(Cache); // initializes Mediator values
-
-				window.Mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
-				window.LoadUI(m_configFilePath);
-				mediator = window.Mediator;
 
-				var dcc = new DictionaryConfigurationController(testView, mediator, entryWithHeadword);
-				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
 				//SUT
-				Assert.IsTrue(DictionaryConfigurationController.IsDirty, "State of the node is changed");
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
+				Assert.IsTrue(dcc.HasSavedAnyChanges, "Should have saved changes");
+			}
+		}
 
-				application.Dispose();
-				window.Dispose();
+		[Test]
+		public void MakingAChangeWithoutSavingDoesNotSetHasChangesFlag()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mainheadword",
+				IsEnabled = true
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+			};
+			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
+				//SUT
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				Assert.IsFalse(dcc.HasSavedAnyChanges, "Should not have saved changes--user did not click OK or Apply");
+			}
+		}
+
+		[Test]
+		public void MakingNoChangeAndSavingDoesNotSetHasChangesFlag()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mainheadword",
+				IsEnabled = true
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+			};
+			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
+				//SUT
+				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
+				Assert.IsFalse(dcc.HasSavedAnyChanges, "Should not have saved changes--none to save");
 			}
 		}
 
