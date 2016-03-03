@@ -10,11 +10,12 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
-	[TestFixture()]
-	public class FwMultilingualPropViewTests
+	[TestFixture]
+	public class FwMultilingualPropViewTests : BaseTest
 	{
 		/// <summary>
 		/// Dummy implementation of IFwMultilingualPropViewDataSource to allow testing FwMultilingualPropView

@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -23,7 +24,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Fields are diposed in test teardown")]
-	public class FdoLexiconTests
+	public class FdoLexiconTests : BaseTest
 	{
 		private ThreadHelper m_threadHelper;
 		private FdoLexicon m_lexicon;

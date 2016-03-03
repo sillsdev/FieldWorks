@@ -163,7 +163,7 @@
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="MessageBoxStub.cs" />
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
-    <Compile Include="Attributes\SetCompanyAndProductForTestsAttribute.cs" />
+    <Compile Include="Attributes\SetCompanyAndProductAndIcuEnvForTestsAttribute.cs" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>

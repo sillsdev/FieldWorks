@@ -79,12 +79,12 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				// value. This allows COMInterfaces.dll to be independent of WinForms.
 				// ENHANCE: store data directory somewhere else other than registry (user.config
 				// file?) and use that.
-				string dir = Environment.GetEnvironmentVariable("ICU_DATA");
+				var dir = Environment.GetEnvironmentVariable("ICU_DATA");
 				if (string.IsNullOrEmpty(dir))
 				{
 					dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
 						string.Format("SIL/Icu{0}", Version));
-					}
+				}
 				return dir;
 			}
 		}
