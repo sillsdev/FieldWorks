@@ -470,6 +470,53 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// LT-17149.
+		/// </summary>
+		[Test]
+		public void UploadFilename_UsesSiteName()
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = "mySiteName";
+			var expectedFilename = "mySiteName.zip";
+			var actualFilename = PublishToWebonaryController.UploadFilename(model, view);
+			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
+		}
+
+		[Test]
+		public void UploadFilename_ThrowsForBadInput()
+		{
+			Assert.Throws<ArgumentNullException>(() => PublishToWebonaryController.UploadFilename(null, null));
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = null;
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+			model.SiteName = "";
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+		}
+
+		[TestCase("my.Site")]
+		[TestCase("my Site")]
+		[TestCase("my$Site")]
+		[TestCase("my%Site")]
+		[TestCase("my_Site")]
+		[TestCase("my*Site")]
+		[TestCase("my/Site")]
+		[TestCase("my:Site")]
+		public void UploadFilename_FailsForInvalidCharactersInSitename(string sitename)
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = sitename;
+
+			// SUT
+			var result = PublishToWebonaryController.UploadFilename(model, view);
+
+			Assert.That(result, Is.Null, "Fail on invalid characters.");
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Invalid characters found in sitename"))), "Inform that there was a problem");
+		}
+
 		#region Helpers
 		/// <summary>
 		/// Helper.

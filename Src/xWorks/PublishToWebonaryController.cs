@@ -12,6 +12,8 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using System.Net;
 using System.Text;
+using Palaso.Extensions;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -220,13 +222,35 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+			var zipBasename = UploadFilename(model, view);
+			if (zipBasename == null)
+				return;
+			var zipFileToUpload = Path.Combine(Path.GetTempPath(), zipBasename);
 			Directory.CreateDirectory(tempDirectoryToCompress);
 			ExportDictionaryContent(tempDirectoryToCompress, model, view);
 			ExportReversalContent(tempDirectoryToCompress, model, view);
 			ExportOtherFilesContent(tempDirectoryToCompress, model, view);
 			CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
 			UploadToWebonary(zipFileToUpload, model, view);
+		}
+
+		/// <summary>
+		/// Filename of zip file to upload to webonary, based on a particular model.
+		/// If there are any characters that might cause a problem, null is returned.
+		/// </summary>
+		internal static string UploadFilename(PublishToWebonaryModel basedOnModel, IPublishToWebonaryView view)
+		{
+			if (basedOnModel == null)
+				throw new ArgumentNullException("basedOnModel");
+			if (string.IsNullOrEmpty(basedOnModel.SiteName))
+				throw new ArgumentException("basedOnModel");
+			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName) + "_ $.%";
+			if (basedOnModel.SiteName.IndexOfAny(disallowedCharacters.ToCharArray()) >= 0)
+			{
+				view.UpdateStatus("Error: Invalid characters found in sitename.");
+				return null;
+			}
+			return basedOnModel.SiteName + ".zip";
 		}
 
 		/// <summary>
