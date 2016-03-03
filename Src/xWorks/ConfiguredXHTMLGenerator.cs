@@ -179,6 +179,11 @@ namespace SIL.FieldWorks.XWorks
 			return xhtmlPath;
 		}
 
+		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
+		{
+			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form");
+		}
+
 		/// <summary>
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
@@ -188,9 +193,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool.
-			var wantLetterHeaders = entryCount > 1 || publicationDecorator != null;
+			var wantLetterHeaders = (entryCount > 1 || publicationDecorator != null) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false))
 			{

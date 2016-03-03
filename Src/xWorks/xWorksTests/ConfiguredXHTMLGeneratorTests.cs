@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
+		private RecordClerk m_Clerk;
 
 		StringBuilder XHTMLStringBuilder { get; set; }
 
@@ -50,10 +51,39 @@ namespace SIL.FieldWorks.XWorks
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
 
+			m_Clerk = CreateClerk();
+			m_mediator.PropertyTable.SetProperty("ActiveClerk", m_Clerk);
+
 			m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+		}
+
+		private RecordClerk CreateClerk()
+		{
+			const string entryClerk = @"<?xml version='1.0' encoding='UTF-8'?>
+			<root>
+				<clerks>
+					<clerk id='entries'>
+						<recordList owner='LexDb' property='Entries'/>
+					</clerk>
+				</clerks>
+				<tools>
+					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView'>
+						<control>
+							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.XhtmlDocView'/>
+							<parameters area='lexicon' clerk='entries' layout='Bartholomew' layoutProperty='DictionaryPublicationLayout' editable='false' configureObjectName='Dictionary'/>
+						</control>
+					</tool>
+				</tools>
+			</root>";
+			var doc = new XmlDocument();
+			doc.LoadXml(entryClerk);
+			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, clerkNode, false);
+			clerk.SortName = "Headword";
+			return clerk;
 		}
 
 		[TestFixtureTearDown]
@@ -69,6 +99,8 @@ namespace SIL.FieldWorks.XWorks
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
+				if (m_Clerk != null)
+					m_Clerk.Dispose();
 				if (m_application != null)
 					m_application.Dispose();
 				if (m_window != null)
@@ -5082,6 +5114,53 @@ namespace SIL.FieldWorks.XWorks
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { lexentry1.Hvo }, null, model, m_mediator);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_SortByNonHeadwordProducesNoLetHead()
+		{
+			var firstAEntry = CreateInterestingLexEntry(Cache);
+			var firstAHeadword = "alpha1";
+			var bHeadword = "beta";
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			var bEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			string xhtmlPath = null;
+			const string letterHeaderXPath = "//div[@class='letHead']";
+			try
+			{
+				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				clerk.SortName = "Glosses";
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_mediator);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 0);
 			}
 			finally
 			{

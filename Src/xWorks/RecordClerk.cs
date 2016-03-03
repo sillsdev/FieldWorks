@@ -156,8 +156,9 @@ namespace SIL.FieldWorks.XWorks
 		/// being sorted or that the current sorting should not be displayed (i.e. the default column
 		/// is being sorted).
 		/// </summary>
-		private string m_sortName = null;
+
 		private bool m_isDefaultSort = false;
+		public string SortName { get; internal set; }
 
 		#region Event Handling
 		public event EventHandler SorterChangedByClerk;
@@ -529,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter(Mediator mediator, XmlNode clerkConfiguration, FdoCache cache)
 		{
-			m_sortName = mediator.PropertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = mediator.PropertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 
 			string persistSorter = mediator.PropertyTable.GetStringProperty(SorterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 			var fwdisposable = m_list.Sorter as IFWDisposable;
@@ -561,7 +562,7 @@ namespace SIL.FieldWorks.XWorks
 				if (sorterNode != null)
 				{
 					sorter = PropertyRecordSorter.Create(cache, sorterNode);
-					m_sortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
+					SortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
 				}
 			}
 			// If sorter is null, allow any sorter which may have been installed during
@@ -2771,7 +2772,7 @@ namespace SIL.FieldWorks.XWorks
 			if (b == null) //Other xworks apps may not have this panel
 				return;
 
-			if (m_list.Sorter == null || m_sortName == null
+			if (m_list.Sorter == null || SortName == null
 				|| (m_isDefaultSort && ToolConfiguration.GetDefaultSorter(m_clerkConfiguration) != null))
 			{
 				b.BackBrush = System.Drawing.Brushes.Transparent;
@@ -2780,7 +2781,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				b.BackBrush = System.Drawing.Brushes.Lime;
-				b.TextForReal = string.Format(xWorksStrings.SortedBy, m_sortName);
+				b.TextForReal = string.Format(xWorksStrings.SortedBy, SortName);
 			}
 		}
 
@@ -2845,8 +2846,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_isDefaultSort = isDefaultSort;
 
-			m_sortName = sortName;
-			m_mediator.PropertyTable.SetProperty(SortNamePropertyTableId, m_sortName, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = sortName;
+			m_mediator.PropertyTable.SetProperty(SortNamePropertyTableId, SortName, PropertyTable.SettingsGroup.LocalSettings);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
