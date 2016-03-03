@@ -354,8 +354,8 @@ namespace SIL.FieldWorks.XWorks
 			IDictionaryParagraphOptionsView paragraphOptionsView = new ParagraphOptionsView();
 			paragraphOptionsView.SetParaStyles(m_paraStyles, paragraphOptions.PargraphStyle);
 			paragraphOptionsView.SetContParaStyles(m_paraStyles, paragraphOptions.ContinuationParagraphStyle);
-			paragraphOptionsView.ParaStyleChanged += (sender, e) => ParaStyleChanged(paragraphOptions, paragraphOptionsView);
-			paragraphOptionsView.ContParaStyleChanged += (sender, e) => ContParaStyleChanged(paragraphOptions, paragraphOptionsView);
+			paragraphOptionsView.ParaStyleChanged += (sender, e) => RefreshPreview(); // TODO pH 2016.02: prevent the style being changed in the combo
+			paragraphOptionsView.ContParaStyleChanged += (sender, e) => RefreshPreview();
 			paragraphOptionsView.StyleParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ParaStyle);
 			paragraphOptionsView.StyleContParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ContParaStyle);
 			View.OptionsView = paragraphOptionsView as ParagraphOptionsView;
@@ -968,23 +968,6 @@ namespace SIL.FieldWorks.XWorks
 			RefreshPreview();
 		}
 		#endregion SenseChanges
-
-		#region ParagrahChanges
-		// REVIEW (Hasso) 2016.03: Aren't these comboboxes always disabled? Refreshing is good, but do we need to update and enable these combos?
-		private void ParaStyleChanged(DictionaryNodeParagraphOptions paraOptions, IDictionaryParagraphOptionsView paraOptionsView)
-		{
-			paraOptions.PargraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.StyleCombosEnabled = !string.IsNullOrEmpty(paraOptions.PargraphStyle);
-			RefreshPreview();
-		}
-
-		private void ContParaStyleChanged(DictionaryNodeParagraphOptions contParaOptions, IDictionaryParagraphOptionsView paraOptionsView)
-		{
-			contParaOptions.ContinuationParagraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.StyleCombosEnabled = !string.IsNullOrEmpty(contParaOptions.PargraphStyle);
-			RefreshPreview();
-		}
-		#endregion
 
 		private void ToggleViewForShowInPara(bool showInPara)
 		{
