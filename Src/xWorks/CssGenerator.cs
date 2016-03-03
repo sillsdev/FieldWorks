@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
-			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, cache);
+			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts.Where(x => x.IsEnabled))
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
-			StyleSheet styleSheet, FdoCache cache)
+			StyleSheet styleSheet, DictionaryConfigurationModel model, FdoCache cache)
 		{
 			if (mediatorstyleSheet == null) return;
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
@@ -67,11 +67,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
 			{
-				GenerateDictionaryNormalParagraphCss(styleSheet, mediator, cache);
+				GenerateDictionaryNormalParagraphCss(styleSheet, mediator);
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
 			{
-				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, cache);
+				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
 			}
 		}
 
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, Mediator mediator)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
 			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, mediator);
@@ -106,12 +106,23 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(dictNormalRule);
 		}
 
-		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, DictionaryConfigurationModel model)
 		{
-			var dictMinorRule = new StyleRule {Value = "div.minorentry"}; // REVIEW (Hasso) 2016.02: minorentry is no longer a valid class name
-			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, mediator);
-			dictMinorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictMinorStyle));
-			styleSheet.Rules.Add(dictMinorRule);
+			// Use the style set in all the parts following main entry, if no style is specified assume Dictionary-Minor
+			for (var i = 1; i < model.Parts.Count; ++i)
+			{
+				var minorEntryNode = model.Parts[i];
+				if (minorEntryNode.IsEnabled)
+				{
+					var styleName = GetParagraphStyleNameFromNode(minorEntryNode);
+					if (string.IsNullOrEmpty(styleName))
+						styleName = DictionaryMinor;
+					var dictionaryMinorStyle = GenerateCssStyleFromFwStyleSheet(styleName, 0, mediator);
+					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
+					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
+					styleSheet.Rules.Add(minorRule);
+				}
+			}
 		}
 
 		private static void GenerateCssForAudioWs(StyleSheet styleSheet, FdoCache cache)

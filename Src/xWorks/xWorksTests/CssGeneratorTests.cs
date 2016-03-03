@@ -2104,24 +2104,55 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForConfiguration_GenerateDictionaryMinorParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Minor");
+			var majorStyle = GenerateEmptyParagraphStyle("Dictionary-Major");
+			var optionsStyle = GenerateEmptyParagraphStyle("Dictionary-Options-Minor");
+			majorStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, 32000);
+			optionsStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, 16000);
 			var testSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses"
 			};
-			var testEntryNode = new ConfigurableDictionaryNode
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentry",
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var extraEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "specialminorentry",
+				Style = majorStyle.Name,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var specialMinor = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "optionsminorentry",
+				DictionaryNodeOptions = new DictionaryNodeParagraphOptions { PargraphStyle = optionsStyle.Name },
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, extraEntryNode, specialMinor }
 			};
-			SetParentsAndEnabled(testEntryNode);
+			SetParentsAndEnabled(mainEntryNode);
+			SetParentsAndEnabled(minorEntryNode);
+			SetParentsAndEnabled(extraEntryNode);
+			SetParentsAndEnabled(specialMinor);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
-							  "Generate Dictionary-Minor Paragraph Style not generated.");
+							  "Dictionary-Minor Paragraph Style not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @"div.specialminorentry{\s*padding-right:32pt;\s*}", RegexOptions.Singleline).Success,
+							  "Dictionary-Minor Paragraph Style for node with style attribute not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @"div.optionsminorentry{\s*padding-right:16pt;\s*}", RegexOptions.Singleline).Success,
+							  "Dictionary-Minor Paragraph Style for node with paragraph options not generated.");
 		}
 
 		private TestStyle GenerateStyle(string name)
