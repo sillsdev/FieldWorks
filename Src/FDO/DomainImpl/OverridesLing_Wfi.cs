@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		// Use this variable with extreme care! SimpleBag is a tricky struct designed to optimize memory usage.
 		// Because it is a struct, if you copy it even to a local variable you are working with a copy. Changes
 		// should NOT be made to such a copy! Don't make this object accessible outside the WfiWordform class.
-		private SimpleBag<ISegment> m_occurrencesInTexts;
+		private SimpleBag<ISegment> m_occurrencesInTexts = new SimpleBag<ISegment>();
 		/// <summary>
 		/// The Segments that reference an occurrence of this word in a text.
 		/// Note: the very first call to this for a given language project can be quite slow.

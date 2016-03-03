@@ -8,7 +8,9 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Security;
 using System.Text;
 using Microsoft.Win32;
 using System.Windows.Forms;
@@ -213,13 +215,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="subKeys">Zero or more subkeys (e.g., a specific application name, project
 		/// name, etc.)</param>
 		/// ----------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "This code should not be responsible for disposing of the CompanyKeyLocalMachine.")]
 		public static RegistryKey SettingsKeyLocalMachine(params string[] subKeys)
 		{
-			RegistryKey key = CompanyKeyLocalMachine;
-			if (key != null )
-				return key.OpenSubKey(GetLocalMachineKeyName(subKeys));
-			return key;
+			try
+			{
+				RegistryKey key = CompanyKeyLocalMachine;
+				if (key != null)
+				{
+					// GJM 5 Jan 2016: This didn't work. My machine over Christmas break developed an inability
+					// to read HKLM keys for FieldWorks w/o getting a SecurityException, so Jason and I added
+					// the try-catch block.
+					//var permission = new RegistryPermission(RegistryPermissionAccess.Read, key.Name +GetLocalMachineKeyName(new string[0] /*subKeys*/));
+					//permission.Demand();
+					return key.OpenSubKey(GetLocalMachineKeyName(subKeys), false);
+				}
+				return key;
+			}
+			catch (SecurityException)
+			{
+				return null;
+			}
 		}
+
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a subkey of HKLM\Software using the company name (Application.CompanyName) and

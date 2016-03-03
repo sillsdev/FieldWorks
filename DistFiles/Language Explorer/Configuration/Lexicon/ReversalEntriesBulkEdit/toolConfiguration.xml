@@ -7,13 +7,11 @@
 				<parameters id="ReversalEntriesEdit" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true"
-							bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true">
-							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true"
-								enableBEFindReplace="true" enableBEOther="true"/>
+						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true"/>
 							<columns>
 								<!-- If you add a new column and it is has a multi-lingual string you will need to review AreSortersCompatible in ReversalListener -->
-								<column label="Form" width="34%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">
+								<column label="Reversal Form" width="20%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">
 									<span>
 										<properties>
 											<editable value="true"/>
@@ -31,7 +29,7 @@
 										</para>
 									</seq>
 								</column>
-								<column label="Category" width="33%" bulkEdit="external">
+								<column label="Reversal Category" width="15%" bulkEdit="external">
 									<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries.BulkReversalEntryPosEditor"/>
 									<properties>
 										<editable value="false"/>

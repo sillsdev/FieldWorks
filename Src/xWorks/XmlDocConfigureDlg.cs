@@ -609,16 +609,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ICmPossibility> GetSortedFlattenedVariantTypeList()
 		{
-			var result = FlattenPossibilityList(
-				m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
+			var result = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.ToList();
 			result.Sort(ComparePossibilitiesByName);
 			return result;
 		}
 
 		private List<ICmPossibility> GetSortedFlattenedComplexFormTypeList()
 		{
-			var result = FlattenPossibilityList(
-				m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
+			var result = m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToList();
 			result.Sort(ComparePossibilitiesByName);
 			return result;
 		}
@@ -643,17 +641,6 @@ namespace SIL.FieldWorks.XWorks
 				index = 0;
 			}
 			ltn.EntryTypeList[index].Name = m_noVariantTypeLabel;
-		}
-
-		internal static List<ICmPossibility> FlattenPossibilityList(IEnumerable<ICmPossibility> sequence)
-		{
-			var list = sequence.ToList();
-			foreach (var poss in sequence)
-			{
-				// Need to get all nested items
-				list.AddRange(FlattenPossibilityList(poss.SubPossibilitiesOS));
-			}
-			return list;
 		}
 		#endregion // Constructor, Initialization, etc.
 
@@ -1255,7 +1242,8 @@ namespace SIL.FieldWorks.XWorks
 		private void HandleStylesBtn(ComboBox combo, Action fixCombo, string defaultStyle)
 		{
 			FwStylesDlg.RunStylesDialogForCombo(combo,
-				() => {
+				() =>
+				{
 					// Reload the lists for the styles combo boxes, and redisplay the controls.
 					SetStylesLists();
 					if (m_btnStyles.Visible)
@@ -1273,7 +1261,13 @@ namespace SIL.FieldWorks.XWorks
 				0, 0,
 #endif
 				m_cache, this, m_propertyTable.GetValue<IApp>("App"),
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+#if RANDYTODO
+	// TODO: Re-enable, after xWorks is merged into Lang Exp, since FlexStylesXmlAccessor now lives in Lang Exp.
+				(new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
+#else
+				null);
+#endif
 		}
 
 		/// <summary>

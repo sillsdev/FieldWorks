@@ -32,25 +32,25 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationManagerDlg));
 			this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.Label();
-			this.configurationsGroupBox = new System.Windows.Forms.GroupBox();
-			this.publicationsGroupBox = new System.Windows.Forms.GroupBox();
-			this.configurationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.configurationsExplanationLabel = new System.Windows.Forms.Label();
-			this.copyButton = new System.Windows.Forms.Button();
-			this.removeButton = new System.Windows.Forms.Button();
-			this.configurationsListView = new System.Windows.Forms.ListView();
-			this.publicationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.publicationsExplanationLabel = new System.Windows.Forms.Label();
-			this.publicationsListView = new System.Windows.Forms.ListView();
-			this.closeButton = new System.Windows.Forms.Button();
-			this.helpButton = new System.Windows.Forms.Button();
 			this.buttonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.helpButton = new System.Windows.Forms.Button();
+			this.closeButton = new System.Windows.Forms.Button();
+			this.configurationsGroupBox = new System.Windows.Forms.GroupBox();
+			this.configurationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.configurationsListView = new System.Windows.Forms.ListView();
+			this.removeButton = new System.Windows.Forms.Button();
+			this.copyButton = new System.Windows.Forms.Button();
+			this.configurationsExplanationLabel = new System.Windows.Forms.Label();
+			this.publicationsGroupBox = new System.Windows.Forms.GroupBox();
+			this.publicationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.publicationsListView = new System.Windows.Forms.ListView();
+			this.publicationsExplanationLabel = new System.Windows.Forms.Label();
 			this.mainTableLayoutPanel.SuspendLayout();
-			this.configurationsGroupBox.SuspendLayout();
-			this.publicationsGroupBox.SuspendLayout();
-			this.configurationsTableLayoutPanel.SuspendLayout();
-			this.publicationsTableLayoutPanel.SuspendLayout();
 			this.buttonTableLayoutPanel.SuspendLayout();
+			this.configurationsGroupBox.SuspendLayout();
+			this.configurationsTableLayoutPanel.SuspendLayout();
+			this.publicationsGroupBox.SuspendLayout();
+			this.publicationsTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainTableLayoutPanel
@@ -68,19 +68,34 @@
 			this.mainTableLayoutPanel.SetColumnSpan(this.explanationLabel, 2);
 			this.explanationLabel.Name = "explanationLabel";
 			// 
+			// buttonTableLayoutPanel
+			// 
+			resources.ApplyResources(this.buttonTableLayoutPanel, "buttonTableLayoutPanel");
+			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
+			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 2, 0);
+			this.buttonTableLayoutPanel.Controls.Add(this.closeButton, 1, 0);
+			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";
+			// 
+			// helpButton
+			// 
+			resources.ApplyResources(this.helpButton, "helpButton");
+			this.helpButton.Name = "helpButton";
+			this.helpButton.UseVisualStyleBackColor = true;
+			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+			// 
+			// closeButton
+			// 
+			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			resources.ApplyResources(this.closeButton, "closeButton");
+			this.closeButton.Name = "closeButton";
+			this.closeButton.UseVisualStyleBackColor = true;
+			// 
 			// configurationsGroupBox
 			// 
 			this.configurationsGroupBox.Controls.Add(this.configurationsTableLayoutPanel);
 			resources.ApplyResources(this.configurationsGroupBox, "configurationsGroupBox");
 			this.configurationsGroupBox.Name = "configurationsGroupBox";
 			this.configurationsGroupBox.TabStop = false;
-			// 
-			// publicationsGroupBox
-			// 
-			this.publicationsGroupBox.Controls.Add(this.publicationsTableLayoutPanel);
-			resources.ApplyResources(this.publicationsGroupBox, "publicationsGroupBox");
-			this.publicationsGroupBox.Name = "publicationsGroupBox";
-			this.publicationsGroupBox.TabStop = false;
 			// 
 			// configurationsTableLayoutPanel
 			// 
@@ -90,24 +105,6 @@
 			this.configurationsTableLayoutPanel.Controls.Add(this.copyButton, 1, 1);
 			this.configurationsTableLayoutPanel.Controls.Add(this.configurationsExplanationLabel, 0, 0);
 			this.configurationsTableLayoutPanel.Name = "configurationsTableLayoutPanel";
-			// 
-			// configurationsExplanationLabel
-			// 
-			resources.ApplyResources(this.configurationsExplanationLabel, "configurationsExplanationLabel");
-			this.configurationsTableLayoutPanel.SetColumnSpan(this.configurationsExplanationLabel, 2);
-			this.configurationsExplanationLabel.Name = "configurationsExplanationLabel";
-			// 
-			// copyButton
-			// 
-			resources.ApplyResources(this.copyButton, "copyButton");
-			this.copyButton.Name = "copyButton";
-			this.copyButton.UseVisualStyleBackColor = true;
-			// 
-			// removeButton
-			// 
-			resources.ApplyResources(this.removeButton, "removeButton");
-			this.removeButton.Name = "removeButton";
-			this.removeButton.UseVisualStyleBackColor = true;
 			// 
 			// configurationsListView
 			// 
@@ -121,17 +118,37 @@
 			this.configurationsListView.UseCompatibleStateImageBehavior = false;
 			this.configurationsListView.View = System.Windows.Forms.View.List;
 			// 
+			// removeButton
+			// 
+			resources.ApplyResources(this.removeButton, "removeButton");
+			this.removeButton.Name = "removeButton";
+			this.removeButton.UseVisualStyleBackColor = true;
+			// 
+			// copyButton
+			// 
+			resources.ApplyResources(this.copyButton, "copyButton");
+			this.copyButton.Name = "copyButton";
+			this.copyButton.UseVisualStyleBackColor = true;
+			// 
+			// configurationsExplanationLabel
+			// 
+			resources.ApplyResources(this.configurationsExplanationLabel, "configurationsExplanationLabel");
+			this.configurationsTableLayoutPanel.SetColumnSpan(this.configurationsExplanationLabel, 2);
+			this.configurationsExplanationLabel.Name = "configurationsExplanationLabel";
+			// 
+			// publicationsGroupBox
+			// 
+			this.publicationsGroupBox.Controls.Add(this.publicationsTableLayoutPanel);
+			resources.ApplyResources(this.publicationsGroupBox, "publicationsGroupBox");
+			this.publicationsGroupBox.Name = "publicationsGroupBox";
+			this.publicationsGroupBox.TabStop = false;
+			// 
 			// publicationsTableLayoutPanel
 			// 
 			resources.ApplyResources(this.publicationsTableLayoutPanel, "publicationsTableLayoutPanel");
 			this.publicationsTableLayoutPanel.Controls.Add(this.publicationsListView, 0, 1);
 			this.publicationsTableLayoutPanel.Controls.Add(this.publicationsExplanationLabel, 0, 0);
 			this.publicationsTableLayoutPanel.Name = "publicationsTableLayoutPanel";
-			// 
-			// publicationsExplanationLabel
-			// 
-			resources.ApplyResources(this.publicationsExplanationLabel, "publicationsExplanationLabel");
-			this.publicationsExplanationLabel.Name = "publicationsExplanationLabel";
 			// 
 			// publicationsListView
 			// 
@@ -142,26 +159,10 @@
 			this.publicationsListView.UseCompatibleStateImageBehavior = false;
 			this.publicationsListView.View = System.Windows.Forms.View.List;
 			// 
-			// closeButton
+			// publicationsExplanationLabel
 			// 
-			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.closeButton, "closeButton");
-			this.closeButton.Name = "closeButton";
-			this.closeButton.UseVisualStyleBackColor = true;
-			// 
-			// helpButton
-			// 
-			resources.ApplyResources(this.helpButton, "helpButton");
-			this.helpButton.Name = "helpButton";
-			this.helpButton.UseVisualStyleBackColor = true;
-			// 
-			// buttonTableLayoutPanel
-			// 
-			resources.ApplyResources(this.buttonTableLayoutPanel, "buttonTableLayoutPanel");
-			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
-			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 2, 0);
-			this.buttonTableLayoutPanel.Controls.Add(this.closeButton, 1, 0);
-			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";
+			resources.ApplyResources(this.publicationsExplanationLabel, "publicationsExplanationLabel");
+			this.publicationsExplanationLabel.Name = "publicationsExplanationLabel";
 			// 
 			// DictionaryConfigurationManagerDlg
 			// 
@@ -173,13 +174,13 @@
 			this.ShowIcon = false;
 			this.mainTableLayoutPanel.ResumeLayout(false);
 			this.mainTableLayoutPanel.PerformLayout();
+			this.buttonTableLayoutPanel.ResumeLayout(false);
 			this.configurationsGroupBox.ResumeLayout(false);
-			this.publicationsGroupBox.ResumeLayout(false);
 			this.configurationsTableLayoutPanel.ResumeLayout(false);
 			this.configurationsTableLayoutPanel.PerformLayout();
+			this.publicationsGroupBox.ResumeLayout(false);
 			this.publicationsTableLayoutPanel.ResumeLayout(false);
 			this.publicationsTableLayoutPanel.PerformLayout();
-			this.buttonTableLayoutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -190,7 +191,7 @@
 		private System.Windows.Forms.Label explanationLabel;
 		private System.Windows.Forms.TableLayoutPanel buttonTableLayoutPanel;
 		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Button closeButton;
+		public System.Windows.Forms.Button closeButton;
 		private System.Windows.Forms.GroupBox configurationsGroupBox;
 		private System.Windows.Forms.TableLayoutPanel configurationsTableLayoutPanel;
 		public System.Windows.Forms.ListView configurationsListView;

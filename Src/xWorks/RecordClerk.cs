@@ -699,7 +699,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				sorter = m_defaultSorter;
 				m_sortName = m_defaultSortLabel;
-			}
+				}
 			// If sorter is still null, allow any sorter which may have been installed during
 			// record list initialization to prevail.
 			if (sorter == null)
@@ -2142,7 +2142,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Tell the RecordClerk that it may now be the new master of the tree bar, if it is not a dependent clerk.
 		/// Use DeactivatedGui to tell RecordClerk that it's not currently being used in a Gui.
 		/// </summary>
-		virtual public void ActivateUI(bool useRecordTreeBar)
+		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			m_fIsActiveInGui = true;
 			CheckDisposed();
@@ -2157,6 +2157,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			if (!updateStatusBar)
+				return;
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
 		}
@@ -2407,6 +2409,18 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 				return m_list.OnLast;
 			}
+		}
+
+		public void JumpToRecord(Guid jumpToGuid)
+		{
+			JumpToRecord(jumpToGuid, false);
+		}
+
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange)
+		{
+			ICmObject obj;
+			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
+				JumpToRecord(obj.Hvo, suppressFocusChange);
 		}
 
 		public void JumpToRecord(int jumpToHvo)

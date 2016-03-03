@@ -22,7 +22,7 @@ using SIL.FieldWorks.Common.FwUtils.Attributes;
 [assembly: CleanupSingletons]
 
 // Override company and product names
-[assembly: SetCompanyAndProductForTests]
+[assembly: SetCompanyAndProductAndIcuEnvForTests]
 
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
@@ -32,6 +32,3 @@ using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
-
-// Set ICU_DATA environment variable
-[assembly: SetIcuDataEnvironmentVariable]

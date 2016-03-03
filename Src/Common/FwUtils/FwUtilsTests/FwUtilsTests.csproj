@@ -182,7 +182,7 @@
     <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="DummyKeyboardAdaptor.cs" />
-    <Compile Include="Attributes\SetCompanyAndProductForTestsAttribute.cs" />
+    <Compile Include="Attributes\SetCompanyAndProductAndIcuEnvForTestsAttribute.cs" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>

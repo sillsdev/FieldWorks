@@ -34,6 +34,7 @@ namespace NUnitReport
 			Console.WriteLine("                     (m)inimal:  Only failures are reported");
 			Console.WriteLine("                     (n)ormal:   Failures and Ignored tests are reported");
 			Console.WriteLine("                     (d)etailed: Even successful tests are reported");
+			Console.WriteLine("      /t:x           where x is either DotCover or NUnit - NUnit is the default");
 			Console.WriteLine("      /a             Collect all appropriate files from {root}/Output/Debug.");
 			Console.WriteLine("                     This cannot be mixed with specific test project names.");
 			Console.WriteLine("      testproject    space separated test project names");
@@ -42,10 +43,12 @@ namespace NUnitReport
 			Console.WriteLine("   NUnitReport xWorksTests DiscourseTests");
 			Console.WriteLine("   NUnitReport xWorksTests /v:d");
 			Console.WriteLine("   NUnitReport /v:normal xWorksTests");
+			Console.WriteLine("   NUnitReport xWorksTests /t:DotCover");
 			Console.WriteLine("   NUnitReport /a /v:m");
+			Console.WriteLine("   NUnitReport /a /t:DotCover");
 			Console.WriteLine("");
 			Console.WriteLine("NUnitReport looks for a file in {root}/Output/Debug with a name of the form");
-			Console.WriteLine("'projectname'.dll-nunit-output.xml for each test project name");
+			Console.WriteLine("'projectname'.dll-nunit-output.xml for each test project name. A build with /p:action=test or /p:action=cover is a prereq.");
 		}
 	}
 }

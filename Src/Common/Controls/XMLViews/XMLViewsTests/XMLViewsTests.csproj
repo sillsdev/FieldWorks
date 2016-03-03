@@ -213,6 +213,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="BulkEditBarTests.cs" />
+    <Compile Include="LayoutMergerTests.cs" />
     <Compile Include="ConfiguredExportTests.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -250,8 +251,15 @@
     <None Include="gendarme-XMLViewsTests.ignore" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LayoutMergerTestData\LexEntryParts.xml" />
+    <Content Include="LayoutMergerTestData\LexSenseParts.xml" />
+    <Content Include="LayoutMergerTestData\MorphologyParts.xml" />
+    <Content Include="LayoutMergerTestData\My_Stem-based_LexEntry_Layouts.xml" />
     <Content Include="Resources\Layouts.xml" />
     <Content Include="Resources\Parts.xml" />
+    <None Include="LayoutMergerTestData\LexEntry.fwlayout" />
+    <None Include="LayoutMergerTestData\LexSense.fwlayout" />
+    <None Include="LayoutMergerTestData\Morphology.fwlayout" />
     <None Include="Resources\TextCacheModel.xml" />
   </ItemGroup>
   <ItemGroup>

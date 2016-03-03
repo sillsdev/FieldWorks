@@ -100,7 +100,6 @@
     <Compile Include="UtilsTest.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <None Include="App.config" />
-    <Compile Include="Attributes\SetIcuDataEnvironmentVariableAttribute.cs" />
     <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
       <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>

@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -96,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject,
 																		 ref UIItemDisplayProperties display)
 		{
-			if(GetDictionaryConfigurationType(m_propertyTable) != null)
+			if(GetDictionaryConfigurationBaseType(m_propertyTable) != null)
 			{
 				display.Visible = false;
 				return true;
@@ -105,20 +106,43 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
+		internal static string GetConfigDialogHelpTopic(IPropertyTable propertyTable)
+		{
+			return GetDictionaryConfigurationBaseType(propertyTable) == "Reversal Index"
+				? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
+		}
+
+		/// <summary>
+		/// Get the base (non-localized) name of the area in FLEx being configured, such as Dictionary or Reversal Index.
+		/// </summary>
+		internal static string GetDictionaryConfigurationBaseType(IPropertyTable propertyTable)
+		{
+			var toolName = propertyTable.GetValue<string>("currentContentControl");
+			switch (toolName)
+			{
+				case "reversalToolBulkEditReversalEntries":
+				case "reversalToolEditComplete":
+					return xWorksStrings.ReversalIndex;
+				case "lexiconBrowse":
+				case "lexiconDictionary":
+				case "lexiconEdit":
+					return "Dictionary";
+				default:
+					return null;
+			}
+		}
+
 		/// <summary>
 		/// Get the localizable name of the area in FLEx being configured, such as Dictionary of Reversal Index.
 		/// </summary>
 		internal static string GetDictionaryConfigurationType(IPropertyTable propertyTable)
 		{
-			var toolName = propertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
-			switch(toolName)
+			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(propertyTable);
+			switch(nonLocalizedConfigurationType)
 			{
-				case "reversalBulkEditReversalEntries":
-				case "reversalEditComplete":
+				case "Reversal Index":
 					return xWorksStrings.ReversalIndex;
-				case "lexiconBrowse":
-				case "lexiconDictionary":
-				case "lexiconEdit" :
+				case "Dictionary":
 					return xWorksStrings.Dictionary;
 				default:
 					return null;
@@ -167,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetInnermostConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			switch (propertyTable.GetValue<string>("ToolForAreaNamed_lexicon"))
+			switch(propertyTable.GetValue<string>("currentContentControl"))
 			{
 				case "reversalBulkEditReversalEntries":
 				case "reversalEditComplete":
@@ -188,11 +212,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
-			using(var dlg = new DictionaryConfigurationDlg())
+			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
 			{
 				var clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				var controller = new DictionaryConfigurationController(dlg, PropertyTable, clerk != null ? clerk.CurrentObject : null);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(PropertyTable));
+				dlg.HelpTopic = GetConfigDialogHelpTopic(PropertyTable);
 				dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window"));
 			}
 			Publisher.Publish("MasterRefresh", null);
@@ -214,36 +239,82 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the current Dictionary configuration file
+		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
+		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view.
 		/// </summary>
-		/// <returns></returns>
-		public static string GetCurrentConfiguration(IPropertyTable propertyTable)
+		public static string GetCurrentConfiguration(IPropertyTable propertyTable, string innerConfigDir = null)
 		{
-			string currentConfig = null;
+			return GetCurrentConfiguration(propertyTable, true, innerConfigDir);
+		}
+
+		/// <summary>
+		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
+		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
+		/// </summary>
+		public static string GetCurrentConfiguration(IPropertyTable propertyTable, bool fUpdate, string innerConfigDir = null)
+		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
-			if(propertyTable != null)
+			if(propertyTable == null)
+				return null;
+			if (innerConfigDir == null)
 			{
-				currentConfig = propertyTable.GetValue("DictionaryPublicationLayout", string.Empty);
-				if(String.IsNullOrEmpty(currentConfig) || !File.Exists(currentConfig))
+				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable);
+			}
+			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
+			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
+			var currentConfig = propertyTable.GetValue(pubLayoutPropName, string.Empty);
+			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
+				return currentConfig;
+			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
+			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
+			var projectConfigDir = GetProjectConfigurationDirectory(propertyTable, innerConfigDir);
+			// If no configuration has yet been selected or the previous selection is invalid,
+			// and the value is "publishSomething", try to use the new "Something" config
+			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
 				{
-					string defaultPublication = "Root";
-					// If no configuration has yet been selected or the previous selection is invalid,
-					// and the value is "publishStem" or "publishRoot", the code will default Root / Stem configuration path
-					if (currentConfig != null && currentConfig.ToLower().IndexOf("publish", StringComparison.Ordinal) == 0)
+				var selectedPublication = currentConfig.Replace("publish", string.Empty);
+				if (!isDictionary)
 					{
-						defaultPublication = currentConfig.Replace("publish", string.Empty);
+					var cache = propertyTable.GetValue<FdoCache>("cache");
+					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
+					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 					}
-					// select the project's Root configuration if available; otherwise, select the default Root configuration
-					currentConfig = Path.Combine(GetProjectConfigurationDirectory(propertyTable, "Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
+				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration
+				currentConfig = Path.Combine(projectConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
 					if(!File.Exists(currentConfig))
 					{
-						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), defaultPublication + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
 					}
-					propertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true, true);
+			}
+			if (!File.Exists(currentConfig))
+			{
+				// select the project's Root configuration if available; otherwise, select the default Root configuration
+				currentConfig = Path.Combine(projectConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
+				if (!File.Exists(currentConfig))
+				{
+					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
 				}
 			}
+			Debug.Assert(File.Exists(currentConfig));
+			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate, true);
 			return currentConfig;
+		}
+
+		/// <summary>
+		/// Sets the current Dictionary or ReversalIndex configuration file path
+		/// </summary>
+		public static void SetCurrentConfiguration(IPropertyTable propertyTable, string currentConfig, bool fUpdate = true)
+		{
+			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictionaryConfigurationDirectoryName
+				? "DictionaryPublicationLayout"
+				: "ReversalIndexPublicationLayout";
+			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate, true);
+		}
+
+		private static string GetInnerConfigDir(string configFilePath)
+		{
+			return Path.GetFileName(Path.GetDirectoryName(configFilePath));
 		}
 	}
 }

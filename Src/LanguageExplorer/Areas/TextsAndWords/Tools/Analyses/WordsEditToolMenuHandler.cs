@@ -620,7 +620,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 								Wordform.AnalysesOC.Add(newAnalysis);
 								newAnalysis.ApprovalStatusIcon = 1; // Make it human approved.
 								int vernWS = TsStringUtils.GetWsAtOffset(tssWord, 0);
-								foreach (string morph in fullForm.Split(Unicode.SpaceChars))
+								foreach (string morph in fullForm.Split(SIL.Utils.Unicode.SpaceChars))
 								{
 									if (morph != null && morph.Length != 0)
 									{

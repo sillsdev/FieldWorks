@@ -38,6 +38,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public event EventHandler ChangedToUnspecified;
 
+		/// <summary>
+		/// Fires when a change is made on this tab to style data.
+		/// </summary>
+		public event EventHandler StyleDataChanged;
+
 		private int dyxGapBetweenLeftCheckboxAndPreviewPane;
 		private bool m_dontUpdateInheritance = true;
 		private bool m_DefaultTextDirectionRtoL = false;
@@ -540,6 +545,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 				if (IsInherited((Control)sender) && ChangedToUnspecified != null)
 					ChangedToUnspecified(this, EventArgs.Empty);
+
+				// Enable style reset ability immediately by causing the stye to be IsModified.
+				SaveToInfo(m_currentStyleInfo);
+
+				if (StyleDataChanged != null)
+					StyleDataChanged(this, null);
 			}
 
 			m_pnlBorderPreview.Refresh();

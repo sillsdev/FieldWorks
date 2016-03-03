@@ -4,7 +4,7 @@
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="ReversalIndexEntry" type="detail" name="Normal">
 		<part ref="ChangeHandler"/>
-		<part ref="ReversalForm" label="Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
+		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
 		<part ref="PartOfSpeech"/>
 		<part ref="CurrentSenses"/>
 		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree-InsertReversalSubentry" hotlinks="mnuDataTree-InsertReversalSubentry-Hotlinks">
@@ -14,7 +14,7 @@
 		</part>
 	</layout>
 	<layout class="ReversalIndexEntry" type="detail" name="Subentry">
-		<part ref="ReversalForm" label="Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
+		<part ref="ReversalForm" label="Reversal Form" menu="mnuDataTree-MoveReversalIndexEntry"/>
 		<part ref="PartOfSpeech"/>
 		<part ref="CurrentSenses"/>
 		<part ref="Section" expansion="expanded" label="Subentries" menu="mnuDataTree-InsertReversalSubentry" hotlinks="mnuDataTree-InsertReversalSubentry-Hotlinks">

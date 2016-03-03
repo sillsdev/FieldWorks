@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2012-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -416,21 +416,26 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmPossibility Publication { get; set; }
 
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
-		public IEnumerable<int> GetEntriesToPublish(IPropertyTable propertyTable, RecordClerk clerk)
+		public int[] GetEntriesToPublish(IPropertyTable propertyTable, int virtualFlid, string dictionaryType = null)
 		{
-			switch(DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable))
+			if (dictionaryType == null)
+			{
+				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable);
+			}
+			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
+			switch (dictionaryType)
 			{
 				case "Dictionary":
-					return VecProp(Cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
 				{
 					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-					if(reversalIndexGuid != Guid.Empty)
+					if (reversalIndexGuid != Guid.Empty)
 					{
 						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
 						if (currentReversalIndex != null)
 						{
-							return currentReversalIndex.AllEntries.Select(indexEntry => indexEntry.Hvo);
+							return GetSortedAndFilteredReversalEntries(currentReversalIndex.Hvo, virtualFlid);
 						}
 					}
 					break;
@@ -466,6 +471,24 @@ namespace SIL.FieldWorks.XWorks
 				return result.Where(IsPublishablePicture).ToArray();
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Get the list of ReversalIndexEntries sorted and filtered the way the user has set it up.
+		/// The default is presumably sorted by the writing system collator on ShortName.
+		/// </summary>
+		private int[] GetSortedAndFilteredReversalEntries(int currentReversalIndexHvo, int virtualFlid)
+		{
+			// Get the list of ReversalIndexItem objects sorted and filtered as set by the reversal bulk edit.
+			var result = base.VecProp(currentReversalIndexHvo, virtualFlid);
+			// Is there ever any more filtering that we need to do?  It would be done here.
+			return result.Where(IsMainReversalEntry).ToArray();
+		}
+
+		private bool IsMainReversalEntry(int hvo)
+		{
+			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
 		}
 
 		/// <summary>
@@ -543,6 +566,15 @@ namespace SIL.FieldWorks.XWorks
 			// It probably isn't necessary to rebuild the fields, but one day we might be able to add a relevant custom field??
 			BuildFieldsToFilter();
 			BuildHomographInfo();
+		}
+
+		/// <summary>
+		/// Return whether this object is explicitly excluded by the publication filtering.
+		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
+		/// </summary>
+		internal bool IsExcludedObject(int hvo)
+		{
+			return m_excludedItems.Contains(hvo);
 		}
 	}
 }

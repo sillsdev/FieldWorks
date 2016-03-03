@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.Utils;
 
 namespace LanguageExplorer
@@ -147,6 +148,14 @@ namespace LanguageExplorer
 		protected override bool StyleIsInUse(IStStyle style)
 		{
 			return (style.Name == "External Link" || base.StyleIsInUse(style));
+		}
+
+		/// <summary>
+		/// Set the properties of a StyleInfo to the factory default settings
+		/// </summary>
+		public void SetPropsToFactorySettings(StyleInfo styleInfo)
+		{
+			ResetProps(styleInfo);
 		}
 	}
 }

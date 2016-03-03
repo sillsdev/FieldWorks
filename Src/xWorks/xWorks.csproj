@@ -300,6 +300,19 @@
     <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ListSenseOptionView.Designer.cs">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.Designer.cs">
+      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryExportService.cs" />
     <Compile Include="EntriesOrChildClassesRecordList.cs" />
     <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
@@ -320,6 +333,7 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
+    <Compile Include="IDictionaryParagraphOptionsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="ISetCache.cs" />
@@ -436,6 +450,9 @@
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="XhtmlRecordDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -484,6 +501,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ListSenseOptionView.resx">
+      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ParagraphOptionsView.resx">
+      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>

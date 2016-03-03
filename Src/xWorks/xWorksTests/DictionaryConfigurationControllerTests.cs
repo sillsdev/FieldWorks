@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 {
 #if RANDYTODO
 	[TestFixture]
-	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Context
 		private DictionaryConfigurationModel m_model;
@@ -339,7 +339,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
@@ -355,13 +356,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "user.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testUserFolder.FullName, "user"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -375,13 +378,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			using (var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "Root.xml")))
+			using (var writer = new StreamWriter(
+				string.Concat(Path.Combine(testUserFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -397,10 +402,10 @@ namespace SIL.FieldWorks.XWorks
 			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			m_model.Label = "configurationALabel";
-			m_model.FilePath = Path.Combine(testDefaultFolder.FullName, "configurationA.xml");
+			m_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
 			m_model.Save();
 			m_model.Label = "configurationBLabel";
-			m_model.FilePath = Path.Combine(testUserFolder.FullName, "configurationB.xml");
+			m_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
 			m_model.Save();
 
 			// SUT
@@ -408,8 +413,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.Contains("configurationALabel", labels.Keys, "missing a label");
 			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
-			Assert.That(labels["configurationALabel"].FilePath, Is.StringContaining("configurationA.xml"), "missing a file name");
-			Assert.That(labels["configurationBLabel"].FilePath, Is.StringContaining("configurationB.xml"), "missing a file name");
+			Assert.That(labels["configurationALabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+			Assert.That(labels["configurationBLabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
 		}
 
 		/// <summary/>
@@ -556,7 +563,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mockWindow = new MockWindowSetup(Cache))
 			{
-				var projectPath = Path.Combine(Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test.xml");
+				var projectPath = string.Concat(Path.Combine(Path.Combine(
+					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
 				var controller = new DictionaryConfigurationController();
 				var result = controller.GetProjectConfigLocationForPath(projectPath, mockWindow.PropertyTable);
@@ -567,7 +575,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetProjectConfigLocationForPath_DefaultLocResultsInProjectPath()
 		{
-			var defaultPath = Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test.xml");
+			var defaultPath = string.Concat(Path.Combine(Path.Combine(
+				FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 			using(var mockWindow = new MockWindowSetup(Cache))
 			{
 				//SUT
@@ -575,7 +584,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				var result = controller.GetProjectConfigLocationForPath(defaultPath, mockWindow.PropertyTable);
 				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
-				Assert.IsTrue(result.EndsWith(Path.Combine("Test", "test.xml")));
+				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}
 		}
 
@@ -591,8 +600,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 									 CellarPropertyType.MultiString, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexEntry");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
 			}
@@ -610,10 +618,10 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
 				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
 				Assert.AreEqual(2, customFieldNodes[0].Children.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && t.IsCustomField),
-					"No Custom Name node found on possibility list custom node");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && t.IsCustomField),
-					"No Custom Abbreviation node found on possibility list custom node");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && !t.IsCustomField),
+					"No standard Name node found on custom possibility list reference");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+					"No standard Abbreviation node found on custom possibility list reference");
 				Assert.IsNotNull(customFieldNodes[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, "No writing system node on possibility list custom node");
 			}
 		}
@@ -894,7 +902,9 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel(Path.Combine(FwDirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")), Cache);
+				var model = new DictionaryConfigurationModel(string.Concat(Path.Combine(
+					FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension),
+					Cache);
 
 				//SUT
 				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
@@ -972,13 +982,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mockWindow = new MockWindowSetup(Cache))
 			{
+				Utils.FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mockWindow.PropertyTable, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
 					_propertyTable = mockWindow.PropertyTable,
 					_model = new DictionaryConfigurationModel
 					{
-						FilePath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "SomeConfigurationFileName")
-					},
+						FilePath = Path.Combine(DictionaryConfigurationListener.GetDefaultConfigurationDirectory("Dictionary"), "SomeConfigurationFileName")
+					}
 				};
 				controller._dictionaryConfigurations = new List<DictionaryConfigurationModel> { controller._model };
 
@@ -986,7 +997,7 @@ namespace SIL.FieldWorks.XWorks
 				controller.SaveModel();
 				var savedPath = mockWindow.PropertyTable.GetValue<string>("DictionaryPublicationLayout");
 				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-				Assert.AreEqual(savedPath, controller._model.FilePath, "Should have saved the path to the selected Configuration Model");
+				Assert.AreEqual(controller._model.FilePath, savedPath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
 				File.Delete(savedPath);
@@ -1007,7 +1018,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Context
-		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
+		internal sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private readonly DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
 
@@ -1017,7 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			public IDictionaryDetailsView DetailsView { set; private get; }
-			public string PreviewData { set; private get; }
+			public string PreviewData { set; internal get; }
 
 			public void Redraw()
 			{ }
@@ -1044,6 +1055,186 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning restore 67
 		}
 		#endregion // Context
+
+		[Test]
+		public void PopulateTreeView_NewProjectDoesNotCrash_DoesNotGeneratesContent()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalForm",
+				Label = "Form",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true,}
+					},
+					DisplayWritingSystemAbbreviations = false
+				},
+				IsEnabled = true
+			};
+			var reversalNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
+
+				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
+				dcc._previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache);
+
+				CreateALexEntry(Cache);
+				Assert.AreEqual(0, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count,
+					"Should have not a Reversal Index at this point");
+				// But actually a brand new project contains an empty ReversalIndex
+				// for the analysisWS, so create one for our test here.
+				CreateDefaultReversalIndex();
+
+				//SUT
+				dcc.PopulateTreeView();
+
+				Assert.IsNullOrEmpty(testView.PreviewData, "Should not have created a preview");
+				Assert.AreEqual(1, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
+				Assert.AreEqual("en", Cache.LangProject.LexDbOA.ReversalIndexesOC.First().WritingSystem);
+			}
+		}
+
+		private void CreateDefaultReversalIndex()
+		{
+			var aWs = Cache.DefaultAnalWs;
+			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			riRepo.FindOrCreateIndexForWs(aWs);
+		}
+
+		private void CreateALexEntry(FdoCache cache)
+		{
+			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
+			entry.CitationForm.set_String(wsFr, cache.TsStrFactory.MakeString("mot", wsFr));
+			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var sense = senseFactory.Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+		}
+
+		[Test]
+		public void SetStartingNode_SelectsCorrectNode()
+		{
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord", Label = "Headword", CSSClassNameOverride = "mainheadword", IsEnabled = true
+			};
+			var summaryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SummaryDefinition", Label = "Summary Definition", IsEnabled = false
+			};
+			var restrictionsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Restrictions", Label = "Restrictions (Entry)", IsEnabled = true
+			};
+			var defglossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss", Label = "Definition (or Gloss)", IsEnabled = true
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example", Label = "Example", IsEnabled = true
+			};
+			var typeAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation", Label = "Abbreviation", IsEnabled = true
+			};
+			var typeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name", Label = "Name", IsEnabled = true
+			};
+			var transTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TypeRA", Label = "Type", CSSClassNameOverride = "type", IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { typeAbbrNode, typeNameNode }
+			};
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation", Label = "Translation", IsEnabled = true
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC", Label = "Translations", CSSClassNameOverride = "translations", IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { transTypeNode, translationNode }
+			};
+			var referenceNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Reference", Label = "Reference", IsEnabled = false
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS", Label = "Examples", CSSClassNameOverride = "examples", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode, referenceNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", Label = "Senses", CSSClassNameOverride = "senses", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { defglossNode, examplesNode },
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", Label = "Main Entry", CSSClassNameOverride = "entry", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, summaryNode, restrictionsNode, sensesNode },
+			};
+			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
+				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
+				//SUT
+				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
+
+				dcc.SetStartingNode(null);
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing a null class list should not find a TreeNode (and should not crash either)");
+
+				dcc.SetStartingNode(new List<string>());
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
+
+				dcc.SetStartingNode(new List<string> {"something","invalid"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
+
+				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
+				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
+
+				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
+				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
+				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
+
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
+				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
+				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
+
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
+				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
+				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
+			}
+		}
 	}
 #endif
 }

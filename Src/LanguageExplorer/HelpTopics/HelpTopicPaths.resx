@@ -2715,6 +2715,22 @@
     <value>/User_Interface/Menus/Tools/Configure_Homograph_Number/Configure_Homograph_Number_dialog_box.htm</value>
     <comment>Configure Homograph Number Dialog box.</comment>
   </data>
+  <data name="khtpConfigureDictionary" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpDictConfigManager" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Dictionary/Manage_Dictionary_Views.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpConfigureReversalIndex" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Reversal_Index/Configure_Reversal_Index_dialog_box.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpRevIndexConfigManager" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Reversal_Index/Manage_Views_Reversal_Index.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
   <data name="khtpChoose-lexiconEdit-PrimaryLexemes" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Show_as_Headwords_In.htm</value>
     <comment>Show as Headword in</comment>

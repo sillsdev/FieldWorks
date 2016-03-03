@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -27,6 +28,11 @@ namespace SIL.FieldWorks.XWorks
 				m_CtrlRightClickMenu.Dispose();
 				components.Dispose();
 			}
+			for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)
+			{
+				m_CtrlRightClickMenu.Items[i].Dispose();
+			}
+			m_CtrlRightClickMenu.Dispose();
 			base.Dispose(disposing);
 		}
 

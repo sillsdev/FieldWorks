@@ -18,6 +18,7 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -199,9 +200,10 @@ namespace SIL.FieldWorks.XWorks
 		private void RefreshPreview()
 		{
 			//_propertyTable should be null only for unit tests which don't need styles
-			if(_propertyTable != null && _previewEntry != null)
+			if (_propertyTable != null && _previewEntry != null && _previewEntry.IsValidObject)
 			{
-				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _propertyTable);
+				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model,
+					_allEntriesPublicationDecorator, _propertyTable);
 			}
 		}
 
@@ -252,6 +254,7 @@ namespace SIL.FieldWorks.XWorks
 			if (node == null)
 				throw new ArgumentNullException();
 
+			node.StringTable = StringTable.Table;	// for localization
 			var newTreeNode = new TreeNode(node.DisplayLabel) { Tag = node, Checked = node.IsEnabled };
 
 			var treeView = View.TreeControl.Tree;
@@ -318,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 																										(ISilDataAccessManaged)cache.MainCacheAccessor,
 																										cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable), cache);
+			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable), cache);
 			View = view;
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
 			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(propertyTable);
@@ -328,11 +331,14 @@ namespace SIL.FieldWorks.XWorks
 			View.ManageConfigurations += (sender, args) =>
 			{
 				// show the Configuration Manager dialog
-				using (var dialog = new DictionaryConfigurationManagerDlg())
+				using (var dialog = new DictionaryConfigurationManagerDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _propertyTable,
 						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
+					dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == "Dictionary"
+						? "khtpDictConfigManager"
+						: "khtpRevIndexConfigManager";
 					dialog.ShowDialog(View as Form);
 				}
 
@@ -399,6 +405,7 @@ namespace SIL.FieldWorks.XWorks
 				// Details may need to be enabled or disabled
 				RefreshPreview();
 				View.TreeControl.Tree.SelectedNode = FindTreeNode(node, View.TreeControl.Tree.Nodes);
+				BuildAndShowOptions(node, propertyTable);
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
@@ -407,7 +414,7 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = true;
+				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsMainEntry(node);
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
@@ -429,7 +436,6 @@ namespace SIL.FieldWorks.XWorks
 		public void SelectModelFromManager(DictionaryConfigurationModel model)
 		{
 			_model = model;
-			SelectCurrentConfiguration();
 		}
 
 		/// <summary>
@@ -483,7 +489,7 @@ namespace SIL.FieldWorks.XWorks
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
-			_propertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true, true);
+			DictionaryConfigurationListener.SetCurrentConfiguration(_propertyTable, _model.FilePath);
 		}
 
 		internal string GetProjectConfigLocationForPath(string filePath, IPropertyTable propertyTable)
@@ -569,6 +575,8 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfiguration()
 		{
 			View.SelectConfiguration(_model);
+			SaveModel();
+			RefreshView();
 		}
 
 		/// <summary>
@@ -608,6 +616,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach(var part in model.Parts)
 			{
+				// Detect a bad configuration file and report it in an intelligable way. We generated bad configs before the migration code was cleaned up
+				// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
+				if (part.FieldDescription == null)
+				{
+					throw new ApplicationException(string.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
+						model.FilePath, part.Label));
+				}
 				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
 				if(part.Children == null)
 					part.Children = new List<ConfigurableDictionaryNode>();
@@ -757,7 +772,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Add configuration nodes for all properties that we want to enable a user to display for a custom
 		/// PossibilityList field. (Currently Name and Abbreviation)
 		/// </summary>
-		private static void AddFieldsForPossibilityList(ConfigurableDictionaryNode configNode)
+		/// <remarks>
+		/// We need this for migrating configurations of custom fields as well as for creating a configuration
+		/// from scratch for a new custom field.
+		/// </remarks>
+		internal static void AddFieldsForPossibilityList(ConfigurableDictionaryNode configNode)
 		{
 			configNode.Children = new List<ConfigurableDictionaryNode>();
 			configNode.Children.Add(new ConfigurableDictionaryNode
@@ -766,7 +785,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "Name",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = true
+					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				});
 			configNode.Children.Add(new ConfigurableDictionaryNode
 				{
@@ -774,7 +793,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "Abbreviation",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = true
+					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				});
 		}
 
@@ -850,6 +869,112 @@ namespace SIL.FieldWorks.XWorks
 					SetIsEnabledForSubTree(child, isEnabled);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Search the TreeNode tree to find a starting node based on matching the "class"
+		/// attributes of the generated XHTML tracing back from the XHTML element clicked.
+		/// If no match is found, SelectedNode is not set.  Otherwise, the best match found
+		/// is used to set SelectedNode.
+		/// </summary>
+		internal void SetStartingNode(List<string> classList)
+		{
+			if (classList == null || classList.Count == 0)
+				return;
+			if (View != null &&
+				View.TreeControl != null &&
+				View.TreeControl.Tree != null)
+			{
+				ConfigurableDictionaryNode topNode = null;
+				// Search through the configuration trees associated with each toplevel TreeNode to find
+				// the best match.  If no match is found, give up.
+				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+				{
+					var configNode = node.Tag as ConfigurableDictionaryNode;
+					if (configNode == null)
+						continue;
+					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
+					if (cssClass == classList[0])
+					{
+						topNode = configNode;
+						break;
+					}
+				}
+				if (topNode == null)
+					return;
+				// We have a match, so search through the TreeNode tree to find the TreeNode tagged
+				// with the given configuration node.  If found, set that as the SelectedNode.
+				classList.RemoveAt(0);
+				var startingConfigNode = FindStartingConfigNode(topNode, classList);
+				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+				{
+					var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
+					if (startingTreeNode != null)
+					{
+						View.TreeControl.Tree.SelectedNode = startingTreeNode;
+						break;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Recursively descend the configuration tree, progressively matching nodes against the list of classes.  Stop
+		/// when we run out of both tree and classes.  Classes can be skipped if not matched.  Running out of tree nodes
+		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better
+		/// match.
+		/// </summary>
+		private ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
+		{
+			if (classList.Count == 0)
+				return topNode;  // what we have already is the best we can find.
+
+			// If we can't go further down the configuration tree, but still have classes to match, back up one level
+			// and try matching with the remaining classes.  The configuration tree doesn't always map exactly with
+			// the XHTML tree structure.  For instance, in the XHTML, Examples contains instances of Example, each
+			// of which contains an instance of Translations, which contains instances of Translation.  In the configuration
+			// tree, Examples contains Example and Translations at the same level.
+			if (topNode.Children == null || topNode.Children.Count == 0)
+			{
+				var match = FindStartingConfigNode(topNode.Parent, classList);
+				if (match != topNode.Parent)
+					return match;	// we found something better!
+				return topNode;		// this is the best we can find.
+			}
+			ConfigurableDictionaryNode matchingNode = null;
+			foreach (ConfigurableDictionaryNode node in topNode.Children)
+			{
+				var cssClass = CssGenerator.GetClassAttributeForConfig(node);
+				if (cssClass == classList[0])
+				{
+					matchingNode = node;
+					break;
+				}
+			}
+			// If we didn't match, skip this class in the list and try the next class, looking at the same configuration
+			// node.  There are classes in the XHTML that aren't represented in the configuration nodes.  ("sensecontent"
+			// and "sense" among others)
+			if (matchingNode == null)
+				matchingNode = topNode;
+			classList.RemoveAt(0);
+			return FindStartingConfigNode(matchingNode, classList);
+		}
+
+		/// <summary>
+		/// Find the TreeNode that has the given configuration node as its Tag value.  (If there were a
+		/// bidirectional link between the two, this method would be unnecessary...)
+		/// </summary>
+		private TreeNode FindMatchingTreeNode(TreeNode node, ConfigurableDictionaryNode configNode)
+		{
+			if ((node.Tag as ConfigurableDictionaryNode) == configNode)
+				return node;
+			foreach (TreeNode child in node.Nodes)
+			{
+				var start = FindMatchingTreeNode(child, configNode);
+				if (start != null)
+					return start;
+			}
+			return null;
 		}
 	}
 }

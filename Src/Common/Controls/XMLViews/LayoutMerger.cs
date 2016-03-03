@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private HashSet<XElement> m_insertedMissing; // missing nodes we already inserted.
 		readonly HashSet<string> m_safeAttrs = new HashSet<string>(
 			new[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
-				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup" });
+				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup","entrytypeseq" });
 
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
@@ -87,6 +87,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var startIndex = 0;
 			BuildOldConfiguredPartsDicts();
 			var newMasterChildElements = m_newMaster.Elements().ToList();
+			var oldConfiguredElements = m_oldConfigured.Elements().ToList();
 			while (startIndex < newMasterChildElements.Count)
 			{
 				var currentChild = newMasterChildElements[startIndex];
@@ -102,7 +103,22 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else
 				{
-					CopyToOutput(currentChild);
+					var copy = CopyToOutput(currentChild);
+					// We need to merge sublayout nodes as well if at all possible.
+					if (currentChild.Name == "sublayout" && m_oldConfigured.Elements().Count() > startIndex)
+					{
+						var currentOldChild = oldConfiguredElements[startIndex];
+						if (currentOldChild.Name == currentChild.Name && currentOldChild.Attributes().Any())
+						{
+							foreach (var xa in currentOldChild.Attributes())
+							{
+								if (m_safeAttrs.Contains(xa.Name.LocalName) || xa.Name == "name" || xa.Name == "group")
+								{
+									XmlUtils.SetAttribute(copy, xa.Name.LocalName, xa.Value);
+								}
+							}
+						}
+					}
 					startIndex++;
 				}
 			}

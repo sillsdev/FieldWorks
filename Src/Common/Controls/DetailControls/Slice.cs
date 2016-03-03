@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				}
 
-				SplitCont.Panel2.Controls.Add(value);
+					SplitCont.Panel2.Controls.Add(value);
 
 				var asFlexComponent = value as IFlexComponent;
 				if (asFlexComponent  != null && PropertyTable != null && Publisher != null && Subscriber != null)
@@ -687,7 +687,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Control != null && Control is INotifyControlInCurrentSlice)
+			if (Control != null && Control is INotifyControlInCurrentSlice && !BeingDiscarded)
 				(Control as INotifyControlInCurrentSlice).SliceIsCurrent = isCurrent;
 			if (TreeNode != null)
 				TreeNode.Invalidate();
@@ -1423,25 +1423,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			Image image = null;
-			if (IsSequenceNode)
-			{
+				Image image = null;
+				if (IsSequenceNode)
+				{
 				image = DetailControlsStrings.SequenceSmall;
-			}
-			else if (IsCollectionNode)
-			{
+				}
+				else if (IsCollectionNode)
+				{
 				image = DetailControlsStrings.CollectionNode;
-			}
-			else if (IsObjectNode || WrapsAtomic)
-			{
+				}
+				else if (IsObjectNode || WrapsAtomic)
+				{
 				image = DetailControlsStrings.atomicNode;
-			}
-			if (image != null)
-			{
-				((Bitmap)image).MakeTransparent(Color.Fuchsia);
-				gr.DrawImage(image, x, y);
-				x += image.Width;
-			}
+				}
+				if (image != null)
+				{
+					((Bitmap)image).MakeTransparent(Color.Fuchsia);
+					gr.DrawImage(image, x, y);
+					x += image.Width;
+				}
 			var p = new PointF(x, y);
 			using (Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.ControlDarkDark)))
 			{
@@ -2285,20 +2285,20 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			{
 				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
-			DataTree dt = ContainingDataTree;
-			try
-			{
-				dt.SetCurrentObjectFlids(obj.Hvo, 0);
-				using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
+				DataTree dt = ContainingDataTree;
+				try
 				{
+					dt.SetCurrentObjectFlids(obj.Hvo, 0);
+					using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
+					{
 					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-					result = ui.DeleteUnderlyingObject();
+						result = ui.DeleteUnderlyingObject();
+					}
 				}
-			}
-			finally
-			{
-				dt.ClearCurrentObjectFlids();
-			}
+				finally
+				{
+					dt.ClearCurrentObjectFlids();
+				}
 			// The slice will likely be disposed in the DeleteUnderlyingObject call,
 			// so make sure we aren't collected until we leave this method, at least.
 			GC.KeepAlive(this);
@@ -2905,7 +2905,13 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		public virtual void AboutToDiscard()
 		{
 			CheckDisposed();
+			BeingDiscarded = true;	// Remember that we're going away in case we need to know this for subsequent method calls.
 		}
+
+		/// <summary>
+		/// Flag whether this slice is in the process of being thrown away.
+		/// </summary>
+		private bool BeingDiscarded { get; set; }
 
 		#region Implementation of IPropertyTableProvider
 

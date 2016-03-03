@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				};
 				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
 				dlg.SelectSensesOnly = true;
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 					AddItem(dlg.SelectedObject);
 			}
 		}

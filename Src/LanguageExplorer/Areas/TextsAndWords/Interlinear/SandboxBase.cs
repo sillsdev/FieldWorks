@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		static internal bool IsPhrase(string word)
 		{
-			return !String.IsNullOrEmpty(word) && word.IndexOfAny(Unicode.SpaceChars) != -1;
+			return !String.IsNullOrEmpty(word) && word.IndexOfAny(SIL.Utils.Unicode.SpaceChars) != -1;
 		}
 
 		/// <summary>

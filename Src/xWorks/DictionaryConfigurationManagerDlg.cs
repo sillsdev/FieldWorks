@@ -1,22 +1,40 @@
-﻿using System;
+﻿// Copyright (c) 2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public partial class DictionaryConfigurationManagerDlg : Form
 	{
-		public DictionaryConfigurationManagerDlg()
+
+		private string m_helpTopic;
+		private readonly HelpProvider m_helpProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
+
+		public DictionaryConfigurationManagerDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
+
+			m_helpTopicProvider = helpTopicProvider;
 
 			// allow renaming via the keyboard
 			configurationsListView.KeyUp += ConfigurationsListViewKeyUp;
 			// Make the Configuration selection more obvious when the control loses focus (LT-15450).
 			configurationsListView.LostFocus += OnLostFocus;
 			configurationsListView.GotFocus += OnGotFocus;
+
+			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			m_helpProvider.SetShowHelp(this, true);
 		}
 
 		private void OnGotFocus(object sender, EventArgs eventArgs)
@@ -42,6 +60,30 @@ namespace SIL.FieldWorks.XWorks
 			// "context menu" (since there is no context menu, go straight to rename from the "Application" key)
 			if ((e.KeyCode == Keys.F2 || e.KeyCode == Keys.Apps) && configurationsListView.SelectedItems.Count == 1)
 				configurationsListView.SelectedItems[0].BeginEdit();
+		}
+
+		internal string HelpTopic
+		{
+			get
+			{
+				if (m_helpTopic == null)
+				{
+					m_helpTopic = "khtpDictConfigManager";
+				}
+				return m_helpTopic;
+			}
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					return;
+				m_helpTopic = value;
+				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			}
+		}
+
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
 		}
 	}
 }

@@ -179,8 +179,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							}
 						}
 					}
-					return readAllowed && writeAllowed;
 				}
+				return readAllowed && writeAllowed;
 			}
 #if __MonoCS__
 			var ufi = new UnixDirectoryInfo(pathToTest);

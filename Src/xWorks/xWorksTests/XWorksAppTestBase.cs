@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public abstract class XWorksAppTestBase : MemoryOnlyBackendProviderTestBase
 	{
-		protected IFwMainWnd m_window; // defined here but created and torn down in subclass?
+		protected IFwMainWnd m_window; // defined and disposed here but created in subclass
 		protected MockFwXApp m_application;
 		protected string m_configFilePath;
 
@@ -308,8 +308,7 @@ namespace SIL.FieldWorks.XWorks
 		//this shows multiple splash screens before we have done anything, and
 		//runs afoul of the code which enforces only one FieldWorks application defined in the process
 		//at any one time.
-		abstract protected void Init();
-
+		protected abstract void Init();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -386,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					throw new ApplicationException ("The installed Adapter does not yet ITestableUIAdapter support ");
 				}
-		}
+			}
 
 		protected Command GetCommand (string commandName)
 		{

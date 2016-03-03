@@ -25,7 +25,8 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureSetUp]
 		public override void FixtureInit()
 		{
-			Init();
+			// Init() is called from XWorksAppTestBase's TestFixtureSetup, so we won't call it here.
+			base.FixtureInit();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if(Directory.Exists(testProjPath))
 				Directory.Delete(testProjPath, true);
@@ -36,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ReturnsShippedConfigurations()
 		{
-			using(var docView = new TestXmlDocView())
+			using(var docView = new TestXhtmlDocView())
 			{
 				docView.SetConfigObjectName("Dictionary");
 				docView.SetPropertyTable(m_propertyTable);
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ReturnsProjectAndShippedConfigs()
 		{
-			using(var docView = new TestXmlDocView())
+			using(var docView = new TestXhtmlDocView())
 			{
 				docView.SetConfigObjectName("Dictionary");
 				docView.SetMediator(m_mediator);
@@ -78,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ProjectOverrideReplacesShipped()
 		{
-			using(var docView = new TestXmlDocView())
+			using(var docView = new TestXhtmlDocView())
 			{
 				docView.SetConfigObjectName("Dictionary");
 				docView.SetMediator(m_mediator);
@@ -131,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -166,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -197,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "Foo"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -223,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -254,7 +255,7 @@ namespace SIL.FieldWorks.XWorks
 				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "NoPubsConf"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -290,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "Unremarkable"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -322,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "baz"+DictionaryConfigurationModel.FileExtension)))
 				{
@@ -356,7 +357,7 @@ namespace SIL.FieldWorks.XWorks
 				// Change the project path to temp for this test
 				Cache.ProjectId.Path = Path.GetTempPath();
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				{
 					var configPathForTest = Path.Combine(Path.GetTempPath(), "ConfigurationSettings", "Dictionary");
 					Directory.CreateDirectory(configPathForTest);
@@ -366,6 +367,7 @@ namespace SIL.FieldWorks.XWorks
 						docView.SetConfigObjectName("Dictionary");
 						docView.SetMediator(m_mediator);
 						docView.SetPropertyTable(m_propertyTable);
+						m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 						m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
@@ -387,14 +389,18 @@ namespace SIL.FieldWorks.XWorks
 				testPubItem.Name.set_String(enId, testPubName);
 
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
-				using(var docView = new TestXmlDocView())
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
-																								  "baz"+DictionaryConfigurationModel.FileExtension)))
+				var subDir = Path.Combine(Path.GetTempPath(), "Dictionary");
+				Directory.CreateDirectory(subDir); // required by DictionaryConfigurationListener.GetCurrentConfiguration()
+				using(var docView = new TestXhtmlDocView())
+				using(var tempConfigFile = TempFile.WithFilename(
+					Path.Combine(subDir, "baz"+DictionaryConfigurationModel.FileExtension)))
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
 					docView.SetPropertyTable(m_propertyTable);
 					m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
+					// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
+					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", true);
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
 					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
@@ -416,7 +422,7 @@ namespace SIL.FieldWorks.XWorks
 				var configSansTestPub = ConfigurationTemplate.Replace("</Publications>",
 																						 "<Publication>NotTheTestPub</Publication></Publications>");
 				var overrideFiles = new List<TempFile>();
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
@@ -474,7 +480,7 @@ namespace SIL.FieldWorks.XWorks
 				var matchingConfig = ConfigurationTemplate.Replace("</Publications>",
 																					"<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
 				var dictionaryConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
-				using(var docView = new TestXmlDocView())
+				using(var docView = new TestXhtmlDocView())
 				using(var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath,
 																								  "NoMatch"+DictionaryConfigurationModel.FileExtension)))
 				using(var matchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath,
@@ -483,6 +489,7 @@ namespace SIL.FieldWorks.XWorks
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
 					docView.SetConfigObjectName("Dictionary");
+					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 					m_propertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path, true);
 					docView.SetMediator(m_mediator);
 					docView.SetPropertyTable(m_propertyTable);
@@ -494,7 +501,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		class TestXmlDocView : XhtmlDocView
+		private class TestXhtmlDocView : XhtmlDocView
 		{
 			internal void SetConfigObjectName(string name)
 			{
@@ -531,13 +538,24 @@ namespace SIL.FieldWorks.XWorks
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if(m_propertyTable != null)
 				m_propertyTable.Dispose();
-			if(m_mediator != null)
+			if (m_window != null)
+				m_window.Dispose();
+
+			if (m_application != null)
+				m_application.Dispose();
+
+			if (m_mediator != null)
 				m_mediator.Dispose();
+
+			m_application = null;
+			m_window = null;
+			m_mediator = null;
 		}
 		#endregion
 	}

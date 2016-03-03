@@ -29,6 +29,7 @@ using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.IO;
 using SIL.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -365,8 +366,9 @@ namespace LanguageExplorer.Dumpster
 			string dummy;
 			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
-																  FLExBridgeHelper.SendReceive,
+			using (CopyDictionaryConfigFileToTemp(projectFolder))
+			{
+				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser, FLExBridgeHelper.SendReceive,
 																  null, FDOBackendProvider.ModelVersion, "0.13",
 																  Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 																  out dataChanged, out dummy);
@@ -376,7 +378,7 @@ namespace LanguageExplorer.Dumpster
 				ProjectLockingService.LockCurrentProject(Cache);
 				return true;
 			}
-
+			}
 			if (dataChanged)
 			{
 				var conflictOccurred = DetectMainConflicts(projectFolder, savedState);
@@ -398,11 +400,29 @@ namespace LanguageExplorer.Dumpster
 		private bool LinkedFilesLocationIsDefault()
 		{
 			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
-			if (!defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir))
-				return false;
-			else
-				return true;
+			return defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir);
 		}
+
+		// FlexBridge looks for the schema to validate Dictionary Configuration files in the project's Temp directory.
+		private static TempFile CopyDictionaryConfigFileToTemp(string projectFolder)
+		{
+			const string dictConfigSchemaFileName = "DictionaryConfiguration.xsd";
+			var dictConfigSchemaPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration", dictConfigSchemaFileName);
+			var projectTempFolder = Path.Combine(projectFolder, "Temp");
+			var dictConfigSchemaTempPath = Path.Combine(projectTempFolder, dictConfigSchemaFileName);
+			if (!Directory.Exists(projectTempFolder))
+				Directory.CreateDirectory(projectTempFolder);
+			if (File.Exists(dictConfigSchemaTempPath))
+			{
+				// We've had difficulties in the past trying to delete this file while it's read-only. This may apply only to early testers' projects.
+				File.SetAttributes(dictConfigSchemaTempPath, FileAttributes.Normal);
+				File.Delete(dictConfigSchemaTempPath);
+			}
+			File.Copy(dictConfigSchemaPath, dictConfigSchemaTempPath);
+			File.SetAttributes(dictConfigSchemaTempPath, FileAttributes.Normal);
+			return new TempFile(dictConfigSchemaTempPath, true);
+		}
+
 		#endregion FLExBridge S/R messages
 
 		#region LiftBridge S/R messages

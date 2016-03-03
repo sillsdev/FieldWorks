@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,6 +21,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The string table is used to localize strings plucked from the XML.  (Other external
+		/// processing makes the localizations available.)
+		/// </summary>
+		[XmlIgnore]
+		public StringTable StringTable { get; set; }
+
+		/// <summary>
 		/// The non-editable portion of the label to display for this node
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
@@ -32,21 +40,32 @@ namespace SIL.FieldWorks.XWorks
 		public string LabelSuffix { get; set; }
 
 		/// <summary>
-		/// Combination of Label and LabelSuffix, if set.
+		/// Combination of Label and LabelSuffix, if set.  This is localized if at all possible.
 		/// </summary>
 		[XmlIgnore]
 		public string DisplayLabel
 		{
 			get
 			{
-				if (LabelSuffix == null)
-					return Label;
-				return string.Format("{0} ({1})", Label, LabelSuffix);
+				if (StringTable == null)
+				{
+					if (LabelSuffix == null)
+						return Label;
+					return string.Format("{0} ({1})", Label, LabelSuffix);
+				}
+				else
+				{
+					var localLabel = StringTable.LocalizeAttributeValue(Label);
+					if (LabelSuffix == null)
+						return localLabel;
+					var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
+					return string.Format("{0} ({1})", localLabel, localSuffix);
+				}
 			}
 		}
 
 		/// <summary>
-		/// Whether this element of dictionary data is to shown as part of the dictionary.
+		/// Whether this element of dictionary data is shown as part of the dictionary.
 		/// </summary>
 		[XmlAttribute(AttributeName = "isEnabled")]
 		public bool IsEnabled { get; set; }
@@ -147,6 +166,8 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
+		[XmlElement("ParagraphOptions", typeof(DictionaryNodeParagraphOptions))]
+		[XmlElement("ReferringSenseOptions", typeof(ReferringSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
@@ -214,8 +235,10 @@ namespace SIL.FieldWorks.XWorks
 		public override bool Equals(object other)
 		{
 			var otherNode = other as ConfigurableDictionaryNode;
+			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix || FieldDescription != otherNode.FieldDescription)
+				return false;
 			// The rules for our tree prevent two same-named nodes under a parent
-			return otherNode != null && CheckParents(this, otherNode);
+			return CheckParents(this, otherNode);
 		}
 
 		/// <summary>
@@ -293,6 +316,41 @@ namespace SIL.FieldWorks.XWorks
 
 			LabelSuffix = newSuffix;
 			return true;
+		}
+
+		/// <summary>
+		/// Check if any enabled nodes preceding this node are displayed in a paragraph
+		/// </summary>
+		public bool CheckForPrevParaNodeSibling()
+		{
+			foreach (var node in Parent.Children)
+			{
+				if (Equals(node, this))
+				{
+					return false;
+				}
+				if (node.CheckForParaNodesEnabled())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check if this node is configured to be displayed in a paragraph
+		/// </summary>
+		public bool CheckForParaNodesEnabled()
+		{
+			if(DictionaryNodeOptions is DictionaryNodeSenseOptions )
+			{
+				return IsEnabled && ((DictionaryNodeSenseOptions)DictionaryNodeOptions).DisplayEachSenseInAParagraph;
+			}
+			if (DictionaryNodeOptions is DictionaryNodeComplexFormOptions)
+			{
+				return IsEnabled && ((DictionaryNodeComplexFormOptions)DictionaryNodeOptions).DisplayEachComplexFormInAParagraph;
+			}
+			return false;
 		}
 	}
 }

@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public override void ActivateUI(bool useRecordTreeBar)
+		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			// by default, we won't publish that we're the "ActiveClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.

@@ -1062,6 +1062,16 @@ namespace SIL.FieldWorks.FDO
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the current version of the database model.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string ModelVersion
+		{
+			get { return FDOBackendProvider.ModelVersion.ToString(); }
+		}
+
 		#endregion Public Properties
 
 		#region Public methods

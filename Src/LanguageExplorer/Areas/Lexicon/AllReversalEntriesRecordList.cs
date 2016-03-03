@@ -94,7 +94,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				try
 				{
-					publisher.Publish("InsertReversalIndex_FORCE", null);
 					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 				}
 				catch

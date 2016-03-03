@@ -14,8 +14,8 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 {
@@ -40,6 +40,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, fontName);
 			style.Rules = ttpBldr.GetTextProps();
 			ComputeDerivedStyles();
+		}
+
+		internal void TestLoadStyles()
+		{
+			LoadStyles();
 		}
 	}
 
@@ -94,6 +99,19 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			m_styleSheet = new DummyFwStyleSheet();
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+		}
+
+		/// <summary/>
+		[Test]
+		public void LoadStyles_LoadedStylesHaveBasedOnMemberSet()
+		{
+			var parentStyle = GenerateEmptyParagraphStyle("parent", null);
+			GenerateEmptyParagraphStyle("child", parentStyle);
+			m_styleSheet.TestLoadStyles();
+			var loadedChildStyle = m_styleSheet.Styles["child"];
+			Assert.That(loadedChildStyle.m_basedOnStyleName, Is.EqualTo("parent"), "Based on name set");
+			Assert.That(loadedChildStyle.m_basedOnStyle, Is.Not.Null, "Based on member not set after styles were loaded");
+			Assert.That(loadedChildStyle.m_basedOnStyle.Name, Is.EqualTo("parent"), "Based on member not set to the parent style");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -207,6 +225,16 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			Assert.IsTrue(styleCollection.Contains(styleName.Normalize(NormalizationForm.FormD)));
 			Assert.IsTrue(styleCollection.Contains(styleName.Normalize(NormalizationForm.FormKC)));
 			Assert.IsTrue(styleCollection.Contains(styleName.Normalize(NormalizationForm.FormKD)));
+		}
+
+		private IStStyle GenerateEmptyParagraphStyle(string name, IStStyle basedOnStyle)
+		{
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var newStyle = styleFactory.Create();
+			Cache.LangProject.TranslatedScriptureOA.StylesOC.Add(newStyle);
+			newStyle.Name = name;
+			newStyle.BasedOnRA = basedOnStyle;
+			return newStyle;
 		}
 	}
 }

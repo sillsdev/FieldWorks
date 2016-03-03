@@ -2345,15 +2345,6 @@ namespace SIL.FieldWorks.XWorks
 				case "Entries":
 					if (owner == "ReversalIndex")
 					{
-#if RANDYTODO
-		// TODO: The client has to deal with creating a new index, since it has to feed in the owning object in a constructor.
-						if (m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count == 0)
-						{
-							// invoke the Reversal listener to create the index for this invalid state
-							Publisher.Publish("InsertReversalIndex_FORCE", null);
-						}
-#endif
-
 						if (m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
 						{
 							owningObject = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];

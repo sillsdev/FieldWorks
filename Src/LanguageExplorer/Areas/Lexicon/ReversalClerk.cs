@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
@@ -99,7 +100,13 @@ namespace LanguageExplorer.Areas.Lexicon
 				return;
 			}
 
-			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
+			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
+
+			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
+			// exist, code elsewhere will make up for it.
+			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
+				ri.ShortName + DictionaryConfigurationModel.FileExtension);
 			PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 
 			ICmObject newOwningObj = NewOwningObject(ri);
@@ -129,7 +136,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					@"Lexicon"),
 					@"ReversalEntriesBulkEdit");
 				var doc = XDocument.Load(Path.Combine(path, @"toolConfiguration.xml"));
-				var columnNode = doc.XPathSelectElement(@"//column[@label='Form']");
+				var columnNode = doc.XPathSelectElement(@"//column[@label='Reversal Form']");
 				return columnNode;
 			}
 		}
@@ -303,25 +310,6 @@ namespace LanguageExplorer.Areas.Lexicon
 				return Guid.Empty;
 			if (Cache.LanguageProject.LexDbOA == null)
 				return Guid.Empty;
-#if RANDYTODO
-			// TODO: Having this here, with the class down in say Areas (a better location),
-			// TODO: Then results in this class referencing LanguageExplorer.Areas.Lexicon
-			// TODO: & that namespace also referencing Areas (circular refs, not good).
-			// TODO: Figure out how to not do this here.
-#endif
-			using (CreateReversalIndexDlg dlg = new CreateReversalIndexDlg())
-			{
-				dlg.Init(Cache);
-				// Don't bother if all languages already have a reversal index!
-				if (dlg.PossibilityCount > 0)
-				{
-					if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-					{
-						int hvo = dlg.NewReversalIndexHvo;
-						return Cache.ServiceLocator.GetObject(hvo).Guid;
-					}
-				}
-			}
 			return Guid.Empty;
 		}
 

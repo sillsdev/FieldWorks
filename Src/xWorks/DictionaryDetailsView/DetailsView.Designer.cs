@@ -114,7 +114,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.MinimumSize = new System.Drawing.Size(320, 100);
 			this.Name = "DetailsView";
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 

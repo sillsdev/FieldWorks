@@ -1,13 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ExportDialog.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -251,7 +244,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -391,31 +384,25 @@ namespace SIL.FieldWorks.XWorks
 		/// and update the appropriate variables from it.
 		/// If this returns a non-null value, it is a newly created object which must be disposed. (See LT-11066.)
 		/// </summary>
-		Control EnsureViewInfo()
+		private Control EnsureViewInfo()
 		{
-			string area = "lexicon";
-			string tool = "lexiconDictionary";
+			string area, tool;
 			m_areaOrig = PropertyTable.GetValue<string>("areaChoice");
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
-			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == "notebook")
 			{
-				if (ft != FxtTypes.kftConfigured)
+				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
 					return null;	// nothing to do.
 				area = m_areaOrig;
 				tool = "notebookDocument";
 			}
 			else
 			{
+				area = "lexicon";
 				switch (ft)
 				{
-					case FxtTypes.kftConfigured:
-						break;
-					case FxtTypes.kftReversal:
-						tool = "reversalEditComplete";
-						break;
 					case FxtTypes.kftClassifiedDict:
 						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
 						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
@@ -445,8 +432,8 @@ namespace SIL.FieldWorks.XWorks
 			return mainControl;
 		}
 
-		List<int> m_translationWritingSystems;
-		List<ICmPossibilityList> m_translatedLists;
+		private List<int> m_translationWritingSystems;
+		private List<ICmPossibilityList> m_translatedLists;
 		private bool m_allQuestions; // For semantic domains, export missing translations as English?
 
 		private void btnExport_Click(object sender, EventArgs e)
@@ -454,13 +441,10 @@ namespace SIL.FieldWorks.XWorks
 			if (m_exportList.SelectedItems.Count == 0)
 				return;
 
-			//if (ItemDisabled((string)m_exportList.SelectedItems[0].Tag))
-			//    return;
 			m_exportItems.Clear();
 			foreach (ListViewItem sel in m_exportList.SelectedItems)
 				m_exportItems.Add(sel);
-			var mainControl = EnsureViewInfo();
-			try
+			using (EnsureViewInfo())
 			{
 
 				if (!PrepareForExport())
@@ -598,11 +582,6 @@ namespace SIL.FieldWorks.XWorks
 					PropertyTable.SetProperty("ExportDlgShowInFolder", "false", true, true);
 				}
 			}
-			finally
-			{
-				if (mainControl != null)
-					mainControl.Dispose();
-			}
 		}
 
 		private static void OpenExportFolder(string sDirectory, string sFileName)
@@ -680,7 +659,6 @@ namespace SIL.FieldWorks.XWorks
 			string fxtPath = (string)m_exportItems[0].Tag;
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
-			{
 				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					try
@@ -705,7 +683,7 @@ namespace SIL.FieldWorks.XWorks
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
 								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1; // todo: pick something legit
+							progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
 								progressDlg.AllowCancel = true;
 								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
 								break;
@@ -735,10 +713,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.AllowCancel = true;
 
 								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
-								break;
-							case FxtTypes.kftPathway:
-								break;
-							case FxtTypes.kftWebonary:
 								break;
 							case FxtTypes.kftLift:
 								progressDlg.Minimum = 0;
@@ -785,7 +759,6 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-		}
 
 		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
 		{
@@ -794,12 +767,15 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 			var xhtmlPath = (string)args[0];
-			var cssPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), Path.GetFileNameWithoutExtension(xhtmlPath) + ".css");
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(PropertyTable, out entriesToSave);
-			progress.Maximum = entriesToSave.Length;
-			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable), m_cache);
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, PropertyTable, xhtmlPath, cssPath, progress);
+			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
+			{
+				case FxtTypes.kftConfigured:
+					new DictionaryExportService(PropertyTable, Publisher).ExportDictionaryContent(xhtmlPath, progress: progress);
+					break;
+				case FxtTypes.kftReversal:
+					new DictionaryExportService(PropertyTable, Publisher).ExportReversalContent(xhtmlPath, progress: progress);
+					break;
+			}
 			return null;
 		}
 
@@ -1188,7 +1164,7 @@ namespace SIL.FieldWorks.XWorks
 					ft.m_ft = FxtTypes.kftSemanticDomains;
 					break;
 				default:
-					Debug.Assert(false, "Invalid type attribute value for the template element");
+					Debug.Fail("Invalid type attribute value for the template element");
 					ft.m_ft = FxtTypes.kftFxt;
 					break;
 			}
@@ -1857,16 +1833,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (SelectOption(type))
 			{
-				Control main = EnsureViewInfo();
-				try
+				using (EnsureViewInfo())
 				{
 					DoExport(file);
 					ValidXmlFile(file);
-				}
-				finally
-				{
-					if (main != null)
-						main.Dispose();
 				}
 			}
 		}

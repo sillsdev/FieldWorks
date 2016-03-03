@@ -96,6 +96,7 @@
     <Compile Include="FdoGenerate\TypeInfo.cs" />
     <Compile Include="ExtractIIDsTask.cs" />
     <Compile Include="GenerateNUnitReports.cs" />
+    <Compile Include="GenerateTestCoverageReport.cs" />
     <Compile Include="IdlImp.cs" />
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="LocalizeFieldWorksTests.cs" />

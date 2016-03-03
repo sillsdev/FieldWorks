@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,6 +21,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
-	#region Environment
+		#region Environment
 		[TestFixtureSetUp]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Clerk disposed in TearDown")]
 		public override void FixtureSetup()
@@ -86,11 +87,12 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			base.FixtureTeardown();
 			Dispose();
 		}
 
-	#region disposal
+		#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -118,8 +120,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(true);
 		}
-	#endregion disposal
-	#endregion Environment
+		#endregion disposal
+		#endregion Environment
 
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
@@ -142,8 +144,10 @@ namespace SIL.FieldWorks.XWorks
 			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode>();
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>()
+			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
@@ -220,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 		}
 
-	#region Test connection to local Webonary instance
+		#region Test connection to local Webonary instance
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void CanConnectAtAll()
@@ -266,10 +270,10 @@ namespace SIL.FieldWorks.XWorks
 			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
 			var inputFile = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
 			var response = client.UploadFile(targetURI, inputFile);
-			var responseText = System.Text.Encoding.ASCII.GetString(response);
+			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
 		}
-	#endregion
+		#endregion
 
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
@@ -458,9 +462,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var query = string.Format(".*{0}.*nsupported.*", tiffFilename);
-				Assert.True(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
+				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
 				query = string.Format(".*{0}.*nsupported.*", jpegFilename);
-				Assert.False(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
+				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
 
 				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, ".*nsupported.*").Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
 			}
@@ -470,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-	#region Helpers
+		#region Helpers
 		/// <summary>
 		/// Helper.
 		/// </summary>
@@ -512,7 +516,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public PublishToWebonaryController SetUpController()
 		{
-			return new PublishToWebonaryController { Cache = Cache, PropertyTable = m_propertyTable };
+			return new PublishToWebonaryController { Cache = Cache, PropertyTable = m_propertyTable, Publisher = m_publisher };
 		}
 
 		internal class MockWebonaryDlg : IPublishToWebonaryView
@@ -526,17 +530,14 @@ namespace SIL.FieldWorks.XWorks
 
 			public void PopulatePublicationsList(IEnumerable<string> publications)
 			{
-				;
 			}
 
 			public void PopulateConfigurationsList(IEnumerable<string> configurations)
 			{
-				;
 			}
 
 			public void PopulateReversalsCheckboxList(IEnumerable<string> reversals)
 			{
-				;
 			}
 
 			public PublishToWebonaryModel Model { get; set; }
@@ -558,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
 			}
 		}
-	#endregion
+		#endregion
 	}
 #endif
 }

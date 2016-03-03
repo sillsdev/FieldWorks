@@ -1,4 +1,4 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,10 +22,28 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache and PropertyTable are references")]
 	public class PublishToWebonaryController
 	{
-		public FdoCache Cache { private get; set; }
+		private readonly FdoCache m_cache;
+		private readonly IPropertyTable m_propertyTable;
+		private readonly DictionaryExportService m_exportService;
 
 		public IPropertyTable PropertyTable { private get; set; }
 
+		public PublishToWebonaryController(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		{
+			m_cache = cache;
+			m_propertyTable = propertyTable;
+			m_exportService = new DictionaryExportService(propertyTable, publisher);
+		}
+
+		public int CountDictionaryEntries()
+		{
+			return m_exportService.CountDictionaryEntries();
+		}
+
+		public int CountReversalIndexEntries(IEnumerable<string> indexes)
+		{
+			return m_exportService.CountReversalIndexEntries(indexes);
+		}
 
 		/// <summary>
 		/// Exports the dictionary xhtml and css for the publication and configuration that the user had selected in the dialog.
@@ -34,11 +52,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration));
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
-			var cssPath = Path.Combine(tempDirectoryToCompress, "configured.css");
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(PropertyTable, out entriesToSave);
 			var configuration = model.Configurations[model.SelectedConfiguration];
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, PropertyTable, xhtmlPath, cssPath, null);
+			m_exportService.ExportDictionaryContent(xhtmlPath, configuration);
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
@@ -79,9 +94,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the reversal xhtml and css for the reversals that the user had selected in the dialog
 		/// </summary>
-		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel textbox, IPublishToWebonaryView logTextbox)
+		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
 		{
-			//TODO:Actually export the reversal content into the temp directory
+			if (model.Reversals == null)
+				return;
+			foreach (var reversal in model.Reversals)
+			{
+				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
+				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
+				// The reversalWs should always match the Display label of one of the AnalysisWritingSystems, this exception is for future programming errors
+				if (reversalWs == null)
+				{
+					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
+				}
+				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.IcuLocale));
+				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig"); // TODO (Hasso) 2016.01: what if the user wants to use a copy of this config?
+				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
+				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
+				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
+			}
 		}
 
 		/// <summary>
@@ -92,8 +123,9 @@ namespace SIL.FieldWorks.XWorks
 			// TODO use specified site with respect to webonary domain, rather than using value
 			// for current testing. eg $siteName.webonary.org/something or
 			// www.webonary.org/$sitename/wp-json/something .
-			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
-			return targetURI;
+			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
+			server = string.IsNullOrEmpty(server) ? "192.168.33.10" : server;
+			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, PublishToWebonaryModel model, IPublishToWebonaryView view)
@@ -119,10 +151,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (WebException e)
 				{
-					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}", e.Message));
+					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
+					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
 					return;
 				}
-				var responseText = System.Text.Encoding.ASCII.GetString(response);
+				var responseText = Encoding.ASCII.GetString(response);
 
 				if (responseText.Contains("Upload successful"))
 				{

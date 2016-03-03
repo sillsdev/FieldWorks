@@ -276,11 +276,8 @@
     <Compile Include="PublishToWebonaryModelTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
-    <Compile Include="XmlDocConfigureDlgTests.cs" />
     <Compile Include="XhtmlDocViewTests.cs" />
-    <Compile Include="XWorksAppTestBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="XWorksAppTestBase.cs" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>

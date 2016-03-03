@@ -44,12 +44,12 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
-using SIL.IO;
 using SIL.Reporting;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
+using SIL.WritingSystems;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using FileUtils = SIL.Utils.FileUtils;
 #if __MonoCS__
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser)
+#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				string xulRunnerLocation;
 				if (MiscUtils.IsUnix)
 				{
@@ -201,11 +201,10 @@ namespace SIL.FieldWorks
 				}
 				else
 				{
-					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "xulrunner");
-					if (!Directory.Exists(xulRunnerLocation))
-						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
-					if (!SetDllDirectory(xulRunnerLocation))
-						throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
+					// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
+					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
+					if (string.IsNullOrEmpty(xulRunnerLocation))
+						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 				}
 
 				Xpcom.Initialize(xulRunnerLocation);
@@ -213,6 +212,7 @@ namespace SIL.FieldWorks
 				//Set default browser for XWebBrowser to use GeckoFX.
 				//This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
+#endregion Initialize XULRunner
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
@@ -270,6 +270,9 @@ namespace SIL.FieldWorks
 
 				// initialize ICU
 				Icu.InitIcuDataDir();
+
+				// initialize the SLDR
+				Sldr.Initialize();
 
 				// initialize Palaso keyboarding
 				KeyboardController.Initialize();
@@ -763,8 +766,8 @@ namespace SIL.FieldWorks
 				}
 				catch (Exception ex)
 				{
-					Debug.Fail("Got exception in FieldWorks.ExisitingProcess", ex.Message);
-					Logger.WriteEvent("Got exception in FieldWorks.ExisitingProcess: ");
+					Debug.Fail("Got exception in FieldWorks.ExistingProcess", ex.Message);
+					Logger.WriteEvent("Got exception in FieldWorks.ExistingProcess: ");
 					Logger.WriteError(ex);
 				}
 				return existingProcesses;
@@ -2790,6 +2793,7 @@ namespace SIL.FieldWorks
 					configMigrator.InitializeFlexComponent(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher, s_activeMainWnd.Subscriber);
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
+				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
 			}
 			catch (StartupException ex)
 			{
@@ -2808,6 +2812,15 @@ namespace SIL.FieldWorks
 			fwMainWindow.Activated += FwMainWindowActivated;
 			fwMainWindow.Closing += FwMainWindowClosing;
 			return true;
+		}
+
+		private static void EnsureValidReversalIndexConfigFile(FdoCache cache)
+		{
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
+			cache.DomainDataByFlid.BeginNonUndoableTask();
+			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr, cache,
+				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, cache.LangProject.ShortName);
+			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3395,6 +3408,8 @@ namespace SIL.FieldWorks
 			}
 
 			KeyboardController.Shutdown();
+
+			Sldr.Cleanup();
 
 			GracefullyShutDown();
 

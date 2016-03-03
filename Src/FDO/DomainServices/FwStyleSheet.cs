@@ -297,7 +297,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (var hvo in ((ISilDataAccessManaged)m_fdoCache.DomainDataByFlid).VecProp(m_hvoStylesOwner, m_tagStylesList))
 			{
 				var style = m_fdoCache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
-				m_StyleInfos.Add(new BaseStyleInfo(style));
+				var basedOnStyle = new BaseStyleInfo(style);
+				m_StyleInfos.Add(basedOnStyle);
+			}
+			foreach (var loadedStyle in m_StyleInfos)
+			{
+				loadedStyle.SetBasedOnStyle(m_StyleInfos);
 			}
 
 			ComputeDerivedStyles();
@@ -1097,13 +1102,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if ((styleBasedOn == null) || styleBasedOn == styleInfo.RealStyle)
 				{
 					// If not based on anything, or based on itself; use as is with any applicable overrides.
-					var bldr = (styleInfo.RealStyle.Rules == null) ? TsPropsBldrClass.Create() :
-						styleInfo.RealStyle.Rules.GetBldr();
+					var bldr = (styleInfo.RealStyle.Rules == null)
+						? TsPropsBldrClass.Create()
+						: styleInfo.RealStyle.Rules.GetBldr();
 					ApplyProgrammaticPropOverrides(styleInfo.Name, bldr);
 					styleInfo.TextProps = bldr.GetTextProps();
 				}
 				else
+				{
 					styleInfo.TextProps = null;
+				}
 			}
 
 			foreach (BaseStyleInfo styleInfo in m_StyleInfos)

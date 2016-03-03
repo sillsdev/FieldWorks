@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,13 +19,14 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
-	class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Cache is a reference")]
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationMigrator m_migrator;
 		private IPropertyTable m_propertyTable;
@@ -39,7 +40,17 @@ namespace SIL.FieldWorks.XWorks
 		private const string CustomFieldChangedLabel = "Custom Label";
 		private const string CustomFieldOriginalName = "Custom Name";
 		private const string CustomFieldUnchangedNameAndLabel = "Custom";
-		private IDisposable m_cf1, m_cf2;
+		private const string CustomFieldGenDate = "Custom GenDate";
+		private const string CustomFieldLocation = "Custom Person";
+		private IDisposable m_cf1, m_cf2, m_cf3, m_cf4;
+
+		// Minor Entry Nodes
+		private const string MinorEntryOldLabel = "Minor Entry";
+		private const string MinorEntryComplexLabel = "Minor Entry (Complex Forms)";
+		private const string MinorEntryVariantLabel = "Minor Entry (Variants)";
+		private const string MinorEntryOldXpath = "//ConfigurationItem[@name='" + MinorEntryOldLabel + "']";
+		private const string MinorEntryComplexXpath = "//ConfigurationItem[@name='" + MinorEntryComplexLabel + "']";
+		private const string MinorEntryVariantXpath = "//ConfigurationItem[@name='" + MinorEntryVariantLabel + "']";
 
 		[TestFixtureSetUp]
 		protected void Init()
@@ -59,16 +70,23 @@ namespace SIL.FieldWorks.XWorks
 
 			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
 				CellarPropertyType.ReferenceCollection, Guid.Empty);
-			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
 					CellarPropertyType.ReferenceCollection, Guid.Empty);
-
+			m_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.GenDate,  Guid.Empty);
+			m_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
+				CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 		}
 
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
+			if (m_migrator != null)
+				m_migrator.SetTestLogger = null;
 			m_cf1.Dispose();
 			m_cf2.Dispose();
+			m_cf3.Dispose();
+			m_cf4.Dispose();
 			m_window.Dispose();
 			m_application.Dispose();
 			m_propertyTable.Dispose();
@@ -102,12 +120,198 @@ namespace SIL.FieldWorks.XWorks
 		public void ConvertLayoutTreeNodeToConfigNode_MainEntryAndMinorEntryWork()
 		{
 			var oldMainNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Main Entry", ClassName = "LexEntry"};
-			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Minor Entry", ClassName = "LexEntry" };
+			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = MinorEntryOldLabel, ClassName = "LexEntry" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldMainNode));
 			Assert.AreEqual(configNode.Label, oldMainNode.Label, "Label Main Entry root node was not migrated");
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldMinorNode));
 			Assert.AreEqual(configNode.Label, oldMinorNode.Label, "Label for Minor Entry root node was not migrated");
+		}
+
+		[Test]
+		public void CopyDefaultsIntoConfigNode_MinorEntryWithoutBeforeAfterWorks()
+		{
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntryNodesType = BuildConvertedMinorEntryNodes();
+				convertedMinorEntryNodesType.FilePath = convertedModelFile.Path;
+				var defaultMInorEntryNodesType = BuildCurrentDefaultMinorEntryNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryNodesType, defaultMInorEntryNodesType);
+				convertedMinorEntryNodesType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryComplexXpath + "/@before");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryComplexXpath + "/@after");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@before");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryVariantXpath + "/@after");
+			}
+		}
+
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_SplitsMinorEntryNodes(
+			[Values(true, false)] bool isOriginal, [Values(true, false)] bool isComplex, [Values(true, false)] bool isVariant)
+		{
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+				convertedMinorEntryModel.FilePath = convertedModelFile.Path;
+				var meNode = convertedMinorEntryModel.Parts[1];
+				meNode.IsDuplicate = !isOriginal;
+				meNode.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Minor,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption
+						{
+							Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isComplex
+						},
+						new DictionaryNodeListOptions.DictionaryNodeOption
+						{
+							Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isVariant
+						}
+					}
+				};
+
+				// SUT
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryModel, BuildCurrentDefaultMinorEntryNodes());
+				convertedMinorEntryModel.Save();
+
+				var hasComplexNode = isOriginal || isComplex || !isVariant;
+				var hasVariantNode = isOriginal || isVariant || !isComplex;
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, hasComplexNode ? 1 : 0);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, hasVariantNode ? 1 : 0);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryOldXpath); // All old Minor Entry nodes should have been split
+			}
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_UpdatesLabelAndListId()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			Assert.AreEqual(MinorEntryComplexLabel, convertedMinorEntryNode.Label);
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex,
+				((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId);
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_PreservesOnlyRelevantTypes()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
+				DictionaryNodeListOptions.ListIds.Minor);
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+			var complexTypeGuids = m_migrator.AvailableComplexFormTypes;
+			Assert.AreEqual(complexTypeGuids.Count(), options.Count, "All Complex Form Types should be present");
+			foreach (var option in options)
+			{
+				Assert.That(option.IsEnabled);
+				Assert.That(complexTypeGuids, Contains.Item(option.Id), "Only Complex Form Types should be present");
+			}
+		}
+
+		[Test]
+		public void CopyDefaultsIntoMinorEntryNode_PreservesSelections()
+		{
+			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
+				DictionaryNodeListOptions.ListIds.Minor);
+			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+			// Disable some options
+			for (var i = 0; i < options.Count; i += 2)
+			{
+				options[i].IsEnabled = false;
+			}
+			// Deep clone Complex Types; we'll be testing those
+			var expectedOptions = options.Where(option => m_migrator.AvailableComplexFormTypes.Contains(option.Id))
+				.Select(option => new DictionaryNodeListOptions.DictionaryNodeOption{ Id = option.Id, IsEnabled = option.IsEnabled }).ToList();
+
+			// SUT
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			var resultOptions = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
+
+			Assert.AreEqual(expectedOptions.Count, resultOptions.Count);
+			var j = 0;
+			foreach (var option in expectedOptions)
+			{
+				Assert.AreEqual(option.Id, resultOptions[j].Id);
+				Assert.AreEqual(option.IsEnabled, resultOptions[j++].IsEnabled);
+			}
+		}
+
+		private static ConfigurableDictionaryNode EmptyNode { get { return new ConfigurableDictionaryNode{ Label = string.Empty }; } }
+
+		private static DictionaryConfigurationModel BuildConvertedMinorEntryNodes()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = MinorEntryOldLabel,
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = "(",
+				Before = ")",
+				DictionaryNodeOptions = new DictionaryNodeListOptions()
+			};
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, minorEntryNode }, Version = -1 };
+		}
+
+		private static DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
+		{
+			var complexEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = MinorEntryComplexLabel,
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = null,
+				Before = null
+			};
+			var variantEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = MinorEntryVariantLabel,
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				After = null,
+				Before = null
+			};
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode } };
+		}
+
+		[Test]
+		public void HasComplexFormTypesSelected_And_HasVariantTypesSelected(
+			[Values(true, false)] bool isUnspecifiedComplexSelected, [Values(true, false)] bool isSpecifiedComplexSelected,
+			[Values(true, false)] bool isUnspecifiedVariantSelected, [Values(true, false)] bool isSpecifiedVariantSelected)
+		{
+			var options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isUnspecifiedComplexSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedComplexSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isUnspecifiedVariantSelected
+				},
+				new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedVariantSelected
+				}
+			};
+
+			Assert.AreEqual(isUnspecifiedComplexSelected || isSpecifiedComplexSelected, m_migrator.HasComplexFormTypesSelected(options), "Complex");
+			Assert.AreEqual(isUnspecifiedVariantSelected || isSpecifiedVariantSelected, m_migrator.HasVariantTypesSelected(options), "Variant");
 		}
 
 		///<summary/>
@@ -317,19 +521,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
 
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			var options = (DictionaryNodeComplexFormOptions)configNode.DictionaryNodeOptions;
 			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
-		}
-
-		///<summary>Root-based Minor Entry - Components should use character styles. See LT-15834.</summary>
-		[Test]
-		public void ConvertLayoutTreeNodeToConfigNode_ComponentUsesCharStyles()
-		{
-			var node = new MockLayoutTreeNode { m_partName = "LexEntry-Jt-StemMinorComponentsConfig" };
-
-			// SUT
-			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
-			Assert.That(configNode.StyleType, Is.EqualTo(ConfigurableDictionaryNode.StyleTypes.Character), "Need to use character styles for Component");
 		}
 
 		///<summary/>
@@ -410,8 +603,12 @@ namespace SIL.FieldWorks.XWorks
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsDiscardedForFalseDuplicate()
 		{
 			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1.0", IsDuplicate = true, Label = "A b c D e f" };
+			ConfigurableDictionaryNode configNode;
 			// SUT
-			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
+			}
 			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
 			Assert.IsNullOrEmpty(configNode.LabelSuffix, "suffix incorrectly migrated");
 			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
@@ -672,6 +869,59 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_StyleTypeIsMigrated()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var convertedChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1" };
+			var convertedChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode1, convertedChildNode2 };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			const ConfigurableDictionaryNode.StyleTypes parentOverride = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			const ConfigurableDictionaryNode.StyleTypes child1Override = ConfigurableDictionaryNode.StyleTypes.Character;
+			const ConfigurableDictionaryNode.StyleTypes defaultStyleType = ConfigurableDictionaryNode.StyleTypes.Default;
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = parentOverride };
+			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override };
+			var baseChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" }; // Child2 will have the default StyleType
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1, baseChildNode2 };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "CssClassNameOverride for parent node not migrated");
+			Assert.AreEqual(child1Override, convertedModel.Parts[0].Children[0].StyleType, "CssClassNameOverride for child 1 not migrated");
+			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "CssClassNameOverride for child 2 should not be set");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_WsOptionIsMigrated()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+			};
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+			};
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(convertedModel.Parts[0].DictionaryNodeOptions, baseModel.Parts[0].DictionaryNodeOptions, "DictionaryNodeOptions for parent node not migrated");
+			Assert.AreEqual(convertedModel.Parts[0].Children[0].DictionaryNodeOptions, baseModel.Parts[0].Children[0].DictionaryNodeOptions, "DictionaryNodeOptions for child not migrated");
+		}
+		///<summary/>
+		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
@@ -728,7 +978,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "New node from base was not merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, "Child", "new node inserted out of order");
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, "Child2", "New node from base was not merged properly");
@@ -749,7 +1002,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, convertedChildNodeTwo.Label, "order of old model was not retained");
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, convertedChildNode.Label, "Nodes incorrectly merged");
@@ -769,7 +1025,10 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -793,12 +1052,15 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.IsTrue(customChild.IsCustomField, "Children of Custom nodes should also be Custom.");
+			Assert.IsFalse(customChild.IsCustomField, "Children of Custom nodes are not necessarily Custom.");
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
@@ -821,7 +1083,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "label was not retained");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
 			Assert.AreEqual(CustomFieldOriginalName, customNode.FieldDescription, "Custom node's Field should have been loaded from the Cache");
@@ -844,7 +1109,12 @@ namespace SIL.FieldWorks.XWorks
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel)); // TODO pH 2014.12: check that an error was reported
+			using (var logger = m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+				Assert.IsTrue(logger.Content.StartsWith(
+					"Could not match 'Truly Custom' in defaults, and it is totally invalid.  Treating it as a custom field, but EXPECT TROUBLE LATER."));
+			}
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -852,7 +1122,47 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
-	#region Minor Entry Componenents Referenced Entries Tests
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ProperChildrenAdded()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries", FieldDescription = "LexEntry" };
+			var customPersonNode = new ConfigurableDictionaryNode { Label = CustomFieldLocation, Parent = convertedParentNode };
+			var customGenDateNode = new ConfigurableDictionaryNode {Label = CustomFieldGenDate, Parent = convertedParentNode };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customPersonNode, customGenDateNode };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			// Test handling expanding "Minor Entries" to "Minor Entries (Complex Forms)" and "Minor Entries (Variants)"
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries (Complex Forms)", FieldDescription = "LexEntry" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", Parent = baseParentNode };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			// Ensure we don't throw because the parent node's label has been expanded.
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			}
+			Assert.AreEqual(3, convertedModel.Parts[0].Children.Count, "Nodes incorrectly merged");
+			Assert.IsTrue(customPersonNode.IsCustomField, "Custom atomic list reference field should be flagged as custom");
+			Assert.IsNotNull(customPersonNode.Children, "Custom atomic list reference field should have children (added)");
+			Assert.AreEqual(2, customPersonNode.Children.Count, "Custom atomic list reference field should have two children added");
+			for (int i = 0; i < customPersonNode.Children.Count; ++i)
+			{
+				var child = customPersonNode.Children[i];
+				Assert.IsFalse(child.IsCustomField, "Children of customPersonNode should not be flagged as custom (" + i + ")");
+				Assert.IsNotNull(child.DictionaryNodeOptions, "Children of customPersonNode should have a DictionaryNodeOptions object");
+				Assert.IsTrue(child.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Children of customPersonNode DictionaryNodeOptions should be a DictionaryNodeWritingSystemOptions object");
+			}
+			Assert.AreEqual("Name", customPersonNode.Children[0].Label, "The first child of customPersonNode should be Name");
+			Assert.AreEqual("Abbreviation", customPersonNode.Children[1].Label, "The second child of customPersonNode should be Abbreviation");
+			Assert.IsNotNull(customPersonNode.DictionaryNodeOptions, "Custom atomic list reference field should have a DictionaryNodeOptions object");
+			Assert.IsTrue(customPersonNode.DictionaryNodeOptions is DictionaryNodeListOptions, "Custom atomic list reference field DictionaryNodeOptions should be a DictionaryNodeListOptions object");
+			Assert.IsTrue(customGenDateNode.IsCustomField, "Custom GenDate field should be flagged as custom");
+			Assert.IsNull(customGenDateNode.Children, "Custom GenDate field should not have any children (added)");
+			Assert.IsNull(customGenDateNode.DictionaryNodeOptions, "Custom GenDate field should not have a DictionaryNodeOptions object");
+
+		}
+
+		#region Minor Entry Componenents Referenced Entries Tests
 		private const string HwBefore = "H.before";
 		private const string GlsBefore = "G.before";
 		private const string HwAfter = "H.after";
@@ -860,7 +1170,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string HwBetween = "H.between";
 		private const string GlsBetween = "G.between";
 
-		private DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
+		private static DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
 			bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
 		{
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
@@ -890,8 +1200,7 @@ namespace SIL.FieldWorks.XWorks
 			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord,
-			bool enableGloss)
+		private static DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord, bool enableGloss)
 		{
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadWord, FieldDescription = "HeadWord"};
 			var gloss = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", IsEnabled = enableGloss, FieldDescription = "DefinitionOrGloss"};
@@ -1050,6 +1359,395 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		private DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
+		{
+			var reverseAbbr = new ConfigurableDictionaryNode
+			{
+				Label = "Abbreviation",
+				IsEnabled = true
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form Type",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reverseAbbr }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultComplexEntryTypeNodes()
+		{
+			var abbreviation = new ConfigurableDictionaryNode
+			{
+				Label = "Reverse Abbreviation",
+				FieldDescription = "ReverseAbbr",
+				IsEnabled = true
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form Type",
+				FieldDescription = "LookupComplexEntryType",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { abbreviation }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_SubentryComplexTypeAbbreviationChanged()
+		{
+			const string complexEntryTypePath = "//ConfigurationItem[@name='Main Entry']/ConfigurationItem[@name='Subentries']/ConfigurationItem[@name='Complex Form Type']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedComplexEntryType = BuildConvertedComplexEntryTypeNodes();
+				convertedComplexEntryType.FilePath = convertedModelFile.Path;
+				var defaultComplexEntryType = BuildCurrentDefaultComplexEntryTypeNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedComplexEntryType, defaultComplexEntryType);
+				convertedComplexEntryType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(complexEntryTypePath + "ConfigurationItem[@name='Abbreviation']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(complexEntryTypePath + "ConfigurationItem[@name='Reverse Abbreviation']", 1);
+			}
+		}
+
+		private DictionaryConfigurationModel BuildConvertedGrammaticalInfoNodes()
+		{
+			var features = new ConfigurableDictionaryNode
+			{
+				Label = "Features",
+				FieldDescription = "Features",
+				IsEnabled = true
+			};
+			var grammaticalInfo = new ConfigurableDictionaryNode
+			{
+				Label = "Grammatical Info.",
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { features }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { grammaticalInfo }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultGrammaticalInfoNodes()
+		{
+			var inflectionFeatures = new ConfigurableDictionaryNode
+			{
+				Label = "Inflection Features",
+				FieldDescription = "FeaturesTSS",
+				IsEnabled = true
+			};
+			var grammaticalInfo = new ConfigurableDictionaryNode
+			{
+				Label = "Grammatical Info.",
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { inflectionFeatures }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { grammaticalInfo }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexInflectionFeaturesMigration()
+		{
+			const string grammaticalInfoTypePath = "//ConfigurationItem[@name='Reversal Entry']/ConfigurationItem[@name='Referenced Senses']/ConfigurationItem[@name='Grammatical Info.']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedGrammaticalInfoType = BuildConvertedGrammaticalInfoNodes();
+				convertedGrammaticalInfoType.FilePath = convertedModelFile.Path;
+				var defaultGrammaticalInfoType = BuildCurrentDefaultGrammaticalInfoNodes();
+
+				using (m_migrator.SetTestLogger = new SimpleLogger())
+				{
+					m_migrator.CopyNewDefaultsIntoConvertedModel(convertedGrammaticalInfoType, defaultGrammaticalInfoType);
+				}
+				convertedGrammaticalInfoType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Features']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(grammaticalInfoTypePath + "ConfigurationItem[@name='Inflection Features']", 1);
+			}
+		}
+
+		private DictionaryConfigurationModel BuildConvertedReversalIndexChildNodes()
+		{
+			var reversalForm = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Form",
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalCategory = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Category",
+				FieldDescription = "PartOfSpeechRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodes()
+		{
+			var reversalForm = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Form",
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalCategory = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Category",
+				FieldDescription = "PartOfSpeechRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexChildNodesMigrated()
+		{
+			const string reversalIndexChildNodesPath = "//ConfigurationItem[@name='Reversal Entry']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedreversalIndexChildNodesType = BuildConvertedReversalIndexChildNodes();
+				convertedreversalIndexChildNodesType.FilePath = convertedModelFile.Path;
+				var defaultreversalIndexChildNodesType = BuildCurrentDefaultReversalIndexChildNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedreversalIndexChildNodesType, defaultreversalIndexChildNodesType);
+				convertedreversalIndexChildNodesType.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Form']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Form']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Category']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Category']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Referenced Senses']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Vernacular Form']", 1);
+			}
+		}
+
+		[Test]
+		[TestCase("publishReversal", "All Reversal Indexes (original)", "AllReversalIndexes")]
+		[TestCase("publishReversal#All RU93", "Copy of All Reversal Indexes", "Copy of All Reversal Indexes-AllReversalIndexes-#All RU93")]
+		[TestCase("publishReversal-en", "English (original)", "English")]
+		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-English-#Engli704")]
+		public void CopyDefaultsIntoConvertedModel_PicksSensibleNameForReversalIndexes(string oldLayout, string oldLabel, string newFileName)
+		{
+			var node = new ConfigurableDictionaryNode { Label = "Reversal Entry" };
+			var model = new DictionaryConfigurationModel{ Version = -1, Label = oldLabel, Parts = new List<ConfigurableDictionaryNode> { node } };
+			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+			m_migrator.CopyNewDefaultsIntoConvertedModel(oldLayout, model);
+			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
+		}
+
+		private DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				IsEnabled = true
+			};
+			var refSenseHeadwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Sense Headword",
+				IsEnabled = true
+			};
+			var summaryDefNode = new ConfigurableDictionaryNode
+			{
+				Label = "Summary Definition",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss",
+				IsEnabled = true
+			};
+			var componentsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Components",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode, summaryDefNode, refSenseHeadwordNode }
+			};
+			var componentReferencesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Component References",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultComponentReferencesNodes()
+		{
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "HeadWord",
+				IsEnabled = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss (or Summary Definition)",
+				FieldDescription = "DefinitionOrGloss",
+				IsEnabled = true
+			};
+			var referencedEntriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Entries",
+				FieldDescription = "ConfigReferencedEntries",
+				CSSClassNameOverride = "referencedentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode, glossNode }
+			};
+			var componentReferencesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Component References",
+				FieldDescription = "ComplexFormEntryRefs",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedEntriesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MainEntryComponentReferences_ComponentsRenamedToReferencedEntries()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Main Entry']/ConfigurationItem[@name='Component References']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMainEntry = BuildConvertedComponentReferencesNodes();
+				convertedMainEntry.FilePath = convertedModelFile.Path;
+				var defaultMainEntry = BuildCurrentDefaultComponentReferencesNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMainEntry, defaultMainEntry);
+				convertedMainEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Components']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Gloss']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Summary Definition']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Reference Sense HeadWord']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Gloss (or Summary Definition)']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Entries']/ConfigurationItem[@name='Referenced Headword']", 1);
+			}
+		}
+
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigrating_ReturnsFalseIfNewReversalConfigsExist()
@@ -1103,7 +1801,193 @@ namespace SIL.FieldWorks.XWorks
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
-	#region Helper
+		/// <summary>
+		/// Check that an old configuration node migrates properly even if the label has been changed
+		/// from "Type" to "Variant Type".  (See https://jira.sil.org/browse/LT-16896.)
+		/// </summary>
+		[Test]
+		public void ConfigsMigrateModifiedLabelOkay()
+		{
+			var oldTypeNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = ", ",
+				ClassName = "LexEntryRef",
+				ContentVisible = true,
+				Label = "Type"
+			};
+			var oldVariantFormNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = ", ",
+				ClassName = "LexEntry",
+				ContentVisible = true,
+				Label = "Variant Form"
+			};
+			var oldCommentNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = " ",
+				ClassName = "LexEntryRef",
+				ContentVisible = false,
+				Label = "Comment",
+				WsLabel = "analysis",
+				WsType = "analysis"
+			};
+			var oldVariantsNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = ")",
+				Before = " (",
+				Between = "; ",
+				ClassName = "LexEntry",
+				ContentVisible = true,
+				Label = "Variants (of Entry)",
+			};
+			oldVariantsNode.Nodes.Add(oldTypeNode);
+			oldVariantsNode.Nodes.Add(oldVariantFormNode);
+			oldVariantsNode.Nodes.Add(oldCommentNode);
+			var oldRefSensesNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				After = "",
+				Before = " ",
+				Between = "; ",
+				ClassName = "ReversalIndexEntry",
+				ContentVisible = true,
+				Label = "Referenced Senses",
+			};
+			oldRefSensesNode.Nodes.Add(oldVariantsNode);
+			var oldReversalEntryNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				ClassName = "ReversalIndexEntry",
+				ContentVisible = false,
+				Label = "Reversal Entry",
+			};
+			oldReversalEntryNode.Nodes.Add(oldRefSensesNode);
+
+			var convertedTopNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldReversalEntryNode);
+			Assert.AreEqual("Reversal Entry", convertedTopNode.Label, "Initial conversion should copy the Label attribute verbatim.");
+			Assert.AreEqual(1, convertedTopNode.Children.Count, "Children nodes should be converted");
+			Assert.AreEqual(1, convertedTopNode.Children[0].Children.Count, "Grandchildren nodes should be converted");
+			Assert.AreEqual(3, convertedTopNode.Children[0].Children[0].Children.Count, "Greatgrandchildren should be converted");
+			var convertedTypeNode = convertedTopNode.Children[0].Children[0].Children[0];
+			Assert.AreEqual("Type", convertedTypeNode.Label, "Nodes are converted in order");
+			Assert.IsNull(convertedTypeNode.FieldDescription, "Initial conversion should not set FieldDescription for the Type node");
+			var convertedCommentNode = convertedTopNode.Children[0].Children[0].Children[2];
+			Assert.AreEqual("Comment", convertedCommentNode.Label, "Third child converted in order okay");
+			Assert.IsNull(convertedCommentNode.FieldDescription, "Initial conversion should not set FieldDescription for the Comment node");
+
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedTopNode }, Label = "Test", Version = -1, AllPublications = true};
+			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
+
+			var newTypeNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = ", ",
+				Label = "Variant Type",
+				FieldDescription = "OwningEntry",
+				IsEnabled = true
+			};
+			var newFormNode = new ConfigurableDictionaryNode
+			{
+				Between = ", ",
+				Label = "Variant Form",
+				FieldDescription = "VariantEntryTypesRS",
+				SubField = "MLHeadWord",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				IsEnabled = true
+			};
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(newFormNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+			};
+			var newCommentNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = " ",
+				Label = "Comment",
+				FieldDescription = "Summary",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				IsEnabled = false
+			};
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
+			(newCommentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			{
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+			};
+			var newVariantsNode = new ConfigurableDictionaryNode
+			{
+				After = ") ",
+				Before = "(",
+				Between = "; ",
+				Label = "Variants (of Entry)",
+				FieldDescription = "Owner",
+				SubField = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Children = new List<ConfigurableDictionaryNode> { newTypeNode, newFormNode, newCommentNode },
+				IsEnabled = true
+			};
+			(newVariantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).ListId = DictionaryNodeListOptions.ListIds.Variant;
+			(newVariantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> {
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "b0000000-c40e-433e-80b5-31da08771344", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "837ebe72-8c1d-4864-95d9-fa313c499d78", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a32f1d1c-4832-46a2-9732-c2276d6547e8", IsEnabled = true },
+				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "0c4663b3-4d9a-47af-b9a1-c8565d8112ed", IsEnabled = true }
+			};
+			var newRefSensesNode = new ConfigurableDictionaryNode
+			{
+				After = " ",
+				Between = "; ",
+				Label = "Vernacular Form",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { newVariantsNode },
+				IsEnabled = true
+			};
+			var newReversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
+				IsEnabled = true
+			};
+			var currentDefaultModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newReversalEntryNode } };
+			DictionaryConfigurationModel.SpecifyParents(currentDefaultModel.Parts);
+
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
+			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
+			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");
+			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");
+		}
+
+		[Test]
+		public void TestMigrateCustomFieldNode()
+		{
+			var xdoc0 = new System.Xml.XmlDocument();
+			xdoc0.LoadXml("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
+			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.DocumentElement, m_migrator, "LexSense");
+			var newTypeNode0 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode0);
+			Assert.IsFalse(newTypeNode0.IsCustomField, "A normal field should not be marked as custom after conversion");
+			Assert.IsTrue(newTypeNode0.IsEnabled, "A normal field should be enabled properly.");
+			Assert.AreEqual("Scientific Name", newTypeNode0.Label, "A normal field copies its label properly during conversion");
+			var xdoc1 = new System.Xml.XmlDocument();
+			xdoc1.LoadXml("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
+			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.DocumentElement, m_migrator, "LexSense");
+			var newTypeNode1 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode1);
+			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
+			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
+			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
+		}
+
+		#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = m_styleSheet.FindStyle(styleName);

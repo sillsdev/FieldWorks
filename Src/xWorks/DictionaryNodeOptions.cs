@@ -17,6 +17,8 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
+	[XmlInclude(typeof(DictionaryNodeParagraphOptions))]
+	[XmlInclude(typeof(ReferringSenseOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -39,6 +41,26 @@ namespace SIL.FieldWorks.XWorks
 				property.SetValue(target, originalValue, null);
 			}
 			return target;
+		}
+	}
+
+	public class ReferringSenseOptions : DictionaryNodeOptions
+	{
+		[XmlElement(ElementName = "WritingSystemOptions")]
+		public DictionaryNodeWritingSystemOptions WritingSystemOptions { get; set; }
+
+		[XmlElement(ElementName = "SenseOptions")]
+		public DictionaryNodeSenseOptions SenseOptions { get; set; }
+
+		public ReferringSenseOptions()
+		{
+			SenseOptions = new DictionaryNodeSenseOptions();
+			WritingSystemOptions=new DictionaryNodeWritingSystemOptions();
+		}
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new ReferringSenseOptions());
 		}
 	}
 
@@ -84,7 +106,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public enum ListIds
 		{
-			// REVIEW (Hasso) 2014.04: One instance of Complex Forms doesn't display the list in the old dialog. This may not be needed.
 			// Since None=0, it is the default selected if nothing is specified in the xml
 			[XmlEnum("none")]
 			None = 0,
@@ -108,7 +129,12 @@ namespace SIL.FieldWorks.XWorks
 			[XmlAttribute(AttributeName = "id")]
 			public string Id { get; set; }
 			[XmlAttribute(AttributeName = "isEnabled")]
-			public bool IsEnabled { get; set; } // REVIEW pH 2014.03: do we need this?  isn't everything here enabled by merit of being here?
+			public bool IsEnabled { get; set; }
+
+			public override string ToString()
+			{
+				return string.Format("[{0}] {1}", IsEnabled ? "X" : "_", Id);
+			}
 		}
 
 		[XmlAttribute(AttributeName = "list")]
@@ -151,6 +177,21 @@ namespace SIL.FieldWorks.XWorks
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
+		}
+	}
+
+	/// <summary>Options for Referenced ParagraphOptions</summary>
+	public class DictionaryNodeParagraphOptions : DictionaryNodeOptions
+	{
+		[XmlAttribute(AttributeName = "paragraphStyle")]
+		public string PargraphStyle { get; set; }
+
+		[XmlAttribute(AttributeName = "continuationParagraphStyle")]
+		public string ContinuationParagraphStyle { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeParagraphOptions());
 		}
 	}
 

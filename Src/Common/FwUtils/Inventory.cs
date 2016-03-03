@@ -461,14 +461,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var layoutName = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
 			var nodes = root.Elements("layoutType");
 			foreach (var xn in nodes)
-			{
-				var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
-				if (layoutOld == layoutName)
 				{
+					var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+					if (layoutOld == layoutName)
+					{
 					xn.ReplaceWith(layoutType);
-					return;
+						return;
+					}
 				}
-			}
 			root.Add(layoutType);
 		}
 
@@ -934,11 +934,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// An override, the base should already be saved in m_baseDoc
 				return GetEltFromDoc(elementName, keyBase, m_baseDoc);
 			}
-			// not an override, just an ordinary derived node.
-			// Possibly the base is another derived node, not yet computed, so we need
-			// to use the full GetElement to ensure that it gets created if needed.
-			return GetElement(elementName, keyBase);
-		}
+				// not an override, just an ordinary derived node.
+				// Possibly the base is another derived node, not yet computed, so we need
+				// to use the full GetElement to ensure that it gets created if needed.
+				return GetElement(elementName, keyBase);
+			}
 
 		/// <summary>
 		/// Load the templates again. Useful when you are working on template writing,
@@ -1056,7 +1056,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="filePaths">Collection of pathnames to individual XDE template files.</param>
 		/// <param name="version"></param>
 		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
-		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
+		/// <remarks>
+		/// tests over in XMLVIews need access to this method.
+		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
 			Debug.Assert(m_mainDoc != null);
@@ -1201,6 +1206,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				if (fileVersion != version && Merger != null && XmlUtils.GetOptionalAttributeValue(node, "base") == null)
 				{
+					if (node.Name == "layoutType")
+					{
+						AddLayoutTypeToInventory(node);
+						if (loadUserOverRides)
+							XmlUtils.SetAttribute(node, "version", version.ToString(CultureInfo.InvariantCulture));
+						survivors.Add(node);
+						wasMerged = true;
+					}
+					else
+					{
 					string[] keyAttrs;
 					var key = GetKeyMain(node, out keyAttrs);
 					XElement current;
@@ -1232,6 +1247,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 							}
 						}
 					}
+				}
 				}
 				else if (fileVersion == version)
 				{
