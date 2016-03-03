@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
 
-		/// <summary>Fired whenever an external dialog makes changes that require the dictionary preview can be refreshed</summary>
+		/// <summary>Fired whenever an external dialog makes changes that require the dictionary preview to be refreshed</summary>
 		public event EventHandler ExternalDialogMadeChanges;
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)

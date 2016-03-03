@@ -693,25 +693,24 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue)
 		{
-			var lexreferences = propertyValue as List<ILexReference>;
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (options != null && lexreferences != null)
+			if (options == null || !(propertyValue is IEnumerable<ILexReference>))
+				return;
+			var lexReferences = ((IEnumerable<ILexReference>)propertyValue).ToList();
+			var sortedReferences = new List<ILexReference>();
+			// REVIEW (Hasso) 2016.03: this Where is redundant to the IsListItemSelectedForExport call in GenerateCollectionItemContent
+			// REVIEW (cont): Filtering here is more performant; the other filter can be removed if it is verifiably redundant.
+			foreach (var option in options.Options.Where(optn => optn.IsEnabled))
 			{
-				var sortedReferences = new List<ILexReference>();
-				foreach (var option in options.Options)
+				foreach (var reference in lexReferences)
 				{
-					foreach (var reference in lexreferences)
-					{
-						if (option.Id.Contains(reference.OwnerType.Guid.ToString()))
-						{
-							if (!sortedReferences.Contains(reference))
-								sortedReferences.Add(reference);
-							break;
-						}
-					}
+					// REVIEW (Hasso) 2016.03: this doesn't handle directional relationships (e.g. part-whole) properly.
+					// ENHANCE: If we haven't one already, we should have a method that matches <Guid>:(f|r) (see IsListItemSelectedForExport)
+					if (option.Id.Contains(reference.OwnerType.Guid.ToString()) && !sortedReferences.Contains(reference))
+						sortedReferences.Add(reference);
 				}
-				propertyValue = sortedReferences;
 			}
+			propertyValue = sortedReferences;
 		}
 
 		/// <summary/>
