@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2014-2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -60,14 +64,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal string HelpTopic
 		{
-			get
-			{
-				if (m_helpTopic == null)
-				{
-					m_helpTopic = "khtpDictConfigManager";
-				}
-				return m_helpTopic;
-			}
+			get { return m_helpTopic ?? (m_helpTopic = "khtpDictConfigManager"); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))

@@ -338,8 +338,10 @@ namespace SIL.FieldWorks.XWorks
 			LoadDictionaryConfigurations();
 			LoadLastDictionaryConfiguration();
 			PopulateTreeView();
-			View.ManageConfigurations += (sender, args) => // TODO pH 2016.02: IsDirty on ManagerDlg
+			View.ManageConfigurations += (sender, args) =>
 			{
+				var currentModel = _model;
+				bool managerMadeChanges, managerSavedChanges;
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(_mediator.HelpTopicProvider))
 				{
@@ -350,13 +352,19 @@ namespace SIL.FieldWorks.XWorks
 						? "khtpDictConfigManager"
 						: "khtpRevIndexConfigManager";
 					dialog.ShowDialog(View as Form);
+					managerSavedChanges = configurationManagerController.HasSavedAnyChanges;
+					managerMadeChanges = configurationManagerController.IsDirty || managerSavedChanges || _model != currentModel;
 				}
+
+				if (!managerMadeChanges)
+					return;
 
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
 				MergeCustomFieldsIntoDictionaryModel(cache, _model);
-				RefreshView();
-				SelectCurrentConfiguration();
+				if (managerSavedChanges) // REVIEW was this here before?
+					SaveModel();
+				SelectCurrentConfigurationAndRefresh();
 			};
 			View.SaveModel += SaveModelHandler;
 			View.SwitchConfiguration += (sender, args) =>
@@ -442,7 +450,7 @@ namespace SIL.FieldWorks.XWorks
 				DisableNodeAndDescendants(treeNode.Tag as ConfigurableDictionaryNode);
 				RefreshView();
 			};
-			SelectCurrentConfiguration();
+			SelectCurrentConfigurationAndRefresh();
 			HasSavedAnyChanges = m_isDirty = false;
 		}
 
@@ -588,7 +596,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void SelectCurrentConfiguration()
+		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,7 +41,10 @@ namespace SIL.FieldWorks.XWorks
 		private readonly List<string> _publications;
 
 		private readonly ListViewItem _allPublicationsItem;
-		private DictionaryConfigurationModel _currentConfig;
+		private readonly DictionaryConfigurationModel _initialConfig;
+
+		public bool IsDirty { get; private set; }
+		public bool HasSavedAnyChanges { get; private set; }
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -115,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_view = view;
 			_mediator = mediator;
-			_currentConfig = currentConfig;
+			_initialConfig = currentConfig;
 
 			// Add special publication selection for All Publications.
 			_allPublicationsItem = new ListViewItem
@@ -162,11 +165,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Select the correct configuration
-			var selectedConfigIdx = _configurations.FindIndex(config => config == _currentConfig);
+			var selectedConfigIdx = _configurations.FindIndex(config => config == _initialConfig);
 			if(selectedConfigIdx >= 0)
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
 			else
 				_view.configurationsListView.Items[0].Selected = true;
+
+			IsDirty = false;
 		}
 
 		private void OnBeforeLabelEdit(object sender, LabelEditEventArgs args)
@@ -234,6 +239,7 @@ namespace SIL.FieldWorks.XWorks
 					_allPublicationsItem.Checked = false;
 				}
 			}
+			IsDirty = true;
 		}
 
 		/// <remarks>
@@ -284,6 +290,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				selectedConfig.Label = labelEditEventArgs.Label;
+				IsDirty = true;
 			}
 
 			// At this point, the user has chosen a unique name.  See if we should generate the filename.
@@ -347,6 +354,7 @@ namespace SIL.FieldWorks.XWorks
 			// update the configurations list
 			_configurations.Add(newConfig);
 
+			IsDirty = true;
 			return newConfig;
 		}
 
@@ -371,12 +379,17 @@ namespace SIL.FieldWorks.XWorks
 				configurationToDelete.Load(_cache);
 				configurationToDelete.FilePath = origFilePath;
 
+				IsDirty = true;
 				return;
 			}
 
 			_configurations.Remove(configurationToDelete);
 			if (configurationToDelete.FilePath != null)
+			{
 				FileUtils.Delete(configurationToDelete.FilePath);
+				HasSavedAnyChanges = true;
+			}
+			IsDirty = true;
 		}
 
 		private void OnDeleteConfiguration(object sender, EventArgs eventArgs)
