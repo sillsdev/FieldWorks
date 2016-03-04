@@ -225,9 +225,14 @@ namespace SIL.FieldWorks.XWorks
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
 		}
 
+		/// <summary>
+		/// Add a message to the status area. Make sure the status area is redrawn so the
+		/// user can see what's going on even if we are working on something.
+		/// </summary>
 		public void UpdateStatus(string statusString)
 		{
-			outputLogTextbox.Text += Environment.NewLine + statusString;
+			outputLogTextbox.AppendText(Environment.NewLine + statusString);
+			outputLogTextbox.Refresh();
 		}
 
 		private void closeButton_Click(object sender, EventArgs e)
