@@ -613,9 +613,12 @@ namespace SIL.FieldWorks.XWorks
 					if (configNode.DictionaryNodeOptions != null)
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
 						if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations && wsOptions.Options.Count(x => x.IsEnabled) > 1)
 							betweenSelector = String.Format("{0}> {1}> span.{2} + span:not(:last-child):after", parentSelector, collectionSelector, WritingSystemPrefix);
+						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
+							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 
