@@ -250,6 +250,15 @@ namespace SIL.FieldWorks.XWorks
 			base.OnClosing(e);
 		}
 
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
+			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
+			if (MiscUtils.IsUnix)
+				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
+		}
 	}
 
 	/// <summary>
