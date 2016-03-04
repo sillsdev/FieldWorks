@@ -109,9 +109,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the localizable name of the area in FLEx being configured, such as Dictionary of Reversal Index.
 		/// </summary>
-		internal static string GetDictionaryConfigurationType(PropertyTable mediator)
+		internal static string GetDictionaryConfigurationType(PropertyTable propertyTable)
 		{
-			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(mediator);
+			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(propertyTable);
 			switch(nonLocalizedConfigurationType)
 			{
 				case "Reversal Index":
@@ -220,9 +220,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view.
 		/// </summary>
-		public static string GetCurrentConfiguration(PropertyTable mediator, string innerConfigDir = null)
+		public static string GetCurrentConfiguration(PropertyTable propertyTable, string innerConfigDir = null)
 		{
-			return GetCurrentConfiguration(mediator, true, innerConfigDir);
+			return GetCurrentConfiguration(propertyTable, true, innerConfigDir);
 		}
 
 		/// <summary>
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.XWorks
 		public static string GetCurrentConfiguration(PropertyTable propertyTable, bool fUpdate, string innerConfigDir = null)
 		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
-			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
+			// before full initialization (if this view is the one being displayed on startup) test the propertyTable before continuing.
 			if(propertyTable == null)
 				return null;
 			if (innerConfigDir == null)

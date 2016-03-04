@@ -57,21 +57,21 @@ namespace SIL.FieldWorks.XWorks
 			return styleSheet.ToString(true, 1);
 		}
 
-		private static void GenerateCssForDefaultStyles(PropertyTable mediator, FwStyleSheet mediatorstyleSheet,
+		private static void GenerateCssForDefaultStyles(PropertyTable propertyTable, FwStyleSheet mediatorstyleSheet,
 			StyleSheet styleSheet, FdoCache cache)
 		{
 			if (mediatorstyleSheet == null) return;
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
 			{
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, propertyTable, cache);
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
 			{
-				GenerateDictionaryNormalParagraphCss(styleSheet, mediator, cache);
+				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable, cache);
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
 			{
-				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, cache);
+				GenerateDictionaryMinorParagraphCss(styleSheet, propertyTable, cache);
 			}
 		}
 
@@ -98,18 +98,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, PropertyTable mediator, FdoCache cache)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, PropertyTable propetyTable, FdoCache cache)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, mediator);
+			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, propetyTable);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 		}
 
-		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, PropertyTable mediator, FdoCache cache)
+		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, PropertyTable propertyTable, FdoCache cache)
 		{
 			var dictMinorRule = new StyleRule {Value = "div.minorentry"};
-			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, mediator);
+			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, propertyTable);
 			dictMinorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictMinorStyle));
 			styleSheet.Rules.Add(dictMinorRule);
 		}
@@ -454,14 +454,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, PropertyTable mediator)
+		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, PropertyTable propertyTable)
 		{
 			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
 			{
 				// Don't remove any character level settings since paragraphs can have their own character level
 				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
 				// But do remove any settings that apply only to ":before" formatting.
-				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
+				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, propertyTable);
 				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
 				{
 					if (blockDeclaration.Properties[i].Name == "content")
