@@ -1895,6 +1895,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
+				if (field is ISenseOrEntry)
+					return GenerateXHTMLForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid);
 				return GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
 			}
 			else if (propertyValue is String)

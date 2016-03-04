@@ -666,6 +666,12 @@ namespace SIL.FieldWorks.FDO
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> ConfigReferencedEntries { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
 	}
 
 	public partial interface ILexReference
@@ -5902,6 +5908,10 @@ namespace SIL.FieldWorks.FDO
 	/// </summary>
 	public interface ISenseOrEntry
 	{
+		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		ICmObject Item { get; }
 		/// <summary>
 		/// The Guid if LexEntry; the owning entry's Guid if LexSense
 		/// </summary>

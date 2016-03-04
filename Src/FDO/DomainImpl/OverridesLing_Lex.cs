@@ -9065,6 +9065,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return wrappedTargets;
 			}
 		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> PrimarySensesOrEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(PrimaryLexemesRS.Count > 0)
+				{
+					wrappedTargets.AddRange(PrimaryLexemesRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
 	}
 
 	/// <summary>
@@ -9385,7 +9402,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			Item = target;
 		}
-		private ICmObject Item { get; set; }
+
+		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		public ICmObject Item { get; private set; }
 
 		public Guid EntryGuid
 		{
@@ -9465,7 +9486,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var sense = Item as ILexSense;
 				if(sense != null)
 				{
-					return sense.Gloss;
+					return sense.DefinitionOrGloss;
 				}
 				return null;
 			}
