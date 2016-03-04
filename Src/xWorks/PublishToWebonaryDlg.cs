@@ -22,6 +22,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly PublishToWebonaryController m_controller;
+		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
+		private int m_additionalMinimumHeightForMono = 26;
 
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
@@ -38,10 +40,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
-			// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
-			var additionalMinimumHeightForMono = 26;
 			if (MiscUtils.IsUnix)
-				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + additionalMinimumHeightForMono);
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
 			Mediator = mediator;
@@ -213,6 +213,8 @@ namespace SIL.FieldWorks.XWorks
 			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
 			var fudge = this.Height - this.tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
+			if (MiscUtils.IsUnix)
+				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
 
 			m_controller.PublishToWebonary(Model, this);
