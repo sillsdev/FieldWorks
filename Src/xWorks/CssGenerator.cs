@@ -714,7 +714,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Generate the singular of the collection name: drop the final character ('s') or handle "entries" => "entry" or "analyses" to "analysis"
+		/// Generate the singular of the collection name: drop the final character ('s') or
+		/// handle "entries" => "entry" or "analyses" to "analysis" or "glosses" to "gloss"
 		/// </summary>
 		internal static string GetClassAttributeForCollectionItem(ConfigurableDictionaryNode configNode)
 		{
@@ -724,6 +725,8 @@ namespace SIL.FieldWorks.XWorks
 				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
 			else if (classNameBase.EndsWith("analyses"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
+			else if (classNameBase.EndsWith("sses"))
+				singularBase = classNameBase.Remove(classNameBase.Length - 2);
 			else
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
 			return singularBase + GetClassAttributeDupSuffix(configNode).ToLower();

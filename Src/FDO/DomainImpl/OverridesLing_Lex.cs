@@ -9034,6 +9034,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// This is a virtual property.  It returns a list of the DefinitionOrGloss values for
+		/// for all the top-level senses owned by the owner of this LexEntryRef.
+		/// Enhance JohnT: implement automatic update when senses, Definitions, or Glosses change.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<IMultiStringAccessor> DefinitionOrGloss
+		{
+			get
+			{
+				return from sense in ((ILexEntry)Owner).SensesOS select sense.DefinitionOrGloss;
+			}
+		}
+
 		/// <summary>
 		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
 		/// that exposes certain LexSense- and LexEntry-specific fields.

@@ -1427,6 +1427,10 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, object collectionOwner, GeneratorSettings settings)
 		{
+			if (item is IMultiStringAccessor)
+			{
+				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
+			}
 			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
 			{
 				return String.Empty;

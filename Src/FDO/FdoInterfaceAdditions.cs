@@ -658,7 +658,8 @@ namespace SIL.FieldWorks.FDO
 		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
 		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
 
-
+		/// <returns>this.Owner.SensesOS.DefinitionOrGloss</returns>
+		IEnumerable<IMultiStringAccessor>  DefinitionOrGloss { get; }
 
 		/// <summary>
 		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
