@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly PublishToWebonaryController m_controller;
 		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
-		private int m_additionalMinimumHeightForMono = 26;
+		private const int m_additionalMinimumHeightForMono = 26;
 
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
