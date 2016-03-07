@@ -339,6 +339,166 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
+		{
+			var defOrGlossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				Between = " ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var catInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				CSSClassNameOverride = "partofspeech",
+				Between = " ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				After = " ",
+				Style = "Dictionary-Contrasting",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { catInfoNode }
+			};
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLOwnerOutlineName",
+				Between = " ",
+				After = " ",
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Character,
+				Style = "Reversal-Vernacular",
+				IsEnabled = true,
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new ReferringSenseOptions
+				{
+					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					{
+						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+						DisplayWritingSystemAbbreviations = false,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled=true } }
+					},
+					SenseOptions = new DictionaryNodeSenseOptions
+					{
+						NumberStyle = "Sense-Reference-Number",
+						BeforeNumber = " ",
+						NumberEvenASingleSense = false,
+						ShowSharedGrammarInfoFirst = true,
+						DisplayEachSenseInAParagraph = false,
+						NumberingStyle = "%O"
+					}
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var vernFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				Between = "; ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true,
+					DisplayEachSenseInAParagraph = false
+				},
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, gramInfoNode, defOrGlossNode }
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { formNode, vernFormNode }
+			};
+			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+			var noun = CreatePartOfSpeech("noun", "n");
+			var verb = CreatePartOfSpeech("verb", "v");
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
+
+			var entry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			entry1.CitationForm.set_String(m_wsFr, "premier");
+			entry1.SensesOS.First().Gloss.set_String(m_wsEn, "first");
+			var msa1 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry1.MorphoSyntaxAnalysesOC.Add(msa1);
+			msa1.PartOfSpeechRA = noun;
+			entry1.SensesOS.First().MorphoSyntaxAnalysisRA = msa1;
+
+			var entry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			entry2.CitationForm.set_String(m_wsFr, "primary");
+			entry2.SensesOS.First().Gloss.set_String(m_wsEn, "first");
+			var msa2 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry2.MorphoSyntaxAnalysesOC.Add(msa2);
+			msa2.PartOfSpeechRA = noun;
+			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2;
+
+			var testEntry = revIndex.FindOrCreateReversalEntry("first");
+			entry1.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+			entry2.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+
+			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			// check that the sense gram info appears once before the rest of the sense information.
+			Assert.IsNotNullOrEmpty(xhtml);
+			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
+			const string separateGramInfo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 1);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(separateGramInfo, 0);
+
+			var msa2a = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry2.MorphoSyntaxAnalysesOC.Add(msa2a);
+			msa2a.PartOfSpeechRA = verb;
+			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2a;
+			xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			// check that the sense gram info appears separately for both senses.
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 0);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(separateGramInfo, 2);
+		}
+
+		private IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
+		{
+			var factory = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+			var pos = factory.Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			pos.Name.set_String(m_wsEn, name);
+			pos.Abbreviation.set_String(m_wsEn, abbr);
+			return pos;
+		}
+
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);

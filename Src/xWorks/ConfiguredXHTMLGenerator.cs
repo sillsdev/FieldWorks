@@ -1303,7 +1303,7 @@ namespace SIL.FieldWorks.XWorks
 			lastGrammaticalInfo = String.Empty;
 			langId = String.Empty;
 			var isSameGrammaticalInfo = false;
-			if (config.FieldDescription == "SensesOS")
+			if (config.FieldDescription == "SensesOS" || config.FieldDescription == "ReferringSenses")
 			{
 				var senseNode = (DictionaryNodeSenseOptions) config.DictionaryNodeOptions;
 				if (senseNode == null)
