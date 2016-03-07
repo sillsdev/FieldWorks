@@ -235,6 +235,32 @@ namespace SIL.FieldWorks.XWorks
 			outputLogTextbox.Refresh();
 		}
 
+		/// <summary>
+		/// Respond to a new status condition by changing the background color of the
+		/// output log.
+		/// </summary>
+		public void SetStatusCondition(WebonaryStatusCondition condition)
+		{
+			Color newColor;
+			switch (condition)
+			{
+				case WebonaryStatusCondition.Success:
+					// Green
+					newColor = System.Drawing.ColorTranslator.FromHtml("#b8ffaa");
+					break;
+				case WebonaryStatusCondition.Error:
+					// Red
+					newColor = System.Drawing.ColorTranslator.FromHtml("#ffaaaa");
+					break;
+				case WebonaryStatusCondition.None:
+				default:
+					// Grey
+					newColor = System.Drawing.ColorTranslator.FromHtml("#dcdad5");
+					break;
+			}
+			outputLogTextbox.BackColor = newColor;
+		}
+
 		private void closeButton_Click(object sender, EventArgs e)
 		{
 			SaveToModel();
@@ -272,6 +298,17 @@ namespace SIL.FieldWorks.XWorks
 	public interface IPublishToWebonaryView
 	{
 		void UpdateStatus(string statusString);
+		void SetStatusCondition(WebonaryStatusCondition condition);
 		PublishToWebonaryModel Model { get; set; }
+	}
+
+	/// <summary>
+	/// Condition of status of publishing to webonary.
+	/// </summary>
+	public enum WebonaryStatusCondition
+	{
+		None,
+		Success,
+		Error
 	}
 }

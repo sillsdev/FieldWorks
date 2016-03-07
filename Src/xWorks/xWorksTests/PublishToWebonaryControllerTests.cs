@@ -571,6 +571,10 @@ namespace SIL.FieldWorks.XWorks
 				StatusStrings.Add(statusString);
 			}
 
+			public void SetStatusCondition(WebonaryStatusCondition condition)
+			{
+			}
+
 			public void PopulatePublicationsList(IEnumerable<string> publications)
 			{
 			}
