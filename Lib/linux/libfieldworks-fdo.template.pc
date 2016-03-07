@@ -1,8 +1,0 @@
-prefix=${pcfiledir}/..	# usually this will resolve to /usr/lib
-assemblies_dir=${prefix}/fieldworks
-Libraries=${assemblies_dir}/FDO.dll ${assemblies_dir}/BasicUtils.dll ${assemblies_dir}/CoreImpl.dll ${assemblies_dir}/COMInterfaces.dll ${assemblies_dir}/Microsoft.Practices.ServiceLocation.dll
-
-Name: libfieldworks-fdo
-Description: FieldWorks Data Objects managed library
-Version: $!{FWMAJOR:0}.$!{FWMINOR:0}
-Libs: -r:FDO.dll -r:BasicUtils.dll -r:CoreImpl.dll -r:COMInterfaces.dll -r:Microsoft.Practices.ServiceLocation.dll
