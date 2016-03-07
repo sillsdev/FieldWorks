@@ -246,6 +246,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var index = m_revIndexFactory.Create();
 			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
+			index.WritingSystem = "en";
 			var indexEntry = m_revIndexEntryFactory.Create();
 			index.EntriesOC.Add(indexEntry);
 			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
@@ -302,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GetSortedAndFilteredReversalEntries_ExcludesSubentries()
+		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
 			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
@@ -310,7 +311,19 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(5, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
 				"there should be 5 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
-			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entries");
+			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
+			Assert.AreEqual(1, entries.Length, "there should be only 1 main Reversal Entry that can be published");
+			var entry = Cache.ServiceLocator.GetObject(entries[0]) as IReversalIndexEntry;
+			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
+			Assert.AreEqual("Reversal 2 Form", entry.ShortName, "'Reversal 2 Form' is the sole publishable main reversal entry");
+			Assert.AreEqual(2, entry.SubentriesOS.Count, "'Reversal 2 Form' has two subentries");
+			// "Reversal 2a Form" is linked to m_water2 which is excluded from publication
+			var vec = m_revDecorator.VecProp(entry.Hvo, ReversalIndexEntryTags.kflidSubentries);
+			Assert.AreEqual(1, vec.Length, "Only one of the subentries is publishable");
+			var subentry = Cache.ServiceLocator.GetObject(vec[0]) as IReversalIndexEntry;
+			Assert.AreEqual("Reversal 2b Form", subentry.ShortName, "'Reversal 2b Form' is the only publishable subentry of 'Reversal 2 Form'");
+			Assert.IsTrue(m_revDecorator.IsExcludedObject(entry.SubentriesOS[0]), "First subentry ('Reversal 2a Form') should be excluded");
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry.SubentriesOS[1]), "Second subentry ('Reversal 2b Form') should not be excluded')");
 		}
 
 		/// <summary>

@@ -1213,7 +1213,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (publicationDecorator != null &&
 						item is ICmObject &&
-						publicationDecorator.IsExcludedObject((item as ICmObject).Hvo))
+						publicationDecorator.IsExcludedObject((ICmObject)item))
 					{
 						// Don't show examples or subentries that have been marked to exclude from publication.
 						// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
@@ -1238,7 +1238,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach (ILexSense item in senseCollection)
 			{
 				Debug.Assert(item != null);
-				if (publicationDecorator != null && publicationDecorator.IsExcludedObject(item.Hvo))
+				if (publicationDecorator != null && publicationDecorator.IsExcludedObject(item))
 					continue;
 				filteredSenseCollection.Add(item);
 			}
