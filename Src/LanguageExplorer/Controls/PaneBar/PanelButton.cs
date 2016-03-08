@@ -6,19 +6,45 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.PaneBar
 {
 	internal class PanelButton : PanelExtension
 	{
-		private bool _mouseOverControl = false;
+		private bool _mouseOverControl;
+		private DataTree _dataTree;
+		private readonly IPropertyTable _propertyTable;
+		private readonly Image _image;
+		private readonly string _property;
+		private readonly string _checkedLabel;
+		private readonly string _uncheckedLabel;
+		private bool _isChecked;
 
-		public PanelButton()
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="propertyTable">The property table, which we use to reset the relevant "ShowHiddenFields" property.</param>
+		/// <param name="image">Optional Image to display.</param>
+		/// <param name="property">The name of the property in the table that is being monitored.</param>
+		/// <param name="checkedLabel">Label to display, when check box is checked</param>
+		/// <param name="uncheckedLabel">Label to display, when check box is not checked.</param>
+		public PanelButton(IPropertyTable propertyTable, Image image, string property, string checkedLabel, string uncheckedLabel)
 		{
+			_propertyTable = propertyTable;
+			_image = image;
+			_property = property;
+			_isChecked = propertyTable.GetValue(_property, false);
+			_checkedLabel = checkedLabel;
+			_uncheckedLabel = uncheckedLabel;
+
 			Dock = DockStyle.Right;
 			Font = new Font("Tahoma", 13F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			Location = new Point(576, 2);
-			Name = "panelEx1";
+			Name = "panelButton";
 			Anchor = AnchorStyles.None;
 			Size = new Size(120, 20);
 
@@ -28,73 +54,98 @@ namespace LanguageExplorer.Controls.PaneBar
 			Click += PanelButton_Click;
 			TabIndex = 0;
 
-			//Tag = choice;
 			SetLabel();
+		}
+
+		/// <summary>
+		/// Set the DataTree.
+		/// </summary>
+		public DataTree DatTree
+		{
+			set { _dataTree = value; }
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "Controls added to collection")]
 		private void SetLabel()
 		{
-#if RANDYTODO
-			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
-			UIItemDisplayProperties display = choice.GetDisplayProperties();
-
 			const int checkBoxWidth = 17;
-			string s = display.Text.Replace("_", "&");
-			this.Text = s;
+			Text = _isChecked ? _checkedLabel : _uncheckedLabel;
 
-			using (Graphics g = this.CreateGraphics())
+			using (var g = CreateGraphics())
 			{
-				int labelWidth = (int)(g.MeasureString(s + "_", this.Font).Width);
-				this.Width = labelWidth;
+				var labelWidth = (int)(g.MeasureString(Text + "_", Font).Width);
+				Width = labelWidth;
 			}
 
 			// Simulate a mouse enter or leave event to get the correct highlighting
 			if (_mouseOverControl)
-				this.panelButton_MouseEnter(null, null);
+				panelButton_MouseEnter(null, null);
 			else
-				this.panelButton_MouseLeave(null, null);
+				panelButton_MouseLeave(null, null);
 
-			this.Controls.Clear(); // Clear out any previous checkboxes and images
+			// Unwire event handlers
+			foreach (Control control in Controls)
+			{
+				if (control is CheckBox)
+				{
+					var controlAsCheckBox = (CheckBox)control;
+					controlAsCheckBox.Click += PanelButton_Click;
+					controlAsCheckBox.MouseEnter += panelButton_MouseEnter;
+					controlAsCheckBox.MouseLeave += panelButton_MouseLeave;
+					controlAsCheckBox.MouseDown += panelButton_MouseDown;
+				}
+				else if (control is PanelExtension)
+				{
+					var controlAsPanelExtension = (PanelExtension)control;
+					controlAsPanelExtension.Click += PanelButton_Click;
+					controlAsPanelExtension.MouseEnter += panelButton_MouseEnter;
+					controlAsPanelExtension.MouseLeave += panelButton_MouseLeave;
+					controlAsPanelExtension.MouseDown += panelButton_MouseDown;
+				}
+				control.Dispose();
+			}
+			Controls.Clear(); // Clear out any previous checkboxes and images
 
 			// Add in a checkbox that reflects the "checked" status of the button
-			CheckBox checkBox = new CheckBox();
-			checkBox.Checked = display.Checked;
-			checkBox.Click += new EventHandler(PanelButton_Click);
-			checkBox.Location = new Point(0, 0);
-			checkBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			checkBox.Dock = System.Windows.Forms.DockStyle.Left;
-			checkBox.Width = checkBoxWidth;
-			checkBox.MouseEnter += new EventHandler(panelButton_MouseEnter);
-			checkBox.MouseLeave += new EventHandler(panelButton_MouseLeave);
-			checkBox.MouseDown += new MouseEventHandler(panelButton_MouseDown);
-			checkBox.BackColor = Color.Transparent;
-			this.Controls.Add(checkBox);
-
-			this.Width += checkBox.Width;
-
-
-			if (display.ImageLabel != null && display.ImageLabel != "" && display.ImageLabel != "default")
+			var checkBox = new CheckBox
 			{
+				Name = @"CheckBox",
+				Checked = _isChecked,
+				Location = new Point(0, 0),
+				Anchor = AnchorStyles.Left,
+				Dock = DockStyle.Left,
+				Width = checkBoxWidth,
+				BackColor = Color.Transparent
+			};
+			checkBox.Click += PanelButton_Click;
+			checkBox.MouseEnter += panelButton_MouseEnter;
+			checkBox.MouseLeave += panelButton_MouseLeave;
+			checkBox.MouseDown += panelButton_MouseDown;
+			Controls.Add(checkBox);
 
-				PanelEx p = new PanelEx();
-				Image i = m_images.GetImage(display.ImageLabel);
-				p.BackgroundImage = i;
-				p.BackgroundImageLayout = ImageLayout.Center;
-				p.Location = new Point(checkBox.Width, 0);
-				p.Anchor = System.Windows.Forms.AnchorStyles.Left;
-				p.Dock = System.Windows.Forms.DockStyle.None;
-				p.Size = new Size(17, this.Height);
-				this.Width += p.Size.Width;
-				this.Controls.Add(p);
-				p.Click += new EventHandler(PanelButton_Click);
-				p.MouseEnter += new EventHandler(panelButton_MouseEnter);
-				p.MouseLeave += new EventHandler(panelButton_MouseLeave);
-				p.MouseDown += new MouseEventHandler(panelButton_MouseDown);
+			Width += checkBox.Width;
+
+			if (_image != null)
+			{
+				var p = new PanelExtension
+				{
+					Name = @"PanelExtension",
+					BackgroundImage = _image,
+					BackgroundImageLayout = ImageLayout.Center,
+					Location = new Point(checkBox.Width, 0),
+					Anchor = AnchorStyles.Left,
+					Dock = DockStyle.None,
+					Size = new Size(17, Height)
+				};
+				Width += p.Size.Width;
+				p.Click += PanelButton_Click;
+				p.MouseEnter += panelButton_MouseEnter;
+				p.MouseLeave += panelButton_MouseLeave;
+				p.MouseDown += panelButton_MouseDown;
+				Controls.Add(p);
 			}
-			this.Refresh();
-#endif
+			Refresh();
 		}
 
 		/// <summary>
@@ -107,45 +158,30 @@ namespace LanguageExplorer.Controls.PaneBar
 
 		private void PanelButton_Click(object sender, EventArgs e)
 		{
-#if RANDYTODO
 			using (new WaitCursor(Form.ActiveForm))
 			{
-				XCore.ChoiceBase c = (XCore.ChoiceBase)this.Tag;
-				c.OnClick(this, null);
+				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
+				_isChecked = cb.Checked;
+				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, true);
+				_dataTree.OnPropertyChanged(_property);
 			}
-#endif
 		}
 
 		private void panelButton_MouseEnter(object sender, EventArgs e)
 		{
 			_mouseOverControl = true;
 
-#if RANDYTODO
-			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
-			UIItemDisplayProperties display = choice.GetDisplayProperties();
-#endif
-
 			Refresh();
 		}
 
 		private void panelButton_MouseDown(object sender, MouseEventArgs e)
 		{
-#if RANDYTODO
-			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
-			UIItemDisplayProperties display = choice.GetDisplayProperties();
-#endif
-
 			Refresh();
 		}
 
 		private void panelButton_MouseLeave(object sender, EventArgs e)
 		{
 			_mouseOverControl = false;
-
-#if RANDYTODO
-			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;
-			UIItemDisplayProperties display = choice.GetDisplayProperties();
-#endif
 
 			Refresh();
 		}

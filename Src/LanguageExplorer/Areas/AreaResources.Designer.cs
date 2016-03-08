@@ -187,6 +187,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main Content.
+        /// </summary>
+        internal static string ksMainContentLabel {
+            get {
+                return ResourceManager.GetString("ksMainContentLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input.
         /// </summary>
         internal static string ksMetaRuleInput {
@@ -246,6 +255,15 @@ namespace LanguageExplorer.Areas {
         internal static string ksQuestions {
             get {
                 return ResourceManager.GetString("ksQuestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record List.
+        /// </summary>
+        internal static string ksRecordListLabel {
+            get {
+                return ResourceManager.GetString("ksRecordListLabel", resourceCulture);
             }
         }
         

@@ -7,6 +7,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lists
 {
@@ -21,6 +25,14 @@ namespace LanguageExplorer.Areas.Lists
 		internal ListsArea(IToolRepository toolRepository)
 		{
 			m_toolRepository = toolRepository;
+		}
+
+		internal static RecordClerk CreateBasicClerkForListArea(IPropertyTable propertyTable, string clerkIdentifier, ICmPossibilityList owningList, bool expand, bool hierarchical, bool includeAbbr, string ws)
+		{
+			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), owningList);
+			var sorter = new PropertyRecordSorter("ShortName");
+			return new RecordClerk(clerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, expand, hierarchical, includeAbbr, ws));
 		}
 
 		#region Implementation of IPropertyTableProvider

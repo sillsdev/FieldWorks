@@ -2,12 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 {
@@ -16,7 +21,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 	/// </summary>
 	internal sealed class DomainTypeEditTool : ITool
 	{
-		private PaneBarContainer _paneBarContainer;
+		/// <summary>
+		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
+		/// The RecordBar has no top PaneBar for information, menus, etc.
+		/// </summary>
+		private CollapsingSplitContainer _collapsingSplitContainer;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -77,8 +86,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(_paneBarContainer);
-			_paneBarContainer = null;
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(_collapsingSplitContainer);
+			_collapsingSplitContainer = null;
 		}
 
 		/// <summary>
@@ -90,10 +99,18 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_paneBarContainer = PaneBarContainerFactory.Create(
-				PropertyTable, Publisher, Subscriber,
-				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+			var panelButton = new PanelButton(PropertyTable, null, "ShowHiddenFields-domainTypeEdit", LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields);
+			panelButton.Dock = DockStyle.Right;
+			panelButton.BringToFront();
+			var controls = new List<Control> {panelButton};
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(PropertyTable, Publisher, Subscriber, mainCollapsingSplitContainer, true,
+				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				"DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA,
+				false, true, false, "best analysis",
+				controls);
+			var recordEditView = (RecordEditView)_collapsingSplitContainer.SecondControl.Controls[1];
+			panelButton.DatTree = recordEditView.DatTree;
+			recordEditView.FinishInitialization();
 		}
 
 		/// <summary>

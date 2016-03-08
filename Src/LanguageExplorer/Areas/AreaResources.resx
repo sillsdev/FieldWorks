@@ -160,6 +160,9 @@
   <data name="ksInsertWordBoundary" xml:space="preserve">
     <value>Insert Word Boundary</value>
   </data>
+  <data name="ksMainContentLabel" xml:space="preserve">
+    <value>Main Content</value>
+  </data>
   <data name="ksMetaRuleInput" xml:space="preserve">
     <value>Input</value>
   </data>
@@ -181,6 +184,9 @@
   <data name="ksQuestions" xml:space="preserve">
     <value>???</value>
     <comment>indicates unknown/undefined/missing value</comment>
+  </data>
+  <data name="ksRecordListLabel" xml:space="preserve">
+    <value>Record List</value>
   </data>
   <data name="ksRedoAddAffixes" xml:space="preserve">
     <value>Redo Adding Affixes</value>

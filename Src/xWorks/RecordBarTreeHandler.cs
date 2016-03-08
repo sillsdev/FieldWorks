@@ -25,6 +25,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -180,13 +181,11 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// makes a hierarchical tree of possibility items, *even if the record list is flattened*
+	/// Makes a hierarchical tree of possibility items, *even if the record list is flattened*
 	/// </summary>
 	public class PossibilityTreeBarHandler : TreeBarHandler
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public PossibilityTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
@@ -220,9 +219,7 @@ namespace SIL.FieldWorks.XWorks
 			if (window == null || window.IsDisposed)
 				return;
 
-#if RANDYTODO
-			window.TreeBarControl.HideHeaderControl();
-#endif
+			window.RecordBarControl.ShowHeaderControl = false;
 		}
 
 		/// <summary>
@@ -336,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 		// map from writing system to font.
 		readonly Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
 
-		//must have a constructor with no parameters, to use with the dynamic loader.
+		/// <summary />
 		public TreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
@@ -471,65 +468,68 @@ namespace SIL.FieldWorks.XWorks
 
 			m_list = list;
 
-#if RANDYTODO
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			using (new WaitCursor((Form)window))
+			var recordBarControl = window.RecordBarControl;
+			if (recordBarControl != null)
 			{
-				window.TreeBarControl.IsFlatList = false;
-				var tree = (TreeView)window.TreeStyleRecordList;
-				var expandedItems = new Set<int>();
-				if (m_tree != null && !m_expand)
-					GetExpandedItems(m_tree.Nodes, expandedItems);
-				m_tree = tree;
-
-				// Removing the handlers first seems to be necessary because multiple tree handlers are
-				// working with one treeview. Only this active one should have handlers connected.
-				// If we fail to do this, switching to a different list causes drag and drop to stop working.
-				ReleaseRecordBar();
-
-				tree.NodeMouseClick += tree_NodeMouseClick;
-				if(editable)
+				using (new WaitCursor((Form)window))
 				{
-					tree.MouseDown += tree_MouseDown;
-					tree.MouseMove += tree_MouseMove;
-					tree.DragDrop += tree_DragDrop;
-					tree.DragOver += tree_DragOver;
-					tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
-					tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-					tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
-				}
-				else
-				{
-					tree.ContextMenuStrip = new ContextMenuStrip();
-				}
-				tree.AllowDrop = editable;
-				tree.BeginUpdate();
-				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
-				m_hvoToTreeNodeTable.Clear();
+					var tree = window.TreeStyleRecordList;
+					var expandedItems = new Set<int>();
+					if (m_tree != null && !m_expand)
+						GetExpandedItems(m_tree.Nodes, expandedItems);
+					m_tree = tree;
 
-				// type size must be set before AddTreeNodes is called
-				m_typeSize = list.TypeSize;
-				AddTreeNodes(list.SortedObjects, tree);
+					// Removing the handlers first seems to be necessary because multiple tree handlers are
+					// working with one treeview. Only this active one should have handlers connected.
+					// If we fail to do this, switching to a different list causes drag and drop to stop working.
+					ReleaseRecordBar();
 
-				tree.Font = new Font(list.FontName, m_typeSize);
-				tree.ShowRootLines = m_hierarchical;
-
-				if (m_expand)
-					tree.ExpandAll();
-				else
-				{
-					tree.CollapseAll();
-					ExpandItems(tree.Nodes, expandedItems);
-				}
-				// Set the selection after expanding/collapsing the tree.  This allows the true
-				// selection to be visible even when the tree is collapsed but the selection is
-				// an internal node.  (See LT-4508.)
-				UpdateSelection(list.CurrentObject);
-				tree.EndUpdate();
-
-				EnsureSelectedNodeVisible(tree);
-			}
+					tree.NodeMouseClick += tree_NodeMouseClick;
+					if (editable)
+					{
+						tree.MouseDown += tree_MouseDown;
+						tree.MouseMove += tree_MouseMove;
+						tree.DragDrop += tree_DragDrop;
+						tree.DragOver += tree_DragOver;
+						tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
+						tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
+						tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
+					}
+					else
+					{
+						tree.ContextMenuStrip = new ContextMenuStrip();
+					}
+					tree.AllowDrop = editable;
+					tree.BeginUpdate();
+#if RANDYTODO
+					window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
 #endif
+					m_hvoToTreeNodeTable.Clear();
+
+					// type size must be set before AddTreeNodes is called
+					m_typeSize = list.TypeSize;
+					AddTreeNodes(list.SortedObjects, tree);
+
+					tree.Font = new Font(list.FontName, m_typeSize);
+					tree.ShowRootLines = m_hierarchical;
+
+					if (m_expand)
+						tree.ExpandAll();
+					else
+					{
+						tree.CollapseAll();
+						ExpandItems(tree.Nodes, expandedItems);
+					}
+					// Set the selection after expanding/collapsing the tree.  This allows the true
+					// selection to be visible even when the tree is collapsed but the selection is
+					// an internal node.  (See LT-4508.)
+					UpdateSelection(list.CurrentObject);
+					tree.EndUpdate();
+
+					EnsureSelectedNodeVisible(tree);
+				}
+			}
 		}
 
 		/// <summary>
@@ -1058,9 +1058,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-#if RANDYTODO
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			var tree = (TreeView)window.TreeStyleRecordList;
+			var tree = window.TreeStyleRecordList;
 			if (currentObject == null)
 			{
 				tree.SelectedNode = null;
@@ -1079,7 +1078,6 @@ namespace SIL.FieldWorks.XWorks
 				tree.SelectedNode = node;
 				EnsureSelectedNodeVisible(tree);
 			}
-#endif
 		}
 	}
 

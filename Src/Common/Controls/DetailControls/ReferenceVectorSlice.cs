@@ -126,7 +126,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.

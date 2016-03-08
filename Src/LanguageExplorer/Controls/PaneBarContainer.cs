@@ -42,30 +42,31 @@ namespace LanguageExplorer.Controls
 
 		#region Construction
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		public PaneBarContainer()
 		{
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public PaneBarContainer(Control mainControl)
+		/// <summary />
+		internal PaneBarContainer(PaneBar.PaneBar paneBar, Control mainControl)
 			: this()
 		{
+			SuspendLayout();
 			m_mainControl = mainControl;
-			// Put it in a local variable,
-			// since we know that is a UserControl,
-			// so we know it has 'AccessibleName' and can be put into 'Controls'.
-			var paneBar = new PaneBar.PaneBar();
 			PaneBar = paneBar;
+			paneBar.Dock = DockStyle.Top;
 
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
 			Controls.Add(m_mainControl);
+			ResumeLayout(false);
+		}
+
+		/// <summary />
+		internal PaneBarContainer(Control mainControl)
+			: this(new PaneBar.PaneBar(), mainControl)
+		{
 		}
 
 #if __MonoCS__ // FWNX-425
@@ -218,7 +219,7 @@ namespace LanguageExplorer.Controls
 		private void ReloadPaneBar()
 		{
 			if (PaneBar == null)
-		{
+			{
 				return;
 			}
 #if RANDYTODO

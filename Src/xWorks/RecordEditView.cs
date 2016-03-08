@@ -44,6 +44,10 @@ namespace SIL.FieldWorks.XWorks
 		#region Data members
 
 		/// <summary>
+		/// Document for slice filters.
+		/// </summary>
+		private XDocument m_sliceFilterDocument;
+		/// <summary>
 		/// Mode string for DataTree to use at top level.
 		/// </summary>
 		protected string m_rootMode;
@@ -57,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 		/// of its root object
 		/// </summary>
 		private bool m_showDescendantInRoot;
-
+		private TreeView m_recordBarTreeView;
 		private ImageList buttonImages;
 		protected Panel m_panel;
 		protected DataTree m_dataEntryForm;
@@ -76,18 +80,24 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Data members
 
 		#region Construction and Removal
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "DataTree gets disposed in Dispose()")]
-		public RecordEditView()
-			: this(new DataTree())
+		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, TreeView recordBarTreeView, RecordClerk recordClerk)
+			: this(configurationParametersElement, sliceFilterDocument, recordBarTreeView, recordClerk, new DataTree())
 		{
 		}
 
-		protected RecordEditView(DataTree dataEntryForm)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "DataTree gets disposed in Dispose()")]
+		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, TreeView recordBarTreeView, RecordClerk recordClerk, DataTree dataEntryForm)
+			: base(configurationParametersElement, recordClerk)
 		{
+			m_sliceFilterDocument = sliceFilterDocument;
+			m_recordBarTreeView = recordBarTreeView;
 			// This must be called before InitializeComponent()
 			m_dataEntryForm = dataEntryForm;
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
@@ -109,10 +119,19 @@ namespace SIL.FieldWorks.XWorks
 		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+		}
 
-			InitBase(propertyTable, null);
+		#endregion
 
-			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue((XElement)null, "showDescendantInRoot", false);
+		/// <summary>
+		/// About to show, so finish initializing.
+		/// </summary>
+		public void FinishInitialization()
+		{
+			InitBase(PropertyTable, m_configurationParametersElement);
+
+			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
 			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
@@ -135,8 +154,6 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_fullyInitialized = true;
 		}
-
-		#endregion
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -279,6 +296,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 #if RANDYTODO
 				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
+#else
+				ShowRecordOnIdle(rni);
 #endif
 			}
 		}
@@ -294,17 +313,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Shows the record on idle. This is where the record is actually shown.
 		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		bool ShowRecordOnIdle(object parameter)
+		void ShowRecordOnIdle(RecordNavigationInfo rni)
 		{
 			if (IsDisposed)
-				return true;
+				return;
 
 			base.ShowRecord();
+#if DEBUG
 			int msStart = Environment.TickCount;
 			Debug.Assert(m_dataEntryForm != null);
+#endif
 
-			var rni = (RecordNavigationInfo) parameter;
 			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
 			Clerk.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
@@ -314,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_dataEntryForm.Hide();
 				m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
-				return true;
+				return;
 			}
 			try
 			{
@@ -341,9 +360,10 @@ namespace SIL.FieldWorks.XWorks
 				ErrorReporter.ReportException(error, app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress,
 					null, false);
 			}
+#if DEBUG
 			int msEnd = Environment.TickCount;
 			Debug.WriteLineIf(RuntimeSwitches.RecordTimingSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", RuntimeSwitches.RecordTimingSwitch.DisplayName);
-			return true;
+#endif
 		}
 
 		/// <summary>
@@ -404,15 +424,15 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
 			Clerk.UpdateRecordTreeBarIfNeeded();
-			SetupSliceFilter();
-			m_dataEntryForm.Dock = DockStyle.Fill;
+			m_dataEntryForm.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
+			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
 #if RANDYTODO
 			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 #endif
 			string sDatabase = Cache.ProjectId.Name;
 			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
 				Inventory.GetInventory("parts", sDatabase));
-			m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (m_dataEntryForm.AccessibilityObject != null)
 				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
 			//set up the context menu, overriding the automatic menu creator/handler
@@ -423,43 +443,11 @@ namespace SIL.FieldWorks.XWorks
 //			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
+			Controls.Clear();
+			Controls.Add(m_informationBar);
 			Controls.Add(m_dataEntryForm);
+			SetInfoBarText();
 			m_dataEntryForm.BringToFront();
-		}
-
-		/// <summary>
-		/// a slice filter is used to hide some slices.
-		/// </summary>
-		/// <remarks> this will set up a filter even if you do not specify a filter path, since
-		/// some filtering is done by the FDO classes (CmObject.IsFieldRelevant)
-		/// </remarks>
-		/// <example>
-		///		to set up a slice filter,kids the relative path in the filterPath attribute of the parameters:
-		///		<control assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView">
-		///			<parameters field="Entries" templatePath="LexEd\XDEs" filterPath="LexEd\basicFilter.xml">
-		///			...
-		///</example>
-		private void SetupSliceFilter()
-		{
-			try
-			{
-				string filterPath = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "filterPath");
-				if (filterPath!= null)
-				{
-#if __MonoCS__
-					// TODO-Linux: fix the data
-					filterPath = filterPath.Replace(@"\", "/");
-#endif
-					var document = XDocument.Load(FwDirectoryFinder.GetCodeFile(filterPath));
-					m_dataEntryForm.SliceFilter = new SliceFilter(document);
-				}
-				else //just set up a minimal filter
-					m_dataEntryForm.SliceFilter = new SliceFilter();
-			}
-			catch (Exception e)
-			{
-				throw new ConfigurationException("Could not load the filter.", m_configurationParametersElement, e);
-			}
 		}
 
 		#endregion // Other methods

@@ -123,7 +123,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.

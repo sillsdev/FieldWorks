@@ -55,6 +55,7 @@ using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using SIL.Reporting;
 using SIL.Utils;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected readonly string m_id;
 		/// <summary>
-		/// this will be null is this clerk is dependent on another one. Only the top-level clerk
+		/// this will be null if this clerk is dependent on another one. Only the top-level clerk
 		/// gets to be represented by and interact with the tree bar.
 		/// </summary>
 		protected RecordBarHandler m_recordBarHandler;

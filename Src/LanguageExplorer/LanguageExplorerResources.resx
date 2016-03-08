@@ -1042,10 +1042,16 @@ you expect.</value>
   <data name="SortReversalSubentries_Label" xml:space="preserve">
     <value>Sort Reversal Subentries</value>
   </data>
-	<data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
+  <data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
     <value>All reversal subentries are now sorted.</value>
   </data>
-	<data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
+  <data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
     <value>Reversal subentry sorting is completed</value>
+  </data>
+  <data name="ksHideFields" xml:space="preserve">
+    <value>Hide Fields</value>
+  </data>
+  <data name="ksShowHiddenFields" xml:space="preserve">
+    <value>Show Hidden Fields</value>
   </data>
 </root>

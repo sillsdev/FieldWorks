@@ -19,23 +19,13 @@ using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
-#if RANDYTODO
-	// TODO: Block class, while the RecordBar class it uses gets moved into LanguageExplorer.
-	// TODO: When the semantic tools get to working, then this code will also move into LanguageExplorer.
-
 	/// <summary>
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
 	/// SemanticDomainList clerk in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
 	/// </summary>
 	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
-#if RANDYTODO
-		// Whatever PaneBar did, figure out some other control,
-		// since PaneBar went away, when the Flex UI adapter went away.
-		private PaneBar m_titleBar;
-#else
-		private Control m_titleBar;
-#endif
+		private IPaneBar m_titleBar;
 		private Panel m_headerPanel;
 		private FwTextBox m_textSearch;
 		private FwCancelSearchButton m_btnCancelSearch;
@@ -45,13 +35,13 @@ namespace SIL.FieldWorks.XWorks
 		private IVwStylesheet m_stylesheet;
 		private ICmSemanticDomainRepository m_semDomRepo;
 
-		/// <summary>
-		/// Need a constructor with no parameters for use with DynamicLoader
-		/// </summary>
-		public SemanticDomainRdeTreeBarHandler()
+		/// <summary />
+		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
 		}
 
+#if RANDYTODO
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="treeBarControl is a reference")]
 		internal override void Init(IPropertyTable propertyTable, XmlNode node)
@@ -69,20 +59,20 @@ namespace SIL.FieldWorks.XWorks
 			m_listView = treeBarControl.ListView;
 			m_listView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
+#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="PaneBar and Panel get added to controls collection and disposed there")]
-		private void SetupAndShowHeaderPanel(XmlNode node, RecordBar treeBarControl)
+		private void SetupAndShowHeaderPanel(XmlNode node, IRecordBar treeBarControl)
 		{
 			if (!treeBarControl.HasHeaderControl)
 			{
 #if RANDYTODO
+				// TODO: Has to wait until xWorks is mwerged into LanguageExploere, to be able to create the pane bar.
 				m_titleBar = new PaneBar { Dock = DockStyle.Top };
-#else
-				m_titleBar = new Button { Dock = DockStyle.Top };
 #endif
 				var headerPanel = new Panel { Visible = false };
-				headerPanel.Controls.Add(m_titleBar);
+				headerPanel.Controls.Add((Control)m_titleBar);
 				m_btnCancelSearch = new FwCancelSearchButton();
 				m_btnCancelSearch.Init();
 				m_btnCancelSearch.Click += m_btnCancelSearch_Click;
@@ -96,9 +86,11 @@ namespace SIL.FieldWorks.XWorks
 				// Keep the text box from covering the cancel search button
 				m_textSearch.Width = headerPanel.Width - m_btnCancelSearch.Width;
 				m_btnCancelSearch.Location = new Point(headerPanel.Width - m_btnCancelSearch.Width, m_textSearch.Location.Y);
+#if RANDYTODO
 				SetInfoBarText(node, m_titleBar);
+#endif
 			}
-			treeBarControl.ShowHeaderControl();
+			treeBarControl.ShowHeaderControl = true;
 		}
 
 		public override void PopulateRecordBar(RecordList list)
@@ -111,16 +103,18 @@ namespace SIL.FieldWorks.XWorks
 
 		private FwTextBox CreateSearchBox()
 		{
-			var searchBox = new FwTextBox();
-			searchBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			searchBox.WritingSystemCode = m_cache.DefaultAnalWs;
-			searchBox.Location = new Point(0, 25);
-			searchBox.Size = new Size(305, 20);
-			searchBox.AdjustStringHeight = true;
-			searchBox.HasBorder = false;
-			searchBox.BorderStyle = BorderStyle.Fixed3D;
-			searchBox.SuppressEnter = true;
-			searchBox.Enabled = true;
+			var searchBox = new FwTextBox
+			{
+				WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor,
+				WritingSystemCode = m_cache.DefaultAnalWs,
+				Location = new Point(0, 25),
+				Size = new Size(305, 20),
+				AdjustStringHeight = true,
+				HasBorder = false,
+				BorderStyle = BorderStyle.Fixed3D,
+				SuppressEnter = true,
+				Enabled = true
+			};
 			searchBox.GotFocus += m_textSearch_GotFocus;
 			return searchBox;
 		}
@@ -198,24 +192,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private int SetHeaderPanelHeight()
 		{
-			return m_textSearch.Height + m_titleBar.Height;
+			return m_textSearch.Height + ((Control)m_titleBar).Height;
 		}
 
-		private RecordBar GetTreeBarControl()
+		private IRecordBar GetTreeBarControl()
 		{
-#if RANDYTODO
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			return window.TreeBarControl;
-#else
-			return null;
-#endif
+			return window.RecordBarControl;
 		}
 
-#if RANDYTODO
-		private void SetInfoBarText(XmlNode handlerNode, PaneBar infoBar)
-#else
-		private void SetInfoBarText(XmlNode handlerNode, Control infoBar)
-#endif
+		private void SetInfoBarText(XmlNode handlerNode, IPaneBar infoBar)
 		{
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.
@@ -242,9 +228,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (IsShowing)
 			{
-#if RANDYTODO
-				window.TreeBarControl.ShowHeaderControl();
-#endif
+				window.RecordBarControl.ShowHeaderControl = true;
 				HandleChangeInSearchText(); // in case we already have a search active when we enter
 			}
 		}
@@ -268,5 +252,4 @@ namespace SIL.FieldWorks.XWorks
 			return baseName + " (" + senseCount + ")";
 		}
 	}
-#endif
 }

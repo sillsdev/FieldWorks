@@ -215,10 +215,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal class InterlinearTextsRecordEditView : RecordEditView
 		{
+#if RANDYTODO
+			// TODO: Replace four null values with real values.
+#endif
 			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 				Justification = "StTextDataTree gets disposed in base class")]
 			public InterlinearTextsRecordEditView(InfoPane info, XElement xnControl)
-				: base(new StTextDataTree())
+				: base(null, null, null, null, new StTextDataTree())
 			{
 				(m_dataEntryForm as StTextDataTree).InfoPane = info;
 				m_configurationParametersElement = xnControl;

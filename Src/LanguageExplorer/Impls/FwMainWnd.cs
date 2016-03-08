@@ -47,39 +47,17 @@ namespace LanguageExplorer.Impls
 	/// <summary>
 	/// Main window class for FW/FLEx.
 	/// </summary>
+	/// <remarks>
+	/// The main control for this window is an instance of CollapsingSplitContainer (mainContainer data member).
+	/// "mainContainer" holds the SidePane (_sidePane) in its Panel1/FirstControl (left side).
+	/// It holds a tool-specific control in its right side (Panel2/SecondControl).
 #if RANDYTODO
 	// TODO: These comments come from the original xWindow class
-	/// <remarks>
-	/// Main CollapsingSplitContainer control for XWindow.
-	/// It holds the Sidebar (m_sidebar) in its Panel1 (left side).
-#if RANDYTODO
-	// TODO: Not true. The main CollapsingSplitContainer always had another CollapsingSplitContainer
-	// TODO: instance in its Panel2. The RecordBar (m_recordBar) was always present in that secondary
-	// TODO: CollapsingSplitContainer instance. The visibily of m_recordBar was set by software, as the user had no control over it.
-	// TODO: The Panel2 of that secondary CollapsingSplitContainer (not the main one) was then that m_mainContentControl control.
-	// TODO: My goal is add that secondary CollapsingSplitContainer instance with its RecordBar, *only* for tools that show the record bar.
-	// TODO: That will let me not have to mess with that "ShowRecordList" property.
-	// TODO: Adding a second CollapsingSplitContainer instance as Panel2 of the main one needs these:
-	// TODO: secondOne.FirstLabel = "Record List" (was now defunct <property name="RecordListLabel" value="Record List" persist="true" />)
-	// TODO: secondOne.SecondLabel = "Main Content" (was now defunct <property name="MainContentLabel" value="Main Content" persist="true"/>)
-	/// It holds m_mainContentControl in Panel2, when m_recordBar is not showing.
-	/// It holds another CollapsingSplitContainer (m_secondarySplitContainer) in Panel2,
-	/// when the record list and the main control are both showing.
-#endif
-	///
-	/// Controlling properties are:
-	/// This is the splitter distance for the sidebar/secondary splitter pair of controls.
-	/// property name="SidebarWidthGlobal" intValue="140" persist="true"
-	/// This property is driven by the needs of the current main control, not the user.
-	/// property name="ShowRecordList" bool="false" persist="true"
-	/// This is the splitter distance for the record list/main content pair of controls.
-	/// property name="RecordListWidthGlobal" intValue="200" persist="true"
-	///
-	/// Event handlers expected to be managed by areas/tools that are ostsensibly global:
+	/// Event handlers expected to be managed by areas/tools that are ostensibly global:
 	///		1. printToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
-	/// </remarks>
 #endif
+	/// </remarks>
 	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
@@ -511,8 +489,6 @@ namespace LanguageExplorer.Impls
 			{
 				SetSplitContainerDistance(mainContainer, sd);
 			}
-			mainContainer.FirstLabel = "Sidebar";
-			mainContainer.SecondLabel = "All Content";
 			// Add areas and tools to "_sidePane";
 			foreach (var area in _areaRepository.AllAreasInOrder())
 			{
@@ -599,7 +575,6 @@ namespace LanguageExplorer.Impls
 			// This property is driven by the needs of the current main control, not the user.
 			// <property name="ShowRecordList" bool="false" persist="true" />
 			// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
-			// TODO: Cf. my comment in the class comment.
 			PropertyTable.SetDefault("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 #endif
 			// This is the splitter distance for the record list/main content pair of controls.
@@ -623,10 +598,16 @@ namespace LanguageExplorer.Impls
 
 			// Get rid of obsolete properties, if they were restored.
 #if RANDYTODO
+			// This property is driven by the needs of the current main control, not the user.
+			// <property name="ShowRecordList" bool="false" persist="true" />
+			// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
 #endif
 			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);
+			PropertyTable.RemoveProperty("SidebarLabel", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("DoingAutomatedTest", SettingsGroup.GlobalSettings);
+			PropertyTable.RemoveProperty("RecordListLabel", SettingsGroup.GlobalSettings);
+			PropertyTable.RemoveProperty("MainContentLabel", SettingsGroup.GlobalSettings);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -908,6 +889,52 @@ namespace LanguageExplorer.Impls
 			if (_countSuspendIdleProcessing > 0)
 			{
 				_countSuspendIdleProcessing--;
+			}
+		}
+
+		/// <summary>
+		/// Get the RecordBar (as a Control), or null if not present.
+		/// </summary>
+		public IRecordBar RecordBarControl
+		{
+			get
+			{
+				IRecordBar recordBarControl = null;
+				var rightSideControl = mainContainer.SecondControl;
+				if (rightSideControl is CollapsingSplitContainer)
+				{
+					var rightSideControlAsCollapsingSplitContainer = (CollapsingSplitContainer)rightSideControl;
+					var leftSideControl = rightSideControlAsCollapsingSplitContainer.FirstControl;
+					if (leftSideControl is IRecordBar)
+					{
+						recordBarControl = (IRecordBar)leftSideControl;
+					}
+				}
+				return recordBarControl;
+			}
+		}
+
+		/// <summary>
+		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
+		/// </summary>
+		public TreeView TreeStyleRecordList
+		{
+			get
+			{
+				var recordBar = RecordBarControl;
+				return recordBar == null ? null : recordBar.TreeView;
+			}
+		}
+
+		/// <summary>
+		/// Get the ListView of RecordBarControl, or null if not present, or it is not showing a list.
+		/// </summary>
+		public ListView ListStyleRecordList
+		{
+			get
+			{
+				var recordBar = RecordBarControl;
+				return recordBar == null ? null : recordBar.ListView;
 			}
 		}
 

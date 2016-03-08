@@ -5,6 +5,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -145,5 +146,20 @@ namespace SIL.FieldWorks.Common.Framework
 		/// See SuspendIdleProcessing.
 		/// </summary>
 		void ResumeIdleProcessing();
+
+		/// <summary>
+		/// Get the RecordBar (as a Control), or null if not present.
+		/// </summary>
+		IRecordBar RecordBarControl { get; }
+
+		/// <summary>
+		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
+		/// </summary>
+		TreeView TreeStyleRecordList { get; }
+
+		/// <summary>
+		/// Get the ListView of RecordBarControl, or null if not present, or it is not showing a list.
+		/// </summary>
+		ListView ListStyleRecordList { get; }
 	}
 }

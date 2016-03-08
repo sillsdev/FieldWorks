@@ -25,6 +25,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.WritingSystems;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace SIL.FieldWorks.XWorks
 {

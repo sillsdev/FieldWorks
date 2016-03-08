@@ -7,8 +7,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -54,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 			// (which temporarily makes the label short while calling EnsureVisible).
 			// (I'm not sure why Rand's comment is in this exact location, so I'm not deleting it.)
 
-			if (this.IsShowing)
+			if (IsShowing)
 			{
 				m_fOutOfDate = false;
 			}
@@ -64,14 +68,14 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-#if RANDYTODO
 			IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			window.TreeBarControl.IsFlatList = true;
 			using (new WaitCursor((Form)window))
 			{
-				ListView list = (ListView)window.ListStyleRecordList;
+				var list = window.ListStyleRecordList;
 				list.BeginUpdate();
+#if RANDYTODO
 				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single node is removed!
+#endif
 				m_hvoToListViewItemTable.Clear();
 
 				AddListViewItems(recList.SortedObjects, list);
@@ -93,7 +97,6 @@ namespace SIL.FieldWorks.XWorks
 				if (list.SelectedItems.Count >0)
 				{}//list.s .EnsureVisible();
 			}
-#endif
 		}
 
 		/// <summary>
@@ -133,12 +136,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-#if RANDYTODO
 				var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-				if (window != null)
-					return (ListView)window.ListStyleRecordList;
-#endif
-				return null;
+				return (window == null) ? null : window.ListStyleRecordList;
 			}
 		}
 

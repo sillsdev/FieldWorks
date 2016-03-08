@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -25,15 +26,15 @@ namespace LanguageExplorer.Controls.PaneBar
 	{
 		private Hashtable m_propertiesToWatch = new Hashtable();
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		public PaneBar()
 		{
 			InitializeComponent();
 			Dock = DockStyle.Top;
 			AccessibleName = @"LanguageExplorer.Controls.PaneBar";
 		}
+
+
 
 		#region Implementation of IPaneBar
 
@@ -58,6 +59,11 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				panelButton.UpdateDisplay();
 			}
+		}
+
+		public void AddControls(IList<Control> paneBarControls)
+		{
+			m_panelMain.Controls.AddRange(paneBarControls.ToArray());
 		}
 
 		#endregion

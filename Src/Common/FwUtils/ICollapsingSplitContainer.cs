@@ -31,6 +31,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		Control FirstVisibleControl { get; }
 
 		/// <summary>
+		/// Gets the right or bottom panel of the implementation, depending on its Orientation.
+		/// </summary>
+		SplitterPanel Panel2 { get; }
+
+		/// <summary>
 		/// Label for expand/collapse area for second half of splitter.
 		/// </summary>
 		string SecondLabel { get; set; }

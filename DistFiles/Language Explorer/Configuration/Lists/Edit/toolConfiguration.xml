@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<tools>
-		<tool label="Academic Domains" value="domainTypeEdit" icon="SideBySideView">
-			<control>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
-				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-domainTypeEdit" collapse="144000">
-					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-						<parameters area="lists" clerk="DomainTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-AcademicDomains"/>
-					</control>
-				</parameters>
-			</control>
-		</tool>
 		<tool label="Anthropology Categories" value="anthroEdit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>

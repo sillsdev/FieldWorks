@@ -248,12 +248,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\DomainTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\LexiconBrowseDialogColumnDefinitions.xml" />
     <Content Include="Resources\LexiconBrowseOverrides.xml" />
     <Content Include="Resources\LexiconBrowseParameters.xml" />
     <Content Include="Resources\GrammarCategoryBrowserParameters.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Resources\ListToolsSliceFilters.xml" />
     <Content Include="Resources\NotebookBrowseParameters.xml" />
     <Content Include="Resources\NotebookDocumentParameters.xml">
       <SubType>Designer</SubType>
@@ -303,12 +307,10 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
       <Link>XML\Lists\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
       <Link>XML\Lists\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml">
-      <Link>XML\Lists\Edit\DataEntryFilters\completeFilter.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
       <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
@@ -328,12 +330,14 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
       <Link>XML\CommonDataTreeInclude.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
       <Link>XML\ConstituentChartStyleInfo.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
       <Link>XML\ContextHelp.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
       <Link>XML\Parts\CellarParts.xml</Link>
@@ -518,6 +522,11 @@
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootVc.cs" />
+    <Compile Include="Areas\Lists\ListResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ListResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureSystemInflectionFeatureListDlgLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -646,6 +655,7 @@
     </Compile>
     <Content Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
       <Link>XML\strings-en.xml</Link>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
@@ -785,6 +795,7 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
+    <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
     <Compile Include="Areas\TextsAndWords\ParserConnection.cs" />
@@ -1148,6 +1159,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LexiconResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Lists\ListResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ListResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Notebook\Tools\NotebookResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

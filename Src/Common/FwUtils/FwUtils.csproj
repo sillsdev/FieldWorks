@@ -216,6 +216,7 @@
     <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
+    <Compile Include="IRecordBar.cs" />
     <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MainUserControl.cs">

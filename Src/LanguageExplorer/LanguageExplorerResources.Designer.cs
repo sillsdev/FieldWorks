@@ -738,7 +738,7 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  relation..
+        ///   Looks up a localized string similar to relation..
         /// </summary>
         internal static string ksDeleteSequenceCollectionB {
             get {
@@ -919,6 +919,15 @@ namespace LanguageExplorer {
         internal static string ksHiddenUnlessData {
             get {
                 return ResourceManager.GetString("ksHiddenUnlessData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Fields.
+        /// </summary>
+        internal static string ksHideFields {
+            get {
+                return ResourceManager.GetString("ksHideFields", resourceCulture);
             }
         }
         
@@ -1877,6 +1886,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Hidden Fields.
+        /// </summary>
+        internal static string ksShowHiddenFields {
+            get {
+                return ResourceManager.GetString("ksShowHiddenFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses..
         /// </summary>
         internal static string ksShowingSemanticClassification {
@@ -2478,6 +2496,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again..
+        /// </summary>
+        internal static string ksWarningSortReversalSubentries {
+            get {
+                return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types..
         /// </summary>
         internal static string ksWhatIsConvertIrregularlyInflectedFormVariants {
@@ -2514,24 +2541,14 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data by the ICU sort rules for your reversal language.
+        ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data alphabetically..
         /// </summary>
         internal static string ksWhatIsSortReversalSubentries {
             get {
                 return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot use 'Undo' to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again.
-        /// </summary>
-        internal static string ksWarningSortReversalSubentries
-        {
-            get
-            {
-                return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
-            }
-        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
@@ -2569,7 +2586,7 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically.
+        ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically (in contrast to a manually chosen order, such as by frequency of use)..
         /// </summary>
         internal static string ksWhenToSortReversalSubentries {
             get {
@@ -2626,16 +2643,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Text_And_Words {
-            get {
-                object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to All reversal subentries are now sorted..
         /// </summary>
         internal static string SortReversalSubEntries_CompletedContent {
@@ -2659,6 +2666,16 @@ namespace LanguageExplorer {
         internal static string SortReversalSubentries_Label {
             get {
                 return ResourceManager.GetString("SortReversalSubentries_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Text_And_Words {
+            get {
+                object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

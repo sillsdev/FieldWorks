@@ -93,13 +93,13 @@ namespace LanguageExplorer.Impls
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
+			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
 			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelArea = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelRecordNumber = new System.Windows.Forms.StatusBarPanel();
-			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Impls
 			this.newFieldWorksProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newFieldWorksProjectToolStripMenuItem.Image")));
 			this.newFieldWorksProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.newFieldWorksProjectToolStripMenuItem.Name = "newFieldWorksProjectToolStripMenuItem";
-			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.newFieldWorksProjectToolStripMenuItem.Text = "&New FieldWorks Project...";
 			this.newFieldWorksProjectToolStripMenuItem.ToolTipText = "Create a new FieldWorks project.";
 			this.newFieldWorksProjectToolStripMenuItem.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
@@ -172,7 +172,7 @@ namespace LanguageExplorer.Impls
 			this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Impls
             this.deleteProjectToolStripMenuItem,
             this.createShortcutOnDesktopToolStripMenuItem});
 			this.projectManagementToolStripMenuItem.Name = "projectManagementToolStripMenuItem";
-			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.projectManagementToolStripMenuItem.Text = "Project &Management";
 			this.projectManagementToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
@@ -255,13 +255,13 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem8
 			// 
 			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem8.Size = new System.Drawing.Size(208, 6);
 			// 
 			// archiveWithRAMPSILToolStripMenuItem
 			// 
 			this.archiveWithRAMPSILToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("archiveWithRAMPSILToolStripMenuItem.Image")));
 			this.archiveWithRAMPSILToolStripMenuItem.Name = "archiveWithRAMPSILToolStripMenuItem";
-			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.archiveWithRAMPSILToolStripMenuItem.Text = "&Archive with RAMP (SIL)...";
 			this.archiveWithRAMPSILToolStripMenuItem.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
 			this.archiveWithRAMPSILToolStripMenuItem.Click += new System.EventHandler(this.File_Archive_With_RAMP);
@@ -269,13 +269,13 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem9
 			// 
 			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-			this.toolStripMenuItem9.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
 			// 
 			// pageSetupToolStripMenuItem
 			// 
 			this.pageSetupToolStripMenuItem.Enabled = false;
 			this.pageSetupToolStripMenuItem.Name = "pageSetupToolStripMenuItem";
-			this.pageSetupToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.pageSetupToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.pageSetupToolStripMenuItem.Text = "Page Setup...";
 			this.pageSetupToolStripMenuItem.ToolTipText = "Determine page layout options for printing.";
 			this.pageSetupToolStripMenuItem.Click += new System.EventHandler(this.File_Page_Setup);
@@ -285,27 +285,27 @@ namespace LanguageExplorer.Impls
 			this.printToolStripMenuItem.Enabled = false;
 			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
 			this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.printToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.printToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.printToolStripMenuItem.Text = "&Print...";
 			this.printToolStripMenuItem.ToolTipText = "Print";
 			// 
 			// toolStripMenuItem10
 			// 
 			this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-			this.toolStripMenuItem10.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem10.Size = new System.Drawing.Size(208, 6);
 			// 
 			// importToolStripMenuItem
 			// 
 			this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.translatedListContentToolStripMenuItem1});
 			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-			this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.importToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.importToolStripMenuItem.Text = "&Import";
 			// 
 			// translatedListContentToolStripMenuItem1
 			// 
 			this.translatedListContentToolStripMenuItem1.Name = "translatedListContentToolStripMenuItem1";
-			this.translatedListContentToolStripMenuItem1.Size = new System.Drawing.Size(196, 22);
+			this.translatedListContentToolStripMenuItem1.Size = new System.Drawing.Size(195, 22);
 			this.translatedListContentToolStripMenuItem1.Text = "&Translated List Content";
 			this.translatedListContentToolStripMenuItem1.Click += new System.EventHandler(this.File_Translated_List_Content);
 			// 
@@ -313,19 +313,19 @@ namespace LanguageExplorer.Impls
 			// 
 			this.exportToolStripMenuItem.Enabled = false;
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(208, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.closeToolStripMenuItem.Text = "&Close";
 			this.closeToolStripMenuItem.ToolTipText = "Close this project.";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.File_CloseWindow);
@@ -511,7 +511,7 @@ namespace LanguageExplorer.Impls
             this.toolStripMenuItem6,
             this.configureToolStripMenuItem});
 			this._toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
-			this._toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+			this._toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
 			this._toolsToolStripMenuItem.Text = "&Tools";
 			// 
 			// toolStripMenuItem6
@@ -605,7 +605,7 @@ namespace LanguageExplorer.Impls
 			// technicalNotesOnFieldWorksSendReceiveToolStripMenuItem
 			// 
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Name = "technicalNotesOnFieldWorksSendReceiveToolStripMenuItem";
-			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Text = "Technical Notes on FieldWorks Send-&Receive...";
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.ToolTipText = "Display technical notes on FieldWorks Send/Receive (only available in English).";
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_on_FieldWorks_Send_Receive);
@@ -613,7 +613,7 @@ namespace LanguageExplorer.Impls
 			// technicalNotesOnWritingSystemsToolStripMenuItem
 			// 
 			this.technicalNotesOnWritingSystemsToolStripMenuItem.Name = "technicalNotesOnWritingSystemsToolStripMenuItem";
-			this.technicalNotesOnWritingSystemsToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+			this.technicalNotesOnWritingSystemsToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
 			this.technicalNotesOnWritingSystemsToolStripMenuItem.Text = "Technical Notes on &Writing Systems...";
 			this.technicalNotesOnWritingSystemsToolStripMenuItem.ToolTipText = "Display technical notes on Writing Systems (only available in English).";
 			this.technicalNotesOnWritingSystemsToolStripMenuItem.Click += new System.EventHandler(this.Help_Training_Writing_Systems);
@@ -621,7 +621,7 @@ namespace LanguageExplorer.Impls
 			// editingLinguisticsPapersUsingXLingPaperToolStripMenuItem
 			// 
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Name = "editingLinguisticsPapersUsingXLingPaperToolStripMenuItem";
-			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Text = "Editing Linguistics Papers Using &XLingPaper...";
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.ToolTipText = "You can edit your Grammar Sketch in XLingPaper format using an XML editor (only a" +
     "vailable in English).";
@@ -743,7 +743,7 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.BackColor = System.Drawing.SystemColors.Control;
 			this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.mainContainer.FirstControl = this._sidePane;
-			this.mainContainer.FirstLabel = "";
+			this.mainContainer.FirstLabel = "Sidebar";
 			this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.mainContainer.IsInitializing = false;
 			this.mainContainer.Location = new System.Drawing.Point(0, 0);
@@ -759,18 +759,26 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.Panel2.Controls.Add(this._rightPanel);
 			this.mainContainer.Panel2MinSize = 16;
 			this.mainContainer.SecondControl = this._rightPanel;
-			this.mainContainer.SecondLabel = "";
+			this.mainContainer.SecondLabel = "All Content";
 			this.mainContainer.Size = new System.Drawing.Size(697, 381);
-			this.mainContainer.SplitterDistance = 126;
+			this.mainContainer.SplitterDistance = 140;
 			this.mainContainer.TabIndex = 0;
 			this.mainContainer.TabStop = false;
+			// 
+			// _sidePane
+			// 
+			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._sidePane.Location = new System.Drawing.Point(0, 0);
+			this._sidePane.Name = "_sidePane";
+			this._sidePane.Size = new System.Drawing.Size(140, 381);
+			this._sidePane.TabIndex = 1;
 			// 
 			// _rightPanel
 			// 
 			this._rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._rightPanel.Location = new System.Drawing.Point(0, 0);
 			this._rightPanel.Name = "_rightPanel";
-			this._rightPanel.Size = new System.Drawing.Size(567, 381);
+			this._rightPanel.Size = new System.Drawing.Size(553, 381);
 			this._rightPanel.TabIndex = 1;
 			// 
 			// _statusbar
@@ -810,14 +818,6 @@ namespace LanguageExplorer.Impls
 			this.statusBarPanelRecordNumber.MinWidth = 40;
 			this.statusBarPanelRecordNumber.Name = "statusBarPanelRecordNumber";
 			this.statusBarPanelRecordNumber.Text = "RecordNumber";
-			// 
-			// sidePane1
-			// 
-			this._sidePane.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._sidePane.Location = new System.Drawing.Point(0, 0);
-			this._sidePane.Name = "sidePane1";
-			this._sidePane.Size = new System.Drawing.Size(126, 381);
-			this._sidePane.TabIndex = 1;
 			// 
 			// FwMainWnd
 			// 

@@ -1601,7 +1601,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Useed on occasions like changing views, this should suppress any optimization that prevents real reloads.
+		/// Used on occasions like changing views, this should suppress any optimization that prevents real reloads.
 		/// </summary>
 		public virtual void ForceReloadList()
 		{

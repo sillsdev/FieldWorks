@@ -5,14 +5,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// Summary description for RecordBar.
 	/// </summary>
-	internal sealed class RecordBar : UserControl, IFWDisposable
+	internal sealed class RecordBar : UserControl, IRecordBar
 	{
 		/// <summary />
 		private TreeView m_treeView;
@@ -26,9 +26,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		public RecordBar()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -54,7 +52,9 @@ namespace LanguageExplorer.Areas
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		/// <summary />
+		/// <summary>
+		/// Get the TreeView control, or null, if using a ListView.
+		/// </summary>
 		public TreeView TreeView
 		{
 			get
@@ -65,7 +65,9 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <summary />
+		/// <summary>
+		/// Get the ListView control, or null, if using a TreeView.
+		/// </summary>
 		public ListView ListView
 		{
 			get
@@ -76,7 +78,9 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <summary />
+		/// <summary>
+		/// Use 'true' to show as a ListView, otherwise 'false' for a TreeView.
+		/// </summary>
 		public bool IsFlatList
 		{
 			set
@@ -96,10 +100,15 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <summary />
+		/// <summary>
+		/// 'true' if the control has the optional header control, otherwise 'false'.
+		/// </summary>
 		public bool HasHeaderControl { get { return m_optionalHeaderControl != null; } }
 
-		/// <summary />
+		/// <summary>
+		/// Add an optional header control
+		/// </summary>
+		/// <param name="c">An optional header control.</param>
 		public void AddHeaderControl(Control c)
 		{
 			CheckDisposed();
@@ -112,18 +121,22 @@ namespace LanguageExplorer.Areas
 			c.Dock = DockStyle.Top;
 		}
 
-		/// <summary />
-		public object SelectedNode
+		/// <summary>
+		/// Select the given TreeNode (when showing the TreeView).
+		/// </summary>
+		public TreeNode SelectedNode
 		{
 			set
 			{
 				CheckDisposed();
 
-				TreeView.SelectedNode = (TreeNode) value;
+				TreeView.SelectedNode = value;
 			}
 		}
 
-		/// <summary />
+		/// <summary>
+		/// Clear both views.
+		/// </summary>
 		public void Clear()
 		{
 			CheckDisposed();
@@ -203,18 +216,19 @@ namespace LanguageExplorer.Areas
 		}
 		#endregion
 
-		/// <summary />
-		public void ShowHeaderControl()
+		/// <summary>
+		/// 'true' to show the optional header control, otherwsie 'false' to hide it.
+		/// </summary>
+		/// <remarks>Has no affect, if there is no header control.</remarks>
+		public bool ShowHeaderControl
 		{
-			if (HasHeaderControl)
-				m_optionalHeaderControl.Visible = true;
-		}
-
-		/// <summary />
-		public void HideHeaderControl()
-		{
-			if (HasHeaderControl)
-				m_optionalHeaderControl.Visible = false;
+			set
+			{
+				if (HasHeaderControl)
+				{
+					m_optionalHeaderControl.Visible = value;
+				}
+			}
 		}
 	}
 }

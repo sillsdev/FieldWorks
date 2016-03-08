@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls
 	/// will have to do that.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
+	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
 	{
 		/// <summary />
 		public const int kCollapsedSize = 16;
@@ -219,7 +219,10 @@ namespace LanguageExplorer.Controls
 				{
 					Panel1.SuspendLayout();
 					Panel1.Controls.Remove(m_firstMainControl);
-					//m_firstMainControl.Dispose();
+					if (!m_firstMainControl.IsDisposed)
+					{
+						m_firstMainControl.Dispose();
+					}
 					m_firstMainControl = value;
 					Panel1.Controls.Add(value);
 					Panel1.ResumeLayout();
@@ -256,7 +259,10 @@ namespace LanguageExplorer.Controls
 				{
 					Panel2.SuspendLayout();
 					Panel2.Controls.Remove(m_secondMainControl);
-					//m_secondMainControl.Dispose();
+					if (!m_secondMainControl.IsDisposed)
+					{
+						m_secondMainControl.Dispose();
+					}
 					m_secondMainControl = value;
 					Panel2.Controls.Add(value);
 					Panel2.ResumeLayout();
@@ -593,6 +599,7 @@ namespace LanguageExplorer.Controls
 			panel.SuspendLayout();
 			if (!panel.Controls.Contains(newControl))
 				panel.Controls.Add(newControl);
+			newControl.Dock = DockStyle.Fill;
 			newControl.BringToFront();
 			if (Panel1 == panel)
 				m_firstFrontedControl = newControl;
