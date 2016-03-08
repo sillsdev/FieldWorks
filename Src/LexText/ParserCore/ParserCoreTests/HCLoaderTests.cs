@@ -594,8 +594,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
 
-			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
-			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past]]"));
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past], POS:V]"));
+			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat"}));
 		}

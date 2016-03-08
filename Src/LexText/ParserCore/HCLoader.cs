@@ -699,14 +699,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var requiredFS = new FeatureStruct();
 			if (msa.PartOfSpeechRA != null)
 				requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(msa.PartOfSpeechRA));
+			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
+				requiredFS.AddValue(m_headFeature, LoadFeatureStruct(msa.InflFeatsOA, m_language.SyntacticFeatureSystem));
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
-
-			var outFS = new FeatureStruct();
-			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
-				outFS.AddValue(m_headFeature, LoadFeatureStruct(msa.InflFeatsOA, m_language.SyntacticFeatureSystem));
-			outFS.Freeze();
-			mrule.OutSyntacticFeatureStruct = outFS;
 
 			var requiredMprFeatures = new List<MprFeature>();
 			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
