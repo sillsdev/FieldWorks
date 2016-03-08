@@ -181,7 +181,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>250, 68</value>
+    <value>270, 68</value>
   </data>
   <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>133, 23</value>
@@ -211,7 +211,7 @@
     <value>15, 68</value>
   </data>
   <data name="lblCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>245, 53</value>
+    <value>250, 53</value>
   </data>
   <data name="lblCancel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
