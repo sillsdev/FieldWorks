@@ -285,8 +285,6 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz ins
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
-	rm -f $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	rm -f $(DESTDIR)/usr/lib/fieldworks/icu.net.*
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
 	# Except we still want strings-en.xml :-)
