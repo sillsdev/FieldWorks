@@ -251,6 +251,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.reversalsCheckedListBox, "reversalsCheckedListBox");
 			this.reversalsCheckedListBox.FormattingEnabled = true;
 			this.reversalsCheckedListBox.Name = "reversalsCheckedListBox";
+			this.reversalsCheckedListBox.CheckOnClick = true;
 			this.reversalsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.reversalsCheckedListBox_SelectedIndexChanged);
 			// 
 			// PublishToWebonaryDlg
