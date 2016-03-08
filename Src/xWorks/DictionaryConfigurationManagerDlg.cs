@@ -18,10 +18,14 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopic;
 		private readonly HelpProvider m_helpProvider;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private readonly ToolTip m_toolTip;
 
 		public DictionaryConfigurationManagerDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
+
+			m_toolTip = new ToolTip();
+			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate); // the (reset|delete) button's tooltip is set when a config is selected
 
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -73,6 +77,8 @@ namespace SIL.FieldWorks.XWorks
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			}
 		}
+
+		public string RemoveButtonToolTip { set { m_toolTip.SetToolTip(removeButton, value); } }
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{

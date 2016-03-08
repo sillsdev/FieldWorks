@@ -90,6 +90,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
+			var toolTip = new ToolTip();
+			toolTip.SetToolTip(moveUp, xWorksStrings.MoveUp);
+			toolTip.SetToolTip(moveDown, xWorksStrings.MoveDown);
+			toolTip.SetToolTip(duplicate, xWorksStrings.Duplicate);
+			toolTip.SetToolTip(remove,  xWorksStrings.Delete);
+			toolTip.SetToolTip(rename, xWorksStrings.EditLabel);
+			//toolTip.SetToolTip(highlight, xWorksStrings.HighlightAffectedContent);
+
 			moveUp.Click += (sender, args) =>
 			{
 				if (MoveUp != null)

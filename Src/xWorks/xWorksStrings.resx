@@ -391,11 +391,27 @@ Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
   </data>
   <data name="MoveUp" xml:space="preserve">
     <value>Move Up</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="EditLabel" xml:space="preserve">
+    <value>Edit Label</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="HighlightAffectedContent" xml:space="preserve">
+    <value>Highlight Affected Content</value>
+    <comment>action on a tree view item</comment>
   </data>
   <data name="kstidExportingLists" xml:space="preserve">
     <value>Writing possibility list contents</value>

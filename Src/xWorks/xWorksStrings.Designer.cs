@@ -205,6 +205,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleted object detected.
         /// </summary>
         internal static string DeletedObjectDetected {
@@ -281,6 +290,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DidNotSelectValidWsForDb {
             get {
                 return ResourceManager.GetString("DidNotSelectValidWsForDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        internal static string Duplicate {
+            get {
+                return ResourceManager.GetString("Duplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Label.
+        /// </summary>
+        internal static string EditLabel {
+            get {
+                return ResourceManager.GetString("EditLabel", resourceCulture);
             }
         }
         
@@ -470,6 +497,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string HaveLaunchedFLEXTenTimes {
             get {
                 return ResourceManager.GetString("HaveLaunchedFLEXTenTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight Affected Content.
+        /// </summary>
+        internal static string HighlightAffectedContent {
+            get {
+                return ResourceManager.GetString("HighlightAffectedContent", resourceCulture);
             }
         }
         

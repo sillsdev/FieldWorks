@@ -203,6 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.copyButton.Enabled = true;
 			_view.removeButton.Enabled = true;
 			_view.closeButton.Enabled = true;
+			_view.RemoveButtonToolTip = IsConfigurationACustomizedShippedDefault(SelectedConfiguration) ? xWorksStrings.Reset : xWorksStrings.Delete;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
