@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -72,6 +73,11 @@ namespace SIL.FieldWorks.XWorks
 		internal string _defaultConfigDir;
 
 		private bool m_isDirty;
+
+		/// <summary>
+		/// Flag whether we're highlighting the affected node in the preview area.
+		/// </summary>
+		private bool _isHighlighted;
 
 		/// <summary>
 		/// Whether any changes have been saved, including changes to the Configs, which Config is the current Config, changes to Styles, etc.,
@@ -417,6 +423,23 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 
+			View.TreeControl.Highlight += (node, button, tooltip) =>
+			{
+				_isHighlighted = !_isHighlighted;
+				if (_isHighlighted)
+				{
+					View.HighlightContent(node.Tag as ConfigurableDictionaryNode);
+					button.BackColor = Color.White;
+					tooltip.SetToolTip(button, xWorksStrings.RemoveHighlighting);
+				}
+				else
+				{
+					View.HighlightContent(null);	// turns off current highlighting.
+					button.BackColor = Color.Yellow;
+					tooltip.SetToolTip(button, xWorksStrings.HighlightAffectedContent);
+				}
+			};
+
 			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
@@ -439,6 +462,12 @@ namespace SIL.FieldWorks.XWorks
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
 				BuildAndShowOptions(node, mediator);
+
+				if (_isHighlighted)
+				{
+					// Highlighting is turned on, change what is highlighted.
+					View.HighlightContent(node);
+				}
 			};
 			View.TreeControl.CheckAll += treeNode =>
 			{

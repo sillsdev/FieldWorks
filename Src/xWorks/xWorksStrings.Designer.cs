@@ -672,6 +672,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary view and move to Lexicon Edit..
+        /// </summary>
+        internal static string ksCancelingPublicationLabel {
+            get {
+                return ResourceManager.GetString("ksCancelingPublicationLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You cannot demote a list of Text Markup Tags into another list..
         /// </summary>
         internal static string ksCantDemoteTagList {
@@ -1447,15 +1456,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click Cancel to stop loading publication view.
-        /// </summary>
-        internal static string ksCancelingPublicationLabel {
-            get {
-                return ResourceManager.GetString("ksCancelingPublicationLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Prohibited Movement.
         /// </summary>
         internal static string ksProhibitedMovement {
@@ -2083,6 +2083,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string RedoMoveItem {
             get {
                 return ResourceManager.GetString("RedoMoveItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove highlighting from affected content.
+        /// </summary>
+        internal static string RemoveHighlighting {
+            get {
+                return ResourceManager.GetString("RemoveHighlighting", resourceCulture);
             }
         }
         

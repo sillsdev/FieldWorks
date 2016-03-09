@@ -6,8 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Gecko;
+using Gecko.DOM;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
@@ -162,6 +165,67 @@ namespace SIL.FieldWorks.XWorks
 			{
 				treeControl.Tree.Nodes[0].Expand();
 			}
+		}
+
+		/// <summary>
+		/// Remember which elements are highlighted so that we can turn the highlighting off later.
+		/// </summary>
+		private List<GeckoElement> _highlightedElements;
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
+		public void HighlightContent(ConfigurableDictionaryNode configNode)
+		{
+			if (m_preview.IsDisposed)
+				return;
+			if (_highlightedElements != null)
+			{
+				foreach (var element in _highlightedElements)
+					element.SetAttribute("style", "");
+				_highlightedElements = null;
+			}
+			if (configNode != null)
+			{
+				var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+				// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
+				_highlightedElements = FindConfiguredItem(configNode, browser);
+				foreach (var element in _highlightedElements)
+					element.SetAttribute("style", "background-color:Yellow");	// LightYellow isn't really bold enough marking to my eyes for this feature.
+			}
+
+		}
+
+		private List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode configNode, GeckoWebBrowser browser)
+		{
+			var elements = new List<GeckoElement>();
+			var classNames = new List<string>();
+			for (var node = configNode; node != null; node = node.Parent)
+				classNames.Insert(0, CssGenerator.GetClassAttributeForConfig(node));
+			var body = browser.Document.DocumentElement.GetElementsByTagName("body").FirstOrDefault();
+			if (body != null)
+			{
+				foreach (var div in body.GetElementsByTagName("div"))
+				{
+					if (div.GetAttribute("class") == classNames[0])
+						elements.AddRange(FindMatchingSpan(div, classNames, 1));
+				}
+			}
+			return elements;
+		}
+
+		private List<GeckoElement> FindMatchingSpan(GeckoElement parent, List<string> classNames, int idxClass)
+		{
+			var elements = new List<GeckoElement>();
+			if (idxClass >= classNames.Count)
+			{
+				elements.Add(parent);
+				return elements;
+			}
+			foreach (var span in parent.GetElementsByTagName("span"))
+			{
+				if (span.GetAttribute("class") == classNames[idxClass])
+					elements.AddRange(FindMatchingSpan(span, classNames, idxClass + 1));
+			}
+			return elements;
 		}
 
 		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -1063,6 +1063,9 @@ namespace SIL.FieldWorks.XWorks
 			public void Redraw()
 			{ }
 
+			public void HighlightContent(ConfigurableDictionaryNode configNode)
+			{ }
+
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
 			{ }
 

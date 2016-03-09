@@ -61,6 +61,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="configuration"></param>
 		void SelectConfiguration(DictionaryConfigurationModel configuration);
+
+		/// <summary>
+		/// Highlight the element(s) corresponding to the configuration node in the preview pane.
+		/// </summary>
+		void HighlightContent(ConfigurableDictionaryNode configNode);
 	}
 
 	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);

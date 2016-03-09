@@ -40,6 +40,15 @@ namespace SIL.FieldWorks.XWorks
 		public event TreeNodeEventHandler Rename;
 
 		/// <summary>
+		/// For events affecting highlighting in the preview pane.
+		/// </summary>
+		public delegate void HighlightEventHandler(TreeNode treeNode, Button button, ToolTip toolTip);
+		/// <summary>
+		/// Event when a TreeNode's corresponding content is requested to be highlighted in the preview pane.
+		/// </summary>
+		public event HighlightEventHandler Highlight;
+
+		/// <summary>
 		/// Event when a user askes to CheckAll treenode children
 		/// </summary>
 		public event TreeNodeEventHandler CheckAll;
@@ -50,6 +59,8 @@ namespace SIL.FieldWorks.XWorks
 		public event TreeNodeEventHandler UnCheckAll;
 
 		private readonly ContextMenuStrip m_CtrlRightClickMenu;
+
+		private readonly ToolTip m_toolTip;
 
 		/// <summary>
 		/// Tree of TreeNodes.
@@ -84,19 +95,24 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool RenameEnabled { set { rename.Enabled = value; } }
 
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool HighlightEnabled { set { highlight.Enabled = value; } }
+
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "ToolStripMenuItems disposed in Dispose method")]
 		public DictionaryConfigurationTreeControl()
 		{
 			InitializeComponent();
 
-			var toolTip = new ToolTip();
-			toolTip.SetToolTip(moveUp, xWorksStrings.MoveUp);
-			toolTip.SetToolTip(moveDown, xWorksStrings.MoveDown);
-			toolTip.SetToolTip(duplicate, xWorksStrings.Duplicate);
-			toolTip.SetToolTip(remove,  xWorksStrings.Delete);
-			toolTip.SetToolTip(rename, xWorksStrings.EditLabel);
-			//toolTip.SetToolTip(highlight, xWorksStrings.HighlightAffectedContent);
+			m_toolTip = new ToolTip();
+			m_toolTip.SetToolTip(moveUp, xWorksStrings.MoveUp);
+			m_toolTip.SetToolTip(moveDown, xWorksStrings.MoveDown);
+			m_toolTip.SetToolTip(duplicate, xWorksStrings.Duplicate);
+			m_toolTip.SetToolTip(remove, xWorksStrings.Delete);
+			m_toolTip.SetToolTip(rename, xWorksStrings.EditLabel);
+			m_toolTip.SetToolTip(highlight, xWorksStrings.HighlightAffectedContent);
 
 			moveUp.Click += (sender, args) =>
 			{
@@ -126,6 +142,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Rename != null)
 					Rename(tree.SelectedNode);
+			};
+
+			highlight.Click += (sender, args) =>
+			{
+				if (Highlight != null)
+					Highlight(tree.SelectedNode, highlight, m_toolTip);
 			};
 
 			// Create the ContextMenuStrip.
