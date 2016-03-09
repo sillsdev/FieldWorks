@@ -2601,6 +2601,48 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, regexCollection3, RegexOptions.Singleline).Success, "expected collection after rule is generated");
 		}
 
+		[Test]
+		public void GenerateCssForConfiguration_NoBeforeAfterForSenseParagraphs()
+		{
+			var glossConfig = new ConfigurableDictionaryNode
+			{
+				Before = "{",
+				Between = "|",
+				After = "}",
+				FieldDescription = "Gloss",
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var sensesConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Before = "[[",
+				After = "]]",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { glossConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesConfig }
+			};
+			SetParentsAndEnabled(entryConfig);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			//SUT
+			var cssPara = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			(sensesConfig.DictionaryNodeOptions as DictionaryNodeSenseOptions).DisplayEachSenseInAParagraph = false;
+			var cssInline = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+
+			var regexBefore = "^\\.lexentry> \\.senses:before\\{";
+			var regexAfter = "^\\.lexentry> \\.senses:after\\{";
+
+			Assert.AreNotEqual(cssPara, cssInline, "The css should change depending on senses showing in a paragraph");
+			Assert.IsTrue(Regex.IsMatch(cssInline, regexBefore, RegexOptions.Multiline), "The css for inline senses should have a senses:before rule");
+			Assert.IsTrue(Regex.IsMatch(cssInline, regexAfter, RegexOptions.Multiline), "The css for inline senses should have a senses:after rule");
+			Assert.IsFalse(Regex.IsMatch(cssPara, regexBefore, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:before rule");
+			Assert.IsFalse(Regex.IsMatch(cssPara, regexAfter, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:after rule");
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();

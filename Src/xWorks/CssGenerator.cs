@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
 				}
-				var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
+				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					(FdoCache) mediator.PropertyTable.GetValue("cache"), mediator);
 				rule.Value = baseSelection;
 				// if the configuration node defines a style then add all the rules generated from that style
@@ -217,7 +217,9 @@ namespace SIL.FieldWorks.XWorks
 						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 					}
 				}
-				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
+				if (showingParagraph)	// Paragraphs don't want the before and after strings!  See LT-17167.
+					selectors = RemoveBeforeAfterSelectorRules(selectors);
+				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
 					styleSheet.Rules.Add(rule);
 			}
@@ -240,16 +242,29 @@ namespace SIL.FieldWorks.XWorks
 			return rules.Where(rule => !IsEmptyRule(rule));
 		}
 
+		private static bool IsBeforeOrAfter(StyleRule rule)
+		{
+			var sel = rule.Selector.ToString();
+			return sel.EndsWith(":before") || sel.EndsWith(":after");
+		}
+
+		private static IEnumerable<StyleRule> RemoveBeforeAfterSelectorRules(IEnumerable<StyleRule> rules)
+		{
+			return rules.Where(rule => !IsBeforeOrAfter(rule));
+		}
+
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
 														StyleSheet styleSheet, ref string baseSelection, Mediator mediator)
 		{
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
 			var senseContentSelector = string.Empty;
 			if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
 			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
-			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
+			if (senseOptions.DisplayEachSenseInAParagraph)
+				selectors = RemoveBeforeAfterSelectorRules(selectors);
+			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
