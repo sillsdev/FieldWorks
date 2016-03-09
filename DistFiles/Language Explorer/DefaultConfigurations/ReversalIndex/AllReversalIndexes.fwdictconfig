@@ -18,7 +18,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
+	<ConfigurationItem name="Referenced Senses" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after=" " field="MLOwnerOutlineName" cssClassNameOverride="headword">
 	  <ReferringSenseOptions>
@@ -581,7 +581,7 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
+		<ConfigurationItem name="Referenced Senses" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">

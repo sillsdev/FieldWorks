@@ -1614,7 +1614,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var referencedSenses = new ConfigurableDictionaryNode
 			{
-				Label = "Vernacular Form",
+				Label = "Referenced Senses",
 				FieldDescription = "ReferringSenses",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { }
@@ -1649,7 +1649,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var referencedSenses = new ConfigurableDictionaryNode
 			{
-				Label = "Vernacular Form",
+				Label = "Referenced Senses",
 				FieldDescription = "ReferringSenses",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { }
@@ -1683,8 +1683,7 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Form']", 1);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Category']");
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Reversal Category']", 1);
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Referenced Senses']");
-				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Vernacular Form']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalIndexChildNodesPath + "ConfigurationItem[@name='Referenced Senses']", 1);
 			}
 		}
 
@@ -2157,7 +2156,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				After = " ",
 				Between = "; ",
-				Label = "Vernacular Form",
+				Label = "Referenced Senses",
 				FieldDescription = "ReferringSenses",
 				Children = new List<ConfigurableDictionaryNode> { newVariantsNode },
 				IsEnabled = true
