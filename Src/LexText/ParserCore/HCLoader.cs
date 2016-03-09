@@ -996,7 +996,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var sb = new StringBuilder();
 							foreach (IPhTerminalUnit termUnit in insertPhones.ContentRS)
 							{
-								string strRep = termUnit.CodesOS[0].Representation.VernacularDefaultWritingSystem.Text;
+								IPhCode code = termUnit.CodesOS[0];
+								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
+									: code.Representation.VernacularDefaultWritingSystem.Text;
 								if (string.IsNullOrEmpty(strRep))
 									throw new InvalidAffixProcessException(allo, false);
 								sb.Append(strRep);

@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Collections;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -53,6 +54,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
+
+			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem);
 
 			m_noun = AddPartOfSpeech("N");
 			m_verb = AddPartOfSpeech("V");
@@ -227,10 +230,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void AddBdry(Guid guid, string strRep)
 		{
 			IPhBdryMarker bdry = Cache.ServiceLocator.GetInstance<IPhBdryMarkerFactory>().Create(guid, Cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
-			bdry.Name.SetVernacularDefaultWritingSystem(strRep);
+			ITsString tss = Cache.TsStrFactory.MakeString(strRep, Cache.DefaultAnalWs);
+			bdry.Name.set_String(Cache.DefaultAnalWs, tss);
 			IPhCode code = Cache.ServiceLocator.GetInstance<IPhCodeFactory>().Create();
 			bdry.CodesOS.Add(code);
-			code.Representation.SetVernacularDefaultWritingSystem(strRep);
+			code.Representation.set_String(Cache.DefaultAnalWs, tss);
 		}
 
 		private ILexEntry AddEntry(Guid morphType, string lexemeForm, string gloss, SandboxGenericMSA msa)
