@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" version="-1" lastModified="2015-12-17" allPublications="true">
   <ConfigurationItem name="Reversal Entry" isEnabled="true" field="ReversalIndexEntry">
-	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
+	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 	  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		<Option id="reversal" isEnabled="true" />
 	  </WritingSystemOptions>
@@ -221,28 +221,13 @@
 		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
 		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord">
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="DefinitionOrGloss">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="ReversalName">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="all analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="OwningEntry" subField="SummaryDefinition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -579,7 +564,7 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
 		<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
+		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 				<Option id="reversal" isEnabled="true" />
 			</WritingSystemOptions>
@@ -802,28 +787,13 @@
 			  <Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="DefinitionOrGloss">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="ReversalName">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="all analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
