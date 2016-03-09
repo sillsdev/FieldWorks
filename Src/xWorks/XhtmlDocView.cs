@@ -804,25 +804,19 @@ namespace SIL.FieldWorks.XWorks
 			if(m_informationBar == null)
 				return;
 			var titleStr = GetBaseTitleStringFromConfig();
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_mediator) == "Reversal Index";
-			if (isReversalIndex && Clerk.OwningObject != null && Clerk.OwningObject.ShortName != null)
-				titleStr = Clerk.OwningObject.ShortName;
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				return;
 			}
-			if (!isReversalIndex)
-			{
-				// Set the configuration part of the title
-				SetConfigViewTitle();
-				//Set the publication part of the title
-				var pubNameTitlePiece = GetCurrentPublication();
-				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
-					pubNameTitlePiece = xWorksStrings.ksAllEntries;
-				titleStr = pubNameTitlePiece + " " + titleStr;
-			}
-			((IPaneBar)m_informationBar).Text = titleStr;
+			// Set the configuration part of the title
+			SetConfigViewTitle();
+			//Set the publication part of the title
+			var pubNameTitlePiece = GetCurrentPublication();
+			if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
+				pubNameTitlePiece = xWorksStrings.ksAllEntries;
+			titleStr = pubNameTitlePiece + " " + titleStr;
+			((IPaneBar) m_informationBar).Text = titleStr;
 		}
 
 		private const int kSpaceForMenuButton = 26;
