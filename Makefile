@@ -256,7 +256,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu54,Keyboards,"Language Explorer",Parts,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
@@ -709,8 +709,12 @@ Fw-build:
 # Import certificates so mono applications can check ssl certificates, specifically when a build task
 # downloads dependency dlls. Output md5sum of certificates imported for the record.
 Fw-build-package:
-	(cd $(mktemp -d) && wget -q "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" && md5sum "certdata.txt?raw=1" && mozroots --import --sync --file "certdata.txt?raw=1")
-	(cd $(BUILD_ROOT)/Build && xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release)
+	cd $$(mktemp -d) \
+		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
+		&& md5sum certdata.txt \
+		&& mozroots --import --sync --file certdata.txt
+	cd $(BUILD_ROOT)/Build \
+		&& xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")

@@ -911,6 +911,12 @@ namespace SIL.FieldWorks.TE
 		// True if we are importing (typically BT only) to the main, current version of Scripture,
 		// as opposed to the typical case of importing to an archive.
 		private bool m_fImportingToMain;
+
+		/// <summary>
+		/// flag that indicates import is being done through FLEx and some special processing
+		/// may need to be done.
+		/// </summary>
+		protected bool m_fStreamLinedImport;
 		#endregion
 
 		#region Import, the only public (static) method (2 overloads)
@@ -944,15 +950,17 @@ namespace SIL.FieldWorks.TE
 		/// and maintaining the archive of original books being overwritten and maintaining
 		/// the book filter).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
+		/// <param name="streamLinedImport">flag indicated if import id done through FLEx.</param>
 		/// <returns>
 		/// The Scripture reference of the first thing that was imported
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static ScrReference Import(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks)
+			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+			bool streamLinedImport = false)
 		{
 			using (TeSfmImporter importer = new TeSfmImporter(settings, cache, styleSheet, undoManager,
-				importCallbacks))
+				importCallbacks, streamLinedImport))
 			{
 				importer.Import();
 				importCallbacks.AllowCancel = false; // LT-16647: Disallow canceling import after it is complete (before disposing importer).
@@ -972,9 +980,11 @@ namespace SIL.FieldWorks.TE
 		/// <param name="undoManager">The undo import manager(which is responsible for creating
 		/// and maintainging the archive of original books being overwritten).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
+		/// <param name="streamLinedImport">flag indicating if import is done through FLEx.</param>
 		/// ------------------------------------------------------------------------------------
 		protected TeSfmImporter(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks)
+			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+			bool streamLinedImport = false)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(styleSheet != null);
@@ -985,6 +995,7 @@ namespace SIL.FieldWorks.TE
 			m_undoManager = undoManager;
 			m_importCallbacks = importCallbacks;
 			m_importCallbacks.Importer = this;
+			m_fStreamLinedImport = streamLinedImport;
 
 			Debug.Assert(m_settings.BasicSettingsExist);
 			// ENHANCE (TomB): Make it possible to start importing in the middle
@@ -4106,6 +4117,11 @@ namespace SIL.FieldWorks.TE
 					IStFootnote footnote = FindCorrespondingFootnote(info.styleId, iFootnote);
 					if (footnote == null)
 					{
+						if (m_fStreamLinedImport)
+						{
+							// will just skip this and any other footnotes in the paragraph.
+							return;
+						}
 						throw new ScriptureUtilsException(
 							SUE_ErrorCode.BackTransMissingVernFootnote,
 							null, 0, info.bldr.Text,

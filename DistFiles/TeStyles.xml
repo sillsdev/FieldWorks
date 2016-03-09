@@ -797,6 +797,7 @@
 			<mapping id="imt2" type="style" styleName="Title_Secondary" />
 			<mapping id="imt3" type="style" styleName="Title_Tertiary" />
 			<mapping id="imte" type="style" styleName="Intro_Section_Head" />
+			<mapping id="io" type="style" styleName="Intro_List_Item1" />
 			<mapping id="io1" type="style" styleName="Intro_List_Item1" />
 			<mapping id="io2" type="style" styleName="Intro_List_Item2" />
 			<mapping id="io3" type="style" styleName="Intro_List_Item3" />

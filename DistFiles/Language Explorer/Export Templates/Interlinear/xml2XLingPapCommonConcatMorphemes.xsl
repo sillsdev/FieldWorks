@@ -62,7 +62,7 @@ Elements to ignore or are handled elsewhere
 														<!-- there are other punct items before it; assume only the last one is preceding punct -->
 														<xsl:value-of select="normalize-space(.)"/>
 													</xsl:when>
-													<xsl:when test="contains(.,'(') or contains(.,'[') or contains(.,'{')">
+													<xsl:when test="contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘')">
 														<!-- there are other preceding word items; look for preceding punctuation N.B. may well need to look for characters, too -->
 														<xsl:value-of select="normalize-space(.)"/>
 													</xsl:when>
@@ -72,7 +72,7 @@ Elements to ignore or are handled elsewhere
 											<xsl:value-of select="normalize-space(.)"/>
 											<!-- append any following punctuation -->
 											<xsl:for-each select="../following-sibling::word[1]/item[@type='punct' and @lang=$sLang]">
-												<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{'))">
+												<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
 													<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
 													<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
 												</xsl:if>

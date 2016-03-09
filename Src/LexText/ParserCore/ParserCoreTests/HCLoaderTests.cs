@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Collections;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -54,11 +55,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			base.CreateTestData();
 
+			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem);
+
 			m_noun = AddPartOfSpeech("N");
 			m_verb = AddPartOfSpeech("V");
 			m_adj = AddPartOfSpeech("A");
 
-			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding></HC></ParserParameters>";
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 
 			IFsFeatureSystem phFeatSys = Cache.LanguageProject.PhFeatureSystemOA;
 			AddClosedFeature(phFeatSys, "voc", "+", "-");
@@ -227,10 +230,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void AddBdry(Guid guid, string strRep)
 		{
 			IPhBdryMarker bdry = Cache.ServiceLocator.GetInstance<IPhBdryMarkerFactory>().Create(guid, Cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
-			bdry.Name.SetVernacularDefaultWritingSystem(strRep);
+			ITsString tss = Cache.TsStrFactory.MakeString(strRep, Cache.DefaultAnalWs);
+			bdry.Name.set_String(Cache.DefaultAnalWs, tss);
 			IPhCode code = Cache.ServiceLocator.GetInstance<IPhCodeFactory>().Create();
 			bdry.CodesOS.Add(code);
-			code.Representation.SetVernacularDefaultWritingSystem(strRep);
+			code.Representation.set_String(Cache.DefaultAnalWs, tss);
 		}
 
 		private ILexEntry AddEntry(Guid morphType, string lexemeForm, string gloss, SandboxGenericMSA msa)
@@ -249,13 +253,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return inflClass;
 		}
 
-		private IMoInflClass AddInflectiononSubclass(IMoInflClass parent, string name)
+		private void AddInflectiononSubclass(IMoInflClass parent, string name)
 		{
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			parent.SubclassesOC.Add(inflClass);
 			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
 			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
-			return inflClass;
 		}
 
 		private ICmPossibility AddExceptionFeature(string name)
@@ -595,8 +598,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
 
-			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
-			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past]]"));
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past], POS:V]"));
+			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat"}));
 		}
@@ -958,7 +961,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
 			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
 				m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("a"), m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("t"), ConsFS)));
-			Assert.That(hcPrule.GroupOrder, Is.EqualTo(new[] {"0", "2", "1", "3"}));
+			Assert.That(hcPrule.LeftGroupName, Is.EqualTo("2"));
+			Assert.That(hcPrule.RightGroupName, Is.EqualTo("1"));
 		}
 
 		[Test]
@@ -1063,7 +1067,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
-		public void Variant()
+		public void VariantStem()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
 			ILexEntryInflType type = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
@@ -1085,6 +1089,52 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+		}
+
+		[Test]
+		public void VariantAffix()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			ILexEntryType type = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("ɯt", Cache.DefaultVernWs));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+
+			rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[1];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+		}
+
+		[Test]
+		public void AcceptUnspecifiedGraphemes()
+		{
+			AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ed", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sȧg", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("e"), Is.False);
+			Assert.That(m_lang.Strata[0].SymbolTable.Contains("ȧ"), Is.False);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
+			LoadLanguage();
+
+			FeatureStruct fs;
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("e", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
+			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("ȧ", out fs), Is.True);
+			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 		}
 	}
 }

@@ -755,5 +755,71 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test ability to import a back translation when it contains a footnote not in the
+		/// vernacular text. The footnote should be skipped when importing from FLEx (streamlined
+		/// import).
+		/// We will process this marker sequence:
+		///    id c1 s p v1 \f \f* text
+		/// Jira issue is LT-16743
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SkipExtraFootnoteInBT()
+		{
+			// Set up the vernacular to match the BT we will import.
+			IScrBook book = AddBookToMockedScripture(2, "Exodo");
+
+			IScrSection sectionMajor = AddSectionToMockedBook(book);
+			AddParaToMockedText(sectionMajor.HeadingOA, "Section Head");
+			IStTxtPara para = AddParaToMockedSectionContent(sectionMajor, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(para, "1", ScrStyleNames.ChapterNumber);
+			AddRunToMockedPara(para, "1", ScrStyleNames.VerseNumber);
+			AddRunToMockedPara(para, "verse one text", null);
+
+			m_importer.Settings.ImportBackTranslation = true;
+			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
+			m_importer.StreamLinedImport = true;
+
+			// ************** process a \id segment, test MakeBook() method *********************
+			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
+			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
+			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
+			Assert.AreEqual(2, m_importer.BookNumber);
+			// verify that we didn't create a different book
+			Assert.AreEqual(book.Hvo, m_importer.ScrBook.Hvo);
+
+			// begin section (Scripture text)
+			// ************** process a chapter *********************
+			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
+			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
+			m_importer.ProcessSegment("", @"\c");
+
+			// ************** process a section head (for 1:1) *********************
+			m_importer.ProcessSegment("First Scripture Section", @"\s");
+
+			// ************** process paragraph with unmatched footnote *********************
+			m_importer.ProcessSegment("", @"\p");
+			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
+			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
+			m_importer.ProcessSegment("", @"\v");
+			m_importer.ProcessSegment("+", @"\f");
+			m_importer.ProcessSegment("BT for footnote", @"\ft");
+			m_importer.ProcessSegment("BT text for verse one", @"\vt");
+
+			// ************** finalize **************
+			m_importer.FinalizeImport();
+
+			// Check the BT of the content paragraph
+			Assert.AreEqual(1, para.TranslationsOC.Count);
+			ICmTranslation trans1 = para.GetBT();
+			Assert.IsNotNull(trans1);
+			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;
+			AssertEx.RunIsCorrect(tss1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
+			AssertEx.RunIsCorrect(tss1, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
+			AssertEx.RunIsCorrect(tss1, 2, "BT text for verse one", null, m_wsAnal);
+		}
 	}
 }
