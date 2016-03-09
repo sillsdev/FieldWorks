@@ -2037,6 +2037,8 @@ namespace SIL.FieldWorks.XWorks
 							  "picture not floated right");
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
 							  "css for image did not contain height contraint attribute");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", RegexOptions.Singleline).Success,
+							  "css for image did not contain valid margin attribute");
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
 							  "float not cleared at entry");
 		}

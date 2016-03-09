@@ -528,10 +528,15 @@ namespace SIL.FieldWorks.XWorks
 			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
 			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			var margin = new Property("margin");
-			margin.Term = new TermList(new PrimitiveTerm(UnitType.Point, 0),
-												new PrimitiveTerm(UnitType.Point, 0),
-												new PrimitiveTerm(UnitType.Point, 4),
-												new PrimitiveTerm(UnitType.Point, 4));
+			var marginValues = new TermList();
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
+			margin.Term = marginValues;
 			pictureProps.Add(margin);
 			pictureProps.Add(new Property("padding") { Term = new PrimitiveTerm(UnitType.Point, 2) });
 			pictureProps.Add(new Property("float")
