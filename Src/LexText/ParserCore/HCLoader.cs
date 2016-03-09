@@ -1604,14 +1604,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			bool isMiddleWithLeftSwitch;
 			int[] indices = prule.GetStrucChangeIndices(out isMiddleWithLeftSwitch);
-			if (indices[PhMetathesisRuleTags.kidxLeftEnv] != -1)
-				hcPrule.GroupOrder.AddRange(GetMetathesisGroupNames(prule, 0, indices[PhMetathesisRuleTags.kidxLeftEnv] + 1));
-			hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxRightSwitch].ToString(CultureInfo.InvariantCulture));
-			if (indices[PhMetathesisRuleTags.kidxMiddle] != -1)
-				hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxMiddle].ToString(CultureInfo.InvariantCulture));
-			hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxLeftSwitch].ToString(CultureInfo.InvariantCulture));
-			if (indices[PhMetathesisRuleTags.kidxRightEnv] != -1)
-				hcPrule.GroupOrder.AddRange(GetMetathesisGroupNames(prule, indices[PhMetathesisRuleTags.kidxRightEnv], prule.StrucDescOS.Count));
+			hcPrule.LeftGroupName = indices[PhMetathesisRuleTags.kidxRightSwitch].ToString(CultureInfo.InvariantCulture);
+			hcPrule.RightGroupName = indices[PhMetathesisRuleTags.kidxLeftSwitch].ToString(CultureInfo.InvariantCulture);
 
 			hcPrule.Properties["ID"] = prule.Hvo;
 

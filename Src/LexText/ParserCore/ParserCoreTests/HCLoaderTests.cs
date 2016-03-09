@@ -957,7 +957,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
 			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
 				m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("a"), m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("t"), ConsFS)));
-			Assert.That(hcPrule.GroupOrder, Is.EqualTo(new[] {"0", "2", "1", "3"}));
+			Assert.That(hcPrule.LeftGroupName, Is.EqualTo("2"));
+			Assert.That(hcPrule.RightGroupName, Is.EqualTo("1"));
 		}
 
 		[Test]
