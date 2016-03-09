@@ -127,7 +127,6 @@ DistFiles/ReleaseData/
 
 Lib/debug/graphite2.lib
 Lib/release/graphite2.lib
-Lib/linux/libfieldworks-fdo.pc
 Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
 
