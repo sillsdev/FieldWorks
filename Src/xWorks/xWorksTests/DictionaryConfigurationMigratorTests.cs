@@ -1812,6 +1812,153 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private DictionaryConfigurationModel BuildConvertedHomographNumberNodes()
+		{
+			var subentryHomographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Homograph Number",
+				IsEnabled = true
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentryHomographNumberNode }
+			};
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				IsEnabled = true
+			};
+			var homographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Homograph Number",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, homographNumberNode, subentriesNode }
+			};
+			var minorHomographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Homograph Number",
+				IsEnabled = true
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry",
+				CSSClassNameOverride = "minorentries",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { minorHomographNumberNode }
+			};
+			var parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode };
+			DictionaryConfigurationModel.SpecifyParents(parts);
+
+			return new DictionaryConfigurationModel { Parts = parts, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultHomographNumberNodes()
+		{
+			var subentryHomographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Secondary Homograph Number",
+				FieldDescription = "HomographNumber",
+				IsEnabled = true
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { subentryHomographNumberNode }
+			};
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "MLHeadWord",
+				IsEnabled = true
+			};
+			var homographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Secondary Homograph Number",
+				FieldDescription = "HomographNumber",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, homographNumberNode, subentriesNode }
+			};
+			var minorCfHomographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Secondary Homograph Number",
+				FieldDescription = "HomographNumber",
+				IsEnabled = true
+			};
+			var minorComplexNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Complex Forms)",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentrycomplex",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { minorCfHomographNumberNode }
+			};
+			var minorVarHomographNumberNode = new ConfigurableDictionaryNode
+			{
+				Label = "Secondary Homograph Number",
+				FieldDescription = "HomographNumber",
+				IsEnabled = true
+			};
+			var minorVariantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentryvariant",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { minorVarHomographNumberNode }
+			};
+			var parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorComplexNode, minorVariantNode };
+			DictionaryConfigurationModel.SpecifyParents(parts);
+
+			return new DictionaryConfigurationModel { Parts = parts };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_Homograph_RenamedTo_SecondaryHomographNumber()
+		{
+			const string mainEntriesPath = "//ConfigurationItem[@name='Main Entry']/";
+			const string subentriesPath = "//ConfigurationItem[@name='Main Entry']/ConfigurationItem[@name='Subentries']/";
+			const string minorCfEntriesPath = "//ConfigurationItem[@name='Minor Entry (Complex Forms)']/";
+			const string minorVarEntriesPath = "//ConfigurationItem[@name='Minor Entry (Variants)']/";
+			const string oldHomographPath = "ConfigurationItem[@name='Homograph Number']";
+			const string newHomographPath = "ConfigurationItem[@name='Secondary Homograph Number']";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedConfig = BuildConvertedHomographNumberNodes();
+				convertedConfig.FilePath = convertedModelFile.Path;
+				var defaultConfig = BuildCurrentDefaultHomographNumberNodes();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig);
+				convertedConfig.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(mainEntriesPath + oldHomographPath);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(mainEntriesPath + newHomographPath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(subentriesPath + oldHomographPath);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(subentriesPath + newHomographPath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(minorCfEntriesPath + oldHomographPath);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(minorCfEntriesPath + newHomographPath, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(minorVarEntriesPath + oldHomographPath);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(minorVarEntriesPath + newHomographPath, 1);
+			}
+		}
+
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigrating_ReturnsFalseIfNewReversalConfigsExist()

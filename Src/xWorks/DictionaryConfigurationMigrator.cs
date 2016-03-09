@@ -541,6 +541,10 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Type" && child.Parent.Label == "Variants (of Entry)")
 					result = "Variant Type";
 
+				// Review: LT-17194 This isn't too simplistic, is it?
+				if (child.Label == "Homograph Number")
+					result = "Secondary Homograph Number";
+
 			}
 			return result;
 		}
