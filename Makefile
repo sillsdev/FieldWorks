@@ -236,6 +236,8 @@ install-tree-fdo:
 	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	# Install content and plug-ins
+	# For reasons I don't understand we need strings-en.txt otherwise the tests fail when run from xbuild
+	install -m 644 DistFiles/strings-en.txt $(DESTDIR)/usr/share/fieldworks
 	install -m 644 DistFiles/*.{xml,map,tec,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{Ethnologue,Icu54,Templates} $(DESTDIR)/usr/share/fieldworks
 	# Remove unwanted items
