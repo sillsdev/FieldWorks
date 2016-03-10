@@ -315,12 +315,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-			// Generate the style information specifically for senses
-			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
-			{
-				Value = string.Format(baseSelection)
-			};
-			styleSheet.Rules.Add(senseContentRule);
+				// Generate the style information specifically for senses
+				var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
+				{
+					Value = string.Format(baseSelection)
+				};
+				styleSheet.Rules.Add(senseContentRule);
 			}
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
@@ -454,13 +454,13 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, IPropertyTable propertyTable)
 		{
 			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
-		{
+			{
 				// Don't remove any character level settings since paragraphs can have their own character level
 				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
 				// But do remove any settings that apply only to ":before" formatting.
 				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, propertyTable);
 				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
-			{
+				{
 					if (blockDeclaration.Properties[i].Name == "content")
 					{
 						blockDeclaration.Properties.RemoveAt(i);
@@ -760,17 +760,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)
-			{
+		{
 			// use the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
 			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert spaces to hyphens,
 			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
 			return string.IsNullOrEmpty(configNode.CSSClassNameOverride)
 				? configNode.FieldDescription.Replace(' ', '-') + (string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField)
 				: configNode.CSSClassNameOverride;
-			}
+		}
 
 		private static string GetClassAttributeDupSuffix(ConfigurableDictionaryNode configNode)
-			{
+		{
 			return configNode.IsDuplicate
 				? "_" + (configNode.LabelSuffix = Regex.Replace(configNode.LabelSuffix, "[^a-zA-Z0-9+]", "-"))
 				: string.Empty;
@@ -897,7 +897,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var leadingIndent = 0.0f;
 				if (exportStyleInfo.HasLeadingIndent)
-			{
+				{
 					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
 				}
 

@@ -699,14 +699,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var requiredFS = new FeatureStruct();
 			if (msa.PartOfSpeechRA != null)
 				requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(msa.PartOfSpeechRA));
+			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
+				requiredFS.AddValue(m_headFeature, LoadFeatureStruct(msa.InflFeatsOA, m_language.SyntacticFeatureSystem));
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
-
-			var outFS = new FeatureStruct();
-			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
-				outFS.AddValue(m_headFeature, LoadFeatureStruct(msa.InflFeatsOA, m_language.SyntacticFeatureSystem));
-			outFS.Freeze();
-			mrule.OutSyntacticFeatureStruct = outFS;
 
 			var requiredMprFeatures = new List<MprFeature>();
 			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
@@ -1000,7 +996,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var sb = new StringBuilder();
 							foreach (IPhTerminalUnit termUnit in insertPhones.ContentRS)
 							{
-								string strRep = termUnit.CodesOS[0].Representation.VernacularDefaultWritingSystem.Text;
+								IPhCode code = termUnit.CodesOS[0];
+								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
+									: code.Representation.VernacularDefaultWritingSystem.Text;
 								if (string.IsNullOrEmpty(strRep))
 									throw new InvalidAffixProcessException(allo, false);
 								sb.Append(strRep);
@@ -1608,14 +1606,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			bool isMiddleWithLeftSwitch;
 			int[] indices = prule.GetStrucChangeIndices(out isMiddleWithLeftSwitch);
-			if (indices[PhMetathesisRuleTags.kidxLeftEnv] != -1)
-				hcPrule.GroupOrder.AddRange(GetMetathesisGroupNames(prule, 0, indices[PhMetathesisRuleTags.kidxLeftEnv] + 1));
-			hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxRightSwitch].ToString(CultureInfo.InvariantCulture));
-			if (indices[PhMetathesisRuleTags.kidxMiddle] != -1)
-				hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxMiddle].ToString(CultureInfo.InvariantCulture));
-			hcPrule.GroupOrder.Add(indices[PhMetathesisRuleTags.kidxLeftSwitch].ToString(CultureInfo.InvariantCulture));
-			if (indices[PhMetathesisRuleTags.kidxRightEnv] != -1)
-				hcPrule.GroupOrder.AddRange(GetMetathesisGroupNames(prule, indices[PhMetathesisRuleTags.kidxRightEnv], prule.StrucDescOS.Count));
+			hcPrule.LeftGroupName = indices[PhMetathesisRuleTags.kidxRightSwitch].ToString(CultureInfo.InvariantCulture);
+			hcPrule.RightGroupName = indices[PhMetathesisRuleTags.kidxLeftSwitch].ToString(CultureInfo.InvariantCulture);
 
 			hcPrule.Properties["ID"] = prule.Hvo;
 

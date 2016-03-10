@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Collections;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -53,6 +54,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
+
+			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem);
 
 			m_noun = AddPartOfSpeech("N");
 			m_verb = AddPartOfSpeech("V");
@@ -227,10 +230,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void AddBdry(Guid guid, string strRep)
 		{
 			IPhBdryMarker bdry = Cache.ServiceLocator.GetInstance<IPhBdryMarkerFactory>().Create(guid, Cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
-			bdry.Name.SetVernacularDefaultWritingSystem(strRep);
+			ITsString tss = Cache.TsStrFactory.MakeString(strRep, Cache.DefaultAnalWs);
+			bdry.Name.set_String(Cache.DefaultAnalWs, tss);
 			IPhCode code = Cache.ServiceLocator.GetInstance<IPhCodeFactory>().Create();
 			bdry.CodesOS.Add(code);
-			code.Representation.SetVernacularDefaultWritingSystem(strRep);
+			code.Representation.set_String(Cache.DefaultAnalWs, tss);
 		}
 
 		private ILexEntry AddEntry(Guid morphType, string lexemeForm, string gloss, SandboxGenericMSA msa)
@@ -594,8 +598,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 			var rule = (AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0];
 
-			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
-			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past]]"));
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past], POS:V]"));
+			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat"}));
 		}
@@ -957,7 +961,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
 			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
 				m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("a"), m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("t"), ConsFS)));
-			Assert.That(hcPrule.GroupOrder, Is.EqualTo(new[] {"0", "2", "1", "3"}));
+			Assert.That(hcPrule.LeftGroupName, Is.EqualTo("2"));
+			Assert.That(hcPrule.RightGroupName, Is.EqualTo("1"));
 		}
 
 		[Test]

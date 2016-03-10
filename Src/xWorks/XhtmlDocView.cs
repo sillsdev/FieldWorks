@@ -816,13 +816,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!isReversalIndex)
 			{
-			// Set the configuration part of the title
-			SetConfigViewTitle();
-			//Set the publication part of the title
-			var pubNameTitlePiece = GetCurrentPublication();
+				// Set the configuration part of the title
+				SetConfigViewTitle();
+				//Set the publication part of the title
+				var pubNameTitlePiece = GetCurrentPublication();
 				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
-				pubNameTitlePiece = xWorksStrings.ksAllEntries;
-			titleStr = pubNameTitlePiece + " " + titleStr;
+					pubNameTitlePiece = xWorksStrings.ksAllEntries;
+				titleStr = pubNameTitlePiece + " " + titleStr;
 			}
 			((IPaneBar)m_informationBar).Text = titleStr;
 		}

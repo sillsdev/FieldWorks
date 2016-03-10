@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 		public static string GetCurrentConfiguration(IPropertyTable propertyTable, bool fUpdate, string innerConfigDir = null)
 		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
-			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
+			// before full initialization (if this view is the one being displayed on startup) test the propertyTable before continuing.
 			if(propertyTable == null)
 				return null;
 			if (innerConfigDir == null)
@@ -272,20 +272,20 @@ namespace SIL.FieldWorks.XWorks
 			// If no configuration has yet been selected or the previous selection is invalid,
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
-				{
+			{
 				var selectedPublication = currentConfig.Replace("publish", string.Empty);
 				if (!isDictionary)
-					{
+				{
 					var cache = propertyTable.GetValue<FdoCache>("cache");
 					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
-					}
+				}
 				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration
 				currentConfig = Path.Combine(projectConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
-					if(!File.Exists(currentConfig))
-					{
+				if(!File.Exists(currentConfig))
+				{
 					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
-					}
+				}
 			}
 			if (!File.Exists(currentConfig))
 			{
