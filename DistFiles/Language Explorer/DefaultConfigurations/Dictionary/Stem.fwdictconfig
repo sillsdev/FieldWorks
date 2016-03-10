@@ -1150,7 +1150,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-  	<ConfigurationItem name="Component References" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
+  	<ConfigurationItem name="Component References" before=" (" between=", " after=") " isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
   		<ListTypeOptions list="complex">
   			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
   			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -1160,7 +1160,7 @@
   			<Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
   			<Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
   		</ListTypeOptions>
-  		<ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+  		<ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
   			<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
   				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
   					<Option id="analysis" isEnabled="true"/>
