@@ -108,6 +108,7 @@ namespace SIL.FieldWorks.XWorks
 			public string AfterText { get; set; }
 			public string Style { get; private set; }
 			public bool StylesVisible { get; set; }
+			public bool StylesEnabled { get; set; }
 			public bool SurroundingCharsVisible { get; set; }
 			private UserControl _mOptionsView = null;
 			public UserControl OptionsView
@@ -189,6 +190,7 @@ namespace SIL.FieldWorks.XWorks
 				m_styleSheet.Styles.Add(new BaseStyleInfo { Name = string.Format("CharStyle{0}", i), IsParagraphStyle = false });
 			}
 		}
+
 		#endregion Setup and Teardown
 
 		#region Helpers
@@ -676,28 +678,6 @@ namespace SIL.FieldWorks.XWorks
 			var optionlessNode = new ConfigurableDictionaryNode();
 			controller.LoadNode(optionlessNode);
 			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
-			controller.View.Dispose();
-		}
-
-		[Test]
-		public void LoadNode_LoadingParagraphOptionsViewOnMainEntry()
-		{
-			var paraOptions = new DictionaryNodeParagraphOptions
-			{
-				PargraphStyle = "Dictionary-Normal",
-				ContinuationParagraphStyle = "Dictionary-Continuation"
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = paraOptions,
-				IsEnabled = true
-			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
-			controller.LoadNode(mainEntryNode);
-			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Paragraph OptionsView Test failed, OptionsView shoud not be null");
-			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).StylesVisible, "Paragraph OptionsView Test failed, StylesVisible shoud not be true");
-			Assert.IsFalse(((TestDictionaryDetailsView)controller.View).SurroundingCharsVisible, "Paragraph OptionsView Test failed, SurroundingCharsVisible shoud not be true");
 			controller.View.Dispose();
 		}
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,8 +13,6 @@ using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
 
@@ -22,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	internal class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private int m_wsEn, m_wsFr;
 
@@ -105,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { reversalFormNode },
 				FieldDescription = "ReversalIndexEntry"
 			};
-			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingEnglishReversalEntry();
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -192,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { formNode },
 				FieldDescription = "ReversalIndexEntry"
 			};
-			CssGeneratorTests.SetParentsAndEnabled(reversalNode);
+			CssGeneratorTests.PopulateFieldsForTesting(reversalNode);
 			var rie = CreateInterestingFrenchReversalEntry() as IReversalIndexEntry;
 			var entryHeadWord = rie.ReferringSenses.First().Entry.HeadWord;
 
@@ -257,7 +255,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSenseToReversaEntry(testEntry, "second gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -329,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSingleSubSenseToSense(testEntry, "second gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -444,7 +442,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { formNode, vernFormNode }
 			};
-			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 
 			var noun = CreatePartOfSpeech("noun", "n");
@@ -590,7 +588,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			CssGeneratorTests.SetParentsAndEnabled(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 		}
 	}
 }

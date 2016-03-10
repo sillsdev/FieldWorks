@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.XWorks
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
 				CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver); // Main Entry
 				CopyDefaultsIntoMinorEntryNode(convertedModel.Parts[1], currentDefaultModel.Parts[1], 0, ver); // Main Entry (Complex Forms)
-				convertedModel.Parts[1].Style = currentDefaultModel.Parts[1].Style; // Main Entry had no style in the old model. TODO: LT-17121 (continuation style)
+				convertedModel.Parts[1].Style = currentDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
 				for (var i = 2; i < convertedModel.Parts.Count; ++i)
 				{
 					CopyDefaultsIntoMinorEntryNode(convertedModel.Parts[i], currentDefaultModel.Parts[i],
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Some configuration nodes had name changes in the new verison
 		/// </summary>
-		private string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
+		private static string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
 		{
 			var result = child.Label;
 			if (version == -1)
@@ -538,7 +538,6 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Type" && child.Parent.Label == "Variants (of Entry)")
 					result = "Variant Type";
 
-				// Review: LT-17194 This isn't too simplistic, is it?
 				if (child.Label == "Homograph Number")
 					result = "Secondary Homograph Number";
 

@@ -17,7 +17,6 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
-	[XmlInclude(typeof(DictionaryNodeParagraphOptions))]
 	[XmlInclude(typeof(ReferringSenseOptions))]
 	public abstract class DictionaryNodeOptions
 	{
@@ -177,21 +176,6 @@ namespace SIL.FieldWorks.XWorks
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
-		}
-	}
-
-	/// <summary>Options for Referenced ParagraphOptions</summary>
-	public class DictionaryNodeParagraphOptions : DictionaryNodeOptions
-	{
-		[XmlAttribute(AttributeName = "paragraphStyle")]
-		public string PargraphStyle { get; set; }
-
-		[XmlAttribute(AttributeName = "continuationParagraphStyle")]
-		public string ContinuationParagraphStyle { get; set; }
-
-		public override DictionaryNodeOptions DeepClone()
-		{
-			return DeepCloneInto(new DictionaryNodeParagraphOptions());
 		}
 	}
 

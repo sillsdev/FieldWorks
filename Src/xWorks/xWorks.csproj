@@ -323,12 +323,6 @@
     <Compile Include="DictionaryDetailsView\ListSenseOptionView.Designer.cs">
       <DependentUpon>ListSenseOptionView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.Designer.cs">
-      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
-    </Compile>
     <Compile Include="DictionaryExportService.cs" />
     <Compile Include="IDictionaryListOptionsView.cs" />
     <Compile Include="DictionaryDetailsView\SenseOptionsView.cs">
@@ -348,7 +342,6 @@
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
-    <Compile Include="IDictionaryParagraphOptionsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
@@ -524,9 +517,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\ListSenseOptionView.resx">
       <DependentUpon>ListSenseOptionView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryDetailsView\ParagraphOptionsView.resx">
-      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>

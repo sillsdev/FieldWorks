@@ -11,7 +11,9 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
@@ -47,6 +49,10 @@ namespace SIL.FieldWorks.XWorks
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
 			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
+			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
+			var styles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles;
+			styles.Add(new BaseStyleInfo { Name = "ParaStyle", IsParagraphStyle = true });
+			styles.Add(new BaseStyleInfo { Name = "CharStyle", IsParagraphStyle = false });
 		}
 
 		[TestFixtureTearDown]
@@ -595,12 +601,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mockMediator = new MockMediator(Cache))
 			{
-				var mediator = mockMediator.Mediator;
 				var projectPath = string.Concat(Path.Combine(Path.Combine(
 					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
-				var controller = new DictionaryConfigurationController();
-				var result = controller.GetProjectConfigLocationForPath(projectPath, mediator);
+				var controller = new DictionaryConfigurationController { _mediator = mockMediator.Mediator };
+				var result = controller.GetProjectConfigLocationForPath(projectPath);
 				Assert.AreEqual(result, projectPath);
 			}
 		}
@@ -612,11 +617,10 @@ namespace SIL.FieldWorks.XWorks
 				FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 			using (var mockMediator = new MockMediator(Cache))
 			{
-				var mediator = mockMediator.Mediator;
 				//SUT
-				var controller = new DictionaryConfigurationController();
+				var controller = new DictionaryConfigurationController { _mediator = mockMediator.Mediator };
 				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
-				var result = controller.GetProjectConfigLocationForPath(defaultPath, mediator);
+				var result = controller.GetProjectConfigLocationForPath(defaultPath);
 				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}

@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -447,44 +446,17 @@ namespace SIL.FieldWorks.XWorks
 				return String.Empty;
 			}
 
-			var pieces = new List<string>();
-			const string continuation = @"<div class=""paracontinuation"">";
-			foreach (var config in configuration.Children)
-			{
-				var content = GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings);
-				if (!String.IsNullOrEmpty(content))
-					pieces.Add(content);
-				if (config.CheckForParaNodesEnabled() && !config.CheckForPrevParaNodeSibling())
-					pieces.Add(continuation);
-			}
+			var pieces = configuration.Children.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
+				.Where(content => !string.IsNullOrEmpty(content)).ToList();
 			if (pieces.Count == 0)
-				return String.Empty;
-			// Handle paracontinuation div elements, including an empty one at the end.
-			for (int i = 0; i < pieces.Count; ++i)
-			{
-				if (pieces[i] == continuation)
-				{
-					if (i == pieces.Count - 1)
-					{
-						pieces.RemoveAt(i);		// don't need it if it's empty
-						break;
-					}
-					else
-					{
-						pieces.Add("</div>");	// close it since it's not empty
-					}
-				}
-			}
+				return string.Empty;
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("div");
 				WriteClassNameAttributeForConfig(xw, configuration);
 				xw.WriteAttributeString("id", "g" + entry.Guid);
-				for (int i = 0; i < pieces.Count; ++i)
-				{
-					xw.WriteRaw(pieces[i]);
-				}
+				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
 				return bldr.ToString();
@@ -689,7 +661,7 @@ namespace SIL.FieldWorks.XWorks
 				s_reportedNodes.Add(config);
 				while (config != null)
 				{
-					Debug.WriteLine(String.Format("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? ""));
+					Debug.WriteLine(string.Format("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? ""));
 					config = config.Parent;
 				}
 			}
@@ -1724,7 +1696,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem, object parent)
 		{
-			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions == null)
 				throw new ArgumentException(string.Format("This configuration node had no options and we were expecting them: {0} ({1})", config.DisplayLabel, config.FieldDescription), "config");
 

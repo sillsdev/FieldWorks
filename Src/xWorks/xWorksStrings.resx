@@ -410,8 +410,10 @@ Are you SURE you want to delete the field {2}?</value>
     <comment>action on a tree view item</comment>
   </data>
   <data name="HighlightAffectedContent" xml:space="preserve">
-    <value>Highlight Affected Content</value>
-    <comment>action on a tree view item</comment>
+    <value>Highlight affected content</value>
+  </data>
+  <data name="RemoveHighlighting" xml:space="preserve">
+    <value>Remove highlighting from affected content</value>
   </data>
   <data name="kstidExportingLists" xml:space="preserve">
     <value>Writing possibility list contents</value>
@@ -945,8 +947,5 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
 	<data name="ksCancelingPublicationLabel" xml:space="preserve">
     <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
-  </data>
-	<data name="RemoveHighlighting" xml:space="preserve">
-    <value>Remove highlighting from affected content</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -53,14 +53,11 @@ namespace SIL.FieldWorks.XWorks
 						return Label;
 					return string.Format("{0} ({1})", Label, LabelSuffix);
 				}
-				else
-				{
-					var localLabel = StringTable.LocalizeAttributeValue(Label);
-					if (LabelSuffix == null)
-						return localLabel;
-					var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
-					return string.Format("{0} ({1})", localLabel, localSuffix);
-				}
+				var localLabel = StringTable.LocalizeAttributeValue(Label);
+				if (LabelSuffix == null)
+					return localLabel;
+				var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
+				return string.Format("{0} ({1})", localLabel, localSuffix);
 			}
 		}
 
@@ -166,7 +163,6 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
-		[XmlElement("ParagraphOptions", typeof(DictionaryNodeParagraphOptions))]
 		[XmlElement("ReferringSenseOptions", typeof(ReferringSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
@@ -244,16 +240,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// A match is two nodes with the same label and suffix in the same hierarchy (all ancestors have same labels & suffixes)
 		/// </summary>
-		/// <param name="first"></param>
-		/// <param name="second"></param>
-		/// <returns></returns>
 		private static bool CheckParents(ConfigurableDictionaryNode first, ConfigurableDictionaryNode second)
 		{
 			if(first == null && second == null)
 			{
 				return true;
 			}
-			if((first.Parent == null && second.Parent != null) || (second.Parent == null && first.Parent != null))
+			if((first == null ^ second == null) || (first.Parent == null ^ second.Parent == null)) // ^ is XOR
 			{
 				return false;
 			}
@@ -316,41 +309,6 @@ namespace SIL.FieldWorks.XWorks
 
 			LabelSuffix = newSuffix;
 			return true;
-		}
-
-		/// <summary>
-		/// Check if any enabled nodes preceding this node are displayed in a paragraph
-		/// </summary>
-		public bool CheckForPrevParaNodeSibling()
-		{
-			foreach (var node in Parent.Children)
-			{
-				if (Equals(node, this))
-				{
-					return false;
-				}
-				if (node.CheckForParaNodesEnabled())
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Check if this node is configured to be displayed in a paragraph
-		/// </summary>
-		public bool CheckForParaNodesEnabled()
-		{
-			if(DictionaryNodeOptions is DictionaryNodeSenseOptions )
-			{
-				return IsEnabled && ((DictionaryNodeSenseOptions)DictionaryNodeOptions).DisplayEachSenseInAParagraph;
-			}
-			if (DictionaryNodeOptions is DictionaryNodeComplexFormOptions)
-			{
-				return IsEnabled && ((DictionaryNodeComplexFormOptions)DictionaryNodeOptions).DisplayEachComplexFormInAParagraph;
-			}
-			return false;
 		}
 	}
 }

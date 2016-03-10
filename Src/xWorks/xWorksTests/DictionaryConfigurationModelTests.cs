@@ -970,6 +970,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex", Parent = null };
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode));
+		}
+
+		[Test]
 		public void IsMainEntry_MinorEntry_False()
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
@@ -1008,11 +1015,7 @@ namespace SIL.FieldWorks.XWorks
 				Label = "Entry",
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
-				{
-					PargraphStyle = "Dictionary-Normal",
-					ContinuationParagraphStyle = "Dictionary-Continuation"
-				},
+				Style = "Dictionary-Continuation",
 				Children = new List<ConfigurableDictionaryNode> { senseNode }
 			};
 			var model = new DictionaryConfigurationModel
@@ -1024,8 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			model.EnsureValidStylesInModel(Cache);
 			//SUT
-			Assert.AreEqual("Dictionary-Normal", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).PargraphStyle, "Existing style should remain.");
-			Assert.AreEqual("Dictionary-Continuation", (entryNode.DictionaryNodeOptions as DictionaryNodeParagraphOptions).ContinuationParagraphStyle, "Existing style should remain.");
+			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
 			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
 			Assert.IsNull((senseNode.DictionaryNodeOptions as DictionaryNodeSenseOptions).NumberStyle, "Missing style should be removed.");
 		}
@@ -1036,7 +1038,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				CreateStyle(fact, "Dictionary-Normal", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);		// needed by EnsureValidStylesInModelRemovesMissingStyles
-				CreateStyle(fact, "Dictionary-Continuation", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
 				CreateStyle(fact, "Sense-Paragraph", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
 				CreateStyle(fact, "Dictionary-SenseNumber", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);
 				CreateStyle(fact, "Dictionary-Headword", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
@@ -1094,11 +1095,7 @@ namespace SIL.FieldWorks.XWorks
 				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
-				{
-					PargraphStyle = "Dictionary-Normal",
-					ContinuationParagraphStyle = "Dictionary-Continuation"
-				},
+				Style = "Dictionary-Normal",
 				Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
 			var model = new DictionaryConfigurationModel
@@ -1169,11 +1166,7 @@ namespace SIL.FieldWorks.XWorks
 				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeParagraphOptions
-				{
-					PargraphStyle = "Dictionary-Normal",
-					ContinuationParagraphStyle = "Dictionary-Continuation"
-				},
+				Style = "Dictionary-Normal",
 				Children = new List<ConfigurableDictionaryNode> { senseNode }
 			};
 			var model = new DictionaryConfigurationModel

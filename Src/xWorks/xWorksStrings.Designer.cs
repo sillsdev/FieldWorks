@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Highlight Affected Content.
+        ///   Looks up a localized string similar to Highlight affected content.
         /// </summary>
         internal static string HighlightAffectedContent {
             get {

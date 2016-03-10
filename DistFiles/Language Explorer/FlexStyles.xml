@@ -100,12 +100,6 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 		</tag>
-		<tag id="Dictionary-Continuation" guid="E552C059-F04A-4672-8943-0F36F9F63536" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Style for all main entry content which follows an intermediate paragraph</usage>
-			<help category="Flex_Dictionary_Styles"/>
-			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
-		</tag>
 		<tag id="Dictionary-Normal" guid="7A194E30-4C8C-4934-83AD-B12ECC47A768" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Base style for everything in the Dictionary view.</usage>
 			<help category="Flex_Dictionary_Styles"/>

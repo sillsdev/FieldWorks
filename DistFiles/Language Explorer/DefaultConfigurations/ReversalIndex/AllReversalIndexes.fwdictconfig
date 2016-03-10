@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" version="-1" lastModified="2015-12-17" allPublications="true">
-  <ConfigurationItem name="Reversal Entry" isEnabled="true" field="ReversalIndexEntry">
+  <ConfigurationItem name="Reversal Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 	  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		<Option id="reversal" isEnabled="true" />

@@ -99,19 +99,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					LoadWsOptions(Options as DictionaryNodeWritingSystemOptions);
+					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					LoadSenseOptions(Options as DictionaryNodeSenseOptions, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
+					LoadSenseOptions((DictionaryNodeSenseOptions) Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
-					LoadListOptions(Options as DictionaryNodeListOptions);
-				}
-				else if (Options is DictionaryNodeParagraphOptions)
-				{
-					LoadParagraphOptions(Options as DictionaryNodeParagraphOptions);
+					LoadListOptions((DictionaryNodeListOptions) Options);
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
@@ -120,18 +116,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is ReferringSenseOptions)
 				{
-					LoadListSenseOptions(Options as ReferringSenseOptions);
+					LoadListSenseOptions((ReferringSenseOptions)Options);
 				}
 				else
 				{
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
 				}
-			}
-			else if ("LexEntry".Equals(m_node.FieldDescription))
-			{
-				// Main Entry and Minor Entry are the only two where field=LexEntry; of these, only Main Entry has Options=null
-				// There is nothing to configure on the Main Entry itself
-				View.Visible = false;
 			}
 			else if ("MorphoSyntaxAnalysisRA".Equals(m_node.FieldDescription) && m_node.Parent.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
@@ -140,9 +130,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-
 				// else, show only the default details (style, before, between, after)
 				View.OptionsView = null;
+				if (m_node.Parent == null)
+				{
+					// A top-level node with no Options is a Main Entry node; don't allow the user to change the Style
+					View.StylesEnabled = false;
+				}
 			}
 
 			// Register eventhandlers
@@ -301,6 +295,7 @@ namespace SIL.FieldWorks.XWorks
 			view.AfterText = node.After;
 			view.Visible = true;
 			view.StylesVisible = true;
+			view.StylesEnabled = true;
 			view.Enabled = IsAllParentsChecked(node);
 			view.SurroundingCharsVisible = node.Parent != null; // top-level nodes don't need Surrounding Characters (Before, Between, After)
 		}
@@ -345,23 +340,6 @@ namespace SIL.FieldWorks.XWorks
 
 				wsOptionsView.Load -= WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 			};
-		}
-
-		/// <summary>Initialize options for DictionaryNodeParagraphOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "paragraphOptions is disposed by its parent")]
-		private void LoadParagraphOptions(DictionaryNodeParagraphOptions paragraphOptions)
-		{
-			IDictionaryParagraphOptionsView paragraphOptionsView = new ParagraphOptionsView();
-			paragraphOptionsView.SetParaStyles(m_paraStyles, paragraphOptions.PargraphStyle);
-			paragraphOptionsView.SetContParaStyles(m_paraStyles, paragraphOptions.ContinuationParagraphStyle);
-			paragraphOptionsView.ParaStyleChanged += (sender, e) => RefreshPreview(); // TODO pH 2016.02: prevent the style being changed in the combo
-			paragraphOptionsView.ContParaStyleChanged += (sender, e) => RefreshPreview();
-			paragraphOptionsView.StyleParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ParaStyle);
-			paragraphOptionsView.StyleContParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ContParaStyle);
-			View.OptionsView = paragraphOptionsView as ParagraphOptionsView;
-			View.StylesVisible = false;
-			View.SurroundingCharsVisible = false;
-
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
@@ -427,7 +405,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
-				LoadComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
+				LoadComplexFormOptions((DictionaryNodeComplexFormOptions) listOptions, listOptionsView);
 			}
 			else
 			{
@@ -443,6 +421,16 @@ namespace SIL.FieldWorks.XWorks
 					View.SetStyles(m_paraStyles, m_node.Style, true);
 				}
 			}
+			InternalLoadList(listOptions, listOptionsView);
+
+			// Prevent events from firing while the view is being initialized
+			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
+
+			View.OptionsView = listOptionsView as UserControl;
+		}
+
+		private void InternalLoadList(DictionaryNodeListOptions listOptions, IDictionaryListOptionsView listOptionsView)
+		{
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
 			{
 				listOptionsView.ListViewVisible = false;
@@ -467,11 +455,6 @@ namespace SIL.FieldWorks.XWorks
 
 				listOptionsView.AvailableItems = availableOptions;
 			}
-
-			// Prevent events from firing while the view is being initialized
-			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
-
-			View.OptionsView = listOptionsView as UserControl;
 		}
 
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, IDictionaryListOptionsView listOptionsView)
@@ -618,8 +601,9 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
-		private void LoadStylesLists_ResetComboxBox()
+		private void LoadStylesListsAndRepopulateComboBox()
 		{
+			// TODO (Hasso) 2016.03: update Styles in Model to prevent a crash if user deleted a style
 			LoadStylesLists();
 
 			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
@@ -803,15 +787,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Run the Styles dialog for the Styles Combo. If the Combo is enabled, update its selected value.
+		/// </summary>
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
-				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider,
-				(new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
-			LoadStylesLists_ResetComboxBox();
+			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, combo.Enabled ? LoadStylesListsAndRepopulateComboBox : (Action)null,
+				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, (IApp)m_mediator.PropertyTable.GetValue("App"),
+				m_mediator.HelpTopicProvider, new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 			RefreshPreview(false); // REVIEW (Hasso) 2016.03: we do not currently check whether anything actually changed in the Styles dlg.
-			// REVIEW (cont): LoadStylesLists_ResetComboBox updates the Style combo, triggering a RefreshPreview(true),
-			// REVIEW (cont):   which registers that changes [could] have been made that need to be saved.
+			// REVIEW (cont): LoadStylesLists_ResetComboBox (called when the user has made changes in the Styles dialog) updates the Style combo,
+			// REVIEW (cont):   triggering a RefreshPreview(true), which registers that changes [could] have been made that need to be saved.
 			// REVIEW (cont): RefreshPreview(false) registers that changes [could] have been made and already saved to the Styles
 		}
 
@@ -894,13 +880,11 @@ namespace SIL.FieldWorks.XWorks
 			}).ToList();
 
 			if (Options is DictionaryNodeWritingSystemOptions)
-				(Options as DictionaryNodeWritingSystemOptions).Options = options;
+				((DictionaryNodeWritingSystemOptions) Options).Options = options;
 			else if (Options is DictionaryNodeListOptions)
 				(Options as DictionaryNodeListOptions).Options = options;
 			else if (Options is ReferringSenseOptions)
-			{
 				(Options as ReferringSenseOptions).WritingSystemOptions.Options = options;
-			}
 			else
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 

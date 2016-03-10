@@ -200,16 +200,18 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void EnsureValidStylesInModel(FdoCache cache)
 		{
-			var styles = new Dictionary<string, IStStyle>();
-			foreach (var style in cache.LangProject.StylesOC)
-				styles.Add(style.Name, style);
-			foreach (var part in this.Parts)
+			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
+			foreach (var part in Parts)
+			{
+				if (IsMainEntry(part) && string.IsNullOrEmpty(part.Style))
+					part.Style = "Dictionary-Normal";
 				EnsureValidStylesInConfigNodes(part, styles);
+			}
 		}
 
-		private void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
+		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
-			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+			if (!string.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
 				node.Style = null;
 			if (node.DictionaryNodeOptions != null)
 				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
@@ -220,22 +222,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void EnsureValidStylesInNodeOptions(DictionaryNodeOptions options, Dictionary<string, IStStyle> styles)
+		private static void EnsureValidStylesInNodeOptions(DictionaryNodeOptions options, Dictionary<string, IStStyle> styles)
 		{
-			if (options is DictionaryNodeParagraphOptions)
-			{
-				var paraOptions = options as DictionaryNodeParagraphOptions;
-				if (!String.IsNullOrEmpty(paraOptions.PargraphStyle) && !styles.ContainsKey(paraOptions.PargraphStyle))
-					paraOptions.PargraphStyle = null;
-				if (!String.IsNullOrEmpty(paraOptions.ContinuationParagraphStyle) && !styles.ContainsKey(paraOptions.ContinuationParagraphStyle))
-					paraOptions.ContinuationParagraphStyle = null;
-			}
-			else if (options is DictionaryNodeSenseOptions)
-			{
-				var senseOptions = options as DictionaryNodeSenseOptions;
-				if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
-					senseOptions.NumberStyle = null;
-			}
+			var senseOptions = options as DictionaryNodeSenseOptions;
+			if (senseOptions == null)
+				return;
+			if (!string.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+				senseOptions.NumberStyle = null;
 		}
 
 		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)
@@ -333,19 +326,20 @@ namespace SIL.FieldWorks.XWorks
 			return Label;
 		}
 
-		/// <summary>
-		/// If node is a Main Entry node.
-		/// </summary>
-		/// <remarks>
-		/// Other things to check could include FieldDescription == "LexEntry" and Parent == null.
-		/// </remarks>
+		/// <summary>If node is a Main Entry node.</summary>
 		internal static bool IsMainEntry(ConfigurableDictionaryNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");
-			if (node.CSSClassNameOverride == "entry")
-				return true;
-			return false;
+			switch (node.CSSClassNameOverride)
+			{
+				case "entry":
+				case "mainentrycomplex":
+				case "reversalindexentry":
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 }

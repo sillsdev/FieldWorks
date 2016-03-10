@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal Mediator _mediator;
 
+		private FdoCache Cache { get { return (FdoCache)_mediator.PropertyTable.GetValue("cache"); } }
+
 		/// <summary>
 		/// The view to display the model in
 		/// </summary>
@@ -92,8 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void LoadDictionaryConfigurations()
 		{
-			var cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
-			_dictionaryConfigurations = GetDictionaryConfigurationModels(cache, _defaultConfigDir, _projectConfigDir);
+			_dictionaryConfigurations = GetDictionaryConfigurationModels(Cache, _defaultConfigDir, _projectConfigDir);
 			View.SetChoices(_dictionaryConfigurations);
 		}
 
@@ -333,7 +334,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator, ICmObject previewEntry)
 		{
 			_mediator = mediator;
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var cache = Cache;
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
 				(ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
@@ -448,7 +449,7 @@ namespace SIL.FieldWorks.XWorks
 				// Details may need to be enabled or disabled
 				RefreshPreview();
 				View.TreeControl.Tree.SelectedNode = FindTreeNode(node, View.TreeControl.Tree.Nodes);
-				BuildAndShowOptions(node, mediator);
+				BuildAndShowOptions(node);
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
@@ -457,11 +458,11 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsMainEntry(node);
+				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsMainEntry(node); // REVIEW (Hasso) 2016.03: we want to duplicate MainComplexForms in Stem
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
-				BuildAndShowOptions(node, mediator);
+				BuildAndShowOptions(node);
 
 				if (_isHighlighted)
 				{
@@ -535,7 +536,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var config in _dictionaryConfigurations)
 			{
-				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);
+				config.FilePath = GetProjectConfigLocationForPath(config.FilePath);
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
@@ -544,10 +545,9 @@ namespace SIL.FieldWorks.XWorks
 			m_isDirty = false;
 		}
 
-		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)
+		internal string GetProjectConfigLocationForPath(string filePath)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			if(filePath.StartsWith(projectConfigDir))
 			{
 				return filePath;
@@ -559,11 +559,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate options pane, from model.
 		/// </summary>
-		private void BuildAndShowOptions(ConfigurableDictionaryNode node, Mediator mediator)
+		private void BuildAndShowOptions(ConfigurableDictionaryNode node)
 		{
 			if (DetailsController == null)
 			{
-				DetailsController = new DictionaryDetailsController(new DetailsView(), mediator);
+				DetailsController = new DictionaryDetailsController(new DetailsView(), _mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
 				DetailsController.ExternalDialogMadeChanges += (sender, e) => RefreshPreview(false);
 			}

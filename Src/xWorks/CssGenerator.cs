@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,6 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-		internal const string DictionaryContinuation = "Dictionary-Continuation";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
@@ -114,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 				var minorEntryNode = model.Parts[i];
 				if (minorEntryNode.IsEnabled)
 				{
-					var styleName = GetParagraphStyleNameFromNode(minorEntryNode);
+					var styleName = minorEntryNode.Style;
 					if (string.IsNullOrEmpty(styleName))
 						styleName = DictionaryMinor;
 					var dictionaryMinorStyle = GenerateCssStyleFromFwStyleSheet(styleName, 0, mediator);
@@ -155,17 +154,6 @@ namespace SIL.FieldWorks.XWorks
 																			  string baseSelection,
 																			  Mediator mediator)
 		{
-			// If we are displaying this node in a paragraph then we should generate the selector for the content in the continuation paragraph
-			if (configNode.CheckForParaNodesEnabled())
-			{
-				var intermediateRule = GenerateRuleforContentFollowIntermediatePara(baseSelection + "> " + SelectBareClassName(configNode), mediator, configNode);
-				styleSheet.Rules.Add(intermediateRule);
-			}
-			// If we are part of a continuation paragraph modify the base selector to include the div
-			if (configNode.Parent != null && configNode.Parent.Parent == null && configNode.CheckForPrevParaNodeSibling())
-			{
-				baseSelection = baseSelection.Contains(".paracontinuation") ? baseSelection : string.Concat(baseSelection, " .paracontinuation");
-			}
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			var referringsenseOptions = configNode.DictionaryNodeOptions as ReferringSenseOptions;
@@ -195,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 				if (pictureOptions != null)
 				{
-					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
+					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection);
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					(FdoCache) mediator.PropertyTable.GetValue("cache"), mediator);
@@ -329,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
-				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" ."));
+				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" .", StringComparison.Ordinal));
 				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
 					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", mediator);
@@ -406,23 +394,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
-		}
-
-		/// <summary>
-		/// Generates rule for Content Following Intermediate Para
-		/// </summary>
-		/// <param name="baseSelection">base class tree</param>
-		/// <param name="mediator">mediator to get the styles</param>
-		/// <param name="configNode"></param>
-		/// <param name="classname">preceding class name</param>
-		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, Mediator mediator, ConfigurableDictionaryNode configNode)
-		{
-			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, configNode, mediator);
-			var rule = new StyleRule(styledeclaration)
-			{
-				Value = string.Format("{0} ~ .paracontinuation", baseSelection)
-			};
-			return rule;
 		}
 
 		/// <summary>
@@ -533,9 +504,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-																		  StyleSheet styleSheet, string baseSelection, Mediator mediator)
+			StyleSheet styleSheet, string baseSelection)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var pictureAndCaptionRule = new StyleRule();
 			pictureAndCaptionRule.Value = baseSelection + " " + SelectClassName(configNode);
 
@@ -597,10 +567,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
-		/// <param name="parentSelector"></param>
-		/// <param name="configNode"></param>
-		/// <param name="baseSelection"></param>
-		/// <returns></returns>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
@@ -982,7 +948,7 @@ namespace SIL.FieldWorks.XWorks
 					return ancestorIndents;
 			} while (!IsParagraphStyle(parentNode, styleSheet));
 
-			var projectStyle = styleSheet.Styles[GetParagraphStyleNameFromNode(parentNode, currentNode.CheckForPrevParaNodeSibling())];
+			var projectStyle = styleSheet.Styles[parentNode.Style];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 
 			return new Tuple<float, float>(GetLeadingIndent(exportStyleInfo),
@@ -1003,19 +969,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, FwStyleSheet styleSheet)
 		{
-			var style = GetParagraphStyleNameFromNode(node);
+			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Character)
+				return false;
+			var style = node.Style;
 			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
-		}
-
-		private static string GetParagraphStyleNameFromNode(ConfigurableDictionaryNode node, bool isContinuation = false)
-		{
-			var paragraphOptions = node.DictionaryNodeOptions as DictionaryNodeParagraphOptions;
-			if (isContinuation && paragraphOptions != null)
-				return paragraphOptions.ContinuationParagraphStyle;
-			var style = !string.IsNullOrEmpty(node.Style)
-				? node.Style
-				: paragraphOptions == null ? null : paragraphOptions.PargraphStyle;
-			return style;
 		}
 
 		/// <summary>

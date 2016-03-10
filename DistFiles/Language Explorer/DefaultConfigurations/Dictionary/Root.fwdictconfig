@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="1" lastModified="2014-10-07">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
-  <ConfigurationItem name="Main Entry" style="Dictionary-Normal" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
-  <ParagraphOptions paragraphStyle="Dictionary-Normal" continuationParagraphStyle="Dictionary-Continuation" />
+  <ConfigurationItem name="Main Entry" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
   <!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
 	   prevents styles for the main HeadWord from leaking onto other HeadWords -->
 	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
