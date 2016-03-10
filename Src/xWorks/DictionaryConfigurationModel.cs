@@ -20,6 +20,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationModel
 	{
 		public const string FileExtension = ".fwdictconfig";
+		public const string AllReversalIndexes = "All Reversal Indexes";
 
 		/// <summary>
 		/// Trees of dictionary elements
@@ -63,6 +64,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool AllPublications { get; set; }
 
 		/// <summary>
+		/// The writing system of the configuration.
+		/// </summary>
+		[XmlAttribute(AttributeName = "writingSystem")]
+		public string WritingSystem { get; set; }
+
+		/// <summary>
 		/// File where data is stored
 		/// </summary>
 		[XmlIgnore]
@@ -88,6 +95,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
 				Label = model.Label;
+				WritingSystem = model.WritingSystem;
 				LastModified = model.LastModified;
 				Version = model.Version;
 				Parts = model.Parts;

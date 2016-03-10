@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (model.Reversals == null)
 				return;
-			foreach (var reversal in model.Reversals)
+			foreach (var reversal in model.SelectedReversals)
 			{
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
 				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
 				}
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.RFC5646));
-				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig"); // TODO (Hasso) 2016.01: what if the user wants to use a copy of this config?
+				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig");
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
 				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);

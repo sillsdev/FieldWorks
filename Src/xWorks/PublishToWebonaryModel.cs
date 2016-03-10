@@ -66,8 +66,8 @@ namespace SIL.FieldWorks.XWorks
 		public List<string> Publications { get; set; }
 
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
+		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
-		public IEnumerable<string> Reversals { get; set; }
 		private Mediator Mediator { get; set; }
 
 		public PublishToWebonaryModel(Mediator mediator)
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 			var projectSettings = Mediator.PropertyTable;
 			projectSettings.SetProperty(WebonarySite, SiteName, false);
 			projectSettings.SetPropertyPersistence(WebonarySite, true);
-			projectSettings.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals), false);
+			projectSettings.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), false);
 			projectSettings.SetPropertyPersistence(WebonaryReversals, true);
 			if(m_selectedConfiguration != null)
 			{

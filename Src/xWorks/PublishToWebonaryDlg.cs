@@ -94,6 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			PopulateConfigurationsListBySelectedPublication();
+			PopulateReversalsCheckboxList();
 		}
 
 		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -121,9 +122,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private void PopulateReversalsCheckboxList()
 		{
-			foreach(var reversal in Model.Reversals)
+			var selectedConfiguration =
+				Model.Reversals.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			reversalsCheckedListBox.Items.Clear();
+			foreach (var reversal in selectedConfiguration)
 			{
-				reversalsCheckedListBox.Items.Add(reversal);
+				if (reversal.Value.Label != DictionaryConfigurationModel.AllReversalIndexes)
+				reversalsCheckedListBox.Items.Add(reversal.Value.Label);
 			}
 		}
 
@@ -135,8 +140,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Load the contents of the drop down and checkbox list controls
 				PopulatePublicationsList();
-				PopulateReversalsCheckboxList();
-
 				if(Model.RememberPassword)
 				{
 					rememberPasswordCheckbox.Checked = true;
@@ -144,7 +147,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
-				SetSelectedReversals(Model.SelectedReversals);
 				if (!String.IsNullOrEmpty(Model.SelectedPublication))
 				{
 					publicationBox.SelectedItem = Model.SelectedPublication;
@@ -153,6 +155,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					publicationBox.SelectedIndex = 0;
 				}
+				PopulateReversalsCheckboxList();
+				SetSelectedReversals(Model.SelectedReversals);
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
 					configurationBox.SelectedItem = Model.SelectedConfiguration;
@@ -170,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 			Model.Password = webonaryPasswordTextbox.Text;
 			Model.UserName = webonaryUsernameTextbox.Text;
 			Model.SiteName = webonarySiteNameTextbox.Text;
-			Model.Reversals = GetSelectedReversals();
+			Model.SelectedReversals = GetSelectedReversals();
 			if(configurationBox.SelectedItem != null)
 			{
 				Model.SelectedConfiguration = configurationBox.SelectedItem.ToString();

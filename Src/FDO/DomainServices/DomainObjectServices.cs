@@ -2467,6 +2467,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				var xmldoc = XDocument.Load(newWsCompleteFilePath);
 				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
 				xElement.Value = curWsLabel;
+				xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("writingSystem");
+				xElement.Value = curWs;
 				xmldoc.Save(newWsCompleteFilePath);
 
 				var wsObj = wsMgr.Get(curWs);

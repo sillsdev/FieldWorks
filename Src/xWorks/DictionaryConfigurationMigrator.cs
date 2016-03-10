@@ -290,6 +290,17 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
+			if (currentDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes && convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
+			{
+				convertedModel.WritingSystem = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Where(
+					x => x.DisplayLabel == convertedModel.Label)
+					.Select(x => x.IcuLocale).FirstOrDefault();
+			}
+			else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
+			{
+				convertedModel.WritingSystem = "";
+			}
+
 			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver); // copy defaults into the Main Entry node
 			for(var i = 1; i < convertedModel.Parts.Count; ++i)
 			{
