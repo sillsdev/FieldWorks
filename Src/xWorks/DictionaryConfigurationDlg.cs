@@ -250,10 +250,14 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode topLevelNode)
 		{
 			var elements = new List<GeckoElement>();
+			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{
-				if (DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
+				if (span.GetAttribute("class") == desiredClass &&
+					DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
+				{
 					elements.Add(span);
+				}
 			}
 			return elements;
 		}
