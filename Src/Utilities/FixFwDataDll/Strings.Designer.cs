@@ -259,11 +259,11 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Removing link to nonexistent ownerguid=&apos;{0}&apos; (class=&apos;{1}&apos;, guid=&apos;{2}&apos;)..
+        ///   Looks up a localized string similar to Removing object with nonexistent owner (ownerguid=&apos;{0}&apos;, (class=&apos;{1}&apos;, guid=&apos;{2}&apos;)..
         /// </summary>
-        internal static string ksRemovingLinkToNonexistentOwner {
+        internal static string ksRemovingObjectWithBadOwner {
             get {
-                return ResourceManager.GetString("ksRemovingLinkToNonexistentOwner", resourceCulture);
+                return ResourceManager.GetString("ksRemovingObjectWithBadOwner", resourceCulture);
             }
         }
         
