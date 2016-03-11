@@ -415,6 +415,7 @@ namespace SIL.FieldWorks.XWorks
 				var cctrls = bar.Controls.Count;
 				bar.Controls[cctrls - 1].Width = spacerWidth;
 				bar.Controls[cctrls - 1].Text = activeLayoutName;
+				bar.Refresh();
 			}
 		}
 

@@ -792,7 +792,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
-			ResetSpacer(maxViewWidth, curViewName);
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator) == xWorksStrings.ReversalIndex;
+			if (!isReversalIndex)
+				ResetSpacer(maxViewWidth, curViewName);
+			else
+				((IPaneBar) m_informationBar).Text = curViewName;
 		}
 
 		/// <summary>
@@ -816,7 +820,16 @@ namespace SIL.FieldWorks.XWorks
 			if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
 				pubNameTitlePiece = xWorksStrings.ksAllEntries;
 			titleStr = pubNameTitlePiece + " " + titleStr;
-			((IPaneBar) m_informationBar).Text = titleStr;
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator) == xWorksStrings.ReversalIndex;
+			if (isReversalIndex)
+			{
+				var maxViewWidth = Width / 2 - kSpaceForMenuButton;
+				// Limit length of View title to remaining available width
+				titleStr = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), titleStr);
+				ResetSpacer(maxViewWidth, titleStr);
+			}
+			else
+				((IPaneBar) m_informationBar).Text = titleStr;
 		}
 
 		private const int kSpaceForMenuButton = 26;

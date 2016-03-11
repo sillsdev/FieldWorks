@@ -784,16 +784,16 @@
 		</menu>
 		<menu id="PaneBar-ReversalIndicesMenu">
 			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
-			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
-			<item label="-" translate="do not translate"/>
-			<item command="CmdConfigureDictionary"/>
-			</menu>
-			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
 				<item command="CmdShowAllPublications"/>
 				<menu list="Publications" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
 				<item label="-" translate="do not translate"/> <!-- separator -->
 				<item command="CmdPublicationsJumpToDefault"/>
+			</menu>
+			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdConfigureDictionary"/>
 			</menu>
 		</menu>
 
@@ -1031,7 +1031,6 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<!-- Properties that should never persist -->
 		<property name="SuspendLoadListUntilOnChangeFilter" value="" persist="false" settingsGroup="local"/>
 		<property name="SuspendLoadingRecordUntilOnJumpToRecord" value="" persist="false" settingsGroup="local"/>
-		<property name="SelectedPublication" value="Main Dictionary" persist="true" settingsGroup="local"/>
 	</defaultProperties>
 	<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar).
 	this path is relative to be executing application.-->
