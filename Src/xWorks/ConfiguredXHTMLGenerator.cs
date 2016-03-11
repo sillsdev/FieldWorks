@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
 		{
-			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form");
+			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form" || clerk.SortName == "Reversal Form");
 		}
 
 		/// <summary>
