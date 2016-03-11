@@ -183,47 +183,63 @@ namespace SIL.FieldWorks.XWorks
 					element.SetAttribute("style", "");
 				_highlightedElements = null;
 			}
-			if (configNode != null)
-			{
-				var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
-				// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
-				_highlightedElements = FindConfiguredItem(configNode, browser);
-				foreach (var element in _highlightedElements)
-					element.SetAttribute("style", "background-color:Yellow");	// LightYellow isn't really bold enough marking to my eyes for this feature.
-			}
-
+			if (configNode == null)
+				return;
+			var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
+			_highlightedElements = FindConfiguredItem(configNode, browser);
+			foreach (var element in _highlightedElements)
+				element.SetAttribute("style", "background-color:Yellow");	// LightYellow isn't really bold enough marking to my eyes for this feature.
 		}
 
-		private List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode configNode, GeckoWebBrowser browser)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "body is a reference")]
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser)
 		{
 			var elements = new List<GeckoElement>();
-			var classNames = new List<string>();
-			for (var node = configNode; node != null; node = node.Parent)
-				classNames.Insert(0, CssGenerator.GetClassAttributeForConfig(node));
-			var body = browser.Document.DocumentElement.GetElementsByTagName("body").FirstOrDefault();
-			if (body != null)
+			var body = browser.Document.Body;
+			if (body == null || selectedConfigNode == null) // Sanity check
+				return elements;
+
+			var topLevelConfigNode = GetTopLevelNode(selectedConfigNode);
+			var topLevelClass = CssGenerator.GetClassAttributeForConfig(topLevelConfigNode);
+			foreach (var div in body.GetElementsByTagName("div"))
 			{
-				foreach (var div in body.GetElementsByTagName("div"))
-				{
-					if (div.GetAttribute("class") == classNames[0])
-						elements.AddRange(FindMatchingSpan(div, classNames, 1));
-				}
+				if (Equals(div.ParentElement, body) && div.GetAttribute("class") == topLevelClass)
+					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode));
 			}
 			return elements;
 		}
 
-		private List<GeckoElement> FindMatchingSpan(GeckoElement parent, List<string> classNames, int idxClass)
+		private static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
+		{
+			ConfigurableDictionaryNode topLevelConfigNode = null;
+			for (var node = childNode; node != null; node = node.Parent)
+			{
+				topLevelConfigNode = node;
+			}
+			return topLevelConfigNode;
+		}
+
+		private static bool DoesGeckoElementOriginateFromConfigNode(ConfigurableDictionaryNode configNode, GeckoElement element,
+			ConfigurableDictionaryNode topLevelNode)
+		{
+			Guid dummyGuid;
+			GeckoElement dummyElement;
+			var classListForGeckoElement = XhtmlDocView.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
+			classListForGeckoElement.RemoveAt(0); // don't need the top level class
+			var nodeToMatch = DictionaryConfigurationController.FindStartingConfigNode(topLevelNode, classListForGeckoElement);
+			return Equals(nodeToMatch, configNode);
+		}
+
+		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
+			ConfigurableDictionaryNode topLevelNode)
 		{
 			var elements = new List<GeckoElement>();
-			if (idxClass >= classNames.Count)
-			{
-				elements.Add(parent);
-				return elements;
-			}
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{
-				if (span.GetAttribute("class") == classNames[idxClass])
-					elements.AddRange(FindMatchingSpan(span, classNames, idxClass + 1));
+				if (DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
+					elements.Add(span);
 			}
 			return elements;
 		}

@@ -149,9 +149,13 @@ namespace SIL.FieldWorks.XWorks
 			e.Handled = true;
 		}
 
+		/// <summary>
+		/// Returns the class hierarchy for a GeckoElement
+		/// </summary>
+		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "elem does NOT need to be disposed locally!")]
-		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
+		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
 			entryElement = element;

@@ -977,7 +977,8 @@ namespace SIL.FieldWorks.XWorks
 		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better
 		/// match.
 		/// </summary>
-		private ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
+		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
+		internal static ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
 		{
 			if (classList.Count == 0)
 				return topNode;  // what we have already is the best we can find.
@@ -1019,7 +1020,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private TreeNode FindMatchingTreeNode(TreeNode node, ConfigurableDictionaryNode configNode)
 		{
-			if ((node.Tag as ConfigurableDictionaryNode) == configNode)
+			if (node.Tag as ConfigurableDictionaryNode == configNode)
 				return node;
 			foreach (TreeNode child in node.Nodes)
 			{
