@@ -222,6 +222,8 @@ namespace SIL.FieldWorks.XWorks
 			else
 				HasSavedAnyChanges = true;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
+			if(_isHighlighted)
+				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode);
 		}
 
 		/// <summary>

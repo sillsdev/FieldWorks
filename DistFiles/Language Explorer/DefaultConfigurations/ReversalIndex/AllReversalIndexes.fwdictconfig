@@ -20,13 +20,10 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Referenced Senses" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after=" " field="MLOwnerOutlineName" cssClassNameOverride="headword">
-	  <ReferringSenseOptions>
+	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after=" " field="ReversalName" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
-		<SenseOptions numberStyle="Sense-Reference-Number" numberBefore=" " numberingStyle="%O" numberAfter="" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-		</ReferringSenseOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Owner" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">

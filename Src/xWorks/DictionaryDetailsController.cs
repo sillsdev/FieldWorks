@@ -114,10 +114,6 @@ namespace SIL.FieldWorks.XWorks
 					// todo: loading options here once UX has been worked out
 					View.OptionsView = null;
 				}
-				else if (Options is ReferringSenseOptions)
-				{
-					LoadListSenseOptions((ReferringSenseOptions)Options);
-				}
 				else
 				{
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
@@ -144,70 +140,6 @@ namespace SIL.FieldWorks.XWorks
 			View.AfterTextChanged += OnViewOnAfterTextChanged;
 
 			View.ResumeLayout();
-		}
-
-		private void LoadListSenseOptions(ReferringSenseOptions listOptions)
-		{
-			string numberingStyles = "x";
-			var listOptionsView = new ListSenseOptionView
-			{
-				DisplayOptionCheckBoxVisible = true,
-				BeforeText = listOptions.SenseOptions.BeforeNumber,
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(),
-				NumberingStyle = listOptions.SenseOptions.NumberingStyle,
-				AfterText = listOptions.SenseOptions.AfterNumber,
-				NumberSingleSense = listOptions.SenseOptions.NumberEvenASingleSense,
-				ShowGrammarFirst = listOptions.SenseOptions.ShowSharedGrammarInfoFirst,
-				SenseInPara = false,
-				DisplayOptionCheckBoxChecked = listOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations,
-			};
-			if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
-				{
-					View.SetStyles(m_paraStyles, m_node.Style, true);
-				}
-			// load character Style (number) and paragraph Style (sense)
-			listOptionsView.SetStyles(m_charStyles, listOptions.SenseOptions.NumberStyle);
-			View.SetStyles(m_paraStyles, m_node.Style, true);
-
-			// (dis)actviate appropriate parts of the view
-			listOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(listOptions.SenseOptions.NumberingStyle);
-			ToggleViewForShowInPara(listOptions.SenseOptions.DisplayEachSenseInAParagraph);
-
-			// Register eventhandlers
-			listOptionsView.BeforeTextChanged += (sender, e) => { listOptions.SenseOptions.BeforeNumber = listOptionsView.BeforeText; RefreshPreview(); };
-			var senseoptions = listOptions.SenseOptions;
-			listOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseoptions, listOptionsView);
-			listOptionsView.AfterTextChanged += (sender, e) => { senseoptions.AfterNumber = listOptionsView.AfterText; RefreshPreview(); };
-			listOptionsView.NumberStyleChanged += (sender, e) => { senseoptions.NumberStyle = listOptionsView.NumberStyle; RefreshPreview(); };
-			// ReSharper disable ImplicitlyCapturedClosure
-			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
-			listOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, listOptionsView.NumberStyle);
-			// ReSharper restore ImplicitlyCapturedClosure
-			listOptionsView.NumberSingleSenseChanged += (sender, e) =>
-			{
-				senseoptions.NumberEvenASingleSense = listOptionsView.NumberSingleSense;
-				RefreshPreview();
-			};
-			listOptionsView.ShowGrammarFirstChanged += (sender, e) =>
-			{
-				senseoptions.ShowSharedGrammarInfoFirst = listOptionsView.ShowGrammarFirst;
-				RefreshPreview();
-			};
-			listOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseoptions, listOptionsView);
-
-			var wsOptions = listOptions.WritingSystemOptions;
-			var availableWSs = LoadAvailableWsList(wsOptions);
-
-			listOptionsView.AvailableItems = availableWSs;
-
-			// Displaying WS Abbreviations is available only when multiple WS's are selected.
-			listOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
-
-			// Prevent events from firing while the view is being initialized
-			listOptionsView.Load += WritingSystemEventHandlerAdder(listOptionsView, wsOptions);
-			// add listOptionsView to the DetailsView
-
-			View.OptionsView = listOptionsView;
 		}
 
 		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
@@ -876,9 +808,7 @@ namespace SIL.FieldWorks.XWorks
 			if (Options is DictionaryNodeWritingSystemOptions)
 				((DictionaryNodeWritingSystemOptions) Options).Options = options;
 			else if (Options is DictionaryNodeListOptions)
-				(Options as DictionaryNodeListOptions).Options = options;
-			else if (Options is ReferringSenseOptions)
-				(Options as ReferringSenseOptions).WritingSystemOptions.Options = options;
+				((DictionaryNodeListOptions) Options).Options = options;
 			else
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 

@@ -163,7 +163,6 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
-		[XmlElement("ReferringSenseOptions", typeof(ReferringSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>

@@ -90,16 +90,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
 		internal static void PopulateFieldsForTesting(ConfigurableDictionaryNode node)
 		{
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { node });
+			Assert.NotNull(node);
+			if(node.Parent == null)
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { node });
 			// avoid test problems in ConfigurableDictionaryNode.GetHashCode() if no Label is set
 			if (string.IsNullOrEmpty(node.Label))
 				node.Label = node.FieldDescription;
-			EnableNodeAndChildren(node);
-		}
 
-		private static void EnableNodeAndChildren(ConfigurableDictionaryNode node)
-		{
-			Assert.NotNull(node);
 			node.IsEnabled = true;
 			if (node.DictionaryNodeOptions != null)
 				EnableAllListOptions(node.DictionaryNodeOptions);
@@ -108,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			foreach (var childNode in node.Children)
 			{
-				EnableNodeAndChildren(childNode);
+				PopulateFieldsForTesting(childNode);
 			}
 		}
 
@@ -126,14 +123,6 @@ namespace SIL.FieldWorks.XWorks
 			else if (options is DictionaryNodeWritingSystemOptions)
 			{
 				checkList = ((DictionaryNodeWritingSystemOptions) options).Options;
-			}
-			else if (options is ReferringSenseOptions)
-			{
-				var refSenseOptions = (ReferringSenseOptions) options;
-				if (refSenseOptions.WritingSystemOptions != null)
-				{
-					checkList = refSenseOptions.WritingSystemOptions.Options;
-				}
 			}
 			else
 			{

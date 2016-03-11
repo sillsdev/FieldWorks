@@ -156,20 +156,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			var referringsenseOptions = configNode.DictionaryNodeOptions as ReferringSenseOptions;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections. Also set display:block on span
 				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, mediator);
-			}
-			else if (referringsenseOptions != null)
-			{
-				// Try to generate the css for the sense number before the baseSelection is updated because
-				// the sense number is a sibling of the sense element and we are normally applying styles to the
-				// children of collections. Also set display:block on span
-				GenerateCssForReferringHeadword(configNode, referringsenseOptions.SenseOptions, styleSheet, ref baseSelection, mediator);
 			}
 			else
 			{
@@ -323,77 +315,6 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", mediator);
 				}
 			}
-		}
-
-		private static void GenerateCssForReferringHeadword(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, ref string baseSelection, Mediator mediator)
-		{
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
-			var senseNumberRule = new StyleRule();
-			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
-			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
-			var senseNumberSelector = string.Format("{0} .referringsensenumber", baseSelection);
-
-			senseNumberRule.Value = senseNumberSelector;
-			if (!String.IsNullOrEmpty(senseOptions.NumberStyle))
-			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, mediator));
-			}
-			if (!IsEmptyRule(senseNumberRule))
-				styleSheet.Rules.Add(senseNumberRule);
-			if (!String.IsNullOrEmpty(senseOptions.BeforeNumber))
-			{
-				var beforeDeclaration = new StyleDeclaration
-				{
-					new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.BeforeNumber) }
-				};
-				styleSheet.Rules.Add(new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" });
-			}
-			if (!String.IsNullOrEmpty(senseOptions.AfterNumber))
-			{
-				var afterDeclaration = new StyleDeclaration();
-				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
-				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
-				styleSheet.Rules.Add(afterRule);
-			}
-			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, mediator);
-			// Generate the style information specifically for senses
-			var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
-				{
-					Value = string.Format(baseSelection)
-				};
-			if (!IsEmptyRule(senseContentRule))
-				styleSheet.Rules.Add(senseContentRule);
-			if (senseOptions.ShowSharedGrammarInfoFirst)
-			{
-				var blockDeclaration = new StyleDeclaration();
-				blockDeclaration.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Attribute, "italic") });
-				var sensesCssClass = GetClassAttributeForConfig(configNode);
-				var sensesSelector = baseSelection.Substring(0,
-					baseSelection.LastIndexOf(sensesCssClass, StringComparison.Ordinal) + sensesCssClass.Length);
-				var blockRule1 = new StyleRule(blockDeclaration)
-				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule1);
-
-				blockDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
-				var blockRule2 = new StyleRule(blockDeclaration)
-				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo:after", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule2);
-			}
-			var wsOptions = configNode.DictionaryNodeOptions as ReferringSenseOptions;
-			if (wsOptions != null && wsOptions.WritingSystemOptions != null)
-			{
-				GenerateCssFromWsOptions(configNode, wsOptions.WritingSystemOptions, styleSheet, baseSelection, mediator);
-				if (wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations)
-				{
-					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
-				}
-			}
-			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(beforeAfterSelectors));
 		}
 
 		/// <summary>

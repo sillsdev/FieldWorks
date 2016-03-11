@@ -218,37 +218,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Load_LoadsReferringSenseOptions()
-		{
-			DictionaryConfigurationModel model;
-			using (var modelFile = new TempFile(new[]
-			{
-				XmlOpenTagsThruHeadword, @"
-			<ReferringSenseOptions>
-				<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
-					<Option isEnabled=""true""  id=""vernacular""/>
-				</WritingSystemOptions>
-				<SenseOptions displayEachSenseInParagraph=""true"" numberStyle=""bold"" numberBefore=""("" numberAfter="") ""
-						numberingStyle=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>
-			</ReferringSenseOptions>",
-				XmlCloseTagsFromHeadword
-			}))
-			{
-				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
-			}
-
-			// The following assertions are based on the specific test data loaded from the file
-			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(ReferringSenseOptions), testNodeOptions);
-			var cfOptions = (ReferringSenseOptions)testNodeOptions;
-			Assert.IsTrue(cfOptions.SenseOptions.DisplayEachSenseInAParagraph);
-			Assert.AreEqual("%O", cfOptions.SenseOptions.NumberingStyle);
-			Assert.AreEqual("(", cfOptions.SenseOptions.BeforeNumber);
-			Assert.AreEqual(") ", cfOptions.SenseOptions.AfterNumber);
-			Assert.AreEqual("bold", cfOptions.SenseOptions.NumberStyle);
-		}
-		[Test]
 		public void Load_NoListSpecifiedResultsInNone()
 		{
 			DictionaryConfigurationModel model;

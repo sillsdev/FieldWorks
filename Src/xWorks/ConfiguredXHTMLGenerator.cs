@@ -2027,11 +2027,6 @@ namespace SIL.FieldWorks.XWorks
 																			ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			var refersenseoptions = config.DictionaryNodeOptions as ReferringSenseOptions;
-			if (refersenseoptions != null)
-			{
-				wsOptions = refersenseoptions.WritingSystemOptions;
-			}
 			if (wsOptions == null)
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
@@ -2061,40 +2056,11 @@ namespace SIL.FieldWorks.XWorks
 				if (!String.IsNullOrEmpty(content))
 					bldr.Append(content);
 			}
-			if (refersenseoptions != null)
-			{
-				var content = GenerateReferringSenseNumber(owningObject, config, settings, refersenseoptions);
-				if (!String.IsNullOrEmpty(content))
-					bldr.Append(content);
-			}
 			if (bldr.Length > 0)
 			{
 				return WriteRawElementContents("span", bldr.ToString(), config);
 			}
 			return String.Empty;
-		}
-
-		private static string GenerateReferringSenseNumber(ICmObject owningObject, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, ReferringSenseOptions refersenseoptions)
-		{
-			var senseOptions = refersenseoptions.SenseOptions;
-			if (senseOptions == null || (!senseOptions.NumberEvenASingleSense))
-				return String.Empty;
-			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
-				return String.Empty;
-			string senseNumber = settings.Cache.GetOutlineNumber(owningObject, LexSenseTags.kflidSenses, false, true,
-					settings.Cache.MainCacheAccessor);
-			string formatedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, config);
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				xw.WriteStartElement("span");
-				xw.WriteAttributeString("class", "referringsensenumber");
-				xw.WriteString(formatedSenseNumber);
-				xw.WriteEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
 		}
 
 		private static string GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,

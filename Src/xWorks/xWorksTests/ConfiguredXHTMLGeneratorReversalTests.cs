@@ -208,33 +208,29 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLOwnerOutlineName",
+				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new ReferringSenseOptions()
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 				{
-					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
-						}
-					},
-					SenseOptions = new DictionaryNodeSenseOptions
-					{
-						NumberEvenASingleSense = true,
-						NumberingStyle = "%A"
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 					}
 				}
 			};
-			var wsOpts = new DictionaryNodeWritingSystemOptions
+			var glossNode = new ConfigurableDictionaryNode
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+					}
 				}
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
@@ -269,41 +265,32 @@ namespace SIL.FieldWorks.XWorks
 
 			const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='1']]/a[text()='Citation']";
 			const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='2']]/a[text()='Citation']";
-			const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='A']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
-			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 2);
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_VernacularFormWithSubSences()
+		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLOwnerOutlineName",
+				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new ReferringSenseOptions()
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
-						}
-					},
-					SenseOptions = new DictionaryNodeSenseOptions
-					{
-						NumberEvenASingleSense = true,
-						NumberingStyle = "%O"
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 					}
 				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
 				}
 			};
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -333,8 +320,9 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
-			const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='1.1']";
-			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 1);
+			// REVIEW (Hasso) 2016.03: we should probably do something about the leading space in the Sense Number Run, as it is currently in addition to the "between" space.
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/a[text()=' 1.1']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
 
 		[Test]
@@ -380,30 +368,18 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLOwnerOutlineName",
+				FieldDescription = "ReversalName",
 				Between = " ",
 				After = " ",
 				StyleType = ConfigurableDictionaryNode.StyleTypes.Character,
 				Style = "Reversal-Vernacular",
 				IsEnabled = true,
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new ReferringSenseOptions
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
-					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-						DisplayWritingSystemAbbreviations = false,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled=true } }
-					},
-					SenseOptions = new DictionaryNodeSenseOptions
-					{
-						NumberStyle = "Sense-Reference-Number",
-						BeforeNumber = " ",
-						NumberEvenASingleSense = false,
-						ShowSharedGrammarInfoFirst = true,
-						DisplayEachSenseInAParagraph = false,
-						NumberingStyle = "%O"
-					}
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled=true } }
 				},
 				Children = new List<ConfigurableDictionaryNode> { }
 			};
