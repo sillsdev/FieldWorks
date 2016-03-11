@@ -5405,6 +5405,181 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// This tests the fix for LT-16504.
+		[Test]
+		public void GenerateXHTMLForEntry_LexicalReferencesOrderedCorrectly()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			var firstSense = firstEntry.SensesOS[0];
+			firstSense.Gloss.set_String(m_wsEn, "man");
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			var secondSense = secondEntry.SensesOS[0];
+			secondSense.Gloss.set_String(m_wsEn, "woman");
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			var thirdSense = thirdEntry.SensesOS[0];
+			thirdSense.Gloss.set_String(m_wsEn, "family");
+
+			var fourthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(fourthEntry, "garçon", m_wsFr, Cache);
+			var fourthSense = fourthEntry.SensesOS[0];
+			fourthSense.Gloss.set_String(m_wsEn, "boy");
+
+			var fifthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(fifthEntry, "fille", m_wsFr, Cache);
+			var fifthSense = fifthEntry.SensesOS[0];
+			fifthSense.Gloss.set_String(m_wsEn, "girl");
+
+			var sixthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(sixthEntry, "individuel", m_wsFr, Cache);
+			var sixthSense = sixthEntry.SensesOS[0];
+			sixthSense.Gloss.set_String(m_wsEn, "individual");
+
+			var antonyms = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtSensePair, "Antonym", "ant", null, null);
+			CreateLexReference(antonyms, new ILexSense[] { firstSense, secondSense });
+			CreateLexReference(antonyms, new ILexSense[] { fourthSense, fifthSense });
+			CreateLexReference(antonyms, new ILexSense[] { thirdSense, sixthSense });
+
+			var wholeparts = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtSenseTree, "Part", "pt", "Whole", "wh");
+			CreateLexReference(wholeparts, new ILexSense[] { thirdSense, firstSense, secondSense, fourthSense, fifthSense });
+
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="vernacular" } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Between = ", ",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode }
+			};
+			var relAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Abbreviation",
+				After = ": ",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="analysis" } }
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var relationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				Between = "; ",
+				After = ". ",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						// This ordering is the crucial part of this test.
+						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=wholeparts.Guid.ToString() + ":r" },
+						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=antonyms.Guid.ToString() },
+						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=wholeparts.Guid.ToString() + ":f" },
+					}
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, targetsNode }
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="analysis" } }
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = false
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, relationsNode }
+			};
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="vernacular" } }
+				},
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, senseNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			var xpathLexRef = "//div/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='lexsensereferences']/span[@class='lexsensereference']";
+			var antSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
+			var whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
+			var ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
+			//SUT
+			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(firstResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
+			var idxAntonym = firstResult.IndexOf(antSpan);
+			var idxWhole = firstResult.IndexOf(whSpan);
+			var idxPart = firstResult.IndexOf(ptSpan);
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme");
+			Assert.Less(0, idxWhole, "Whole relation should exist for homme");
+			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme");
+			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme");
+
+			var thirdResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(thirdEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(thirdResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
+			idxAntonym = thirdResult.IndexOf(antSpan);
+			idxWhole = thirdResult.IndexOf(whSpan);
+			idxPart = thirdResult.IndexOf(ptSpan);
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
+			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
+			Assert.Less(0, idxPart, "Part relation should exist for famille");
+			Assert.Less(idxAntonym, idxPart, "Antonym relation should come before Part relation for famille");
+
+			var sixthResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(sixthEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(sixthResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
+			idxAntonym = sixthResult.IndexOf(antSpan);
+			idxWhole = sixthResult.IndexOf(whSpan);
+			idxPart = sixthResult.IndexOf(ptSpan);
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
+			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
+			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
+		}
+
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{
@@ -5557,6 +5732,30 @@ namespace SIL.FieldWorks.XWorks
 			lexRef.TargetsRS.Add(secondEntry);
 			if (thirdEntry != null)
 				lexRef.TargetsRS.Add(thirdEntry);
+		}
+
+		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
+		{
+			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			lrt.MappingType = (int)type;
+			lrt.Name.set_String(m_wsEn, name);
+			lrt.Abbreviation.set_String(m_wsEn, abbr);
+			if (!String.IsNullOrEmpty(revName))
+				lrt.ReverseName.set_String(m_wsEn, revName);
+			if (!String.IsNullOrEmpty(revAbbr))
+				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
+			return lrt;
+		}
+
+		private void CreateLexReference(ILexRefType lrt, IEnumerable<ILexSense> senses)
+		{
+			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			lrt.MembersOC.Add(lexRef);
+			foreach (var sense in senses)
+				lexRef.TargetsRS.Add(sense);
 		}
 
 		private ICmPossibility CreatePublicationType(string name)

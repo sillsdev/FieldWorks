@@ -568,7 +568,7 @@ namespace SIL.FieldWorks.XWorks
 					return String.Empty;
 				}
 				propertyValue = property.GetValue(field, new object[] { });
-				GetSortedReferencePropertyValue(config, ref propertyValue);
+				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
 			if (propertyValue == null)
@@ -668,23 +668,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue)
+		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue, object parent)
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (options == null || !(propertyValue is IEnumerable<ILexReference>))
 				return;
-			var lexReferences = ((IEnumerable<ILexReference>)propertyValue).ToList();
+			// Calculate and store the ids for each of the references once for efficiency.
+			var refsAndIds = new List<Tuple<ILexReference, string>>();
+			foreach (var reference in (IEnumerable<ILexReference>)propertyValue)
+			{
+				var id = reference.OwnerType.Guid.ToString();
+				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType))
+					id = id + LexRefDirection(reference, parent);
+				refsAndIds.Add(new Tuple<ILexReference, string>(reference, id));
+			}
 			var sortedReferences = new List<ILexReference>();
 			// REVIEW (Hasso) 2016.03: this Where is redundant to the IsListItemSelectedForExport call in GenerateCollectionItemContent
 			// REVIEW (cont): Filtering here is more performant; the other filter can be removed if it is verifiably redundant.
 			foreach (var option in options.Options.Where(optn => optn.IsEnabled))
 			{
-				foreach (var reference in lexReferences)
+				foreach (var duple in refsAndIds)
 				{
-					// REVIEW (Hasso) 2016.03: this doesn't handle directional relationships (e.g. part-whole) properly.
-					// ENHANCE: If we haven't one already, we should have a method that matches <Guid>:(f|r) (see IsListItemSelectedForExport)
-					if (option.Id.Contains(reference.OwnerType.Guid.ToString()) && !sortedReferences.Contains(reference))
-						sortedReferences.Add(reference);
+					if (option.Id == duple.Item2 && !sortedReferences.Contains(duple.Item1))
+					{
+						sortedReferences.Add(duple.Item1);
+					}
 				}
 			}
 			propertyValue = sortedReferences;
