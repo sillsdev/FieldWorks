@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FixData
 					}
 					foreach (var reject in rejects)
 					{
-						logger(entryGuidString, DateTime.Now.ToShortDateString(), Strings.ksRemovedUnusedMsa);
+						logger(Strings.ksRemovedUnusedMsa, true);
 						reject.Remove();
 					}
 				}
@@ -166,6 +166,16 @@ namespace SIL.FieldWorks.FixData
 		internal bool IsRejectedMsa(String guid)
 		{
 			return !goodMsas.Contains(guid);
+		}
+
+		internal override void Reset()
+		{
+			senseToMSA.Clear();
+			entryToMSA.Clear();
+			entryToSense.Clear();
+			subSenses.Clear();
+			goodMsas.Clear();
+			base.Reset();
 		}
 	}
 }

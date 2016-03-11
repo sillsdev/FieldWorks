@@ -132,8 +132,7 @@ namespace SIL.FieldWorks.FixData
 			{
 				// We can repair it to match the sense's msa, an ideal repair, since we checked the sense's msa IS valid.
 				objsur.SetAttributeValue("guid", senseMsaGuid);
-				logger(guidString, DateTime.Now.ToShortDateString(),
-					String.Format(Strings.ksRepairingMorphBundleFromSense, guidString));
+				logger(String.Format(Strings.ksRepairingMorphBundleFromSense, guidString), true);
 				return;
 			}
 			// Next see if we can link to a unique msa via our morph child.
@@ -148,14 +147,12 @@ namespace SIL.FieldWorks.FixData
 				if (soleEntryMsa != null)
 				{
 					objsur.SetAttributeValue("guid", soleEntryMsa);
-					logger(guidString, DateTime.Now.ToShortDateString(),
-						String.Format(Strings.ksRepairingMorphBundleFromEntry, guidString));
+					logger(String.Format(Strings.ksRepairingMorphBundleFromEntry, guidString), true);
 					return;
 				}
 			}
 			// If we can't fix it nicely, just clobber it (and its parent, since this is an atomic property).
-			logger(guidString, DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingDanglingMsa,
-				destGuidString, guidString));
+			logger(String.Format(Strings.ksRemovingDanglingMsa, destGuidString, guidString), true);
 			objsur.Parent.Remove();
 		}
 
@@ -183,14 +180,12 @@ namespace SIL.FieldWorks.FixData
 				{
 					// We can repair it to use the only form of the right entry, a very promising repair.
 					objsur.SetAttributeValue("guid", soleForm);
-					logger(guidString, DateTime.Now.ToShortDateString(),
-						String.Format(Strings.ksRepairingBundleFormFromEntry, guidString));
+					logger(String.Format(Strings.ksRepairingBundleFormFromEntry, guidString), true);
 					return;
 				}
 			}
 			// If we can't fix it nicely, just clobber it (and its parent, since this is an atomic property).
-			logger(guidString, DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingDanglingMorph,
-				destGuidString, guidString));
+			logger(String.Format(Strings.ksRemovingDanglingMorph, destGuidString, guidString), true);
 			objsur.Parent.Remove();
 		}
 
@@ -235,6 +230,13 @@ namespace SIL.FieldWorks.FixData
 			if (destAttr == null)
 				return null; // weird, but none of our business
 			return destAttr.Value;
+		}
+
+		internal override void Reset()
+		{
+			m_senseToMsa.Clear();
+			m_entrys.Clear();
+			base.Reset();
 		}
 	}
 }
