@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		public event EventHandler DetailsModelChanged;
 
 		/// <summary>Fired whenever an external dialog makes changes that require the dictionary preview to be refreshed</summary>
-		public event EventHandler ExternalDialogMadeChanges;
+		public event EventHandler StylesDialogMadeChanges;
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
 		{
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -132,11 +132,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// else, show only the default details (style, before, between, after)
 				View.OptionsView = null;
-				if (m_node.Parent == null)
-				{
-					// A top-level node with no Options is a Main Entry node; don't allow the user to change the Style
+				if (DictionaryConfigurationModel.IsReadonlyMainEntry(m_node))
 					View.StylesEnabled = false;
-				}
 			}
 
 			// Register eventhandlers
@@ -601,16 +598,24 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
-		private void LoadStylesListsAndRepopulateComboBox()
+		/// <summary>
+		/// Creates an Action for the Styles dialog to run to fix the Styles in the Model [and Combobox] and cause a refresh.
+		/// StylesDialogMadeChanges tells the main controller to check all Styles in the Model, refresh, and register that a change has been saved.
+		/// View.SetStyles changes the selected Style in the Combo, triggering a refresh and register that a change has been made but not saved.
+		/// </summary>
+		private Action FixStyles(bool repopulate)
 		{
-			// TODO (Hasso) 2016.03: update Styles in Model to prevent a crash if user deleted a style
-			LoadStylesLists();
+			return () =>
+			{
+				if(StylesDialogMadeChanges != null)
+					StylesDialogMadeChanges(m_node, new EventArgs());
 
-			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
-			if (isPara)
-				View.SetStyles(m_paraStyles, m_node.Style, true);
-			else
-				View.SetStyles(m_charStyles, m_node.Style, false);
+				if (!repopulate)
+					return;
+				LoadStylesLists();
+				var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+				View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
+			};
 		}
 
 		/// <summary>
@@ -773,18 +778,10 @@ namespace SIL.FieldWorks.XWorks
 		#endregion LoadModel
 
 		#region HandleChanges
-		private void RefreshPreview(bool isChangeInDictionaryModel = true)
+		private void RefreshPreview()
 		{
-			if (isChangeInDictionaryModel)
-			{
-				if (DetailsModelChanged != null)
-					DetailsModelChanged(m_node, new EventArgs());
-			}
-			else
-			{
-				if (ExternalDialogMadeChanges != null)
-					ExternalDialogMadeChanges(m_node, new EventArgs());
-			}
+			if (DetailsModelChanged != null)
+				DetailsModelChanged(m_node, new EventArgs());
 		}
 
 		/// <summary>
@@ -792,13 +789,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, combo.Enabled ? LoadStylesListsAndRepopulateComboBox : (Action)null,
+			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
+			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
 				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, (IApp)m_mediator.PropertyTable.GetValue("App"),
 				m_mediator.HelpTopicProvider, new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
-			RefreshPreview(false); // REVIEW (Hasso) 2016.03: we do not currently check whether anything actually changed in the Styles dlg.
-			// REVIEW (cont): LoadStylesLists_ResetComboBox (called when the user has made changes in the Styles dialog) updates the Style combo,
-			// REVIEW (cont):   triggering a RefreshPreview(true), which registers that changes [could] have been made that need to be saved.
-			// REVIEW (cont): RefreshPreview(false) registers that changes [could] have been made and already saved to the Styles
 		}
 
 		private void BeforeTextChanged()

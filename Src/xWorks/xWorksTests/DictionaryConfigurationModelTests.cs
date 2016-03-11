@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,11 +18,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
+	public class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
@@ -960,27 +961,43 @@ namespace SIL.FieldWorks.XWorks
 		public void IsMainEntry_NullArgument_Throws()
 		{
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsMainEntry(null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsReadonlyMainEntry(null));
 		}
 
 		[Test]
 		public void IsMainEntry_MainEntry_True()
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
-			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode));
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
+			Assert.True(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Readonly Main Entry");
 		}
 
 		[Test]
-		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True()
+		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True_ButNotReadonly()
 		{
-			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex", Parent = null };
-			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode));
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Parent = null
+			};
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
+			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Stem's Complex Main Entry should be duplicable");
+		}
+
+		[Test]
+		public void IsMainEntry_MainReversalIndexEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
+			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
+			Assert.True(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Readonly Main Entry");
 		}
 
 		[Test]
 		public void IsMainEntry_MinorEntry_False()
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
-			Assert.False(DictionaryConfigurationModel.IsMainEntry(minorEntryNode));
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(minorEntryNode), "Main Entry");
+			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(minorEntryNode), "Readonly Main Entry");
 		}
 
 		[Test]
@@ -988,7 +1005,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
 			var someNode = new ConfigurableDictionaryNode{ FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
-			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode));
+			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode), "Main Entry");
+			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(someNode), "Readonly Main Entry");
 		}
 
 		[Test]

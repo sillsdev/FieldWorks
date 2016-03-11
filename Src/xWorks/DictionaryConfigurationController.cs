@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsMainEntry(node); // REVIEW (Hasso) 2016.03: we want to duplicate MainComplexForms in Stem
+				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsReadonlyMainEntry(node);
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
@@ -565,7 +565,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DetailsController = new DictionaryDetailsController(new DetailsView(), _mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
-				DetailsController.ExternalDialogMadeChanges += (sender, e) => RefreshPreview(false);
+				DetailsController.StylesDialogMadeChanges += (sender, e) =>
+				{
+					_model.EnsureValidStylesInModel(Cache); // in case the change was a rename or deletion
+					RefreshPreview(false);
+				};
 			}
 			DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;

@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal void EnsureValidStylesInModel(FdoCache cache)
+		public void EnsureValidStylesInModel(FdoCache cache)
 		{
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
 			foreach (var part in Parts)
@@ -332,6 +332,12 @@ namespace SIL.FieldWorks.XWorks
 		public override string ToString()
 		{
 			return Label;
+		}
+
+		/// <summary>If node is a Main Entry node that should not be duplicated or edited.</summary>
+		internal static bool IsReadonlyMainEntry(ConfigurableDictionaryNode node)
+		{
+			return IsMainEntry(node) && node.DictionaryNodeOptions == null;
 		}
 
 		/// <summary>If node is a Main Entry node.</summary>
