@@ -171,6 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Remember which elements are highlighted so that we can turn the highlighting off later.
 		/// </summary>
 		private List<GeckoElement> _highlightedElements;
+		const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		public void HighlightContent(ConfigurableDictionaryNode configNode)
@@ -180,7 +181,12 @@ namespace SIL.FieldWorks.XWorks
 			if (_highlightedElements != null)
 			{
 				foreach (var element in _highlightedElements)
-					element.SetAttribute("style", "");
+				{
+					// remove the background-color added earlier.  any other style setting is unchanged.
+					var style = element.GetAttribute("style");
+					style = style.Replace(HighlightStyle, "");
+					element.SetAttribute("style", style);
+				}
 				_highlightedElements = null;
 			}
 			if (configNode == null)
@@ -189,7 +195,15 @@ namespace SIL.FieldWorks.XWorks
 			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
 			_highlightedElements = FindConfiguredItem(configNode, browser);
 			foreach (var element in _highlightedElements)
-				element.SetAttribute("style", "background-color:Yellow");	// LightYellow isn't really bold enough marking to my eyes for this feature.
+			{
+				// add background-color to the style, preserving any existing style.  (See LT-17222.)
+				var style = element.GetAttribute("style");
+				if (String.IsNullOrEmpty(style))
+					style = HighlightStyle;
+				else
+					style = HighlightStyle + style;	// note trailing space in string constant
+				element.SetAttribute("style", style);
+			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
