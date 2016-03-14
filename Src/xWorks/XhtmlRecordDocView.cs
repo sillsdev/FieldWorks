@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -65,11 +66,23 @@ namespace SIL.FieldWorks.XWorks
 			var element = browser.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
 				return;
-			// We don't care about left clicks in this context.
-			if (e.Button == GeckoMouseButton.Right)
+			if (e.Button == GeckoMouseButton.Left)
+			{
+				HandleDomLeftClick(e, element);
+			}
+			else if (e.Button == GeckoMouseButton.Right)
 			{
 				XhtmlDocView.HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
 			}
+		}
+
+		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
+		{
+			GeckoElement dummy;
+			var topLevelGuid = XhtmlDocView.GetHrefFromGeckoDomElement(element);
+			if (topLevelGuid != Guid.Empty)
+				Clerk.JumpToRecord(topLevelGuid);
+			e.Handled = true;
 		}
 
 		protected override void ShowRecord()

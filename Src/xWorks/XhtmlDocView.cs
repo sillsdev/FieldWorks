@@ -108,9 +108,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
 		{
-			Guid topLevelGuid;
 			GeckoElement dummy;
-			GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
+			var topLevelGuid = GetHrefFromGeckoDomElement(element);
+			if (topLevelGuid == Guid.Empty)
+				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
 			if (topLevelGuid != Guid.Empty)
 				Clerk.JumpToRecord(topLevelGuid);
 			e.Handled = true;
@@ -177,6 +178,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return classList;
+		}
+
+		internal static Guid GetHrefFromGeckoDomElement(GeckoElement element)
+		{
+			if (!element.HasAttribute("href"))
+				return Guid.Empty;
+
+			var hrefVal = element.GetAttribute("href");
+			return !hrefVal.StartsWith("#g") ? Guid.Empty : new Guid(hrefVal.Substring(2));
 		}
 
 		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
