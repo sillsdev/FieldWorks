@@ -753,7 +753,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public void SetMappingFeatures()
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 			int index = -1;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
@@ -821,7 +821,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public void SetMappingNaturalClass()
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			SelectionHelper.Create(m_view);
 
 			var natClasses = new HashSet<ICmObject>();
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
@@ -888,19 +888,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public const int ktagRightEmpty = -201;
 		public const int ktagIndex = -202;
 
-		IMoAffixProcess m_rule = null;
+		private IMoAffixProcess m_rule;
 
-		ITsTextProps m_headerProps;
-		ITsTextProps m_arrowProps;
-		ITsTextProps m_ctxtProps;
-		ITsTextProps m_indexProps;
-		ITsTextProps m_resultProps;
+		private readonly ITsTextProps m_headerProps;
+		private readonly ITsTextProps m_arrowProps;
+		private readonly ITsTextProps m_ctxtProps;
+		private readonly ITsTextProps m_indexProps;
+		private readonly ITsTextProps m_resultProps;
 
-		ITsString m_inputStr;
-		ITsString m_indexStr;
-		ITsString m_resultStr;
-		ITsString m_doubleArrow;
-		ITsString m_space;
+		private readonly ITsString m_inputStr;
+		private readonly ITsString m_indexStr;
+		private readonly ITsString m_resultStr;
+		private readonly ITsString m_doubleArrow;
+		private readonly ITsString m_space;
 
 		public AffixRuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
 			: base(cache, mediator)
@@ -976,6 +976,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
+		private int OutputMaxNumLines
+		{
+			get
+			{
+				int maxNumLines = 1;
+				foreach (IMoModifyFromInput modify in m_rule.OutputOS.OfType<IMoModifyFromInput>())
+				{
+					IPhNCFeatures nc = modify.ModificationRA;
+					if (nc != null && nc.FeaturesOA != null)
+					{
+						int numLines = nc.FeaturesOA.FeatureSpecsOC.Count;
+						if (numLines > maxNumLines)
+							maxNumLines = numLines;
+					}
+				}
+				return maxNumLines;
+			}
+		}
+
 		protected override int GetVarIndex(IPhFeatureConstraint var)
 		{
 			return -1;
@@ -1007,7 +1026,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					inputLen.nVal += headerLen.nVal;
 
 					VwLength leftEmptyLen;
-					leftEmptyLen.nVal = 8000 + (PILE_MARGIN * 2) + 2000;
+					leftEmptyLen.nVal = 8000 + (PileMargin * 2) + 2000;
 					leftEmptyLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += leftEmptyLen.nVal;
 
@@ -1023,7 +1042,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 
 					VwLength rightEmptyLen;
-					rightEmptyLen.nVal = 8000 + (PILE_MARGIN * 2) + 1000;
+					rightEmptyLen.nVal = 8000 + (PileMargin * 2) + 1000;
 					rightEmptyLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += rightEmptyLen.nVal;
 
@@ -1186,22 +1205,36 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput) mapping;
-							var numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
-							// left bracket pile
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
-							vwenv.OpenInnerPile();
+							int maxNumLines = OutputMaxNumLines;
+							int numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
 
+							// index pile
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+							vwenv.OpenInnerPile();
+							AddExtraLines(maxNumLines - 1, vwenv);
+							vwenv.OpenParagraph();
 							vwenv.Props = m_bracketProps;
 							vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
-
-							// put index in the left bracket pile
 							if (modify.ContentRA == null)
 								vwenv.AddProp(ktagIndex, this, 0);
 							else
 								vwenv.AddProp(ktagIndex, this, modify.ContentRA.IndexInOwner + 1);
+							vwenv.CloseParagraph();
+							vwenv.CloseInnerPile();
+
+							// left bracket pile
 							// right align brackets in left bracket pile, since the index could have a greater width, then the bracket
-							if (numLines > 1)
+							if (numLines == 1)
 							{
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - 1, vwenv);
+								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
+								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracket);
+								vwenv.CloseInnerPile();
+							}
+							else
+							{
+								vwenv.OpenInnerPile();
 								vwenv.Props = m_bracketProps;
 								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
@@ -1214,18 +1247,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								vwenv.Props = m_bracketProps;
 								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketLowHook);
+								vwenv.CloseInnerPile();
 							}
-							else
-							{
-								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
-								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracket);
-							}
-							vwenv.CloseInnerPile();
 
 							// feature pile
 							vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 							vwenv.OpenInnerPile();
-							AddExtraLines(1, vwenv);
+							AddExtraLines(maxNumLines - numLines, vwenv);
 							if (numLines == 0)
 								vwenv.AddProp(MoModifyFromInputTags.kflidModification, this, kfragQuestions);
 							else
@@ -1233,12 +1261,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							vwenv.CloseInnerPile();
 
 							// right bracket pile
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
-							vwenv.OpenInnerPile();
-							vwenv.Props = m_bracketProps;
-							vwenv.AddProp(ktagRightBoundary, this, kfragSpace);
-							if (numLines > 1)
+							if (numLines == 1)
 							{
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								AddExtraLines(maxNumLines - 1, vwenv);
+								vwenv.OpenInnerPile();
+								vwenv.AddProp(ktagRightBoundary, this, kfragRightBracket);
+								vwenv.CloseInnerPile();
+							}
+							else
+							{
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, vwenv);
 								vwenv.Props = m_bracketProps;
 								vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketUpHook);
 								for (int i = 1; i < numLines - 1; i++)
@@ -1247,13 +1282,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketExt);
 								}
 								vwenv.Props = m_bracketProps;
-								vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketLowHook);
+								vwenv.AddProp(ktagRightBoundary, this, kfragRightBracketLowHook);
+								vwenv.CloseInnerPile();
 							}
-							else
-							{
-								vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracket);
-							}
-							vwenv.CloseInnerPile();
 							break;
 					}
 					break;
@@ -1308,6 +1339,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			vwenv.Props = m_pileProps;
 			vwenv.OpenInnerPile();
+			AddExtraLines(OutputMaxNumLines - 1, vwenv);
 			vwenv.OpenParagraph();
 			vwenv.Props = m_bracketProps;
 			vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);

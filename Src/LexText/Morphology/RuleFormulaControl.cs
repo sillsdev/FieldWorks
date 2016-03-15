@@ -964,9 +964,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void SetContextFeatures()
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
-			bool reconstruct = false;
+			bool reconstruct;
 
-			using (var featChooser = new LexText.Controls.PhonologicalFeatureChooserDlg())
+			using (var featChooser = new PhonologicalFeatureChooserDlg())
 			{
 				var ctxt = (IPhSimpleContextNC) CurrentContext;
 				var natClass = (IPhNCFeatures) ctxt.FeatureStructureRA;
@@ -1007,8 +1007,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public virtual bool DisplayContextMenu(IVwSelection vwselNew)
 		{
-			SelectionHelper sel = SelectionHelper.Create(vwselNew, m_view);
-			var obj = CurrentObject;
+			SelectionHelper.Create(vwselNew, m_view);
+			ICmObject obj = CurrentObject;
 
 			if (obj != null)
 			{
@@ -1054,8 +1054,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						if (cellId != -1 && cellId != -2)
 						{
 							IVwSelection newSel = SelectCell(cellId, limit == SelectionHelper.SelLimitType.Bottom, false);
-							SelectionHelper.SelLimitType otherLimit = limit == SelectionHelper.SelLimitType.Top
-								? SelectionHelper.SelLimitType.Bottom : SelectionHelper.SelLimitType.Top;
 							sel.ReduceToIp(limit);
 							IVwSelection otherSel = sel.SetSelection(m_view, false, false);
 							if (sel.Selection.EndBeforeAnchor)
@@ -1132,7 +1130,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			curIch = -1;
 			curTag = -1;
 
-			var obj = GetItem(sel, limit);
+			ICmObject obj = GetItem(sel, limit);
 			if (obj == null)
 				return false;
 
@@ -1219,8 +1217,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// are we at the beginning of an item?
 			if ((curHvo == initialHvo && curIch == initialIch && curTag == initialTag)
 				|| (curIch == 0 && curTag == RuleFormulaVc.ktagLeftBoundary)
-				//|| (m_cache.GetClassOfObject(hvo) != PhIterationContext.kclsidPhIterationContext && curIch == 0 && curTag == (int)PhTerminalUnit.PhTerminalUnitTags.kflidName)
-				|| (curIch == 0 && curTag == RuleFormulaVc.ktagXVariable))
+				|| (curIch == 0 && curTag == RuleFormulaVc.ktagXVariable)
+				// when you click to the left of a ZWSP left boundary, Views might place the cursor to the right of the
+				// ZWSP. we do not adjust the selection in this case so that the cursor can be placed before the item
+				// instead of selecting the whole item.
+				|| (curIch == 1 && curTag == RuleFormulaVc.ktagLeftBoundary && curTss.Text == "\u200b"))
 			{
 				// if the current selection is an IP, then don't adjust anything
 				if (!sel.IsRange)
@@ -1272,13 +1273,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void SelectLeftBoundary(int cellId, int cellIndex, bool install)
 		{
 			var levels = new List<SelLevInfo>(GetLevelInfo(cellId, cellIndex));
-			// if the current item is an iteration context, include the extra level
-			//if (m_cache.GetClassOfObject(hvo) == PhIterationContext.kclsidPhIterationContext)
-			//{
-			//    SelLevInfo iterCtxtLev = new SelLevInfo();
-			//    iterCtxtLev.tag = (int)PhIterationContext.PhIterationContextTags.kflidMember;
-			//    levels.Insert(0, iterCtxtLev);
-			//}
 			try
 			{
 				m_view.RootBox.MakeTextSelection(0, levels.Count, levels.ToArray(), RuleFormulaVc.ktagLeftBoundary, 0, 0, 0,

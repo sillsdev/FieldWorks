@@ -6,13 +6,12 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -22,10 +21,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class RuleFormulaView : RootSiteControl
 	{
-		RuleFormulaControl m_formulaControl = null;
-		ICmObject m_obj = null;
-		RuleFormulaVc m_vc = null;
-		int m_rootFrag = -1;
+		private RuleFormulaControl m_formulaControl;
+		private ICmObject m_obj;
+		private RuleFormulaVc m_vc;
+		private int m_rootFrag = -1;
 
 		/// <summary>
 		/// We MUST inherit from this, not from just EditingHelper; otherwise, the right event isn't
@@ -52,10 +51,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				return false;
 			}
-		}
-
-		public RuleFormulaView()
-		{
 		}
 
 		protected override EditingHelper CreateEditingHelper()
@@ -113,6 +108,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				return;
 
 			m_rootb = VwRootBoxClass.Create();
+			// the default value of 4 for MaxParasToScan isn't high enough when using the arrow keys to move
+			// the cursor between items in a rule when the number of lines in the rule is high, since there might
+			// be a large number of non-editable empty lines in a pile
+			m_rootb.MaxParasToScan = 10;
 			m_rootb.SetSite(this);
 			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 			// JohnT: this notification removal was introduced by Damien in change list 25875, along with removing
@@ -133,12 +132,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (e.KeyCode == Keys.Delete)
 			{
 				m_formulaControl.RemoveItems(true);
-			}
-			else
-			{
 				e.Handled = true;
-				base.OnKeyDown(e);
 			}
+			base.OnKeyDown(e);
 		}
 
 		/// <summary>
@@ -150,8 +146,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (e.KeyChar == (char)Keys.Back)
 			{
 				m_formulaControl.RemoveItems(false);
+				e.Handled = true;
 			}
-			e.Handled = true;
 			base.OnKeyPress(e);
 		}
 
@@ -164,16 +160,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y,
-				new SIL.Utils.Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
-				new SIL.Utils.Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
+				new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
+				new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
 				true);
 			if (sel == null)
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
 
 			if (m_formulaControl.DisplayContextMenu(sel))
 				return true;
-			else
-				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 		}
 	}
 
@@ -226,10 +221,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public const int ktagInnerNonBoundary = -107;
 
 		// spacing between contexts
-		protected const int PILE_MARGIN = 1000;
+		protected const int PileMargin = 2000;
 
-		static string[] VARIABLE_NAMES = new string[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
-														"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
+		private static readonly string[] VariableNames = { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
+														   "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 
 		protected XCore.Mediator m_mediator;
 
@@ -252,7 +247,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_x;
 		protected ITsString m_zwSpace;
 
-		public RuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
+		protected RuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
 		{
 			Cache = cache;
 			m_mediator = mediator;
@@ -264,8 +259,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_bracketProps = tpb.GetTextProps();
 
 			tpb = TsPropsBldrClass.Create();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 			m_pileProps = tpb.GetTextProps();
 
 			var tsf = m_cache.TsStrFactory;
@@ -324,7 +319,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					switch (ctxtOrVar.ClassID)
 					{
 						case PhSequenceContextTags.kClassId:
-							var seqCtxt = ctxtOrVar as IPhSequenceContext;
+							var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 							if (seqCtxt.MembersRS.Count > 0)
 							{
 								vwenv.AddObjVecItems(PhSequenceContextTags.kflidMembers, this, kfragContext);
@@ -339,11 +334,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							break;
 
 						case PhSimpleContextNCTags.kClassId:
-							var ncCtxt = ctxtOrVar as IPhSimpleContextNC;
+							var ncCtxt = (IPhSimpleContextNC) ctxtOrVar;
 							if (ncCtxt.FeatureStructureRA != null && ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 							{
 								// Natural class simple context with a feature-based natural class
-								var natClass = ncCtxt.FeatureStructureRA as IPhNCFeatures;
+								var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
 
 								int numLines = GetNumLines(ncCtxt);
 								if (numLines == 0)
@@ -393,7 +388,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									// left bracket pile
 									int maxNumLines = MaxNumLines;
 									vwenv.Props = m_bracketProps;
-									vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
+									vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 									vwenv.OpenInnerPile();
 									AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
 									vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
@@ -414,7 +409,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									// right bracket pile
 									vwenv.Props = m_bracketProps;
 									if (!isOuterIterCtxt)
-										vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
+										vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 									vwenv.OpenInnerPile();
 									AddExtraLines(maxNumLines - numLines, ktagRightNonBoundary, vwenv);
 									vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketUpHook);
@@ -443,14 +438,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							break;
 
 						case PhIterationContextTags.kClassId:
-							IPhIterationContext iterCtxt = ctxtOrVar as IPhIterationContext;
+							var iterCtxt = (IPhIterationContext) ctxtOrVar;
 							if (iterCtxt.MemberRA != null)
 							{
 								int numLines = GetNumLines(iterCtxt.MemberRA as IPhSimpleContext);
 								if (numLines > 1)
 								{
 									vwenv.AddObjProp(PhIterationContextTags.kflidMember, this, kfragContext);
-									DisplayIterCtxt(iterCtxt, numLines, vwenv);
+									DisplayIterCtxt(numLines, vwenv);
 								}
 								else
 								{
@@ -465,7 +460,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 										vwenv.AddObjProp(PhIterationContextTags.kflidMember, this, kfragContext);
 										vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightParen);
 									}
-									DisplayIterCtxt(iterCtxt, 1, vwenv);
+									DisplayIterCtxt(1, vwenv);
 									// Views doesn't handle selection properly when we have an inner pile with strings on either side,
 									// so we don't add a zero-width space at the end
 									CloseContextPile(vwenv, false);
@@ -483,7 +478,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							if (!isOuterIterCtxt)
 								OpenContextPile(vwenv);
 
-							var segCtxt = ctxtOrVar as IPhSimpleContextSeg;
+							var segCtxt = (IPhSimpleContextSeg) ctxtOrVar;
 							if (segCtxt.FeatureStructureRA != null)
 								vwenv.AddObjProp(PhSimpleContextSegTags.kflidFeatureStructure, this, kfragTerminalUnit);
 							else
@@ -497,7 +492,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							if (!isOuterIterCtxt)
 								OpenContextPile(vwenv);
 
-							var bdryCtxt = ctxtOrVar as IPhSimpleContextBdry;
+							var bdryCtxt = (IPhSimpleContextBdry) ctxtOrVar;
 							if (bdryCtxt.FeatureStructureRA != null)
 								vwenv.AddObjProp(PhSimpleContextBdryTags.kflidFeatureStructure, this, kfragTerminalUnit);
 							else
@@ -588,10 +583,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
 					int i = m_cache.DomainDataByFlid.get_IntProp(vwenv.CurrentObject(), tag);
-					if (i == -1)
-						tss = m_infinity;
-					else
-						tss = m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
+					tss = i == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
 
 				case kfragLeftBracketUpHook:
@@ -654,28 +646,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return tssVal;
 		}
 
-		int GetIndex(int[] hvos, int hvo)
-		{
-			for (int i = 0; i < hvos.Length; i++)
-			{
-				if (hvos[i] == hvo)
-					return i;
-			}
-			return -1;
-		}
-
 		ITsString CreateFeatureLine(IFsClosedValue value)
 		{
 			ITsIncStrBldr featLine = TsIncStrBldrClass.Create();
-			if (value.ValueRA != null)
-				featLine.AppendTsString(value.ValueRA.Abbreviation.BestAnalysisAlternative);
-			else
-				featLine.AppendTsString(m_questions);
+			featLine.AppendTsString(value.ValueRA != null ? value.ValueRA.Abbreviation.BestAnalysisAlternative : m_questions);
 			featLine.Append(" ");
-			if (value.FeatureRA != null)
-				featLine.AppendTsString(value.FeatureRA.Abbreviation.BestAnalysisAlternative);
-			else
-				featLine.AppendTsString(m_questions);
+			featLine.AppendTsString(value.FeatureRA != null ? value.FeatureRA.Abbreviation.BestAnalysisAlternative : m_questions);
 			return featLine.GetString();
 		}
 
@@ -688,7 +664,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ITsIncStrBldr varLine = TsIncStrBldrClass.Create();
 			if (!polarity)
 				varLine.AppendTsString(m_cache.TsStrFactory.MakeString("-", m_cache.DefaultUserWs));
-			varLine.AppendTsString(m_cache.TsStrFactory.MakeString(VARIABLE_NAMES[varIndex], m_cache.DefaultUserWs));
+			varLine.AppendTsString(m_cache.TsStrFactory.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
 			varLine.Append(" ");
 			varLine.AppendTsString(var.FeatureRA == null ? m_questions : var.FeatureRA.Abbreviation.BestAnalysisAlternative);
 			return varLine.GetString();
@@ -711,7 +687,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		void DisplayIterCtxt(IPhIterationContext iterCtxt, int numLines, IVwEnv vwenv)
+		void DisplayIterCtxt(int numLines, IVwEnv vwenv)
 		{
 			int superOffset = 0;
 			if (numLines == 1)
@@ -727,7 +703,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 			}
 			vwenv.OpenInnerPile();
 			if (numLines == 1)
@@ -807,7 +783,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (ctxtOrVar.ClassID)
 			{
 				case PhSequenceContextTags.kClassId:
-					IPhSequenceContext seqCtxt = ctxtOrVar as IPhSequenceContext;
+					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 					int maxNumLines = 1;
 					foreach (IPhPhonContext cur in seqCtxt.MembersRS)
 					{
@@ -818,15 +794,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return maxNumLines;
 
 				case PhIterationContextTags.kClassId:
-					IPhIterationContext iterCtxt = ctxtOrVar as IPhIterationContext;
+					var iterCtxt = (IPhIterationContext) ctxtOrVar;
 					return GetNumLines(iterCtxt.MemberRA);
 
 				case PhSimpleContextNCTags.kClassId:
 					int numFeats = 0;
-					IPhSimpleContextNC ncCtxt = ctxtOrVar as IPhSimpleContextNC;
+					var ncCtxt = (IPhSimpleContextNC) ctxtOrVar;
 					if (ncCtxt.FeatureStructureRA != null && ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 					{
-						IPhNCFeatures natClass = ncCtxt.FeatureStructureRA as IPhNCFeatures;
+						var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
 						if (natClass.FeaturesOA != null)
 							numFeats = natClass.FeaturesOA.FeatureSpecsOC.Count;
 					}
@@ -861,20 +837,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (ctxtOrVar.ClassID)
 			{
 				case PhSequenceContextTags.kClassId:
-					var seqCtxt = ctxtOrVar as IPhSequenceContext;
+					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 					int totalLen = 0;
 					foreach (IPhPhonContext cur in seqCtxt.MembersRS)
 						totalLen += GetWidth(cur, vwenv);
 					return totalLen;
 
 				case PhIterationContextTags.kClassId:
-					return GetIterCtxtWidth(ctxtOrVar as IPhIterationContext, vwenv) + (PILE_MARGIN * 2);
+					return GetIterCtxtWidth(ctxtOrVar as IPhIterationContext, vwenv) + (PileMargin * 2);
 
 				case PhVariableTags.kClassId:
-					return GetStrWidth(m_x, null, vwenv) + (PILE_MARGIN * 2);
+					return GetStrWidth(m_x, null, vwenv) + (PileMargin * 2);
 
 				default:
-					return GetSimpleCtxtWidth(ctxtOrVar as IPhSimpleContext, vwenv) + (PILE_MARGIN * 2);
+					return GetSimpleCtxtWidth(ctxtOrVar as IPhSimpleContext, vwenv) + (PileMargin * 2);
 			}
 		}
 
@@ -928,11 +904,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (ctxt.ClassID)
 			{
 				case PhSimpleContextBdryTags.kClassId:
-					var bdryCtxt = ctxt as IPhSimpleContextBdry;
+					var bdryCtxt = (IPhSimpleContextBdry) ctxt;
 					return GetTermUnitWidth(bdryCtxt.FeatureStructureRA, vwenv);
 
 				case PhSimpleContextSegTags.kClassId:
-					var segCtxt = ctxt as IPhSimpleContextSeg;
+					var segCtxt = (IPhSimpleContextSeg) ctxt;
 					return GetTermUnitWidth(segCtxt.FeatureStructureRA, vwenv);
 
 				case PhSimpleContextNCTags.kClassId:
@@ -956,7 +932,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				int numLines = GetNumLines(ctxt);
 				if (numLines == 1)
 				{
-					int len = 0;
+					int len;
 					if (ctxt.FeatureStructureRA.Abbreviation.UserDefaultWritingSystem.Text == "C"
 						|| ctxt.FeatureStructureRA.Abbreviation.UserDefaultWritingSystem.Text == "V")
 					{
@@ -980,11 +956,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else
 			{
-				int len = 0;
-				if (ctxt.FeatureStructureRA == null)
-					len = GetStrWidth(m_questions, null, vwenv);
-				else
-					len = GetStrWidth(ctxt.FeatureStructureRA.Abbreviation.BestAnalysisAlternative, null, vwenv);
+				int len = GetStrWidth(ctxt.FeatureStructureRA == null ? m_questions : ctxt.FeatureStructureRA.Abbreviation.BestAnalysisAlternative, null, vwenv);
 				len += GetStrWidth(m_leftBracket, null, vwenv);
 				len += GetStrWidth(m_rightBracket, null, vwenv);
 				return len;
@@ -1019,11 +991,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		int GetVariablesWidth(IPhSimpleContextNC ctxt, IVwEnv vwenv, bool polarity)
 		{
-			var vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
+			IFdoReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
 			int maxLen = 0;
-			for (int i = 0; i < vars.Count; i++)
+			foreach (IPhFeatureConstraint var in vars)
 			{
-				ITsString varLine = CreateVariableLine(vars[i], polarity);
+				ITsString varLine = CreateVariableLine(var, polarity);
 				int len = GetStrWidth(varLine, null, vwenv);
 				if (len > maxLen)
 					maxLen = len;
