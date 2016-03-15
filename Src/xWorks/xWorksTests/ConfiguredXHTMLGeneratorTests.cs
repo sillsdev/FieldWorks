@@ -3480,7 +3480,7 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='C c']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
 		}
@@ -3497,7 +3497,7 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='C c']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
 		}
@@ -3515,8 +3515,8 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='C c']";
-				const string proveOnlyOneHeader = "//div[@class='letHead']/div[@class='letter']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
+				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
 			}

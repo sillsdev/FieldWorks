@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				Assert.AreEqual("r", last, "should have updated the last letter header");
 			}
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
 		}
@@ -160,8 +160,8 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
-				const string proveOnlyOneHeader = "//div[@class='letHead']/div[@class='letter']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
+				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
 			}

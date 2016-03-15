@@ -345,6 +345,8 @@ namespace SIL.FieldWorks.XWorks
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, Set<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
+			if (entry is IReversalIndexEntry)
+				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
 			var firstLetter = ConfiguredExport.GetLeadChar(GetLetHeadbyEntryType(entry), wsString,
 																		  dummyOne, dummyTwo, dummyThree, cache);
 			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
@@ -356,8 +358,9 @@ namespace SIL.FieldWorks.XWorks
 
 				xhtmlWriter.WriteStartElement("div");
 				xhtmlWriter.WriteAttributeString("class", "letHead");
-				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteStartElement("span");
 				xhtmlWriter.WriteAttributeString("class", "letter");
+				xhtmlWriter.WriteAttributeString("lang", wsString);
 				xhtmlWriter.WriteString(headerTextBuilder.ToString());
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteEndElement();
