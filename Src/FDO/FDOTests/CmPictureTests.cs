@@ -309,6 +309,34 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_pictureFactory.Create("CmPicture||whatever.jpg||||This is a caption||", CmFolderTags.LocalPictures);
 		}
 
+		/// <summary>
+		/// Tests creating a CmPicture from a GUID
+		/// </summary>
+		[Test]
+		public void CmPictureConstructor_FromGuid()
+		{
+			var guid = Guid.NewGuid();
+
+			// Execute
+			var picture = m_pictureFactory.Create(guid);
+
+			// Verify
+			Assert.That(picture.Guid, Is.EqualTo(guid));
+		}
+
+		/// <summary>
+		/// Tests creating a CmPicture from a empty GUID
+		/// </summary>
+		[Test]
+		public void CmPictureConstructor_FromEmptyGuid()
+		{
+			// Execute
+			var picture = m_pictureFactory.Create(Guid.Empty);
+
+			// Verify
+			Assert.That(picture.Guid, Is.Not.Null);
+		}
+
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test ability to get the text representation of a picture.

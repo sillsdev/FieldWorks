@@ -1911,6 +1911,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return pic;
 		}
 
+		/// <summary>
+		/// Create a new entry with the given guid.
+		/// </summary>
+		public ICmPicture Create(Guid guid)
+		{
+			if (guid == Guid.Empty)
+				return Create();
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			return new CmPicture(m_cache, hvo, guid);
+		}
+
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parses the string representing the type of the location range.
