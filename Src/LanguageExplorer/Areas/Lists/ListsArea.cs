@@ -35,6 +35,11 @@ namespace LanguageExplorer.Areas.Lists
 			return new RecordClerk(clerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, expand, hierarchical, includeAbbr, ws));
 		}
 
+		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
+		{
+			return string.Format("{0}-{1}", ListResources.ksShowHiddenFields, toolMachineName);
+		}
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>

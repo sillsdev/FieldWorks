@@ -62,11 +62,100 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters filterPath=&quot;Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml&quot; persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AcademicDomains&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AcademicDomains&quot; /&gt;.
+        /// </summary>
+        internal static string AnthroEditParameters {
+            get {
+                return ResourceManager.GetString("AnthroEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ChartMarkers&quot; /&gt;.
+        /// </summary>
+        internal static string ChartmarkEditParameters {
+            get {
+                return ResourceManager.GetString("ChartmarkEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ConstChartTempl&quot; /&gt;.
+        /// </summary>
+        internal static string CharttempEditParameters {
+            get {
+                return ResourceManager.GetString("CharttempEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;EditComplex&quot; altTitleId=&quot;complexEntryType&quot; /&gt;.
+        /// </summary>
+        internal static string ComplexEntryTypeEditParameters {
+            get {
+                return ResourceManager.GetString("ComplexEntryTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ConfidenceLevels&quot; /&gt;.
+        /// </summary>
+        internal static string ConfidenceEditParameters {
+            get {
+                return ResourceManager.GetString("ConfidenceEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AnthroItems&quot; /&gt;.
         /// </summary>
         internal static string DomainTypeEditParameters {
             get {
                 return ResourceManager.GetString("DomainTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-EducationLevels&quot; /&gt;.
+        /// </summary>
+        internal static string EducationEditParameters {
+            get {
+                return ResourceManager.GetString("EducationEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Genres&quot; /&gt;.
+        /// </summary>
+        internal static string GenresEditParameters {
+            get {
+                return ResourceManager.GetString("GenresEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ShowHiddenFields.
+        /// </summary>
+        internal static string ksShowHiddenFields {
+            get {
+                return ResourceManager.GetString("ksShowHiddenFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-LexicalRelations&quot; /&gt;.
+        /// </summary>
+        internal static string LexRefEditParameters {
+            get {
+                return ResourceManager.GetString("LexRefEditParameters", resourceCulture);
             }
         }
         
@@ -83,6 +172,166 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string ListToolsSliceFilters {
             get {
                 return ResourceManager.GetString("ListToolsSliceFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Locations&quot; /&gt;.
+        /// </summary>
+        internal static string LocationsEditParameters {
+            get {
+                return ResourceManager.GetString("LocationsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-MorphemeTypes&quot; /&gt;.
+        /// </summary>
+        internal static string MorphTypeEditParameters {
+            get {
+                return ResourceManager.GetString("MorphTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-People&quot; /&gt;.
+        /// </summary>
+        internal static string PeopleEditParameters {
+            get {
+                return ResourceManager.GetString("PeopleEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Positions&quot; /&gt;.
+        /// </summary>
+        internal static string PositionsEditParameters {
+            get {
+                return ResourceManager.GetString("PositionsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-PublicationTypes&quot; /&gt;.
+        /// </summary>
+        internal static string PublicationsEditParameters {
+            get {
+                return ResourceManager.GetString("PublicationsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-RecTypes&quot; /&gt;.
+        /// </summary>
+        internal static string RecTypeEditParameters {
+            get {
+                return ResourceManager.GetString("RecTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Restrictions&quot; /&gt;.
+        /// </summary>
+        internal static string RestrictionsEditParameters {
+            get {
+                return ResourceManager.GetString("RestrictionsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Roles&quot; /&gt;.
+        /// </summary>
+        internal static string RoleEditParameters {
+            get {
+                return ResourceManager.GetString("RoleEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-SemanticDomains&quot; /&gt;.
+        /// </summary>
+        internal static string SemanticDomainEditParameters {
+            get {
+                return ResourceManager.GetString("SemanticDomainEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-SenseTypes&quot; /&gt;.
+        /// </summary>
+        internal static string SenseTypeEditParameters {
+            get {
+                return ResourceManager.GetString("SenseTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Status&quot; /&gt;.
+        /// </summary>
+        internal static string StatusEditParameters {
+            get {
+                return ResourceManager.GetString("StatusEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-TextMarkupTags&quot; /&gt;.
+        /// </summary>
+        internal static string TextMarkupTagsEditParameters {
+            get {
+                return ResourceManager.GetString("TextMarkupTagsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-TimesOfDay&quot; /&gt;.
+        /// </summary>
+        internal static string TimeOfDayEditParameters {
+            get {
+                return ResourceManager.GetString("TimeOfDayEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; /&gt;.
+        /// </summary>
+        internal static string TranslationTypeEditParameters {
+            get {
+                return ResourceManager.GetString("TranslationTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Usages&quot; /&gt;.
+        /// </summary>
+        internal static string UsageTypeEditParameters {
+            get {
+                return ResourceManager.GetString("UsageTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;EditVariant&quot; altTitleId=&quot;variantType&quot; /&gt;.
+        /// </summary>
+        internal static string VariantEntryTypeEditParameters {
+            get {
+                return ResourceManager.GetString("VariantEntryTypeEditParameters", resourceCulture);
             }
         }
     }

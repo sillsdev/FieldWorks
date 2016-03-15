@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		void RefreshPane();
 
 		/// <summary>
-		/// Add contorls to the IPaneBar.
+		/// Add controls to the IPaneBar.
 		/// </summary>
 		/// <param name="paneBarControls">Controls to be added to IPaneBar.</param>
 		void AddControls(IList<Control> paneBarControls);

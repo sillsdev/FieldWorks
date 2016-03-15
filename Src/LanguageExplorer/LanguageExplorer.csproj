@@ -248,6 +248,78 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\TimeOfDayEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\RecTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\VariantEntryTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\UsageTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\TranslationTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\TextMarkupTagsEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\StatusEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\SenseTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\SemanticDomainEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\RestrictionsEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\PositionsEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\PeopleEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\MorphTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\PublicationsEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\LocationsEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\LexRefEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\GenresEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\RoleEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\EducationEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\CharttempEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\ChartmarkEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\ConfidenceEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\AnthroEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\ComplexEntryTypeEditParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\DomainTypeEditParameters.xml">
       <SubType>Designer</SubType>
     </Content>

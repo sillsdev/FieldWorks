@@ -61,6 +61,10 @@ namespace LanguageExplorer.Controls.PaneBar
 			}
 		}
 
+		/// <summary>
+		/// Add controls to the IPaneBar.
+		/// </summary>
+		/// <param name="paneBarControls">Controls to be added to IPaneBar.</param>
 		public void AddControls(IList<Control> paneBarControls)
 		{
 			m_panelMain.Controls.AddRange(paneBarControls.ToArray());

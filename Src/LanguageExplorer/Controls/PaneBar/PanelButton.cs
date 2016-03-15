@@ -51,7 +51,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			MouseEnter += panelButton_MouseEnter;
 			MouseLeave += panelButton_MouseLeave;
 			MouseDown += panelButton_MouseDown;
-			Click += PanelButton_Click;
+			Click += PanelButton_CheckBox_Clicked;
 			TabIndex = 0;
 
 			SetLabel();
@@ -90,18 +90,18 @@ namespace LanguageExplorer.Controls.PaneBar
 				if (control is CheckBox)
 				{
 					var controlAsCheckBox = (CheckBox)control;
-					controlAsCheckBox.Click += PanelButton_Click;
-					controlAsCheckBox.MouseEnter += panelButton_MouseEnter;
-					controlAsCheckBox.MouseLeave += panelButton_MouseLeave;
-					controlAsCheckBox.MouseDown += panelButton_MouseDown;
+					controlAsCheckBox.Click -= PanelButton_CheckBox_Clicked;
+					controlAsCheckBox.MouseEnter -= panelButton_MouseEnter;
+					controlAsCheckBox.MouseLeave -= panelButton_MouseLeave;
+					controlAsCheckBox.MouseDown -= panelButton_MouseDown;
 				}
 				else if (control is PanelExtension)
 				{
 					var controlAsPanelExtension = (PanelExtension)control;
-					controlAsPanelExtension.Click += PanelButton_Click;
-					controlAsPanelExtension.MouseEnter += panelButton_MouseEnter;
-					controlAsPanelExtension.MouseLeave += panelButton_MouseLeave;
-					controlAsPanelExtension.MouseDown += panelButton_MouseDown;
+					controlAsPanelExtension.Click -= PanelButton_Image_Clicked;
+					controlAsPanelExtension.MouseEnter -= panelButton_MouseEnter;
+					controlAsPanelExtension.MouseLeave -= panelButton_MouseLeave;
+					controlAsPanelExtension.MouseDown -= panelButton_MouseDown;
 				}
 				control.Dispose();
 			}
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Controls.PaneBar
 				Width = checkBoxWidth,
 				BackColor = Color.Transparent
 			};
-			checkBox.Click += PanelButton_Click;
+			checkBox.Click += PanelButton_CheckBox_Clicked;
 			checkBox.MouseEnter += panelButton_MouseEnter;
 			checkBox.MouseLeave += panelButton_MouseLeave;
 			checkBox.MouseDown += panelButton_MouseDown;
@@ -128,6 +128,9 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			if (_image != null)
 			{
+#if RANDYTODO
+				// TODO: Are there any users of this? If so what do they do?
+#endif
 				var p = new PanelExtension
 				{
 					Name = @"PanelExtension",
@@ -139,7 +142,7 @@ namespace LanguageExplorer.Controls.PaneBar
 					Size = new Size(17, Height)
 				};
 				Width += p.Size.Width;
-				p.Click += PanelButton_Click;
+				p.Click += PanelButton_Image_Clicked;
 				p.MouseEnter += panelButton_MouseEnter;
 				p.MouseLeave += panelButton_MouseLeave;
 				p.MouseDown += panelButton_MouseDown;
@@ -156,14 +159,24 @@ namespace LanguageExplorer.Controls.PaneBar
 			SetLabel();
 		}
 
-		private void PanelButton_Click(object sender, EventArgs e)
+		private void PanelButton_CheckBox_Clicked(object sender, EventArgs e)
 		{
 			using (new WaitCursor(Form.ActiveForm))
 			{
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
-				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, true);
-				_dataTree.OnPropertyChanged(_property);
+				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
+				_dataTree.ShowHiddenFields(_isChecked);
+			}
+		}
+
+		private void PanelButton_Image_Clicked(object sender, EventArgs e)
+		{
+			using (new WaitCursor(Form.ActiveForm))
+			{
+				_isChecked = !_isChecked;
+				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
+				_dataTree.ShowHiddenFields(_isChecked);
 			}
 		}
 

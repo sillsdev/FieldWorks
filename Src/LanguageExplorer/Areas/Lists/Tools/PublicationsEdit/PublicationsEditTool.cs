@@ -4,9 +4,11 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
@@ -16,7 +18,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 	/// </summary>
 	internal sealed class PublicationsEditTool : ITool
 	{
-		private PaneBarContainer _paneBarContainer;
+		/// <summary>
+		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
+		/// The RecordBar has no top PaneBar for information, menus, etc.
+		/// </summary>
+		private CollapsingSplitContainer _collapsingSplitContainer;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -75,8 +81,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(_paneBarContainer);
-			_paneBarContainer = null;
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -88,10 +93,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_paneBarContainer = PaneBarContainerFactory.Create(
-				PropertyTable, Publisher, Subscriber,
-				mainCollapsingSplitContainer.SecondControl,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(PropertyTable, Publisher, Subscriber, mainCollapsingSplitContainer, true,
+				XDocument.Parse(ListResources.PublicationsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				MachineName,
+				"PublicationsEditParameters", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.PublicationTypesOA,
+				false, false, false, "best vernoranal");
 		}
 
 		/// <summary>

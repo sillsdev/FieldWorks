@@ -319,8 +319,6 @@ namespace LanguageExplorer.Areas
 				this.Name = id;//for debugging
 			FirstLabel = XmlUtils.GetOptionalAttributeValue(configurationParameters, "firstLabel", "");
 			SecondLabel = XmlUtils.GetOptionalAttributeValue(configurationParameters, "secondLabel", "");
-			SetFirstCollapseZone(nodes[0]);
-			SetSecondCollapseZone(nodes[1]);
 
 			string orientation = XmlUtils.GetOptionalAttributeValue(configurationParameters, "splitterBarOrientation", "vertical");
 			if (orientation.ToLowerInvariant() == "horizontal" && Orientation != Orientation.Horizontal)

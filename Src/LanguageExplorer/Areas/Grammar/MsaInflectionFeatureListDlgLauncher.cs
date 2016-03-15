@@ -44,7 +44,6 @@ namespace LanguageExplorer.Areas.Grammar
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_msaInflectionFeatureListDlgLauncherView.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			m_msaInflectionFeatureListDlgLauncherView.Init(cache, obj as IFsFeatStruc);
 		}
 

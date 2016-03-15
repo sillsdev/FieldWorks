@@ -587,6 +587,12 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SelectedWritingSystemHvosForCurrentContextMenu", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);
+#if RANDYTODO
+			// TODO DataTree processes both of these:
+			// TODO:	1. "ShowHiddenFields" is used by a View menu item.
+			// TODO:	2. "ShowHiddenFields-someToolName" is used by PanelButton.
+			// TODO: Remove this property, when the menu is set up.
+#endif
 			PropertyTable.SetDefault("ShowHiddenFields", false, SettingsGroup.LocalSettings, false, false);
 
 			// not stored, but needed.

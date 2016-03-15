@@ -2,17 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.PaneBar;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 {
@@ -86,8 +83,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(_collapsingSplitContainer);
-			_collapsingSplitContainer = null;
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -99,18 +95,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			var panelButton = new PanelButton(PropertyTable, null, "ShowHiddenFields-domainTypeEdit", LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields);
-			panelButton.Dock = DockStyle.Right;
-			panelButton.BringToFront();
-			var controls = new List<Control> {panelButton};
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(PropertyTable, Publisher, Subscriber, mainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				MachineName,
 				"DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA,
-				false, true, false, "best analysis",
-				controls);
-			var recordEditView = (RecordEditView)_collapsingSplitContainer.SecondControl.Controls[1];
-			panelButton.DatTree = recordEditView.DatTree;
-			recordEditView.FinishInitialization();
+				false, true, false, "best analysis");
 		}
 
 		/// <summary>

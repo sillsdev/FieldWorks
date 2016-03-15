@@ -289,13 +289,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				}
 
-					SplitCont.Panel2.Controls.Add(value);
-
-				var asFlexComponent = value as IFlexComponent;
-				if (asFlexComponent  != null && PropertyTable != null && Publisher != null && Subscriber != null)
-				{
-					asFlexComponent.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-				}
+				SplitCont.Panel2.Controls.Add(value);
 			}
 		}
 

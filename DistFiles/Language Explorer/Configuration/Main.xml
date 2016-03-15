@@ -614,6 +614,7 @@ InterlinMaster user:
 			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdConfigureDictionary"/>
+			</menu>
 		</menu>
 
 		<menu id="mnuEnvReferenceChoices">

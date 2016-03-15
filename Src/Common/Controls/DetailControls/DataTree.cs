@@ -3866,11 +3866,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				PropertyTable.SetProperty(name, !oldShowValue, SettingsGroup.LocalSettings, true, true); // update the pane bar check box.
 				HandleShowHiddenFields(!oldShowValue);
 			}
-			else if (name.StartsWith("ShowHiddenFields-"))
-			{
-				bool fShowAllFields = PropertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
-				HandleShowHiddenFields(fShowAllFields);
-			}
 			else if (name == "currentContentControlObject")
 			{
 				m_fCurrentContentControlObjectTriggered = true;
@@ -4393,6 +4388,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#endregion
+
+		public void ShowHiddenFields(bool showHiddenFields)
+		{
+			HandleShowHiddenFields(showHiddenFields);
+		}
 	}
 
 	class DummyObjectSlice : Slice

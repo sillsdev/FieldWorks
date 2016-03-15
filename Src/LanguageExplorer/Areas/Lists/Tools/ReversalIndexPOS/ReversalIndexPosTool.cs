@@ -87,6 +87,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
+#if RANDYTODO
+			// TODO: Do not use generic list tool setup!
+#endif
 			_multiPane = MultiPaneFactory.Create(
 				PropertyTable, Publisher, Subscriber,
 				mainCollapsingSplitContainer.SecondControl,

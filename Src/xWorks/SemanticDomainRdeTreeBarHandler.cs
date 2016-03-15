@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!treeBarControl.HasHeaderControl)
 			{
 #if RANDYTODO
-				// TODO: Has to wait until xWorks is mwerged into LanguageExploere, to be able to create the pane bar.
+				// TODO: Has to wait until xWorks is merged into LanguageExplorer to be able to create the pane bar.
 				m_titleBar = new PaneBar { Dock = DockStyle.Top };
 #endif
 				var headerPanel = new Panel { Visible = false };

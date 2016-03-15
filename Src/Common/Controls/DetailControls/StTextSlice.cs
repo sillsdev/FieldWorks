@@ -37,8 +37,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			base.FinishInit();
 
-			var textHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
-			((StTextView) RootSite).Init(textHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo), m_ws);
+			if (m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid) == 0)
+			{
+				CreateText();
+			}
+			((StTextView)RootSite).Init(m_ws);
 		}
 
 #if RANDYTODO
@@ -207,20 +210,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.OnEnter(e);
 
 			// If we don't already have an StText in this field, make one now.
-			var view = (StTextView) RootSite;
-			if (view.StText == null)
+			if (((StTextView)RootSite).StText == null)
 			{
-				int textHvo = 0;
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					var sda = m_cache.DomainDataByFlid;
-					textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
-					var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
-					var tsf = m_cache.TsStrFactory;
-					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, tsf.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
-				});
-				view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
+				CreateText();
 			}
+		}
+
+		private void CreateText()
+		{
+			var view = (StTextView)RootSite;
+			var textHvo = 0;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				var sda = m_cache.DomainDataByFlid;
+				textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
+				var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
+				var tsf = m_cache.TsStrFactory;
+				sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, tsf.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
+			});
+			view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
 		}
 	}
 
@@ -272,13 +280,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
-		public void Init(IStText text, int ws)
+		public void Init(int ws)
 		{
 			CheckDisposed();
 			Cache = PropertyTable.GetValue<FdoCache>("cache");
 			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-			m_text = text;
-			m_vc = new StVc("Normal", ws) {Cache = m_fdoCache, Editable = true};
+			m_vc = new StVc("Normal", ws)
+			{
+				Cache = m_fdoCache,
+				Editable = true
+			};
 			DoSpellCheck = true;
 			if (m_rootb == null)
 			{

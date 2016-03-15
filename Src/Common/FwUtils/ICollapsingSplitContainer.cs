@@ -31,9 +31,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		Control FirstVisibleControl { get; }
 
 		/// <summary>
+		/// Set the width, which if less than the provided value, will trigger a collapse of the left/top pane.
+		/// </summary>
+		int FirstCollapseZone { set; }
+
+		/// <summary>
 		/// Gets the right or bottom panel of the implementation, depending on its Orientation.
 		/// </summary>
-		SplitterPanel Panel2 { get; }
+		SplitterPanel SecondPanel { get; }
 
 		/// <summary>
 		/// Label for expand/collapse area for second half of splitter.
@@ -48,5 +53,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This will return null if the data member is null.
 		/// </remarks>
 		Control SecondControl { get; set; }
+
+		/// <summary>
+		/// Set the width, which if less than the provided value, will trigger a collapse of the right/bottom pane.
+		/// </summary>
+		int SecondCollapseZone { set; }
 	}
 }

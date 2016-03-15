@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <overrides>
-	<column layout="CitationFormForEntry" visibility="menu"/>
-	<column layout="GrammaticalInfoAbbrForSense" visibility="menu"/>
-	<column layout="DomainsOfSensesForSense" visibility="menu"/>
+	<column layout="CitationFormForEntry" visibility="menu" />
+	<column layout="GrammaticalInfoAbbrForSense" visibility="menu" />
+	<column layout="DomainsOfSensesForSense" visibility="menu" />
 </overrides>

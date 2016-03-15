@@ -6,7 +6,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils;
-using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
@@ -88,8 +87,8 @@ namespace LanguageExplorer.Controls
 
 			m_firstIconControl.Dock = DockStyle.Fill;
 			Panel1.Controls.Add(m_firstIconControl);
-			m_firstIconControl.Click += new EventHandler(m_panel1Btn_Click);
-			m_firstIconControl.Paint += new PaintEventHandler(m_panel1Btn_Paint);
+			m_firstIconControl.Click += m_panel1Btn_Click;
+			m_firstIconControl.Paint += m_panel1Btn_Paint;
 			//Panel1.ControlAdded += new ControlEventHandler(CollapsingSplitContainer_Panel_ControlAdded);
 
 			FixedPanel = FixedPanel.Panel1;
@@ -110,8 +109,8 @@ namespace LanguageExplorer.Controls
 				Panel1.AccessibleName = "CSC.SplitContainer.One";
 			if (Panel2 != null && Panel2.AccessibleName == null)
 				Panel2.AccessibleName = "CSC.SplitContainer.Two";
-			Panel2.Layout += new LayoutEventHandler(Panel2_Layout);
-			Panel2.SizeChanged += new EventHandler(Panel2_SizeChanged);
+			Panel2.Layout += Panel2_Layout;
+			Panel2.SizeChanged += Panel2_SizeChanged;
 
 			ResumeLayout(false);
 
@@ -131,7 +130,7 @@ namespace LanguageExplorer.Controls
 			image.RotateFlip(RotateFlipType.Rotate270FlipNone);
 			m_expandSplitterIcons[3] = image;
 
-			Panel1.SizeChanged += new EventHandler(Panel1_SizeChanged);
+			Panel1.SizeChanged += Panel1_SizeChanged;
 			BackColor = Color.FromKnownColor(KnownColor.Control); // so the splitter itself is gray
 			Panel1.BackColor = Color.FromKnownColor(KnownColor.Window); // the content areas should be white if not covered.
 			Panel2.BackColor = Color.FromKnownColor(KnownColor.Window); // the content areas should be white if not covered.
@@ -235,6 +234,25 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
+		/// Set the width, which if less than the provided value, will trigger a collapse of the left/top pane.
+		/// </summary>
+		public int FirstCollapseZone
+		{
+			set
+			{
+				m_firstCollapseZone = GetNewCollapseZoneValue(value);
+			}
+		}
+
+		/// <summary>
+		/// Gets the right or bottom panel of the implementation, depending on its Orientation.
+		/// </summary>
+		public SplitterPanel SecondPanel
+		{
+			get { return Panel2; }
+		}
+
+		/// <summary>
 		/// The control that should be resized in the shared dimension when resizing the window.
 		/// It is always the right/bottom one at this point.
 		/// </summary>
@@ -255,23 +273,45 @@ namespace LanguageExplorer.Controls
 					throw new ArgumentNullException("SecondControl cannot be null.");
 
 				value.Dock = DockStyle.Fill;
-				if (Panel2.Controls.Contains(m_secondMainControl))
+				if (SecondPanel.Controls.Contains(m_secondMainControl))
 				{
-					Panel2.SuspendLayout();
-					Panel2.Controls.Remove(m_secondMainControl);
+					SecondPanel.SuspendLayout();
+					SecondPanel.Controls.Remove(m_secondMainControl);
 					if (!m_secondMainControl.IsDisposed)
 					{
 						m_secondMainControl.Dispose();
 					}
 					m_secondMainControl = value;
-					Panel2.Controls.Add(value);
-					Panel2.ResumeLayout();
+					SecondPanel.Controls.Add(value);
+					SecondPanel.ResumeLayout();
 				}
 				else
 					m_secondMainControl = value;
 
-				ResetControl(Panel2, value);
+				ResetControl(SecondPanel, value);
 			}
+		}
+
+		/// <summary>
+		/// Set the width, which if less than the provided value, will trigger a collapse of the right/bottom pane.
+		/// </summary>
+		public int SecondCollapseZone
+		{
+			set
+			{
+				m_secondCollapseZone = GetNewCollapseZoneValue(value);
+			}
+		}
+
+		private int GetNewCollapseZoneValue(int newValue)
+		{
+			int newZoneValue;
+			using (var gr = CreateGraphics())
+			{
+				newZoneValue = Math.Max((int) (newValue*gr.DpiX)/MiscUtils.kdzmpInch,
+					kCollapseZone);
+			}
+			return newZoneValue;
 		}
 
 		/// <summary>
@@ -326,11 +366,11 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		protected void ResetSplitterEventHandler(bool reactivate)
 		{
-			this.SplitterMoved -= new System.Windows.Forms.SplitterEventHandler(this.OnSplitterMoved);
+			SplitterMoved -= OnSplitterMoved;
 
 			if (reactivate)
 			{
-				this.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.OnSplitterMoved);
+				SplitterMoved += OnSplitterMoved;
 			}
 		}
 
@@ -392,7 +432,7 @@ namespace LanguageExplorer.Controls
 					else
 					{
 						x += icon.Width + kLabelOffset;
-						g.DrawString(label, font, brush, (float)x, (float)0.0);
+						g.DrawString(label, font, brush, x, (float)0.0);
 					}
 				}
 			}
@@ -626,46 +666,6 @@ namespace LanguageExplorer.Controls
 			{
 				m_wantResetControls = true;
 			}
-		}
-
-		/// <summary />
-		internal void SetFirstCollapseZone(XmlNode node)
-		{
-			m_firstCollapseZone = GetCollapseZone(node);
-		}
-
-		/// <summary />
-		internal void SetSecondCollapseZone(XmlNode node)
-		{
-			m_secondCollapseZone = GetCollapseZone(node);
-		}
-
-		private int GetCollapseZone(XmlNode xmlNode)
-		{
-			if (xmlNode == null)
-				return kCollapseZone;
-#if RANDYTODO
-			// TODO: The whole xmlNode business isn't available now. Figure out how to live without it.
-			string sCollapse = XmlUtils.GetOptionalAttributeValue(xmlNode, "collapse", null);
-			if (sCollapse == null)
-			{
-				XmlNode parameters = xmlNode.SelectSingleNode("parameters");
-				if (parameters != null)
-					sCollapse = XmlUtils.GetOptionalAttributeValue(parameters, "collapse", null);
-			}
-			if (String.IsNullOrEmpty(sCollapse))
-				return kCollapseZone;
-			int collapse;
-			if (Int32.TryParse(sCollapse, out collapse) && collapse > 0)
-			{
-				using (Graphics gr = CreateGraphics())
-				{
-					return Math.Max((int)((float)collapse * gr.DpiX) / SIL.Utils.MiscUtils.kdzmpInch,
-						kCollapseZone);
-				}
-			}
-#endif
-			return kCollapseZone;
 		}
 
 		#endregion Event handler methods
