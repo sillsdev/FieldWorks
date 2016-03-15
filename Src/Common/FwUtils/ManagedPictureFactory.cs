@@ -6,6 +6,7 @@
 // Responsibility:
 // ---------------------------------------------------------------------------------------------
 
+using System;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -15,9 +16,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Implement IPictureFactory using ImagePicture class.
 	/// This class Should NOT be used from C# or other managed code.
 	/// </summary>
-	[Guid("17a2e876-2968-11e0-8046-0019dbf4566e"),
-	ClassInterface(ClassInterfaceType.None),
-	TypeLibType(TypeLibTypeFlags.FCanCreate)]
+	[Guid("17a2e876-2968-11e0-8046-0019dbf4566e")]
+	[ClassInterface(ClassInterfaceType.None)]
+	[TypeLibType(TypeLibTypeFlags.FCanCreate)]
 	public class ManagedPictureFactory : IPictureFactory
 	{
 		/// <summary>

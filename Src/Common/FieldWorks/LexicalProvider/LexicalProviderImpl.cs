@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					propertyTable.SetProperty("App", flexApp, true);
 
 					LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-						"UserHelpFile", tss, null);
+					"UserHelpFile", tss, null);
 				}
 			});
 		}
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					propertyTable.SetProperty("App", flexApp, true);
 
 					LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-						"UserHelpFile", tss);
+					"UserHelpFile", tss);
 				}
 			});
 		}

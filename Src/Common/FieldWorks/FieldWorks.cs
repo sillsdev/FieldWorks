@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -196,17 +197,17 @@ namespace SIL.FieldWorks
 				{
 					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 					if (String.IsNullOrEmpty(xulRunnerLocation))
-						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-					if (!librarySearchPath.Contains(xulRunnerLocation))
-						throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+				if (!librarySearchPath.Contains(xulRunnerLocation))
+					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				}
 				else
 				{
-					// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
+				// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
 					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
-					if (string.IsNullOrEmpty(xulRunnerLocation))
-						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+				if (string.IsNullOrEmpty(xulRunnerLocation))
+					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 				}
 
 				Xpcom.Initialize(xulRunnerLocation);
@@ -539,8 +540,8 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void LaunchRestoreFromCommandLine(FwAppArgs appArgs)
 		{
-			RestoreProject(null, appArgs.BackupFile);
-		}
+				RestoreProject(null, appArgs.BackupFile);
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -983,7 +984,7 @@ namespace SIL.FieldWorks
 					// needed after doing a save.
 					Thread.Sleep(2000);
 					s_renameSuccessful = s_cache.RenameDatabase(s_renameNewName);
-				}
+			}
 			}
 			finally
 			{
@@ -1191,15 +1192,15 @@ namespace SIL.FieldWorks
 			Justification = "appKey is a reference")]
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
-			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
-			// even when the application is in a crashed state. For example, error reporting failed
-			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
-			RegistryKey appKey = FwRegistryHelper.FieldWorksRegistryKey;
+				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
+				// even when the application is in a crashed state. For example, error reporting failed
+				// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+				RegistryKey appKey = FwRegistryHelper.FieldWorksRegistryKey;
 			if (parent != null && parent.App != null && parent.App == s_flexApp && s_flexAppKey != null)
-				appKey = s_flexAppKey;
-			return ErrorReporter.ReportException(error, appKey, SupportEmail,
-				parent as Form, isLethal);
-		}
+					appKey = s_flexAppKey;
+				return ErrorReporter.ReportException(error, appKey, SupportEmail,
+					parent as Form, isLethal);
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1355,7 +1356,7 @@ namespace SIL.FieldWorks
 		{
 			// From the provided project, return the best possible ProjectId object.
 			return new ProjectId(latestProject);
-		}
+				}
 
 		/// <summary>
 		/// Returns true if valid command-line args created this projectId.
@@ -1990,15 +1991,15 @@ namespace SIL.FieldWorks
 			string projectPath = fwApp.Cache.ProjectId.Path;
 			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
 			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-			if (!MiscUtils.IsUnix)
-			{
-				parentDirectory = parentDirectory.ToLowerInvariant();
-				projectsDirectory = projectsDirectory.ToLowerInvariant();
-			}
+				if (!MiscUtils.IsUnix)
+				{
+					parentDirectory = parentDirectory.ToLowerInvariant();
+					projectsDirectory = projectsDirectory.ToLowerInvariant();
+				}
 
-			UpdateProjectsLocation(dlg.ProjectsFolder, fwApp, projectPath);
-		}
-		}
+					UpdateProjectsLocation(dlg.ProjectsFolder, fwApp, projectPath);
+				}
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2705,13 +2706,13 @@ namespace SIL.FieldWorks
 				// not even be one that was migrated. But it will probably work for most users.
 				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
 					return;
-				// TODO-Linux: Help is not implemented in Mono
-				const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
+					// TODO-Linux: Help is not implemented in Mono
+					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
 				DialogResult res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo, MessageBoxIcon.None,
-					MessageBoxDefaultButton.Button1, 0, app.HelpFile,
-					"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo, MessageBoxIcon.None,
+						MessageBoxDefaultButton.Button1, 0, app.HelpFile,
+						"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
 				if (res != DialogResult.Yes)
 					return;
 				MoveExternalLinkDirectoryAndFiles(app);
@@ -2912,14 +2913,14 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static FwApp GetOrCreateApplication(FwAppArgs args)
 		{
-			if (s_flexApp == null)
-			{
-				s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
+					if (s_flexApp == null)
+					{
+						s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 					FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(), args);
-				s_flexAppKey = s_flexApp.SettingsKey;
-			}
-			return s_flexApp;
-		}
+						s_flexAppKey = s_flexApp.SettingsKey;
+					}
+					return s_flexApp;
+				}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

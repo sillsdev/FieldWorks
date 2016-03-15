@@ -162,8 +162,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_msaGroupBox);
 			}
 
-			// Reset window location.
-			// Get location to the stored values, if any.
+				// Reset window location.
+				// Get location to the stored values, if any.
 			if (m_propertyTable.PropertyExists("msaCreatorDlgLocation"))
 			{
 				var locWnd = m_propertyTable.GetValue<Point>("msaCreatorDlgLocation");
@@ -175,10 +175,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				//m_mediator.XCore.PropertyTable.GetValue("msaCreatorDlgSize");
 				Rectangle rect = new Rectangle(locWnd, Size);
 				ScreenHelper.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
 			}
-		}
 
 		/// <summary>
 		/// Check to see if the object has been disposed.

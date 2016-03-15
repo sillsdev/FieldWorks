@@ -504,12 +504,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			Form = form;
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="cache"></param>
-		///  <param name="wp"></param>
-		///  <param name="mediator"></param>
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="wp"></param>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
 		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssform)

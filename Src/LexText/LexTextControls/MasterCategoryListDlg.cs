@@ -117,14 +117,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="posList"></param>
-		///  <param name="mediator"></param>
+		/// </summary>
+		/// <param name="posList"></param>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		///  <param name="subItemOwner"></param>
+		/// <param name="subItemOwner"></param>
 		public void SetDlginfo(ICmPossibilityList posList, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();

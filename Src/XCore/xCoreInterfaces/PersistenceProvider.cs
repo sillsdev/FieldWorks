@@ -32,7 +32,7 @@ namespace XCore
 		/// same settings each time. So each case would need its own context string.</param>
 		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable, string context)
 		{
-			m_contextString = context;
+			m_contextString= context;
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 		}
@@ -48,7 +48,7 @@ namespace XCore
 		{
 		}
 
-		public void RestoreWindowSettings(string id, Form form)
+		public void RestoreWindowSettings(string id,Form form)
 		{
 			object state = Get(id,"windowState");
 			//don't bother restoring the program to the minimized state.

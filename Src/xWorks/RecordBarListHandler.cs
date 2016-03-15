@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 				XWindow window = m_propertyTable.GetValue<XWindow>("window");
 				if (window != null)
 					return (ListView)window.ListStyleRecordList;
-				return null;
+					return null;
 			}
 		}
 

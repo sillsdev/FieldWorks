@@ -93,8 +93,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (app != null)
 					{
 						parent = app.ActiveMainWindow;
-					}
-					if (parent == null)
+				}
+				if (parent == null)
 					{
 						parent = m_propertyTable.GetValue<Form>("window");
 					}

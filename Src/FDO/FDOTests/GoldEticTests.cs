@@ -4,9 +4,10 @@
 
 using System.IO;
 using System.Xml;
+using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
-using NUnit.Framework;
+using SIL.TestUtilities;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

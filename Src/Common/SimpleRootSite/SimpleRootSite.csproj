@@ -239,6 +239,7 @@
     </EmbeddedResource>
     <Compile Include="ViewInputManager.cs" />
     <Compile Include="IbusRootSiteEventHandler.cs" />
+    <Compile Include="WpfInterfacesForMono.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />

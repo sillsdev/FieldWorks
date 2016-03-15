@@ -451,12 +451,12 @@ namespace FwBuildTasks
 			{
 				if (m_parentTask.BuildSource)
 				{
-					if (!CheckForPoFileProblems())
-						return;
+				if (!CheckForPoFileProblems())
+					return;
 
-					CreateStringsXml();
+				CreateStringsXml();
 
-					CreateXmlMappingFromPo();
+				CreateXmlMappingFromPo();
 				}
 
 				List<string> projectFolders;

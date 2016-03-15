@@ -12,15 +12,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -126,22 +126,22 @@ namespace SIL.FieldWorks.FdoUi
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
-		///  ------------------------------------------------------------------------------------
-		///  <summary>
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="cache"></param>
-		///  <param name="hvoSrc"></param>
-		///  <param name="tagSrc"></param>
-		///  <param name="wsSrc"></param>
-		///  <param name="ichMin"></param>
-		///  <param name="ichLim"></param>
-		///  <param name="owner"></param>
-		///  <param name="mediator"></param>
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="hvoSrc"></param>
+		/// <param name="tagSrc"></param>
+		/// <param name="wsSrc"></param>
+		/// <param name="ichMin"></param>
+		/// <param name="ichLim"></param>
+		/// <param name="owner"></param>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
-		///  <param name="helpFileKey">string key to get the help file name</param>
-		///  ------------------------------------------------------------------------------------
+		/// <param name="helpFileKey">string key to get the help file name</param>
+		/// ------------------------------------------------------------------------------------
 		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
 			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey)
@@ -254,16 +254,16 @@ namespace SIL.FieldWorks.FdoUi
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
 			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-			if (entries == null || entries.Count == 0)
-			{
+				if (entries == null || entries.Count == 0)
+				{
 				ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
-				if (entry == null)
-					return;
-				entries = new List<ILexEntry>(1);
-				entries.Add(entry);
-			}
+					if (entry == null)
+						return;
+					entries = new List<ILexEntry>(1);
+					entries.Add(entry);
+				}
 			DisplayEntriesRecursive(cache, owner, mediator, propertyTable, styleSheet, helpProvider, helpFileKey, entries, tssWf);
-		}
+			}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
 			Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet,
@@ -511,29 +511,29 @@ namespace SIL.FieldWorks.FdoUi
 		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm, IWin32Window owner)
 		{
-			using (EntryGoDlg entryGoDlg = new EntryGoDlg())
-			{
-				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
-				// but reset after activated.
-				SetCurrentModalForm(entryGoDlg);
-				var wp = new WindowParams
+				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
 				{
-					m_btnText = FdoUiStrings.ksShow,
-					m_title = FdoUiStrings.ksFindInDictionary,
-					m_label = FdoUiStrings.ksFind_
-				};
-				if (owner == null)
-					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
-				entryGoDlg.Owner = owner as Form;
+					// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
+					// but reset after activated.
+					SetCurrentModalForm(entryGoDlg);
+					var wp = new WindowParams
+								 {
+									 m_btnText = FdoUiStrings.ksShow,
+									 m_title = FdoUiStrings.ksFindInDictionary,
+									 m_label = FdoUiStrings.ksFind_
+								 };
+					if (owner == null)
+						entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
+					entryGoDlg.Owner = owner as Form;
 				entryGoDlg.SetDlgInfo(cache, wp, mediator, propertyTable, tssForm);
-				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
-				if (entryGoDlg.ShowDialog() == DialogResult.OK)
-				{
-					var entry = entryGoDlg.SelectedObject as ILexEntry;
-					Debug.Assert(entry != null);
-					return entry;
+					entryGoDlg.SetHelpTopic("khtpFindInDictionary");
+					if (entryGoDlg.ShowDialog() == DialogResult.OK)
+					{
+						var entry = entryGoDlg.SelectedObject as ILexEntry;
+						Debug.Assert(entry != null);
+						return entry;
+					}
 				}
-			}
 			return null;
 		}
 

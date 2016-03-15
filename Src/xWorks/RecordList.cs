@@ -1105,21 +1105,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int fontHeight;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			if (analysisWs)
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-				"Normal", stylesheet,
-				wsContainer.DefaultAnalysisWritingSystem.Handle,
-				cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
-			else
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-				"Normal", stylesheet,
-				wsContainer.DefaultVernacularWritingSystem.Handle,
-				cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
+				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
+				if (analysisWs)
+				{
+					fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
+					"Normal", stylesheet,
+					wsContainer.DefaultAnalysisWritingSystem.Handle,
+					cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
+				}
+				else
+				{
+					fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
+					"Normal", stylesheet,
+					wsContainer.DefaultVernacularWritingSystem.Handle,
+					cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
+				}
 			return fontHeight;
 		}
 
@@ -3339,25 +3339,25 @@ namespace SIL.FieldWorks.XWorks
 			return -1;
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <remarks> notice that currently, we do not require (or allow)
-		///  the class owning object to be specified. It is inferred.
-		///  Also notice that we assume that all of these collections are owned by,
-		///  essentially, a Singleton object in the database.  For example,
-		///  there is only one lexical database, so we do not need nor have a need for a way to
-		///  specify which lexical database we want to browse.</remarks>
-		///  <remarks> The initial plan was to do something smarter, so that we would not have this
-		///  big switch statement.  There are various possibilities, but this is our first pass
-		///  in order to get something working.</remarks>
-		///  <param name="name">the name of the vector, as defined here</param>
-		///  <param name="owner">the name of the owner of the vector (can be null if using a
-		///  defined type)</param>
-		///  <param name="analysisWs">True to use the analysis font, false otherwise</param>
+		/// </summary>
+		/// <remarks> notice that currently, we do not require (or allow)
+		/// the class owning object to be specified. It is inferred.
+		/// Also notice that we assume that all of these collections are owned by,
+		/// essentially, a Singleton object in the database.  For example,
+		/// there is only one lexical database, so we do not need nor have a need for a way to
+		/// specify which lexical database we want to browse.</remarks>
+		/// <remarks> The initial plan was to do something smarter, so that we would not have this
+		/// big switch statement.  There are various possibilities, but this is our first pass
+		/// in order to get something working.</remarks>
+		/// <param name="name">the name of the vector, as defined here</param>
+		/// <param name="owner">the name of the owner of the vector (can be null if using a
+		/// defined type)</param>
+		/// <param name="analysisWs">True to use the analysis font, false otherwise</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="owningObject">the object which owns the vector</param>
-		///  <param name="fontName"></param>
+		/// <param name="fontName"></param>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="typeSize"></param>
@@ -3778,8 +3778,8 @@ namespace SIL.FieldWorks.XWorks
 			// while the program is running. In case a crash occurs, we don't want to reload an obsolete
 			// list the next time we start up.
 			FileUtils.Delete(pathname);
-			return false; // could not restore, bad file or deleted objects or...
-		}
+				return false; // could not restore, bad file or deleted objects or...
+			}
 
 		/// <summary>
 		/// LT-12780:  On reloading FLEX there were situtaions where it reloaded on the first element of a list instead of

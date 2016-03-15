@@ -4064,19 +4064,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
-				dlg.Init(null, GetUILanguages(), m_cache);
-				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
-				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
-				dlg.SetExistingElementNames(ExtractExistingElementNames(false));
-				if (dlg.ShowDialog(this) == DialogResult.OK)
-				{
-					m_dirtySenseLastSave = true;
+			dlg.Init(null, GetUILanguages(), m_cache);
+			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
+			dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
+			dlg.SetExistingElementNames(ExtractExistingElementNames(false));
+			if (dlg.ShowDialog(this) == DialogResult.OK)
+			{
+				m_dirtySenseLastSave = true;
 
-					// now add the new item and then select it
-					AddInLineMarker(dlg.IFM(), true);
-					listViewCharMappings.Focus();
-				}
+				// now add the new item and then select it
+				AddInLineMarker(dlg.IFM(), true);
+				listViewCharMappings.Focus();
 			}
+		}
 		}
 
 		private void btnModifyCharMapping_Click(object sender, System.EventArgs e)
@@ -4185,43 +4185,43 @@ namespace SIL.FieldWorks.LexText.Controls
 			switch (fd.Type)
 			{
 				case CellarPropertyType.MultiUnicode:
-					sig = "MultiUnicode";
+				sig = "MultiUnicode";
 					break;
 				case CellarPropertyType.String:
-					sig = "string";
+				sig = "string";
 					break;
 				case CellarPropertyType.OwningAtomic:
 					if (fd.DstCls == StTextTags.kClassId)
 					{
-						sig = "text";
+				sig = "text";
 					}
 					break;
 				case CellarPropertyType.ReferenceAtomic:
 					if (fd.ListRootId != Guid.Empty)
 					{
-						sig = "ListRef";
+				sig = "ListRef";
 					}
 					break;
 				case CellarPropertyType.ReferenceCollection:
 					if (fd.ListRootId != Guid.Empty)
 					{
-						sig = "ListMultiRef";
+				sig = "ListMultiRef";
 					}
 					break;
-				// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
-				// Not sure these string values are actually used for anything; if they are, it might be a problem,
-				// because I haven't been able to track down how or where they are used.
+			// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
+			// Not sure these string values are actually used for anything; if they are, it might be a problem,
+			// because I haven't been able to track down how or where they are used.
 				case CellarPropertyType.GenDate:
-					sig = "Date";
+				sig = "Date";
 					break;
 				case CellarPropertyType.Integer:
-					sig = "Integer";
+				sig = "Integer";
 					break;
 				case CellarPropertyType.Numeric:
-					sig = "Number";
+				sig = "Number";
 					break;
 				default:
-					throw new Exception("Error converting custom field to LexImportField - unexpected signature");
+				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
 
 			LexImportCustomField lif = new LexImportCustomField(

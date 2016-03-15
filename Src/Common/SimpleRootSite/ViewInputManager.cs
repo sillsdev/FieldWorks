@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return KeyboardController.NullKeyboard;
 
 				CoreWritingSystemDefinition wsd = manager.Get(ws.Handle);
-				return wsd.LocalKeyboard;
+				return wsd.LocalKeyboard ?? KeyboardController.NullKeyboard;
 			}
 		}
 	}

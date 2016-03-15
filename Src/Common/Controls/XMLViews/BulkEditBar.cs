@@ -762,7 +762,7 @@ namespace SIL.FieldWorks.Common.Controls
 			besc.Stylesheet = m_bv.StyleSheet;
 			if (besc.Mediator != m_mediator)
 			{
-				besc.Mediator = m_mediator;
+			besc.Mediator = m_mediator;
 			}
 			if (besc.PropTable != m_propertyTable)
 			{

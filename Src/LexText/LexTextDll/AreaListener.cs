@@ -356,10 +356,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 				{
 					return true;
 				}
-				foreach (XmlNode node in nodes)
-				{
+					foreach (XmlNode node in nodes)
+					{
 					AddToolNodeToDisplay(possRepo, cache, display, node);
-				}
+					}
 			}
 			return true;
 		}
@@ -1050,7 +1050,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (area != null)
 				{
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-				}
+			}
 			}
 			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);

@@ -271,9 +271,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (!string.IsNullOrEmpty(sortUsing))
 				{
-					writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
+				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
 						XmlUtils.MakeSafeXml(sortUsing));
-					writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
+				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
 						XmlUtils.MakeSafeXml(sortRules));
 				}
 				writer.WriteLine("</WritingSystem>");

@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.TE
 		private void btnCompare_Click(object sender, EventArgs e)
 		{
 			throw new InvalidProgramException("Report this to developers, as you can't show Scripture merge diffs from FLEx.");
-		}
+			}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

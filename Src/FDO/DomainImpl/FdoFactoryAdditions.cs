@@ -1376,7 +1376,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			else
 			{
-				int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
 				pos = new PartOfSpeech(m_cache, hvo, guid);
 			}
 			owner.SubPossibilitiesOS.Add(pos);

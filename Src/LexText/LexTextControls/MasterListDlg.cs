@@ -156,11 +156,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="featSys"></param>
-		///  <param name="mediator"></param>
+		/// </summary>
+		/// <param name="featSys"></param>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
 		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu)
@@ -170,15 +170,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlginfo(featSys, mediator, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="featSys"></param>
-		///  <param name="mediator"></param>
+		/// </summary>
+		/// <param name="featSys"></param>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="launchedFromInsertMenu"></param>
-		///  <param name="sWindowKey">used to store location and size of dialog window</param>
-		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
+		/// <param name="sWindowKey">used to store location and size of dialog window</param>
+		/// <param name="sXmlFile">file containing the XML form of the gloss list</param>
 		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, XCore.PropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();

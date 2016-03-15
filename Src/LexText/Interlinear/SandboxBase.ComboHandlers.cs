@@ -22,7 +22,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;
-using Color = System.Drawing.Color;
+using Color=System.Drawing.Color;
 
 namespace SIL.FieldWorks.IText
 {

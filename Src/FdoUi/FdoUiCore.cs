@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.FdoUi
 			if (m_propertyTable == null)
 				m_propertyTable = propertyTable;
 			if (Mediator == null)
-				Mediator = mediator;
+			Mediator = mediator;
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			m_hostControl = hostControl;
 
@@ -1080,12 +1080,12 @@ namespace SIL.FieldWorks.FdoUi
 					var app = propertyTable.GetValue<FwApp>("App");
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 				}
-				string fileToDelete = file.AbsoluteInternalPath;
-				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-				// with an exception indicating that something is using the file, despite the code above that
-				// tries to make our picture cache let go of it.
-				// However, waiting until idle seems to solve the problem.
-				mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+			string fileToDelete = file.AbsoluteInternalPath;
+			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+			// with an exception indicating that something is using the file, despite the code above that
+			// tries to make our picture cache let go of it.
+			// However, waiting until idle seems to solve the problem.
+			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
 				{
 					try
 					{
@@ -1097,7 +1097,7 @@ namespace SIL.FieldWorks.FdoUi
 					}
 					return true; // task is complete, don't try again.
 				});
-				file.Delete();
+			file.Delete();
 		}
 		}
 

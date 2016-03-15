@@ -73,28 +73,28 @@ namespace SIL.FieldWorks
 			this.buttonLayout.SuspendLayout();
 			this.mainVerticalLayout.SuspendLayout();
 			this.SuspendLayout();
-			//
+			// 
 			// topPanel
-			//
+			// 
 			resources.ApplyResources(this.topPanel, "topPanel");
 			this.topPanel.Controls.Add(this.m_openSampleOrLastProjectLink);
 			this.topPanel.Controls.Add(this.m_sampleOrLastProjectLinkLabel);
 			this.topPanel.Name = "topPanel";
-			//
+			// 
 			// m_openSampleOrLastProjectLink
-			//
+			// 
 			resources.ApplyResources(this.m_openSampleOrLastProjectLink, "m_openSampleOrLastProjectLink");
 			this.m_openSampleOrLastProjectLink.Name = "m_openSampleOrLastProjectLink";
 			this.m_openSampleOrLastProjectLink.TabStop = true;
 			this.m_openSampleOrLastProjectLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_openProjectLink_LinkClicked);
-			//
+			// 
 			// m_sampleOrLastProjectLinkLabel
-			//
+			// 
 			resources.ApplyResources(this.m_sampleOrLastProjectLinkLabel, "m_sampleOrLastProjectLinkLabel");
 			this.m_sampleOrLastProjectLinkLabel.Name = "m_sampleOrLastProjectLinkLabel";
-			//
+			// 
 			// openButton
-			//
+			// 
 			resources.ApplyResources(this.openButton, "openButton");
 			this.openButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.openButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
@@ -103,9 +103,9 @@ namespace SIL.FieldWorks
 			this.openButton.Name = "openButton";
 			this.openButton.UseVisualStyleBackColor = true;
 			this.openButton.Click += new System.EventHandler(this.m_btnOpen_Click);
-			//
+			// 
 			// receiveButton
-			//
+			// 
 			resources.ApplyResources(this.receiveButton, "receiveButton");
 			this.receiveButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.receiveButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
@@ -114,9 +114,9 @@ namespace SIL.FieldWorks
 			this.receiveButton.Name = "receiveButton";
 			this.receiveButton.UseVisualStyleBackColor = true;
 			this.receiveButton.Click += new System.EventHandler(this.Receive_Click);
-			//
+			// 
 			// createButton
-			//
+			// 
 			resources.ApplyResources(this.createButton, "createButton");
 			this.createButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.createButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
@@ -125,9 +125,9 @@ namespace SIL.FieldWorks
 			this.createButton.Name = "createButton";
 			this.createButton.UseVisualStyleBackColor = true;
 			this.createButton.Click += new System.EventHandler(this.m_btnNew_Click);
-			//
+			// 
 			// importButton
-			//
+			// 
 			resources.ApplyResources(this.importButton, "importButton");
 			this.importButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.importButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
@@ -135,9 +135,9 @@ namespace SIL.FieldWorks
 			this.importButton.Name = "importButton";
 			this.importButton.UseVisualStyleBackColor = true;
 			this.importButton.Click += new System.EventHandler(this.Import_Click);
-			//
+			// 
 			// restoreButton
-			//
+			// 
 			resources.ApplyResources(this.restoreButton, "restoreButton");
 			this.restoreButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.restoreButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
@@ -145,56 +145,56 @@ namespace SIL.FieldWorks
 			this.restoreButton.Name = "restoreButton";
 			this.restoreButton.UseVisualStyleBackColor = true;
 			this.restoreButton.Click += new System.EventHandler(this.m_btnRestore_Click);
-			//
+			// 
 			// alwaysOpenLastProjectCheckBox
-			//
+			// 
 			resources.ApplyResources(this.alwaysOpenLastProjectCheckBox, "alwaysOpenLastProjectCheckBox");
 			this.alwaysOpenLastProjectCheckBox.Name = "alwaysOpenLastProjectCheckBox";
 			this.alwaysOpenLastProjectCheckBox.UseVisualStyleBackColor = true;
-			//
+			// 
 			// reportingInfoLayout
-			//
+			// 
 			resources.ApplyResources(this.reportingInfoLayout, "reportingInfoLayout");
 			this.reportingInfoLayout.Controls.Add(this.infoIcon);
 			this.reportingInfoLayout.Controls.Add(this.reportingInfoLabel);
 			this.reportingInfoLayout.Name = "reportingInfoLayout";
-			//
+			// 
 			// infoIcon
-			//
+			// 
 			resources.ApplyResources(this.infoIcon, "infoIcon");
 			this.infoIcon.Name = "infoIcon";
 			this.infoIcon.TabStop = false;
-			//
+			// 
 			// reportingInfoLabel
-			//
+			// 
 			this.reportingInfoLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			resources.ApplyResources(this.reportingInfoLabel, "reportingInfoLabel");
 			this.reportingInfoLabel.Name = "reportingInfoLabel";
 			this.reportingInfoLabel.ReadOnly = true;
-			//
+			// 
 			// buttonLayout
-			//
+			// 
 			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Controls.Add(this.helpButton);
 			this.buttonLayout.Controls.Add(this.closeButton);
 			this.buttonLayout.Name = "buttonLayout";
-			//
+			// 
 			// helpButton
-			//
+			// 
 			resources.ApplyResources(this.helpButton, "helpButton");
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = true;
 			this.helpButton.Click += new System.EventHandler(this.m_btnHelp_Click);
-			//
+			// 
 			// closeButton
-			//
+			// 
 			resources.ApplyResources(this.closeButton, "closeButton");
 			this.closeButton.Name = "closeButton";
 			this.closeButton.UseVisualStyleBackColor = true;
 			this.closeButton.Click += new System.EventHandler(this.m_btnExit_Click);
-			//
+			// 
 			// mainVerticalLayout
-			//
+			// 
 			resources.ApplyResources(this.mainVerticalLayout, "mainVerticalLayout");
 			this.mainVerticalLayout.Controls.Add(this.topPanel);
 			this.mainVerticalLayout.Controls.Add(this.m_lblProjectLoadError);
@@ -207,9 +207,9 @@ namespace SIL.FieldWorks
 			this.mainVerticalLayout.Controls.Add(this.reportingInfoLayout);
 			this.mainVerticalLayout.Controls.Add(this.buttonLayout);
 			this.mainVerticalLayout.Name = "mainVerticalLayout";
-			//
+			// 
 			// m_lblProjectLoadError
-			//
+			// 
 			this.m_lblProjectLoadError.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.m_lblProjectLoadError.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
@@ -218,9 +218,9 @@ namespace SIL.FieldWorks
 			this.m_lblProjectLoadError.ReadOnly = true;
 			this.m_lblProjectLoadError.TabStop = false;
 			this.m_lblProjectLoadError.IsTextSelectable = true;
-			//
+			// 
 			// WelcomeToFieldWorksDlg
-			//
+			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.mainVerticalLayout);

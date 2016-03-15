@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using SIL.Lift.Validation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -23,9 +22,10 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.Lift.Validation;
+using SIL.TestUtilities;
+using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace LexTextControlsTests

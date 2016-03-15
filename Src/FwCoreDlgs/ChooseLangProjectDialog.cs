@@ -269,8 +269,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_lstLanguageProjects.SelectedItem == null)
 				return;
 
-			Project = m_lstLanguageProjects.SelectedItem.ToString();
-		}
+				Project = m_lstLanguageProjects.SelectedItem.ToString();
+			}
 
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{

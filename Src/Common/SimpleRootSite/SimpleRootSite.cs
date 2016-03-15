@@ -458,9 +458,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
-#if __MonoCS__
+				#if __MonoCS__
 				KeyboardController.UnregisterControl(this);
-#endif
+				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))

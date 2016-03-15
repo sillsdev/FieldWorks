@@ -751,19 +751,19 @@ namespace SIL.FieldWorks.LexText.Controls
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);
 				}
 
-				return m_selectedMainPOS.AllAffixSlots;
+					return m_selectedMainPOS.AllAffixSlots;
 			}
 
 			// Called by InsertEntryDlg so we know the morphtype
-			bool fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
-			bool fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
-			if (fIsPrefixal && fIsSuffixal)
+				bool fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
+				bool fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
+				if (fIsPrefixal && fIsSuffixal)
 			{
-				return m_selectedMainPOS.AllAffixSlots;
+					return m_selectedMainPOS.AllAffixSlots;
 			}
 
-			return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
-		}
+					return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
+			}
 
 		public void AdjustInternalControlsAndGrow()
 		{
