@@ -350,29 +350,24 @@ namespace SIL.FieldWorks.XWorks
 			View.ManageConfigurations += (sender, args) =>
 			{
 				var currentModel = _model;
-				bool managerMadeChanges, managerSavedChanges;
+				bool managerMadeChanges;
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(_mediator.HelpTopicProvider))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
 						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
-					dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_mediator) == "Dictionary"
-						? "khtpDictConfigManager"
-						: "khtpRevIndexConfigManager";
+					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
-					managerSavedChanges = configurationManagerController.HasSavedAnyChanges;
-					managerMadeChanges = configurationManagerController.IsDirty || managerSavedChanges || _model != currentModel;
+					managerMadeChanges = configurationManagerController.IsDirty ||  _model != currentModel;
 				}
-
+				// if the manager has not updated anything then we don't need to make any adustments
 				if (!managerMadeChanges)
 					return;
-
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
 				MergeCustomFieldsIntoDictionaryModel(cache, _model);
-				if (managerSavedChanges) // REVIEW was this here before?
-					SaveModel();
+				SaveModel();
 				SelectCurrentConfigurationAndRefresh();
 			};
 			View.SaveModel += SaveModelHandler;
@@ -484,6 +479,19 @@ namespace SIL.FieldWorks.XWorks
 			};
 			SelectCurrentConfigurationAndRefresh();
 			HasSavedAnyChanges = m_isDirty = false;
+		}
+
+		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
+		{
+			dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_mediator) == xWorksStrings.Dictionary
+						? "khtpDictConfigManager"
+						: "khtpRevIndexConfigManager";
+
+			if (DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_mediator) == xWorksStrings.ReversalIndex)
+			{
+				dialog.Text = xWorksStrings.ReversalIndexConfigurationDlgTitle;
+				dialog.ConfigurationGroupText = xWorksStrings.DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel;
+			}
 		}
 
 		public void SelectModelFromManager(DictionaryConfigurationModel model)

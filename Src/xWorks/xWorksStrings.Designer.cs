@@ -285,6 +285,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversal Configurations.
+        /// </summary>
+        internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown..
         /// </summary>
         internal static string DidNotSelectValidWsForDb {
@@ -2114,6 +2123,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversal Index Configuration Manager.
+        /// </summary>
+        internal static string ReversalIndexConfigurationDlgTitle {
+            get {
+                return ResourceManager.GetString("ReversalIndexConfigurationDlgTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save changes?.
         /// </summary>
         internal static string SaveChanges {
@@ -2263,6 +2281,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string YouAreResetting {
             get {
                 return ResourceManager.GetString("YouAreResetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are resetting the following to the &apos;All Reversal Indexes&apos; settings:.
+        /// </summary>
+        internal static string YouAreResettingReversal {
+            get {
+                return ResourceManager.GetString("YouAreResettingReversal", resourceCulture);
             }
         }
     }

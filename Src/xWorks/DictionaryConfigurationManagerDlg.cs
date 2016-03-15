@@ -78,6 +78,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public string ConfigurationGroupText { set { configurationsGroupBox.Text = value; } }
+
 		public string RemoveButtonToolTip { set { m_toolTip.SetToolTip(removeButton, value); } }
 
 		private void helpButton_Click(object sender, EventArgs e)

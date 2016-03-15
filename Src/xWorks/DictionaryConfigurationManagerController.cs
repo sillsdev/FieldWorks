@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using Palaso.Linq;
+using SIL.CoreImpl;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -44,7 +45,6 @@ namespace SIL.FieldWorks.XWorks
 		private readonly DictionaryConfigurationModel _initialConfig;
 
 		public bool IsDirty { get; private set; }
-		public bool HasSavedAnyChanges { get; private set; }
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.copyButton.Enabled = true;
 			_view.removeButton.Enabled = true;
 			_view.closeButton.Enabled = true;
-			_view.RemoveButtonToolTip = IsConfigurationACustomizedShippedDefault(SelectedConfiguration) ? xWorksStrings.Reset : xWorksStrings.Delete;
+			_view.RemoveButtonToolTip = IsConfigurationACustomizedOriginal(SelectedConfiguration) ? xWorksStrings.Reset : xWorksStrings.Delete;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
@@ -368,17 +368,9 @@ namespace SIL.FieldWorks.XWorks
 			if (configurationToDelete == null)
 				throw new ArgumentNullException("configurationToDelete");
 
-			if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
+			if (IsConfigurationACustomizedOriginal(configurationToDelete))
 			{
-				var origFilePath = configurationToDelete.FilePath;
-				var filenameOfFilePath = Path.GetFileName(origFilePath);
-
-				var pathToShippedFile = Path.Combine(_defaultConfigDir, filenameOfFilePath);
-
-				configurationToDelete.FilePath = pathToShippedFile;
-				// Recreate from shipped XML file.
-				configurationToDelete.Load(_cache);
-				configurationToDelete.FilePath = origFilePath;
+				ResetConfigurationContents(configurationToDelete);
 
 				IsDirty = true;
 				return;
@@ -388,9 +380,41 @@ namespace SIL.FieldWorks.XWorks
 			if (configurationToDelete.FilePath != null)
 			{
 				FileUtils.Delete(configurationToDelete.FilePath);
-				HasSavedAnyChanges = true;
 			}
 			IsDirty = true;
+		}
+
+		private void ResetConfigurationContents(DictionaryConfigurationModel configurationToDelete)
+		{
+			var origFilePath = configurationToDelete.FilePath;
+			var filenameOfFilePath = Path.GetFileName(origFilePath);
+			var origReversalLabel = configurationToDelete.Label;
+			var origReversalWs = configurationToDelete.WritingSystem;
+
+			var allReversalsFileName = "AllReversalIndexes" + DictionaryConfigurationModel.FileExtension;
+			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete);
+			// The reversals will be reset to what the user has configured under All Reversal Indexes. This makes it useful to actually change that.
+			// If the user resets "AllReversalIndexes" it will reset to the shipping version.
+			var pathToDefaultFile = resettingReversal
+				? Path.Combine( _projectConfigDir, allReversalsFileName)
+				: Path.Combine(_defaultConfigDir, filenameOfFilePath);
+
+			configurationToDelete.FilePath = pathToDefaultFile;
+			// Recreate from shipped XML file.
+			configurationToDelete.Load(_cache);
+			configurationToDelete.FilePath = origFilePath;
+			if (resettingReversal)
+			{
+				configurationToDelete.Label = origReversalLabel;
+				configurationToDelete.WritingSystem = origReversalWs;
+			}
+		}
+
+		private static bool IsAllReversalIndexConfig(DictionaryConfigurationModel configurationToDelete)
+		{
+			if (Path.GetFileNameWithoutExtension(configurationToDelete.FilePath) == "AllReversalIndexes")
+				return true;
+			return false;
 		}
 
 		private void OnDeleteConfiguration(object sender, EventArgs eventArgs)
@@ -405,9 +429,12 @@ namespace SIL.FieldWorks.XWorks
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
 				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
 
-				if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
+				if (IsConfigurationACustomizedOriginal(configurationToDelete))
 				{
-					dlg.TopMessage = xWorksStrings.YouAreResetting;
+					if (IsConfigurationAnOriginalReversal(configurationToDelete) && !IsAllReversalIndexConfig(configurationToDelete))
+						dlg.TopMessage = xWorksStrings.YouAreResettingReversal;
+					else
+						dlg.TopMessage = xWorksStrings.YouAreResetting;
 					dlg.BottomQuestion = xWorksStrings.WantContinue;
 					dlg.DeleteButtonText = xWorksStrings.Reset;
 				}
@@ -421,7 +448,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Re-select configuration that was reset, or select first configuration if we just deleted a
 			// configuration.
-			if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
+			if (IsConfigurationACustomizedOriginal(configurationToDelete))
 			{
 				_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == configurationToDelete.Label).Selected = true;
 			}
@@ -429,6 +456,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				_view.configurationsListView.Items[0].Selected = true;
 			}
+		}
+
+		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configurationToDelete)
+		{
+			return IsConfigurationACustomizedShippedDefault(configurationToDelete) || IsConfigurationAnOriginalReversal(configurationToDelete);
 		}
 
 		/// <summary>
@@ -444,6 +476,24 @@ namespace SIL.FieldWorks.XWorks
 
 			var filename = Path.GetFileName(configuration.FilePath);
 			return defaultConfigurationFiles.Contains(filename);
+		}
+
+		/// <summary>
+		/// Whether a configuration represents a Reversal.
+		/// </summary>
+		public bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration)
+		{
+			if (configuration.FilePath == null)
+				return false;
+
+			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
+			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem))
+			{
+				var writingSystem = (IWritingSystem)_cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
+				// The reversals start out with the filename matching the ws DisplayLabel, copies will have a different file name
+				return writingSystem.DisplayLabel == Path.GetFileNameWithoutExtension(configuration.FilePath);
+			}
+			return false;
 		}
 	}
 }
