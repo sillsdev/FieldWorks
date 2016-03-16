@@ -334,6 +334,14 @@ namespace SIL.FieldWorks.XWorks
 			return Label;
 		}
 
+		/// <summary>If node is a HeadWord node.</summary>
+		internal static bool IsHeadWord(ConfigurableDictionaryNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			return node.CSSClassNameOverride == "headword" || node.CSSClassNameOverride == "mainheadword";
+		}
+
 		/// <summary>If node is a Main Entry node that should not be duplicated or edited.</summary>
 		internal static bool IsReadonlyMainEntry(ConfigurableDictionaryNode node)
 		{

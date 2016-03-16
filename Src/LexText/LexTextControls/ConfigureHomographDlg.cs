@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -24,6 +25,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
+		private HomographConfiguration m_homographConfiguration;
 		private FdoCache m_cache;
 		FwStyleSheet m_stylesheet;
 		private IApp m_app;
@@ -32,6 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected string m_helpTopic = ""; // Default help topic ID
 
+		private bool m_masterRefreshRequired;
 
 		public void SetupDialog(HomographConfiguration hc, FdoCache cache, FwStyleSheet stylesheet, IApp app,
 			IHelpTopicProvider helpTopicProvider)
@@ -41,6 +44,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 
+			m_homographConfiguration = hc;
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_app = app;
@@ -75,19 +79,24 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Set the properties of the HC passed in to those indicated by the dialog.
+		/// Set the properties of the HomographConfiguration to those specified in the dialog.
 		/// </summary>
-		public void GetResults(HomographConfiguration hc)
+		protected override void OnClosing(CancelEventArgs e)
 		{
-			hc.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, !m_radioHide.Checked);
-			hc.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef,
-				!m_radioHide.Checked && m_chkShowHomographNumInDict.Checked);
-			hc.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef,
-				!m_radioHide.Checked && m_chkShowHomographNumInReversal.Checked);
-			hc.HomographNumberBefore = m_radioBefore.Checked;
-			hc.ShowSenseNumberRef = !m_radioHide.Checked && m_chkShowSenseNumInDict.Checked;
-			hc.ShowSenseNumberReversal = !m_radioHide.Checked && m_chkShowSenseNumInReversal.Checked;
-
+			if (DialogResult == DialogResult.OK)
+			{
+				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, !m_radioHide.Checked);
+				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef,
+					!m_radioHide.Checked && m_chkShowHomographNumInDict.Checked);
+				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef,
+					!m_radioHide.Checked && m_chkShowHomographNumInReversal.Checked);
+				m_homographConfiguration.HomographNumberBefore = m_radioBefore.Checked;
+				m_homographConfiguration.ShowSenseNumberRef = !m_radioHide.Checked && m_chkShowSenseNumInDict.Checked;
+				m_homographConfiguration.ShowSenseNumberReversal = !m_radioHide.Checked && m_chkShowSenseNumInReversal.Checked;
+			}
+			base.OnClosing(e);
+			if (m_masterRefreshRequired)
+				DialogResult = DialogResult.OK; // let the client know that something has changed
 		}
 
 		private void m_radioBefore_CheckedChanged(object sender, System.EventArgs e)
@@ -156,15 +165,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				dlg.ShowTEStyleTypes = false;
 				dlg.CanSelectParagraphBackgroundColor = false;
-				if (dlg.ShowDialog(this) == DialogResult.OK &&
-					((dlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
-						(dlg.ChangeType & StyleChangeType.Added) > 0 ||
-							(dlg.ChangeType & StyleChangeType.RenOrDel) > 0))
+				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					FwStyleSheet stylesheet = new FwStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
+					m_masterRefreshRequired = true;
 				}
 			}
 		}

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SIL.FieldWorks.XWorks
 {
-	interface IDictionaryConfigurationView
+	internal interface IDictionaryConfigurationView
 	{
 		/// <summary>
 		/// Tell the controller to launch the dialog where different dictionary configurations (or views) are managed.

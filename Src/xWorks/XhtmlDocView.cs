@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
 				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
-				refreshNeeded = controller.HasSavedAnyChanges;
+				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
 				mediator.SendMessage("MasterRefresh", null);

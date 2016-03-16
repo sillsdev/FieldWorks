@@ -1840,7 +1840,7 @@ namespace SIL.FieldWorks.XWorks
 			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's GUID
 			// so we can generate a link to the main or minor entry for this headword.
 			var guid = Guid.Empty;
-			if (config.CSSClassNameOverride == "headword")
+			if (DictionaryConfigurationModel.IsHeadWord(config))
 			{
 				if (field is ILexEntry)
 					guid = ((ILexEntry)field).Guid;

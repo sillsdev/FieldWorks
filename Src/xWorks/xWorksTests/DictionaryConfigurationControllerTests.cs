@@ -1206,7 +1206,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
-				Assert.IsTrue(dcc.HasSavedAnyChanges, "Should have saved changes");
+				Assert.IsTrue(dcc.MasterRefreshRequired, "Should have saved changes");
 			}
 		}
 
@@ -1240,7 +1240,7 @@ namespace SIL.FieldWorks.XWorks
 				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
-				Assert.IsFalse(dcc.HasSavedAnyChanges, "Should not have saved changes--user did not click OK or Apply");
+				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--user did not click OK or Apply");
 			}
 		}
 
@@ -1274,7 +1274,7 @@ namespace SIL.FieldWorks.XWorks
 				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
 				//SUT
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
-				Assert.IsFalse(dcc.HasSavedAnyChanges, "Should not have saved changes--none to save");
+				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--none to save");
 			}
 		}
 

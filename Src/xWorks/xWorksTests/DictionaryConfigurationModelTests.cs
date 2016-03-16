@@ -927,6 +927,51 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsHeadWord_NullArgument_Throws()
+		{
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsHeadWord(null));
+		}
+
+		[Test]
+		public void IsHeadWord_HeadWord_True()
+		{
+			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Headword", FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
+			}));
+		}
+
+		[Test]
+		public void IsHeadWord_NonStandardHeadWord_True()
+		{
+			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Other Form", FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
+			}));
+			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword", FieldDescription = "ReversalName", CSSClassNameOverride = "headword"
+			}));
+			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Headword", FieldDescription = "OwningEntry", SubField = "MLHeadWord", CSSClassNameOverride = "headword"
+			}));
+			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Headword", FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword"
+			}));
+		}
+
+		[Test]
+		public void IsHeadWord_NonHeadWord_False()
+		{
+			Assert.False(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
+			{
+				Label = "Headword", FieldDescription = "OwningEntry", CSSClassNameOverride = "alternateform"
+			}));
+		}
+
+		[Test]
 		public void IsMainEntry_NullArgument_Throws()
 		{
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsMainEntry(null));

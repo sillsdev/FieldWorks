@@ -6,11 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Gecko;
-using Gecko.DOM;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
@@ -171,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Remember which elements are highlighted so that we can turn the highlighting off later.
 		/// </summary>
 		private List<GeckoElement> _highlightedElements;
-		const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
+		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		public void HighlightContent(ConfigurableDictionaryNode configNode)

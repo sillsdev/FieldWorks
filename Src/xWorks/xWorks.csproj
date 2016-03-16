@@ -311,6 +311,12 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\ButtonWithPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ButtonWithPane.Designer.cs">
+      <DependentUpon>ButtonWithPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\DetailsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -505,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ButtonWithPane.resx">
+      <DependentUpon>ButtonWithPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>

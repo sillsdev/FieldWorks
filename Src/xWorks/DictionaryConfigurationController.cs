@@ -23,7 +23,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	class DictionaryConfigurationController
+	internal class DictionaryConfigurationController
 	{
 		/// <summary>
 		/// The current model being worked with
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Whether any changes have been saved, including changes to the Configs, which Config is the current Config, changes to Styles, etc.,
 		/// that require the preview to be updated.
 		/// </summary>
-		public bool HasSavedAnyChanges { get; private set; }
+		public bool MasterRefreshRequired { get; private set; }
 
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			if (isChangeInDictionaryModel)
 				m_isDirty = true;
 			else
-				HasSavedAnyChanges = true;
+				MasterRefreshRequired = true;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
 			if(_isHighlighted)
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode);
@@ -478,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 			SelectCurrentConfigurationAndRefresh();
-			HasSavedAnyChanges = m_isDirty = false;
+			MasterRefreshRequired = m_isDirty = false;
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
 			DictionaryConfigurationListener.SetCurrentConfiguration(_mediator, _model.FilePath);
-			HasSavedAnyChanges = true;
+			MasterRefreshRequired = true;
 			m_isDirty = false;
 		}
 

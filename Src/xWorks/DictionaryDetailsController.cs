@@ -11,9 +11,11 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -44,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
 
-		/// <summary>Fired whenever an external dialog makes changes that require the dictionary preview to be refreshed</summary>
+		/// <summary>Fired whenever the Styles dialog makes changes that require the dictionary preview to be refreshed</summary>
 		public event EventHandler StylesDialogMadeChanges;
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
@@ -99,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
+					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options, DictionaryConfigurationModel.IsHeadWord(node));
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
@@ -231,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "wsOptionsView is disposed by its parent")]
-		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
+		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions, bool showConfigureHomographNum)
 		{
 			var wsOptionsView = new ListOptionsView
 			{
@@ -248,7 +250,16 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
-			View.OptionsView = wsOptionsView;
+			if (showConfigureHomographNum)
+			{
+				var optionsView = new ButtonWithPane { PaneContents = wsOptionsView };
+				optionsView.ButtonClicked += (o, e) => HandleHomographButton();
+				View.OptionsView = optionsView;
+			}
+			else
+			{
+				View.OptionsView = wsOptionsView;
+			}
 		}
 
 		private EventHandler WritingSystemEventHandlerAdder(IDictionaryListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
@@ -539,9 +550,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return () =>
 			{
-				if(StylesDialogMadeChanges != null)
-					StylesDialogMadeChanges(m_node, new EventArgs());
-
+				RefreshStylesAndPreview();
 				if (!repopulate)
 					return;
 				LoadStylesLists();
@@ -714,6 +723,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (DetailsModelChanged != null)
 				DetailsModelChanged(m_node, new EventArgs());
+		}
+
+		private void RefreshStylesAndPreview()
+		{
+			if (StylesDialogMadeChanges != null)
+				StylesDialogMadeChanges(m_node, new EventArgs());
+		}
+
+		private void HandleHomographButton()
+		{
+			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			using (var dlg = new ConfigureHomographDlg())
+			{
+				dlg.SetupDialog(hc, m_cache, m_styleSheet, (IApp)m_mediator.PropertyTable.GetValue("App"), m_mediator.HelpTopicProvider);
+				//dlg.StartPosition = FormStartPosition.CenterScreen;
+				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
+					return;
+				RefreshStylesAndPreview(); // The Styles dialog is also available through the ConfigureHomographDlg
+			}
 		}
 
 		/// <summary>
