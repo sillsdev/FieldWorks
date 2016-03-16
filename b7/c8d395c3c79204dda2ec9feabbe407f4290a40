@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+1: Cambell Prince <cambell.prince@gmail.com>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Robin Munn <robin_munn@sil.org>
+Submitted-at: Wed, 16 Mar 2016 04:40:22 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/3988
+Project: FieldWorks
+Branch: refs/heads/feature/lfmerge
