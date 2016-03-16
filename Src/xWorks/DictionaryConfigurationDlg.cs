@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 			return elements;
 		}
 
-		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void m_buttonManageConfigurations_Click(object sender, EventArgs e)
 		{
 			if (ManageConfigurations != null)
 				ManageConfigurations(sender, e);
