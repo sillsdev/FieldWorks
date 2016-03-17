@@ -911,38 +911,6 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Component References" isEnabled="true" before="(" between=", " after=") " field="ComplexFormEntryRefs">
-	  <ConfigurationItem name="Complex Form Type" isEnabled="true" before="" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		<ConfigurationItem name="Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after=" " field="Abbreviation">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Name" isEnabled="false" before="" between=" " after="" field="Name">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Entries" isEnabled="true" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Classified-Headword" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
-		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			<Option id="vernacular" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " after="" field="DefinitionOrGloss">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true" />
-		</WritingSystemOptions>
-	  </ConfigurationItem>
-	</ConfigurationItem>
 	<ConfigurationItem name="Bibliography" isEnabled="false" before="" between=" " after=" " field="Bibliography">
 	  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		<Option id="all analysis" isEnabled="true" />
@@ -2746,6 +2714,38 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  </ConfigurationItem>
+	</ConfigurationItem>
+	<ConfigurationItem name="Component References" isEnabled="true" before="(" between=", " after=") " field="ComplexFormEntryRefs">
+	  <ConfigurationItem name="Complex Form Type" isEnabled="true" before="" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after=" " field="Abbreviation">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Name" isEnabled="false" before="" between=" " after="" field="Name">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Referenced Entries" isEnabled="true" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
+		<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Classified-Headword" before="" between=" " after="" field="HeadWord" cssClassNameOverride="headword">
+		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+			<Option id="vernacular" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " after="" field="DefinitionOrGloss">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Bibliography" isEnabled="false" before="" between=" " after=" " field="Bibliography">

@@ -19,7 +19,7 @@
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Secondary Homograph Number" style="Homograph-Number" after=" " isEnabled="false" field="HomographNumber"/>
+	<ConfigurationItem name="Secondary Homograph Number" style="" after=" " isEnabled="false" field="HomographNumber"/>
 	<ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
 	  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
 		<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
@@ -451,7 +451,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Other Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
-	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
+	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 			<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -809,7 +809,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Other Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
-		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 			<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -932,7 +932,7 @@
 	<ConfigurationItem name="Date Created" before="created on: " after=" " isEnabled="false" field="DateCreated"/>
 	<ConfigurationItem name="Date Modified" before="modified on: " after=" " isEnabled="false" field="DateModified"/>
 	<ConfigurationItem name="Other Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
-	<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
+	<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 			<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1965,7 +1965,7 @@
 	  <ConfigurationItem name="Date Created" before="created on: " after=" " isEnabled="false" field="DateCreated"/>
 	  <ConfigurationItem name="Date Modified" before="modified on: " after=" " isEnabled="false" field="DateModified"/>
 	  <ConfigurationItem name="Other Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
-	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
+	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 			<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
