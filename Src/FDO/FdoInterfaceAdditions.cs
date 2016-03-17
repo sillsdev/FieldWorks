@@ -1089,6 +1089,11 @@ namespace SIL.FieldWorks.FDO
 		/// This returns the subentries of this sense
 		/// </summary>
 		IEnumerable<ILexEntry> Subentries { get; }
+
+		/// <summary>
+		/// This is a entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
+		/// </summary>
+		IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense { get; }
 	}
 
 	/// <summary>

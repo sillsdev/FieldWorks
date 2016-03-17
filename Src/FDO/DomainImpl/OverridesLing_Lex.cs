@@ -3741,6 +3741,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_MLOwnerOutlineNameFlid = Cache.MetaDataCache.GetFieldId("LexSense", "MLOwnerOutlineName", false);
 		}
 
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntryRef")]
 		public IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
 		{
 			get

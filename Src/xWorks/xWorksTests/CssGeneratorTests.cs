@@ -1549,6 +1549,44 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_PrimaryEntryReferencesTypeBeforeAndAfterWork()
+		{
+			var entrytypes = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EntryTypes",
+				CSSClassNameOverride = "entrytypes",
+				Style = "FooStyle",
+				Before = "*",
+				After = "@"
+			};
+			var primaryentry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EntryRefsWithThisMainSense",
+				Style = "FooStyle",
+				Before = "[",
+				After = "]",
+				Children = new List<ConfigurableDictionaryNode> { entrytypes }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				CSSClassNameOverride = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { primaryentry }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "ReversalIndexEntry"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense\>\s*\.entryrefswiththismainsense\s*\.entryrefswiththismainsens\>\s*\.entrytypes\:before{.*content:'\*'.*}", RegexOptions.Singleline).Success);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense\>\s*\.entryrefswiththismainsense\s*\.entryrefswiththismainsens\>\s*\.entrytypes\:after{.*content:'\@'.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_BetweenWorks()
 		{
 			var senses = new ConfigurableDictionaryNode
