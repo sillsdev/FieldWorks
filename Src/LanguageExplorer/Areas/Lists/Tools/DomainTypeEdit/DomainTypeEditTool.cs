@@ -56,16 +56,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 
 			PropertyTable.SetDefault(string.Format("ToolForAreaNamed_{0}", AreaMachineName), MachineName, SettingsGroup.LocalSettings, true, false);
 		}
@@ -95,11 +93,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(PropertyTable, Publisher, Subscriber, mainCollapsingSplitContainer, true,
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber), mainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				"DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA,
-				false, true, false, "best analysis");
+				new PossibilityListClerkParameterObject("DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, false, true, false, "best analysis"));
 		}
 
 		/// <summary>

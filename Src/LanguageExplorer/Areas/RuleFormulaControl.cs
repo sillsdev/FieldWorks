@@ -1007,7 +1007,7 @@ namespace LanguageExplorer.Areas
 				// we only bother to display the context menu if an item is selected
 				using (var ui = new CmObjectUi(obj))
 				{
-					ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 					return ui.HandleRightClick(this, true, ContextMenuID);
 				}
 			}

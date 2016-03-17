@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using SIL.CoreImpl;
 using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
@@ -175,7 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 								{
 									Visible = false
 								};
-			m_oneAnalSandbox.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_oneAnalSandbox.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			Controls.Add(m_oneAnalSandbox);
 			if (m_oneAnalSandbox.RootBox == null)
 				m_oneAnalSandbox.MakeRoot();	// adding sandbox to Controls doesn't make rootbox.

@@ -38,7 +38,7 @@ namespace LanguageExplorerTests.Lexicon
 				using (var recordList = new TestReversalRecordList(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), reversalIndex))
 				{
 					propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);
-					recordList.InitializeFlexComponent(propertyTable, publisher, subscriber);
+					recordList.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
 					propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
 
 					var propTableId = recordList.GetPropertyTableId(FieldName);

@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_view.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			m_view.Init(obj, this, new RegRuleFormulaVc(PropertyTable, Publisher), RegRuleFormulaVc.kfragRHS);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);

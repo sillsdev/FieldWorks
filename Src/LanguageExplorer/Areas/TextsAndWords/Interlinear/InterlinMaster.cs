@@ -620,7 +620,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void CreateCChart()
 		{
 			m_constChartPane = new ConstituentChart(Cache);
-			(m_constChartPane as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			(m_constChartPane as IFlexComponent).InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
@@ -704,12 +704,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			base.InitializeFlexComponent(flexComponentParameterObject);
 
 #if RANDYTODO
 			// Do this BEFORE calling InitBase, which calls ShowRecord, whose correct behavior
@@ -812,7 +810,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				site.Cache = Cache;
 			if (site is IFlexComponent)
 			{
-				(site as IFlexComponent).InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				(site as IFlexComponent).InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 		}
 

@@ -112,7 +112,7 @@ namespace LanguageExplorer.Impls
 
 			_toolRepository = new ToolRepository();
 			_areaRepository = new AreaRepository(_toolRepository);
-			_areaRepository.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			_areaRepository.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
 			SetupOutlookBar();
 

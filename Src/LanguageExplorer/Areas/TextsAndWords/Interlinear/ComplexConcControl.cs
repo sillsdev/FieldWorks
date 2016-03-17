@@ -93,12 +93,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			base.InitializeFlexComponent(flexComponentParameterObject);
 
 			var pattern = PropertyTable.GetValue<ComplexConcGroupNode>("ComplexConcPattern");
 			if (pattern == null)
@@ -108,7 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
 
-			m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_view.InitializeFlexComponent(flexComponentParameterObject);
 			m_view.Init(this);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Morph), CanAddMorph);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Word), CanAddConstraint);

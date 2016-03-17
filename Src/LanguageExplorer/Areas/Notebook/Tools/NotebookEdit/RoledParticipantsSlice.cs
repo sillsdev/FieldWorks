@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var vrl = (VectorReferenceLauncher) Control;
 			if (vrl.PropertyTable == null)
 			{
-				vrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				vrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 			vrl.Initialize(m_cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, m_persistenceProvider,
 				DisplayNameProperty,

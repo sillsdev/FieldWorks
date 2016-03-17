@@ -69,12 +69,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			base.InitializeFlexComponent(flexComponentParameterObject);
+
 			InitBase(PropertyTable, m_configurationParametersElement);
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
@@ -325,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 					CmObjectUi ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
 					if (ui != null)
 					{
-						ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+						ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 						e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
 					}
 				}
@@ -372,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
-			m_browseViewer.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_browseViewer.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			m_browseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.

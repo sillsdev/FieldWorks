@@ -4,6 +4,7 @@
 
 using System;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
@@ -89,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			ctrl.Initialize(PropertyTable.GetValue<FdoCache>("cache"),
 				m_fs,
 				m_flid,

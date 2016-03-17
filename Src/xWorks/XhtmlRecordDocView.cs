@@ -29,9 +29,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			base.InitializeFlexComponent(flexComponentParameterObject);
 
 			InitBase(PropertyTable, m_configurationParametersElement);
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)

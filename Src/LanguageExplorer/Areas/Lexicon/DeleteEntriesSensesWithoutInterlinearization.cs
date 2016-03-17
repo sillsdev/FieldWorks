@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -86,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
 		{
 			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, cache.ServiceLocator);
-			cd.InitializeFlexComponent(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber);
+			cd.InitializeFlexComponent(new FlexComponentParameterObject(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = entries.Length;

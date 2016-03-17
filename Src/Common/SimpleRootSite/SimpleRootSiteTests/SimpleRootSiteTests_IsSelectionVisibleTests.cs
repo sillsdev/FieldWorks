@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 
 			m_site = new DummyRootSite();
-			m_site.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_site.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 
 			DynamicMock rootb = new DynamicMock(typeof(IVwRootBox));
 			rootb.SetupResult("Height", 10000);

@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -27,12 +28,12 @@ namespace LanguageExplorer.Areas.Lists
 			m_toolRepository = toolRepository;
 		}
 
-		internal static RecordClerk CreateBasicClerkForListArea(IPropertyTable propertyTable, string clerkIdentifier, ICmPossibilityList owningList, bool expand, bool hierarchical, bool includeAbbr, string ws)
+		internal static RecordClerk CreateBasicClerkForListArea(IPropertyTable propertyTable, PossibilityListClerkParameterObject possibilityListClerkParameterObject)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
-			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), owningList);
+			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), possibilityListClerkParameterObject.OwningList);
 			var sorter = new PropertyRecordSorter("ShortName");
-			return new RecordClerk(clerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, expand, hierarchical, includeAbbr, ws));
+			return new RecordClerk(possibilityListClerkParameterObject.ClerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, possibilityListClerkParameterObject.Expand, possibilityListClerkParameterObject.Hierarchical, possibilityListClerkParameterObject.IncludeAbbr, possibilityListClerkParameterObject.Ws));
 		}
 
 		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
@@ -72,16 +73,14 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 		}
 
 		#endregion

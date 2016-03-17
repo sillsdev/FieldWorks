@@ -88,6 +88,7 @@ namespace LanguageExplorerTests.Interlinear
 			mb.SenseRA = sense;
 			mb.MorphRA = morph;
 
+			var flexComponentParameterObject = new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber);
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
@@ -95,7 +96,7 @@ namespace LanguageExplorerTests.Interlinear
 			{
 				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 				{
-					sandbox.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+					sandbox.InitializeFlexComponent(flexComponentParameterObject);
 					sut.SetSandboxForTesting(sandbox);
 					var mockList = MockRepository.GenerateMock<IComboList>();
 					sut.SetComboListForTesting(mockList);
@@ -111,7 +112,7 @@ namespace LanguageExplorerTests.Interlinear
 				mb.MsaRA = msa;
 				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 				{
-					sandbox.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+					sandbox.InitializeFlexComponent(flexComponentParameterObject);
 					sut.SetSandboxForTesting(sandbox);
 					Assert.That(sut.NeedSelectSame(), Is.False);
 				}
@@ -120,7 +121,7 @@ namespace LanguageExplorerTests.Interlinear
 
 		[Test]
 		public void MakeCombo_SelectionIsInvalid_Throws()
-	{
+		{
 			var vwsel = MockRepository.GenerateMock<IVwSelection>();
 			vwsel.Stub(s => s.IsValid).Return(false);
 			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);

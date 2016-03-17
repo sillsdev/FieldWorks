@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
@@ -69,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			CheckDisposed();
 			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis) Object, ConfigurationNode);
-			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 		}
 

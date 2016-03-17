@@ -63,14 +63,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 		}
 
 		#endregion

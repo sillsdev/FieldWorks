@@ -14,6 +14,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Install(parent);
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
-			ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			ctrl.Initialize(
 				PropertyTable.GetValue<FdoCache>("cache"),
 				Media.MediaFileRA,

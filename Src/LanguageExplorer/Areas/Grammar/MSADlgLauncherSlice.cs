@@ -4,6 +4,7 @@
 
 using System;
 using System.Drawing;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -69,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
 			if (ctrl.PropertyTable == null)
 			{
-				ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
 			ctrl.Initialize(PropertyTable.GetValue<FdoCache>("cache"),

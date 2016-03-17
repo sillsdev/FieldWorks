@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 
 			m_basicView = new DummyBasicView {Cache = Cache, Visible = false, StyleSheet = styleSheet};
-			m_basicView.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_basicView.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 		}
 
 		/// -----------------------------------------------------------------------------------

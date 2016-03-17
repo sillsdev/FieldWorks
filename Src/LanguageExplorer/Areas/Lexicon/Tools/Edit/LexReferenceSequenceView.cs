@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -63,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
 			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
 			ReferenceBaseUi ui = new ReferenceSequenceUi(Cache, m_rootObj, m_rootFlid, hvo);
-			ui.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			return ui.HandleRightClick(this, true);
 		}
 

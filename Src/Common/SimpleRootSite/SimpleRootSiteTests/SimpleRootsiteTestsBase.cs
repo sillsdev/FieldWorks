@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			};
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
-			m_basicView.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_basicView.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 		}
 
 		/// ------------------------------------------------------------------------------------

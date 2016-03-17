@@ -867,6 +867,7 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
+    <Compile Include="Controls\PossibilityListClerkParameterObject.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />

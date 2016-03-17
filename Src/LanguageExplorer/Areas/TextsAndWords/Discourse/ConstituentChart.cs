@@ -115,20 +115,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 
 			m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			var lineChoices = GetLineChoices();
-			m_body.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			m_body.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			m_body.LineChoices = lineChoices;
 			m_ribbon.LineChoices = lineChoices;
 		}
@@ -1171,7 +1169,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return false;
 			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
-				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				dlg.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(this);
 			}
 

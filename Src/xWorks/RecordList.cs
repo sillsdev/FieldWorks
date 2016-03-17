@@ -2720,17 +2720,15 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
-	/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public virtual void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
-	{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+		/// </summary>
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public virtual void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			CurrentIndex = -1;

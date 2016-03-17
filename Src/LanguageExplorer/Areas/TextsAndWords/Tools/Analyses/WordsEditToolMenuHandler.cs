@@ -174,7 +174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			using (var ctrl = new ConcordanceDlg(concordOnObject))
 			{
-				ctrl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				ctrl.Launch();
 			}
 		}

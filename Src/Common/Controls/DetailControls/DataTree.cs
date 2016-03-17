@@ -2318,7 +2318,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (slice == null)
 			{
 				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
-				slice.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				slice.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
 				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
 				// means it gets searched twice if not found, but that's fairly harmless.
@@ -2755,7 +2755,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, PropertyTable, Publisher, Subscriber, caller, reuseMap);
+				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber), caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -4371,16 +4371,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
+
 			if (PersistenceProvder != null)
 			{
 				RestorePreferences();

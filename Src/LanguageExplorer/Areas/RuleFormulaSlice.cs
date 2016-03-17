@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -35,7 +36,7 @@ namespace LanguageExplorer.Areas
 				var retval = (RuleFormulaControl)Control;
 				if (retval.PropertyTable == null)
 				{
-					retval.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					retval.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				}
 				return retval;
 			}

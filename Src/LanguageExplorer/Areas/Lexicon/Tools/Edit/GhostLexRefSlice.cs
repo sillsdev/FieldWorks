@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -37,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var btnLauncher = (ButtonLauncher) Control;
 			if (btnLauncher.PropertyTable == null)
 			{
-				btnLauncher.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				btnLauncher.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 			btnLauncher.Initialize(m_cache, m_obj, 1, "nonsence", null, null, null);
 			base.Install(parent);

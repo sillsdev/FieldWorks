@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree = new DataTree();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
-			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_dtree.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
 		}
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_dtree.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_dtree.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
 			m_dtree = new DataTree();
-			m_dtree.InitializeFlexComponent(m_propertyTable, m_publisher, m_subscriber);
+			m_dtree.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);

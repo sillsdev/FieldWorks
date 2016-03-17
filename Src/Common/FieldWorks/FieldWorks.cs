@@ -2790,7 +2790,7 @@ namespace SIL.FieldWorks
 				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
 					var configMigrator = new DictionaryConfigurationMigrator();
-					configMigrator.InitializeFlexComponent(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher, s_activeMainWnd.Subscriber);
+					configMigrator.InitializeFlexComponent(new FlexComponentParameterObject(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher, s_activeMainWnd.Subscriber));
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);

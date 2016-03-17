@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
 			using (var dlg = new InterlinearExportDialog(objRoot, m_vc, bookImporter))
 			{
-				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				dlg.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(this);
 			}
 			if (fFocusBox)

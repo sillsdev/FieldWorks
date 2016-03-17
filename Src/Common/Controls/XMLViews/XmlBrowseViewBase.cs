@@ -1095,6 +1095,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
 			if (m_nodeSpec == null)
 				m_nodeSpec = nodeSpec;
+			// Do this early...we need the ID to restore the columns when the VC is created.
+			m_id = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "id", "NeedsId");
 			m_bv = bv;
 			m_fdoCache = cache;
 			m_sda = m_bv.SpecialCache;
@@ -2114,21 +2116,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public override void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			base.InitializeFlexComponent(propertyTable, publisher, subscriber);
-
-#if RANDYTODO
-			// Do this early...we need the ID to restore the columns when the VC is created.
-			m_id = XmlUtils.GetOptionalAttributeValue(configurationParameters, "id", "NeedsId");
-			// The call to the superclass method ignores "configurationParameters",
-			// so set it here if it hasn't already been done.
-			if (m_nodeSpec == null)
-				m_nodeSpec = configurationParameters;
-#endif
+			base.InitializeFlexComponent(flexComponentParameterObject);
 
 			SetSelectedRowHighlighting();//read the property table
 		}

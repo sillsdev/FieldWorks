@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
 				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
-				m_view.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				m_view.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 
 			var panel = new Panel { Dock = DockStyle.Fill };

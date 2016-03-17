@@ -56,16 +56,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 		}
 
 		#endregion
@@ -96,9 +94,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		{
 			_configurationDocument = XDocument.Parse(NotebookResources.NotebookDocumentParameters);
 			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
-			recordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			var flexComponentParameterObject = new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber);
+			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
-				PropertyTable, Publisher, Subscriber,
+				flexComponentParameterObject,
 				mainCollapsingSplitContainer.SecondControl,
 				new XmlDocView(_configurationDocument.Root, recordClerk));
 		}

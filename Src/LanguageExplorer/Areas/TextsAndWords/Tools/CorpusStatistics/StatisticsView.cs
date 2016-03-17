@@ -73,16 +73,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="propertyTable">Interface to a property table.</param>
-		/// <param name="publisher">Interface to the publisher.</param>
-		/// <param name="subscriber">Interface to the subscriber.</param>
-		public void InitializeFlexComponent(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(propertyTable, publisher, subscriber, PropertyTable, Publisher, Subscriber);
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = propertyTable;
-			Publisher = publisher;
-			Subscriber = subscriber;
+			PropertyTable = flexComponentParameterObject.PropertyTable;
+			Publisher = flexComponentParameterObject.Publisher;
+			Subscriber = flexComponentParameterObject.Subscriber;
 
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			const string clerkName = "interlinearTexts";
@@ -93,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				if (clerk is TemporaryRecordClerk)
 				{
 					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
-					_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+					_interlinearTextsRecordClerk.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 				}
 				else
 				{
@@ -103,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			else
 			{
 				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
-				_interlinearTextsRecordClerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+				_interlinearTextsRecordClerk.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			}
 			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
 			// the set of selected texts).

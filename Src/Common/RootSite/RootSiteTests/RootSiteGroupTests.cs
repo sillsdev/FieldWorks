@@ -87,9 +87,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					draftPane = new DummyBasicView(),
 					btPane = new DummyBasicView())
 				{
-					stylePane.InitializeFlexComponent(propertyTable, publisher, subscriber);
-					draftPane.InitializeFlexComponent(propertyTable, publisher, subscriber);
-					btPane.InitializeFlexComponent(propertyTable, publisher, subscriber);
+					var flexComponentParameterObject = new FlexComponentParameterObject(propertyTable, publisher, subscriber);
+					stylePane.InitializeFlexComponent(flexComponentParameterObject);
+					draftPane.InitializeFlexComponent(flexComponentParameterObject);
+					btPane.InitializeFlexComponent(flexComponentParameterObject);
 					using (RootSiteGroup group = new RootSiteGroup())
 					{
 						PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox.MockInstance);

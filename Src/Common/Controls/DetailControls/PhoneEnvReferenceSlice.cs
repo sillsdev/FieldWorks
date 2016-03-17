@@ -10,6 +10,7 @@
 // </remarks>
 using System;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -105,7 +106,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var rl = (PhoneEnvReferenceLauncher)Control;
-			rl.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
+			rl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
 			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, null, null);
 			rl.ConfigurationNode = ConfigurationNode;
 			rl.ViewSizeChanged += OnViewSizeChanged;

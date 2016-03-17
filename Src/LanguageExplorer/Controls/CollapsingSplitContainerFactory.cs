@@ -25,27 +25,20 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Create an instance of a CollapsingSplitContainer.
 		/// </summary>
-		/// <param name="propertyTable">The property table</param>
-		/// <param name="publisher">The Publisher</param>
-		/// <param name="subscriber">The Subscriber</param>
+		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
 		/// <param name="mainCollapsingSplitContainer">The window's main CollapsingSplitContainer</param>
 		/// <param name="verticalSplitter">'true' to have a vertical splitter or 'false' to have a horizontal splitter.</param>
 		/// <param name="configurationParametersElement">Main parameters element.</param>
 		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
-		/// <param name="clerkIdentifier">Identifier for new RecordClerk.</param>
-		/// <param name="owningList">Possibility list the owns itmes being shown/edited.</param>
-		/// <param name="expand">'true' to expand the tree view or 'false' to only show top level of items.</param>
-		/// <param name="hierarchical">'true' if the list has sub-possibilities or 'false' for a flat list.</param>
-		/// <param name="includeAbbr">'true' to show possibility abbreviations, otherwise 'false' to only show full names.</param>
-		/// <param name="ws">Writing System used to dispaly the </param>
+		/// <param name="possibilityListClerkParameterObject">parameter object of data needed to create the clerk and it record list.</param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
-		internal static CollapsingSplitContainer Create(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
+		internal static CollapsingSplitContainer Create(FlexComponentParameterObject flexComponentParameterObject,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
-			string clerkIdentifier, ICmPossibilityList owningList, bool expand, bool hierarchical, bool includeAbbr, string ws)
+			PossibilityListClerkParameterObject possibilityListClerkParameterObject)
 		{
-			var panelButton = new PanelButton(propertyTable, null, ListsArea.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(flexComponentParameterObject.PropertyTable, null, ListsArea.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -58,17 +51,15 @@ namespace LanguageExplorer.Controls
 			}
 			parentSplitterPanelControl.Controls.Clear();
 
-			var recordClerk = ListsArea.CreateBasicClerkForListArea(propertyTable, clerkIdentifier,
-				owningList,
-				expand, hierarchical, includeAbbr, ws);
-			recordClerk.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			var recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameterObject.PropertyTable, possibilityListClerkParameterObject);
+			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			var recordBar = new RecordBar
 			{
 				IsFlatList = false
 			};
 			recordBar.Clear();
 			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, recordBar.TreeView, recordClerk);
-			recordEditView.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			recordEditView.InitializeFlexComponent(flexComponentParameterObject);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
 
@@ -88,7 +79,7 @@ namespace LanguageExplorer.Controls
 			newCollapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
 			parentSplitterPanelControl.Controls.Add(newCollapsingSplitContainer);
 			newCollapsingSplitContainer.Dock = DockStyle.Fill;
-			paneBarContainer.InitializeFlexComponent(propertyTable, publisher, subscriber);
+			paneBarContainer.InitializeFlexComponent(flexComponentParameterObject);
 
 			newCollapsingSplitContainer.ResumeLayout();
 			parentSplitterPanelControl.ResumeLayout();
@@ -96,7 +87,7 @@ namespace LanguageExplorer.Controls
 			recordBar.BringToFront();
 			panel2ChildControlAsControl.BringToFront();
 
-			newCollapsingSplitContainer.SplitterDistance = propertyTable.GetValue<int>("RecordListWidthGlobal");
+			newCollapsingSplitContainer.SplitterDistance = flexComponentParameterObject.PropertyTable.GetValue<int>("RecordListWidthGlobal");
 			mainCollapsingSplitContainer.SecondControl = newCollapsingSplitContainer;
 			recordEditView.MainPaneBar = paneBarContainer.PaneBar;
 			panelButton.DatTree = recordEditView.DatTree;
