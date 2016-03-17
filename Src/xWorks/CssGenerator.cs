@@ -844,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
-			AddFontInfoCss(projectStyle, declaration, wsId);
+			AddFontInfoCss(projectStyle, declaration, wsId, (FdoCache)mediator.PropertyTable.GetValue("cache"));
 
 			if (exportStyleInfo.NumberScheme != 0)
 			{
@@ -945,17 +945,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds the css rules for font info properties using the writing system overrides
 		/// </summary>
-		/// <param name="projectStyle"></param>
-		/// <param name="declaration"></param>
-		/// <param name="wsId">writing system id</param>
-		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId)
+		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId, FdoCache cache)
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
 			var fontName = wsFontInfo.FontName.ValueIsSet ? wsFontInfo.FontName.Value
-																		 : defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
-			if(fontName != null)
+				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
+
+			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
+			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
+			// empty span (ie span[lang|="en"]{}. If not included, font-family will be added to many more spans.
+			if (fontName == null && projectStyle.Name == "Normal")
+			{
+				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
+				if(lgWritingSysytem != null)
+					fontName = lgWritingSysytem.DefaultFontName;
+			}
+
+			if (fontName != null)
 			{
 				var fontFamily = new Property("font-family");
 				fontFamily.Term =
@@ -972,6 +980,7 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, "vertical-align", declaration);
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
+
 		}
 
 		/// <summary>
