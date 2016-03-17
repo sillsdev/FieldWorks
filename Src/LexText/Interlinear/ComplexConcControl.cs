@@ -15,12 +15,13 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public partial class ComplexConcControl : ConcordanceControlBase, IFocusablePanePortion
+	public partial class ComplexConcControl : ConcordanceControlBase, IFocusablePanePortion, IPatternControl
 	{
 		private enum ComplexConcordanceInsertType
 		{
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			base.Init(mediator, configurationParameters);
 
-			var pattern = (ComplexConcGroupNode) m_mediator.PropertyTable.GetValue("ComplexConcPattern");
+			ComplexConcGroupNode pattern = (ComplexConcGroupNode) m_mediator.PropertyTable.GetValue("ComplexConcPattern");
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
@@ -104,7 +105,13 @@ namespace SIL.FieldWorks.IText
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
 
-			m_view.Init(mediator, this);
+			m_view.Init(mediator, m_patternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, mediator), ComplexConcPatternVc.kfragPattern,
+				m_patternModel.DataAccess);
+
+			m_view.SelectionChanged += SelectionChanged;
+			m_view.RemoveItemsRequested += RemoveItemsRequested;
+			m_view.ContextMenuRequested += ContextMenuRequested;
+
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Morph), CanAddMorph);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Word), CanAddConstraint);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.TextTag), CanAddConstraint);
@@ -203,14 +210,14 @@ namespace SIL.FieldWorks.IText
 
 		private void ParseUnparsedParagraphs()
 		{
-			var concDecorator = ConcDecorator;
+			ConcDecorator concDecorator = ConcDecorator;
 			IStTxtPara[] needsParsing = concDecorator.InterestingTexts.SelectMany(txt => txt.ParagraphsOS).Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent).ToArray();
 			if (needsParsing.Length > 0)
 			{
 				NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
 					() =>
 					{
-						foreach (var para in needsParsing)
+						foreach (IStTxtPara para in needsParsing)
 							ParagraphParser.ParseParagraph(para);
 					});
 			}
@@ -218,7 +225,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override List<IParaFragment> SearchForMatches()
 		{
-			var matches = new List<IParaFragment>();
+			List<IParaFragment> matches = new List<IParaFragment>();
 			if (m_patternModel.IsPatternEmpty)
 				return matches;
 
@@ -274,21 +281,15 @@ namespace SIL.FieldWorks.IText
 				}
 
 				int j = 0;
-				var nodes = new ComplexConcPatternNode[index2 - index1 + 1];
+				ComplexConcPatternNode[] nodes = new ComplexConcPatternNode[index2 - index1 + 1];
 				for (int i = index1; i <= index2; i++)
 					nodes[j++] = anchorNode.Parent.Children[i];
 				return nodes;
 			}
 		}
 
-		/// <summary>
-		/// Removes items. This is called by the view when a delete or backspace button is pressed.
-		/// </summary>
-		/// <param name="forward">if <c>true</c> the delete button was pressed, otherwise backspace was pressed</param>
-		public void RemoveNodes(bool forward)
+		private void RemoveItemsRequested(object sender, RemoveItemsRequestedEventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_patternModel.Root.IsLeaf)
 				return;
 
@@ -311,7 +312,7 @@ namespace SIL.FieldWorks.IText
 				ComplexConcPatternNode n = GetNode(sel, SelectionHelper.SelLimitType.Top);
 				parent = n.Parent;
 				index = GetNodeIndex(n);
-				var tss = sel.GetTss(SelectionHelper.SelLimitType.Anchor);
+				ITsString tss = sel.GetTss(SelectionHelper.SelLimitType.Anchor);
 				// if the current ich is at the end of the current string, then we can safely assume
 				// we are at the end of the current item, so remove it or the next item based on what
 				// key was pressed, otherwise we are in the middle in which
@@ -319,7 +320,7 @@ namespace SIL.FieldWorks.IText
 				// item based on what key was pressed
 				if (sel.IchAnchor == tss.Length)
 				{
-					if (forward)
+					if (e.Forward)
 					{
 						if (index == n.Parent.Children.Count - 1)
 							index = -1;
@@ -329,7 +330,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					if (!forward)
+					if (!e.Forward)
 						index--;
 				}
 
@@ -433,117 +434,13 @@ namespace SIL.FieldWorks.IText
 		private void ReconstructView(ComplexConcPatternNode parent, int index, bool initial)
 		{
 			m_view.RootBox.Reconstruct();
-			SelectAt(parent, index, initial, true, true);
+			m_view.SelectAt(parent, index, initial, true, true);
 		}
 
-		private SelLevInfo[] GetLevelInfo(ComplexConcPatternNode parent, int index)
+		private void SelectionChanged(object sender, EventArgs eventArgs)
 		{
-			var levels = new List<SelLevInfo>();
-			if (!m_patternModel.Root.IsLeaf)
-			{
-				ComplexConcPatternNode node = parent;
-				int i = index;
-				while (node != null)
-				{
-					levels.Add(new SelLevInfo {tag = ComplexConcPatternSda.ktagChildren, ihvo = i});
-					i = GetNodeIndex(node);
-					node = node.Parent;
-				}
-			}
-			return levels.ToArray();
-		}
-
-		private void SelectLeftBoundary(ComplexConcPatternNode parent, int index, bool install)
-		{
-			try
-			{
-				SelLevInfo[] levels = GetLevelInfo(parent, index);
-				m_view.RootBox.MakeTextSelection(0, levels.Length, levels, ComplexConcPatternVc.ktagLeftBoundary, 0, 0, 0,
-					0, false, -1, null, install);
-			}
-			catch
-			{
-			}
-		}
-
-		private void SelectRightBoundary(ComplexConcPatternNode parent, int index, bool install)
-		{
-			try
-			{
-				SelLevInfo[] levels = GetLevelInfo(parent, index);
-				m_view.RootBox.MakeTextSelection(0, levels.Length, levels, ComplexConcPatternVc.ktagRightBoundary, 0, 1, 1,
-					0, false, -1, null, install);
-			}
-			catch
-			{
-			}
-		}
-
-		/// <summary>
-		/// Moves the cursor to the specified position in the specified cell.
-		/// </summary>
-		/// <param name="parent"></param>
-		/// <param name="index">Index of the item in the cell.</param>
-		/// <param name="initial">if <c>true</c> move the cursor to the beginning of the specified item, otherwise it is moved to the end</param>
-		/// <param name="editable">if <c>true</c> move the cursor to the first editable position</param>
-		/// <param name="install">if <c>true</c> install the selection</param>
-		/// <returns>The new selection</returns>
-		private IVwSelection SelectAt(ComplexConcPatternNode parent, int index, bool initial, bool editable, bool install)
-		{
-			SelLevInfo[] levels = GetLevelInfo(parent, index);
-			return m_view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null, initial, editable, false, false, install);
-		}
-
-		/// <summary>
-		/// Update the new selection. This is called by rule formula view when selection changes.
-		/// </summary>
-		/// <param name="prootb">The root box.</param>
-		/// <param name="vwselNew">The new selection.</param>
-		public virtual void UpdateSelection(IVwRootBox prootb, IVwSelection vwselNew)
-		{
-			CheckDisposed();
-			SelectionHelper sel = SelectionHelper.Create(vwselNew, m_view);
-			if (sel != null)
-				AdjustSelection(sel);
 			// since the context has changed update the display options on the insertion control
 			m_insertControl.UpdateOptionsDisplay();
-		}
-
-		/// <summary>
-		/// Adjusts the selection.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		private void AdjustSelection(SelectionHelper sel)
-		{
-			IVwSelection anchorSel;
-			int curHvo, curIch, curTag;
-			// anchor IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.Anchor, out anchorSel, out curHvo, out curIch, out curTag))
-				return;
-
-			IVwSelection endSel;
-			int curEndHvo, curEndIch, curEndTag;
-			// end IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.End, out endSel, out curEndHvo, out curEndIch, out curEndTag))
-				return;
-
-			// create range selection
-			IVwSelection vwSel = m_view.RootBox.MakeRangeSelection(anchorSel, endSel, false);
-			if (vwSel != null)
-			{
-				ITsString tss;
-				int ws;
-				bool prev;
-
-				// only install the adjusted selection if it is different then the current selection
-				int wholeHvo, wholeIch, wholeTag, wholeEndHvo, wholeEndIch, wholeEndTag;
-				vwSel.TextSelInfo(false, out tss, out wholeIch, out prev, out wholeHvo, out wholeTag, out ws);
-				vwSel.TextSelInfo(true, out tss, out wholeEndIch, out prev, out wholeEndHvo, out wholeEndTag, out ws);
-
-				if (wholeHvo != curHvo || wholeEndHvo != curEndHvo || wholeIch != curIch || wholeEndIch != curEndIch
-					|| wholeTag != curTag || wholeEndTag != curEndTag)
-					vwSel.Install();
-			}
 		}
 
 		private int GetNodeIndex(ComplexConcPatternNode node)
@@ -553,161 +450,23 @@ namespace SIL.FieldWorks.IText
 			return node.Parent.Children.IndexOf(node);
 		}
 
-		/// <summary>
-		/// Creates a selection IP for the specified limit.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		/// <param name="limit">The limit.</param>
-		/// <param name="vwSel">The new selection.</param>
-		/// <param name="curHvo">The current hvo.</param>
-		/// <param name="curIch">The current ich.</param>
-		/// <param name="curTag">The current tag.</param>
-		/// <returns><c>true</c> if we want to create a range selection, otherwise <c>false</c></returns>
-		private bool GetSelectionInfo(SelectionHelper sel, SelectionHelper.SelLimitType limit, out IVwSelection vwSel,
-			out int curHvo, out int curIch, out int curTag)
+		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
 		{
-			vwSel = null;
-			curHvo = 0;
-			curIch = -1;
-			curTag = -1;
-
-			ComplexConcPatternNode node = GetNode(sel, limit);
-			if (node == null)
-				return false;
-
-			ITsString curTss;
-			int ws;
-			bool prev;
-
-			sel.Selection.TextSelInfo(limit == SelectionHelper.SelLimitType.End, out curTss, out curIch, out prev, out curHvo, out curTag, out ws);
-
-			int index = GetNodeIndex(node);
-
-			if (!sel.IsRange)
-			{
-				// if the current selection is an IP, check if it is in one of the off-limits areas, and move the IP
-				if (curIch == 0 && curTag == ComplexConcPatternVc.ktagLeftNonBoundary)
-				{
-					// the cursor is at a non-selectable left edge of an item, so
-					// move to the selectable left edge
-					SelectLeftBoundary(node.Parent, index, true);
-					return false;
-				}
-				if (curIch == curTss.Length && curTag == ComplexConcPatternVc.ktagLeftNonBoundary)
-				{
-					// the cursor has been moved to the left from the left boundary, so move the
-					// cursor to the previous item in the cell or the previous cell
-					if (index > 0)
-					{
-						SelectAt(node.Parent, index - 1, false, true, true);
-					}
-					else
-					{
-						SelectLeftBoundary(node.Parent, index, true);
-					}
-					return false;
-				}
-				if (curIch == curTss.Length && curTag == ComplexConcPatternVc.ktagRightNonBoundary)
-				{
-					// the cursor is at a non-selectable right edge of an item, so move to the
-					// selectable right edge
-					SelectRightBoundary(node.Parent, index, true);
-					return false;
-				}
-				if (curIch == 0 && curTag == ComplexConcPatternVc.ktagRightNonBoundary)
-				{
-					// the cursor has been moved to the right from the right boundary, so move the
-					// cursor to the next item in the cell or the next cell
-					if (index < node.Parent.Children.Count - 1)
-					{
-						SelectAt(node.Parent, index + 1, true, true, true);
-					}
-					else
-					{
-						SelectRightBoundary(node.Parent, index, true);
-					}
-					return false;
-				}
-				if (curTss.Text == "\u200b" && curIch == 1 && curTag == ComplexConcPatternVc.ktagLeftBoundary)
-				{
-					SelectLeftBoundary(node.Parent, index, true);
-					return false;
-				}
-				if (!sel.Selection.IsEditable)
-				{
-					//SelectAt(cellId, cellIndex, true, true, true);
-					return false;
-				}
-			}
-
-			// find the beginning of the currently selected item
-			IVwSelection initialSel = SelectAt(node.Parent, index, true, false, false);
-
-			ITsString tss;
-			int selCellIndex = index;
-			int initialHvo, initialIch, initialTag;
-			if (initialSel == null)
-				return false;
-			initialSel.TextSelInfo(false, out tss, out initialIch, out prev, out initialHvo, out initialTag, out ws);
-
-			// are we at the beginning of an item?
-			if ((curHvo == initialHvo && curIch == initialIch && curTag == initialTag)
-				|| (curIch == 0 && curTag == ComplexConcPatternVc.ktagLeftBoundary))
-			{
-				// if the current selection is an IP, then don't adjust anything
-				if (!sel.IsRange)
-					return false;
-
-				// if we are the beginning of the current item, and the current selection is a range, and the end is before the anchor,
-				// then do not include the current item in the adjusted range selection
-				if (sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
-					selCellIndex = index - 1;
-			}
-			else
-			{
-				int finalIch, finalHvo, finalTag;
-				IVwSelection finalSel = SelectAt(node.Parent, index, false, false, false);
-				finalSel.TextSelInfo(false, out tss, out finalIch, out prev, out finalHvo, out finalTag, out ws);
-				// are we at the end of an item?
-				if ((curHvo == finalHvo && curIch == finalIch && curTag == finalTag)
-					|| (curIch == curTss.Length && curTag == ComplexConcPatternVc.ktagRightBoundary))
-				{
-					// if the current selection is an IP, then don't adjust anything
-					if (!sel.IsRange)
-						return false;
-
-					// if we are the end of the current item, and the current selection is a range, and the anchor is before the end,
-					// then do not include the current item in the adjusted range selection
-					if (!sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
-						selCellIndex = index + 1;
-				}
-			}
-
-			bool initial = limit == SelectionHelper.SelLimitType.Anchor ? !sel.Selection.EndBeforeAnchor : sel.Selection.EndBeforeAnchor;
-			vwSel = SelectAt(node.Parent, selCellIndex, initial, false, false);
-
-			return vwSel != null;
-		}
-
-		public bool DisplayContextMenu(IVwSelection sel)
-		{
-			var sh = SelectionHelper.Create(sel, m_view);
+			SelectionHelper sh = SelectionHelper.Create(e.Selection, m_view);
 			ComplexConcPatternNode node = GetNode(sh, SelectionHelper.SelLimitType.Anchor);
-			var nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(n => GetAllNodes(n)));
+			HashSet<ComplexConcPatternNode> nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(GetAllNodes));
 			if (!nodes.Contains(node))
 				sh.Selection.Install();
 			if (nodes.Count > 0)
 			{
 				// we only bother to display the context menu if an item is selected
-				var window = (XWindow) m_mediator.PropertyTable.GetValue("window");
+				XWindow window = (XWindow) m_mediator.PropertyTable.GetValue("window");
 
 				window.ShowContextMenu("mnuComplexConcordance",
 					new Point(Cursor.Position.X, Cursor.Position.Y),
 					new TemporaryColleagueParameter(m_mediator, this, true),
 					null, null);
 			}
-
-			return false;
 		}
 
 		private IEnumerable<ComplexConcPatternNode> GetAllNodes(ComplexConcPatternNode node)
@@ -729,9 +488,9 @@ namespace SIL.FieldWorks.IText
 			switch (((InsertOption) e.Option).Type)
 			{
 				case ComplexConcordanceInsertType.Morph:
-					using (var dlg = new ComplexConcMorphDlg())
+					using (ComplexConcMorphDlg dlg = new ComplexConcMorphDlg())
 					{
-						var morphNode = new ComplexConcMorphNode();
+						ComplexConcMorphNode morphNode = new ComplexConcMorphNode();
 						dlg.SetDlgInfo(m_cache, m_mediator, morphNode);
 						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 							node = morphNode;
@@ -739,9 +498,9 @@ namespace SIL.FieldWorks.IText
 					break;
 
 				case ComplexConcordanceInsertType.Word:
-					using (var dlg = new ComplexConcWordDlg())
+					using (ComplexConcWordDlg dlg = new ComplexConcWordDlg())
 					{
-						var wordNode = new ComplexConcWordNode();
+						ComplexConcWordNode wordNode = new ComplexConcWordNode();
 						dlg.SetDlgInfo(m_cache, m_mediator, wordNode);
 						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 							node = wordNode;
@@ -749,9 +508,9 @@ namespace SIL.FieldWorks.IText
 					break;
 
 				case ComplexConcordanceInsertType.TextTag:
-					using (var dlg = new ComplexConcTagDlg())
+					using (ComplexConcTagDlg dlg = new ComplexConcTagDlg())
 					{
-						var tagNode = new ComplexConcTagNode();
+						ComplexConcTagNode tagNode = new ComplexConcTagNode();
 						dlg.SetDlgInfo(m_cache, m_mediator, tagNode);
 						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 							node = tagNode;
@@ -881,7 +640,7 @@ namespace SIL.FieldWorks.IText
 					max = nodes[0].Maximum;
 					paren = !nodes[0].IsLeaf;
 				}
-				using (var dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, paren))
+				using (OccurrenceDlg dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
 					if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
@@ -907,7 +666,7 @@ namespace SIL.FieldWorks.IText
 		{
 			ComplexConcPatternNode parent = nodes[0].Parent;
 			int index = GetNodeIndex(nodes[0]);
-			var group = new ComplexConcGroupNode();
+			ComplexConcGroupNode group = new ComplexConcGroupNode();
 			parent.Children.Insert(index, group);
 			foreach (ComplexConcPatternNode node in nodes)
 			{
@@ -933,10 +692,10 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 
-			var wordNode = nodes[0] as ComplexConcWordNode;
+			ComplexConcWordNode wordNode = nodes[0] as ComplexConcWordNode;
 			if (wordNode != null)
 			{
-				using (var dlg = new ComplexConcWordDlg())
+				using (ComplexConcWordDlg dlg = new ComplexConcWordDlg())
 				{
 					dlg.SetDlgInfo(m_cache, m_mediator, wordNode);
 					if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
@@ -945,10 +704,10 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				var morphNode = nodes[0] as ComplexConcMorphNode;
+				ComplexConcMorphNode morphNode = nodes[0] as ComplexConcMorphNode;
 				if (morphNode != null)
 				{
-					using (var dlg = new ComplexConcMorphDlg())
+					using (ComplexConcMorphDlg dlg = new ComplexConcMorphDlg())
 					{
 						dlg.SetDlgInfo(m_cache, m_mediator, morphNode);
 						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
@@ -957,10 +716,10 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					var tagNode = nodes[0] as ComplexConcTagNode;
+					ComplexConcTagNode tagNode = nodes[0] as ComplexConcTagNode;
 					if (tagNode != null)
 					{
-						using (var dlg = new ComplexConcTagDlg())
+						using (ComplexConcTagDlg dlg = new ComplexConcTagDlg())
 						{
 							dlg.SetDlgInfo(m_cache, m_mediator, tagNode);
 							if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
@@ -980,5 +739,63 @@ namespace SIL.FieldWorks.IText
 		}
 
 		public bool IsFocusedPane { get; set; }
+
+		public object GetContext(SelectionHelper sel)
+		{
+			return GetContext(sel, SelectionHelper.SelLimitType.Anchor);
+		}
+
+		public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		{
+			ComplexConcPatternNode node = GetNode(sel, limit);
+			return node == null ? null : node.Parent;
+		}
+
+		public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		{
+			return GetNode(sel, limit);
+		}
+
+		public int GetItemContextIndex(object ctxt, object obj)
+		{
+			return GetNodeIndex((ComplexConcPatternNode) obj);
+		}
+
+		public SelLevInfo[] GetLevelInfo(object ctxt, int cellIndex)
+		{
+			List<SelLevInfo> levels = new List<SelLevInfo>();
+			if (!m_patternModel.Root.IsLeaf)
+			{
+				ComplexConcPatternNode node = (ComplexConcPatternNode) ctxt;
+				int i = cellIndex;
+				while (node != null)
+				{
+					levels.Add(new SelLevInfo {tag = ComplexConcPatternSda.ktagChildren, ihvo = i});
+					i = GetNodeIndex(node);
+					node = node.Parent;
+				}
+			}
+			return levels.ToArray();
+		}
+
+		public int GetContextCount(object ctxt)
+		{
+			return ((ComplexConcPatternNode) ctxt).Children.Count;
+		}
+
+		public object GetNextContext(object ctxt)
+		{
+			return null;
+		}
+
+		public object GetPrevContext(object ctxt)
+		{
+			return null;
+		}
+
+		public int GetFlid(object ctxt)
+		{
+			return -1;
+		}
 	}
 }

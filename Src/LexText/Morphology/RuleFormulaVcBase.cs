@@ -3,293 +3,64 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
-	/// <summary>
-	/// This class represents a Views rootsite control that is used to display a rule
-	/// formula. It notifies the rule formula control about key presses and right clicks.
-	/// </summary>
-	public class RuleFormulaView : RootSiteControl
-	{
-		private RuleFormulaControl m_formulaControl;
-		private ICmObject m_obj;
-		private RuleFormulaVc m_vc;
-		private int m_rootFrag = -1;
-
-		/// <summary>
-		/// We MUST inherit from this, not from just EditingHelper; otherwise, the right event isn't
-		/// connected (in an overide of OnEditingHelperCreated) for us to get selection change notifications.
-		/// </summary>
-		class RuleFormulaEditingHelper : RootSiteEditingHelper
-		{
-			public RuleFormulaEditingHelper(FdoCache cache, IEditingCallbacks callbacks)
-				: base(cache, callbacks)
-			{
-			}
-
-			public override bool CanCopy()
-			{
-				return false;
-			}
-
-			public override bool CanCut()
-			{
-				return false;
-			}
-
-			public override bool CanPaste()
-			{
-				return false;
-			}
-		}
-
-		protected override EditingHelper CreateEditingHelper()
-		{
-			// we can't just use the Editable property to disable copy/cut/paste, because we want
-			// the view to be read only, so instead we use a custom EditingHelper
-			return new RuleFormulaEditingHelper(Cache, this);
-		}
-
-		#region IDisposable override
-		protected override void Dispose(bool disposing)
-		{
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-			}
-
-			m_formulaControl = null;
-			m_obj = null;
-			m_vc = null;
-
-			base.Dispose(disposing);
-		}
-		#endregion IDisposable override
-
-		public void Init(XCore.Mediator mediator, ICmObject obj, RuleFormulaControl formulaControl,
-			RuleFormulaVc vc, int rootFrag)
-		{
-			CheckDisposed();
-			m_formulaControl = formulaControl;
-			Mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			m_obj = obj;
-			m_vc = vc;
-			m_rootFrag = rootFrag;
-			if (m_rootb == null)
-			{
-				MakeRoot();
-			}
-			else if (m_obj != null)
-			{
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromMediator(m_mediator));
-				m_rootb.Reconstruct();
-			}
-		}
-
-		public override void MakeRoot()
-		{
-			CheckDisposed();
-			base.MakeRoot();
-
-			if (m_fdoCache == null || DesignMode)
-				return;
-
-			m_rootb = VwRootBoxClass.Create();
-			// the default value of 4 for MaxParasToScan isn't high enough when using the arrow keys to move
-			// the cursor between items in a rule when the number of lines in the rule is high, since there might
-			// be a large number of non-editable empty lines in a pile
-			m_rootb.MaxParasToScan = 10;
-			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
-			// JohnT: this notification removal was introduced by Damien in change list 25875, along with removing
-			// several IgnorePropChanged wrappers in RuleFormulaControl. I don't know why we ever wanted to not see
-			// (some) PropChanged messages, but ignoring them all prevents us from removing inserted items from the
-			// view in Undo. (see FWR-3501)
-			//m_fdoCache.MainCacheAccessor.RemoveNotification(m_rootb);
-			if (m_obj != null)
-				m_rootb.SetRootObject(m_obj.Hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromMediator(m_mediator));
-		}
-
-		/// <summary>
-		/// override this to allow deleting an item IF the key is Delete.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Delete)
-			{
-				m_formulaControl.RemoveItems(true);
-				e.Handled = true;
-			}
-			base.OnKeyDown(e);
-		}
-
-		/// <summary>
-		/// override this to allow deleting an item IF the key is Backspace.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnKeyPress(KeyPressEventArgs e)
-		{
-			if (e.KeyChar == (char)Keys.Back)
-			{
-				m_formulaControl.RemoveItems(false);
-				e.Handled = true;
-			}
-			base.OnKeyPress(e);
-		}
-
-		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
-		{
-			CheckDisposed();
-			m_formulaControl.UpdateSelection(prootb, vwselNew);
-		}
-
-		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
-		{
-			IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y,
-				new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
-				new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
-				true);
-			if (sel == null)
-				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
-
-			if (m_formulaControl.DisplayContextMenu(sel))
-				return true;
-			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-		}
-	}
-
 	/// <summary>
 	/// This view constructor is intended to be extended by particular rule formula view
 	/// constructors. It handles the display of phonological contexts, such as <c>PhSequenceContext</c>,
 	/// <c>PhIterationContext</c>, <c>PhSimpleContextNC</c>, <c>PhSimpleContextSeg</c>, <c>PhSimpleContextNC</c>, etc., for
 	/// rule formulas.
 	/// </summary>
-	public abstract class RuleFormulaVc : FwBaseVc
+	public abstract class RuleFormulaVcBase : PatternVcBase
 	{
-		public const int kfragEmpty = 0;
-		public const int kfragContext = 1;
-		public const int kfragFeatNC = 2;
-		public const int kfragFeats = 3;
-		public const int kfragFeature = 4;
-		public const int kfragPlusVariable = 5;
-		public const int kfragMinusVariable = 6;
-		public const int kfragFeatureLine = 7;
-		public const int kfragPlusVariableLine = 8;
-		public const int kfragMinusVariableLine = 9;
-		public const int kfragIterCtxtMax = 10;
-		public const int kfragIterCtxtMin = 11;
-		public const int kfragNC = 12;
-		public const int kfragTerminalUnit = 13;
+		public const int kfragContext = 100;
+		public const int kfragFeatNC = 101;
+		public const int kfragFeats = 102;
+		public const int kfragFeature = 103;
+		public const int kfragPlusVariable = 104;
+		public const int kfragMinusVariable = 105;
+		public const int kfragFeatureLine = 106;
+		public const int kfragPlusVariableLine = 107;
+		public const int kfragMinusVariableLine = 108;
+		public const int kfragIterCtxtMax = 109;
+		public const int kfragIterCtxtMin = 110;
+		public const int kfragNC = 111;
+		public const int kfragTerminalUnit = 112;
 
 		// variant frags
-		public const int kfragLeftBracketUpHook = 14;
-		public const int kfragLeftBracketExt = 15;
-		public const int kfragLeftBracketLowHook = 16;
-		public const int kfragRightBracketUpHook = 17;
-		public const int kfragRightBracketExt = 18;
-		public const int kfragRightBracketLowHook = 19;
-		public const int kfragLeftBracket = 20;
-		public const int kfragRightBracket = 21;
-		public const int kfragQuestions = 22;
-		public const int kfragLeftParen = 23;
-		public const int kfragRightParen = 24;
-		public const int kfragXVariable = 25;
-		public const int kfragZeroWidthSpace = 26;
+		public const int kfragXVariable = 113;
 
 		// fake flids
-		public const int ktagFeature = -100;
-		public const int ktagVariable = -101;
-		public const int ktagLeftBoundary = -102;
-		public const int ktagRightBoundary = -103;
-		public const int ktagLeftNonBoundary = -104;
-		public const int ktagRightNonBoundary = -105;
-		public const int ktagXVariable = -106;
-		public const int ktagInnerNonBoundary = -107;
-
-		// spacing between contexts
-		protected const int PileMargin = 2000;
+		public const int ktagFeature = -200;
+		public const int ktagVariable = -201;
+		public const int ktagXVariable = -202;
 
 		private static readonly string[] VariableNames = { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
 														   "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 
-		protected XCore.Mediator m_mediator;
-
-		protected ITsTextProps m_bracketProps;
-		protected ITsTextProps m_pileProps;
-
-		protected ITsString m_empty;
 		protected ITsString m_infinity;
-		protected ITsString m_leftBracketUpHook;
-		protected ITsString m_leftBracketExt;
-		protected ITsString m_leftBracketLowHook;
-		protected ITsString m_rightBracketUpHook;
-		protected ITsString m_rightBracketExt;
-		protected ITsString m_rightBracketLowHook;
-		protected ITsString m_leftBracket;
-		protected ITsString m_rightBracket;
-		protected ITsString m_questions;
-		protected ITsString m_leftParen;
-		protected ITsString m_rightParen;
 		protected ITsString m_x;
-		protected ITsString m_zwSpace;
 
-		protected RuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
+		protected RuleFormulaVcBase(FdoCache cache, XCore.Mediator mediator)
+			: base(cache, mediator)
 		{
-			Cache = cache;
-			m_mediator = mediator;
-
-			// use Doulos SIL because it supports the special characters that are needed for
-			// multiline brackets
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
-			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Charis SIL");
-			m_bracketProps = tpb.GetTextProps();
-
-			tpb = TsPropsBldrClass.Create();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-			m_pileProps = tpb.GetTextProps();
-
-			var tsf = m_cache.TsStrFactory;
-			var userWs = m_cache.DefaultUserWs;
-			m_empty = tsf.MakeString("", userWs);
+			ITsStrFactory tsf = m_cache.TsStrFactory;
+			int userWs = m_cache.DefaultUserWs;
 			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_leftBracketUpHook = tsf.MakeString("\u23a1", userWs);
-			m_leftBracketExt = tsf.MakeString("\u23a2", userWs);
-			m_leftBracketLowHook = tsf.MakeString("\u23a3", userWs);
-			m_rightBracketUpHook = tsf.MakeString("\u23a4", userWs);
-			m_rightBracketExt = tsf.MakeString("\u23a5", userWs);
-			m_rightBracketLowHook = tsf.MakeString("\u23a6", userWs);
-			m_leftBracket = tsf.MakeString("[", userWs);
-			m_rightBracket = tsf.MakeString("]", userWs);
-			m_questions = tsf.MakeString("???", userWs);
-			m_leftParen = tsf.MakeString("(", userWs);
-			m_rightParen = tsf.MakeString(")", userWs);
 			m_x = tsf.MakeString("X", userWs);
-			m_zwSpace = tsf.MakeString("\u200b", userWs);
 		}
 
 		/// <summary>
 		/// Gets the maximum number of lines for context cells.
 		/// </summary>
 		/// <value>The max number of lines.</value>
-		protected abstract int MaxNumLines
-		{
-			get;
-		}
+		protected abstract int GetMaxNumLines();
 
 		/// <summary>
 		/// Gets the index of the specified feature constraint. This is used to ensure that the same
@@ -326,10 +97,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							}
 							else
 							{
-								OpenContextPile(vwenv, false);
+								OpenSingleLinePile(vwenv, GetMaxNumLines(), false);
 								vwenv.Props = m_bracketProps;
 								vwenv.AddProp(PhSequenceContextTags.kflidMembers, this, kfragEmpty);
-								CloseContextPile(vwenv, false);
+								CloseSingleLinePile(vwenv, false);
 							}
 							break;
 
@@ -344,19 +115,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								if (numLines == 0)
 								{
 									if (!isOuterIterCtxt)
-										OpenContextPile(vwenv);
+										OpenSingleLinePile(vwenv, GetMaxNumLines());
 
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 									vwenv.AddProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragQuestions);
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 
 									if (!isOuterIterCtxt)
-										CloseContextPile(vwenv);
+										CloseSingleLinePile(vwenv);
 								}
 								else if (numLines == 1)
 								{
 									if (!isOuterIterCtxt)
-										OpenContextPile(vwenv);
+										OpenSingleLinePile(vwenv, GetMaxNumLines());
 
 									// use normal brackets for a single line context
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
@@ -379,14 +150,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 
 									if (!isOuterIterCtxt)
-										CloseContextPile(vwenv);
+										CloseSingleLinePile(vwenv);
 								}
 								else
 								{
 									// multiline context
 
 									// left bracket pile
-									int maxNumLines = MaxNumLines;
+									int maxNumLines = GetMaxNumLines();
 									vwenv.Props = m_bracketProps;
 									vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 									vwenv.OpenInnerPile();
@@ -423,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							{
 								// natural class context with segment-based natural class
 								if (!isOuterIterCtxt)
-									OpenContextPile(vwenv);
+									OpenSingleLinePile(vwenv, GetMaxNumLines());
 
 								vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 								if (ncCtxt.FeatureStructureRA != null)
@@ -433,7 +204,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 
 								if (!isOuterIterCtxt)
-									CloseContextPile(vwenv);
+									CloseSingleLinePile(vwenv);
 							}
 							break;
 
@@ -449,7 +220,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								}
 								else
 								{
-									OpenContextPile(vwenv);
+									OpenSingleLinePile(vwenv, GetMaxNumLines());
 									if (iterCtxt.MemberRA.ClassID == PhSimpleContextNCTags.kClassId)
 									{
 										vwenv.AddObjProp(PhIterationContextTags.kflidMember, this, kfragContext);
@@ -463,20 +234,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									DisplayIterCtxt(1, vwenv);
 									// Views doesn't handle selection properly when we have an inner pile with strings on either side,
 									// so we don't add a zero-width space at the end
-									CloseContextPile(vwenv, false);
+									CloseSingleLinePile(vwenv, false);
 								}
 							}
 							else
 							{
-								OpenContextPile(vwenv);
+								OpenSingleLinePile(vwenv, GetMaxNumLines());
 								vwenv.AddProp(PhIterationContextTags.kflidMember, this, kfragQuestions);
-								CloseContextPile(vwenv);
+								CloseSingleLinePile(vwenv);
 							}
 							break;
 
 						case PhSimpleContextSegTags.kClassId:
 							if (!isOuterIterCtxt)
-								OpenContextPile(vwenv);
+								OpenSingleLinePile(vwenv, GetMaxNumLines());
 
 							var segCtxt = (IPhSimpleContextSeg) ctxtOrVar;
 							if (segCtxt.FeatureStructureRA != null)
@@ -485,12 +256,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								vwenv.AddProp(PhSimpleContextSegTags.kflidFeatureStructure, this, kfragQuestions);
 
 							if (!isOuterIterCtxt)
-								CloseContextPile(vwenv);
+								CloseSingleLinePile(vwenv);
 							break;
 
 						case PhSimpleContextBdryTags.kClassId:
 							if (!isOuterIterCtxt)
-								OpenContextPile(vwenv);
+								OpenSingleLinePile(vwenv, GetMaxNumLines());
 
 							var bdryCtxt = (IPhSimpleContextBdry) ctxtOrVar;
 							if (bdryCtxt.FeatureStructureRA != null)
@@ -499,13 +270,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								vwenv.AddProp(PhSimpleContextBdryTags.kflidFeatureStructure, this, kfragQuestions);
 
 							if (!isOuterIterCtxt)
-								CloseContextPile(vwenv);
+								CloseSingleLinePile(vwenv);
 							break;
 
 						case PhVariableTags.kClassId:
-							OpenContextPile(vwenv);
+							OpenSingleLinePile(vwenv, GetMaxNumLines());
 							vwenv.AddProp(ktagXVariable, this, kfragXVariable);
-							CloseContextPile(vwenv);
+							CloseSingleLinePile(vwenv);
 							break;
 					}
 					break;
@@ -562,13 +333,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
 		{
 			// we use display variant to display literal strings that are editable
-			ITsString tss = null;
+			ITsString tss;
 			switch (frag)
 			{
-				case kfragEmpty:
-					tss = m_empty;
-					break;
-
 				case kfragFeatureLine:
 					var value = m_cache.ServiceLocator.GetInstance<IFsClosedValueRepository>().GetObject(vwenv.CurrentObject());
 					tss = CreateFeatureLine(value);
@@ -586,56 +353,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					tss = i == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
 
-				case kfragLeftBracketUpHook:
-					tss = m_leftBracketUpHook;
-					break;
-
-				case kfragLeftBracketExt:
-					tss = m_leftBracketExt;
-					break;
-
-				case kfragLeftBracketLowHook:
-					tss = m_leftBracketLowHook;
-					break;
-
-				case kfragRightBracketUpHook:
-					tss = m_rightBracketUpHook;
-					break;
-
-				case kfragRightBracketExt:
-					tss = m_rightBracketExt;
-					break;
-
-				case kfragRightBracketLowHook:
-					tss = m_rightBracketLowHook;
-					break;
-
-				case kfragLeftBracket:
-					tss = m_leftBracket;
-					break;
-
-				case kfragRightBracket:
-					tss = m_rightBracket;
-					break;
-
-				case kfragQuestions:
-					tss = m_questions;
-					break;
-
-				case kfragLeftParen:
-					tss = m_leftParen;
-					break;
-
-				case kfragRightParen:
-					tss = m_rightParen;
-					break;
-
 				case kfragXVariable:
 					tss = m_x;
 					break;
 
-				case kfragZeroWidthSpace:
-					tss = m_zwSpace;
+				default:
+					tss = base.DisplayVariant(vwenv, tag, frag);
 					break;
 			}
 			return tss;
@@ -670,23 +393,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return varLine.GetString();
 		}
 
-		protected void AddExtraLines(int numLines, IVwEnv vwenv)
-		{
-			AddExtraLines(numLines, ktagLeftNonBoundary, vwenv);
-		}
-
-		protected void AddExtraLines(int numLines, int tag, IVwEnv vwenv)
-		{
-			for (int i = 0; i < numLines; i++)
-			{
-				vwenv.Props = m_bracketProps;
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-				vwenv.OpenParagraph();
-				vwenv.AddProp(tag, this, kfragEmpty);
-				vwenv.CloseParagraph();
-			}
-		}
-
 		void DisplayIterCtxt(int numLines, IVwEnv vwenv)
 		{
 			int superOffset = 0;
@@ -715,40 +421,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, 0);
 			vwenv.OpenParagraph();
 			vwenv.AddIntProp(PhIterationContextTags.kflidMinimum);
-			vwenv.CloseParagraph();
-			vwenv.CloseInnerPile();
-		}
-
-		protected void OpenContextPile(IVwEnv vwenv)
-		{
-			OpenContextPile(vwenv, true);
-		}
-
-		protected void OpenContextPile(IVwEnv vwenv, bool addBoundary)
-		{
-			vwenv.Props = m_pileProps;
-			vwenv.OpenInnerPile();
-			AddExtraLines(MaxNumLines - 1, vwenv);
-			vwenv.OpenParagraph();
-			if (addBoundary)
-			{
-				vwenv.Props = m_bracketProps;
-				vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
-			}
-		}
-
-		protected void CloseContextPile(IVwEnv vwenv)
-		{
-			CloseContextPile(vwenv, true);
-		}
-
-		protected void CloseContextPile(IVwEnv vwenv, bool addBoundary)
-		{
-			if (addBoundary)
-			{
-				vwenv.Props = m_bracketProps;
-				vwenv.AddProp(ktagRightBoundary, this, kfragZeroWidthSpace);
-			}
 			vwenv.CloseParagraph();
 			vwenv.CloseInnerPile();
 		}
@@ -812,18 +484,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Gets the font height of the specified writing system for the normal style.
-		/// </summary>
-		/// <param name="ws">The ws.</param>
-		/// <returns></returns>
-		int GetFontHeight(int ws)
-		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			return FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet,
-				ws, m_cache.LanguageWritingSystemFactoryAccessor);
-		}
-
-		/// <summary>
 		/// Gets the width of the specified context or variable.
 		/// </summary>
 		/// <param name="ctxtOrVar">The context or variable.</param>
@@ -879,10 +539,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				return len;
 			}
-			else
-			{
-				return GetStrWidth(m_questions, null, vwenv);
-			}
+
+			return GetStrWidth(m_questions, null, vwenv);
 		}
 
 		int GetMinMaxWidth(IPhIterationContext ctxt, ITsTextProps props, IVwEnv vwenv)

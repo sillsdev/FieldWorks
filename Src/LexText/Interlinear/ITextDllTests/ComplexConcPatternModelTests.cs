@@ -10,62 +10,53 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 using FS = System.Collections.Generic.Dictionary<SIL.FieldWorks.FDO.IFsFeatDefn, object>;
 
 namespace SIL.FieldWorks.IText
 {
 	[TestFixture]
-	public class ComplexConcPatternModelTests : MemoryOnlyBackendProviderTestBase
+	public class ComplexConcPatternModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IPartOfSpeech m_noun;
 		private IPartOfSpeech m_verb;
 		private IPartOfSpeech m_adj;
 		private FDO.IText m_text;
 		private ICmPossibility m_np;
-		private IEqualityComparer<IParaFragment> m_fragmentComparer;
+		private readonly IEqualityComparer<IParaFragment> m_fragmentComparer = new ParaFragmentEqualityComparer();
 		private IFsFeatStrucType m_inflType;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		protected override void CreateTestData()
 		{
-			base.FixtureSetup();
+			m_noun = MakePartOfSpeech("noun");
+			m_verb = MakePartOfSpeech("verb");
+			m_adj = MakePartOfSpeech("adj");
 
-			m_fragmentComparer = new ParaFragmentEqualityComparer();
+			IFsFeatureSystem msFeatSys = Cache.LanguageProject.MsFeatureSystemOA;
+			m_inflType = AddFSType(msFeatSys, "infl",
+				AddComplexFeature(msFeatSys, "nounAgr", AddClosedFeature(msFeatSys, "num", "sg", "pl")),
+				AddClosedFeature(msFeatSys, "tense", "pres"));
 
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				{
-					m_noun = MakePartOfSpeech("noun");
-					m_verb = MakePartOfSpeech("verb");
-					m_adj = MakePartOfSpeech("adj");
+			m_np = Cache.LangProject.GetDefaultTextTagList().ReallyReallyAllPossibilities.Single(poss => poss.Abbreviation.BestAnalysisAlternative.Text == "Noun Phrase");
 
-					IFsFeatureSystem msFeatSys = Cache.LanguageProject.MsFeatureSystemOA;
-					m_inflType = AddFSType(msFeatSys, "infl",
-						AddComplexFeature(msFeatSys, "nounAgr", AddClosedFeature(msFeatSys, "num", "sg", "pl")),
-						AddClosedFeature(msFeatSys, "tense", "pres"));
+			ILexEntry ni = MakeEntry("ni-", m_verb, "1SgSubj");
+			ILexEntry him = MakeEntry("him-", m_verb, "3SgObj");
+			ILexEntry bili = MakeEntry("bili", m_verb, "to see");
+			ILexEntry ra = MakeEntry("-ra", m_verb, "Pres", new FS {{GetFeature("tense"), GetValue("pres")}});
 
-					m_np = Cache.LangProject.GetDefaultTextTagList().ReallyReallyAllPossibilities.Single(poss => poss.Abbreviation.BestAnalysisAlternative.Text == "Noun Phrase");
+			ILexEntry pus = MakeEntry("pus", m_adj, "green");
 
-					ILexEntry ni = MakeEntry("ni-", m_verb, "1SgSubj");
-					ILexEntry him = MakeEntry("him-", m_verb, "3SgObj");
-					ILexEntry bili = MakeEntry("bili", m_verb, "to see");
-					ILexEntry ra = MakeEntry("-ra", m_verb, "Pres", new FS {{GetFeature("tense"), GetValue("pres")}});
+			ILexEntry yalo = MakeEntry("yalo", m_noun, "mat");
+			ILexEntry la = MakeEntry("-la", m_noun, "1SgPoss", new FS {{GetFeature("nounAgr"), new FS {{GetFeature("num"), GetValue("sg")}}}});
 
-					ILexEntry pus = MakeEntry("pus", m_adj, "green");
+			MakeWordform("nihimbilira", "I see", m_verb, ni, him, bili, ra);
+			MakeWordform("pus", "green", m_adj, pus);
+			MakeWordform("yalola", "my mat", m_noun, yalo, la);
+			MakeWordform("ban", "test", MakePartOfSpeech("pos"));
 
-					ILexEntry yalo = MakeEntry("yalo", m_noun, "mat");
-					ILexEntry la = MakeEntry("-la", m_noun, "1SgPoss", new FS {{GetFeature("nounAgr"), new FS {{GetFeature("num"), GetValue("sg")}}}});
+			m_text = MakeText("nihimbilira pus, yalola ban.");
 
-					MakeWordform("nihimbilira", "I see", m_verb, ni, him, bili, ra);
-					MakeWordform("pus", "green", m_adj, pus);
-					MakeWordform("yalola", "my mat", m_noun, yalo, la);
-					MakeWordform("ban", "test", MakePartOfSpeech("pos"));
-
-					m_text = MakeText("nihimbilira pus, yalola ban.");
-
-					var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
-					MakeTag(m_text, m_np, para.SegmentsOS.First(), 1, para.SegmentsOS.First(), 3);
-				});
+			var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
+			MakeTag(m_text, m_np, para.SegmentsOS.First(), 1, para.SegmentsOS.First(), 3);
 		}
 
 		private IFsClosedFeature AddClosedFeature(IFsFeatureSystem featSys, string name, params string[] values)
@@ -559,6 +550,23 @@ namespace SIL.FieldWorks.IText
 				}});
 			model.Compile();
 			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 23, null)}).Using(m_fragmentComparer));
+		}
+
+		[Test]
+		public void ParagraphWithInvalidParse()
+		{
+			var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
+			ISegment seg = para.SegmentsOS.First();
+
+			var model = new ComplexConcPatternModel(Cache);
+
+			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 17, 23, null)}).Using(m_fragmentComparer));
+
+			// cause analyses and baseline to get out-of-sync
+			seg.AnalysesRS.RemoveAt(0);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 17, 23, null)}).Using(m_fragmentComparer));
 		}
 
 		private class ParaFragmentEqualityComparer : IEqualityComparer<IParaFragment>

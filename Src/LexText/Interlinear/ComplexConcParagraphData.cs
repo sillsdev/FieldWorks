@@ -9,6 +9,8 @@ using System.Linq;
 using SIL.Collections;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
@@ -23,6 +25,26 @@ namespace SIL.FieldWorks.IText
 		{
 			m_para = para;
 			m_shape = new Shape(spanFactory, begin => new ShapeNode(spanFactory, FeatureStruct.New(featSys).Symbol("bdry").Symbol("paraBdry").Value));
+			if (!GenerateShape(spanFactory, featSys))
+			{
+				// if there are any analyses that are out-of-sync with the baseline, we force a parse
+				// and try again, somehow this can happen even though we have already parsed all
+				// paragraphs that is out-of-date
+				NonUndoableUnitOfWorkHelper.DoSomehow(m_para.Cache.ActionHandlerAccessor, () =>
+				{
+					using (var pp = new ParagraphParser(m_para.Cache))
+					{
+						pp.ForceParse(m_para);
+					}
+				});
+				m_shape.Clear();
+				if (!GenerateShape(spanFactory, featSys))
+					throw new InvalidOperationException("A paragraph cannot be parsed properly.");
+			}
+		}
+
+		private bool GenerateShape(SpanFactory<ShapeNode> spanFactory, FeatureSystem featSys)
+		{
 			m_shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value);
 			var typeFeat = featSys.GetFeature<SymbolicFeature>("type");
 			var catFeat = featSys.GetFeature<SymbolicFeature>("cat");
@@ -33,6 +55,12 @@ namespace SIL.FieldWorks.IText
 				var annotations = new List<Annotation<ShapeNode>>();
 				foreach (Tuple<IAnalysis, int, int> analysis in segment.GetAnalysesAndOffsets())
 				{
+					// check if analyses are out-of-sync with the baseline
+					ITsString baselineStr = m_para.Contents.GetSubstring(analysis.Item2, analysis.Item3);
+					ITsString formStr = analysis.Item1.GetForm(baselineStr.get_WritingSystemAt(0));
+					if (!baselineStr.Text.Equals(formStr.Text, StringComparison.InvariantCultureIgnoreCase))
+						return false;
+
 					var wordform = analysis.Item1 as IWfiWordform;
 					if (wordform != null)
 					{
@@ -170,19 +198,19 @@ namespace SIL.FieldWorks.IText
 			foreach (ITextTag tag in m_para.OwnerOfClass<IStText>().TagsOC)
 			{
 				List<Annotation<ShapeNode>> beginSegment, endSegment;
-				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) ||
-					!segments.TryGetValue(tag.EndSegmentRA, out endSegment))
-						continue;
-				var beginAnnotation = beginSegment[tag.BeginAnalysisIndex];
-				var endAnnotation = endSegment[tag.EndAnalysisIndex];
-				var tagType = tag.TagRA;
+				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) || !segments.TryGetValue(tag.EndSegmentRA, out endSegment))
+					continue;
+				Annotation<ShapeNode> beginAnnotation = beginSegment[tag.BeginAnalysisIndex];
+				Annotation<ShapeNode> endAnnotation = endSegment[tag.EndAnalysisIndex];
+				ICmPossibility tagType = tag.TagRA;
 				if (tagType == null || beginAnnotation == null || endAnnotation == null)
 					continue; // guard against LT-14549 crash
-				var tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginAnnotation.Span.Start, endAnnotation.Span.End),
-					FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value)
-						{ Data = tag };
+				Annotation<ShapeNode> tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginAnnotation.Span.Start, endAnnotation.Span.End),
+					FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value) { Data = tag };
 				m_shape.Annotations.Add(tagAnn, false);
 			}
+
+			return true;
 		}
 
 		private ComplexConcParagraphData(ComplexConcParagraphData paraData)
