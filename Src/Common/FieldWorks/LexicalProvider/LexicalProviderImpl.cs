@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -20,7 +21,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.Reporting;
 using SIL.Utils;
 
@@ -82,8 +82,10 @@ namespace SIL.FieldWorks.LexicalProvider
 					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
 					propertyTable.SetProperty("App", flexApp, true, true);
 
-					LexEntryUi.DisplayEntry(FieldWorks.Cache, propertyTable, publisher, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-						"UserHelpFile", tss, null);
+					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
+					var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
+					var methodInfo = lexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
+					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, publisher, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss, null });
 				}
 			});
 		}
@@ -118,8 +120,10 @@ namespace SIL.FieldWorks.LexicalProvider
 					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
 					propertyTable.SetProperty("App", flexApp, true, true);
 
-					LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-						"UserHelpFile", tss);
+					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
+					var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
+					var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(FdoCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
+					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss });
 				}
 			});
 		}

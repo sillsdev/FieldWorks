@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			CheckDisposed();
 			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis) Object, ConfigurationNode);
-			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 		}
 

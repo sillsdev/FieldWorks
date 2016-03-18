@@ -54,10 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			InitBase(PropertyTable, null);
 
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 			m_rootSite = ConstructRoot();
-			m_rootSite.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber)); // Init it as Flex component.
+			m_rootSite.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber)); // Init it as Flex component.
 			//m_rootSite.PersistenceProvder = new XCore.PersistenceProvider(m_mediator.PropertyTable);
 
 			m_rootSite.Dock = System.Windows.Forms.DockStyle.Fill;

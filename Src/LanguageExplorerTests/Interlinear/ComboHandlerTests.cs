@@ -88,7 +88,7 @@ namespace LanguageExplorerTests.Interlinear
 			mb.SenseRA = sense;
 			mb.MorphRA = morph;
 
-			var flexComponentParameterObject = new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);

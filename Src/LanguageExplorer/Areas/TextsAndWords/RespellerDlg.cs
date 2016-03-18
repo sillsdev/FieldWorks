@@ -114,14 +114,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 
 		#endregion
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_srcClerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 				m_srcClerk.OwningObject = m_srcwfiWordform;
 #endif
-				m_sourceSentences.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				m_sourceSentences.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
 				m_specialSda = m_sourceSentences.BrowseViewer.SpecialCache;
 				m_moreMinSize = Size;

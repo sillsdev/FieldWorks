@@ -49,14 +49,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 
 		#endregion
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView();
 			mainCollapsingSplitContainer.SecondControl.Controls.Add(_statisticsView);
-			_statisticsView.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			_statisticsView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			_statisticsView.Activate(mainCollapsingSplitContainer, menuStrip, toolStripContainer, statusbar);
 		}
 

@@ -822,7 +822,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					{
 
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
-						ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 						//We need this to determine which kind of relation we are deleting
 						var lrtOwner = (ILexRefType) lr.Owner;
@@ -897,7 +897,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 					{
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
-						ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 						//We need this to determine which kind of relation we are deleting
 						var lrtOwner = lr.Owner as ILexRefType;

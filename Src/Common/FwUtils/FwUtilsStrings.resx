@@ -187,4 +187,17 @@ If you want to use Paratext with this project, make a change in this project (so
   <data name="ProblemRestoringSettings" xml:space="preserve">
     <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
   </data>
+  <data name="kstidFileNotFound" xml:space="preserve">
+    <value>File does not exist:
+{0}</value>
+    <comment>Message shown on the Unable to Open Project dialog box when a FieldWorks project file could not be found</comment>
+  </data>
+  <data name="kstidInvalidFwProjType" xml:space="preserve">
+    <value>Invalid FieldWorks project type.</value>
+    <comment>Message shown on the Unable to Open Project dialog box when FLEx is started without a valid project type. Must be specified on the command line or inferable from the project name.</comment>
+  </data>
+  <data name="kstidNoProjectName" xml:space="preserve">
+    <value>FieldWorks project name not specified.</value>
+    <comment>Message shown when FLEx is started with one of the project types but no database name is supplied.</comment>
+  </data>
 </root>

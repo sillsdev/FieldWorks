@@ -53,14 +53,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 
 		#endregion
@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		{
 			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
 			var recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
-			var flexComponentParameterObject = new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				flexComponentParameterObject,

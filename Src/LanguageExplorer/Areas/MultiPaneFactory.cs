@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Create a new MultiPane instance where both main child controls are PaneBarContainer instances
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="parentControl">Parent control for the new MultiPane</param>
 		/// <param name="tool"></param>
 		/// <param name="multiPaneId"></param>
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas
 		/// <param name="secondlabel">Label of the Right/Bottom control of the MultiPane</param>
 		/// <param name="orientation">Orientation of the splitter bar.</param>
 		/// <returns></returns>
-		internal static MultiPane Create(FlexComponentParameterObject flexComponentParameterObject, Control parentControl, ITool tool, string multiPaneId, Control firstControl, string firstlabel, Control secondControl, string secondlabel, Orientation orientation)
+		internal static MultiPane Create(FlexComponentParameters flexComponentParameters, Control parentControl, ITool tool, string multiPaneId, Control firstControl, string firstlabel, Control secondControl, string secondlabel, Orientation orientation)
 		{
 			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
 			// have PaneBarContainer children, which then have other main children,
@@ -38,9 +38,9 @@ namespace LanguageExplorer.Areas
 				FirstLabel = firstlabel,
 				SecondLabel = secondlabel
 			};
-			PaneBarContainerFactory.Create(flexComponentParameterObject, newMultiPane, firstControl, secondControl);
+			PaneBarContainerFactory.Create(flexComponentParameters, newMultiPane, firstControl, secondControl);
 
-			newMultiPane.InitializeFlexComponent(flexComponentParameterObject);
+			newMultiPane.InitializeFlexComponent(flexComponentParameters);
 			parentControl.Controls.Add(newMultiPane);
 			parentControl.ResumeLayout();
 			firstControl.BringToFront();

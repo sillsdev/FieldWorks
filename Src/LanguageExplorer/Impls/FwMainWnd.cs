@@ -32,6 +32,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
@@ -112,7 +113,7 @@ namespace LanguageExplorer.Impls
 
 			_toolRepository = new ToolRepository();
 			_areaRepository = new AreaRepository(_toolRepository);
-			_areaRepository.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			_areaRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			SetupOutlookBar();
 
@@ -614,6 +615,15 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("DoingAutomatedTest", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("RecordListLabel", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("MainContentLabel", SettingsGroup.GlobalSettings);
+
+			Subscriber.Subscribe("MigrateOldConfigurations", MigrateOldConfigurations);
+		}
+
+		private void MigrateOldConfigurations(object newValue)
+		{
+			var configMigrator = new DictionaryConfigurationMigrator();
+			configMigrator.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			configMigrator.MigrateOldConfigurationsIfNeeded();
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

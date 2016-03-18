@@ -68,10 +68,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FdoUi.dll</HintPath>
     </Reference>
-    <Reference Include="FieldWorks, Version=9.0.0.23039, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FieldWorks.exe</HintPath>
-    </Reference>
     <Reference Include="Filters, Version=9.0.0.13771, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Filters.dll</HintPath>
@@ -867,7 +863,7 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
-    <Compile Include="Controls\PossibilityListClerkParameterObject.cs" />
+    <Compile Include="Controls\PossibilityListClerkParameters.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />

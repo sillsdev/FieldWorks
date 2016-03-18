@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XElement node, ICmObject obj,
-			IPersistenceProvider persistenceProvider, FlexComponentParameterObject flexComponentParameterObject, XElement caller, ObjSeqHashMap reuseMap)
+			IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
 			switch(editor)
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					if (flid == 0)
 						throw new ApplicationException("field attribute required for basic properties " + node.GetOuterXml());
-					int ws = GetWs(cache, flexComponentParameterObject.PropertyTable, node);
+					int ws = GetWs(cache, flexComponentParameters.PropertyTable, node);
 					if (ws != 0)
 						slice = new StringSlice(obj, flid, ws);
 					else
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
 					if (fShowWsLabel)
 						(slice as StringSlice).ShowWsLabel = true;
-					int wsEmpty = GetWs(cache, flexComponentParameterObject.PropertyTable, node, "wsempty");
+					int wsEmpty = GetWs(cache, flexComponentParameters.PropertyTable, node, "wsempty");
 					if (wsEmpty != 0)
 						(slice as StringSlice).DefaultWs = wsEmpty;
 					break;
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "atomicreferencepos":
 				{
-					slice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameterObject.PropertyTable, flexComponentParameterObject.Publisher);
+					slice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
 					break;
 				}
 				case "possatomicreference":
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "atomicreferenceposdisabled":
 				{
-					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameterObject.PropertyTable, flexComponentParameterObject.Publisher);
+					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
 					break;
 				}
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "sttext":
 				{
-					slice = new StTextSlice(obj, flid, GetWs(cache, flexComponentParameterObject.PropertyTable, node));
+					slice = new StTextSlice(obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
 					break;
 				}
 
@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				case "customwithparams":
 				{
-					slice = (Slice)DynamicLoader.CreateObject(node, cache, editor, flid, node, obj, persistenceProvider, GetWs(cache, flexComponentParameterObject.PropertyTable, node));
+					slice = (Slice)DynamicLoader.CreateObject(node, cache, editor, flid, node, obj, persistenceProvider, GetWs(cache, flexComponentParameters.PropertyTable, node));
 					break;
 				}
 				case "ghostvector":
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
-			slice.InitializeFlexComponent(flexComponentParameterObject);
+			slice.InitializeFlexComponent(flexComponentParameters);
 			slice.AccessibleName = editor;
 
 			return slice;

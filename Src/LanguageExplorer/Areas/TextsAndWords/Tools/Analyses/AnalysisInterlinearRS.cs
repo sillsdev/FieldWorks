@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 								{
 									Visible = false
 								};
-			m_oneAnalSandbox.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			m_oneAnalSandbox.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Controls.Add(m_oneAnalSandbox);
 			if (m_oneAnalSandbox.RootBox == null)
 				m_oneAnalSandbox.MakeRoot();	// adding sandbox to Controls doesn't make rootbox.

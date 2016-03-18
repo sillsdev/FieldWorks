@@ -2318,7 +2318,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (slice == null)
 			{
 				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
-				slice.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				slice.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
 				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
 				// means it gets searched twice if not found, but that's fairly harmless.
@@ -2755,7 +2755,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber), caller, reuseMap);
+				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -4371,14 +4371,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 
 			if (PersistenceProvder != null)
 			{

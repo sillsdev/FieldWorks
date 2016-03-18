@@ -213,10 +213,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="OpenFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/OpenFile.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="kstidNoProjectName" xml:space="preserve">
-    <value>FieldWorks project name not specified.</value>
-    <comment>Message shown when TE or FLEx is started with one of the MySQL project types but no database name is supplied.</comment>
-  </data>
   <data name="kstidSaving" xml:space="preserve">
     <value>Saving project {0}...</value>
     <comment>Splash screen message when changes made during application initialization are being saved</comment>
@@ -249,10 +245,6 @@ Continue using English as the user interface language?</value>
   <data name="ksReviewLocationOfLinkedFiles" xml:space="preserve">
     <value>Review the location of Linked Files</value>
   </data>
-  <data name="kstidInvalidFwProjType" xml:space="preserve">
-    <value>Invalid FieldWorks project type.</value>
-    <comment>Message shown on the Unable to Open Project dialog box when TE or FLEx is started without a valid project type. Must be specified on the command line or inferable from the project name.</comment>
-  </data>
   <data name="ksInsufficientPrivilegesToUpdateProjectLocationCaption" xml:space="preserve">
     <value>Unable to modify project locations.</value>
   </data>
@@ -271,11 +263,6 @@ Continue using English as the user interface language?</value>
   </data>
   <data name="Receive" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/chorus32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="kstidFileNotFound" xml:space="preserve">
-    <value>File does not exist:
-{0}</value>
-    <comment>Message shown on the Unable to Open Project dialog box when a FieldWorks project file could not be found</comment>
   </data>
   <data name="kstidFLEx" xml:space="preserve">
     <value>Language Explorer</value>

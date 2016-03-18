@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					footnoteView.StyleSheet = styleSheet;
 					footnoteView.Visible = false;
-					footnoteView.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
+					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
 					// We don't actually want to show it, but we need to force the view to create the root
 					// box and lay it out so that various test stuff can happen properly.
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					footnoteView.StyleSheet = styleSheet;
 					footnoteView.Visible = false;
-					footnoteView.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
+					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
 					// We don't actually want to show it, but we need to force the view to create the root
 					// box and lay it out so that various test stuff can happen properly.

@@ -34,10 +34,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			var bulkEditBar = m_browseViewer.BulkEditBar;
 			// We want a custom name for the tab, the operation label, and the target item
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			var viewer = new BrowseViewerPhonologicalFeatures(nodeSpec,
 						 hvoRoot,
 						 cache, sortItemProvider, sda);
-			viewer.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			viewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			return viewer;
 		}
 	}

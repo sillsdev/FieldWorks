@@ -29,5 +29,5 @@ M: System.Void SIL.FieldWorks.FieldWorks/<>*::<KickOffAppFromOtherProcess>*()
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>*::<ShowEntry>*()
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>*::<ShowRelatedWords>*()
 
-M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.Func`1<SIL.FieldWorks.ProjectId>)
+M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.Func`1<SIL.FieldWorks.Common.FwUtils.ProjectId>)
 M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.IFlexApp)

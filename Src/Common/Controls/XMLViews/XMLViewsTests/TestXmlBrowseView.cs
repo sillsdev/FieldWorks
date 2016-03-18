@@ -25,7 +25,7 @@ namespace XMLViewsTests
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			using (var bv = new XmlBrowseView())
 			{
-				bv.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
+				bv.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 				bv.SimulateDoubleClick(new EventArgs());
 			}
 		}

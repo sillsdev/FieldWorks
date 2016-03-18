@@ -773,7 +773,7 @@ namespace LanguageExplorerTests.Interlinear
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
 			var sandbox = new SandboxBase(Cache, null, lineChoices, occurrence.Analysis.Hvo);
-			sandbox.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
+			sandbox.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			sandbox.MakeRoot();
 			return sandbox;
 		}

@@ -38,14 +38,12 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
@@ -281,7 +279,7 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_ui = new FwFdoUI(GetHelpTopicProvider(), s_threadHelper);
+				s_ui = (IFdoUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwFdoUI", GetHelpTopicProvider(), s_threadHelper);
 
 				if (CoreImpl.Properties.Settings.Default.CallUpgrade)
 				{
@@ -2789,9 +2787,7 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
 				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
-					var configMigrator = new DictionaryConfigurationMigrator();
-					configMigrator.InitializeFlexComponent(new FlexComponentParameterObject(s_activeMainWnd.PropertyTable, s_activeMainWnd.Publisher, s_activeMainWnd.Subscriber));
-					configMigrator.MigrateOldConfigurationsIfNeeded();
+					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
 			}

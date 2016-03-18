@@ -39,10 +39,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			m_fdoCache = PropertyTable.GetValue<FdoCache>("cache");
 			VisibleChanged += OnVisibleChanged;
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				Visible = false
 			};
-			m_tryAWordSandbox.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			m_tryAWordSandbox.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Controls.Add(m_tryAWordSandbox);
 			SetSandboxSize();
 			SetSandboxLocation();

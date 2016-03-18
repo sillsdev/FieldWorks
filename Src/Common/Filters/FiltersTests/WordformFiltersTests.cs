@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Filters
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
 				propertyTable.SetProperty("cache", Cache, true, true);
-				flp.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
+				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);

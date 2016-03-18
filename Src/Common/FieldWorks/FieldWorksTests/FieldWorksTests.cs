@@ -6,7 +6,11 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Reflection;
 using NUnit.Framework;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
@@ -180,6 +184,57 @@ namespace SIL.FieldWorks
 				// Not crash or anything
 				FieldWorks.EnsureValidLinkedFilesFolderCore(configuredFolder, defaultFolder);
 			});
+		}
+
+		/// <summary>
+		/// FieldWorks creates in instance of IFdoUI (FwFdoUI). This test makes sure it still resides in FdoUi.dll,
+		/// since if it ever moves, the test will fail.
+		/// </summary>
+		[Test]
+		public void MakeSureIFdoUIImplementationHasNotMoved()
+		{
+			try
+			{
+				using (var threadHelper = new ThreadHelper())
+				{
+					var iFdoUIImpl = (IFdoUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwFdoUI", FieldWorks.GetHelpTopicProvider(), threadHelper);
+					Assert.IsNotNull(iFdoUIImpl);
+				}
+			}
+			catch (Exception err)
+			{
+				Assert.Fail("Somebody moved 'SIL.FieldWorks.FdoUi.FwFdoUI', or made it impossible to create via Reflection. Error mesage: {0}", err.Message);
+			}
+		}
+
+		/// <summary>
+		/// LexicalProviderImpl in FieldWorks creates in instance of LexEntryUi. This test makes sure it still resides in FdoUi.dll,
+		/// since if it (or the sought after method) ever moves, the test will fail.
+		/// </summary>
+		[Test]
+		public void MakeSureDisplayRelatedEntriesOfLexEntryUiImplementationHasNotMoved()
+		{
+			var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
+			Assert.IsNotNull(fdoUiAssembly, "Somebody deleted the 'FdoUi.dll'.");
+			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
+			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
+			var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new [] {typeof(FdoCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString)});
+			Assert.IsNotNull(methodInfo, "Somebody deleted the 'DisplayRelatedEntries' from the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
+		}
+
+		/// <summary>
+		/// LexicalProviderImpl in FieldWorks creates in instance of LexEntryUi. This test makes sure it still resides in FdoUi.dll,
+		/// since if it (or the sought after method) ever moves, the test will fail.
+		/// </summary>
+		[Test]
+		public void MakeSureDisplayEntryOfLexEntryUiImplementationHasNotMoved()
+		{
+			var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
+			Assert.IsNotNull(fdoUiAssembly, "Somebody deleted the 'FdoUi.dll'.");
+			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
+			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
+			var methodInfo = lexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
+			Assert.IsNotNull(methodInfo, "Somebody deleted the 'DisplayEntry' from the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
 		}
 
 		/// <summary>

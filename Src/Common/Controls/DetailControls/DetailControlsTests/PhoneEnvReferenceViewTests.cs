@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			using (var view = new PhoneEnvReferenceView())
 			{
-				view.InitializeFlexComponent(new FlexComponentParameterObject(propertyTable, publisher, subscriber));
+				view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 				view.SetSda(sda);
 				view.SetRoot(form);
 				view.SetCache(Cache);

@@ -1027,10 +1027,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			PropertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
 		}

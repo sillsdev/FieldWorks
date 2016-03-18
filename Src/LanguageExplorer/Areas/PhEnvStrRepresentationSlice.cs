@@ -485,7 +485,7 @@ namespace LanguageExplorer.Areas
 				// We need a CmObjectUi in order to call HandleRightClick().
 				using (var ui = new CmObjectUi(m_env))
 				{
-					ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					return ui.HandleRightClick(this, true, "mnuEnvChoices");
 				}
 			}

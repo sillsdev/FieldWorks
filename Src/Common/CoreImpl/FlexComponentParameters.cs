@@ -1,14 +1,16 @@
-using System;
+// Copyright (c) 2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Class that contains the three interfaces used in the IFlexComponent interface.
 	/// </summary>
-	public class FlexComponentParameterObject
+	public class FlexComponentParameters
 	{
 		/// <summary />
-		public FlexComponentParameterObject(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public FlexComponentParameters(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			PropertyTable = propertyTable;
 			Publisher = publisher;

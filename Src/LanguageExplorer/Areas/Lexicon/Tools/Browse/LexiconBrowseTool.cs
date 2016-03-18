@@ -54,14 +54,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 
 		#endregion
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			_configurationDocument.Root.Add(columnsElement);
 			var recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
-			var flexComponentParameterObject = new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				flexComponentParameterObject,

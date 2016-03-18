@@ -113,12 +113,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_dataEntryForm.InitializeFlexComponent(flexComponentParameterObject);
+			m_dataEntryForm.InitializeFlexComponent(flexComponentParameters);
 		}
 
 		#endregion
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.XWorks
 			//set up the context menu, overriding the automatic menu creator/handler
 
 			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParametersElement);
-			m_menuHandler.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			m_menuHandler.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 //			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 			// TODO: Not right yet!
-			docView.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			docView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			return docView;
 		}
 

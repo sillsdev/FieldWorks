@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using LanguageExplorer.Dumpster;
 using NUnit.Framework;
@@ -51,6 +53,21 @@ namespace LanguageExplorerTests.Dumpster
 			}
 
 			Assert.That(builder.ToString(), Is.EqualTo(expected));
+		}
+
+		/// <summary>
+		/// Make sure FLExBridgeListener can use Reflection to call OpenNewProject on the FieldWorks static class.
+		/// </summary>
+		[Test]
+		public void MakeSureOpenNewProjectMethodHasNotMoved()
+		{
+			var fdoUiAssembly = Assembly.LoadFrom("FieldWorks.exe");
+			Assert.IsNotNull(fdoUiAssembly, "Somebody deleted the main 'FieldWorks.exe'.");
+			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FieldWorks");
+			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the main 'FieldWorks' class.");
+			var methodInfo = lexEntryUiType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
+			Assert.IsNotNull(methodInfo);
+			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'OpenNewProject' static method from the main 'FieldWorks' class.");
 		}
 
 		[Test]

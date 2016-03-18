@@ -109,7 +109,7 @@
     <Compile Include="CoreWritingSystemFactory.cs" />
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
-    <Compile Include="FlexComponentParameterObject.cs" />
+    <Compile Include="FlexComponentParameters.cs" />
     <Compile Include="ICommandUndoRedoText.cs" />
     <Compile Include="MemoryWritingSystemRepository.cs" />
     <Compile Include="FlexComponentCheckingService.cs" />

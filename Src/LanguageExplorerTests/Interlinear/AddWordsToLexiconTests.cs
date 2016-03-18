@@ -103,7 +103,7 @@ namespace LanguageExplorerTests.Interlinear
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_sandbox = new SandboxForTests(Cache, lineChoices);
-			m_sandbox.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
+			m_sandbox.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 		}
 
 		internal class SandboxForTests : Sandbox

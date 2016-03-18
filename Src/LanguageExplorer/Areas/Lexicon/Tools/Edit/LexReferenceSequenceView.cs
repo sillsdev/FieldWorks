@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
 			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
 			ReferenceBaseUi ui = new ReferenceSequenceUi(Cache, m_rootObj, m_rootFlid, hvo);
-			ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			return ui.HandleRightClick(this, true);
 		}
 

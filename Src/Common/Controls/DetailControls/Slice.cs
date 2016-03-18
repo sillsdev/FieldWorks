@@ -2285,7 +2285,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 					dt.SetCurrentObjectFlids(obj.Hvo, 0);
 					using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 					{
-						ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						result = ui.DeleteUnderlyingObject();
 					}
 				}
@@ -2530,7 +2530,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MergeUnderlyingObject(fLoseNoTextData);
 			}
 			// The slice will likely be disposed in the MergeUnderlyingObject call,
@@ -2584,7 +2584,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MoveUnderlyingObjectToCopyOfOwner();
 			}
 			// The slice will likely be disposed in the MoveUnderlyingObjectToCopyOfOwner call,
@@ -2935,18 +2935,18 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public virtual void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 
 			if (Control is IFlexComponent)
 			{
-				((IFlexComponent)Control).InitializeFlexComponent(flexComponentParameterObject);
+				((IFlexComponent)Control).InitializeFlexComponent(flexComponentParameters);
 			}
 			else if (Control != null)
 			{
@@ -2956,7 +2956,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 					var fc = Control.Controls[i] as IFlexComponent;
 					if (fc != null)
 					{
-						fc.InitializeFlexComponent(flexComponentParameterObject);
+						fc.InitializeFlexComponent(flexComponentParameters);
 					}
 				}
 			}

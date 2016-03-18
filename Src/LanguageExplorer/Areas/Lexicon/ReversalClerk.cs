@@ -60,10 +60,10 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			ChangeOwningObjectIfPossible();
 		}
@@ -362,7 +362,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var ui = new CmObjectUi(ri);
-					ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					dlg.SetDlgInfo(ui, Cache, PropertyTable);
 					dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
 					dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;

@@ -189,6 +189,16 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File does not exist:
+        ///{0}.
+        /// </summary>
+        internal static string kstidFileNotFound {
+            get {
+                return ResourceManager.GetString("kstidFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  in.
         /// </summary>
         internal static string kstidIn {
@@ -216,11 +226,29 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid FieldWorks project type..
+        /// </summary>
+        internal static string kstidInvalidFwProjType {
+            get {
+                return ResourceManager.GetString("kstidInvalidFwProjType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  mm.
         /// </summary>
         internal static string kstidMm {
             get {
                 return ResourceManager.GetString("kstidMm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks project name not specified..
+        /// </summary>
+        internal static string kstidNoProjectName {
+            get {
+                return ResourceManager.GetString("kstidNoProjectName", resourceCulture);
             }
         }
         

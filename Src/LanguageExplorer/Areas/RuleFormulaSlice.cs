@@ -36,7 +36,7 @@ namespace LanguageExplorer.Areas
 				var retval = (RuleFormulaControl)Control;
 				if (retval.PropertyTable == null)
 				{
-					retval.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+					retval.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				}
 				return retval;
 			}

@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				Cache = PropertyTable.GetValue<FdoCache>("cache")
 			};
-			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 			m_sda = ctrl.Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);

@@ -596,7 +596,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (GetSelectedWordform(m_rootb.Selection, out wordform))
 				{
 					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
-					ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				}
 #if RANDYTODO
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),
@@ -917,10 +917,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 #if RANDYTODO
 			m_clerk = ToolConfiguration.FindClerk(PropertyTable, configurationParameters);

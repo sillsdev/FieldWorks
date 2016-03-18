@@ -14,23 +14,23 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Check to make sure an IFlexComponent can be initialized.
 		/// </summary>
-		public static void CheckInitializationValues(FlexComponentParameterObject sourceFlexComponentParameterObject,
-			FlexComponentParameterObject targetFlexComponentParameterObject)
+		public static void CheckInitializationValues(FlexComponentParameters sourceFlexComponentParameters,
+			FlexComponentParameters targetFlexComponentParameters)
 		{
-			if (sourceFlexComponentParameterObject == null)
-				throw new ArgumentNullException("sourceFlexComponentParameterObject");
-			if (targetFlexComponentParameterObject == null)
-				throw new ArgumentNullException("targetFlexComponentParameterObject");
+			if (sourceFlexComponentParameters == null)
+				throw new ArgumentNullException("sourceFlexComponentParameters");
+			if (targetFlexComponentParameters == null)
+				throw new ArgumentNullException("targetFlexComponentParameters");
 
 			// The three source values must not be null.
-			if (sourceFlexComponentParameterObject.PropertyTable == null) throw new InvalidOperationException("No source property table.");
-			if (sourceFlexComponentParameterObject.Publisher == null) throw new InvalidOperationException("No source publisher.");
-			if (sourceFlexComponentParameterObject.Subscriber == null) throw new InvalidOperationException("No source subscriber.");
+			if (sourceFlexComponentParameters.PropertyTable == null) throw new InvalidOperationException("No source property table.");
+			if (sourceFlexComponentParameters.Publisher == null) throw new InvalidOperationException("No source publisher.");
+			if (sourceFlexComponentParameters.Subscriber == null) throw new InvalidOperationException("No source subscriber.");
 
 			// Three target values must be null.
-			if (targetFlexComponentParameterObject.PropertyTable != null) throw new InvalidOperationException("target property table must be null");
-			if (targetFlexComponentParameterObject.Publisher != null) throw new InvalidOperationException(" target publisher must be null");
-			if (targetFlexComponentParameterObject.Subscriber != null) throw new InvalidOperationException("target subscriber must be null");
+			if (targetFlexComponentParameters.PropertyTable != null) throw new InvalidOperationException("target property table must be null");
+			if (targetFlexComponentParameters.Publisher != null) throw new InvalidOperationException(" target publisher must be null");
+			if (targetFlexComponentParameters.Subscriber != null) throw new InvalidOperationException("target subscriber must be null");
 		}
 	}
 }

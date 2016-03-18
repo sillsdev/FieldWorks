@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var btnLauncher = (ButtonLauncher) Control;
 			if (btnLauncher.PropertyTable == null)
 			{
-				btnLauncher.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			btnLauncher.Initialize(m_cache, m_obj, 1, "nonsence", null, null, null);
 			base.Install(parent);

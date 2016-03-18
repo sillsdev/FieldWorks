@@ -9,7 +9,7 @@ namespace LanguageExplorer.Controls
 	/// <summary>
 	/// Class that bundles the parameters used to create a RecordClerk for a possibility list.
 	/// </summary>
-	internal class PossibilityListClerkParameterObject
+	internal class PossibilityListClerkParameters
 	{
 		/// <summary>
 		/// The clerk identifier
@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		internal string Ws { get; private set; }
 
-		internal PossibilityListClerkParameterObject(string clerkIdentifier, ICmPossibilityList owningList, bool expand, bool hierarchical, bool includeAbbr, string ws)
+		internal PossibilityListClerkParameters(string clerkIdentifier, ICmPossibilityList owningList, bool expand, bool hierarchical, bool includeAbbr, string ws)
 		{
 			ClerkIdentifier = clerkIdentifier;
 			OwningList = owningList;

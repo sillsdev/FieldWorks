@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Install(parent);
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
-			ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			ctrl.Initialize(
 				PropertyTable.GetValue<FdoCache>("cache"),
 				Media.MediaFileRA,

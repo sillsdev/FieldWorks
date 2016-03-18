@@ -181,11 +181,11 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			ReLoad();

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -17,7 +18,6 @@ using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.CoreImpl;
-using SIL.FieldWorks;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -109,14 +109,14 @@ namespace LanguageExplorer.Dumpster
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 
 			Cache = PropertyTable.GetValue<FdoCache>("cache");
 			PropertyTable.SetProperty("FLExBridgeListener", this, false, true);
@@ -229,7 +229,10 @@ namespace LanguageExplorer.Dumpster
 			PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 				SettingsGroup.LocalSettings, true, true);
 
-			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
+			var fdoUiAssembly = Assembly.Load("FieldWorks.exe");
+			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FieldWorks");
+			var methodInfo = lexEntryUiType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
+			methodInfo.Invoke(null, new object[] { new ProjectId(newprojectPathname) });
 
 			return true;
 		}

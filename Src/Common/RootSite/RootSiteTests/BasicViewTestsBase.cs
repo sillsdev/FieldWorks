@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_basicView.Cache = Cache;
 			m_basicView.Visible = false;
 			m_basicView.StyleSheet = styleSheet;
-			m_basicView.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
+			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 		}
 
 		/// ------------------------------------------------------------------------------------

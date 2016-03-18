@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="COMInterfaces, Version=9.0.0.17686, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="CoreImpl, Version=8.0.6.31180, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -104,6 +108,7 @@
       <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestUtils, Version=6.1.1.27323, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -126,7 +131,6 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="FieldWorksTests.cs" />
-    <Compile Include="ProjectIDTests.cs" />
     <Compile Include="WelcomeToFieldWorksDlgTests.cs" />
   </ItemGroup>
   <ItemGroup>

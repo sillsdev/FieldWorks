@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.XWorks
 				var app = PropertyTable.GetValue<IFlexApp>("App");
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, Clerk.VirtualListPublisher, app,
 					Publication);
-				m_mainView.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				m_mainView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;
 				m_mainView.SelectionChangedEvent +=
@@ -1272,10 +1272,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			//Clerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 

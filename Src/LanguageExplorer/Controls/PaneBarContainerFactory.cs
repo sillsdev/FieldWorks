@@ -17,18 +17,18 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Create a new PaneBarContainer
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="parentControl">Parent control for the new PaneBarContainer</param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameterObject flexComponentParameterObject, Control parentControl, Control mainChildControl)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control parentControl, Control mainChildControl)
 		{
 			parentControl.SuspendLayout();
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
-			newPaneBarContainer.InitializeFlexComponent(flexComponentParameterObject);
+			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
 			if (mainChildControl is IPaneBarUser)
 			{
 				var asPaneBarUser = (IPaneBarUser)mainChildControl;
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls
 			if (mainChildControl is IFlexComponent)
 			{
 				var asFlexComponent = (IFlexComponent) mainChildControl;
-				asFlexComponent.InitializeFlexComponent(flexComponentParameterObject);
+				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
 			parentControl.Controls.Add(newPaneBarContainer);
 			parentControl.ResumeLayout();
@@ -49,25 +49,25 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Create a pair of PaneBarContainer instances for <paramref name="parentMultiPane"/>.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="parentMultiPane">Parent control for the new PaneBarContainers</param>
 		/// <param name="firstChildControl">Main child control for the new PaneBarContainer</param>
 		/// <param name="secondChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static void Create(FlexComponentParameterObject flexComponentParameterObject, MultiPane parentMultiPane, Control firstChildControl, Control secondChildControl)
+		internal static void Create(FlexComponentParameters flexComponentParameters, MultiPane parentMultiPane, Control firstChildControl, Control secondChildControl)
 		{
 			parentMultiPane.SuspendLayout();
 			var newPaneBarContainer1 = new PaneBarContainer(firstChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
-			newPaneBarContainer1.InitializeFlexComponent(flexComponentParameterObject);
+			newPaneBarContainer1.InitializeFlexComponent(flexComponentParameters);
 			parentMultiPane.FirstControl = newPaneBarContainer1;
 			var newPaneBarContainer2 = new PaneBarContainer(secondChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
-			newPaneBarContainer2.InitializeFlexComponent(flexComponentParameterObject);
+			newPaneBarContainer2.InitializeFlexComponent(flexComponentParameters);
 			parentMultiPane.SecondControl = newPaneBarContainer2;
 			parentMultiPane.ResumeLayout();
 			firstChildControl.BringToFront();

@@ -145,14 +145,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 
 			helpProvider.HelpNamespace = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile;
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -625,7 +625,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				clerk.OwningObject = selObj;
 
 				m_currentBrowseView = new RecordBrowseView();
-				m_currentBrowseView.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				m_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
 				PropertyTable.SetProperty(sPropName, true, false, false);

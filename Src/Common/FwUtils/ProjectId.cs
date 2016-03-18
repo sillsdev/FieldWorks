@@ -1,19 +1,16 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProjectId.cs
-// Responsibility: FW team
+
 using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using System.Runtime.Serialization;
-using SIL.FieldWorks.Common.FwUtils;
 using SysPath = System.IO.Path;
 
-namespace SIL.FieldWorks
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -257,20 +254,20 @@ namespace SIL.FieldWorks
 		/// (For example, the file must exist, but it's contents are not checked.)
 		/// </summary>
 		/// <returns></returns>
-		internal Exception GetExceptionIfInvalid()
+		public Exception GetExceptionIfInvalid()
 		{
 			if (string.IsNullOrEmpty(Name))
-				return new StartupException(Properties.Resources.kstidNoProjectName, false);
+				return new StartupException(FwUtilsStrings.kstidNoProjectName, false);
 
 			switch (Type)
 			{
 				case FDOBackendProviderType.kXML:
 				case FDOBackendProviderType.kSharedXML:
 					if (!FileUtils.SimilarFileExists(Path))
-						return new StartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
+						return new StartupException(string.Format(FwUtilsStrings.kstidFileNotFound, Path));
 					break;
 				case FDOBackendProviderType.kInvalid:
-					return new StartupException(Properties.Resources.kstidInvalidFwProjType);
+					return new StartupException(FwUtilsStrings.kstidInvalidFwProjType);
 				default:
 					return new NotImplementedException("Unknown type of project.");
 			}

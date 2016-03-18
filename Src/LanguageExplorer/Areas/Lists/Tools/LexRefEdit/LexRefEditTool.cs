@@ -56,14 +56,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameterObject, new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
-			PropertyTable = flexComponentParameterObject.PropertyTable;
-			Publisher = flexComponentParameterObject.Publisher;
-			Subscriber = flexComponentParameterObject.Subscriber;
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 
 		#endregion
@@ -91,10 +91,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber), mainCollapsingSplitContainer, true,
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(new FlexComponentParameters(PropertyTable, Publisher, Subscriber), mainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.LexRefEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameterObject("LexRefTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.ReferencesOA, false, true, true, "best analysis"));
+				new PossibilityListClerkParameters("LexRefTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.ReferencesOA, false, true, true, "best analysis"));
 		}
 
 		/// <summary>

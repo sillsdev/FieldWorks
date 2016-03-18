@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
 		{
 			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, cache.ServiceLocator);
-			cd.InitializeFlexComponent(new FlexComponentParameterObject(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));
+			cd.InitializeFlexComponent(new FlexComponentParameters(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = entries.Length;

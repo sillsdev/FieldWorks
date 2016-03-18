@@ -69,10 +69,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
 			InitBase(PropertyTable, m_configurationParametersElement);
 			m_fullyInitialized = true;
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 					CmObjectUi ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
 					if (ui != null)
 					{
-						ui.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
 					}
 				}
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
-			m_browseViewer.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			m_browseViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_browseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.

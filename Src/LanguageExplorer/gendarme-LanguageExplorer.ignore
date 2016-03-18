@@ -29,9 +29,9 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # added to other object and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinTaggingChild::AddListToMenu(System.Windows.Forms.ToolStrip,SIL.FieldWorks.FDO.ICmPossibility)
 M: LanguageExplorer.Areas.TextsAndWords.Interlinear.IComboHandler LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/InterlinComboHandler::MakeCombo(SIL.CoreImpl.IHelpTopicProvider,System.Int32,LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
-M: LanguageExplorer.Controls.CollapsingSplitContainer LanguageExplorer.Controls.CollapsingSplitContainerFactory::Create(SIL.CoreImpl.FlexComponentParameterObject,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Boolean,System.Xml.Linq.XElement,System.Xml.Linq.XDocument,System.String,LanguageExplorer.Controls.PossibilityListClerkParameterObject)
+M: LanguageExplorer.Controls.CollapsingSplitContainer LanguageExplorer.Controls.CollapsingSplitContainerFactory::Create(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Boolean,System.Xml.Linq.XElement,System.Xml.Linq.XDocument,System.String,LanguageExplorer.Controls.PossibilityListClerkParameters)
 M: System.Void LanguageExplorer.Controls.CollapsingSplitContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.CollapsingSplitContainer&)
-M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lists.ListsArea::CreateBasicClerkForListArea(SIL.CoreImpl.IPropertyTable,LanguageExplorer.Controls.PossibilityListClerkParameterObject)
+M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lists.ListsArea::CreateBasicClerkForListArea(SIL.CoreImpl.IPropertyTable,LanguageExplorer.Controls.PossibilityListClerkParameters)
 M: SIL.FieldWorks.Common.FwUtils.IRecordBar LanguageExplorer.Impls.FwMainWnd::get_RecordBarControl()
 
 # variable is added to Controls and disposed there
@@ -112,7 +112,7 @@ M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice
 M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayDataTreeInsert(System.Object,XCore.UIItemDisplayProperties&)
 M: System.Boolean LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler::OnDisplayInsertMediaFile(System.Object,XCore.UIItemDisplayProperties&)
 M: System.Void LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncher::HandleChooser()
-M: System.Void LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.FlexComponentParameterObject)
+M: System.Void LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes::InitializeFlexComponent(SIL.CoreImpl.FlexComponentParameters)
 M: System.Boolean LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
 M: System.Void LanguageExplorer.Areas.TextsAndWords.RespellerDlg::SetSuggestions()
 M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase::IsInGlossMode()
@@ -125,7 +125,7 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/IhMi
 M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/<Import>*::<>*()
 # Windows
 M: System.Boolean LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk/<>*::<Import>*()
-M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView::InitializeFlexComponent(SIL.CoreImpl.FlexComponentParameterObject)
+M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics.StatisticsView::InitializeFlexComponent(SIL.CoreImpl.FlexComponentParameters)
 
 # added to collection and disposed there
 M: System.Void LanguageExplorer.Controls.SilSidePane.OutlookBar::CreateContextMenu()

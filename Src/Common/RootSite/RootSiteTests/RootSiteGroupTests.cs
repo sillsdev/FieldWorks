@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					draftPane = new DummyBasicView(),
 					btPane = new DummyBasicView())
 				{
-					var flexComponentParameterObject = new FlexComponentParameterObject(propertyTable, publisher, subscriber);
+					var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
 					stylePane.InitializeFlexComponent(flexComponentParameterObject);
 					draftPane.InitializeFlexComponent(flexComponentParameterObject);
 					btPane.InitializeFlexComponent(flexComponentParameterObject);

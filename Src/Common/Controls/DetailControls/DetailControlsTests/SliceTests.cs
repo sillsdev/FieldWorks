@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
-			var flexComponentParameterObject = new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameterObject);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_DataTree = new DataTree();
-			var flexComponentParameterObject = new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameterObject);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();

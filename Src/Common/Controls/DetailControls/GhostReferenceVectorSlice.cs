@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 
-			((GhostReferenceVectorLauncher)Control).InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			((GhostReferenceVectorLauncher)Control).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName);
 		}
 

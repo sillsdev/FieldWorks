@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
 			if (ctrl.PropertyTable == null)
 			{
-				ctrl.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
 			ctrl.Initialize(PropertyTable.GetValue<FdoCache>("cache"),

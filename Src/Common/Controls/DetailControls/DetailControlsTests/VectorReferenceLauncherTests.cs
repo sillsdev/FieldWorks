@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
 			//m_moFact = servLoc.GetInstance<IMoStemAllomorphFactory>();
 			MockLauncher = new MockVectorReferenceLauncher();
-			MockLauncher.InitializeFlexComponent(new FlexComponentParameterObject(m_propertyTable, m_publisher, m_subscriber));
+			MockLauncher.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_wsAnalysis = Cache.DefaultAnalWs;
 			m_wsVern = Cache.DefaultVernWs;
 			m_wsAnalStr = Cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(Cache.DefaultAnalWs);
@@ -536,12 +536,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
-		/// <param name="flexComponentParameterObject">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameterObject flexComponentParameterObject)
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			base.InitializeFlexComponent(flexComponentParameterObject);
+			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_vectorRefView.InitializeFlexComponent(flexComponentParameterObject);
+			m_vectorRefView.InitializeFlexComponent(flexComponentParameters);
 		}
 
 		#endregion

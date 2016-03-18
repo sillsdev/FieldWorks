@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_view.InitializeFlexComponent(new FlexComponentParameterObject(PropertyTable, Publisher, Subscriber));
+			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_view.Init(obj, this, new AffixRuleFormulaVc(PropertyTable, Publisher), AffixRuleFormulaVc.kfragRule);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
