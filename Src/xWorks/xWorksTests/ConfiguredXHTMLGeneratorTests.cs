@@ -1148,6 +1148,69 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_OtherReferencedComplexForms()
+		{
+			var complexformoptions = new DictionaryNodeComplexFormOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+			};
+			complexformoptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+			{
+				Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d",
+				IsEnabled = true
+			});
+
+			var revAbbrevNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				IsEnabled = true,
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var orcfNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				Label = "Other Referenced Complex Forms",
+				IsEnabled = true,
+				DictionaryNodeOptions = complexformoptions,
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { orcfNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
+			var complexformentryref = CreateComplexFormbasedonNodeOption(mainEntry, otherReferencedComplexForm,
+				complexformoptions.Options.First(), false);
+
+			var complexRefAbbr = complexformentryref.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
+			var complexRefRevAbbr = complexformentryref.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			var fwdNameXpath = string.Format(
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
+					complexRefAbbr);
+			var revNameXpath = string.Format(
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+					complexRefRevAbbr);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(fwdNameXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithSpaceWorks()
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
@@ -5700,6 +5763,27 @@ namespace SIL.FieldWorks.XWorks
 			return complexEntryRef;
 		}
 
+		private ILexEntryRef CreateComplexFormbasedonNodeOption(ICmObject main, ILexEntry complexForm, DictionaryNodeListOptions.DictionaryNodeOption option, bool subentry)
+		{
+			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			complexForm.EntryRefsOS.Add(complexEntryRef);
+			var complexEntryType =
+				(ILexEntryType)
+					Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(x => x.Guid.ToString() == option.Id);
+			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
+			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
+			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
+			if (complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
+				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
+			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
+			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
+			complexEntryRef.ComponentLexemesRS.Add(main);
+			if (subentry)
+				complexEntryRef.PrimaryLexemesRS.Add(main);
+			else
+				complexEntryRef.ShowComplexFormsInRS.Add(main);
+			return complexEntryRef;
+		}
 		/// <summary>
 		/// Generates a Lexical Reference.
 		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
