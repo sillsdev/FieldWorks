@@ -197,6 +197,10 @@ namespace SIL.FieldWorks.IText
 
 			foreach (ITextTag tag in m_para.OwnerOfClass<IStText>().TagsOC)
 			{
+				// skip invalid tags
+				// TODO: should these tags be cleaned up somewhere?
+				if (tag.BeginAnalysisIndex >= tag.BeginSegmentRA.AnalysesRS.Count || tag.BeginAnalysisIndex > tag.EndAnalysisIndex)
+					continue;
 				List<Annotation<ShapeNode>> beginSegment, endSegment;
 				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) || !segments.TryGetValue(tag.EndSegmentRA, out endSegment))
 					continue;

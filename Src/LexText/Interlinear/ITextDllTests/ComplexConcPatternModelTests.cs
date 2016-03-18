@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.IText
 			return Cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.OfType<IFsClosedFeature>().SelectMany(f => f.ValuesOC).First(sym => sym.Abbreviation.AnalysisDefaultWritingSystem.Text == id);
 		}
 
-		private void MakeTag(FDO.IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
+		private ITextTag MakeTag(FDO.IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
 		{
 			ITextTag ttag = Cache.ServiceLocator.GetInstance<ITextTagFactory>().Create();
 			text.ContentsOA.TagsOC.Add(ttag);
@@ -145,6 +145,7 @@ namespace SIL.FieldWorks.IText
 			ttag.BeginAnalysisIndex = begin;
 			ttag.EndSegmentRA = endSeg;
 			ttag.EndAnalysisIndex = end;
+			return ttag;
 		}
 
 		private FDO.IText MakeText(string contents)
@@ -567,6 +568,28 @@ namespace SIL.FieldWorks.IText
 			// cause analyses and baseline to get out-of-sync
 			seg.AnalysesRS.RemoveAt(0);
 			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 17, 23, null)}).Using(m_fragmentComparer));
+		}
+
+		[Test]
+		public void InvalidTags()
+		{
+			var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
+			ISegment seg = para.SegmentsOS.First();
+
+			var model = new ComplexConcPatternModel(Cache);
+
+			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+
+			// create a tag that occurs after the segment
+			ITextTag ttag = MakeTag(m_text, m_np, seg, 6, seg, 6);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+
+			ttag.Delete();
+			// create a tag where the begin index is greater than the end index
+			MakeTag(m_text, m_np, seg, 5, seg, 4);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 		}
 
 		private class ParaFragmentEqualityComparer : IEqualityComparer<IParaFragment>

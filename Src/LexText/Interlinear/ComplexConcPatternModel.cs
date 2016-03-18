@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.IText
 				return Enumerable.Empty<IParaFragment>();
 
 			var matches = new List<IParaFragment>();
-			foreach (IStTxtPara para in text.ParagraphsOS)
+			foreach (IStTxtPara para in text.ParagraphsOS.OfType<IStTxtPara>())
 			{
 				IParaFragment lastFragment = null;
 				var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
