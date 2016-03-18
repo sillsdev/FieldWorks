@@ -61,13 +61,13 @@ namespace LanguageExplorerTests.Dumpster
 		[Test]
 		public void MakeSureOpenNewProjectMethodHasNotMoved()
 		{
-			var fdoUiAssembly = Assembly.LoadFrom("FieldWorks.exe");
-			Assert.IsNotNull(fdoUiAssembly, "Somebody deleted the main 'FieldWorks.exe'.");
-			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FieldWorks");
-			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the main 'FieldWorks' class.");
-			var methodInfo = lexEntryUiType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
+			var fwAssembly = Assembly.LoadFrom("FieldWorks.exe");
+			Assert.IsNotNull(fwAssembly, "Somebody deleted the main 'FieldWorks.exe'.");
+			var fwType = fwAssembly.GetType("SIL.FieldWorks.FieldWorks");
+			Assert.IsNotNull(fwType, "Somebody deleted the main 'FieldWorks' class.");
+			var methodInfo = fwType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
 			Assert.IsNotNull(methodInfo);
-			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'OpenNewProject' static method from the main 'FieldWorks' class.");
+			Assert.IsNotNull(fwType, "Somebody deleted the 'OpenNewProject' static method from the main 'FieldWorks' class.");
 		}
 
 		[Test]

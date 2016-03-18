@@ -237,8 +237,8 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				return m_objectListPublisher;
-				}
 			}
+		}
 
 		internal protected virtual string PropertyTableId(string sorterOrFilter)
 		{
@@ -736,8 +736,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 							ReloadList();
 				return;
-						}
-					}
+				}
+			}
 
 		protected virtual bool TryHandleUpdateOrMarkPendingReload(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -2720,10 +2720,10 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
+	/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
+	{
 			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;

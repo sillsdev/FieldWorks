@@ -33,9 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
 		protected ITsStrFactory m_tsf;
-
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		protected IPropertyTable m_propertyTable;
 		/// <summary>
 		/// </summary>

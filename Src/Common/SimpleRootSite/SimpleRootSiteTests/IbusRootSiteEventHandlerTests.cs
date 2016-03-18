@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_dummySimpleRootSite = new DummySimpleRootSite();
 			Assert.NotNull(m_dummySimpleRootSite.RootBox);
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 
 		[TearDown]
@@ -1593,7 +1594,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	public interface ITestableIbusCommunicator : IIbusCommunicator
+	public interface ITestableIbusCommunicator: IIbusCommunicator
 	{
 		string PreEdit { get; }
 	}
@@ -1860,7 +1861,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class XkbKeyboardRetrievingAdaptorDouble : XkbKeyboardRetrievingAdaptor
+	class XkbKeyboardRetrievingAdaptorDouble: XkbKeyboardRetrievingAdaptor
 	{
 		public XkbKeyboardRetrievingAdaptorDouble(IXklEngine engine): base(engine)
 		{
@@ -1871,7 +1872,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class IbusKeyboardRetrievingAdaptorDouble : IbusKeyboardRetrievingAdaptor
+	class IbusKeyboardRetrievingAdaptorDouble: IbusKeyboardRetrievingAdaptor
 	{
 		public IbusKeyboardRetrievingAdaptorDouble(IIbusCommunicator ibusCommunicator): base(ibusCommunicator)
 		{

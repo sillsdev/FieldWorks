@@ -794,7 +794,7 @@ namespace SIL.FieldWorks.XWorks
 				if (obj != null)
 				{
 					display.Text = string.Format(display.Text, StringTable.Table.GetString(obj.ClassName, "ClassNames"));
-				}
+			}
 			}
 
 			return true;//we handled this, no need to ask anyone else.

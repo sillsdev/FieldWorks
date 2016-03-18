@@ -787,7 +787,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			private set;
 		}
 
-		/// <summary>
+	/// <summary>
 		/// Gets the name.
 		/// </summary>
 		/// <value>The name.</value>

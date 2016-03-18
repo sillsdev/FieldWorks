@@ -106,6 +106,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Release\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
@@ -184,7 +188,9 @@
     <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
     <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
     <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Discourse\ConstituentChartTests.cs" />
+    <Compile Include="Discourse\ConstituentChartTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Discourse\DiscourseExportTests.cs" />
     <Compile Include="Discourse\DiscourseTestHelper.cs" />
     <Compile Include="Discourse\InMemoryDiscourseTestBase.cs" />
@@ -204,7 +210,9 @@
     <Compile Include="Interlinear\ComboHandlerTests.cs" />
     <Compile Include="Interlinear\ComplexConcPatternModelTests.cs" />
     <Compile Include="Interlinear\ImportInterlinearAnalysesTests.cs" />
-    <Compile Include="Interlinear\InterlinDocForAnalysisTests.cs" />
+    <Compile Include="Interlinear\InterlinDocForAnalysisTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Interlinear\InterlinearExporterTests.cs" />
     <Compile Include="Interlinear\InterlinLineChoicesTests.cs" />
     <Compile Include="Interlinear\InterlinMasterTests.cs" />
@@ -213,7 +221,9 @@
     <Compile Include="Interlinear\MorphemeBreakerTests.cs" />
     <Compile Include="Interlinear\SandboxBaseTests.cs" />
     <Compile Include="Interlinear\ShowSpaceDecoratorTests.cs" />
-    <Compile Include="Interlinear\TestTaggingChild.cs" />
+    <Compile Include="Interlinear\TestTaggingChild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>

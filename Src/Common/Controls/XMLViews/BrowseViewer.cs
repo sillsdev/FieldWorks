@@ -1138,14 +1138,14 @@ namespace SIL.FieldWorks.Common.Controls
 			SaveSelectionItems(new Set<int>(selectionItemsToSave));
 		}
 
-		///  <summary>
+		/// <summary>
 		///
-		///  </summary>
-		///  <param name="bv"></param>
-		///  <param name="spec"></param>
+		/// </summary>
+		/// <param name="bv"></param>
+		/// <param name="spec"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
-		///  <returns></returns>
+		/// <returns></returns>
 		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache)
 		{
 			return new BulkEditBar(bv, spec, propertyTable, cache);

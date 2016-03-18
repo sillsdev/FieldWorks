@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
@@ -10,8 +11,8 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FixData;
-using System.Collections.Generic;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.TestUtilities;
 
 namespace FixFwDataDllTests
 {
@@ -98,13 +99,13 @@ namespace FixFwDataDllTests
 
 			// Verify initial state: two lists with the same name.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='CmPossibilityList']/Name/AUni[text()='Custom test list']", 2, false);
+				"//rt[@class='CmPossibilityList']/Name/AUni[text()='Custom test list']", 2);
 
 			// Verify output: two lists with original IDs and second is renamed.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='CmPossibilityList' and @guid='5250350b-83fb-432b-a24f-a8dad580d350']/Name/AUni[text()='Custom test list']", 1, false);
+				"//rt[@class='CmPossibilityList' and @guid='5250350b-83fb-432b-a24f-a8dad580d350']/Name/AUni[text()='Custom test list']", 1);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='CmPossibilityList' and @guid='1e4c4389-7835-408f-9408-c7f1c488d737']/Name/AUni[text()='Custom test list1']", 1, false);
+				"//rt[@class='CmPossibilityList' and @guid='1e4c4389-7835-408f-9408-c7f1c488d737']/Name/AUni[text()='Custom test list1']", 1);
 
 			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found");
 
@@ -144,19 +145,19 @@ namespace FixFwDataDllTests
 
 			// The surviving analyses should have their owners corrected. I think it's enough to check one.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='WfiAnalysis' and @guid='" + analysis2_2Guid + "' and @ownerguid='" + firstdupGuid + "']", 1, false);
+				"//rt[@class='WfiAnalysis' and @guid='" + analysis2_2Guid + "' and @ownerguid='" + firstdupGuid + "']", 1);
 
 			// The merged "dup" wordform should have four analyses
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur", 4, false);
+				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur", 4);
 
 			// One of which should be the last one from the deleted wordform.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur[@guid='BCD9971A-D871-472D-8843-9B5392AAA57F']", 1, false);
+				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur[@guid='BCD9971A-D871-472D-8843-9B5392AAA57F']", 1);
 
 			// The segment which refers to the deleted wordform should be fixed.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='Segment' and @guid='b405f3c0-58e1-4492-8a40-e955774a6911']/Analyses/objsur[@guid='" + firstdupGuid + "']", 1, false);
+				"//rt[@class='Segment' and @guid='b405f3c0-58e1-4492-8a40-e955774a6911']/Analyses/objsur[@guid='" + firstdupGuid + "']", 1);
 
 			// Merging these two verifies that it does the right things when (a) the second word of a set is the only one with analyses
 			// and (b) the writing systems are in a different order
@@ -167,11 +168,11 @@ namespace FixFwDataDllTests
 
 			// The second merged wordform should have one analysis
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='WfiWordform' and @guid='" + firstDupFrSp + "']/Analyses/objsur", 1, false);
+				"//rt[@class='WfiWordform' and @guid='" + firstDupFrSp + "']/Analyses/objsur", 1);
 
 			// The surviving analyses should have their owners corrected. I think it's enough to check one.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='WfiAnalysis' and @guid='AE2BA69A-42BA-4582-AFA4-B8AC3E5567C2' and @ownerguid='" + firstDupFrSp + "']", 1, false);
+				"//rt[@class='WfiAnalysis' and @guid='AE2BA69A-42BA-4582-AFA4-B8AC3E5567C2' and @ownerguid='" + firstDupFrSp + "']", 1);
 
 
 			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found");
@@ -199,7 +200,7 @@ namespace FixFwDataDllTests
 		private static void VerifyElementCount(string testPath, string className, string guid, int expectedCount)
 		{
 			AssertThatXmlIn.File(testPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"" + className + "\" and @guid=\"" + guid + "\"]", expectedCount, false);
+				"//rt[@class=\"" + className + "\" and @guid=\"" + guid + "\"]", expectedCount);
 		}
 
 		[Test]
@@ -213,26 +214,26 @@ namespace FixFwDataDllTests
 
 			// Verify initial state: no custom field element on one input, the other already has them.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom", 0, false);
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1);
 
 			// Verify Results: the allomorph has had the expected basic custom fields added.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyNumber' and @val='0']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyNumber' and @val='0']", 1);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyDate' and @val='0']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyDate' and @val='0']", 1);
 			// The one that already had them should still only have one of each.
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='0']", 0, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='0']", 0);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='0']", 0, false);
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='0']", 0);
 			Assert.That(errors[0], Is.StringStarting("Missing default value type added to "));
 		}
 
@@ -245,12 +246,12 @@ namespace FixFwDataDllTests
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
+				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2);
 			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found");
 			Assert.True(errors[0].EndsWith("Object with guid '" + testGuid + "' already exists! (not fixed)"),
 				"Error message is incorrect."); // OriginalFixer--ksObjectWithGuidAlreadyExists
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
+				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2);
 		}
 
 		[Test]
@@ -269,7 +270,7 @@ namespace FixFwDataDllTests
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0);
 			Assert.AreEqual(4, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
@@ -283,24 +284,24 @@ namespace FixFwDataDllTests
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
 			// The parent SenseType property of the danging <objsur> should be removed with it.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @guid=\"3110cf83-ad6c-47fe-91f8-8bf789473792\"]/SenseType", 0, false);
+				"//rt[@class=\"LexSense\" and @guid=\"3110cf83-ad6c-47fe-91f8-8bf789473792\"]/SenseType", 0);
 
 			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 1, false);
+				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testChangeGuid + "\"]", 1, false);
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testChangeGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 1, false);
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 1);
 			// Check that they were fixed
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 0, false);
+				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2, false);
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//SenseType/objsur[@guid=\"" + secondDangler + "\"]", 0, false);
+				"//SenseType/objsur[@guid=\"" + secondDangler + "\"]", 0);
 		}
 
 		[Test]
@@ -322,10 +323,10 @@ namespace FixFwDataDllTests
 			foreach (var guid in new[] {lpBob1, lpBob2, scJoe1, scJoe2})
 			{
 				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-					"//objsur[@guid=\"" + guid + "\"]", 1, false);
+					"//objsur[@guid=\"" + guid + "\"]", 1);
 			}
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lpBob3 + "\"]", 2, false);
+				"//objsur[@guid=\"" + lpBob3 + "\"]", 2);
 
 			Assert.AreEqual(4, errors.Count, "Unexpected number of errors found.");
 			//The order of these doesn't really matter but this is the one we happen to get.
@@ -338,18 +339,18 @@ namespace FixFwDataDllTests
 			foreach (var guid in new[] {lpBob1, lpFred, scJoe1, scBob})
 			{
 				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-					"//objsur[@guid=\"" + guid + "\"]", 1, false);
+					"//objsur[@guid=\"" + guid + "\"]", 1);
 				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-					"//rt[@guid=\"" + guid + "\"]", 1, false);
+					"//rt[@guid=\"" + guid + "\"]", 1);
 			}
 
 			// These should not (the first xpath would match the reference to lpBob3 in fred as well as the owning one)
 			foreach (var guid in new[] { lpBob2, lpBob3, scJoe2 })
 			{
 				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-					"//objsur[@guid=\"" + guid + "\"]", 0, false);
+					"//objsur[@guid=\"" + guid + "\"]", 0);
 				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-					"//rt[@guid=\"" + guid + "\"]", 0, false);
+					"//rt[@guid=\"" + guid + "\"]", 0);
 			}
 		}
 
@@ -375,28 +376,28 @@ namespace FixFwDataDllTests
 
 			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexReference\"]", 3, false);
+				"//rt[@class=\"LexReference\"]", 3);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 1, false);
+				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 1, false);
+				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 1);
 
 			// Check that they were fixed
 			// Should have deleted both LexReference objects
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 0, false);
+				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 0, false);
+				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 0);
 
 			// Should still have the LexRefType object
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexRefType\" and @guid=\"" + lexRefTypeChangedGuid + "\"]", 1, false);
+				"//rt[@class=\"LexRefType\" and @guid=\"" + lexRefTypeChangedGuid + "\"]", 1);
 			// And that it has only one objsur now
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + lexRefNotDeleted + "\"]", 1, false);
+				"//objsur[@guid=\"" + lexRefNotDeleted + "\"]", 1);
 			// Check that the valid LexReference is not deleted
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexReference\"]", 1, false);
+				"//rt[@class=\"LexReference\"]", 1);
 		}
 
 		/// <summary>
@@ -429,22 +430,22 @@ namespace FixFwDataDllTests
 			// Verify initial state.
 			// We start out with morph bundles that have broken links.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			// This one is not obviously broken, but the grammatical sense fixer will kill its target.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"" + willDeleteMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"" + willDeleteMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\" and @guid=\"" + willDeleteMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"MoStemMsa\" and @guid=\"" + willDeleteMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 
 			// Check errors
 			Assert.AreEqual(10, errors.Count, "Unexpected number of errors found.");
@@ -469,19 +470,19 @@ namespace FixFwDataDllTests
 
 			// Check file repair
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa", 0, false); // must remove Msa, not just child objsur
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa", 0); // must remove Msa, not just child objsur
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"26ae3989-d424-4dd2-a32d-c556c6985a99\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"26ae3989-d424-4dd2-a32d-c556c6985a99\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"8056c7d9-70ea-41b9-89e9-de28f7d686a7\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"8056c7d9-70ea-41b9-89e9-de28f7d686a7\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph", 0, false);  // must remove Morph, not just child objsur
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph", 0);  // must remove Morph, not just child objsur
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur", 0, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur", 0);
 		}
 
 		/// <summary>
@@ -502,9 +503,9 @@ namespace FixFwDataDllTests
 			// Verify initial state.
 			// We start out with a morph bundles and a sense that have broken links to the same missing MSA.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1);
 
 			// Check errors
 			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
@@ -515,9 +516,9 @@ namespace FixFwDataDllTests
 
 			// Check file repair
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa", 0, false);
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis", 0, false);		}
+				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis", 0);		}
 
 		[Test]
 		public void TestDanglingCustomListReferences()
@@ -531,21 +532,21 @@ namespace FixFwDataDllTests
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]", 1, false);
+				"//rt[@class=\"LexEntry\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + custItem1Guid + "\"]", 0, false);
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1, false);
+				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1);
 			// The containing <Custom> element as well as the objsur should be removed
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@guid='c5e6aab3-4236-43b4-998e-d41ff26eba7b']/Custom", 0, false);
+				"//rt[@guid='c5e6aab3-4236-43b4-998e-d41ff26eba7b']/Custom", 0);
 			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + custItem1Guid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
 
 			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1, false);
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1);
 		}
 
 		[Test]
@@ -562,11 +563,11 @@ namespace FixFwDataDllTests
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]", 2, false);
+				"//rt[@class=\"LexEntry\"]", 2);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 0, false);
+				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1, false);
+				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1);
 			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + custItem1Guid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
@@ -580,9 +581,9 @@ namespace FixFwDataDllTests
 
 			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1, false);
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 2, false);
+				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 2);
 		}
 
 		[Test]
@@ -594,10 +595,10 @@ namespace FixFwDataDllTests
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 1, false);
+				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 1);
 			Assert.AreEqual(1, errors.Count, "Incorrect number of errors.");
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 2, false);
+				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 2);
 		}
 
 		/// <summary>
@@ -634,31 +635,31 @@ namespace FixFwDataDllTests
 			// Verification
 			// check that the clause marker was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 1, false);
+				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + chartRowGuid + "\"]", 1, false);
+				"//objsur[@guid=\"" + chartRowGuid + "\"]", 1);
 
 			// check that the clause marker has been deleted
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 0, false);
+				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 0);
 
 			// check that the row is no longer in the chart
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + chartRowGuid + "\"]", 0, false);
+				"//objsur[@guid=\"" + chartRowGuid + "\"]", 0);
 
 			// check that the row has been deleted
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0);
 
 			// check that the phone rule sequence context was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 1, false);
+				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + segmentRuleRhsGuid + "\"]", 1, false);
+				"//objsur[@guid=\"" + segmentRuleRhsGuid + "\"]", 1);
 
 			// check that the phone rule sequence context has been deleted
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 0, false);
+				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 0);
 
 			Assert.AreEqual(3, errors.Count, "Unexpected number of errors found.");
 			Assert.AreEqual("Removing owner of empty sequence (guid='" + chartRowGuid +
@@ -690,26 +691,26 @@ namespace FixFwDataDllTests
 
 			// check that the clause marker was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 4, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 4);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\"]", 5, false);
+				"//rt[@class=\"MoStemMsa\"]", 5);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsFeatStruc\"]", 2, false);
+				"//rt[@class=\"FsFeatStruc\"]", 2);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsComplexValue\"]", 1, false);
+				"//rt[@class=\"FsComplexValue\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsClosedValue\"]", 1, false);
+				"//rt[@class=\"FsClosedValue\"]", 1);
 
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\"]", 3, false);
+				"//rt[@class=\"MoStemMsa\"]", 3);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsFeatStruc\"]", 0, false);
+				"//rt[@class=\"FsFeatStruc\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsComplexValue\"]", 0, false);
+				"//rt[@class=\"FsComplexValue\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"FsClosedValue\"]", 0, false);
+				"//rt[@class=\"FsClosedValue\"]", 0);
 		}
 
 		[Test]
@@ -729,10 +730,10 @@ namespace FixFwDataDllTests
 
 			// check that the msa was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1);
 			// And that it was deleted.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 0, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 0);
 		}
 
 		[Test]
@@ -758,33 +759,33 @@ namespace FixFwDataDllTests
 			data.FixErrorsAndSave();
 			// Check initial state of the test file
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"TextTag\"]", 1, false);
+				"//rt[@class=\"TextTag\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartWordGroup\"]", 3, false);
+				"//rt[@class=\"ConstChartWordGroup\"]", 3);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + segmentGuid + "\"]", 3, false);
+				"//objsur[@guid=\"" + segmentGuid + "\"]", 3);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 1, false);
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 1);
 			// Check the repaired state of the test file
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"TextTag\"]", 1, false);
+				"//rt[@class=\"TextTag\"]", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartWordGroup\"]", 2, false);
+				"//rt[@class=\"ConstChartWordGroup\"]", 2);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//objsur[@guid=\"" + segmentGuid + "\"]", 0, false); // got rid of all the refs to the bad segment.
+				"//objsur[@guid=\"" + segmentGuid + "\"]", 0); // got rid of all the refs to the bad segment.
 			// The parent (property) elements of the deleted objsur elements should be gone, too.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@guid='f864b36d-ecf0-4c22-9fac-ff91b009a8f8']/BeginSegment", 0, false);
+				"//rt[@guid='f864b36d-ecf0-4c22-9fac-ff91b009a8f8']/BeginSegment", 0);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@guid='f864b36d-ecf0-4c22-9fac-ff91b009a8f8']/EndSegment", 0, false);
+				"//rt[@guid='f864b36d-ecf0-4c22-9fac-ff91b009a8f8']/EndSegment", 0);
 			// Note that the other dangling EndSegment does not result in the property being deleted; it is
 			// repaired instead.
 
 			// check that the row has been deleted
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0);
 			Assert.AreEqual(6, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
@@ -848,65 +849,65 @@ namespace FixFwDataDllTests
 			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
 			// It's important that one of the entries needing a non-zero number does not have one at all to begin with.
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding1Guid + "\" and not(HomographNumber)]", 1, false);
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding1Guid + "\" and not(HomographNumber)]", 1);
 			// It's also important that one of them has allmorphs
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding2Guid + "\" and AlternateForms/objsur/@guid='bb464c5d-de15-494b-bc05-1ee92c3028e6']", 1, false);
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding2Guid + "\" and AlternateForms/objsur/@guid='bb464c5d-de15-494b-bc05-1ee92c3028e6']", 1);
 
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']", 1);
 
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + "08fc938e-110e-44f4-8660-165d26030124" + "']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + "08fc938e-110e-44f4-8660-165d26030124" + "']", 1);
 
 			// Group of four entries that have empty lexeme form. We want them to end up with no homograph numbers.
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry1Guid + "']/HomographNumber[@val='1']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry1Guid + "']/HomographNumber[@val='1']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry2Guid + "']/HomographNumber[@val='2']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry2Guid + "']/HomographNumber[@val='2']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/HomographNumber[@val='3']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/HomographNumber[@val='3']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']", 1);
 			// The third has no LexemeForm field at all.
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/LexemeForm", 0, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/LexemeForm", 0);
 			// The fourth has no homograph number field at all.
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']/HomographNumber", 0, false);
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']/HomographNumber", 0);
 
 			// Two LexEntries have different citation forms but are otherwise identical starting with 0's should end with 0's
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid1 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid1 + "']/HomographNumber[@val='0']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid2 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid2 + "']/HomographNumber[@val='0']", 1);
 			// Two LexEntries with the same citation forms but otherwise different starting with 0's should end with '1', '2'
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + citationSameGuid1 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + citationSameGuid1 + "']/HomographNumber[@val='0']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + citationSameGuid2 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + citationSameGuid2 + "']/HomographNumber[@val='0']", 1);
 			// Two LexEntries have different SecondaryOrder in the MoMorphType but are otherwise identical
 			// starting with 0's should end with a 0 and a the different should get a 1
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder1 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder1 + "']/HomographNumber[@val='0']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder2 + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder2 + "']/HomographNumber[@val='0']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + diffSecondaryOrder + "']/HomographNumber[@val='0']", 1, false);
+				"//rt[@class='LexEntry' and @guid='" + diffSecondaryOrder + "']/HomographNumber[@val='0']", 1);
 
 			// stems for multilingual ones:
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='de' and text()='irrelevant']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='de' and text()='irrelevant']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='fr' and text()='else']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='fr' and text()='else']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='de' and text()='homo']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='de' and text()='homo']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='fr' and text()='else']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='fr' and text()='else']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='de' and text()='homo']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='de' and text()='homo']", 1);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='fr' and text()='something']", 1, false);
+				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='fr' and text()='something']", 1);
 
 			errors.Clear();
 			Assert.DoesNotThrow(() =>

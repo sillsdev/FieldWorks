@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.LexicalProvider
 							dbAnalysis.MeaningsOC.Add(dbGloss);
 						}
 						dbGlosses = dbGloss.Form;
-						dbAnalysis.ApprovalStatusIcon = 1; // Assume the analysis from the external application is user approved
+						dbAnalysis.ApprovalStatusIcon = (int)Opinions.approves; // Assume the analysis from the external application is user approved
 					}
 					else
 					{

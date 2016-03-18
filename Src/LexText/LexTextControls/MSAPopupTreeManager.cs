@@ -113,17 +113,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// Load the special strings from the string table.
 			m_sUnknown = StringTable.Table.GetString("NullItemLabel",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			m_sSpecifyGramFunc = StringTable.Table.GetString("AddNewGramFunc",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			m_sModifyGramFunc = StringTable.Table.GetString("ModifyGramFunc",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			m_sSpecifyDifferent = StringTable.Table.GetString("SpecifyDifferentGramFunc",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			m_sCreateGramFunc = StringTable.Table.GetString("CreateGramFunc",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			m_sEditGramFunc = StringTable.Table.GetString("EditGramFunc",
-				"DetailControls/MSAReferenceComboBox");
+					"DetailControls/MSAReferenceComboBox");
 			if (string.IsNullOrEmpty(m_sUnknown) ||
 				m_sUnknown == "*NullItemLabel*")
 			{

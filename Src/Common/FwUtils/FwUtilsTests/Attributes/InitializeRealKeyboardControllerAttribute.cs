@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
+using NUnit.Framework;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 

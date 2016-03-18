@@ -217,75 +217,71 @@ unicodechareditor.1.gz: DistFiles/Linux/unicodechareditor.1.xml
 manpage-clean:
 	rm -f fieldworks-flex.1.gz unicodechareditor.1.gz
 
-install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
+install-tree-fdo:
 	# Create directories
-	# NOTE: we create two odd looking directories here (/usr/lib/tmp/FDO... and
-	# /usr/share/tmp/FW...). This is needed to separate the files that go into
-	# libfieldworks-fdo from the files that go into fieldworks-applications. Files in
-	# /usr/share/tmp/FW/fieldworks will go into /usr/share/fieldworks in the
-	# fieldworks-applications package but not at all into the libfieldworks-fdo package,
-	# and files in /usr/lib/tmp/FDO/fieldworks will go into /usr/lib/fieldworks in the
-	# libfieldworks-fdo package but not at all into the fieldworks-applications package.
-	# On the user's machine the files from /usr/lib/tmp/FDO/fieldworks and /usr/lib/fieldworks
-	# will end up in the same directory (/usr/lib/fieldworks), and files from
-	# /usr/share/tmp/FW/fieldworks and /usr/share/fieldworks will end up in
-	# /usr/share/fieldworks.
+	install -d $(DESTDIR)/usr/lib/fieldworks
+	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install -d $(DESTDIR)/usr/lib/pkgconfig
+	install -d $(DESTDIR)/usr/share/fieldworks
+	install -d $(DESTDIR)/var/lib/fieldworks
+	# Install libraries and their support files
+	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
+	# Install executables and scripts
+	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
+	# Install content and plug-ins
+	# For reasons I don't understand we need strings-en.txt otherwise the tests fail when run from xbuild
+	install -m 644 DistFiles/strings-en.txt $(DESTDIR)/usr/share/fieldworks
+	install -m 644 DistFiles/*.{xml,map,tec,dtd} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Icu54,Templates} $(DESTDIR)/usr/share/fieldworks
+	# Remove unwanted items
+	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
+	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
+
+install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
+	# Create directories
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/lib/pkgconfig
-	install -d $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
-	install -d $(DESTDIR)/usr/share/tmp/FW/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
-	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.so $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/FDO/*.{dll*,so} $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
-	install -m 644 $(OUT_DIR)/FieldWorks/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/FDO/{*.compmap,components.map} $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
-	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks
+	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
-	install $(OUT_DIR)/FieldWorks/*.exe $(DESTDIR)/usr/lib/fieldworks
+	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install DistFiles/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install Bin/ReadKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
-	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
-	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/tmp/FDO/fieldworks/icu-bin
 	install Lib/linux/fieldworks-flex $(DESTDIR)/usr/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
 	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
-	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
-	install -m 644 Lib/linux/libfieldworks-fdo.pc $(DESTDIR)/usr/lib/pkgconfig
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	# Install content and plug-ins
-	install -m 644 DistFiles/*.{xml,map,tec,dtd} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Icu54,Templates} $(DESTDIR)/usr/share/fieldworks
-	install -m 644 DistFiles/*.{pdf,txt,reg} $(DESTDIR)/usr/share/tmp/FW/fieldworks
-	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/tmp/FW/fieldworks
-	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/tmp/FW/fieldworks
+	install -m 644 DistFiles/*.{pdf,txt,reg} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Handle the Converter files
-	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/tmp/FW/fieldworks
+	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
-	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/lib{xample,patr}$$OTHERWIDTH.so
-	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
-	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
-	rm -f $(DESTDIR)/usr/lib/{,tmp/FDO/}fieldworks/libTECkit{,_Compiler}*.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
+	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
-	rm -f $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	rm -f $(DESTDIR)/usr/lib/fieldworks/icu.net.*
-	# The following files come from DistFiles but are already included in FDO
-	rm $(DESTDIR)/usr/lib/fieldworks/Logos.Utility.dll
-	rm $(DESTDIR)/usr/lib/fieldworks/Microsoft.Practices.ServiceLocation.dll
-	rm $(DESTDIR)/usr/lib/fieldworks/StructureMap.dll
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
-	rm -f $(DESTDIR)/usr/share/tmp/FW/fieldworks/Language\ Explorer/Configuration/strings-*.xml
 	# Except we still want strings-en.xml :-)
 	install -m 644 DistFiles/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration
 
@@ -302,8 +298,10 @@ install: install-tree install-menuentries l10n-install
 install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
+install-package-fdo: install-tree-fdo install-COM
+
 uninstall: uninstall-menuentries
-	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/lib/tmp/FDO/fieldworks $(DESTDIR)/usr/share/fieldworks $(DESTDIR)/usr/share/tmp/FW/fieldworks
+	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
 
 uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
@@ -312,7 +310,7 @@ uninstall-menuentries:
 installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
 	-(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && \
-		../configure --prefix=/usr/lib/tmp/FDO/fieldworks --libdir=/usr/lib/tmp/FDO/fieldworks)
+		../configure --prefix=/usr/lib/fieldworks --libdir=/usr/lib/fieldworks)
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) all
 
 installable-COM-clean:
@@ -716,13 +714,19 @@ Fw-build:
 
 # Import certificates so mono applications can check ssl certificates, specifically when a build task
 # downloads dependency dlls. Output md5sum of certificates imported for the record.
-Fw-build-package:
+InstallCerts:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
 		&& md5sum certdata.txt \
 		&& mozroots --import --sync --file certdata.txt
+
+Fw-build-package: InstallCerts
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
+
+Fw-build-package-fdo: InstallCerts
+	cd $(BUILD_ROOT)/Build \
+		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")

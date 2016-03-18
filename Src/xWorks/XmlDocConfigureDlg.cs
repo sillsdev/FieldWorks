@@ -289,9 +289,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Rectangle rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenHelper.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
-			}
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
 
 			// Make a help topic ID
 			m_helpTopicID = generateChooserHelpTopicID(m_configNotLocalizedObjectName);
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private void SetSelectedDictionaryTypeItem(string sLayoutType)
-		{
+					{
 			int idx = -1;
 			for (int i = 0; i < m_cbDictType.Items.Count; ++i)
 			{

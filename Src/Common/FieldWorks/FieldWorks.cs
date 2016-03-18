@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;

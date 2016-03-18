@@ -1001,7 +1001,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			IFlexApp app;
 			if (propertyTable != null && propertyTable.TryGetValue("App", out app))
-				{
+			{
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 				}
 				string fileToDelete = file.AbsoluteInternalPath;

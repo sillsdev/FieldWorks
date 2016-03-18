@@ -805,11 +805,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// m_wsMenuStrip
 			//
 			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.m_modifyMenuItem,
-				this.m_hideMenuItem,
-				this.m_mergeMenuItem,
-				this.m_deleteMenuItem
-			});
+					this.m_modifyMenuItem,
+					this.m_hideMenuItem,
+					this.m_mergeMenuItem,
+					this.m_deleteMenuItem
+				});
 			this.m_wsMenuStrip.Name = "m_wsMenuStrip";
 			resources.ApplyResources(this.m_wsMenuStrip, "m_wsMenuStrip");
 			//

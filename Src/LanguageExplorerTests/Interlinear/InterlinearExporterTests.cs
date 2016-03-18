@@ -9,15 +9,15 @@ using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Xsl;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.Interlinear
 {

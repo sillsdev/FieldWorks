@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_areaOrig == "notebook")
 			{
 				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
-					return null;	// nothing to do.
+					return null; // nothing to do.
 				area = m_areaOrig;
 				tool = "notebookDocument";
 			}
@@ -659,106 +659,106 @@ namespace SIL.FieldWorks.XWorks
 			string fxtPath = (string)m_exportItems[0].Tag;
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
-				using (var progressDlg = new ProgressDialogWithTask(this))
+			using (var progressDlg = new ProgressDialogWithTask(this))
+			{
+				try
 				{
-					try
+					progressDlg.Title = String.Format(xWorksStrings.Exporting0,
+						m_exportItems[0].SubItems[0].Text);
+					progressDlg.Message = xWorksStrings.Exporting_;
+
+					switch (ft.m_ft)
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
-							m_exportItems[0].SubItems[0].Text);
-						progressDlg.Message = xWorksStrings.Exporting_;
+						case FxtTypes.kftFxt:
+							m_dumper = new XDumper(m_cache);
+							m_dumper.UpdateProgress += OnDumperUpdateProgress;
+							m_dumper.SetProgressMessage += OnDumperSetProgressMessage;
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_dumper.GetProgressMaximum();
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
 
-						switch (ft.m_ft)
-						{
-							case FxtTypes.kftFxt:
-								m_dumper = new XDumper(m_cache);
-								m_dumper.UpdateProgress += OnDumperUpdateProgress;
-								m_dumper.SetProgressMessage += OnDumperSetProgressMessage;
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_dumper.GetProgressMaximum();
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
-
-								progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
-								break;
-							case FxtTypes.kftConfigured:
-							case FxtTypes.kftReversal:
-								progressDlg.Minimum = 0;
+							progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
+							break;
+						case FxtTypes.kftConfigured:
+						case FxtTypes.kftReversal:
+							progressDlg.Minimum = 0;
 							progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
-								progressDlg.AllowCancel = true;
-								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
-								break;
-							case FxtTypes.kftClassifiedDict:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_seqView.ObjectCount;
-								progressDlg.AllowCancel = true;
+							progressDlg.AllowCancel = true;
+							progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
+							break;
+						case FxtTypes.kftClassifiedDict:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_seqView.ObjectCount;
+							progressDlg.AllowCancel = true;
 
-								IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-								progressDlg.RunTask(true, ExportConfiguredDocView,
-									outPath, fxtPath, ft, vss);
-								break;
-							case FxtTypes.kftTranslatedLists:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_translatedLists.Count;
-								progressDlg.AllowCancel = true;
+							IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
+							progressDlg.RunTask(true, ExportConfiguredDocView,
+								outPath, fxtPath, ft, vss);
+							break;
+						case FxtTypes.kftTranslatedLists:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_translatedLists.Count;
+							progressDlg.AllowCancel = true;
 
-								progressDlg.RunTask(true, ExportTranslatedLists, outPath);
-								break;
-							case FxtTypes.kftSemanticDomains:
-								// Potentially, we could count semantic domains and try to make the export update for each.
-								// In practice this only takes a second or two on a typical modern computer
-								// an the main export routine is borrowed from kftTranslatedLists and set up to count each
-								// list as one step. For now, claiming this export just has one step seems good enough.
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1;
-								progressDlg.AllowCancel = true;
+							progressDlg.RunTask(true, ExportTranslatedLists, outPath);
+							break;
+						case FxtTypes.kftSemanticDomains:
+							// Potentially, we could count semantic domains and try to make the export update for each.
+							// In practice this only takes a second or two on a typical modern computer
+							// an the main export routine is borrowed from kftTranslatedLists and set up to count each
+							// list as one step. For now, claiming this export just has one step seems good enough.
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1;
+							progressDlg.AllowCancel = true;
 
-								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
-								break;
-							case FxtTypes.kftLift:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1000;
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
-								progressDlg.RunTask(true, ExportLift, outPath, ft.m_filtered);
-								break;
-							case FxtTypes.kftGrammarSketch:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1000;
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
-								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
-								break;
-						}
-					}
-					catch (WorkerThreadException e)
-					{
-						if (e.InnerException is CancelException)
-						{
-							MessageBox.Show(this, e.InnerException.Message);
-							m_ce = null;
-						}
-						else if (e.InnerException is LiftFormatException)
-						{
-							// Show the pretty yellow semi-crash dialog box, with instructions for the
-							// user to report the bug.
-							var app = PropertyTable.GetValue<IApp>("App");
-							ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-								app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
-						}
-						else
-						{
-							string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
-							MessageBox.Show(this, msg);
-						}
-					}
-					finally
-					{
-						m_progressDlg = null;
-						m_dumper = null;
-						Close();
+							progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
+							break;
+						case FxtTypes.kftLift:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1000;
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
+							progressDlg.RunTask(true, ExportLift, outPath, ft.m_filtered);
+							break;
+						case FxtTypes.kftGrammarSketch:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1000;
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
+							progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
+							break;
 					}
 				}
+				catch (WorkerThreadException e)
+				{
+					if (e.InnerException is CancelException)
+					{
+						MessageBox.Show(this, e.InnerException.Message);
+						m_ce = null;
+					}
+					else if (e.InnerException is LiftFormatException)
+					{
+						// Show the pretty yellow semi-crash dialog box, with instructions for the
+						// user to report the bug.
+							var app = PropertyTable.GetValue<IApp>("App");
+						ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
+								app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
+					}
+					else
+					{
+						string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+						MessageBox.Show(this, msg);
+					}
+				}
+				finally
+				{
+					m_progressDlg = null;
+					m_dumper = null;
+					Close();
+				}
 			}
+		}
 
 		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
 		{

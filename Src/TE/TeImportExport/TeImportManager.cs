@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.TE
 			TeImportUi importUi)
 		{
 			return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi, m_fParatextStreamlinedImport);
-		}
+			}
 
 		#endregion
 

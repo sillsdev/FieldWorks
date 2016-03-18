@@ -519,16 +519,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			base.TestSetup();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
-				m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
-				CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
-				CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
+			m_wsKalabaIpa = CreateWritingSystem("qaa-fonipa-x-kal", "Kalaba", true);
+			m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
+			CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
+			CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
 				CoreWritingSystemDefinition wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
-				m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
-				Cache.ServiceLocator.WritingSystemManager.Save();
-				// this will remove it from the local store, but not from the global store
-				wsTest.MarkedForDeletion = true;
-				Cache.ServiceLocator.WritingSystemManager.Save();
+			m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
+			Cache.ServiceLocator.WritingSystemManager.Save();
+			// this will remove it from the local store, but not from the global store
+			wsTest.MarkedForDeletion = true;
+			Cache.ServiceLocator.WritingSystemManager.Save();
 			});
 			m_dlg = new DummyWritingSystemPropertiesDialog(Cache);
 		}
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg = null;
 
 			base.TestTearDown();
-		}
+			}
 		#endregion
 
 		#region Helper Methods

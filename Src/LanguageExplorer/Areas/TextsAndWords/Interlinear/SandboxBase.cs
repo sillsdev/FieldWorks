@@ -1175,12 +1175,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		///  <summary />
-		///  <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
-		///  </param>
+		/// <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
+		/// </param>
 		/// <param name="fLookForDefaults"></param>
 		/// <param name="fAdjustCase">If true, may adjust case of morpheme when
-		///  proposing whole word as default morpheme breakdown.</param>
-		///  <returns>true if any guessing is involved.</returns>
+		/// proposing whole word as default morpheme breakdown.</param>
+		/// <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
@@ -3049,9 +3049,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		///  <summary />
-		///  <param name="startLine"></param>
-		///  <param name="increment">(the direction is indicated by increment, which should be 1 or -1)</param>
-		///  <param name="iMorph"></param>
+		/// <param name="startLine"></param>
+		/// <param name="increment">(the direction is indicated by increment, which should be 1 or -1)</param>
+		/// <param name="iMorph"></param>
 		/// <param name="fSkipIconToTextField"></param>
 		/// <param name="fWrapToNextLine"></param>
 		/// <returns></returns>
