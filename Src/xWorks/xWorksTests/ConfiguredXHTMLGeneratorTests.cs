@@ -287,6 +287,109 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_PronunciationVideoFileGeneratesAnchorTag()
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Label = "Pronunciations",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "variantpronunciations",
+				Label = "Variant Pronunciations",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Label = "Variant Forms",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantPronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry(Cache);
+			var variant = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(entry, variant, true); // we need a real Variant Type to pass the list options test
+			// Create a folder in the project to hold the media files
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			// Create and fill in the media files
+			const string expectedMediaFolder = @"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/";
+			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pron1);
+			var fileName1 = "test1.mp4";
+			CreateTestMediaFile(Cache, fileName1, folder, pron1);
+			var videoFileUrl1 = expectedMediaFolder + fileName1;
+			var pron2 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			variant.PronunciationsOS.Add(pron2);
+			var fileName2 = "test2.mp4";
+			CreateTestMediaFile(Cache, fileName2, folder, pron2);
+			var videoFileUrl2 = expectedMediaFolder + fileName2;
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+			const string movieCameraChar = "\U0001f3a5";
+			const string movieCamSearch = "/a/text()['" + movieCameraChar + "']";
+			const string entryPart = "/div[@class='lexentry']";
+			const string pronunciationsPart = "/span[@class='pronunciations']/span[@class='pronunciation']";
+			const string mediaFilePart = "/span[@class='mediafiles']/span[@class='mediafile']";
+			const string mediaFileAnchor1 = entryPart + pronunciationsPart + mediaFilePart + movieCamSearch;
+			const string variantsPart = "/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']";
+			const string varPronPart = "/span[@class='variantpronunciations']/span[@class='variantpronunciation']";
+			const string mediaFileAnchor2 = entryPart + variantsPart + varPronPart + mediaFilePart + movieCamSearch;
+
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			Assert.That(result, Contains.Substring(videoFileUrl1));
+			Assert.That(result, Contains.Substring(videoFileUrl2));
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(mediaFileAnchor1, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(mediaFileAnchor2, 1);
+		}
+
+		private static void CreateTestMediaFile(FdoCache cache, string name, ICmFolder localMediaFolder, ILexPronunciation pronunciation)
+		{
+			var mainMediaFile = cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(mainMediaFile);
+			var mainFile = cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			localMediaFolder.FilesOC.Add(mainFile);
+			mainFile.InternalPath = name;
+			mainMediaFile.MediaFileRA = mainFile;
+			//return mainMediaFile;
+		}
+
+		private static ConfigurableDictionaryNode CreateMediaNode()
+		{
+			var mediaFileNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFileRA",
+				Label = "Media Files",
+				IsEnabled = true
+			};
+			var mediaNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFilesOS",
+				CSSClassNameOverride = "mediafiles",
+				Label = "Pronunciation Media",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> {mediaFileNode}
+			};
+			return mediaNode;
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_NoEnabledConfigurationsWritesNothing()
 		{
 			var homographNum = new ConfigurableDictionaryNode
@@ -5732,14 +5835,22 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private ILexEntryRef CreateVariantForm(ILexEntry main, ILexEntry variantForm)
+		private ILexEntryRef CreateVariantForm(ILexEntry main, ILexEntry variantForm, bool useKnownType = false)
 		{
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
-			var ws = Cache.DefaultAnalWs;
-			var varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
-			owningList.PossibilitiesOS.Add(varType);
-			varType.Name.set_String(ws, TestVariantName);
+			ILexEntryType varType;
+			if (useKnownType)
+			{
+				varType = owningList.PossibilitiesOS.Last() as ILexEntryType;
+			}
+			else
+			{
+				varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+				owningList.PossibilitiesOS.Add(varType);
+				var ws = Cache.DefaultAnalWs;
+				varType.Name.set_String(ws, TestVariantName);
+			}
 			return variantForm.MakeVariantOf(main, varType);
 		}
 

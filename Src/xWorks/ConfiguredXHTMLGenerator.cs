@@ -602,34 +602,35 @@ namespace SIL.FieldWorks.XWorks
 										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
 			switch (typeForNode)
 			{
-				case (PropertyType.CollectionType):
+				case PropertyType.CollectionType:
 					if (!IsCollectionEmpty(propertyValue))
 						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings);
 					return String.Empty;
 
-				case (PropertyType.MoFormType):
+				case PropertyType.MoFormType:
 					return GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
 
-				case (PropertyType.CmObjectType):
+				case PropertyType.CmObjectType:
 					return GenerateXHTMLForICmObject(propertyValue as ICmObject, config, settings);
 
-				case (PropertyType.CmPictureType):
+				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
-					if (fileProperty != null)
-						return GenerateXHTMLForPicture(fileProperty, config, settings);
-					else
-						return GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+					return fileProperty != null ? GenerateXHTMLForPicture(fileProperty, config, settings) : GenerateXHTMLForPictureCaption(propertyValue, config, settings);
 
-				case (PropertyType.CmPossibility):
+				case PropertyType.CmPossibility:
 					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
 
-				case (PropertyType.CmFileType):
+				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
 					if (fileProperty != null)
 					{
+						const string movieCamera = "\U0001F3A5";
+						const string audioPlayButton = "\u25B6";
+						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
+						if (IsVideo(fileProperty.InternalPath))
+							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, movieCamera);
 						var audioId = "g" + fileProperty.Guid;
-						var srcAttr = GenerateSrcAttributeFromFilePath(fileProperty, settings.UseRelativePaths ? "AudioVisual" : null, settings);
-						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, "\u25B6");
+						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
 					}
 					return String.Empty;
 
@@ -649,6 +650,45 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return bldr.ToString();
+		}
+
+		private static string GenerateXHTMLForVideoFile(string className, string srcAttribute, string caption)
+		{
+			if (String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
+				return String.Empty;
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
+			{
+				// This creates a link that will open the video in the same window as the dictionary view/preview
+				// refreshing will bring it back to the dictionary
+				xw.WriteStartElement("a");
+				xw.WriteAttributeString("class", className);
+				xw.WriteAttributeString("href", srcAttribute);
+				if (!String.IsNullOrEmpty(caption))
+					xw.WriteString(caption);
+				else
+					xw.WriteRaw("");
+				xw.WriteFullEndElement();
+				xw.Flush();
+				return bldr.ToString();
+			}
+		}
+
+		private static bool IsVideo(string fileName)
+		{
+			var extension = Path.GetExtension(fileName);
+			switch (extension)
+			{
+					// any others we should detect?
+				case ".mp4":
+				case ".avi":
+				case ".swf":
+				case ".mov":
+				case ".flv":
+				case ".ogv":
+					return true;
+			}
+			return false;
 		}
 
 #if DEBUG
@@ -847,11 +887,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
-		private static string GenerateSrcAttributeForAudioFromFilePath(string filename, string subFolder, GeneratorSettings settings)
+		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
 			var linkedFilesRootDir = settings.Cache.LangProject.LinkedFilesRootDir;
-			var audioVisualFile = Path.Combine(linkedFilesRootDir, subFolder, filename);
+			var audioVisualFile = Path.GetDirectoryName(filename) == subFolder ?
+				Path.Combine(linkedFilesRootDir, filename) :
+				Path.Combine(linkedFilesRootDir, subFolder, filename);
 			if (settings.UseRelativePaths && subFolder != null)
 			{
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(filename)));
@@ -2108,7 +2150,7 @@ namespace SIL.FieldWorks.XWorks
 				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text))
 				{
 					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
-					var srcAttr = GenerateSrcAttributeForAudioFromFilePath(fieldValue.Text, "AudioVisual", settings);
+					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldValue.Text, "AudioVisual", settings);
 					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, String.Empty);
 					if (!String.IsNullOrEmpty(content))
 						return WriteRawElementContents("span", content, null);

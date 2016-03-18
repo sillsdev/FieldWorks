@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
+using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -85,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 			if (e.Button == GeckoMouseButton.Left)
 			{
 				// Select the entry represented by the current element.  [LT-16982]
-				HandleDomLeftClick(e, element);
+				HandleDomLeftClick(Clerk, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -106,14 +107,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
 			var topLevelGuid = GetHrefFromGeckoDomElement(element);
 			if (topLevelGuid == Guid.Empty)
 				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
 			if (topLevelGuid != Guid.Empty)
-				Clerk.JumpToRecord(topLevelGuid);
+			{
+				var currentObj = clerk.CurrentObject;
+				if (currentObj != null && currentObj.Guid == topLevelGuid)
+				{
+					// don't need to jump, we're already here...
+					// unless this is a video link
+					if (element is GeckoAnchorElement)
+						return; // don't handle the click; gecko will jump to the link
+				}
+				else
+				{
+					clerk.JumpToRecord(topLevelGuid);
+				}
+			}
 			e.Handled = true;
 		}
 

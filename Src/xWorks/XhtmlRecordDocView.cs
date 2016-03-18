@@ -68,21 +68,12 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				HandleDomLeftClick(e, element);
+				XhtmlDocView.HandleDomLeftClick(Clerk, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
 				XhtmlDocView.HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
 			}
-		}
-
-		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
-		{
-			GeckoElement dummy;
-			var topLevelGuid = XhtmlDocView.GetHrefFromGeckoDomElement(element);
-			if (topLevelGuid != Guid.Empty)
-				Clerk.JumpToRecord(topLevelGuid);
-			e.Handled = true;
 		}
 
 		protected override void ShowRecord()
