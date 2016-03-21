@@ -44,11 +44,21 @@ namespace FixFwData
 
 		private static void SetUpErrorHandling()
 		{
-			using (new HotSpotProvider())
+			if (MiscUtils.IsUnix && Environment.GetEnvironmentVariable("DISPLAY") == null)
 			{
 				ErrorReport.EmailAddress = "flex_errors@sil.org";
 				ErrorReport.AddStandardProperties();
-				ExceptionHandler.Init();
+				var syslogExceptionHandler = new SIL.Linux.Logging.SyslogExceptionHandler("FixFwData");
+				ExceptionHandler.Init(syslogExceptionHandler);
+			}
+			else
+			{
+				using (new HotSpotProvider())
+				{
+					ErrorReport.EmailAddress = "flex_errors@sil.org";
+					ErrorReport.AddStandardProperties();
+					ExceptionHandler.Init();
+				}
 			}
 		}
 
